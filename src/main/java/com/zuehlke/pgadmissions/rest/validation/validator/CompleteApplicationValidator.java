@@ -9,9 +9,11 @@ import org.springframework.validation.ValidationUtils;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.services.ApplicationService;
+import org.springframework.validation.Validator;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 @Component
-public class CompleteApplicationValidator extends AbstractValidator {
+public class CompleteApplicationValidator extends LocalValidatorFactoryBean implements Validator {
 
     @Autowired
     private ApplicationService applicationService;
@@ -19,10 +21,11 @@ public class CompleteApplicationValidator extends AbstractValidator {
     @Override
     public boolean supports(Class<?> clazz) {
         return Application.class.isAssignableFrom(clazz);
-    }
 
+    }
     @Override
-    public void addExtraValidation(Object target, Errors errors) {
+    public void validate(Object target, Errors errors, Object... validationHints) {
+        super.validate(target, errors, validationHints);
         Application application = (Application) target;
 
         ValidationUtils.rejectIfEmpty(errors, "programDetail", "notNull");

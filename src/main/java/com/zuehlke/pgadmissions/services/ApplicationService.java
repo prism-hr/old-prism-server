@@ -85,7 +85,7 @@ public class ApplicationService {
 
     @Autowired
     private CommentService commentService;
-    
+
     @Autowired
     private ApplicationExportService applicationExportService;
 
@@ -255,7 +255,7 @@ public class ApplicationService {
         if (comment.isApplicationCompletionComment()) {
             application.setCompletionDate(comment.getCreatedTimestamp().toLocalDate());
         }
-        
+
         if (comment.isApplicationPurgeComment()) {
             purgeApplication(application, comment);
         }
@@ -338,13 +338,13 @@ public class ApplicationService {
         comment.getAssignedUsers().addAll(assignedUsers);
         return actionService.executeUserAction(application, action, comment);
     }
-    
+
     public void filterResourceListData(ResourceListRowRepresentation representation, User currentUser) {
         if (currentUser.getId() == representation.getUser().getId()) {
             representation.setApplicationRatingAverage(null);
         }
     }
-    
+
     public List<Integer> getApplicationsForExport() {
         return applicationDAO.getApplicationsForExport();
     }

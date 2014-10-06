@@ -350,7 +350,7 @@ public class SystemService {
         }
 
         stateService.deleteObsoleteStateDurations();
-        notificationService.deleteObseleteNotificationConfigurations();
+        notificationService.deleteObsoleteNotificationConfigurations();
         roleService.deleteInactiveRoles();
     }
 
@@ -414,8 +414,7 @@ public class SystemService {
             Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                     .addAssignedUser(user, roleService.getCreatorRole(system), PrismRoleTransitionType.CREATE);
             ActionOutcomeDTO outcome = actionService.executeSystemAction(system, action, comment);
-            notificationService.sendNotification(user, system, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST,
-                    ImmutableMap.of("action", outcome.getTransitionAction().getId().name()));
+            notificationService.sendRegistrationNotification(user, outcome);
         }
     }
 
@@ -427,7 +426,7 @@ public class SystemService {
                     + " which is required for backward compatibility by the workflow engine", e);
         }
     }
-    
+
     private String getFileContent(String filePath) {
         try {
             return Joiner.on(java.lang.System.lineSeparator()).join(Resources.readLines(Resources.getResource(filePath), Charsets.UTF_8));

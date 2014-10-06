@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dto;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 
@@ -10,6 +11,8 @@ public class UserNotificationDefinitionDTO {
     private PrismRole roleId;
 
     private PrismNotificationTemplate notificationTemplateId;
+
+    private PrismAction actionId;
 
     public final Integer getUserId() {
         return userId;
@@ -35,4 +38,11 @@ public class UserNotificationDefinitionDTO {
         this.notificationTemplateId = notificationTemplateId;
     }
 
+    public PrismAction getActionId() {
+        return actionId;
+    }
+
+    public void setActionId(PrismAction actionId) {
+        this.actionId = actionId;
+    }
 }

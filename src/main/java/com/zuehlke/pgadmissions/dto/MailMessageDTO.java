@@ -6,6 +6,7 @@ import java.util.Map;
 import com.google.common.base.MoreObjects;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplateProperty;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
 
 public final class MailMessageDTO {
@@ -14,7 +15,7 @@ public final class MailMessageDTO {
 
     private User to;
 
-    private Map<String, Object> model;
+    private Map<PrismNotificationTemplateProperty, Object> model;
 
     private NotificationTemplateVersion template;
 
@@ -28,11 +29,11 @@ public final class MailMessageDTO {
         this.to = to;
     }
 
-    public void setModel(final Map<String, Object> model) {
+    public void setModel(final Map<PrismNotificationTemplateProperty, Object> model) {
         this.model = model;
     }
 
-    public Map<String, Object> getModel() {
+    public Map<PrismNotificationTemplateProperty, Object> getModel() {
         return model;
     }
 

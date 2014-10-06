@@ -1,42 +1,30 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.dao.NotificationDAO;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.System;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.MailMessageDTO;
+import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
+import com.zuehlke.pgadmissions.mail.MailSender;
+import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.dao.NotificationDAO;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
-import com.zuehlke.pgadmissions.domain.NotificationTemplate;
-import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.System;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.dto.MailMessageDTO;
-import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
-import com.zuehlke.pgadmissions.mail.MailSender;
-import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplateProperty.*;
 
 @Service
 @Transactional
@@ -98,7 +86,7 @@ public class NotificationService {
         return templates;
     }
 
-    public void deleteObseleteNotificationConfigurations() {
+    public void deleteObsoleteNotificationConfigurations() {
         notificationDAO.deleteObsoleteNotificationConfigurations(getWorkflowTemplates());
     }
 
@@ -127,7 +115,7 @@ public class NotificationService {
             Integer reminderInterval = getReminderInterval(resource, notificationTemplate);
 
             if (!sent.get(notificationTemplate).contains(user) && baseline.minusDays(reminderInterval) == userRole.getLastNotifiedDate()) {
-                sendNotification(user, resource, notificationTemplate.getReminderTemplate(), ImmutableMap.of("author", invoker.getDisplayName()));
+                sendNotification(user, resource, notificationTemplate.getReminderTemplate(), invoker, reminder.getActionId(), Collections.<PrismNotificationTemplateProperty, String>emptyMap());
                 sent.put(notificationTemplate, user);
             }
 
@@ -154,7 +142,7 @@ public class NotificationService {
 
             if (!sent.get(notificationTemplate).contains(user) && (lastNotifiedDate == null || doSendReminder)) {
                 NotificationTemplate sendTemplate = doSendReminder ? notificationTemplate.getReminderTemplate() : notificationTemplate;
-                sendNotification(user, resource, sendTemplate, ImmutableMap.of("author", invoker.getDisplayName()));
+                sendNotification(user, resource, sendTemplate, invoker, definition.getActionId(), Collections.<PrismNotificationTemplateProperty, String>emptyMap());
                 user.setLastNotifiedDate(resource.getClass(), baseline);
                 sent.put(notificationTemplate, user);
             }
@@ -176,7 +164,7 @@ public class NotificationService {
             NotificationTemplate notificationTemplate = getById(update.getNotificationTemplateId());
 
             if (!sent.get(notificationTemplate).contains(user)) {
-                sendNotification(user, resource, notificationTemplate, ImmutableMap.of("author", invoker.getDisplayName()));
+                sendNotification(user, resource, notificationTemplate, invoker, null, Collections.<PrismNotificationTemplateProperty, String>emptyMap());
                 user.setLastNotifiedDate(resource.getClass(), baseline);
                 sent.put(notificationTemplate, user);
             }
@@ -187,15 +175,16 @@ public class NotificationService {
         return notificationDAO.getRecommendationNotifications(baseline);
     }
 
-    public void sendNotification(User user, Resource resource, PrismNotificationTemplate notificationTemplateId, Map<String, String> extraParameters) {
+    public void sendNotification(User user, Resource resource, PrismNotificationTemplate notificationTemplateId, User sender, PrismAction action, Map<PrismNotificationTemplateProperty, String> extraParameters) {
         NotificationTemplate notificationTemplate = getById(notificationTemplateId);
-        sendNotification(user, resource, notificationTemplate, extraParameters);
+        sendNotification(user, resource, notificationTemplate, sender, action, extraParameters);
     }
 
     public void sendDataImportErrorNotifications(Institution institution, String errorMessage) {
+        System system = systemService.getSystem();
         for (User user : userService.getUsersForResourceAndRole(institution, PrismRole.INSTITUTION_ADMINISTRATOR)) {
             NotificationTemplate template = getById(PrismNotificationTemplate.INSTITUTION_IMPORT_ERROR_NOTIFICATION);
-            sendNotification(user, institution, template, ImmutableMap.of("message", errorMessage));
+            sendNotification(user, institution, template, system.getUser(), null, ImmutableMap.of(ERROR_MESSAGE, errorMessage));
         }
     }
 
@@ -209,8 +198,21 @@ public class NotificationService {
         System system = systemService.getSystem();
         NotificationTemplate template = getById(PrismNotificationTemplate.SYSTEM_RECOMMENDATION_NOTIFICATION);
         String recommendations = advertService.getRecommendedAdvertsForEmail(persistentUser);
-        sendNotification(persistentUser, system, template, ImmutableMap.of("author", system.getUser().getDisplayName(), "recommendations", recommendations));
+        sendNotification(persistentUser, system, template, system.getUser(), null, ImmutableMap.of(RECOMMENDATIONS, recommendations));
         persistentUser.getUserAccount().setLastNotifiedDateRecommendation(baseline);
+    }
+
+    public void sendRegistrationNotification(User user, ActionOutcomeDTO actionOutcome) {
+        System system = systemService.getSystem();
+        sendNotification(user, actionOutcome.getTransitionResource(), PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST,
+                system.getUser(), actionOutcome.getTransitionAction().getId(), Collections.<PrismNotificationTemplateProperty, String>emptyMap());
+    }
+
+    public void sendResetPasswordNotification(User user, String newPassword) {
+        System system = systemService.getSystem();
+
+        sendNotification(user, systemService.getSystem(), PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION,
+                system.getUser(), null, ImmutableMap.of(NEW_PASSWORD_CONTROL, newPassword));
     }
 
     private void sendIndividualRequestNotifications(Resource resource, User invoker, LocalDate baseline) {
@@ -222,7 +224,7 @@ public class NotificationService {
             NotificationTemplate notificationTemplate = getById(request.getNotificationTemplateId());
 
             if (!sent.get(notificationTemplate).contains(user)) {
-                sendNotification(user, resource, notificationTemplate, ImmutableMap.of("author", invoker.getDisplayName()));
+                sendNotification(user, resource, notificationTemplate, invoker, request.getActionId(), Collections.<PrismNotificationTemplateProperty, String>emptyMap());
                 sent.put(notificationTemplate, user);
             }
 
@@ -233,10 +235,10 @@ public class NotificationService {
         }
     }
 
-    private void sendIndividualUpdateNotifications(Resource resource, Action action, User invoker, LocalDate baseline) {
+    private void sendIndividualUpdateNotifications(Resource resource, Action action, User sender, LocalDate baseline) {
         State state = resource.getPreviousState();
 
-        List<UserNotificationDefinitionDTO> updates = notificationDAO.getIndividualUpdateNotifications(resource, state, action, invoker, baseline);
+        List<UserNotificationDefinitionDTO> updates = notificationDAO.getIndividualUpdateNotifications(resource, state, action, sender, baseline);
         HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
 
         for (UserNotificationDefinitionDTO update : updates) {
@@ -244,35 +246,37 @@ public class NotificationService {
             NotificationTemplate notificationTemplate = getById(update.getNotificationTemplateId());
 
             if (!sent.get(notificationTemplate).contains(user)) {
-                sendNotification(user, resource, notificationTemplate, ImmutableMap.of("author", invoker.getDisplayName()));
+                sendNotification(user, resource, notificationTemplate, sender, null, Collections.<PrismNotificationTemplateProperty, String>emptyMap());
                 sent.put(notificationTemplate, user);
             }
         }
     }
 
-    private void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate, Map<String, String> extraParameters) {
+    private void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate, User sender, PrismAction action, Map<PrismNotificationTemplateProperty, String> extraParameters) {
         NotificationTemplateVersion templateVersion = getActiveVersion(resource, notificationTemplate);
         MailMessageDTO message = new MailMessageDTO();
 
         message.setTo(user);
         message.setTemplate(templateVersion);
-        message.setModel(createNotificationModel(user, resource, extraParameters));
+        message.setModel(createNotificationModel(user, resource, sender, action, extraParameters));
         message.setAttachments(Lists.<AttachmentInputSource>newArrayList());
 
         mailSender.sendEmail(message);
     }
 
-    private Map<String, Object> createNotificationModel(User user, Resource resource, Map<String, String> extraParameters) {
-        Map<String, Object> model = Maps.newHashMap();
-        model.put("user", user.getDisplayName());
-        model.put("userFirstName", user.getFirstName());
-        model.put("userLastName", user.getLastName());
-        model.put("userEmail", user.getEmail());
-        model.put("activationCode", user.getActivationCode());
+    private Map<PrismNotificationTemplateProperty, Object> createNotificationModel(User user, Resource resource, User sender, PrismAction action, Map<PrismNotificationTemplateProperty, String> extraParameters) {
+        Map<PrismNotificationTemplateProperty, Object> model = Maps.newHashMap();
+        model.put(USER, user.getDisplayName());
+        model.put(USER_FIRST_NAME, user.getFirstName());
+        model.put(USER_LAST_NAME, user.getLastName());
+        model.put(USER_EMAIL, user.getEmail());
+        model.put(USER_ACTIVATION_CODE, user.getActivationCode());
+        model.put(AUTHOR, sender.getDisplayName());
+        model.put(AUTHOR_EMAIL, sender.getEmail());
 
-        model.put("resourceId", resource.getId().toString());
-        // TODO construct action url, example: http://localhost:9000/#/application/15101/action?action=APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY&user=franek@pieczka.pl
-        model.put("actionUrl", "to be defined");
+        model.put(DIRECTIONS_CONTROL, "to be defined");
+        model.put(ACTION_CONTROL, "to be defined");
+        model.put(VIEW_EDIT_CONTROL, "to be defined");
 
         System system = resource.getSystem();
         Institution institution = resource.getInstitution();
@@ -281,41 +285,37 @@ public class NotificationService {
         Application application = resource.getApplication();
 
         if (application != null) {
-            model.put("applicant", application.getUser().getDisplayName());
-            model.put("applicationId", application.getId().toString());
-            model.put("applicationCode", application.getCode());
-            model.put("projectOrProgramTitle", project == null ? program.getTitle() : project.getTitle());
+            model.put(APPLICANT, application.getUser().getDisplayName());
+            model.put(APPLICATION_CODE, application.getCode());
+            model.put(PROJECT_OR_PROGRAM_TITLE, project == null ? program.getTitle() : project.getTitle());
         }
 
         if (program != null) {
-            model.put("programId", program.getId().toString());
-            model.put("programCode", program.getCode());
-            model.put("programTitle", program.getTitle());
+            model.put(PROGRAM_CODE, program.getCode());
+            model.put(PROGRAM_TITLE, program.getTitle());
         }
 
         if (project != null) {
-            model.put("projectId", project.getId().toString());
-            model.put("projectCode", project.getCode());
-            model.put("projectTitle", project.getTitle());
+            model.put(PROJECT_CODE, project.getCode());
+            model.put(PROJECT_TITLE, project.getTitle());
         }
 
         if (institution != null) {
-            model.put("institutionId", institution.getId().toString());
-            model.put("institutionCode", institution.getCode());
-            model.put("institutionTitle", institution.getTitle());
+            model.put(INSTITUTION_CODE, institution.getCode());
+            model.put(INSTITUTION_TITLE, institution.getTitle());
         }
 
-        for (String parameter : extraParameters.keySet()) {
+        for (PrismNotificationTemplateProperty parameter : extraParameters.keySet()) {
             model.put(parameter, extraParameters.get(parameter));
         }
 
-        model.put("systemName", system.getTitle());
-        model.put("time", new Date());
-        model.put("host", host);
+        model.put(SYSTEM_NAME, system.getTitle());
+        model.put(TIME, new Date());
+        model.put(HOST, host);
         return model;
     }
 
-    public List<PrismNotificationTemplate> getAvailableTemplates(PrismScope scope){
+    public List<PrismNotificationTemplate> getAvailableTemplates(PrismScope scope) {
         return notificationDAO.getAvailableTemplates(scope);
     }
 

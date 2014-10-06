@@ -211,12 +211,15 @@ public class SystemInitialisationHelper {
 
             NotificationConfiguration configuration = notificationService.getConfiguration(system, template);
             assertEquals(configuration.getNotificationTemplate(), template);
-            assertEquals(configuration.getNotificationTemplateVersion().getNotificationTemplate(), template);
             assertEquals(PrismNotificationTemplate.getReminderInterval(template.getId()), configuration.getReminderInterval());
-
-            NotificationTemplateVersion version = configuration.getNotificationTemplateVersion();
-            assertEquals(getFileContent(defaultEmailSubjectDirectory + template.getId().getInitialTemplateSubject()), version.getSubject());
-            assertEquals(getFileContent(defaultEmailContentDirectory + template.getId().getInitialTemplateContent()), version.getContent());
+            
+            Set<NotificationTemplateVersion> versions = configuration.getNotificationTemplateVersions();
+            assertEquals(1, versions.size());
+            
+            NotificationTemplateVersion activeVersion = notificationService.getActiveVersion(system, template);
+            assertEquals(system.getLocale(), activeVersion.getLocale());
+            assertEquals(getFileContent(defaultEmailSubjectDirectory + template.getId().getInitialTemplateSubject()), activeVersion.getSubject());
+            assertEquals(getFileContent(defaultEmailContentDirectory + template.getId().getInitialTemplateContent()), activeVersion.getContent());
         }
     }
 

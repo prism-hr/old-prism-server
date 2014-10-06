@@ -1,17 +1,16 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 
 @Entity
 @Table(name = "NOTIFICATION_CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "locale", "notification_template_id" }),
@@ -34,24 +33,19 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
     @ManyToOne
     @JoinColumn(name = "program_id")
     private Program program;
-    
-    @Column(name = "locale", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PrismLocale locale;
 
     @ManyToOne
     @JoinColumn(name = "notification_template_id")
     private NotificationTemplate notificationTemplate;
-
-    @ManyToOne
-    @JoinColumn(name = "notification_template_version_id")
-    private NotificationTemplateVersion notificationTemplateVersion;
 
     @Column(name = "day_reminder_interval")
     private Integer reminderInterval;
 
     @Column(name = "locked", nullable = false)
     private Boolean locked;
+    
+    @OneToMany(mappedBy = "notificationConfiguration")
+    private Set<NotificationTemplateVersion> notificationTemplateVersions;
 
     public Integer getId() {
         return id;
@@ -91,28 +85,12 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
         this.program = program;
     }
 
-    public final PrismLocale getLocale() {
-        return locale;
-    }
-
-    public final void setLocale(PrismLocale locale) {
-        this.locale = locale;
-    }
-
     public NotificationTemplate getNotificationTemplate() {
         return notificationTemplate;
     }
 
     public void setNotificationTemplate(NotificationTemplate notificationTemplate) {
         this.notificationTemplate = notificationTemplate;
-    }
-
-    public NotificationTemplateVersion getNotificationTemplateVersion() {
-        return notificationTemplateVersion;
-    }
-
-    public void setNotificationTemplateVersion(NotificationTemplateVersion notificationTemplateVersion) {
-        this.notificationTemplateVersion = notificationTemplateVersion;
     }
 
     public Integer getReminderInterval() {
@@ -133,23 +111,17 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
         this.locked = locked;
     }
 
-    public NotificationConfiguration withSystem(System system) {
-        this.system = system;
-        return this;
+    public final Set<NotificationTemplateVersion> getNotificationTemplateVersions() {
+        return notificationTemplateVersions;
     }
-    
-    public NotificationConfiguration withLocale(PrismLocale locale) {
-        this.locale = locale;
+
+    public NotificationConfiguration withResource(Resource resource) {
+        setResource(resource);
         return this;
     }
 
     public NotificationConfiguration withNotificationTemplate(NotificationTemplate notificationTemplate) {
         this.notificationTemplate = notificationTemplate;
-        return this;
-    }
-
-    public NotificationConfiguration withNotificationTemplateVersion(NotificationTemplateVersion notificationTemplateVersion) {
-        this.notificationTemplateVersion = notificationTemplateVersion;
         return this;
     }
 
@@ -165,7 +137,7 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("locale", locale).addProperty("notificationTemplate", notificationTemplate);
+        return super.getResourceSignature().addProperty("notificationTemplate", notificationTemplate);
     }
 
 }

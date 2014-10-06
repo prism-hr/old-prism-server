@@ -8,7 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -17,7 +16,7 @@ import com.google.common.collect.Sets;
 @Entity
 @Table(name = "COMMENT_CUSTOM_QUESTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "action_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "action_id" }), @UniqueConstraint(columnNames = { "program_id", "action_id" }) })
-public class CommentCustomQuestion extends WorkflowResource {
+public class CommentCustomQuestion extends WorkflowResourceConfiguration {
 
     @Id
     private Integer id;
@@ -38,15 +37,14 @@ public class CommentCustomQuestion extends WorkflowResource {
     @JoinColumn(name = "action_id", nullable = false)
     private Action action;
 
-    @OneToOne
-    @JoinColumn(name = "comment_custom_question_version_id")
-    private CommentCustomQuestionVersion version;
-
-    @Column(name = "is_enabled")
+    @Column(name = "enabled", nullable = false)
     private Boolean enabled;
+    
+    @Column(name = "locked", nullable = false)
+    private Boolean locked;
 
     @OneToMany(mappedBy = "commentCustomQuestion")
-    private Set<CommentCustomQuestionVersion> versions = Sets.newHashSet();
+    private Set<CommentCustomQuestionVersion> commentCustomQuestionVersions = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -94,14 +92,6 @@ public class CommentCustomQuestion extends WorkflowResource {
         this.action = action;
     }
 
-    public CommentCustomQuestionVersion getVersion() {
-        return version;
-    }
-
-    public void setVersion(CommentCustomQuestionVersion version) {
-        this.version = version;
-    }
-
     public Boolean getEnabled() {
         return enabled;
     }
@@ -110,8 +100,16 @@ public class CommentCustomQuestion extends WorkflowResource {
         this.enabled = enabled;
     }
 
-    public Set<CommentCustomQuestionVersion> getVersions() {
-        return versions;
+    public final Boolean getLocked() {
+        return locked;
+    }
+
+    public final void setLocked(Boolean locked) {
+        this.locked = locked;
+    }
+
+    public Set<CommentCustomQuestionVersion> getCommentCustomQuestionVersions() {
+        return commentCustomQuestionVersions;
     }
 
     public CommentCustomQuestion withSystem(System system) {
@@ -133,9 +131,14 @@ public class CommentCustomQuestion extends WorkflowResource {
         this.action = action;
         return this;
     }
-
-    public CommentCustomQuestion withVersion(CommentCustomQuestionVersion version) {
-        this.version = version;
+    
+    public CommentCustomQuestion withEnabled(Boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
+    
+    public CommentCustomQuestion withLocked(Boolean locked) {
+        this.locked = locked;
         return this;
     }
 

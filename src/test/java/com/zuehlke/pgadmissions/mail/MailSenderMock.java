@@ -19,7 +19,8 @@ public class MailSenderMock extends MailSender {
 
     public MailMessageDTO assertEmailSent(User recipient, PrismNotificationTemplate templateId) {
         for (MailMessageDTO message : sentMessages) {
-            if (HibernateUtils.sameEntities(recipient, message.getTo()) && templateId == message.getTemplate().getNotificationTemplate().getId()) {
+            if (HibernateUtils.sameEntities(recipient, message.getTo())
+                    && templateId == message.getTemplate().getNotificationConfiguration().getNotificationTemplate().getId()) {
                 sentMessages.remove(message);
                 return message;
             }

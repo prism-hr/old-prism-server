@@ -2,134 +2,125 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 
 @Entity
 @Table(name = "notification_template_version")
-public class NotificationTemplateVersion {
+public class NotificationTemplateVersion extends WorkflowResourceVersion {
 
     @Id
     @GeneratedValue
     private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "notification_configuration_id", nullable = false)
+    private NotificationConfiguration notificationConfiguration;
     
-    @ManyToOne
-    @JoinColumn(name = "system_id")
-    private System system;
-
-    @ManyToOne
-    @JoinColumn(name = "institution_id")
-    private Institution institution;
-
-    @ManyToOne
-    @JoinColumn(name = "program_id")
-    private Program program;
-
-    @ManyToOne
-    @JoinColumn(name = "notification_template_id", nullable = false)
-    private NotificationTemplate notificationTemplate;
+    @Column(name = "locale", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismLocale locale;
 
     @Column(name = "subject", nullable = false)
     private String subject;
 
-    @Lob
     @Column(name = "content", nullable = false)
     private String content;
+    
+    @Column(name = "active", nullable = false)
+    private Boolean active;
 
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
-
-    public Integer getId() {
+    
+    public final Integer getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public final void setId(Integer id) {
         this.id = id;
     }
 
-    public System getSystem() {
-        return system;
+    public final NotificationConfiguration getNotificationConfiguration() {
+        return notificationConfiguration;
     }
 
-    public void setSystem(System system) {
-        this.system = system;
+    public final void setNotificationConfiguration(NotificationConfiguration notificationConfiguration) {
+        this.notificationConfiguration = notificationConfiguration;
     }
 
-    public Institution getInstitution() {
-        return institution;
+    @Override
+    public final PrismLocale getLocale() {
+        return locale;
     }
 
-    public void setInstitution(Institution institution) {
-        this.institution = institution;
+    @Override
+    public final void setLocale(PrismLocale locale) {
+        this.locale = locale;
     }
 
-    public Program getProgram() {
-        return program;
-    }
-
-    public void setProgram(Program program) {
-        this.program = program;
-    }
-
-    public void setResource(Resource resource) {
-        this.system = null;
-        this.institution = null;
-        this.program = null;
-        IntrospectionUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
-    }
-    
-    public NotificationTemplate getNotificationTemplate() {
-        return notificationTemplate;
-    }
-
-    public void setNotificationTemplate(NotificationTemplate notificationTemplate) {
-        this.notificationTemplate = notificationTemplate;
-    }
-
-    public String getSubject() {
+    public final String getSubject() {
         return subject;
     }
 
-    public void setSubject(String subject) {
+    public final void setSubject(String subject) {
         this.subject = subject;
     }
 
-    public String getContent() {
+    public final String getContent() {
         return content;
     }
 
-    public void setContent(String content) {
+    public final void setContent(String content) {
         this.content = content;
     }
 
-    public DateTime getCreatedTimestamp() {
+    @Override
+    public final Boolean getActive() {
+        return active;
+    }
+
+    @Override
+    public final void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    @Override
+    public final DateTime getCreatedTimestamp() {
         return createdTimestamp;
     }
 
-    public void setCreatedTimestamp(DateTime createdTimestamp) {
+    @Override
+    public final void setCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
     }
+
+    public NotificationTemplateVersion withNotificationConfiguration(NotificationConfiguration notificationConfiguration) {
+        this.notificationConfiguration = notificationConfiguration;
+        return this;
+    }
     
-    public NotificationTemplateVersion withId(Integer id) {
-        this.id = id;
+    public NotificationTemplateVersion withLocale(PrismLocale locale) {
+        this.locale = locale;
         return this;
     }
-
-    public NotificationTemplateVersion withNotificationTemplate(NotificationTemplate notificationTemplate) {
-        this.notificationTemplate = notificationTemplate;
+    
+    public NotificationTemplateVersion withActive(Boolean active) {
+        this.active = active;
         return this;
     }
-
+    
     public NotificationTemplateVersion withSubject(String subject) {
         this.subject = subject;
         return this;

@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 @Table(name = "DISPLAY_CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "locale", "property_category", "property_key" }),
         @UniqueConstraint(columnNames = { "institution_id", "locale", "property_category", "property_key" }),
         @UniqueConstraint(columnNames = { "program_id", "locale", "property_category", "property_key" }) })
-public class DisplayConfiguration extends WorkflowResourceConfiguration {
+public class DisplayConfiguration extends WorkflowResource {
 
     @Id
     @GeneratedValue
@@ -51,9 +51,6 @@ public class DisplayConfiguration extends WorkflowResourceConfiguration {
 
     @Column(name = "property_value", nullable = false)
     private String propertyValue;
-
-    @Column(name = "locked", nullable = false)
-    private Boolean locked;
 
     public final Integer getId() {
         return id;
@@ -124,17 +121,7 @@ public class DisplayConfiguration extends WorkflowResourceConfiguration {
     public final void setPropertyValue(String propertyValue) {
         this.propertyValue = propertyValue;
     }
-
-    @Override
-    public final Boolean getLocked() {
-        return locked;
-    }
-
-    @Override
-    public final void setLocked(Boolean locked) {
-        this.locked = locked;
-    }
-
+    
     public DisplayConfiguration withSystem(System system) {
         this.system = system;
         return this;
@@ -167,11 +154,6 @@ public class DisplayConfiguration extends WorkflowResourceConfiguration {
 
     public DisplayConfiguration withPropertyValue(String propertyValue) {
         this.propertyValue = propertyValue;
-        return this;
-    }
-
-    public DisplayConfiguration withLocked(Boolean locked) {
-        this.locked = locked;
         return this;
     }
 

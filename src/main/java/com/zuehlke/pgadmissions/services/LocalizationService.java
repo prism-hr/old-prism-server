@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.WorkflowDefinition;
+import com.zuehlke.pgadmissions.domain.WorkflowResourceLocalized;
 import com.zuehlke.pgadmissions.domain.WorkflowResourceVersion;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 
@@ -14,23 +14,27 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 @Transactional
 public class LocalizationService {
 
-    public <T extends WorkflowResourceVersion> T getLocalizedVersion(Resource resource, User user, List<T> versions) {
-        PrismLocale userLocale = user == null ? null : user.getLocale();
-        PrismLocale resourceLocale = resource.getLocale();
-        
-        T userVersion = null;
-        T resourceVersion = null;
-        
-        for (T version : versions) {
-            PrismLocale versionLocale = version.getLocale();
-            if (versionLocale == userLocale) {
-                userVersion = version;
-            } else if (versionLocale == resourceLocale) {
-                resourceVersion = version;
-            }
+    @Autowired
+    private ConfigurationService configurationService;
+
+    public <T extends WorkflowResourceLocalized<V>, U extends WorkflowDefinition, V extends WorkflowResourceVersion> V getVersion(
+            Class<T> localizedEntityClass, Resource resource, U parameter, PrismLocale userLocale, PrismLocale resourceLocale) {
+        WorkflowResourceLocalized<V> localized = configurationService.getConfiguration(localizedEntityClass, resource, parameter);
+        V version = localized.getVersion(userLocale);
+
+        if (version == null) {
+            version = localized.getVersion(resourceLocale);
         }
-        
-        return userVersion == null ? resourceVersion : userVersion;
+
+        if (version == null) {
+            Resource parentResource = resource.getParentResource();
+            if (resource == parentResource) {
+                return null;
+            }
+            return getVersion(localizedEntityClass, parentResource, parameter, userLocale, resourceLocale);
+        }
+
+        return (V) version;
     }
-    
+
 }

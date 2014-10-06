@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.dao;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -13,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
-import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
@@ -31,27 +28,6 @@ public class NotificationDAO {
 
     @Autowired
     private SessionFactory sessionFactory;
-
-    public NotificationConfiguration getConfiguration(Resource resource, NotificationTemplate template) {
-        return (NotificationConfiguration) sessionFactory.getCurrentSession().createCriteria(NotificationConfiguration.class) //
-                .add(Restrictions.eq("notificationTemplate", template)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("system", resource.getSystem())) //
-                        .add(Restrictions.eq("institution", resource.getInstitution())) //
-                        .add(Restrictions.eq("program", resource.getProgram()))) //
-                .addOrder(Order.desc("program")) //
-                .addOrder(Order.desc("institution")) //
-                .addOrder(Order.desc("system")) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-
-    public List<NotificationTemplateVersion> getActiveVersions(NotificationConfiguration configuration) {
-        return (List<NotificationTemplateVersion>) sessionFactory.getCurrentSession().createCriteria(NotificationTemplateVersion.class) //
-                .add(Restrictions.eq("notificationConfiguration", configuration)) //
-                .add(Restrictions.eq("active", true)) //
-                .list();
-    }
 
     public List<NotificationTemplate> getWorkflowRequestTemplates() {
         return (List<NotificationTemplate>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //

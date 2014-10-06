@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
@@ -69,6 +70,9 @@ public class NotificationService {
     private EntityService entityService;
     
     @Autowired
+    private ConfigurationService configurationService;
+    
+    @Autowired
     private LocalizationService localizationService;
 
     public NotificationTemplate getById(PrismNotificationTemplate id) {
@@ -76,17 +80,17 @@ public class NotificationService {
     }
 
     public NotificationConfiguration getConfiguration(Resource resource, NotificationTemplate template) {
-        return notificationDAO.getConfiguration(resource, template);
+        return configurationService.getConfiguration(NotificationConfiguration.class, resource, template);
     }
     
     public NotificationTemplateVersion getActiveVersion(Resource resource, NotificationTemplate template) {
-        return getActiveVersion(resource, null, template);
+        return getVersion(resource, null, template);
     }
 
-    public NotificationTemplateVersion getActiveVersion(Resource resource, User user, NotificationTemplate template) {
-        NotificationConfiguration configuration = notificationDAO.getConfiguration(resource, template);
-        List<NotificationTemplateVersion> versions = notificationDAO.getActiveVersions(configuration);
-        return localizationService.getLocalizedVersion(resource, user, versions);
+    public NotificationTemplateVersion getVersion(Resource resource, User user, NotificationTemplate template) {
+        PrismLocale userLocale = user.getLocale();
+        PrismLocale resourceLocale = resource.getLocale();
+        return localizationService.getVersion(NotificationConfiguration.class, resource, template, userLocale, resourceLocale);
     }
 
     public Integer getReminderInterval(Resource resource, NotificationTemplate template) {
@@ -205,12 +209,7 @@ public class NotificationService {
             sendNotification(user, institution, template, ImmutableMap.of("message", errorMessage));
         }
     }
-
-    public void deleteAllNotifications() {
-        entityService.deleteAll(NotificationConfiguration.class);
-        entityService.deleteAll(NotificationTemplateVersion.class);
-    }
-
+    
     public void sendRecommendationNotification(User transientUser, LocalDate baseline) {
         User persistentUser = userService.getById(transientUser.getId());
         System system = systemService.getSystem();
@@ -258,7 +257,7 @@ public class NotificationService {
     }
 
     private void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate, Map<String, String> extraParameters) {
-        NotificationTemplateVersion templateVersion = getActiveVersion(resource, user, notificationTemplate);
+        NotificationTemplateVersion templateVersion = getVersion(resource, user, notificationTemplate);
         MailMessageDTO message = new MailMessageDTO();
 
         message.setTo(user);

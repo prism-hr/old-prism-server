@@ -12,7 +12,7 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(name = "state_duration", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "state_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "state_id" }), @UniqueConstraint(columnNames = { "program_id", "state_id" }) })
-public class StateDuration extends WorkflowResourceConfiguration {
+public class StateDuration extends WorkflowResource {
 
     @Id
     @GeneratedValue
@@ -36,9 +36,6 @@ public class StateDuration extends WorkflowResourceConfiguration {
 
     @Column(name = "day_duration", nullable = false)
     private Integer duration;
-    
-    @Column(name = "locked", nullable = false)
-    private Boolean locked;
     
     public Integer getId() {
         return id;
@@ -93,16 +90,6 @@ public class StateDuration extends WorkflowResourceConfiguration {
     public void setDuration(Integer duration) {
         this.duration = duration;
     }
-    
-    @Override
-    public final Boolean getLocked() {
-        return locked;
-    }
-
-    @Override
-    public final void setLocked(Boolean locked) {
-        this.locked = locked;
-    }
 
     public StateDuration withSystem(System system) {
         this.system = system;
@@ -116,11 +103,6 @@ public class StateDuration extends WorkflowResourceConfiguration {
     
     public StateDuration withDuration(Integer duration) {
         this.duration = duration;
-        return this;
-    }
-    
-    public StateDuration withLocked(Boolean locked) {
-        this.locked = locked;
         return this;
     }
     

@@ -10,9 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 
 @Entity
@@ -24,22 +21,15 @@ public class CommentCustomQuestionVersion extends WorkflowResourceVersion {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "comment_custom_question_id", nullable = false)
+    @JoinColumn(name = "comment_custom_question_id", insertable = false, updatable = false, nullable = false)
     private CommentCustomQuestion commentCustomQuestion;
     
-    @Column(name = "locale", nullable = false)
+    @Column(name = "locale", insertable = false, updatable = false, nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismLocale locale;
 
     @Column(name = "content", nullable = false)
     private String content;
-    
-    @Column(name = "active", nullable = false)
-    private Boolean active;
-    
-    @Column(name = "created_timestamp", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime createdTimestamp;
 
     public Integer getId() {
         return id;
@@ -75,26 +65,6 @@ public class CommentCustomQuestionVersion extends WorkflowResourceVersion {
         this.content = content;
     }
     
-    @Override
-    public final Boolean getActive() {
-        return active;
-    }
-
-    @Override
-    public final void setActive(Boolean active) {
-        this.active = active;
-    }
-
-    @Override
-    public DateTime getCreatedTimestamp() {
-        return createdTimestamp;
-    }
-
-    @Override
-    public void setCreatedTimestamp(DateTime createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
-    }
-    
     public CommentCustomQuestionVersion withCommentCustomQuestion(CommentCustomQuestion commentCustomQuestion) {
         this.commentCustomQuestion = commentCustomQuestion;
         return this;
@@ -102,11 +72,6 @@ public class CommentCustomQuestionVersion extends WorkflowResourceVersion {
     
     public CommentCustomQuestionVersion withLocale(PrismLocale locale) {
         this.locale = locale;
-        return this;
-    }
-    
-    public CommentCustomQuestionVersion withActive(Boolean active) {
-        this.active = active;
         return this;
     }
     

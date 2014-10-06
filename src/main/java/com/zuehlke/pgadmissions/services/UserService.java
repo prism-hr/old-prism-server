@@ -1,35 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
-
-import javax.xml.bind.JAXBException;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserAccount;
+import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
@@ -40,6 +16,20 @@ import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.SocialPresenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.xml.bind.JAXBException;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
 
 @Service
 @Transactional
@@ -68,7 +58,7 @@ public class UserService {
 
     @Autowired
     private SystemService systemService;
-    
+
     @Autowired
     private SocialPresenceService socialPresenceService;
 
@@ -118,8 +108,7 @@ public class UserService {
                 .withEnabled(false));
 
         ActionOutcomeDTO outcome = actionService.getRegistrationOutcome(user, registrationDTO, referrer);
-        notificationService.sendNotification(user, outcome.getTransitionResource(), PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST,
-                ImmutableMap.of("action", outcome.getTransitionAction().getId().name()));
+        notificationService.sendRegistrationNotification(user, outcome);
         return user;
     }
 
@@ -145,8 +134,7 @@ public class UserService {
         User storedUser = getUserByEmail(email);
         if (storedUser != null) {
             String newPassword = encryptionUtils.generateUserPassword();
-            notificationService.sendNotification(storedUser, systemService.getSystem(), PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION,
-                    ImmutableMap.of("newPassword", newPassword));
+            notificationService.sendResetPasswordNotification(storedUser, newPassword);
             storedUser.getUserAccount().setTemporaryPassword(encryptionUtils.getMD5Hash(newPassword));
             storedUser.getUserAccount().setTemporaryPasswordExpiryTimestamp(new DateTime().plusHours(1));
         }
@@ -241,7 +229,7 @@ public class UserService {
     public List<Integer> getMatchingUsers(String searchTerm) {
         return userDAO.getMatchingUsers(searchTerm);
     }
-    
+
     public SocialPresenceRepresentation getSocialProfiles(String firstName, String lastName) throws IOException {
         return socialPresenceService.getPotentialUserProfiles(firstName, lastName);
     }

@@ -64,7 +64,8 @@ public class NotificationDAO {
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
                         .add(Projections.groupProperty("role.id"), "roleId") //
-                        .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId")) //
+                        .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId")
+                        .add(Projections.groupProperty("stateAction.action.id"), "actionId")) //
                 .createAlias("stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
@@ -127,7 +128,8 @@ public class NotificationDAO {
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
                         .add(Projections.groupProperty("role.id"), "roleId") //
-                        .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId")) //
+                        .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId")
+                        .add(Projections.groupProperty("stateAction.action.id"), "actionId")) //
                 .createAlias("stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //

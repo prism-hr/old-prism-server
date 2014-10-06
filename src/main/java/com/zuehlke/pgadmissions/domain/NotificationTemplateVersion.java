@@ -10,9 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 
 @Entity
@@ -24,10 +21,10 @@ public class NotificationTemplateVersion extends WorkflowResourceVersion {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "notification_configuration_id", nullable = false)
+    @JoinColumn(name = "notification_configuration_id", insertable = false, updatable = false, nullable = false)
     private NotificationConfiguration notificationConfiguration;
-    
-    @Column(name = "locale", nullable = false)
+
+    @Column(name = "locale", insertable = false, updatable = false, nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismLocale locale;
 
@@ -36,14 +33,7 @@ public class NotificationTemplateVersion extends WorkflowResourceVersion {
 
     @Column(name = "content", nullable = false)
     private String content;
-    
-    @Column(name = "active", nullable = false)
-    private Boolean active;
 
-    @Column(name = "created_timestamp", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime createdTimestamp;
-    
     public final Integer getId() {
         return id;
     }
@@ -85,42 +75,17 @@ public class NotificationTemplateVersion extends WorkflowResourceVersion {
     public final void setContent(String content) {
         this.content = content;
     }
-
-    @Override
-    public final Boolean getActive() {
-        return active;
-    }
-
-    @Override
-    public final void setActive(Boolean active) {
-        this.active = active;
-    }
-
-    @Override
-    public final DateTime getCreatedTimestamp() {
-        return createdTimestamp;
-    }
-
-    @Override
-    public final void setCreatedTimestamp(DateTime createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
-    }
-
+    
     public NotificationTemplateVersion withNotificationConfiguration(NotificationConfiguration notificationConfiguration) {
         this.notificationConfiguration = notificationConfiguration;
         return this;
     }
-    
+
     public NotificationTemplateVersion withLocale(PrismLocale locale) {
         this.locale = locale;
         return this;
     }
-    
-    public NotificationTemplateVersion withActive(Boolean active) {
-        this.active = active;
-        return this;
-    }
-    
+
     public NotificationTemplateVersion withSubject(String subject) {
         this.subject = subject;
         return this;
@@ -131,9 +96,9 @@ public class NotificationTemplateVersion extends WorkflowResourceVersion {
         return this;
     }
 
-    public NotificationTemplateVersion withCreatedTimestamp(DateTime createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
-        return this;
+    @Override
+    public ResourceSignature getResourceSignature() {
+        return super.getResourceSignature().addProperty("notificationConfiguration", notificationConfiguration);
     }
 
 }

@@ -7,14 +7,10 @@ CREATE TABLE DISPLAY_CONFIGURATION (
 	property_category VARCHAR(50) NOT NULL,
 	property_key VARCHAR(50) NOT NULL,
 	property_value TEXT NOT NULL,
-	locked INT(1) UNSIGNED NOT NULL,
 	PRIMARY KEY (id),
 	UNIQUE INDEX (system_id, locale, property_category, property_key),
 	UNIQUE INDEX (institution_id, locale, property_category, property_key),
 	UNIQUE INDEX (program_id, locale, property_category, property_key),
-	INDEX (system_id, locale, property_category, property_key, locked),
-	INDEX (institution_id, locale, property_category, property_key, locked),
-	INDEX (program_id, locale, property_category, property_key, locked),
 	FOREIGN KEY (system_id) REFERENCES SYSTEM (id),
 	FOREIGN KEY (institution_id) REFERENCES INSTITUTION (id),
 	FOREIGN KEY (program_id) REFERENCES PROGRAM (id)
@@ -57,53 +53,12 @@ ALTER TABLE SYSTEM
 	MODIFY COLUMN locale VARCHAR(10) NOT NULL
 ;
 
-ALTER TABLE STATE_DURATION
-	ADD COLUMN locked INT(1) UNSIGNED NOT NULL DEFAULT 1,
-	ADD INDEX (system_id, state_id, locked),
-	ADD INDEX (institution_id, state_id, locked),
-	ADD INDEX (program_id, state_id, locked)
-;
-
-ALTER TABLE STATE_DURATION
-	MODIFY COLUMN locked INT(1) UNSIGNED NOT NULL
-;
-
-ALTER TABLE WORKFLOW_CONFIGURATION
-	ADD COLUMN locked INT(1) UNSIGNED NOT NULL DEFAULT 1,
-	ADD INDEX (system_id, configuration_parameter, locked),
-	ADD INDEX (institution_id, configuration_parameter, locked),
-	ADD INDEX (program_id, configuration_parameter, locked)
-;
-
-ALTER TABLE WORKFLOW_CONFIGURATION
-	MODIFY COLUMN locked INT(1) UNSIGNED NOT NULL
-;
-
-ALTER TABLE NOTIFICATION_CONFIGURATION
-	ADD COLUMN locked INT(1) UNSIGNED NOT NULL DEFAULT 1,
-	ADD INDEX (system_id, notification_template_id, locked),
-	ADD INDEX (institution_id, notification_template_id, locked),
-	ADD INDEX (program_id, notification_template_id, locked)
-;
-
-ALTER TABLE NOTIFICATION_CONFIGURATION
-	MODIFY COLUMN locked INT(1) UNSIGNED NOT NULL
-;
-
 ALTER TABLE COMMENT_CUSTOM_QUESTION
 	CHANGE COLUMN is_enabled enabled INT(1) UNSIGNED NOT NULL,
 	DROP INDEX system_id,
 	DROP INDEX institution_id,
 	ADD UNIQUE INDEX (system_id, action_id),
-	ADD UNIQUE INDEX (institution_id, action_id),
-	ADD COLUMN locked INT(1) UNSIGNED NOT NULL DEFAULT 0,
-	ADD INDEX (system_id, action_id, locked),
-	ADD INDEX (institution_id, action_id, locked),
-	ADD INDEX (program_id, action_id, locked)
-;
-
-ALTER TABLE COMMENT_CUSTOM_QUESTION
-	MODIFY COLUMN locked INT(1) UNSIGNED NOT NULL
+	ADD UNIQUE INDEX (institution_id, action_id)
 ;
 
 ALTER TABLE NOTIFICATION_TEMPLATE_VERSION
@@ -156,4 +111,14 @@ ALTER TABLE COMMENT_CUSTOM_QUESTION_VERSION
 ALTER TABLE COMMENT_CUSTOM_QUESTION
 	DROP FOREIGN KEY comment_custom_question_ibfk_3,
 	DROP COLUMN comment_custom_question_version_id
+;
+
+ALTER TABLE COMMENT_CUSTOM_QUESTION_VERSION
+	DROP COLUMN active,
+	DROP COLUMN created_timestamp
+;
+
+ALTER TABLE NOTIFICATION_TEMPLATE_VERSION
+	DROP COLUMN active,
+	DROP COLUMN created_timestamp
 ;

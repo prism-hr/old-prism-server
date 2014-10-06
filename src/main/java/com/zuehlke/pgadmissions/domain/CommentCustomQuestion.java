@@ -1,22 +1,25 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.Set;
+import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 
 @Entity
 @Table(name = "COMMENT_CUSTOM_QUESTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "action_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "action_id" }), @UniqueConstraint(columnNames = { "program_id", "action_id" }) })
-public class CommentCustomQuestion extends WorkflowResourceConfiguration {
+public class CommentCustomQuestion extends WorkflowResourceLocalized<CommentCustomQuestionVersion> {
 
     @Id
     private Integer id;
@@ -39,12 +42,11 @@ public class CommentCustomQuestion extends WorkflowResourceConfiguration {
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
-    
-    @Column(name = "locked", nullable = false)
-    private Boolean locked;
 
-    @OneToMany(mappedBy = "commentCustomQuestion")
-    private Set<CommentCustomQuestionVersion> commentCustomQuestionVersions = Sets.newHashSet();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "comment_custom_question_id", nullable = false)
+    @MapKeyColumn(name = "locale", nullable = false)
+    private Map<PrismLocale, CommentCustomQuestionVersion> commentCustomQuestionVersions = Maps.newHashMap();
 
     public Integer getId() {
         return id;
@@ -100,15 +102,8 @@ public class CommentCustomQuestion extends WorkflowResourceConfiguration {
         this.enabled = enabled;
     }
 
-    public final Boolean getLocked() {
-        return locked;
-    }
-
-    public final void setLocked(Boolean locked) {
-        this.locked = locked;
-    }
-
-    public Set<CommentCustomQuestionVersion> getCommentCustomQuestionVersions() {
+    @Override
+    public final Map<PrismLocale, CommentCustomQuestionVersion> getVersions() {
         return commentCustomQuestionVersions;
     }
 
@@ -134,11 +129,6 @@ public class CommentCustomQuestion extends WorkflowResourceConfiguration {
     
     public CommentCustomQuestion withEnabled(Boolean enabled) {
         this.enabled = enabled;
-        return this;
-    }
-    
-    public CommentCustomQuestion withLocked(Boolean locked) {
-        this.locked = locked;
         return this;
     }
 

@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismConfiguration;
 @Table(name = "WORKFLOW_CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "configuration_parameter" }),
         @UniqueConstraint(columnNames = { "institution_id", "configuration_parameter" }),
         @UniqueConstraint(columnNames = { "program_id", "configuration_parameter" }) })
-public class WorkflowConfiguration extends WorkflowResourceConfiguration {
+public class WorkflowConfiguration extends WorkflowResource {
 
     @Id
     @GeneratedValue
@@ -44,9 +44,6 @@ public class WorkflowConfiguration extends WorkflowResourceConfiguration {
     
     @Column(name = "maximum_required")
     private Integer maximumRequired;
-    
-    @Column(name = "locked", nullable = false)
-    private Boolean locked;
 
     public Integer getId() {
         return id;
@@ -110,16 +107,6 @@ public class WorkflowConfiguration extends WorkflowResourceConfiguration {
         this.maximumRequired = maximumRequired;
     }
 
-    @Override
-    public final Boolean getLocked() {
-        return locked;
-    }
-
-    @Override
-    public final void setLocked(Boolean locked) {
-        this.locked = locked;
-    }
-
     public WorkflowConfiguration withSystem(System system) {
         this.system = system;
         return this;
@@ -137,11 +124,6 @@ public class WorkflowConfiguration extends WorkflowResourceConfiguration {
     
     public WorkflowConfiguration withMaximumRequired(Integer maximumRequired) {
         this.maximumRequired = maximumRequired;
-        return this;
-    }
-    
-    public WorkflowConfiguration withLocked(Boolean locked) {
-        this.locked = locked;
         return this;
     }
     

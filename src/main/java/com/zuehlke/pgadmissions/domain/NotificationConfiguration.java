@@ -1,22 +1,27 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.Set;
+import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 
 @Entity
 @Table(name = "NOTIFICATION_CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "locale", "notification_template_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "locale", "notification_template_id" }),
         @UniqueConstraint(columnNames = { "program_id", "locale", "notification_template_id" }) })
-public class NotificationConfiguration extends WorkflowResourceConfiguration {
+public class NotificationConfiguration extends WorkflowResourceLocalized<NotificationTemplateVersion> {
 
     @Id
     @GeneratedValue
@@ -40,12 +45,11 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
 
     @Column(name = "day_reminder_interval")
     private Integer reminderInterval;
-
-    @Column(name = "locked", nullable = false)
-    private Boolean locked;
     
-    @OneToMany(mappedBy = "notificationConfiguration")
-    private Set<NotificationTemplateVersion> notificationTemplateVersions;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "notification_template_id", nullable = false)
+    @MapKeyColumn(name = "locale", nullable = false)
+    private Map<PrismLocale, NotificationTemplateVersion> notificationTemplateVersions = Maps.newHashMap();
 
     public Integer getId() {
         return id;
@@ -100,18 +104,9 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
     public void setReminderInterval(Integer reminderInterval) {
         this.reminderInterval = reminderInterval;
     }
-
+    
     @Override
-    public final Boolean getLocked() {
-        return locked;
-    }
-
-    @Override
-    public final void setLocked(Boolean locked) {
-        this.locked = locked;
-    }
-
-    public final Set<NotificationTemplateVersion> getNotificationTemplateVersions() {
+    public final Map<PrismLocale, NotificationTemplateVersion> getVersions() {
         return notificationTemplateVersions;
     }
 
@@ -129,12 +124,7 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
         this.reminderInterval = reminderInterval;
         return this;
     }
-
-    public NotificationConfiguration withLocked(Boolean locked) {
-        this.locked = locked;
-        return this;
-    }
-
+    
     @Override
     public ResourceSignature getResourceSignature() {
         return super.getResourceSignature().addProperty("notificationTemplate", notificationTemplate);

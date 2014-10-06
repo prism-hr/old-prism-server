@@ -99,7 +99,6 @@ public class WorkflowConfigurationHelper {
         statesVisited.add(state);
 
         assertEquals(state.getScope(), state.getStateGroup().getScope());
-        assertFalse(state.getStateActions().isEmpty());
 
         verifyStateActions(state);
         verifyStateActionAssignments(state);

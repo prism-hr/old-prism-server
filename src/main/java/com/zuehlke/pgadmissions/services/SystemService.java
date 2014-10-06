@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.Action;
@@ -281,48 +281,47 @@ public class SystemService {
             notificationService.deleteAllNotifications();
         }
 
-        HashMap<NotificationTemplate, NotificationTemplateVersion> createdTemplates = Maps.newHashMap();
+        List<NotificationTemplate> processedTemplates = Lists.newArrayList();
+
         for (PrismNotificationTemplate prismTemplate : PrismNotificationTemplate.values()) {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismTemplate.getScope());
 
-            NotificationTemplate template;
             NotificationTemplate transientTemplate = new NotificationTemplate().withId(prismTemplate).withNotificationType(prismTemplate.getNotificationType())
                     .withNotificationPurpose(prismTemplate.getNotificationPurpose()).withScope(scope);
             NotificationTemplate duplicateTemplate = entityService.getDuplicateEntity(transientTemplate);
-            NotificationTemplateVersion version;
 
             if (duplicateTemplate == null) {
                 entityService.save(transientTemplate);
-                template = transientTemplate;
-                version = initialiseNotificationTemplateVersion(template);
+                processedTemplates.add(transientTemplate);
             } else {
-                template = duplicateTemplate;
-                version = notificationService.getActiveVersion(system, template);
-                if (version == null) {
-                    version = initialiseNotificationTemplateVersion(duplicateTemplate);
-                }
+                processedTemplates.add(duplicateTemplate);
             }
-
-            createdTemplates.put(template, version);
         }
 
-        for (NotificationTemplate template : createdTemplates.keySet()) {
-            template.setReminderTemplate(notificationService.getById(PrismNotificationTemplate.getReminderTemplate(template.getId())));
-            NotificationConfiguration transientConfiguration = new NotificationConfiguration().withSystem(system).withLocale(system.getLocale())
-                    .withNotificationTemplate(template).withNotificationTemplateVersion(createdTemplates.get(template))
-                    .withReminderInterval(PrismNotificationTemplate.getReminderInterval(template.getId()));
-            entityService.createOrUpdate(transientConfiguration);
+        for (NotificationTemplate createdTemplate : processedTemplates) {
+            initialiseNotificationConfiguration(system, createdTemplate);
         }
     }
 
-    private NotificationTemplateVersion initialiseNotificationTemplateVersion(NotificationTemplate template) {
+    private void initialiseNotificationConfiguration(System system, NotificationTemplate createdTemplate) throws DeduplicationException {
+        NotificationTemplate reminderTemplate = notificationService.getById(PrismNotificationTemplate.getReminderTemplate(createdTemplate.getId()));
+        createdTemplate.setReminderTemplate(reminderTemplate);
+        NotificationConfiguration transientConfiguration = new NotificationConfiguration().withResource(system).withNotificationTemplate(createdTemplate)
+                .withReminderInterval(PrismNotificationTemplate.getReminderInterval(createdTemplate.getId())).withLocked(false);
+        NotificationConfiguration peristentConfiguration = entityService.createOrUpdate(transientConfiguration);
+        NotificationTemplateVersion activeVersion = notificationService.getActiveVersion(system, createdTemplate);
+        if (activeVersion == null) {
+            initialiseNotificationTemplateVersion(system, createdTemplate, peristentConfiguration);
+        }
+    }
+
+    private void initialiseNotificationTemplateVersion(System system, NotificationTemplate template, NotificationConfiguration configuration) {
         PrismNotificationTemplate templateId = template.getId();
         String defaultSubject = getFileContent(defaultEmailSubjectDirectory + templateId.getInitialTemplateSubject());
         String defaultContent = getFileContent(defaultEmailContentDirectory + templateId.getInitialTemplateContent());
-        NotificationTemplateVersion version = new NotificationTemplateVersion().withNotificationTemplate(template).withSubject(defaultSubject)
-                .withContent(defaultContent).withCreatedTimestamp(new DateTime());
+        NotificationTemplateVersion version = new NotificationTemplateVersion().withNotificationConfiguration(configuration).withLocale(system.getLocale())
+                .withSubject(defaultSubject).withContent(defaultContent).withActive(true).withCreatedTimestamp(new DateTime());
         entityService.save(version);
-        return version;
     }
 
     private void initialiseStateDurations(System system) throws DeduplicationException {

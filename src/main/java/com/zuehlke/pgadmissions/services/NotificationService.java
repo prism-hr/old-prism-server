@@ -67,6 +67,9 @@ public class NotificationService {
 
     @Autowired
     private EntityService entityService;
+    
+    @Autowired
+    private LocalizationService localizationService;
 
     public NotificationTemplate getById(PrismNotificationTemplate id) {
         return entityService.getByProperty(NotificationTemplate.class, "id", id);
@@ -75,10 +78,15 @@ public class NotificationService {
     public NotificationConfiguration getConfiguration(Resource resource, NotificationTemplate template) {
         return notificationDAO.getConfiguration(resource, template);
     }
-
+    
     public NotificationTemplateVersion getActiveVersion(Resource resource, NotificationTemplate template) {
+        return getActiveVersion(resource, null, template);
+    }
+
+    public NotificationTemplateVersion getActiveVersion(Resource resource, User user, NotificationTemplate template) {
         NotificationConfiguration configuration = notificationDAO.getConfiguration(resource, template);
-        return configuration == null ? null : configuration.getNotificationTemplateVersion();
+        List<NotificationTemplateVersion> versions = notificationDAO.getActiveVersions(configuration);
+        return localizationService.getLocalizedVersion(resource, user, versions);
     }
 
     public Integer getReminderInterval(Resource resource, NotificationTemplate template) {
@@ -250,7 +258,7 @@ public class NotificationService {
     }
 
     private void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate, Map<String, String> extraParameters) {
-        NotificationTemplateVersion templateVersion = getActiveVersion(resource, notificationTemplate);
+        NotificationTemplateVersion templateVersion = getActiveVersion(resource, user, notificationTemplate);
         MailMessageDTO message = new MailMessageDTO();
 
         message.setTo(user);

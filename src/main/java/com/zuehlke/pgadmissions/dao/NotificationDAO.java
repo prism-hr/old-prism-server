@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
@@ -43,6 +44,13 @@ public class NotificationDAO {
                 .addOrder(Order.desc("system")) //
                 .setMaxResults(1) //
                 .uniqueResult();
+    }
+
+    public List<NotificationTemplateVersion> getActiveVersions(NotificationConfiguration configuration) {
+        return (List<NotificationTemplateVersion>) sessionFactory.getCurrentSession().createCriteria(NotificationTemplateVersion.class) //
+                .add(Restrictions.eq("notificationConfiguration", configuration)) //
+                .add(Restrictions.eq("active", true)) //
+                .list();
     }
 
     public List<NotificationTemplate> getWorkflowRequestTemplates() {
@@ -94,7 +102,7 @@ public class NotificationDAO {
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
-    
+
     public List<UserNotificationDefinitionDTO> getIndividualUpdateNotifications(Resource resource, State state, Action action, User invoker, LocalDate baseline) {
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
                 .setProjection(Projections.projectionList() //
@@ -127,7 +135,7 @@ public class NotificationDAO {
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
-    
+
     public List<UserNotificationDefinitionDTO> getIndividualRequestReminders(Resource resource, LocalDate baseline) {
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
                 .setProjection(Projections.projectionList() //
@@ -156,10 +164,10 @@ public class NotificationDAO {
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
-    
+
     public List<UserNotificationDefinitionDTO> getSyndicatedRequestNotifications(Resource resource, LocalDate baseline) {
         String lastNotifiedDateReference = "user.lastNotifiedDate" + resource.getClass().getSimpleName();
-        
+
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
@@ -183,27 +191,36 @@ public class NotificationDAO {
                         .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull(lastNotifiedDateReference))
-                        .add(Restrictions.lt(lastNotifiedDateReference, baseline))) //
+                        .add(Restrictions.isNull(lastNotifiedDateReference)).add(Restrictions.lt(lastNotifiedDateReference, baseline))) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
-    
+
     public List<UserNotificationDefinitionDTO> getSyndicatedUpdateNotifications(Resource resource, State state, Action action, User invoker, LocalDate baseline) {
         String lastNotifiedDateReference = "user.lastNotifiedDate" + resource.getClass().getSimpleName();
-        
-        return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
+
+        return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(Action.class)
+                //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
-                        .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId")) //
-                .createAlias("stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN) //
-                .createAlias("stateActionNotification.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("stateActionNotification.notificationTemplate", "notificationTemplate", JoinType.INNER_JOIN) //
-                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("stateAction.state", state)) //
+                        .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId"))
+                //
+                .createAlias("stateActions", "stateAction", JoinType.INNER_JOIN)
+                //
+                .createAlias("stateAction.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN)
+                //
+                .createAlias("stateActionNotification.role", "role", JoinType.INNER_JOIN)
+                //
+                .createAlias("stateActionNotification.notificationTemplate", "notificationTemplate", JoinType.INNER_JOIN)
+                //
+                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN)
+                //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN)
+                //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN)
+                //
+                .add(Restrictions.eq("stateAction.state", state))
+                //
                 .add(Restrictions.eq("stateAction.action", action))
                 .add(Restrictions.eq("notificationTemplate.notificationType", PrismNotificationType.SYNDICATED)) //
                 .add(Restrictions.disjunction() //
@@ -219,12 +236,11 @@ public class NotificationDAO {
                         .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull(lastNotifiedDateReference))
-                        .add(Restrictions.lt(lastNotifiedDateReference, baseline))) //
+                        .add(Restrictions.isNull(lastNotifiedDateReference)).add(Restrictions.lt(lastNotifiedDateReference, baseline))) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
-    
+
     public List<User> getRecommendationNotifications(LocalDate baseline) {
         LocalDate lastSentBaseline = baseline.minusWeeks(1);
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(User.class) //

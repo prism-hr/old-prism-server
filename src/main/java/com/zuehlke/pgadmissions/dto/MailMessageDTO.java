@@ -66,7 +66,7 @@ public final class MailMessageDTO {
                 .add("to", to.getEmail())
                 .add("actionUrl", model.get("actionUrl"))
                 .add("resourceId", model.get("resourceId"))
-                .add("template", template.getNotificationTemplate().getId())
+                .add("template", template.getNotificationConfiguration().getNotificationTemplate().getId())
                 .toString();
     }
 

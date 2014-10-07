@@ -1,20 +1,53 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
+import java.util.Set;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
+import org.apache.solr.analysis.LowerCaseFilterFactory;
+import org.apache.solr.analysis.SnowballPorterFilterFactory;
+import org.apache.solr.analysis.StandardTokenizerFactory;
+import org.apache.solr.analysis.StopFilterFactory;
+import org.hibernate.annotations.Type;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.AnalyzerDef;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Parameter;
+import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.TokenFilterDef;
+import org.hibernate.search.annotations.TokenizerDef;
+import org.joda.time.LocalDate;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import org.apache.solr.analysis.*;
-import org.hibernate.annotations.Type;
-import org.hibernate.search.annotations.*;
-import org.hibernate.search.annotations.Parameter;
-import org.joda.time.LocalDate;
-
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Set;
 
 @AnalyzerDef(name = "advertAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
@@ -333,7 +366,7 @@ public class Advert {
 
             @Override
             @SuppressWarnings("unchecked")
-            protected <T extends Enum> T getAdvertTag() {
+            protected <T extends Enum<?>> T getAdvertTag() {
                 return (T) domain;
             }
 
@@ -375,7 +408,7 @@ public class Advert {
 
             @Override
             @SuppressWarnings("unchecked")
-            protected <T extends Enum> T getAdvertTag() {
+            protected <T extends Enum<?>> T getAdvertTag() {
                 return (T) industry;
             }
 
@@ -417,7 +450,7 @@ public class Advert {
 
             @Override
             @SuppressWarnings("unchecked")
-            protected <T extends Enum> T getAdvertTag() {
+            protected <T extends Enum<?>> T getAdvertTag() {
                 return (T) function;
             }
 
@@ -459,7 +492,7 @@ public class Advert {
 
             @Override
             @SuppressWarnings("unchecked")
-            protected <T extends Enum> T getAdvertTag() {
+            protected <T extends Enum<?>> T getAdvertTag() {
                 return (T) programType;
             }
 
@@ -471,7 +504,7 @@ public class Advert {
 
         protected abstract Integer getAdvertId();
 
-        protected abstract <T extends Enum> T getAdvertTag();
+        protected abstract <T extends Enum<?>> T getAdvertTag();
 
         @Override
         public int hashCode() {

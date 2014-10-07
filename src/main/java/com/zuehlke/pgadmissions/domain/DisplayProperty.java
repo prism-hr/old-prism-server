@@ -15,9 +15,9 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 
 @Entity
-@Table(name = "DISPLAY_PROPERTY", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "locale", "property_category", "property_key" }),
-        @UniqueConstraint(columnNames = { "institution_id", "property_category", "property_key" }),
-        @UniqueConstraint(columnNames = { "program_id", "property_category", "property_key" }) })
+@Table(name = "DISPLAY_PROPERTY", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "locale", "display_category_id", "property_index" }),
+        @UniqueConstraint(columnNames = { "institution_id", "display_category_id", "property_index" }),
+        @UniqueConstraint(columnNames = { "program_id", "display_category_id", "property_index" }) })
 public class DisplayProperty extends WorkflowResource {
 
     @Id
@@ -168,7 +168,7 @@ public class DisplayProperty extends WorkflowResource {
         if (system != null) {
             signature.addProperty("locale", locale);
         }
-        return signature.addProperty("propertyCategory", displayCategory).addProperty("propertyIndex", propertyIndex);
+        return signature.addProperty("displayCategory", displayCategory).addProperty("propertyIndex", propertyIndex);
     }
 
 }

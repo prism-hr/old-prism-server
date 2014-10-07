@@ -5,6 +5,14 @@ import org.apache.commons.beanutils.PropertyUtils;
 
 public class ReflectionUtils {
 
+    public static Object getStaticProperty (Class<?> clazz, String property) {
+        try {
+            return clazz.getField(property).get(null);
+        } catch (Exception e) {
+            throw new Error(e);
+        }
+    }
+    
     public static Object getProperty(Object bean, String property) {
         try {
             return  PropertyUtils.getSimpleProperty(bean, property);

@@ -4,7 +4,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public enum PrismDisplayCategory {
 
-    GLOBAL(PrismScope.SYSTEM);
+    SYSTEM_RUNNING(PrismScope.SYSTEM),
+    APPLICATION_REJECTED(PrismScope.APPLICATION);
     
     private PrismScope scope;
     

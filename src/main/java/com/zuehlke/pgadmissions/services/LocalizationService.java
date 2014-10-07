@@ -66,8 +66,32 @@ public class LocalizationService {
                 + " is not valid globalized configuration");
     }
 
+    public String getLocalizedProperty(Resource resource, PrismDisplayProperty propertyIndex) {
+        return getLocalizedProperty(resource, resource.getLocale(), propertyIndex);
+    }
+    
+    public String getLocalizedProperty(Resource resource, PrismLocale locale, PrismDisplayProperty propertyIndex) {
+        return getLocalizedProperties(resource, locale, propertyIndex).get(propertyIndex);
+    }
+    
+    public HashMap<PrismDisplayProperty, String> getLocalizedProperties(Resource resource, PrismLocale locale, PrismDisplayCategory category) {
+        return getLocalizedProperties(resource, locale, category);
+    }
+    
     public HashMap<PrismDisplayProperty, String> getLocalizedProperties(Resource resource, PrismLocale locale, PrismDisplayCategory... categories) {
         List<DisplayProperty> properties = localizationDAO.getDisplayProperties(resource, locale, categories);
+        HashMap<PrismDisplayProperty, String> propertiesMerged = Maps.newHashMap();
+        for (DisplayProperty property : properties) {
+            PrismDisplayProperty index = property.getPropertyIndex();
+            if (!propertiesMerged.containsKey(index)) {
+                propertiesMerged.put(index, property.getPropertyValue());
+            }
+        }
+        return propertiesMerged;
+    }
+    
+    public HashMap<PrismDisplayProperty, String> getLocalizedProperties(Resource resource, PrismLocale locale, PrismDisplayProperty... propertyIndices) {
+        List<DisplayProperty> properties = localizationDAO.getDisplayProperties(resource, locale, propertyIndices);
         HashMap<PrismDisplayProperty, String> propertiesMerged = Maps.newHashMap();
         for (DisplayProperty property : properties) {
             PrismDisplayProperty index = property.getPropertyIndex();

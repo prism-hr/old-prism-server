@@ -1,12 +1,10 @@
 package com.zuehlke.pgadmissions.dto;
 
+import java.util.List;
+
 import com.google.common.base.MoreObjects;
 import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplateProperty;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
-
-import java.util.List;
 
 public final class MailMessageDTO {
 

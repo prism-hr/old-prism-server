@@ -217,6 +217,7 @@ public class SystemInitialisationHelper {
             
             assertEquals(property.getPropertyIndex().getCategory(), displayCategory.getId());
             assertEquals(property.getPropertyIndex().getDefaultValue(), property.getPropertyValue());
+            assertTrue(property.getPropertyDefault());
         }
     }
 

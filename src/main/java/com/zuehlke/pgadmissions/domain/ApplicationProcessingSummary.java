@@ -11,9 +11,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Entity
 @Table(name = "APPLICATION_PROCESSING_SUMMARY", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "state_group_id" }),

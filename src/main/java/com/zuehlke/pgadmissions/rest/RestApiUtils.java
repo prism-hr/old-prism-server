@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.rest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -11,8 +14,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ProgramExtendedRepr
 import com.zuehlke.pgadmissions.rest.representation.resource.ProjectExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.SystemExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RestApiUtils {
 

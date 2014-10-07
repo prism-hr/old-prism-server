@@ -161,6 +161,9 @@ public class Comment {
     @JoinColumn(name = "application_rejection_reason_id")
     private RejectionReason rejectionReason;
 
+    @Column(name = "application_rejection_reason_display")
+    private String rejectionReasonDisplay;
+
     @Column(name = "application_rating")
     private Integer applicationRating;
 
@@ -178,7 +181,7 @@ public class Comment {
 
     @Column(name = "application_export_reference")
     private String exportReference;
-    
+
     @Column(name = "application_export_exception")
     private String exportException;
 
@@ -481,6 +484,14 @@ public class Comment {
         this.rejectionReason = rejectionReason;
     }
 
+    public final String getRejectionReasonDisplay() {
+        return rejectionReasonDisplay;
+    }
+
+    public final void setRejectionReasonDisplay(String rejectionReasonDisplay) {
+        this.rejectionReasonDisplay = rejectionReasonDisplay;
+    }
+
     public Integer getApplicationRating() {
         return applicationRating;
     }
@@ -528,7 +539,7 @@ public class Comment {
     public void setExportReference(String exportReference) {
         this.exportReference = exportReference;
     }
-    
+
     public String getExportException() {
         return exportException;
     }
@@ -697,7 +708,7 @@ public class Comment {
         this.exportReference = exportReference;
         return this;
     }
-    
+
     public Comment withExportException(String exportException) {
         this.exportException = exportException;
         return this;
@@ -870,6 +881,11 @@ public class Comment {
                 .contains(action.getId());
     }
 
+    public boolean isApplicationAutomatedRejectionComment() {
+        return action.getId() == PrismAction.APPLICATION_TERMINATE && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED
+                && rejectionReason == null;
+    }
+
     public boolean isTransitionComment() {
         StateGroup stateGroup = state == null ? null : state.getStateGroup();
         StateGroup transitionStateGroup = transitionState == null ? null : transitionState.getStateGroup();
@@ -892,7 +908,7 @@ public class Comment {
     public String getApplicationRatingDisplay() {
         return applicationRating == null ? null : new BigDecimal(applicationRating).setScale(2, RoundingMode.HALF_UP).toPlainString();
     }
-    
+
     public String getUserDisplay() {
         return user == null ? null : user.getDisplayName();
     }

@@ -15,3 +15,17 @@ ALTER TABLE DISPLAY_PROPERTY
 	ADD INDEX (display_category_id),
 	ADD FOREIGN KEY (display_category_id) REFERENCES DISPLAY_CATEGORY (id)
 ;
+
+ALTER TABLE DISPLAY_PROPERTY
+	ADD COLUMN property_default INT(1) UNSIGNED NOT NULL,
+	ADD INDEX (system_id, property_default)
+;
+
+ALTER TABLE DISPLAY_PROPERTY
+	CHANGE COLUMN property_key property_index VARCHAR(50) NOT NULL
+;
+
+ALTER TABLE COMMENT
+	ADD COLUMN application_rejection_reason_display VARCHAR(255) AFTER application_rejection_reason_id
+;
+

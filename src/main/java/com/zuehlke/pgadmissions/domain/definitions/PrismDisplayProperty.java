@@ -2,7 +2,8 @@ package com.zuehlke.pgadmissions.domain.definitions;
 
 public enum PrismDisplayProperty {
 
-    DATE_FORMAT(PrismDisplayCategory.GLOBAL, "dd MMM yyyy");
+    SYSTEM_RUNNING_DATE_FORMAT(PrismDisplayCategory.SYSTEM_RUNNING, "dd MMM yyyy"),
+    APPLICATION_REJECTED_DEFAULT_REASON(PrismDisplayCategory.APPLICATION_REJECTED, "The opportunity that you applied for has been discontinued");
     
     private PrismDisplayCategory category;
     

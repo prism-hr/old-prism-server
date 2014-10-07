@@ -107,15 +107,15 @@ public class LocalizationDAO {
                 "delete :workflowResourceClass " //
                         + "where :keyIndex = :keyValue " //
                         + "and (institution in (" //
-                                + "from institution " //
+                                + "from Institution " //
                                 + "where system = :system "
                                 + "and locale = :locale) " //
                         + "or program in (" //
-                                + "from program " //
+                                + "from Program " //
                                 + "where system = :system "
                                 + "and locale = :locale) " //
                         + "or program in (" //
-                                + "from program " //
+                                + "from Program " //
                                 + "where institution = :institution "
                                 + "and locale = :locale))") //
                 .setParameter("workflowResourceClass", workflowResourceClass.getSimpleName()) //

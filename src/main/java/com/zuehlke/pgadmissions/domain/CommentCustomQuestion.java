@@ -43,10 +43,12 @@ public class CommentCustomQuestion extends WorkflowResource {
     @MapKeyColumn(name = "name", nullable = false)
     private Map<String, CommentCustomQuestionVersion> commentCustomQuestionVersions = Maps.newHashMap();
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }

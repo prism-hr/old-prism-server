@@ -38,7 +38,7 @@ public class LifeCycleService implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws WorkflowConfigurationException, DeduplicationException, DataImportException, IOException, InterruptedException {
         if (BooleanUtils.isTrue(initializeWorkflow)) {
-            systemService.initialiseSystem();
+            systemService.initializeSystem();
         }
 
         if (BooleanUtils.isTrue(initializeData)) {
@@ -46,7 +46,7 @@ public class LifeCycleService implements InitializingBean {
         }
 
         if (BooleanUtils.isTrue(initializeSearch)) {
-            systemService.initialiseSearchIndex();
+            systemService.initializeSearchIndex();
         }
     }
 

@@ -1,11 +1,11 @@
 package com.zuehlke.pgadmissions.domain;
 
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 public abstract class Resource implements IUniqueEntity {
 

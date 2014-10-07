@@ -1,9 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
-import java.util.Map;
 
-import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,8 +23,6 @@ import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplateProperty;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
@@ -34,13 +30,8 @@ import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
 import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
 import com.zuehlke.pgadmissions.mail.MailSender;
+import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional
@@ -74,17 +65,22 @@ public class NotificationService {
     private EntityService entityService;
 
     @Autowired
-    private ConfigurationService configurationService;
-
-    @Autowired
-    private NotificationTemplatePropertyService notificationTemplatePropertyService;
+    private LocalizationService localizationService;
 
     public NotificationTemplate getById(PrismNotificationTemplate id) {
         return entityService.getByProperty(NotificationTemplate.class, "id", id);
     }
 
     public NotificationConfiguration getConfiguration(Resource resource, NotificationTemplate template) {
-        return configurationService.getConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
+        return localizationService.getConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
+    }
+
+    public void removeLocalizedConfiguration(Resource resource, NotificationTemplate template) {
+        localizationService.removeLocalizedConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
+    }
+    
+    public void restoreGlobalizedConfiguration(Resource resource, NotificationTemplate template) {
+        localizationService.restoreGlobalizedConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
     }
 
     public Integer getReminderInterval(Resource resource, NotificationTemplate template) {
@@ -225,6 +221,17 @@ public class NotificationService {
 
         sendNotification(PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION, new NotificationTemplateModelDTO(user, systemService.getSystem(), system.getUser()).withNewPassword(newPassword));
     }
+    
+    public List<PrismNotificationTemplate> getEditableTemplates(PrismScope scope) {
+        return notificationDAO.geEditableTemplates(scope);
+    }
+
+    public void saveConfiguration(Resource resource, NotificationTemplate template, NotificationConfigurationDTO notificationConfigurationDTO) {
+        NotificationConfiguration configuration = getConfiguration(resource, template);
+        configuration.setSubject(notificationConfigurationDTO.getSubject());
+        configuration.setContent(notificationConfigurationDTO.getContent());
+        configuration.setReminderInterval(notificationConfigurationDTO.getReminderInterval());
+    }
 
     private void sendIndividualRequestNotifications(Resource resource, User invoker, LocalDate baseline) {
         List<UserNotificationDefinitionDTO> requests = notificationDAO.getIndividualRequestNotifications(resource, invoker);
@@ -273,15 +280,5 @@ public class NotificationService {
 
         mailSender.sendEmail(message);
     }
-
-    public List<PrismNotificationTemplate> getEditableTemplates(PrismScope scope) {
-        return notificationDAO.geEditableTemplates(scope);
-    }
-
-    public void saveConfiguration(Resource resource, NotificationTemplate template, NotificationConfigurationDTO notificationConfigurationDTO) {
-        NotificationConfiguration configuration = getConfiguration(resource, template);
-        configuration.setSubject(notificationConfigurationDTO.getSubject());
-        configuration.setContent(notificationConfigurationDTO.getContent());
-        configuration.setReminderInterval(notificationConfigurationDTO.getReminderInterval());
-    }
+    
 }

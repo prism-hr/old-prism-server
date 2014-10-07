@@ -15,7 +15,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -25,6 +24,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Entity
 @Table(name = "USER")

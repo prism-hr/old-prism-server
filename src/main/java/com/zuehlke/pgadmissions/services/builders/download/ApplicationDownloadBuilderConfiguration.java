@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services.builders.download;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Font.FontFamily;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 public class ApplicationDownloadBuilderConfiguration {
 
@@ -46,11 +47,7 @@ public class ApplicationDownloadBuilderConfiguration {
 
     private static final Font getFont(ApplicationDownloadBuilderFontSize size, ApplicationDownloadBuilderColor color, boolean bold, boolean underline) {
         String property = size.name() + "_FONT" + (color == null ? "" : "_" + color.name()) + (bold ? "_BOLD" : "") + (underline ? "_UNDERLINE" : "");
-        try {
-            return (Font) ApplicationDownloadBuilderConfiguration.class.getField(property).get(null);
-        } catch (Exception e) {
-            throw new Error("No such font definition: " + property, e);
-        }
+        return (Font) ReflectionUtils.getStaticProperty(ApplicationDownloadBuilderConfiguration.class, property);
     }
 
     public static enum ApplicationDownloadBuilderFontSize {

@@ -1,5 +1,26 @@
 package com.zuehlke.pgadmissions.mail;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
+
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springframework.stereotype.Service;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
@@ -14,34 +35,18 @@ import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
 import com.zuehlke.pgadmissions.services.NotificationTemplatePropertyService;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.text.StrSubstitutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.MimeMessagePreparator;
-import org.springframework.stereotype.Service;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
-
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class MailSender {
 
-    private final Logger logger = LoggerFactory.getLogger(MailSender.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MailSender.class);
 
+    @Value("${application.host}")
+    private String host;
+    
     @Value("${context.environment}")
     private String contextEnvironment;
 
@@ -75,7 +80,7 @@ public class MailSender {
             final String plainText = mailToPlainTextConverter.getPlainText(htmlText) + "\n\n" + emailBrokenLinkMessage;
 
             if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat")) {
-                logger.info(String.format("Sending Production Email: %s", message.toString()));
+                LOGGER.info(String.format("Sending Production Email: %s", message.toString()));
                 javaMailSender.send(new MimeMessagePreparator() {
                     @Override
                     public void prepare(final MimeMessage mimeMessage) throws Exception {
@@ -90,13 +95,13 @@ public class MailSender {
                     }
                 });
             } else {
-                logger.info(String.format("Sending Development Email: %s", message.toString()));
+                LOGGER.info(String.format("Sending Development Email: %s", message.toString()));
             }
         } catch (Exception e) {
             if (configuration.getNotificationTemplate().getNotificationType() == PrismNotificationType.INDIVIDUAL) {
                 throw new Error(e);
             } else {
-                logger.error(String.format("Failed to send email %s", message.toString()), e);
+                LOGGER.error(String.format("Failed to send email %s", message.toString()), e);
             }
         }
 
@@ -119,6 +124,7 @@ public class MailSender {
                 }
                 Object value = ReflectionUtils.invokeMethod(notificationTemplatePropertyService, property.getGetterMethod(), arguments.toArray());
                 model.put(property.name(), value);
+                model.put("HOST", host);
             }
         }
         return model;

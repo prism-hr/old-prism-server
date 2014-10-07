@@ -1,20 +1,21 @@
 package com.zuehlke.pgadmissions.rest.validation.validator.comment;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldResolution;
-import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldResolution;
+import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Component
 public class CommentDTOValidator extends LocalValidatorFactoryBean implements Validator {
@@ -50,7 +51,7 @@ public class CommentDTOValidator extends LocalValidatorFactoryBean implements Va
                             ValidationUtils.rejectIfEmptyOrWhitespace(errors, fieldName, "notEmpty");
                             break;
                         case SIZE:
-                            Collection collection = (Collection) fieldValue;
+                            Collection<?> collection = (Collection<?>) fieldValue;
                             Integer min = (Integer) fieldResolution.getArguments().get("min");
                             Integer max = (Integer) fieldResolution.getArguments().get("max");
                             if (min != null && min > 0 && (collection == null || collection.size() < min)) {
@@ -72,4 +73,5 @@ public class CommentDTOValidator extends LocalValidatorFactoryBean implements Va
             ValidationUtils.invokeValidator(customValidator, comment, errors);
         }
     }
+    
 }

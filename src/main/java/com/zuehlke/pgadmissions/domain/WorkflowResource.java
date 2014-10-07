@@ -3,6 +3,10 @@ package com.zuehlke.pgadmissions.domain;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public abstract class WorkflowResource implements IUniqueEntity {
+    
+    public abstract Integer getId();
+    
+    public abstract void setId(Integer id);
 
     public abstract System getSystem();
 
@@ -15,7 +19,7 @@ public abstract class WorkflowResource implements IUniqueEntity {
     public abstract void setInstitution(Institution institution);
 
     public abstract void setProgram(Program program);
-
+    
     public Resource getResource() {
         System system = getSystem();
         Institution institution = getInstitution();

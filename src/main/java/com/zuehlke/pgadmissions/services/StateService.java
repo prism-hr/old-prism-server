@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -39,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Service
 @Transactional
@@ -272,12 +272,23 @@ public class StateService {
     }
 
     public StateTransition getApplicationProcessedOutcome(Resource resource, Comment comment) {
-        PrismState transitionStateId = PrismState.valueOf(resource.getState().getId().toString() + "_COMPLETED");
-        if (comment.getAction().getId() == PrismAction.APPLICATION_WITHDRAW) {
-            transitionStateId = PrismState.APPLICATION_WITHDRAWN_COMPLETED;
-        }
-        if (resource.getInstitution().isUclInstitution() && resource.getState().getStateGroup().getId() != PrismStateGroup.APPLICATION_UNSUBMITTED) {
-            transitionStateId = PrismState.valueOf(transitionStateId.toString().replace("COMPLETED", "PENDING_EXPORT"));
+        PrismState transitionStateId;
+        PrismAction actionId = comment.getAction().getId(); 
+        if (actionId == PrismAction.APPLICATION_TERMINATE || actionId == PrismAction.APPLICATION_WITHDRAW) {
+            if (resource.getState().getStateGroup().getId() == PrismStateGroup.APPLICATION_UNSUBMITTED) {
+                transitionStateId = PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED;
+            } else if (BooleanUtils.isTrue(resource.getInstitution().getUclInstitution())) {
+                transitionStateId = PrismState.APPLICATION_REJECTED_PENDING_EXPORT;
+            } else {
+                transitionStateId = PrismState.APPLICATION_REJECTED_COMPLETED;
+            }
+        } else {
+            PrismState stateId = resource.getState().getId();
+            if (BooleanUtils.isTrue(resource.getInstitution().getUclInstitution())) {
+                transitionStateId = PrismState.valueOf(stateId.name() + "_PENDING_EXPORT");
+            } else {
+                transitionStateId = PrismState.valueOf(stateId.name() + "_COMPLETED");
+            }
         }
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }

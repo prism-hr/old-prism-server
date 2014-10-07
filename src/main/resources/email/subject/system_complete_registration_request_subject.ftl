@@ -1,1 +1,1 @@
-Your Registration for ${systemName}
+Your Registration for ${SYSTEM_NAME}

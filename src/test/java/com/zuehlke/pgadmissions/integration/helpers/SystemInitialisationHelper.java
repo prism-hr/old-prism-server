@@ -20,6 +20,8 @@ import com.google.common.base.Joiner;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ActionRedaction;
+import com.zuehlke.pgadmissions.domain.DisplayCategory;
+import com.zuehlke.pgadmissions.domain.DisplayProperty;
 import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -49,6 +51,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNoti
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.services.LocalizationService;
 import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -101,6 +104,9 @@ public class SystemInitialisationHelper {
 
     @Autowired
     private SystemService systemService;
+    
+    @Autowired
+    private LocalizationService localizationService;
 
     @Autowired
     private UserHelper userHelper;
@@ -197,6 +203,21 @@ public class SystemInitialisationHelper {
 
         for (UserRole userRole : systemUser.getUserRoles()) {
             assertEquals(userRole.getRole().getId(), PrismRole.SYSTEM_ADMINISTRATOR);
+        }
+    }
+    
+    public void verifyDisplayPropertyCreation() {
+        System system = systemService.getSystem();
+        for (DisplayProperty property : localizationService.getAllLocalizedProperties()) {
+            assertEquals(property.getResource(), system);
+            assertEquals(property.getLocale(), system.getLocale());
+            
+            DisplayCategory displayCategory = property.getDisplayCategory();
+            assertEquals(displayCategory.getScope().getId(), displayCategory.getId().getScope());
+            
+            assertEquals(property.getPropertyIndex().getCategory(), displayCategory.getId());
+            assertEquals(property.getPropertyIndex().getDefaultValue(), property.getPropertyValue());
+            assertTrue(property.getPropertyDefault());
         }
     }
 

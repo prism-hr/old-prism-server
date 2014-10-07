@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import java.math.BigDecimal;
 
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.ParentResource;
 import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import com.zuehlke.pgadmissions.utils.SummaryUtils;
 
 @Service

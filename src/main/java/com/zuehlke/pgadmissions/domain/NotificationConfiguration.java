@@ -46,10 +46,12 @@ public class NotificationConfiguration extends WorkflowResource {
     @Column(name = "day_reminder_interval")
     private Integer reminderInterval;
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }

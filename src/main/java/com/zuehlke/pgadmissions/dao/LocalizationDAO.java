@@ -52,8 +52,6 @@ public class LocalizationDAO {
     }
 
     public List<DisplayProperty> getDisplayProperties(Resource resource, PrismLocale locale, PrismDisplayCategory... categories) {
-        System system = resource.getSystem();
-
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DisplayProperty.class);
 
         Disjunction categoriesFilter = Restrictions.disjunction();
@@ -61,24 +59,12 @@ public class LocalizationDAO {
             categoriesFilter.add(Restrictions.eq("displayCategory", category));
         }
 
-        return criteria.add(categoriesFilter) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq("system", system)) //
-                                .add(Restrictions.in("locale", Arrays.asList(system.getLocale(), locale)))) //
-                        .add(Restrictions.eq("institution", resource.getInstitution())) //
-                        .add(Restrictions.eq("program", resource.getProgram()))) //
-                .addOrder(Order.asc("propertyIndex")) //
-                .addOrder(Order.desc("program")) //
-                .addOrder(Order.asc("institution")) //
-                .addOrder(Order.desc("system")) //
-                .addOrder(Order.desc("propertyDefault")) //
-                .list();
+        criteria.add(categoriesFilter);
+        appendPropertyLocalizationFilter(resource, locale, criteria);
+        return criteria.list();
     }
     
     public List<DisplayProperty> getDisplayProperties(Resource resource, PrismLocale locale, PrismDisplayProperty... propertyIndices) {
-        System system = resource.getSystem();
-
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DisplayProperty.class);
 
         Disjunction categoriesFilter = Restrictions.disjunction();
@@ -86,19 +72,9 @@ public class LocalizationDAO {
             categoriesFilter.add(Restrictions.eq("propertyIndex", property));
         }
 
-        return criteria.add(categoriesFilter) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq("system", system)) //
-                                .add(Restrictions.in("locale", Arrays.asList(system.getLocale(), locale)))) //
-                        .add(Restrictions.eq("institution", resource.getInstitution())) //
-                        .add(Restrictions.eq("program", resource.getProgram()))) //
-                .addOrder(Order.asc("propertyIndex")) //
-                .addOrder(Order.desc("program")) //
-                .addOrder(Order.asc("institution")) //
-                .addOrder(Order.desc("system")) //
-                .addOrder(Order.desc("propertyDefault")) //
-                .list();
+        criteria.add(categoriesFilter);
+        appendPropertyLocalizationFilter(resource, locale, criteria);
+        return criteria.list();
     }
 
     public <T extends WorkflowResource> void restoreGlobalizedConfiguration(Class<T> workflowResourceClass, String keyIndex, WorkflowDefinition keyValue,
@@ -125,6 +101,21 @@ public class LocalizationDAO {
                 .setParameter("locale", globalizedResource.getLocale()) //
                 .setParameter("institution", globalizedResourceScope == PrismScope.INSTITUTION ? globalizedResource : null) //
                 .executeUpdate();
+    }
+    
+    private void appendPropertyLocalizationFilter(Resource resource, PrismLocale locale, Criteria criteria) {
+        System system = resource.getSystem();
+        criteria.add(Restrictions.disjunction() //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.eq("system", system)) //
+                                .add(Restrictions.in("locale", Arrays.asList(system.getLocale(), locale)))) //
+                        .add(Restrictions.eq("institution", resource.getInstitution())) //
+                        .add(Restrictions.eq("program", resource.getProgram()))) //
+                .addOrder(Order.asc("propertyIndex")) //
+                .addOrder(Order.desc("program")) //
+                .addOrder(Order.asc("institution")) //
+                .addOrder(Order.desc("system")) //
+                .addOrder(Order.desc("propertyDefault")); //
     }
 
 }

@@ -69,7 +69,7 @@ public class NotificationService {
     private EntityService entityService;
 
     @Autowired
-    private ConfigurationService configurationService;
+    private LocalizationService localizationService;
 
     @Autowired
     private NotificationTemplatePropertyService notificationTemplatePropertyService;
@@ -79,7 +79,15 @@ public class NotificationService {
     }
 
     public NotificationConfiguration getConfiguration(Resource resource, NotificationTemplate template) {
-        return configurationService.getConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
+        return localizationService.getConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
+    }
+
+    public void removeLocalizedConfiguration(Resource resource, NotificationTemplate template) {
+        localizationService.removeLocalizedConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
+    }
+    
+    public void restoreGlobalizedConfiguration(Resource resource, NotificationTemplate template) {
+        
     }
 
     public Integer getReminderInterval(Resource resource, NotificationTemplate template) {
@@ -101,7 +109,7 @@ public class NotificationService {
     public void deleteObsoleteNotificationConfigurations() {
         notificationDAO.deleteObsoleteNotificationConfigurations(getWorkflowTemplates());
     }
-    
+
     public void sendWorkflowNotifications(Resource resource, Comment comment) {
         User invoker = comment.getAuthor();
         LocalDate baseline = new LocalDate();
@@ -127,7 +135,8 @@ public class NotificationService {
             Integer reminderInterval = getReminderInterval(resource, notificationTemplate);
 
             if (!sent.get(notificationTemplate).contains(user) && baseline.minusDays(reminderInterval) == userRole.getLastNotifiedDate()) {
-                sendNotification(notificationTemplate.getReminderTemplate(), new NotificationTemplateModelDTO(user, resource, invoker).withTransitionAction(reminder.getActionId()));
+                sendNotification(notificationTemplate.getReminderTemplate(),
+                        new NotificationTemplateModelDTO(user, resource, invoker).withTransitionAction(reminder.getActionId()));
                 sent.put(notificationTemplate, user);
             }
 
@@ -212,13 +221,15 @@ public class NotificationService {
     public void sendRegistrationNotification(User user, ActionOutcomeDTO actionOutcome) {
         System system = systemService.getSystem();
         sendNotification(PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST,
-                new NotificationTemplateModelDTO(user, actionOutcome.getTransitionResource(), system.getUser()).withTransitionAction(actionOutcome.getTransitionAction().getId()));
+                new NotificationTemplateModelDTO(user, actionOutcome.getTransitionResource(), system.getUser()).withTransitionAction(actionOutcome
+                        .getTransitionAction().getId()));
     }
 
     public void sendResetPasswordNotification(User user, String newPassword) {
         System system = systemService.getSystem();
 
-        sendNotification(PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION, new NotificationTemplateModelDTO(user, systemService.getSystem(), system.getUser()).withNewPassword(newPassword));
+        sendNotification(PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION,
+                new NotificationTemplateModelDTO(user, systemService.getSystem(), system.getUser()).withNewPassword(newPassword));
     }
 
     private void sendIndividualRequestNotifications(Resource resource, User invoker, LocalDate baseline) {
@@ -265,14 +276,20 @@ public class NotificationService {
         message.setTo(modelDTO.getUser());
         message.setConfiguration(configuration);
         message.setModel(createNotificationModel(template, modelDTO));
-        message.setAttachments(Lists.<AttachmentInputSource>newArrayList());
+        message.setAttachments(Lists.<AttachmentInputSource> newArrayList());
 
         mailSender.sendEmail(message);
     }
 
-    private Map<PrismNotificationTemplateProperty, Object> createNotificationModel(NotificationTemplate notificationTemplate, NotificationTemplateModelDTO modelDTO) {
+    public List<PrismNotificationTemplate> getEditableTemplates(PrismScope scope) {
+        return notificationDAO.geEditableTemplates(scope);
+    }
+
+    private Map<PrismNotificationTemplateProperty, Object> createNotificationModel(NotificationTemplate notificationTemplate,
+            NotificationTemplateModelDTO modelDTO) {
         Map<PrismNotificationTemplateProperty, Object> model = Maps.newHashMap();
-        List<PrismNotificationTemplatePropertyCategory> categories = Lists.asList(PrismNotificationTemplatePropertyCategory.GLOBAL, notificationTemplate.getId().getPropertyCategories());
+        List<PrismNotificationTemplatePropertyCategory> categories = Lists.asList(PrismNotificationTemplatePropertyCategory.GLOBAL, notificationTemplate
+                .getId().getPropertyCategories());
         for (PrismNotificationTemplatePropertyCategory propertyCategory : categories) {
             for (PrismNotificationTemplateProperty property : propertyCategory.getProperties()) {
                 List<Object> arguments = Lists.newLinkedList();
@@ -285,10 +302,6 @@ public class NotificationService {
             }
         }
         return model;
-    }
-
-    public List<PrismNotificationTemplate> getEditableTemplates(PrismScope scope) {
-        return notificationDAO.geEditableTemplates(scope);
     }
 
 }

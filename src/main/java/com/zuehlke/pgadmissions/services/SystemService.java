@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -20,11 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.DisplayCategory;
+import com.zuehlke.pgadmissions.domain.DisplayProperty;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
@@ -41,6 +45,8 @@ import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
@@ -146,6 +152,9 @@ public class SystemService {
 
         LOGGER.info("Initialising system");
         System system = initialiseSystemResource();
+
+        LOGGER.info("Initialising display property definitions");
+        initialiseDisplayProperties(system);
 
         LOGGER.info("Initialising notification definitions");
         initialiseNotificationTemplates(system);
@@ -268,6 +277,23 @@ public class SystemService {
         System system = entityService.createOrUpdate(transientSystem);
         system.setCode(resourceService.generateResourceCode(system));
         return system;
+    }
+
+    private void initialiseDisplayProperties(System system) throws DeduplicationException {
+        HashMap<PrismDisplayCategory, DisplayCategory> processedCategories = Maps.newHashMap();
+        for (PrismDisplayCategory prismCategory : PrismDisplayCategory.values()) {
+            Scope scope = scopeService.getById(prismCategory.getScope());
+            DisplayCategory transientCategory = new DisplayCategory().withId(prismCategory).withScope(scope);
+            DisplayCategory persistentCategory = entityService.createOrUpdate(transientCategory);
+            processedCategories.put(prismCategory, persistentCategory);
+        }
+        for (PrismDisplayProperty prismProperty : PrismDisplayProperty.values()) {
+            DisplayProperty property = new DisplayProperty().withResource(system).withLocale(system.getLocale())
+                    .withDisplayCategory(processedCategories.get(prismProperty.getCategory())).withPropertyIndex(prismProperty)
+                    .withPropertyValue(prismProperty.getDefaultValue());
+            entityService.save(property);
+        }
+
     }
 
     private void initialiseNotificationTemplates(System system) throws DeduplicationException {

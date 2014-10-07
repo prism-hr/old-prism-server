@@ -45,12 +45,13 @@ import com.zuehlke.pgadmissions.rest.dto.AdvertFeesAndPaymentsDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertFilterMetadataDTO;
 import com.zuehlke.pgadmissions.rest.dto.FinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Service
 @Transactional
 public class AdvertService {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger lOGGER = LoggerFactory.getLogger(AdvertService.class);
 
     private final HashMap<LocalDate, HashMap<String, BigDecimal>> exchangeRates = Maps.newHashMap();
 
@@ -179,28 +180,24 @@ public class AdvertService {
 
     @SuppressWarnings("unchecked")
     public void saveFilterMetadata(Class<? extends Resource> resourceClass, Integer resourceId, AdvertFilterMetadataDTO metadataDTO) {
-        try {
-            Resource resource = resourceService.getById(resourceClass, resourceId);
-            Advert advert = (Advert) PropertyUtils.getSimpleProperty(resource, "advert");
+        Resource resource = resourceService.getById(resourceClass, resourceId);
+        Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
 
-            Field[] properties = metadataDTO.getClass().getDeclaredFields();
-            for (Field property : properties) {
-                String propertyName = property.getName();
-                List<Object> values = (List<Object>) PropertyUtils.getSimpleProperty(metadataDTO, propertyName);
+        Field[] properties = metadataDTO.getClass().getDeclaredFields();
+        for (Field property : properties) {
+            String propertyName = property.getName();
+            List<Object> values = (List<Object>) ReflectionUtils.getProperty(metadataDTO, propertyName);
 
-                if (values != null) {
-                    Set<Object> persistentMetadata = (Set<Object>) PropertyUtils.getSimpleProperty(advert, propertyName);
-                    persistentMetadata.clear();
+            if (values != null) {
+                Set<Object> persistentMetadata = (Set<Object>) ReflectionUtils.getProperty(advert, propertyName);
+                persistentMetadata.clear();
 
-                    boolean isTargetInstitutionsProperty = propertyName.equals("targetInstitution");
-                    for (Object value : values) {
-                        value = isTargetInstitutionsProperty ? institutionService.getById((Integer) value) : value;
-                        persistentMetadata.add(value);
-                    }
+                boolean isTargetInstitutionsProperty = propertyName.equals("targetInstitution");
+                for (Object value : values) {
+                    value = isTargetInstitutionsProperty ? institutionService.getById((Integer) value) : value;
+                    persistentMetadata.add(value);
                 }
             }
-        } catch (Exception e) {
-            throw new Error(e);
         }
     }
 
@@ -264,7 +261,7 @@ public class AdvertService {
                 setConvertedMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated,
                         minimumGenerated, maximumGenerated, rate);
             } catch (Exception e) {
-                logger.error("Problem performing currency conversion", e);
+                lOGGER.error("Problem performing currency conversion", e);
             }
         }
     }
@@ -334,7 +331,7 @@ public class AdvertService {
             setConvertedMonetaryValues(financialDetails, interval.name().toLowerCase(), minimumSpecified, maximumSpecified, intervalPrefixGenerated,
                     minimumGenerated, maximumGenerated, rate);
         } catch (Exception e) {
-            logger.error("Unable to perform currency conversion", e);
+            lOGGER.error("Unable to perform currency conversion", e);
         }
     }
 

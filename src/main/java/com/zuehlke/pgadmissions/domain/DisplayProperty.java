@@ -11,12 +11,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.definitions.DisplayPropertyCategory;
-import com.zuehlke.pgadmissions.domain.definitions.DisplayPropertyKey;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 
 @Entity
-@Table(name = "DISPLAY_CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "locale", "property_category", "property_key" }),
+@Table(name = "DISPLAY_PROPERTY", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "locale", "property_category", "property_key" }),
         @UniqueConstraint(columnNames = { "institution_id", "property_category", "property_key" }),
         @UniqueConstraint(columnNames = { "program_id", "property_category", "property_key" }) })
 public class DisplayProperty extends WorkflowResource {
@@ -41,16 +40,19 @@ public class DisplayProperty extends WorkflowResource {
     @JoinColumn(name = "program_id")
     private Program program;
 
-    @Column(name = "property_category", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private DisplayPropertyCategory propertyCategory;
+    @ManyToOne
+    @JoinColumn(name = "display_category_id")
+    private DisplayCategory displayCategory;
 
-    @Column(name = "property_key", nullable = false)
+    @Column(name = "property_index", nullable = false)
     @Enumerated(EnumType.STRING)
-    private DisplayPropertyKey propertyKey;
+    private PrismDisplayProperty propertyIndex;
 
     @Column(name = "property_value", nullable = false)
     private String propertyValue;
+    
+    @Column(name = "property_default", nullable = false)
+    private Boolean propertyDefault;
 
     public final Integer getId() {
         return id;
@@ -98,20 +100,20 @@ public class DisplayProperty extends WorkflowResource {
         this.locale = locale;
     }
 
-    public final DisplayPropertyCategory getPropertyCategory() {
-        return propertyCategory;
+    public final DisplayCategory getDisplayCategory() {
+        return displayCategory;
     }
 
-    public final void setPropertyCategory(DisplayPropertyCategory propertyCategory) {
-        this.propertyCategory = propertyCategory;
+    public final void setDisplayCategory(DisplayCategory displayCategory) {
+        this.displayCategory = displayCategory;
     }
 
-    public final DisplayPropertyKey getPropertyKey() {
-        return propertyKey;
+    public final PrismDisplayProperty getPropertyIndex() {
+        return propertyIndex;
     }
 
-    public final void setPropertyKey(DisplayPropertyKey propertyKey) {
-        this.propertyKey = propertyKey;
+    public final void setPropertyIndex(PrismDisplayProperty propertyIndex) {
+        this.propertyIndex = propertyIndex;
     }
 
     public final String getPropertyValue() {
@@ -122,18 +124,16 @@ public class DisplayProperty extends WorkflowResource {
         this.propertyValue = propertyValue;
     }
 
-    public DisplayProperty withSystem(System system) {
-        this.system = system;
-        return this;
+    public final Boolean getPropertyDefault() {
+        return propertyDefault;
     }
 
-    public DisplayProperty withInstitution(Institution institution) {
-        this.institution = institution;
-        return this;
+    public final void setPropertyDefault(Boolean propertyDefault) {
+        this.propertyDefault = propertyDefault;
     }
 
-    public DisplayProperty withProgram(Program program) {
-        this.program = program;
+    public DisplayProperty withResource(Resource resource) {
+        setResource(resource);
         return this;
     }
 
@@ -142,18 +142,23 @@ public class DisplayProperty extends WorkflowResource {
         return this;
     }
 
-    public DisplayProperty withPropertyCategory(DisplayPropertyCategory propertyCategory) {
-        this.propertyCategory = propertyCategory;
+    public DisplayProperty withDisplayCategory(DisplayCategory displayCategory) {
+        this.displayCategory = displayCategory;
         return this;
     }
 
-    public DisplayProperty withPropertyKey(DisplayPropertyKey propertyKey) {
-        this.propertyKey = propertyKey;
+    public DisplayProperty withPropertyIndex(PrismDisplayProperty propertyIndex) {
+        this.propertyIndex = propertyIndex;
         return this;
     }
 
     public DisplayProperty withPropertyValue(String propertyValue) {
         this.propertyValue = propertyValue;
+        return this;
+    }
+    
+    public DisplayProperty withPropertyDefault(Boolean propertyDefault) {
+        this.propertyDefault = propertyDefault;
         return this;
     }
 
@@ -163,7 +168,7 @@ public class DisplayProperty extends WorkflowResource {
         if (system != null) {
             signature.addProperty("locale", locale);
         }
-        return signature.addProperty("propertyCategory", propertyCategory).addProperty("propertyKey", propertyKey);
+        return signature.addProperty("propertyCategory", displayCategory).addProperty("propertyIndex", propertyIndex);
     }
 
 }

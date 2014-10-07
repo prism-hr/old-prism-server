@@ -1,38 +1,27 @@
 package com.zuehlke.pgadmissions.services;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import java.util.Arrays;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Service
 public class NotificationTemplatePropertyService {
 
-    private static final Logger log = LoggerFactory.getLogger(NotificationTemplatePropertyService.class);
-
     @Value("${application.host}")
     private String host;
-
-
+    
     public String get(NotificationTemplateModelDTO modelDTO, String[] properties) {
-        try {
-            Object tempObject = modelDTO;
-            for (String property : properties) {
-                tempObject = PropertyUtils.getSimpleProperty(tempObject, property);
-            }
-            return (String) tempObject;
-        } catch (Exception e) {
-            log.error("Could not traverse through properties chain: " + Arrays.toString(properties));
-            throw new Error(e);
+        Object tempObject = modelDTO;
+        for (String property : properties) {
+            tempObject = ReflectionUtils.getProperty(tempObject, property);
         }
+        return (String) tempObject;
     }
 
     public String getProjectOrProgramTitle(NotificationTemplateModelDTO modelDTO) {

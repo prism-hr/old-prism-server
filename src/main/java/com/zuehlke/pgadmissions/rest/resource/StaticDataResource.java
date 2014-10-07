@@ -140,7 +140,7 @@ public class StaticDataResource {
 
         Map<PrismScope, List<PrismNotificationTemplate>> templatesMap = Maps.newHashMap();
         for (PrismScope prismScope : PrismScope.values()) {
-            List<PrismNotificationTemplate> templates = notificationService.getAvailableTemplates(prismScope);
+            List<PrismNotificationTemplate> templates = notificationService.getEditableTemplates(prismScope);
             templatesMap.put(prismScope, templates);
         }
         staticData.put("notificationTemplates", templatesMap);

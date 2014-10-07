@@ -44,27 +44,21 @@ public class NotificationDAO {
                 .list();
     }
 
-    public void deleteObsoleteNotificationConfigurations(List<NotificationTemplate> activeNotificationWorkflowTemplates) {
+    public void deleteObsoleteNotificationConfigurations(List<NotificationTemplate> activeTemplates) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete NotificationConfiguration " //
                         + "where notificationTemplate not in (:configurableTemplates)") //
-                .setParameterList("configurableTemplates", activeNotificationWorkflowTemplates) //
+                .setParameterList("configurableTemplates", activeTemplates) //
                 .executeUpdate();
     }
 
     public List<UserNotificationDefinitionDTO> getIndividualRequestNotifications(Resource resource, User invoker) {
-        return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession()
-                .createCriteria(Action.class)
-                //
-                .setProjection(
-                        Projections.projectionList()
-                                //
-                                .add(Projections.groupProperty("user.id"), "userId")
-                                //
-                                .add(Projections.groupProperty("role.id"), "roleId")
-                                //
-                                .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId")
-                                .add(Projections.groupProperty("stateAction.action.id"), "actionId")) //
+        return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("user.id"), "userId") //
+                        .add(Projections.groupProperty("role.id"), "roleId") //
+                        .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId") //
+                        .add(Projections.groupProperty("stateAction.action.id"), "actionId")) //
                 .createAlias("stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
@@ -230,7 +224,7 @@ public class NotificationDAO {
                 .list();
     }
 
-    public List<PrismNotificationTemplate> getAvailableTemplates(PrismScope scope) {
+    public List<PrismNotificationTemplate> geEditableTemplates(PrismScope scope) {
         return (List<PrismNotificationTemplate>) sessionFactory.getCurrentSession().createCriteria(NotificationTemplate.class) //
                 .setProjection(Projections.property("id")) //
                 .createAlias("scope", "scope", JoinType.INNER_JOIN) //

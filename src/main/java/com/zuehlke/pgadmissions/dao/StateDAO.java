@@ -98,11 +98,11 @@ public class StateDAO {
     public List<State> getOrderedTransitionStates(State state, State... excludedTransitionStates) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("stateTransition.transitionState")) //
-                .createAlias("stateTransitions", "stateTransition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("stateTransition.transitionState", "transitionState", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("transitionState.stateGroup", "stateGroup", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("transitionState.scope", "scope", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("action", "action", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("stateTransitions", "stateTransition", JoinType.INNER_JOIN) //
+                .createAlias("stateTransition.transitionState", "transitionState", JoinType.INNER_JOIN) //
+                .createAlias("transitionState.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
+                .createAlias("transitionState.scope", "scope", JoinType.INNER_JOIN) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("action.creationScope", "creationScope", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("state", state));
 
@@ -148,12 +148,6 @@ public class StateDAO {
         return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("state.id")) //
                 .add(Restrictions.eq("action.id", PrismAction.PROJECT_CREATE_APPLICATION)) //
-                .list();
-    }
-    
-    public List<State> getWorkflowStates() {
-        return (List<State>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.groupProperty("state")) //
                 .list();
     }
     

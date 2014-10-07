@@ -1,18 +1,18 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.base.Joiner;
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Joiner;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
-
-import java.util.Arrays;
 
 @Service
 @Transactional
@@ -51,5 +51,5 @@ public class NotificationTemplatePropertyService {
         }
         return "<a href=\"" + url + "\">View</a>";
     }
-
+    
 }

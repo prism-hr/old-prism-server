@@ -121,7 +121,7 @@ public class Institution extends ParentResource {
     private InstitutionAddress address;
 
     @Column(name = "is_ucl_institution", nullable = false)
-    private Boolean uclInstitution = false;
+    private Boolean uclInstitution;
 
     @Column(name = "application_created_count")
     private Integer applicationCreatedCount;
@@ -329,11 +329,11 @@ public class Institution extends ParentResource {
         this.address = address;
     }
 
-    public boolean isUclInstitution() {
+    public Boolean getUclInstitution() {
         return uclInstitution;
     }
 
-    public void setUclInstitution(boolean uclInstitution) {
+    public void setUclInstitution(Boolean uclInstitution) {
         this.uclInstitution = uclInstitution;
     }
 

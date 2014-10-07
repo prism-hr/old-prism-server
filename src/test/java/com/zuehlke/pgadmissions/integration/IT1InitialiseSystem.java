@@ -30,7 +30,7 @@ public class IT1InitialiseSystem {
     @Test
     public void run() throws Exception {
         for (int i = 0; i < 2; i++) {
-            systemService.initialiseSystem();
+            systemService.initializeSystem();
 
             systemInitialisationHelper.verifyScopeCreation();
             systemInitialisationHelper.verifyRoleCreation();

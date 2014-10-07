@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -17,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.WorkflowDefinition;
 import com.zuehlke.pgadmissions.domain.WorkflowResource;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
@@ -63,14 +65,39 @@ public class LocalizationDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.eq("system", system)) //
-                                .add(Restrictions.eq("locale", locale))) //
+                                .add(Restrictions.in("locale", Arrays.asList(system.getLocale(), locale)))) //
                         .add(Restrictions.eq("institution", resource.getInstitution())) //
                         .add(Restrictions.eq("program", resource.getProgram()))) //
                 .addOrder(Order.asc("propertyIndex")) //
                 .addOrder(Order.desc("program")) //
                 .addOrder(Order.asc("institution")) //
                 .addOrder(Order.desc("system")) //
-                .addOrder(Order.asc("propertyDefault")) //
+                .addOrder(Order.desc("propertyDefault")) //
+                .list();
+    }
+    
+    public List<DisplayProperty> getDisplayProperties(Resource resource, PrismLocale locale, PrismDisplayProperty... propertyIndices) {
+        System system = resource.getSystem();
+
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DisplayProperty.class);
+
+        Disjunction categoriesFilter = Restrictions.disjunction();
+        for (PrismDisplayProperty property : propertyIndices) {
+            categoriesFilter.add(Restrictions.eq("propertyIndex", property));
+        }
+
+        return criteria.add(categoriesFilter) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.eq("system", system)) //
+                                .add(Restrictions.in("locale", Arrays.asList(system.getLocale(), locale)))) //
+                        .add(Restrictions.eq("institution", resource.getInstitution())) //
+                        .add(Restrictions.eq("program", resource.getProgram()))) //
+                .addOrder(Order.asc("propertyIndex")) //
+                .addOrder(Order.desc("program")) //
+                .addOrder(Order.asc("institution")) //
+                .addOrder(Order.desc("system")) //
+                .addOrder(Order.desc("propertyDefault")) //
                 .list();
     }
 

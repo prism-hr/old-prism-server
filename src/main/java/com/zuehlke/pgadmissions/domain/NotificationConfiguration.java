@@ -1,27 +1,20 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.Map;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-
 @Entity
-@Table(name = "NOTIFICATION_CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "locale", "notification_template_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "locale", "notification_template_id" }),
-        @UniqueConstraint(columnNames = { "program_id", "locale", "notification_template_id" }) })
-public class NotificationConfiguration extends WorkflowResourceLocalized<NotificationTemplateVersion> {
+@Table(name = "NOTIFICATION_CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "notification_template_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "notification_template_id" }),
+        @UniqueConstraint(columnNames = { "program_id", "notification_template_id" }) })
+public class NotificationConfiguration extends WorkflowResource {
 
     @Id
     @GeneratedValue
@@ -40,16 +33,18 @@ public class NotificationConfiguration extends WorkflowResourceLocalized<Notific
     private Program program;
 
     @ManyToOne
-    @JoinColumn(name = "notification_template_id")
+    @JoinColumn(name = "notification_template_id", nullable = false)
     private NotificationTemplate notificationTemplate;
+
+    @Column(name = "subject", nullable = false)
+    private String subject;
+
+    @Lob
+    @Column(name = "content", nullable = false)
+    private String content;
 
     @Column(name = "day_reminder_interval")
     private Integer reminderInterval;
-    
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "notification_template_id", nullable = false)
-    @MapKeyColumn(name = "locale", nullable = false)
-    private Map<PrismLocale, NotificationTemplateVersion> notificationTemplateVersions = Maps.newHashMap();
 
     public Integer getId() {
         return id;
@@ -97,17 +92,28 @@ public class NotificationConfiguration extends WorkflowResourceLocalized<Notific
         this.notificationTemplate = notificationTemplate;
     }
 
+    public final String getSubject() {
+        return subject;
+    }
+
+    public final void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public final String getContent() {
+        return content;
+    }
+
+    public final void setContent(String content) {
+        this.content = content;
+    }
+
     public Integer getReminderInterval() {
         return reminderInterval;
     }
 
     public void setReminderInterval(Integer reminderInterval) {
         this.reminderInterval = reminderInterval;
-    }
-    
-    @Override
-    public final Map<PrismLocale, NotificationTemplateVersion> getVersions() {
-        return notificationTemplateVersions;
     }
 
     public NotificationConfiguration withResource(Resource resource) {
@@ -120,11 +126,21 @@ public class NotificationConfiguration extends WorkflowResourceLocalized<Notific
         return this;
     }
 
+    public NotificationConfiguration withSubject(String subject) {
+        this.subject = subject;
+        return this;
+    }
+
+    public NotificationConfiguration withContent(String content) {
+        this.content = content;
+        return this;
+    }
+
     public NotificationConfiguration withReminderInterval(Integer reminderInterval) {
         this.reminderInterval = reminderInterval;
         return this;
     }
-    
+
     @Override
     public ResourceSignature getResourceSignature() {
         return super.getResourceSignature().addProperty("notificationTemplate", notificationTemplate);

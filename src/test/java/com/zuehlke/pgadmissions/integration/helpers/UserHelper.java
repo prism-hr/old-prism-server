@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
@@ -48,7 +47,7 @@ public class UserHelper {
 
         userService.registerUser(
                 new UserRegistrationDTO().withFirstName(user.getFirstName()).withLastName(user.getLastName()).withEmail(user.getEmail())
-                        .withLocale(PrismLocale.EN_GB).withActivationCode(user.getActivationCode()).withPassword("password").withResourceId(resourceId)
+                        .withActivationCode(user.getActivationCode()).withPassword("password").withResourceId(resourceId)
                         .withAction(new ActionDTO().withAction(actionId)), testContextReferrer);
 
         mailSenderMock.assertEmailSent(user, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
@@ -60,4 +59,5 @@ public class UserHelper {
         userService.activateUser(user.getId());
         assertTrue(user.isEnabled());
     }
+    
 }

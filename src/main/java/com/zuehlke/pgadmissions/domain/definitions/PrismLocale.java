@@ -8,4 +8,8 @@ public enum PrismLocale {
     DE_CH, //
     SR_RS;
     
+    public static PrismLocale getSystemLocale() {
+        return EN_GB;
+    }
+    
 }

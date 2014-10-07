@@ -103,7 +103,7 @@ public class ApplicationService {
 
         Application previousApplication = getPreviousApplication(application);
         if (previousApplication != null) {
-            applicationCopyHelper.copyApplicationFormData(application, previousApplication);
+            applicationCopyHelper.copyApplicationData(application, previousApplication);
         }
 
         AdvertClosingDate closingDate = advert.getClosingDate();
@@ -330,8 +330,7 @@ public class ApplicationService {
             for (CommentAssignedUserDTO assignedUserDTO : commentDTO.getAssignedUsers()) {
                 UserDTO commentUserDTO = assignedUserDTO.getUser();
 
-                User commentUser = userService.getOrCreateUser(commentUserDTO.getFirstName(), commentUserDTO.getLastName(), commentUserDTO.getEmail(),
-                        application.getLocale());
+                User commentUser = userService.getOrCreateUser(commentUserDTO.getFirstName(), commentUserDTO.getLastName(), commentUserDTO.getEmail());
                 assignedUsers.add(new CommentAssignedUser().withUser(commentUser).withRole(entityService.getById(Role.class, assignedUserDTO.getRole())));
             }
         }

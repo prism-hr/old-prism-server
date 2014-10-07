@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.beans.Introspector;
-
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -19,9 +17,9 @@ public class ConfigurationDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public <T extends WorkflowResource> T getConfiguration(Class<T> entityClass, Resource resource, WorkflowDefinition parameter) {
+    public <T extends WorkflowResource> T getConfiguration(Class<T> entityClass, Resource resource, String uniqifierReference, WorkflowDefinition uniqifier) {
         return (T) sessionFactory.getCurrentSession().createCriteria(entityClass) //
-                .add(Restrictions.eq(Introspector.decapitalize(parameter.getClass().getSimpleName()), parameter)) //
+                .add(Restrictions.eq(uniqifierReference, uniqifier)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("system", resource.getSystem())) //
                         .add(Restrictions.eq("institution", resource.getInstitution())) //

@@ -101,8 +101,8 @@ public class ApplicationSectionService {
             }
         }
         for (ApplicationSupervisorDTO supervisorDTO : programDetailDTO.getSupervisors()) {
-            User user = userService.getOrCreateUser(supervisorDTO.getUser().getFirstName(), supervisorDTO.getUser().getLastName(), supervisorDTO.getUser()
-                    .getEmail(), application.getLocale());
+            UserDTO userDTO = supervisorDTO.getUser();
+            User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
             ApplicationSupervisor supervisor = new ApplicationSupervisor().withAware(supervisorDTO.getAcceptedSupervision()).withUser(user);
             application.getSupervisors().add(supervisor);
         }
@@ -121,7 +121,7 @@ public class ApplicationSectionService {
         }
 
         UserDTO userDTO = supervisorDTO.getUser();
-        User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), application.getLocale());
+        User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
         supervisor.setUser(user);
 
         supervisor.setAcceptedSupervision(supervisorDTO.getAcceptedSupervision());
@@ -358,7 +358,7 @@ public class ApplicationSectionService {
         }
 
         UserDTO userDTO = refereeDTO.getUser();
-        User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), application.getLocale());
+        User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
         referee.setUser(user);
 
         referee.setJobEmployer(refereeDTO.getJobEmployer());
@@ -366,6 +366,7 @@ public class ApplicationSectionService {
 
         AddressDTO addressDTO = refereeDTO.getAddress();
         Address address = referee.getAddress();
+        
         if (address == null) {
             address = new Address();
             referee.setAddress(address);

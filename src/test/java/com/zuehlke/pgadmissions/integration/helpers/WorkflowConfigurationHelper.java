@@ -171,9 +171,10 @@ public class WorkflowConfigurationHelper {
             verifyStateTransitions(stateAction);
         }
 
-        assertEquals(1, userDefaultActions.size());
+        boolean actionsEmpty = state.getStateActions().isEmpty();     
+        assertTrue(actionsEmpty || userDefaultActions.size() == 1);
         assertTrue(systemDefaultActions.size() <= 1);
-        assertTrue(viewEditActions.size() >= 1);
+        assertTrue(actionsEmpty || viewEditActions.size() >= 1);
 
         if (stateService.getStateDuration(systemService.getSystem(), state) != null) {
             assertFalse(escalationActions.isEmpty());

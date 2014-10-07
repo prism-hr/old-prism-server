@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.util.List;
 import java.util.Map;
 
+import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.NotificationDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -35,7 +35,12 @@ import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
 import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
 import com.zuehlke.pgadmissions.mail.MailSender;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -69,7 +74,7 @@ public class NotificationService {
     private EntityService entityService;
 
     @Autowired
-    private LocalizationService localizationService;
+    private ConfigurationService configurationService;
 
     @Autowired
     private NotificationTemplatePropertyService notificationTemplatePropertyService;
@@ -79,15 +84,7 @@ public class NotificationService {
     }
 
     public NotificationConfiguration getConfiguration(Resource resource, NotificationTemplate template) {
-        return localizationService.getConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
-    }
-
-    public void removeLocalizedConfiguration(Resource resource, NotificationTemplate template) {
-        localizationService.removeLocalizedConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
-    }
-    
-    public void restoreGlobalizedConfiguration(Resource resource, NotificationTemplate template) {
-        
+        return configurationService.getConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
     }
 
     public Integer getReminderInterval(Resource resource, NotificationTemplate template) {
@@ -135,8 +132,7 @@ public class NotificationService {
             Integer reminderInterval = getReminderInterval(resource, notificationTemplate);
 
             if (!sent.get(notificationTemplate).contains(user) && baseline.minusDays(reminderInterval) == userRole.getLastNotifiedDate()) {
-                sendNotification(notificationTemplate.getReminderTemplate(),
-                        new NotificationTemplateModelDTO(user, resource, invoker).withTransitionAction(reminder.getActionId()));
+                sendNotification(notificationTemplate.getReminderTemplate(), new NotificationTemplateModelDTO(user, resource, invoker).withTransitionAction(reminder.getActionId()));
                 sent.put(notificationTemplate, user);
             }
 
@@ -221,15 +217,13 @@ public class NotificationService {
     public void sendRegistrationNotification(User user, ActionOutcomeDTO actionOutcome) {
         System system = systemService.getSystem();
         sendNotification(PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST,
-                new NotificationTemplateModelDTO(user, actionOutcome.getTransitionResource(), system.getUser()).withTransitionAction(actionOutcome
-                        .getTransitionAction().getId()));
+                new NotificationTemplateModelDTO(user, actionOutcome.getTransitionResource(), system.getUser()).withTransitionAction(actionOutcome.getTransitionAction().getId()));
     }
 
     public void sendResetPasswordNotification(User user, String newPassword) {
         System system = systemService.getSystem();
 
-        sendNotification(PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION,
-                new NotificationTemplateModelDTO(user, systemService.getSystem(), system.getUser()).withNewPassword(newPassword));
+        sendNotification(PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION, new NotificationTemplateModelDTO(user, systemService.getSystem(), system.getUser()).withNewPassword(newPassword));
     }
 
     private void sendIndividualRequestNotifications(Resource resource, User invoker, LocalDate baseline) {
@@ -273,10 +267,9 @@ public class NotificationService {
         NotificationConfiguration configuration = getConfiguration(modelDTO.getResource(), template);
         MailMessageDTO message = new MailMessageDTO();
 
-        message.setTo(modelDTO.getUser());
         message.setConfiguration(configuration);
-        message.setModel(createNotificationModel(template, modelDTO));
-        message.setAttachments(Lists.<AttachmentInputSource> newArrayList());
+        message.setModelDTO(modelDTO);
+        message.setAttachments(Lists.<AttachmentInputSource>newArrayList());
 
         mailSender.sendEmail(message);
     }
@@ -285,23 +278,10 @@ public class NotificationService {
         return notificationDAO.geEditableTemplates(scope);
     }
 
-    private Map<PrismNotificationTemplateProperty, Object> createNotificationModel(NotificationTemplate notificationTemplate,
-            NotificationTemplateModelDTO modelDTO) {
-        Map<PrismNotificationTemplateProperty, Object> model = Maps.newHashMap();
-        List<PrismNotificationTemplatePropertyCategory> categories = Lists.asList(PrismNotificationTemplatePropertyCategory.GLOBAL, notificationTemplate
-                .getId().getPropertyCategories());
-        for (PrismNotificationTemplatePropertyCategory propertyCategory : categories) {
-            for (PrismNotificationTemplateProperty property : propertyCategory.getProperties()) {
-                List<Object> arguments = Lists.newLinkedList();
-                arguments.add(modelDTO);
-                if (property.getMethodArguments().length > 0) {
-                    arguments.add(property.getMethodArguments());
-                }
-                Object value = ReflectionUtils.invokeMethod(notificationTemplatePropertyService, property.getGetterMethod(), arguments.toArray());
-                model.put(property, value);
-            }
-        }
-        return model;
+    public void saveConfiguration(Resource resource, NotificationTemplate template, NotificationConfigurationDTO notificationConfigurationDTO) {
+        NotificationConfiguration configuration = getConfiguration(resource, template);
+        configuration.setSubject(notificationConfigurationDTO.getSubject());
+        configuration.setContent(notificationConfigurationDTO.getContent());
+        configuration.setReminderInterval(notificationConfigurationDTO.getReminderInterval());
     }
-
 }

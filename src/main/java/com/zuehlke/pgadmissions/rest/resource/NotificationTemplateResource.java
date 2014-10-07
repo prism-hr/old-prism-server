@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
+import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplateProperty;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.mail.MailSender;
@@ -14,13 +14,13 @@ import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.representation.NotificationConfigurationRepresentation;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.NotificationService;
-import freemarker.template.TemplateException;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import javax.validation.Valid;
 import java.util.Map;
 
 @RestController
@@ -55,38 +55,61 @@ public class NotificationTemplateResource {
             @ModelAttribute ResourceDescriptor resourceDescriptor,
             @PathVariable Integer resourceId,
             @PathVariable String notificationTemplateId,
-            @RequestBody NotificationConfigurationDTO notificationConfigurationDTO) throws Exception {
+            @Valid @RequestBody NotificationConfigurationDTO notificationConfigurationDTO,
+            BindingResult validationErrors) throws Exception {
+        NotificationTemplate template = notificationService.getById(PrismNotificationTemplate.valueOf(notificationTemplateId));
+
+        validateAndCreatePreview(template, notificationConfigurationDTO, validationErrors);
+        if (validationErrors.hasErrors()) {
+            throw new PrismValidationException("Invalid notification configuration", validationErrors);
+        }
 
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        notificationService.saveConfiguration(resource, template, notificationConfigurationDTO);
 
         // TODO save notification version
     }
 
     @RequestMapping(value = "/notificationTemplates/{notificationTemplateId}/preview", method = RequestMethod.POST)
-    public NotificationConfigurationRepresentation getNotificationTemplatePreview(
+    public Map<String, String> getNotificationTemplatePreview(
             @ModelAttribute ResourceDescriptor resourceDescriptor,
             @PathVariable String notificationTemplateId,
-            @RequestBody NotificationConfigurationDTO notificationConfigurationDTO,
+            @Valid @RequestBody NotificationConfigurationDTO notificationConfigurationDTO,
             BindingResult validationErrors) throws Exception {
         NotificationTemplate template = notificationService.getById(PrismNotificationTemplate.valueOf(notificationTemplateId));
+
+        Map<String, String> preview = validateAndCreatePreview(template, notificationConfigurationDTO, validationErrors);
+        if (validationErrors.hasErrors()) {
+            throw new PrismValidationException("Invalid notification configuration", validationErrors);
+        }
+        return preview;
+    }
+
+    private Map<String, String> validateAndCreatePreview(NotificationTemplate template, NotificationConfigurationDTO notificationConfigurationDTO, BindingResult errors) {
+        if (template.getId().getReminderTemplate() == null && notificationConfigurationDTO.getReminderInterval() != null) {
+            errors.rejectValue("reminderInterval", "forbidden");
+        } else if (template.getId().getReminderTemplate() != null && notificationConfigurationDTO.getReminderInterval() == null) {
+            errors.rejectValue("reminderInterval", "notNull");
+        }
+
         Map<String, Object> model = mailSender.createNotificationModel(template, createSampleModelDTO());
         String subject = null, content = null;
         try {
             subject = mailSender.processTemplate(template.getId(), notificationConfigurationDTO.getSubject(), model);
         } catch (Exception e) {
-            validationErrors.rejectValue("subject", "invalid");
+            errors.rejectValue("subject", "invalid");
         }
 
         try {
             content = mailSender.processTemplate(template.getId(), notificationConfigurationDTO.getContent(), model);
         } catch (Exception e) {
-            validationErrors.rejectValue("content", "invalid");
+            errors.rejectValue("content", "invalid");
         }
 
         if (subject == null || content == null) {
-            throw new PrismValidationException("Invalid template", validationErrors);
+            throw new PrismValidationException("Invalid template", errors);
         }
-        return new NotificationConfigurationRepresentation(subject, content);
+        return ImmutableMap.of("subject", subject, "content", content);
     }
 
     @ModelAttribute

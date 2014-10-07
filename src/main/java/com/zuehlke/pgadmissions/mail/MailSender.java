@@ -1,11 +1,11 @@
 package com.zuehlke.pgadmissions.mail;
 
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-
+import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
+import com.zuehlke.pgadmissions.dto.MailMessageDTO;
+import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
+import freemarker.template.Template;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,13 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
-import com.zuehlke.pgadmissions.dto.MailMessageDTO;
-import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
-
-import freemarker.template.Template;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 
 @Service
 public class MailSender {
@@ -48,7 +45,7 @@ public class MailSender {
 
     @Autowired
     private FreeMarkerConfig freemarkerConfig;
-    
+
     @Autowired
     private MailToPlainTextConverter mailToPlainTextConverter;
 
@@ -56,23 +53,23 @@ public class MailSender {
 
         final NotificationTemplateVersion notificationTemplate = message.getTemplate();
 
-        if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat")) {
-            logger.info(String.format("Sending Production Email: %s", message.toString()));
-            try {
+        try {
+            String templateName = notificationTemplate.getNotificationTemplate().getId().name() + "_subject_" + notificationTemplate.getId();
+            Template subjectTemplate = new Template(templateName, new StringReader(notificationTemplate.getSubject()), freemarkerConfig.getConfiguration());
+            final String subject = FreeMarkerTemplateUtils.processTemplateIntoString(subjectTemplate, message.getModel());
+
+            templateName = notificationTemplate.getNotificationTemplate().getId().name() + "_content_" + notificationTemplate.getId();
+            Template contentTemplate = new Template(templateName, new StringReader(notificationTemplate.getContent()), freemarkerConfig.getConfiguration());
+            final String htmlText = FreeMarkerTemplateUtils.processTemplateIntoString(contentTemplate, message.getModel());
+            final String plainText = mailToPlainTextConverter.getPlainText(htmlText) + "\n\n" + emailBrokenLinkMessage;
+
+
+            if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat")) {
+                logger.info(String.format("Sending Production Email: %s", message.toString()));
                 javaMailSender.send(new MimeMessagePreparator() {
                     @Override
                     public void prepare(final MimeMessage mimeMessage) throws Exception {
                         final MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
-
-                        String templateName = notificationTemplate.getNotificationTemplate().getId().name() + "_subject_" + notificationTemplate.getId();
-                        Template subjectTemplate = new Template(templateName, new StringReader(notificationTemplate.getSubject()), freemarkerConfig.getConfiguration());
-                        String subject = FreeMarkerTemplateUtils.processTemplateIntoString(subjectTemplate, message.getModel());
-
-                        templateName = notificationTemplate.getNotificationTemplate().getId().name() + "_content_" + notificationTemplate.getId();
-                        Template contentTemplate = new Template(templateName, new StringReader(notificationTemplate.getContent()), freemarkerConfig.getConfiguration());
-                        String htmlText = FreeMarkerTemplateUtils.processTemplateIntoString(contentTemplate, message.getModel());
-                        String plainText = mailToPlainTextConverter.getPlainText(htmlText);
-                        plainText = plainText + "\n\n" + emailBrokenLinkMessage;
 
                         messageHelper.setTo(convertToInternetAddresses(message.getTo()));
                         messageHelper.setSubject(subject);
@@ -83,15 +80,16 @@ public class MailSender {
                         }
                     }
                 });
-            } catch (Exception e) {
-                if (notificationTemplate.getNotificationTemplate().getNotificationType() == PrismNotificationType.INDIVIDUAL) {
-                    throw new Error(e);
-                } else {
-                    logger.error(String.format("Failed to send email %s", message.toString()), e);
-                }
+            } else {
+                logger.info(String.format("Sending Development Email: %s", message.toString()));
             }
-        } else {
-            logger.info(String.format("Sending Development Email: %s", message.toString()));
+
+        } catch (Exception e) {
+            if (notificationTemplate.getNotificationTemplate().getNotificationType() == PrismNotificationType.INDIVIDUAL) {
+                throw new Error(e);
+            } else {
+                logger.error(String.format("Failed to send email %s", message.toString()), e);
+            }
         }
     }
 

@@ -3,13 +3,13 @@ package com.zuehlke.pgadmissions.domain;
 import java.util.HashMap;
 import java.util.List;
 
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 public interface IUniqueEntity {
 
@@ -28,17 +28,17 @@ public interface IUniqueEntity {
         public HashMultimap<String, Object> getExclusions() {
             return exclusions;
         }
-        
+
         public ResourceSignature addProperty(String key, Object value) {
             properties.put(key, value);
             return this;
         }
-        
+
         public ResourceSignature addExclusion(String key, Object value) {
             exclusions.put(key, value);
             return this;
         }
-        
+
         @Override
         public String toString() {
             List<String> readableProperties = Lists.newArrayList();
@@ -47,12 +47,12 @@ public interface IUniqueEntity {
             }
             return Joiner.on(", ").join(readableProperties);
         }
-        
+
         private String propertyToString(Object property) {
             if (property == null) {
                 return "null";
             } else if (PropertyUtils.isReadable(property, "id")) {
-                IntrospectionUtils.getProperty(property, "id");
+                ReflectionUtils.getProperty(property, "id");
             }
             return property.toString();
         }

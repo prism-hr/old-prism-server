@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBElement;
 
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -55,7 +56,6 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.Programm
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
 import com.zuehlke.pgadmissions.utils.ConversionUtils;
-import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Service
 @Transactional
@@ -191,8 +191,8 @@ public class ImportedEntityService {
     public <T extends ImportedEntity> void mergeImportedEntity(Class<T> entityClass, Institution institution, Object entityDefinition) throws Exception {
         ImportedEntity transientEntity = entityClass.newInstance();
         transientEntity.setInstitution(institution);
-        transientEntity.setCode((String) IntrospectionUtils.getProperty(entityDefinition, "code"));
-        transientEntity.setName((String) IntrospectionUtils.getProperty(entityDefinition, "name"));
+        transientEntity.setCode((String) ReflectionUtils.getProperty(entityDefinition, "code"));
+        transientEntity.setName((String) ReflectionUtils.getProperty(entityDefinition, "name"));
         transientEntity.setEnabled(true);
         entityService.createOrUpdate(transientEntity);
     }

@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -24,7 +25,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
-import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Entity
 @Table(name = "USER")
@@ -52,47 +52,47 @@ public class User implements UserDetails, IUniqueEntity {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
     @Column(name = "last_name", nullable = false)
     private String lastName;
-    
+
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
     @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
     @Column(name = "email", nullable = false, unique = true)
     private String email;
-    
+
     @OneToOne
     @JoinColumn(name = "portrait_document_id")
     private Document portraitDocument;
-    
+
     @Column(name = "linkedin_uri")
     private String linkedinUri;
-    
+
     @Column(name = "twitter_uri")
     private String twitterUri;
-    
+
     @Column(name = "activation_code", nullable = false, unique = true)
     private String activationCode;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
-    
+
     @Column(name = "last_notified_date_system")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedDateSystem;
-    
+
     @Column(name = "last_notified_date_institution")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedDateInstitution;
-    
+
     @Column(name = "last_notified_date_program")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedDateProgram;
-    
+
     @Column(name = "last_notified_date_project")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedDateProject;
-    
+
     @Column(name = "last_notified_date_application")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedDateApplication;
@@ -103,7 +103,7 @@ public class User implements UserDetails, IUniqueEntity {
 
     @OneToMany(mappedBy = "user")
     private Set<UserRole> userRoles = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "user")
     private Set<Document> documents = Sets.newHashSet();
 
@@ -206,7 +206,7 @@ public class User implements UserDetails, IUniqueEntity {
     public void setUserAccount(UserAccount account) {
         this.userAccount = account;
     }
-    
+
     public final LocalDate getLastNotifiedDateSystem() {
         return lastNotifiedDateSystem;
     }
@@ -254,7 +254,7 @@ public class User implements UserDetails, IUniqueEntity {
     public final void setParentUser(User parentUser) {
         this.parentUser = parentUser;
     }
-    
+
     public Set<UserRole> getUserRoles() {
         return userRoles;
     }
@@ -295,7 +295,7 @@ public class User implements UserDetails, IUniqueEntity {
         this.lastName = lastName;
         return this;
     }
-    
+
     public User withFullName(String fullName) {
         this.fullName = fullName;
         return this;
@@ -320,13 +320,13 @@ public class User implements UserDetails, IUniqueEntity {
         this.parentUser = parentUser;
         return this;
     }
-    
+
     public <T extends Resource> LocalDate getLastNotifiedDate(Class<T> resourceClass) {
-        return (LocalDate) IntrospectionUtils.getProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName());
+        return (LocalDate) ReflectionUtils.getProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName());
     }
-    
+
     public <T extends Resource> void setLastNotifiedDate(Class<T> resourceClass, LocalDate lastNotifiedDate) {
-        IntrospectionUtils.setProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName(), lastNotifiedDate);
+        ReflectionUtils.setProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName(), lastNotifiedDate);
     }
 
     @Override

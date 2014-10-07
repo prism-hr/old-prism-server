@@ -22,7 +22,7 @@ public class HibernateUtils {
     }
 
     public static <T> boolean sameEntities(T entity1, T entity2) {
-        return Objects.equal(IntrospectionUtils.getProperty(entity1, "id"), IntrospectionUtils.getProperty(entity2, "id"));
+        return Objects.equal(ReflectionUtils.getProperty(entity1, "id"), ReflectionUtils.getProperty(entity2, "id"));
     }
 
     public static <T> boolean containsEntity(Iterable<T> iterable, T entity) {
@@ -33,5 +33,5 @@ public class HibernateUtils {
         }
         return false;
     }
-    
+
 }

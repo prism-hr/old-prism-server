@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.utils;
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 
-public class IntrospectionUtils {
+public class ReflectionUtils {
 
     public static Object getProperty(Object bean, String property) {
         try {
@@ -12,7 +12,7 @@ public class IntrospectionUtils {
             throw new Error(e);
         }
     }
-    
+
     public static void setProperty(Object bean, String property, Object value) {
         try {
             PropertyUtils.setSimpleProperty(bean, property, value);
@@ -20,7 +20,7 @@ public class IntrospectionUtils {
             throw new Error(e);
         }
     }
-    
+
     public static Object invokeMethod(Object bean, String methodName, Object... inputs) {
         try {
             return MethodUtils.invokeMethod(bean, methodName, inputs);
@@ -28,5 +28,5 @@ public class IntrospectionUtils {
             throw new Error(e);
         }
     }
-    
+
 }

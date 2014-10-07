@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import java.math.BigDecimal;
 
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.ParentResource;
 import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 import com.zuehlke.pgadmissions.utils.SummaryUtils;
 
 @Service
@@ -99,11 +99,11 @@ public class ApplicationSummaryService {
 
     private void updatePreviousApplicationProcessing(Application application, StateGroup previousStateGroup, LocalDate baseline) {
         ApplicationProcessing previousProcessing = applicationSummaryDAO.getProcessing(application, previousStateGroup);
-        
+
         if (previousProcessing == null) {
             return;
         }
-        
+
         Integer stateDuration = Days.daysBetween(previousProcessing.getLastUpdatedDate(), baseline).getDays();
 
         previousProcessing.setDayDurationAverage(SummaryUtils.computeRunningAverage((previousProcessing.getInstanceCount() - 1),
@@ -146,9 +146,9 @@ public class ApplicationSummaryService {
 
     private void incrementApplicationEventCount(Application application, String eventCountProperty) {
         for (ParentResource parentResource : application.getParentResources()) {
-            ParentResource parent = (ParentResource) IntrospectionUtils.getProperty(application, parentResource.getResourceScope().getLowerCaseName());
-            Integer currentCount = (Integer) IntrospectionUtils.getProperty(parent, eventCountProperty);
-            IntrospectionUtils.setProperty(parent, eventCountProperty, SummaryUtils.incrementRunningCount(currentCount));
+            ParentResource parent = (ParentResource) ReflectionUtils.getProperty(application, parentResource.getResourceScope().getLowerCaseName());
+            Integer currentCount = (Integer) ReflectionUtils.getProperty(parent, eventCountProperty);
+            ReflectionUtils.setProperty(parent, eventCountProperty, SummaryUtils.incrementRunningCount(currentCount));
         }
     }
 

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Service
 @Transactional
@@ -69,7 +69,7 @@ public class EntityService {
     public Serializable save(Object entity) {
         return entityDAO.save(entity);
     }
-    
+
     public void delete(Object entity) {
         entityDAO.delete(entity);
     }
@@ -85,15 +85,15 @@ public class EntityService {
     public Object merge(Object entity) {
         return entityDAO.merge(entity);
     }
-    
+
     public <T> void deleteAll(Class<T> classReference) {
         entityDAO.deleteAll(classReference);
     }
-    
+
     @SuppressWarnings("unchecked")
     private <T extends IUniqueEntity> T overwriteProperties(T persistentResource, T transientResource) {
-        Object persistentId = IntrospectionUtils.getProperty(persistentResource, "id");
-        IntrospectionUtils.setProperty(transientResource, "id", persistentId);
+        Object persistentId = ReflectionUtils.getProperty(persistentResource, "id");
+        ReflectionUtils.setProperty(transientResource, "id", persistentId);
         return (T) merge(transientResource);
     }
 

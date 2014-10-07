@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -38,7 +39,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
-import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Service
 @Transactional
@@ -180,7 +180,7 @@ public class StateService {
 
         if (potentialStateTransitions.size() > 1) {
             PrismStateTransitionEvaluation transitionEvaluation = potentialStateTransitions.get(0).getStateTransitionEvaluation().getId();
-            return (StateTransition) IntrospectionUtils.invokeMethod(this, transitionEvaluation.getMethodName(), operative, comment);
+            return (StateTransition) ReflectionUtils.invokeMethod(this, transitionEvaluation.getMethodName(), operative, comment);
         }
 
         return potentialStateTransitions.isEmpty() ? null : potentialStateTransitions.get(0);
@@ -299,7 +299,7 @@ public class StateService {
                 PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), recruitedComment.getParentResourceTransitionState().getId());
     }
-    
+
     public StateTransition getInstitutionApprovedOutcome(Resource resource, Comment comment) {
         return getUserDefinedNextState(resource, comment);
     }
@@ -347,7 +347,7 @@ public class StateService {
     public List<PrismState> getStatesByStateGroup(PrismStateGroup stateGroupId) {
         return stateDAO.getStatesByStateGroup(stateGroupId);
     }
-    
+
     public List<PrismState> getActiveProgramStates() {
         return stateDAO.getActiveProgramStates();
     }
@@ -355,7 +355,7 @@ public class StateService {
     public List<PrismState> getActiveProjectStates() {
         return stateDAO.getActiveProjectStates();
     }
-    
+
     public List<PrismState> getAvailableNextStates(Resource resource, List<ActionRepresentation> permittedActions) {
         return stateDAO.getAvailableNextStates(resource, permittedActions);
     }

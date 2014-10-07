@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
-import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
@@ -30,7 +29,6 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.System;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
@@ -68,10 +66,10 @@ public class NotificationService {
 
     @Autowired
     private EntityService entityService;
-    
+
     @Autowired
     private ConfigurationService configurationService;
-    
+
     @Autowired
     private LocalizationService localizationService;
 
@@ -80,17 +78,7 @@ public class NotificationService {
     }
 
     public NotificationConfiguration getConfiguration(Resource resource, NotificationTemplate template) {
-        return configurationService.getConfiguration(NotificationConfiguration.class, resource, template);
-    }
-    
-    public NotificationTemplateVersion getActiveVersion(Resource resource, NotificationTemplate template) {
-        return getVersion(resource, null, template);
-    }
-
-    public NotificationTemplateVersion getVersion(Resource resource, User user, NotificationTemplate template) {
-        PrismLocale userLocale = user.getLocale();
-        PrismLocale resourceLocale = resource.getLocale();
-        return localizationService.getVersion(NotificationConfiguration.class, resource, template, userLocale, resourceLocale);
+        return configurationService.getConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
     }
 
     public Integer getReminderInterval(Resource resource, NotificationTemplate template) {
@@ -209,7 +197,7 @@ public class NotificationService {
             sendNotification(user, institution, template, ImmutableMap.of("message", errorMessage));
         }
     }
-    
+
     public void sendRecommendationNotification(User transientUser, LocalDate baseline) {
         User persistentUser = userService.getById(transientUser.getId());
         System system = systemService.getSystem();
@@ -256,14 +244,14 @@ public class NotificationService {
         }
     }
 
-    private void sendNotification(User user, Resource resource, NotificationTemplate notificationTemplate, Map<String, String> extraParameters) {
-        NotificationTemplateVersion templateVersion = getVersion(resource, user, notificationTemplate);
+    private void sendNotification(User user, Resource resource, NotificationTemplate template, Map<String, String> extraParameters) {
+        NotificationConfiguration configuration = getConfiguration(resource, template);
         MailMessageDTO message = new MailMessageDTO();
 
         message.setTo(user);
-        message.setTemplate(templateVersion);
+        message.setConfiguration(configuration);
         message.setModel(createNotificationModel(user, resource, extraParameters));
-        message.setAttachments(Lists.<AttachmentInputSource>newArrayList());
+        message.setAttachments(Lists.<AttachmentInputSource> newArrayList());
 
         mailSender.sendEmail(message);
     }
@@ -277,7 +265,8 @@ public class NotificationService {
         model.put("activationCode", user.getActivationCode());
 
         model.put("resourceId", resource.getId().toString());
-        // TODO construct action url, example: http://localhost:9000/#/application/15101/action?action=APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY&user=franek@pieczka.pl
+        // TODO construct action url, example:
+        // http://localhost:9000/#/application/15101/action?action=APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY&user=franek@pieczka.pl
         model.put("actionUrl", "to be defined");
 
         System system = resource.getSystem();

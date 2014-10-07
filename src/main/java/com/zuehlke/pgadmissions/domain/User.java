@@ -7,8 +7,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -25,7 +23,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
@@ -62,10 +59,6 @@ public class User implements UserDetails, IUniqueEntity {
     @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
     @Column(name = "email", nullable = false, unique = true)
     private String email;
-    
-    @Column(name = "locale", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PrismLocale locale;
     
     @OneToOne
     @JoinColumn(name = "portrait_document_id")
@@ -169,15 +162,7 @@ public class User implements UserDetails, IUniqueEntity {
     public void setEmail(String email) {
         this.email = email;
     }
-
-    public final PrismLocale getLocale() {
-        return locale;
-    }
-
-    public final void setLocale(PrismLocale locale) {
-        this.locale = locale;
-    }
-
+    
     public final Document getPortraitDocument() {
         return portraitDocument;
     }
@@ -318,11 +303,6 @@ public class User implements UserDetails, IUniqueEntity {
 
     public User withEmail(String email) {
         this.email = email;
-        return this;
-    }
-    
-    public User withLocale(PrismLocale locale) {
-        this.locale = locale;
         return this;
     }
 

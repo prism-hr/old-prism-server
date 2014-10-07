@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -14,12 +13,11 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 
 @Entity
 @Table(name = "COMMENT_CUSTOM_QUESTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "action_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "action_id" }), @UniqueConstraint(columnNames = { "program_id", "action_id" }) })
-public class CommentCustomQuestion extends WorkflowResourceLocalized<CommentCustomQuestionVersion> {
+public class CommentCustomQuestion extends WorkflowResource {
 
     @Id
     private Integer id;
@@ -40,13 +38,10 @@ public class CommentCustomQuestion extends WorkflowResourceLocalized<CommentCust
     @JoinColumn(name = "action_id", nullable = false)
     private Action action;
 
-    @Column(name = "enabled", nullable = false)
-    private Boolean enabled;
-
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_custom_question_id", nullable = false)
-    @MapKeyColumn(name = "locale", nullable = false)
-    private Map<PrismLocale, CommentCustomQuestionVersion> commentCustomQuestionVersions = Maps.newHashMap();
+    @MapKeyColumn(name = "name", nullable = false)
+    private Map<String, CommentCustomQuestionVersion> commentCustomQuestionVersions = Maps.newHashMap();
 
     public Integer getId() {
         return id;
@@ -94,19 +89,6 @@ public class CommentCustomQuestion extends WorkflowResourceLocalized<CommentCust
         this.action = action;
     }
 
-    public Boolean getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    @Override
-    public final Map<PrismLocale, CommentCustomQuestionVersion> getVersions() {
-        return commentCustomQuestionVersions;
-    }
-
     public CommentCustomQuestion withSystem(System system) {
         this.system = system;
         return this;
@@ -126,9 +108,9 @@ public class CommentCustomQuestion extends WorkflowResourceLocalized<CommentCust
         this.action = action;
         return this;
     }
-    
-    public CommentCustomQuestion withEnabled(Boolean enabled) {
-        this.enabled = enabled;
+
+    public CommentCustomQuestion addCommentCustomQuestionVersion(String name, String content) {
+        commentCustomQuestionVersions.put(name, new CommentCustomQuestionVersion().withCommentCustomQuestion(this).withName(name).withContent(content));
         return this;
     }
 

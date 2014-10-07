@@ -17,9 +17,9 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 
 @Entity
 @Table(name = "DISPLAY_CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "locale", "property_category", "property_key" }),
-        @UniqueConstraint(columnNames = { "institution_id", "locale", "property_category", "property_key" }),
-        @UniqueConstraint(columnNames = { "program_id", "locale", "property_category", "property_key" }) })
-public class DisplayConfiguration extends WorkflowResource {
+        @UniqueConstraint(columnNames = { "institution_id", "property_category", "property_key" }),
+        @UniqueConstraint(columnNames = { "program_id", "property_category", "property_key" }) })
+public class DisplayProperty extends WorkflowResource {
 
     @Id
     @GeneratedValue
@@ -29,6 +29,10 @@ public class DisplayConfiguration extends WorkflowResource {
     @JoinColumn(name = "system_id")
     private System system;
 
+    @Column(name = "locale", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismLocale locale;
+
     @ManyToOne
     @JoinColumn(name = "institution_id")
     private Institution institution;
@@ -36,10 +40,6 @@ public class DisplayConfiguration extends WorkflowResource {
     @ManyToOne
     @JoinColumn(name = "program_id")
     private Program program;
-
-    @Column(name = "locale", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PrismLocale locale;
 
     @Column(name = "property_category", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -121,46 +121,49 @@ public class DisplayConfiguration extends WorkflowResource {
     public final void setPropertyValue(String propertyValue) {
         this.propertyValue = propertyValue;
     }
-    
-    public DisplayConfiguration withSystem(System system) {
+
+    public DisplayProperty withSystem(System system) {
         this.system = system;
         return this;
     }
 
-    public DisplayConfiguration withInstitution(Institution institution) {
+    public DisplayProperty withInstitution(Institution institution) {
         this.institution = institution;
         return this;
     }
 
-    public DisplayConfiguration withProgram(Program program) {
+    public DisplayProperty withProgram(Program program) {
         this.program = program;
         return this;
     }
 
-    public DisplayConfiguration withLocale(PrismLocale locale) {
+    public DisplayProperty withLocale(PrismLocale locale) {
         this.locale = locale;
         return this;
     }
 
-    public DisplayConfiguration withPropertyCategory(DisplayPropertyCategory propertyCategory) {
+    public DisplayProperty withPropertyCategory(DisplayPropertyCategory propertyCategory) {
         this.propertyCategory = propertyCategory;
         return this;
     }
 
-    public DisplayConfiguration withPropertyKey(DisplayPropertyKey propertyKey) {
+    public DisplayProperty withPropertyKey(DisplayPropertyKey propertyKey) {
         this.propertyKey = propertyKey;
         return this;
     }
 
-    public DisplayConfiguration withPropertyValue(String propertyValue) {
+    public DisplayProperty withPropertyValue(String propertyValue) {
         this.propertyValue = propertyValue;
         return this;
     }
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("locale", locale).addProperty("propertyCategory", propertyCategory)
-                .addProperty("propertyKey", propertyKey);
+        ResourceSignature signature = super.getResourceSignature();
+        if (system != null) {
+            signature.addProperty("locale", locale);
+        }
+        return signature.addProperty("propertyCategory", propertyCategory).addProperty("propertyKey", propertyKey);
     }
 
 }

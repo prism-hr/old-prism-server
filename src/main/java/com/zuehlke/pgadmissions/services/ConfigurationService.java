@@ -12,12 +12,12 @@ import com.zuehlke.pgadmissions.domain.WorkflowResource;
 @Service
 @Transactional
 public class ConfigurationService {
-    
+
     @Autowired
     private ConfigurationDAO configurationDAO;
-    
-    public <T extends WorkflowResource> T getConfiguration(Class<T> entityClass, Resource resource, WorkflowDefinition parameter) {
-        return configurationDAO.getConfiguration(entityClass, resource, parameter);
+
+    public <T extends WorkflowResource> T getConfiguration(Class<T> entityClass, Resource resource, String uniqifierReference, WorkflowDefinition uniqifier) {
+        return configurationDAO.getConfiguration(entityClass, resource, uniqifierReference, uniqifier);
     }
-    
+
 }

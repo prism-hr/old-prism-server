@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.MoreObjects;
-import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
+import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
 
@@ -14,9 +14,9 @@ public final class MailMessageDTO {
 
     private User to;
 
-    private Map<String, Object> model;
+    private NotificationConfiguration configuration;
 
-    private NotificationTemplateVersion template;
+    private Map<String, Object> model;
 
     private List<AttachmentInputSource> attachments;
 
@@ -28,20 +28,20 @@ public final class MailMessageDTO {
         this.to = to;
     }
 
+    public final NotificationConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public final void setConfiguration(NotificationConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
     public void setModel(final Map<String, Object> model) {
         this.model = model;
     }
 
     public Map<String, Object> getModel() {
         return model;
-    }
-
-    public NotificationTemplateVersion getTemplate() {
-        return template;
-    }
-
-    public void setTemplate(NotificationTemplateVersion template) {
-        this.template = template;
     }
 
     public List<AttachmentInputSource> getAttachments() {
@@ -62,12 +62,8 @@ public final class MailMessageDTO {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("to", to.getEmail())
-                .add("actionUrl", model.get("actionUrl"))
-                .add("resourceId", model.get("resourceId"))
-                .add("template", template.getNotificationConfiguration().getNotificationTemplate().getId())
-                .toString();
+        return MoreObjects.toStringHelper(this).add("to", to.getEmail()).add("actionUrl", model.get("actionUrl")).add("resourceId", model.get("resourceId"))
+                .add("template", configuration.getNotificationTemplate().getId()).toString();
     }
 
 }

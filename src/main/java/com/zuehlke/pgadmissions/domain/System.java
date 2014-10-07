@@ -5,6 +5,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -41,6 +43,7 @@ public class System extends Resource {
     private String title;
     
     @Column(name = "locale", nullable = false)
+    @Enumerated(EnumType.STRING)
     private PrismLocale locale;
 
     @Column(name = "last_data_import_date")

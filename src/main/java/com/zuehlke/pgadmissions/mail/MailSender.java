@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
+import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
@@ -54,7 +54,7 @@ public class MailSender {
 
     public void sendEmail(final MailMessageDTO message) {
 
-        final NotificationTemplateVersion templateVersion = message.getTemplate();
+        final NotificationConfiguration configuration = message.getConfiguration();
 
         if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat")) {
             logger.info(String.format("Sending Production Email: %s", message.toString()));
@@ -63,16 +63,17 @@ public class MailSender {
                     @Override
                     public void prepare(final MimeMessage mimeMessage) throws Exception {
                         final MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
-
-                        String templateReference = templateVersion.getNotificationConfiguration().getNotificationTemplate().getId().name();
-
-                        String templateName = templateReference + "_subject_" + templateVersion.getId();
-                        Template subjectTemplate = new Template(templateName, new StringReader(templateVersion.getSubject()), freemarkerConfig
+                        
+                        String templateReference = configuration.getNotificationTemplate().getId().name();
+                        String configurationReference = configuration.getId().toString();
+                        
+                        String templateName = templateReference + "_subject_" + configurationReference;
+                        Template subjectTemplate = new Template(templateName, new StringReader(configuration.getSubject()), freemarkerConfig
                                 .getConfiguration());
                         String subject = FreeMarkerTemplateUtils.processTemplateIntoString(subjectTemplate, message.getModel());
 
-                        String contentName = templateReference + "_content_" + templateVersion.getId();
-                        Template contentTemplate = new Template(contentName, new StringReader(templateVersion.getContent()), freemarkerConfig
+                        String contentName = templateReference + "_content_" + configurationReference;
+                        Template contentTemplate = new Template(contentName, new StringReader(configuration.getContent()), freemarkerConfig
                                 .getConfiguration());
                         String htmlText = FreeMarkerTemplateUtils.processTemplateIntoString(contentTemplate, message.getModel());
                         String plainText = mailToPlainTextConverter.getPlainText(htmlText);
@@ -88,7 +89,7 @@ public class MailSender {
                     }
                 });
             } catch (Exception e) {
-                if (templateVersion.getNotificationConfiguration().getNotificationTemplate().getNotificationType() == PrismNotificationType.INDIVIDUAL) {
+                if (configuration.getNotificationTemplate().getNotificationType() == PrismNotificationType.INDIVIDUAL) {
                     throw new Error(e);
                 } else {
                     logger.error(String.format("Failed to send email %s", message.toString()), e);

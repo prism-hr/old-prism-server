@@ -5,17 +5,17 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 public abstract class WorkflowResource implements IUniqueEntity {
 
     public abstract System getSystem();
-    
+
     public abstract Institution getInstitution();
-    
+
     public abstract Program getProgram();
-    
+
     public abstract void setSystem(System system);
-    
+
     public abstract void setInstitution(Institution institution);
-    
+
     public abstract void setProgram(Program program);
-    
+
     public Resource getResource() {
         System system = getSystem();
         Institution institution = getInstitution();
@@ -32,9 +32,9 @@ public abstract class WorkflowResource implements IUniqueEntity {
         setSystem(null);
         setInstitution(null);
         setProgram(null);
-        
+
         PrismScope resourceScope = resource.getResourceScope();
-        
+
         switch (resourceScope) {
         case SYSTEM:
             setSystem(resource.getSystem());
@@ -49,7 +49,7 @@ public abstract class WorkflowResource implements IUniqueEntity {
             throw new Error("No setter for scope " + resourceScope.getLowerCaseName());
         }
     }
-    
+
     @Override
     public ResourceSignature getResourceSignature() {
         Resource resource = getResource();

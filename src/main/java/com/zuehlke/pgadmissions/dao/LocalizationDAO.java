@@ -108,17 +108,21 @@ public class LocalizationDAO {
                         + "where :keyIndex = :keyValue " //
                         + "and (institution in (" //
                                 + "from institution " //
-                                + "where system = :system) " //
+                                + "where system = :system "
+                                + "and locale = :locale) " //
                         + "or program in (" //
                                 + "from program " //
-                                + "where system = :system) " //
+                                + "where system = :system "
+                                + "and locale = :locale) " //
                         + "or program in (" //
                                 + "from program " //
-                                + "where institution = :institution))") //
+                                + "where institution = :institution "
+                                + "and locale = :locale))") //
                 .setParameter("workflowResourceClass", workflowResourceClass.getSimpleName()) //
                 .setParameter("keyIndex", keyValue) //
                 .setParameter("keyValue", keyValue) //
                 .setParameter("system", globalizedResourceScope == PrismScope.SYSTEM ? globalizedResource : null) //
+                .setParameter("locale", globalizedResource.getLocale()) //
                 .setParameter("institution", globalizedResourceScope == PrismScope.INSTITUTION ? globalizedResource : null) //
                 .executeUpdate();
     }

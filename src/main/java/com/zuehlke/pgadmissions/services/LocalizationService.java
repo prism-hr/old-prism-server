@@ -48,7 +48,9 @@ public class LocalizationService {
     public <T extends WorkflowResource> void removeLocalizedConfiguration(Class<NotificationConfiguration> entityClass, Resource resource, String keyIndex,
             WorkflowDefinition keyValue) {
         T localizedConfiguration = getConfigurationStrict(entityClass, resource, keyIndex, keyValue);
-        entityService.delete(localizedConfiguration);
+        if (localizedConfiguration != null) {
+            entityService.delete(localizedConfiguration);
+        }
     }
 
     public <T extends WorkflowResource> void restoreGlobalizedConfiguration(Class<NotificationConfiguration> entityClass, Resource resource, String keyIndex,
@@ -61,9 +63,6 @@ public class LocalizationService {
         if (globalizedResourceScope == PrismScope.SYSTEM || globalizedResourceScope == PrismScope.INSTITUTION) {
             localizationDAO.restoreGlobalizedConfiguration(entityClass, keyIndex, keyValue, globalizedResource, globalizedResourceScope);
         }
-
-        throw new Error(globalizedConfiguration.getClass().getSimpleName() + " id: " + globalizedConfiguration.getId().toString()
-                + " is not valid globalized configuration");
     }
 
     public String getLocalizedProperty(Resource resource, PrismDisplayProperty propertyIndex) {
@@ -74,24 +73,21 @@ public class LocalizationService {
         return getLocalizedProperties(resource, locale, propertyIndex).get(propertyIndex);
     }
     
+    public HashMap<PrismDisplayProperty, String> getLocalizedProperties(Resource resource, PrismLocale locale, PrismDisplayProperty... propertyIndices) {
+        List<DisplayProperty> properties = localizationDAO.getDisplayProperties(resource, locale, propertyIndices);
+        return filterProperties(properties);
+    }
+    
     public HashMap<PrismDisplayProperty, String> getLocalizedProperties(Resource resource, PrismLocale locale, PrismDisplayCategory category) {
         return getLocalizedProperties(resource, locale, category);
     }
     
     public HashMap<PrismDisplayProperty, String> getLocalizedProperties(Resource resource, PrismLocale locale, PrismDisplayCategory... categories) {
         List<DisplayProperty> properties = localizationDAO.getDisplayProperties(resource, locale, categories);
-        HashMap<PrismDisplayProperty, String> propertiesMerged = Maps.newHashMap();
-        for (DisplayProperty property : properties) {
-            PrismDisplayProperty index = property.getPropertyIndex();
-            if (!propertiesMerged.containsKey(index)) {
-                propertiesMerged.put(index, property.getPropertyValue());
-            }
-        }
-        return propertiesMerged;
+        return filterProperties(properties);
     }
     
-    public HashMap<PrismDisplayProperty, String> getLocalizedProperties(Resource resource, PrismLocale locale, PrismDisplayProperty... propertyIndices) {
-        List<DisplayProperty> properties = localizationDAO.getDisplayProperties(resource, locale, propertyIndices);
+    private HashMap<PrismDisplayProperty, String> filterProperties(List<DisplayProperty> properties) {
         HashMap<PrismDisplayProperty, String> propertiesMerged = Maps.newHashMap();
         for (DisplayProperty property : properties) {
             PrismDisplayProperty index = property.getPropertyIndex();

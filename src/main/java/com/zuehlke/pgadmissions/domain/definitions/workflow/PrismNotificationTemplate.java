@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import java.util.HashMap;
-
 import com.google.common.collect.Maps;
+
+import java.util.HashMap;
 
 public enum PrismNotificationTemplate {
 
@@ -122,18 +122,14 @@ public enum PrismNotificationTemplate {
         return name().toLowerCase() + "_content.ftl";
     }
 
-    public static HashMap<PrismNotificationTemplate, PrismReminderDefinition> getReminderdefinitions() {
-        return reminderDefinitions;
-    }
-
-    public static PrismNotificationTemplate getReminderTemplate(PrismNotificationTemplate template) {
-        PrismReminderDefinition definition = reminderDefinitions.get(template);
+    public PrismNotificationTemplate getReminderTemplate() {
+        PrismReminderDefinition definition = reminderDefinitions.get(this);
         return definition != null ? definition.getTemplate() : null;
     }
 
-    public static Integer getReminderInterval(PrismNotificationTemplate template) {
-        PrismReminderDefinition definition = reminderDefinitions.get(template);
-        return definition != null ? reminderDefinitions.get(template).getInterval() : null;
+    public Integer getReminderInterval() {
+        PrismReminderDefinition definition = reminderDefinitions.get(this);
+        return definition != null ? reminderDefinitions.get(this).getInterval() : null;
     }
 
     private static void buildReminderDefinition(PrismNotificationTemplate template, PrismNotificationTemplate reminder, int interval) {

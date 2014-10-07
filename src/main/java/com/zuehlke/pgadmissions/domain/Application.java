@@ -463,6 +463,11 @@ public class Application extends Resource {
         return this;
     }
 
+    public Application withCode(final String code) {
+        this.code = code;
+        return this;
+    }
+
     public Application withSystem(System system) {
         this.system = system;
         return this;
@@ -656,5 +661,5 @@ public class Application extends Resource {
                 .addExclusion("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED)
                 .addExclusion("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED);
     }
-    
+
 }

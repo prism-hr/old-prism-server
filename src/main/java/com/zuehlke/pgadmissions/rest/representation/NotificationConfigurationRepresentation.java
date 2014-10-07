@@ -1,10 +1,12 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-public class NotificationTemplateVersionRepresentation {
+public class NotificationConfigurationRepresentation {
 
     private String subject;
 
     private String content;
+
+    private Integer reminderInterval;
 
     public String getSubject() {
         return subject;
@@ -20,5 +22,13 @@ public class NotificationTemplateVersionRepresentation {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Integer getReminderInterval() {
+        return reminderInterval;
+    }
+
+    public void setReminderInterval(Integer reminderInterval) {
+        this.reminderInterval = reminderInterval;
     }
 }

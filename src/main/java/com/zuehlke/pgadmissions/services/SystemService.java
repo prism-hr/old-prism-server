@@ -28,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.DisplayCategory;
-import com.zuehlke.pgadmissions.domain.DisplayProperty;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
@@ -115,6 +114,9 @@ public class SystemService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private LocalizationService localizationService;
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -288,12 +290,9 @@ public class SystemService {
             processedCategories.put(prismCategory, persistentCategory);
         }
         for (PrismDisplayProperty prismProperty : PrismDisplayProperty.values()) {
-            DisplayProperty transientProperty = new DisplayProperty().withResource(system).withLocale(system.getLocale())
-                    .withDisplayCategory(processedCategories.get(prismProperty.getCategory())).withPropertyIndex(prismProperty)
-                    .withPropertyValue(prismProperty.getDefaultValue()).withPropertyDefault(true);
-            entityService.createOrUpdate(transientProperty);
+            localizationService.createOrUpdateDisplayProperty(system, processedCategories.get(prismProperty.getCategory()), prismProperty,
+                    prismProperty.getDefaultValue());
         }
-
     }
 
     private void initializeNotificationTemplates(System system) throws DeduplicationException {

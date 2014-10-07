@@ -9,10 +9,9 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-
-import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Entity
 @Table(name = "notification_template_version")
@@ -21,7 +20,7 @@ public class NotificationTemplateVersion {
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @ManyToOne
     @JoinColumn(name = "system_id")
     private System system;
@@ -85,9 +84,9 @@ public class NotificationTemplateVersion {
         this.system = null;
         this.institution = null;
         this.program = null;
-        IntrospectionUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
+        ReflectionUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
     }
-    
+
     public NotificationTemplate getNotificationTemplate() {
         return notificationTemplate;
     }
@@ -119,7 +118,7 @@ public class NotificationTemplateVersion {
     public void setCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
     }
-    
+
     public NotificationTemplateVersion withId(Integer id) {
         this.id = id;
         return this;

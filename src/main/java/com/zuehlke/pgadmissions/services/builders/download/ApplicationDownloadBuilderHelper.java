@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +24,6 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderColor;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
-import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Component
 public class ApplicationDownloadBuilderHelper {
@@ -64,8 +64,8 @@ public class ApplicationDownloadBuilderHelper {
 
     public void addContentRow(String title, String content, ApplicationDownloadBuilderFontSize fontSize, PdfPTable table) {
         String fontSizePostfix = WordUtils.capitalizeFully(fontSize.name());
-        table.addCell((PdfPCell) IntrospectionUtils.invokeMethod(this, "newTitleCell" + fontSizePostfix, title));
-        table.addCell((PdfPCell) IntrospectionUtils.invokeMethod(this, "newContentCell" + fontSizePostfix, content == null ? notProvided : content));
+        table.addCell((PdfPCell) ReflectionUtils.invokeMethod(this, "newTitleCell" + fontSizePostfix, title));
+        table.addCell((PdfPCell) ReflectionUtils.invokeMethod(this, "newContentCell" + fontSizePostfix, content == null ? notProvided : content));
     }
 
     public void closeSection(Document pdfDocument, PdfPTable body) throws DocumentException {

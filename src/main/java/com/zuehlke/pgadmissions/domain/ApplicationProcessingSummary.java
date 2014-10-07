@@ -11,10 +11,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Entity
 @Table(name = "APPLICATION_PROCESSING_SUMMARY", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "state_group_id" }),
@@ -139,7 +138,7 @@ public class ApplicationProcessingSummary implements IUniqueEntity {
         this.institution = null;
         this.program = null;
         this.project = null;
-        IntrospectionUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
+        ReflectionUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
     }
 
     public ApplicationProcessingSummary withResource(Resource resource) {

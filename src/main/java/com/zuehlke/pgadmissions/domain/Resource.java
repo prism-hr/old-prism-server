@@ -1,23 +1,23 @@
 package com.zuehlke.pgadmissions.domain;
 
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 public abstract class Resource implements IUniqueEntity {
 
     public abstract Integer getId();
 
     public abstract void setId(Integer id);
-    
+
     public abstract User getUser();
 
     public abstract void setUser(User user);
-    
+
     public abstract String getCode();
-    
+
     public abstract void setCode(String code);
 
     public abstract System getSystem();
@@ -37,9 +37,9 @@ public abstract class Resource implements IUniqueEntity {
     public abstract void setProject(Project project);
 
     public abstract Application getApplication();
-    
+
     public abstract String getReferrer();
-    
+
     public abstract void setReferrer(String referrer);
 
     public abstract State getState();
@@ -61,13 +61,13 @@ public abstract class Resource implements IUniqueEntity {
     public abstract DateTime getUpdatedTimestamp();
 
     public abstract void setUpdatedTimestamp(DateTime updatedTimestamp);
-    
+
     public abstract String getSequenceIdentifier();
-    
+
     public abstract void setSequenceIdentifier(String sequenceIdentifier);
-    
+
     public abstract void addComment(Comment comment);
-    
+
     public Resource getParentResource() {
         PrismScope resourceScope = PrismScope.getResourceScope(this.getClass());
         switch (resourceScope) {
@@ -103,8 +103,8 @@ public abstract class Resource implements IUniqueEntity {
         if (getResourceScope().equals(resourceScope)) {
             return this;
         } else {
-            return (Resource) IntrospectionUtils.getProperty(this, resourceScope.getLowerCaseName());
+            return (Resource) ReflectionUtils.getProperty(this, resourceScope.getLowerCaseName());
         }
     }
-    
+
 }

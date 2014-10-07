@@ -13,6 +13,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -38,7 +39,6 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.Programm
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.NotificationService;
-import com.zuehlke.pgadmissions.utils.IntrospectionUtils;
 
 @Component
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -99,7 +99,7 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
                 LOGGER.info("Skipping the import from file: " + fileLocation);
             } else {
                 LOGGER.info("Starting the import from file: " + fileLocation);
-                
+
                 Class<ImportedEntity> importedEntityClass = (Class<ImportedEntity>) importedEntityFeed.getImportedEntityType().getEntityClass();
 
                 Institution institution = importedEntityFeed.getInstitution();
@@ -148,7 +148,7 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
                 unmarshaller.setSchema(schema);
 
                 Object unmarshalled = unmarshaller.unmarshal(fileUrl);
-                return (List<Object>) IntrospectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbPropertyName());
+                return (List<Object>) ReflectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbPropertyName());
             }
 
             return null;

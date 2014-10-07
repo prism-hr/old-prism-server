@@ -16,6 +16,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
-import com.zuehlke.pgadmissions.domain.Scope;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateActionAssignment;
@@ -46,6 +46,7 @@ import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
 @Service
+@Scope("prototype")
 @Transactional
 public class WorkflowConfigurationHelper {
 
@@ -80,24 +81,21 @@ public class WorkflowConfigurationHelper {
     public void verifyWorkflowConfiguration() {
         verifyState(null);
 
-        List<State> workflowStates = stateService.getWorkflowStates();
+        List<State> workflowStates = stateService.getStates();
         assertEquals(workflowStates.size(), statesVisited.size());
 
         verifyPropagatedActions();
         verifyCreatorRoles();
         verifyFallbackActions();
-
-        cleanUp();
     }
 
     private void verifyState(State state) {
         if (state == null) {
             state = stateService.getById(PrismState.SYSTEM_RUNNING);
         }
-
-        logger.info("Verifying state: " + state.getId().toString());
+        
         statesVisited.add(state);
-
+        logger.info("Verifying state: " + state.getId().toString());
         assertEquals(state.getScope(), state.getStateGroup().getScope());
 
         verifyStateActions(state);
@@ -112,6 +110,8 @@ public class WorkflowConfigurationHelper {
     }
 
     private void verifyTransitionState(State state, State transitionState) {
+        statesVisited.add(transitionState);
+        
         int statePrecedence = state.getScope().getPrecedence();
         int transitionStatePrecedence = transitionState.getScope().getPrecedence();
 
@@ -171,9 +171,10 @@ public class WorkflowConfigurationHelper {
             verifyStateTransitions(stateAction);
         }
 
-        assertEquals(1, userDefaultActions.size());
+        boolean actionsEmpty = state.getStateActions().isEmpty();     
+        assertTrue(actionsEmpty || userDefaultActions.size() == 1);
         assertTrue(systemDefaultActions.size() <= 1);
-        assertTrue(viewEditActions.size() >= 1);
+        assertTrue(actionsEmpty || viewEditActions.size() >= 1);
 
         if (stateService.getStateDuration(systemService.getSystem(), state) != null) {
             assertFalse(escalationActions.isEmpty());
@@ -297,7 +298,7 @@ public class WorkflowConfigurationHelper {
         for (StateAction stateAction : state.getStateActions()) {
             for (StateActionNotification notification : stateAction.getStateActionNotifications()) {
                 NotificationTemplate template = notification.getNotificationTemplate();
-                Scope templateScope = template.getScope();
+                com.zuehlke.pgadmissions.domain.Scope templateScope = template.getScope();
                 logger.info("Verifying notification: " + template.getId().toString());
 
                 assertTrue(state.getScope() == templateScope || templateScope.getId() == PrismScope.SYSTEM
@@ -321,7 +322,7 @@ public class WorkflowConfigurationHelper {
 
     private void verifyPropagatedActions() {
         for (StateTransition stateTransition : propagatingStateTransitions) {
-            Scope propagatingScope = stateTransition.getStateAction().getState().getScope();
+            com.zuehlke.pgadmissions.domain.Scope propagatingScope = stateTransition.getStateAction().getState().getScope();
 
             Set<PrismScope> parentScopes = actualParentScopes.get(propagatingScope.getId());
             Set<PrismScope> childScopes = actualChildScopes.get(propagatingScope.getId());
@@ -330,7 +331,7 @@ public class WorkflowConfigurationHelper {
                 logger.info("Verifying propagated action: " + stateTransition.getStateAction().getState().getId().toString() + " "
                         + stateTransition.getStateAction().getAction().getId().toString() + " " + propagatedAction.getId().toString());
 
-                Scope actionScope = propagatedAction.getScope();
+                com.zuehlke.pgadmissions.domain.Scope actionScope = propagatedAction.getScope();
                 if (actionScope.getPrecedence() > propagatingScope.getPrecedence()) {
                     assertTrue(childScopes.contains(actionScope.getId()));
                 } else {
@@ -358,16 +359,6 @@ public class WorkflowConfigurationHelper {
     private <T> void assertCollectionEquals(Collection<T> expectedCollection, Collection<T> actualCollection) {
         assertEquals(expectedCollection.size(), actualCollection.size());
         assertTrue(actualCollection.containsAll(expectedCollection));
-    }
-
-    private void cleanUp() {
-        statesVisited.clear();
-        actualChildScopes.clear();
-        actualParentScopes.clear();
-        actualRolesCreated.clear();
-        actualCreatorRoles.clear();
-        propagatingStateTransitions.clear();
-        actualRoleExclusions.clear();
     }
 
 }

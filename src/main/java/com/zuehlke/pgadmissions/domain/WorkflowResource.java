@@ -1,31 +1,59 @@
 package com.zuehlke.pgadmissions.domain;
 
-import com.google.common.base.Objects;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public abstract class WorkflowResource implements IUniqueEntity {
 
-    public abstract Object getId();
+    public abstract System getSystem();
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getId());
+    public abstract Institution getInstitution();
+
+    public abstract Program getProgram();
+
+    public abstract void setSystem(System system);
+
+    public abstract void setInstitution(Institution institution);
+
+    public abstract void setProgram(Program program);
+
+    public Resource getResource() {
+        System system = getSystem();
+        Institution institution = getInstitution();
+        Program program = getProgram();
+        if (system != null) {
+            return system;
+        } else if (institution != null) {
+            return institution;
+        }
+        return program;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (object == null) {
-            return false;
+    public void setResource(Resource resource) {
+        setSystem(null);
+        setInstitution(null);
+        setProgram(null);
+
+        PrismScope resourceScope = resource.getResourceScope();
+
+        switch (resourceScope) {
+        case SYSTEM:
+            setSystem(resource.getSystem());
+            break;
+        case INSTITUTION:
+            setInstitution(resource.getInstitution());
+            break;
+        case PROGRAM:
+            setProgram(resource.getProgram());
+            break;
+        default:
+            throw new Error("No setter for scope " + resourceScope.getLowerCaseName());
         }
-        if (getClass() != object.getClass()) {
-            return false;
-        }
-        final WorkflowResource otherResource = (WorkflowResource) object;
-        return Objects.equal(getId(), otherResource.getId());
     }
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("id", getId());
+        Resource resource = getResource();
+        return new ResourceSignature().addProperty(resource.getResourceScope().getLowerCaseName(), resource);
     }
 
 }

@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 @Entity
 @Table(name = "STATE")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class State extends WorkflowResource {
+public class State extends WorkflowDefinition {
 
     @Id
     @Column(name = "id")

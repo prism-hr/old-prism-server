@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismConfiguration;
 @Table(name = "WORKFLOW_CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "configuration_parameter" }),
         @UniqueConstraint(columnNames = { "institution_id", "configuration_parameter" }),
         @UniqueConstraint(columnNames = { "program_id", "configuration_parameter" }) })
-public class WorkflowConfiguration extends WorkflowResourceConfiguration {
+public class WorkflowConfiguration extends WorkflowResource {
 
     @Id
     @GeneratedValue

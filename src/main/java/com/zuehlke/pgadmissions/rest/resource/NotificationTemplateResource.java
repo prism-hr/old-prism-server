@@ -1,5 +1,14 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
+import org.dozer.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
@@ -9,9 +18,6 @@ import com.zuehlke.pgadmissions.rest.dto.NotificationTemplateVersionDTO;
 import com.zuehlke.pgadmissions.rest.representation.NotificationTemplateVersionRepresentation;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.NotificationService;
-import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/{resourceScope:programs|institutions|systems}")
@@ -34,7 +40,7 @@ public class NotificationTemplateResource {
 
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         NotificationTemplate template = notificationService.getById(PrismNotificationTemplate.valueOf(notificationTemplateId));
-        return dozerBeanMapper.map(notificationService.getActiveVersion(resource, template), NotificationTemplateVersionRepresentation.class);
+        return dozerBeanMapper.map(notificationService.getConfiguration(resource, template), NotificationTemplateVersionRepresentation.class);
     }
 
     @RequestMapping(value = "/{resourceId}/notificationTemplates/{notificationTemplateId}", method = RequestMethod.PUT)

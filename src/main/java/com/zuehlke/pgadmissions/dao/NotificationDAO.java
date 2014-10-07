@@ -1,11 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
+import java.util.List;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -16,7 +12,18 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.StateAction;
+import com.zuehlke.pgadmissions.domain.StateActionNotification;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -24,20 +31,6 @@ public class NotificationDAO {
 
     @Autowired
     private SessionFactory sessionFactory;
-
-    public NotificationConfiguration getConfiguration(Resource resource, NotificationTemplate template) {
-        return (NotificationConfiguration) sessionFactory.getCurrentSession().createCriteria(NotificationConfiguration.class) //
-                .add(Restrictions.eq("notificationTemplate", template)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("system", resource.getSystem())) //
-                        .add(Restrictions.eq("institution", resource.getInstitution())) //
-                        .add(Restrictions.eq("program", resource.getProgram()))) //
-                .addOrder(Order.desc("program")) //
-                .addOrder(Order.desc("institution")) //
-                .addOrder(Order.desc("system")) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
 
     public List<NotificationTemplate> getWorkflowRequestTemplates() {
         return (List<NotificationTemplate>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
@@ -60,12 +53,18 @@ public class NotificationDAO {
     }
 
     public List<UserNotificationDefinitionDTO> getIndividualRequestNotifications(Resource resource, User invoker) {
-        return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("user.id"), "userId") //
-                        .add(Projections.groupProperty("role.id"), "roleId") //
-                        .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId")
-                        .add(Projections.groupProperty("stateAction.action.id"), "actionId")) //
+        return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession()
+                .createCriteria(Action.class)
+                //
+                .setProjection(
+                        Projections.projectionList()
+                                //
+                                .add(Projections.groupProperty("user.id"), "userId")
+                                //
+                                .add(Projections.groupProperty("role.id"), "roleId")
+                                //
+                                .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId")
+                                .add(Projections.groupProperty("stateAction.action.id"), "actionId")) //
                 .createAlias("stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
@@ -128,7 +127,7 @@ public class NotificationDAO {
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
                         .add(Projections.groupProperty("role.id"), "roleId") //
-                        .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId")
+                        .add(Projections.groupProperty("notificationTemplate.id"), "notificationTemplateId") //
                         .add(Projections.groupProperty("stateAction.action.id"), "actionId")) //
                 .createAlias("stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
@@ -179,8 +178,7 @@ public class NotificationDAO {
                         .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull(lastNotifiedDateReference))
-                        .add(Restrictions.lt(lastNotifiedDateReference, baseline))) //
+                        .add(Restrictions.isNull(lastNotifiedDateReference)).add(Restrictions.lt(lastNotifiedDateReference, baseline))) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
@@ -200,7 +198,7 @@ public class NotificationDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state", state)) //
-                .add(Restrictions.eq("stateAction.action", action))
+                .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.eq("notificationTemplate.notificationType", PrismNotificationType.SYNDICATED)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("actionCategory", PrismActionCategory.CREATE_RESOURCE)) //
@@ -215,8 +213,7 @@ public class NotificationDAO {
                         .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull(lastNotifiedDateReference))
-                        .add(Restrictions.lt(lastNotifiedDateReference, baseline))) //
+                        .add(Restrictions.isNull(lastNotifiedDateReference)).add(Restrictions.lt(lastNotifiedDateReference, baseline))) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }

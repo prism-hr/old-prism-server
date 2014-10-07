@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 @Entity
 @Table(name = "ACTION")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Action extends WorkflowResource {
+public class Action extends WorkflowDefinition {
 
     @Id
     @Column(name = "id", nullable = false)

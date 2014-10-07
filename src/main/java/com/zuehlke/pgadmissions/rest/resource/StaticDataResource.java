@@ -5,9 +5,6 @@ import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 import java.util.List;
 import java.util.Map;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.services.NotificationService;
 import org.apache.commons.lang.WordUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,12 +40,14 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateAction;
 import com.zuehlke.pgadmissions.domain.StateGroup;
 import com.zuehlke.pgadmissions.domain.Title;
-import com.zuehlke.pgadmissions.domain.WorkflowResource;
+import com.zuehlke.pgadmissions.domain.WorkflowDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.StateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ImportedEntityRepresentation;
@@ -60,6 +59,7 @@ import com.zuehlke.pgadmissions.rest.representation.workflow.StateActionRepresen
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
+import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.utils.TimeZoneList;
 
 @RestController
@@ -219,9 +219,9 @@ public class StaticDataResource {
         }
     }
 
-    private static class ToIdFunction implements Function<WorkflowResource, Object> {
+    private static class ToIdFunction implements Function<WorkflowDefinition, Object> {
         @Override
-        public Object apply(WorkflowResource input) {
+        public Object apply(WorkflowDefinition input) {
             return input.getId();
         }
     }

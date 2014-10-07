@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.Institution;
 public class ApplicationCopyHelper {
 
     @Transactional
-    public void copyApplicationFormData(Application to, Application from) {
+    public void copyApplicationData(Application to, Application from) {
         if (from.getPersonalDetail() != null) {
             ApplicationPersonalDetail personalDetail = new ApplicationPersonalDetail();
             to.setPersonalDetail(personalDetail);

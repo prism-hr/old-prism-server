@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 @Entity
 @Table(name = "ROLE")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Role extends WorkflowResource implements GrantedAuthority {
+public class Role extends WorkflowDefinition implements GrantedAuthority {
 
     private static final long serialVersionUID = 4265990408553249748L;
 

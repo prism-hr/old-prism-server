@@ -6,6 +6,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -24,6 +26,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 
@@ -68,6 +71,10 @@ public class Program extends ParentResource {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
     @Column(name = "title", nullable = false)
     private String title;
+    
+    @Column(name = "locale", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismLocale locale;
 
     @Column(name = "require_project_definition", nullable = false)
     private Boolean requireProjectDefinition;
@@ -247,6 +254,15 @@ public class Program extends ParentResource {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    @Override
+    public final PrismLocale getLocale() {
+        return locale;
+    }
+
+    public final void setLocale(PrismLocale locale) {
+        this.locale = locale;
     }
 
     public Boolean getRequireProjectDefinition() {
@@ -450,6 +466,11 @@ public class Program extends ParentResource {
 
     public Program withTitle(String title) {
         setTitle(title);
+        return this;
+    }
+    
+    public Program withLocale(PrismLocale locale) {
+        this.locale = locale;
         return this;
     }
 

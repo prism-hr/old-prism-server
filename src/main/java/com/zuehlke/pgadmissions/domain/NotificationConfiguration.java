@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -13,7 +14,7 @@ import javax.persistence.UniqueConstraint;
 @Table(name = "NOTIFICATION_CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "notification_template_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "notification_template_id" }),
         @UniqueConstraint(columnNames = { "program_id", "notification_template_id" }) })
-public class NotificationConfiguration extends WorkflowResourceConfiguration {
+public class NotificationConfiguration extends WorkflowResource {
 
     @Id
     @GeneratedValue
@@ -32,12 +33,15 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
     private Program program;
 
     @ManyToOne
-    @JoinColumn(name = "notification_template_id")
+    @JoinColumn(name = "notification_template_id", nullable = false)
     private NotificationTemplate notificationTemplate;
-    
-    @ManyToOne
-    @JoinColumn(name = "notification_template_version_id")
-    private NotificationTemplateVersion notificationTemplateVersion;
+
+    @Column(name = "subject", nullable = false)
+    private String subject;
+
+    @Lob
+    @Column(name = "content", nullable = false)
+    private String content;
 
     @Column(name = "day_reminder_interval")
     private Integer reminderInterval;
@@ -49,51 +53,7 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
     public void setId(Integer id) {
         this.id = id;
     }
-    
-    public NotificationTemplate getNotificationTemplate() {
-        return notificationTemplate;
-    }
 
-    public void setNotificationTemplate(NotificationTemplate notificationTemplate) {
-        this.notificationTemplate = notificationTemplate;
-    }
-
-    public NotificationTemplateVersion getNotificationTemplateVersion() {
-        return notificationTemplateVersion;
-    }
-
-    public void setNotificationTemplateVersion(NotificationTemplateVersion notificationTemplateVersion) {
-        this.notificationTemplateVersion = notificationTemplateVersion;
-    }
-
-    public Integer getReminderInterval() {
-        return reminderInterval;
-    }
-
-    public void setReminderInterval(Integer reminderInterval) {
-        this.reminderInterval = reminderInterval;
-    }
-
-    public NotificationConfiguration withSystem(System system) {
-        this.system = system;
-        return this;
-    }
-    
-    public NotificationConfiguration withNotificationTemplate(NotificationTemplate notificationTemplate) {
-        this.notificationTemplate = notificationTemplate;
-        return this;
-    }
-    
-    public NotificationConfiguration withNotificationTemplateVersion(NotificationTemplateVersion notificationTemplateVersion) {
-        this.notificationTemplateVersion = notificationTemplateVersion;
-        return this;
-    }
-    
-    public NotificationConfiguration withReminderInterval(Integer reminderInterval) {
-        this.reminderInterval = reminderInterval;
-        return this;
-    }
-    
     @Override
     public System getSystem() {
         return system;
@@ -123,7 +83,64 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
     public void setProgram(Program program) {
         this.program = program;
     }
-    
+
+    public NotificationTemplate getNotificationTemplate() {
+        return notificationTemplate;
+    }
+
+    public void setNotificationTemplate(NotificationTemplate notificationTemplate) {
+        this.notificationTemplate = notificationTemplate;
+    }
+
+    public final String getSubject() {
+        return subject;
+    }
+
+    public final void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public final String getContent() {
+        return content;
+    }
+
+    public final void setContent(String content) {
+        this.content = content;
+    }
+
+    public Integer getReminderInterval() {
+        return reminderInterval;
+    }
+
+    public void setReminderInterval(Integer reminderInterval) {
+        this.reminderInterval = reminderInterval;
+    }
+
+    public NotificationConfiguration withResource(Resource resource) {
+        setResource(resource);
+        return this;
+    }
+
+    public NotificationConfiguration withNotificationTemplate(NotificationTemplate notificationTemplate) {
+        this.notificationTemplate = notificationTemplate;
+        return this;
+    }
+
+    public NotificationConfiguration withSubject(String subject) {
+        this.subject = subject;
+        return this;
+    }
+
+    public NotificationConfiguration withContent(String content) {
+        this.content = content;
+        return this;
+    }
+
+    public NotificationConfiguration withReminderInterval(Integer reminderInterval) {
+        this.reminderInterval = reminderInterval;
+        return this;
+    }
+
     @Override
     public ResourceSignature getResourceSignature() {
         return super.getResourceSignature().addProperty("notificationTemplate", notificationTemplate);

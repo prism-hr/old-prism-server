@@ -28,6 +28,8 @@ public class ApplicationDAO {
 
     public Application getPreviousSubmittedApplication(Application application) {
         return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class).add(Restrictions.eq("user", application.getUser())) //
+                .createAlias("program", "program", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("program.locale", application.getLocale())) //
                 .add(Restrictions.isNotNull("submittedTimestamp")) //
                 .add(Restrictions.ne("id", application.getId())) //
                 .addOrder(Order.desc("submittedTimestamp")) //
@@ -38,6 +40,8 @@ public class ApplicationDAO {
 
     public Application getPreviousUnsubmittedApplication(Application application) {
         return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class).add(Restrictions.eq("user", application.getUser())) //
+                .createAlias("program", "program", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("program.locale", application.getLocale())) //
                 .add(Restrictions.isNull("submittedTimestamp")) //
                 .add(Restrictions.ne("id", application.getId())) //
                 .addOrder(Order.desc("createdTimestamp")) //
@@ -79,7 +83,7 @@ public class ApplicationDAO {
                 .addOrder(Order.asc("comment.id")) //
                 .list();
     }
-    
+
     public List<ApplicationReferee> getApplicationRefereesNotResponded(Application application) {
         return (List<ApplicationReferee>) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
                 .add(Restrictions.eq("application", application)) //
@@ -95,14 +99,14 @@ public class ApplicationDAO {
                 .addOrder(Order.desc("startDate")) //
                 .list();
     }
-    
+
     public ApplicationReferee getRefereeByUser(Application application, User user) {
         return (ApplicationReferee) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
                 .add(Restrictions.eq("application", application)) //
                 .add(Restrictions.eq("user", user)) //
                 .uniqueResult();
     }
-    
+
     public List<Integer> getApplicationsForExport() {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .setProjection(Projections.groupProperty("id")) //

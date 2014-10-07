@@ -103,7 +103,7 @@ public class ApplicationService {
 
         Application previousApplication = getPreviousApplication(application);
         if (previousApplication != null) {
-            applicationCopyHelper.copyApplicationFormData(application, previousApplication);
+            applicationCopyHelper.copyApplicationData(application, previousApplication);
         }
 
         AdvertClosingDate closingDate = advert.getClosingDate();
@@ -278,14 +278,14 @@ public class ApplicationService {
         Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withDelegateUser(delegateUser).withAction(action)
                 .withTransitionState(transitionState).withCreatedTimestamp(new DateTime())
                 .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse())).withQualified(commentDTO.getQualified())
-                .withCompetentInWorkLanguage(commentDTO.getCompetentInWorkLanguage())
-                .withInterviewDateTime(commentDTO.getInterviewDateTime()).withInterviewTimeZone(commentDTO.getInterviewTimeZone())
-                .withInterviewDuration(commentDTO.getInterviewDuration()).withInterviewerInstructions(commentDTO.getInterviewerInstructions())
-                .withIntervieweeInstructions(commentDTO.getIntervieweeInstructions()).withInterviewLocation(commentDTO.getInterviewLocation())
-                .withSuitableForInstitution(commentDTO.getSuitableForInstitution()).withSuitableForOpportunity(commentDTO.getSuitableForOpportunity())
-                .withDesireToInterview(commentDTO.getDesireToInterview()).withDesireToRecruit(commentDTO.getDesireToRecruit())
-                .withPositionTitle(commentDTO.getPositionTitle()).withPositionDescription(commentDTO.getPositionDescription())
-                .withPositionProvisionalStartDate(positionProvisionalStartDate).withAppointmentConditions(commentDTO.getAppointmentConditions());
+                .withCompetentInWorkLanguage(commentDTO.getCompetentInWorkLanguage()).withInterviewDateTime(commentDTO.getInterviewDateTime())
+                .withInterviewTimeZone(commentDTO.getInterviewTimeZone()).withInterviewDuration(commentDTO.getInterviewDuration())
+                .withInterviewerInstructions(commentDTO.getInterviewerInstructions()).withIntervieweeInstructions(commentDTO.getIntervieweeInstructions())
+                .withInterviewLocation(commentDTO.getInterviewLocation()).withSuitableForInstitution(commentDTO.getSuitableForInstitution())
+                .withSuitableForOpportunity(commentDTO.getSuitableForOpportunity()).withDesireToInterview(commentDTO.getDesireToInterview())
+                .withDesireToRecruit(commentDTO.getDesireToRecruit()).withPositionTitle(commentDTO.getPositionTitle())
+                .withPositionDescription(commentDTO.getPositionDescription()).withPositionProvisionalStartDate(positionProvisionalStartDate)
+                .withAppointmentConditions(commentDTO.getAppointmentConditions());
 
         if (commentDTO.getResidenceState() != null) {
             ResidenceState residenceState = entityService.getById(ResidenceState.class, commentDTO.getResidenceState());

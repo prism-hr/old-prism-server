@@ -1,0 +1,2 @@
+ALTER TABLE INTERVIEW ADD COLUMN further_interviewer_details VARCHAR(2000)
+;

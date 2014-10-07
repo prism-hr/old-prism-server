@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -105,7 +106,7 @@ public class SystemInitialisationHelper {
     private UserHelper userHelper;
 
     @Autowired
-    private WorkflowConfigurationHelper workflowConfigurationHelper;
+    private ApplicationContext applicationContext;
 
     public void verifyScopeCreation() {
         for (PrismScope scopeId : scopeService.getScopesDescending()) {
@@ -211,7 +212,7 @@ public class SystemInitialisationHelper {
             NotificationConfiguration configuration = notificationService.getConfiguration(system, template);
             assertEquals(configuration.getNotificationTemplate(), template);
             assertEquals(PrismNotificationTemplate.getReminderInterval(template.getId()), configuration.getReminderInterval());
-            
+
             assertEquals(getFileContent(defaultEmailSubjectDirectory + template.getId().getInitialTemplateSubject()), configuration.getSubject());
             assertEquals(getFileContent(defaultEmailContentDirectory + template.getId().getInitialTemplateContent()), configuration.getContent());
         }
@@ -257,7 +258,7 @@ public class SystemInitialisationHelper {
         verifyNotificationTemplateCreation();
         verifyStateDurationCreation();
 
-        workflowConfigurationHelper.verifyWorkflowConfiguration();
+        applicationContext.getBean(WorkflowConfigurationHelper.class).verifyWorkflowConfiguration();
     }
 
     public void verifySystemUserRegistration() throws Exception {

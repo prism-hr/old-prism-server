@@ -209,7 +209,7 @@ public class AdvertService {
         Advert peristentAdvert = getById(transientAdvert.getId());
         LocalDate baseline = new LocalDate();
 
-        if (peristentAdvert.hasCovertedFee()) {
+        if (peristentAdvert.hasConvertedFee()) {
             updateConvertedMonetaryValues(peristentAdvert.getFee(), baseline);
         }
 

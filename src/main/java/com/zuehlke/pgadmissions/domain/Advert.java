@@ -1,58 +1,25 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
-import java.util.Set;
-
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Embedded;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
-import org.apache.solr.analysis.LowerCaseFilterFactory;
-import org.apache.solr.analysis.SnowballPorterFilterFactory;
-import org.apache.solr.analysis.StandardTokenizerFactory;
-import org.apache.solr.analysis.StopFilterFactory;
-import org.hibernate.annotations.Type;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Analyzer;
-import org.hibernate.search.annotations.AnalyzerDef;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Parameter;
-import org.hibernate.search.annotations.Store;
-import org.hibernate.search.annotations.TokenFilterDef;
-import org.hibernate.search.annotations.TokenizerDef;
-import org.joda.time.LocalDate;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import org.apache.solr.analysis.*;
+import org.hibernate.annotations.Type;
+import org.hibernate.search.annotations.*;
+import org.hibernate.search.annotations.Parameter;
+import org.joda.time.LocalDate;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Set;
 
 @AnalyzerDef(name = "advertAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
         @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
-        @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class) })
+        @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class)})
 @Entity
 @Table(name = "ADVERT")
 @Indexed
@@ -88,7 +55,7 @@ public class Advert {
     private Integer studyDurationMaximum;
 
     @Embedded
-    @AttributeOverrides({ @AttributeOverride(name = "interval", column = @Column(name = "fee_interval")),
+    @AttributeOverrides({@AttributeOverride(name = "interval", column = @Column(name = "fee_interval")),
             @AttributeOverride(name = "currencySpecified", column = @Column(name = "fee_currency_specified")),
             @AttributeOverride(name = "currencyAtLocale", column = @Column(name = "fee_currency_at_locale")),
             @AttributeOverride(name = "monthMinimumSpecified", column = @Column(name = "month_fee_minimum_specified")),
@@ -99,11 +66,11 @@ public class Advert {
             @AttributeOverride(name = "monthMaximumAtLocale", column = @Column(name = "month_fee_maximum_at_locale")),
             @AttributeOverride(name = "yearMinimumAtLocale", column = @Column(name = "year_fee_minimum_at_locale")),
             @AttributeOverride(name = "yearMaximumAtLocale", column = @Column(name = "year_fee_maximum_at_locale")),
-            @AttributeOverride(name = "converted", column = @Column(name = "fee_converted")) })
+            @AttributeOverride(name = "converted", column = @Column(name = "fee_converted"))})
     private FinancialDetails fee;
 
     @Embedded
-    @AttributeOverrides({ @AttributeOverride(name = "interval", column = @Column(name = "pay_interval")),
+    @AttributeOverrides({@AttributeOverride(name = "interval", column = @Column(name = "pay_interval")),
             @AttributeOverride(name = "currencySpecified", column = @Column(name = "pay_currency_specified")),
             @AttributeOverride(name = "currencyAtLocale", column = @Column(name = "pay_currency_at_locale")),
             @AttributeOverride(name = "monthMinimumSpecified", column = @Column(name = "month_pay_minimum_specified")),
@@ -114,7 +81,7 @@ public class Advert {
             @AttributeOverride(name = "monthMaximumAtLocale", column = @Column(name = "month_pay_maximum_at_locale")),
             @AttributeOverride(name = "yearMinimumAtLocale", column = @Column(name = "year_pay_minimum_at_locale")),
             @AttributeOverride(name = "yearMaximumAtLocale", column = @Column(name = "year_pay_maximum_at_locale")),
-            @AttributeOverride(name = "converted", column = @Column(name = "pay_converted")) })
+            @AttributeOverride(name = "converted", column = @Column(name = "pay_converted"))})
     private FinancialDetails pay;
 
     @OneToOne
@@ -141,8 +108,8 @@ public class Advert {
     private Set<PrismAdvertFunction> functions = Sets.newHashSet();
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "ADVERT_TARGET_INSTITUTION", joinColumns = { @JoinColumn(name = "advert_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "institution_id", nullable = false) }, //
-            uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "advert_id" }) })
+    @JoinTable(name = "ADVERT_TARGET_INSTITUTION", joinColumns = {@JoinColumn(name = "advert_id", nullable = false)}, inverseJoinColumns = {@JoinColumn(name = "institution_id", nullable = false)}, //
+            uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_id", "advert_id"})})
     private Set<Institution> targetInstitutions = Sets.newHashSet();
 
     @ManyToMany(cascade = CascadeType.ALL, targetEntity = AdvertTargetProgramType.class)
@@ -324,7 +291,7 @@ public class Advert {
         return isProjectAdvert() ? project.getInstitution() : program.getInstitution();
     }
 
-    public boolean hasCovertedFee() {
+    public boolean hasConvertedFee() {
         return fee != null && !fee.getCurrencySpecified().equals(fee.getCurrencyAtLocale());
     }
 
@@ -333,7 +300,7 @@ public class Advert {
     }
 
     @Entity
-    @Table(name = "ADVERT_DOMAIN", uniqueConstraints = { @UniqueConstraint(columnNames = { "domain", "advert_id" }) })
+    @Table(name = "ADVERT_DOMAIN", uniqueConstraints = {@UniqueConstraint(columnNames = {"domain", "advert_id"})})
     private static class AdvertDomain {
 
         @EmbeddedId
@@ -358,7 +325,7 @@ public class Advert {
             @Column(name = "domain", nullable = false)
             @Enumerated(EnumType.STRING)
             private PrismAdvertDomain domain;
-            
+
             @Override
             protected Integer getAdvertId() {
                 return advertId;
@@ -366,7 +333,7 @@ public class Advert {
 
             @Override
             @SuppressWarnings("unchecked")
-            protected <T extends Enum<T>> T getAdvertTag() {
+            protected <T extends Enum> T getAdvertTag() {
                 return (T) domain;
             }
 
@@ -375,7 +342,7 @@ public class Advert {
     }
 
     @Entity
-    @Table(name = "ADVERT_INDUSTRY", uniqueConstraints = { @UniqueConstraint(columnNames = { "industry", "advert_id" }) })
+    @Table(name = "ADVERT_INDUSTRY", uniqueConstraints = {@UniqueConstraint(columnNames = {"industry", "advert_id"})})
     private static class AdvertIndustry {
 
         @EmbeddedId
@@ -400,7 +367,7 @@ public class Advert {
             @Column(name = "industry", nullable = false)
             @Enumerated(EnumType.STRING)
             private PrismAdvertIndustry industry;
-            
+
             @Override
             protected Integer getAdvertId() {
                 return advertId;
@@ -408,7 +375,7 @@ public class Advert {
 
             @Override
             @SuppressWarnings("unchecked")
-            protected <T extends Enum<T>> T getAdvertTag() {
+            protected <T extends Enum> T getAdvertTag() {
                 return (T) industry;
             }
 
@@ -417,7 +384,7 @@ public class Advert {
     }
 
     @Entity
-    @Table(name = "ADVERT_FUNCTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "function", "advert_id" }) })
+    @Table(name = "ADVERT_FUNCTION", uniqueConstraints = {@UniqueConstraint(columnNames = {"function", "advert_id"})})
     private static class AdvertFunction {
 
         @EmbeddedId
@@ -442,7 +409,7 @@ public class Advert {
             @Column(name = "function", nullable = false)
             @Enumerated(EnumType.STRING)
             private PrismAdvertFunction function;
-            
+
             @Override
             protected Integer getAdvertId() {
                 return advertId;
@@ -450,7 +417,7 @@ public class Advert {
 
             @Override
             @SuppressWarnings("unchecked")
-            protected <T extends Enum<T>> T getAdvertTag() {
+            protected <T extends Enum> T getAdvertTag() {
                 return (T) function;
             }
 
@@ -459,7 +426,7 @@ public class Advert {
     }
 
     @Entity
-    @Table(name = "ADVERT_TARGET_PROGRAM_TYPE", uniqueConstraints = { @UniqueConstraint(columnNames = { "program_type", "advert_id" }) })
+    @Table(name = "ADVERT_TARGET_PROGRAM_TYPE", uniqueConstraints = {@UniqueConstraint(columnNames = {"program_type", "advert_id"})})
     private static class AdvertTargetProgramType {
 
         @EmbeddedId
@@ -492,21 +459,21 @@ public class Advert {
 
             @Override
             @SuppressWarnings("unchecked")
-            protected <T extends Enum<T>> T getAdvertTag() {
+            protected <T extends Enum> T getAdvertTag() {
                 return (T) programType;
             }
 
         }
 
     }
-    
+
     private static abstract class AdvertTagId {
-        
+
         protected abstract Integer getAdvertId();
-        
-        protected abstract <T extends Enum<T>> T getAdvertTag();
-        
-        @Override 
+
+        protected abstract <T extends Enum> T getAdvertTag();
+
+        @Override
         public int hashCode() {
             return Objects.hashCode(getAdvertId(), getAdvertTag());
         }
@@ -520,7 +487,7 @@ public class Advert {
                 return false;
             }
             final AdvertTagId other = (AdvertTagId) object;
-            return getAdvertId() == other.getAdvertId() && getAdvertTag() == other.getAdvertTag(); 
+            return Objects.equal(getAdvertId(), other.getAdvertId()) && Objects.equal(getAdvertTag(), other.getAdvertTag());
         }
 
     }

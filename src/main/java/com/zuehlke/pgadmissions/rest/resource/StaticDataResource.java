@@ -7,6 +7,8 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.*;
 import com.zuehlke.pgadmissions.domain.definitions.*;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplateProperty;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.StateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
@@ -114,13 +116,21 @@ public class StaticDataResource {
         }
         staticData.put("notificationTemplatesPerScope", templatesMap);
 
-        List<Map<String, String>> templateDefinitions = Lists.newArrayListWithCapacity(PrismNotificationTemplate.values().length);
+        List<Map<String, Object>> templateDefinitions = Lists.newArrayListWithCapacity(PrismNotificationTemplate.values().length);
         for (PrismNotificationTemplate template : PrismNotificationTemplate.values()) {
-            Map<String, String> definition = Maps.newHashMap();
+            Map<String, Object> definition = Maps.newHashMap();
             definition.put("id", template.name());
             if (template.getReminderTemplate() != null) {
                 definition.put("reminderTemplate", template.getReminderTemplate().name());
             }
+            List<PrismNotificationTemplatePropertyCategory> categories = Lists.asList(PrismNotificationTemplatePropertyCategory.GLOBAL, template.getPropertyCategories());
+            List<PrismNotificationTemplateProperty> properties = Lists.newLinkedList();
+            for (PrismNotificationTemplateProperty property : PrismNotificationTemplateProperty.values()) {
+                if(categories.contains(property.getCategory())){
+                    properties.add(property);
+                }
+            }
+            definition.put("properties", properties);
             templateDefinitions.add(definition);
         }
         staticData.put("notificationTemplates", templateDefinitions);

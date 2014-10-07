@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import com.google.common.base.Joiner;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -10,16 +11,24 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
+import java.util.Arrays;
+
 @Service
 public class NotificationTemplatePropertyService {
 
     @Value("${application.host}")
     private String host;
-    
+
     public String get(NotificationTemplateModelDTO modelDTO, String[] properties) {
         Object tempObject = modelDTO;
+        int i = 0;
         for (String property : properties) {
+            if(tempObject == null){
+                String[] subArray = Arrays.copyOf(properties, i);
+                throw new NullPointerException("Value of given property (of NotificationTemplateModelDTO) is null: " + Joiner.on(".").join(subArray));
+            }
             tempObject = ReflectionUtils.getProperty(tempObject, property);
+            i++;
         }
         return (String) tempObject;
     }

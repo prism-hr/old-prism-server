@@ -171,7 +171,7 @@ public class Project extends ParentResource {
     public void setTitle(String title) {
         this.title = title;
     }
-    
+
     @Override
     public PrismLocale getLocale() {
         return program.getLocale();
@@ -379,6 +379,16 @@ public class Project extends ParentResource {
     @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
+    }
+
+    public Project withTitle(final String title) {
+        this.title = title;
+        return this;
+    }
+
+    public Project withCode(final String code) {
+        this.code = code;
+        return this;
     }
 
     @Override

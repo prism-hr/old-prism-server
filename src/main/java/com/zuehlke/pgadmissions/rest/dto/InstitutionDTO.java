@@ -15,8 +15,8 @@ public class InstitutionDTO {
 
     @NotEmpty
     private String title;
-    
-    @NotEmpty
+
+    @NotNull
     private PrismLocale locale;
 
     @NotNull
@@ -30,20 +30,20 @@ public class InstitutionDTO {
 
     @NotNull
     private String summary;
-    
+
     private String description;
-    
+
     @NotEmpty
     private String homepage;
 
     private Integer logoDocumentId;
-    
+
     private String logoUri;
 
     private String googleIdentifier;
-    
+
     private String linkedinIdentifier;
-    
+
     @NotNull
     private InstitutionAddressDTO address;
 

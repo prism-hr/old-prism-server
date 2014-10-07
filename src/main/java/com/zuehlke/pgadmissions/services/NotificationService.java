@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.NotificationDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -35,7 +34,12 @@ import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
 import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
 import com.zuehlke.pgadmissions.mail.MailSender;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -262,29 +266,11 @@ public class NotificationService {
         NotificationConfiguration configuration = getConfiguration(modelDTO.getResource(), template);
         MailMessageDTO message = new MailMessageDTO();
 
-        message.setTo(modelDTO.getUser());
         message.setConfiguration(configuration);
-        message.setModel(createNotificationModel(template, modelDTO));
+        message.setModelDTO(modelDTO);
         message.setAttachments(Lists.<AttachmentInputSource>newArrayList());
 
         mailSender.sendEmail(message);
-    }
-
-    private Map<PrismNotificationTemplateProperty, Object> createNotificationModel(NotificationTemplate notificationTemplate, NotificationTemplateModelDTO modelDTO) {
-        Map<PrismNotificationTemplateProperty, Object> model = Maps.newHashMap();
-        List<PrismNotificationTemplatePropertyCategory> categories = Lists.asList(PrismNotificationTemplatePropertyCategory.GLOBAL, notificationTemplate.getId().getPropertyCategories());
-        for (PrismNotificationTemplatePropertyCategory propertyCategory : categories) {
-            for (PrismNotificationTemplateProperty property : propertyCategory.getProperties()) {
-                List<Object> arguments = Lists.newLinkedList();
-                arguments.add(modelDTO);
-                if (property.getMethodArguments().length > 0) {
-                    arguments.add(property.getMethodArguments());
-                }
-                Object value = ReflectionUtils.invokeMethod(notificationTemplatePropertyService, property.getGetterMethod(), arguments.toArray());
-                model.put(property, value);
-            }
-        }
-        return model;
     }
 
     public List<PrismNotificationTemplate> getEditableTemplates(PrismScope scope) {

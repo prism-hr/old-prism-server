@@ -21,8 +21,8 @@ public class ProgramDTO {
     @NotEmpty
     @Size(max = 255)
     private String title;
-    
-    @NotEmpty
+
+    @NotNull
     private PrismLocale locale;
 
     @Size(min = 1)

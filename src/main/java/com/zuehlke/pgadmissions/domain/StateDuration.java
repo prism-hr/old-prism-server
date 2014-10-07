@@ -12,7 +12,7 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(name = "state_duration", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "state_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "state_id" }), @UniqueConstraint(columnNames = { "program_id", "state_id" }) })
-public class StateDuration extends WorkflowResourceConfiguration {
+public class StateDuration extends WorkflowResource {
 
     @Id
     @GeneratedValue
@@ -44,6 +44,36 @@ public class StateDuration extends WorkflowResourceConfiguration {
     public void setId(Integer id) {
         this.id = id;
     }
+    
+    @Override
+    public System getSystem() {
+        return system;
+    }
+
+    @Override
+    public void setSystem(System system) {
+        this.system = system;
+    }
+
+    @Override
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    @Override
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
+
+    @Override
+    public Program getProgram() {
+        return program;
+    }
+
+    @Override
+    public void setProgram(Program program) {
+        this.program = program;
+    }
 
     public State getState() {
         return state;
@@ -74,36 +104,6 @@ public class StateDuration extends WorkflowResourceConfiguration {
     public StateDuration withDuration(Integer duration) {
         this.duration = duration;
         return this;
-    }
-    
-    @Override
-    public System getSystem() {
-        return system;
-    }
-
-    @Override
-    public void setSystem(System system) {
-        this.system = system;
-    }
-
-    @Override
-    public Institution getInstitution() {
-        return institution;
-    }
-
-    @Override
-    public void setInstitution(Institution institution) {
-        this.institution = institution;
-    }
-
-    @Override
-    public Program getProgram() {
-        return program;
-    }
-
-    @Override
-    public void setProgram(Program program) {
-        this.program = program;
     }
     
     @Override

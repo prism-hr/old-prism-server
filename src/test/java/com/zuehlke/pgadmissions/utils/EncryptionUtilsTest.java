@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.utils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import junit.framework.Assert;
 
 import org.junit.Test;
 
@@ -28,6 +27,6 @@ public class EncryptionUtilsTest {
 	public void shouldGenerateNewUserPassword() {
 		EncryptionUtils encryptionUtils = new EncryptionUtils();
 		String genPassword = encryptionUtils.generateUserPassword();
-		Assert.assertEquals(8, genPassword.length());
+		assertEquals(8, genPassword.length());
 	}
 }

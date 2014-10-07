@@ -7,6 +7,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
@@ -20,6 +21,9 @@ public class ProgramDTO {
     @NotEmpty
     @Size(max = 255)
     private String title;
+    
+    @NotEmpty
+    private PrismLocale locale;
 
     @Size(min = 1)
     private PrismStudyOption[] studyOptions;
@@ -62,6 +66,14 @@ public class ProgramDTO {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public final PrismLocale getLocale() {
+        return locale;
+    }
+
+    public final void setLocale(PrismLocale locale) {
+        this.locale = locale;
     }
 
     public PrismStudyOption[] getStudyOptions() {

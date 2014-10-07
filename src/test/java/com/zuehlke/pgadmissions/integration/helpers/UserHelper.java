@@ -59,5 +59,5 @@ public class UserHelper {
         userService.activateUser(user.getId());
         assertTrue(user.isEnabled());
     }
-
+    
 }

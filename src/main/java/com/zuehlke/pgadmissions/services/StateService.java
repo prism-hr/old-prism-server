@@ -101,10 +101,6 @@ public class StateService {
         return entityService.list(StateTransitionEvaluation.class);
     }
 
-    public List<State> getWorkflowStates() {
-        return stateDAO.getWorkflowStates();
-    }
-
     public StateDuration getStateDuration(Resource resource) {
         return stateDAO.getStateDuration(resource, resource.getState());
     }

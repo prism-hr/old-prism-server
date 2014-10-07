@@ -287,9 +287,9 @@ public class ImportedEntityService {
 
         ProgramType programType = getImportedEntityByCode(ProgramType.class, institution, programTypeId.name());
         Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution)
-                .withImportedCode(programDefinition.getCode()).withTitle(transientTitle).withRequireProjectDefinition(transientRequireProjectDefinition)
-                .withImported(true).withAdvert(transientAdvert).withProgramType(programType).withUser(proxyCreator).withCreatedTimestamp(baseline)
-                .withUpdatedTimestamp(baseline);
+                .withImportedCode(programDefinition.getCode()).withTitle(transientTitle).withLocale(institution.getLocale())
+                .withRequireProjectDefinition(transientRequireProjectDefinition).withImported(true).withAdvert(transientAdvert).withProgramType(programType)
+                .withUser(proxyCreator).withCreatedTimestamp(baseline).withUpdatedTimestamp(baseline);
 
         Program persistentProgram = entityService.getDuplicateEntity(transientProgram);
 

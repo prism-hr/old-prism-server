@@ -5,30 +5,28 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-
 @Entity
 @Table(name = "COMMENT_CUSTOM_QUESTION_VERSION")
-public class CommentCustomQuestionVersion {
+public class CommentCustomQuestionVersion implements IUniqueEntity {
 
     @Id
     @GeneratedValue
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "comment_custom_question_id", nullable = false)
+    @JoinColumn(name = "comment_custom_question_id", insertable = false, updatable = false)
     private CommentCustomQuestion commentCustomQuestion;
+    
+    @Column(name = "name", insertable = false, updatable = false)
+    private String name;
 
+    @Lob
     @Column(name = "content", nullable = false)
     private String content;
-    
-    @Column(name = "created_timestamp", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime createdTimestamp;
 
     public Integer getId() {
         return id;
@@ -46,6 +44,14 @@ public class CommentCustomQuestionVersion {
         this.commentCustomQuestion = commentCustomQuestion;
     }
 
+    public final String getName() {
+        return name;
+    }
+
+    public final void setName(String name) {
+        this.name = name;
+    }
+
     public String getContent() {
         return content;
     }
@@ -54,22 +60,24 @@ public class CommentCustomQuestionVersion {
         this.content = content;
     }
     
-    public DateTime getCreatedTimestamp() {
-        return createdTimestamp;
-    }
-
-    public void setCreatedTimestamp(DateTime createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
-    }
-    
     public CommentCustomQuestionVersion withCommentCustomQuestion(CommentCustomQuestion commentCustomQuestion) {
         this.commentCustomQuestion = commentCustomQuestion;
+        return this;
+    }
+    
+    public CommentCustomQuestionVersion withName(String name) {
+        this.name = name;
         return this;
     }
     
     public CommentCustomQuestionVersion withContent(String content) {
         this.content = content;
         return this;
+    }
+    
+    @Override
+    public ResourceSignature getResourceSignature() {
+        return new ResourceSignature().addProperty("commentCustomQuestion", commentCustomQuestion).addProperty("name", "name");
     }
 
 }

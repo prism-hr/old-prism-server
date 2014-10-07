@@ -17,7 +17,7 @@ public class UserRegistrationDTO {
     @NotEmpty
     @Email
     private String email;
-
+    
     private String activationCode;
 
     @NotEmpty
@@ -99,7 +99,7 @@ public class UserRegistrationDTO {
         this.email = email;
         return this;
     }
-
+    
     public UserRegistrationDTO withActivationCode(final String activationCode) {
         this.activationCode = activationCode;
         return this;

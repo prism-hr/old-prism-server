@@ -4,6 +4,7 @@ import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public abstract class Resource implements IUniqueEntity {
@@ -19,6 +20,8 @@ public abstract class Resource implements IUniqueEntity {
     public abstract String getCode();
 
     public abstract void setCode(String code);
+    
+    public abstract PrismLocale getLocale();
 
     public abstract System getSystem();
 

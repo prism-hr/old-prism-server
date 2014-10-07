@@ -162,7 +162,7 @@ public class User implements UserDetails, IUniqueEntity {
     public void setEmail(String email) {
         this.email = email;
     }
-
+    
     public final Document getPortraitDocument() {
         return portraitDocument;
     }

@@ -151,12 +151,6 @@ public class StateDAO {
                 .list();
     }
     
-    public List<State> getWorkflowStates() {
-        return (List<State>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.groupProperty("state")) //
-                .list();
-    }
-    
     public List<PrismState> getStatesByStateGroup(PrismStateGroup stateGroupId) {
         return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(State.class) //
                 .setProjection(Projections.property("id")) //

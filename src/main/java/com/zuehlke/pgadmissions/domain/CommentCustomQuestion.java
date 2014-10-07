@@ -1,23 +1,23 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.Set;
+import java.util.Map;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
 
 @Entity
 @Table(name = "COMMENT_CUSTOM_QUESTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "action_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "action_id" }), @UniqueConstraint(columnNames = { "program_id", "action_id" }) })
-public class CommentCustomQuestion extends WorkflowResourceConfiguration {
+public class CommentCustomQuestion extends WorkflowResource {
 
     @Id
     private Integer id;
@@ -38,15 +38,10 @@ public class CommentCustomQuestion extends WorkflowResourceConfiguration {
     @JoinColumn(name = "action_id", nullable = false)
     private Action action;
 
-    @OneToOne
-    @JoinColumn(name = "comment_custom_question_version_id")
-    private CommentCustomQuestionVersion version;
-
-    @Column(name = "is_enabled")
-    private Boolean enabled;
-
-    @OneToMany(mappedBy = "commentCustomQuestion")
-    private Set<CommentCustomQuestionVersion> versions = Sets.newHashSet();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "comment_custom_question_id", nullable = false)
+    @MapKeyColumn(name = "name", nullable = false)
+    private Map<String, CommentCustomQuestionVersion> commentCustomQuestionVersions = Maps.newHashMap();
 
     public Integer getId() {
         return id;
@@ -94,26 +89,6 @@ public class CommentCustomQuestion extends WorkflowResourceConfiguration {
         this.action = action;
     }
 
-    public CommentCustomQuestionVersion getVersion() {
-        return version;
-    }
-
-    public void setVersion(CommentCustomQuestionVersion version) {
-        this.version = version;
-    }
-
-    public Boolean getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public Set<CommentCustomQuestionVersion> getVersions() {
-        return versions;
-    }
-
     public CommentCustomQuestion withSystem(System system) {
         this.system = system;
         return this;
@@ -134,8 +109,8 @@ public class CommentCustomQuestion extends WorkflowResourceConfiguration {
         return this;
     }
 
-    public CommentCustomQuestion withVersion(CommentCustomQuestionVersion version) {
-        this.version = version;
+    public CommentCustomQuestion addCommentCustomQuestionVersion(String name, String content) {
+        commentCustomQuestionVersions.put(name, new CommentCustomQuestionVersion().withCommentCustomQuestion(this).withName(name).withContent(content));
         return this;
     }
 

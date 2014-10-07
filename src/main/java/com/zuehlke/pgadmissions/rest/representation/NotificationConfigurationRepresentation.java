@@ -1,10 +1,18 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-public class NotificationTemplateVersionRepresentation {
+public class NotificationConfigurationRepresentation {
 
     private String subject;
 
     private String content;
+
+    public NotificationConfigurationRepresentation() {
+    }
+
+    public NotificationConfigurationRepresentation(String subject, String content) {
+        this.subject = subject;
+        this.content = content;
+    }
 
     public String getSubject() {
         return subject;

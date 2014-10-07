@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-public class NotificationTemplateVersionDTO {
+public class NotificationConfigurationDTO {
 
     private String subject;
 

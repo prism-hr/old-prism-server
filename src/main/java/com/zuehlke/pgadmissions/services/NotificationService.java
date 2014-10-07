@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.util.List;
 import java.util.Map;
 
+import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -105,7 +106,7 @@ public class NotificationService {
     public void deleteObsoleteNotificationConfigurations() {
         notificationDAO.deleteObsoleteNotificationConfigurations(getWorkflowTemplates());
     }
-    
+
     public void sendWorkflowNotifications(Resource resource, Comment comment) {
         User invoker = comment.getAuthor();
         LocalDate baseline = new LocalDate();
@@ -277,4 +278,10 @@ public class NotificationService {
         return notificationDAO.geEditableTemplates(scope);
     }
 
+    public void saveConfiguration(Resource resource, NotificationTemplate template, NotificationConfigurationDTO notificationConfigurationDTO) {
+        NotificationConfiguration configuration = getConfiguration(resource, template);
+        configuration.setSubject(notificationConfigurationDTO.getSubject());
+        configuration.setContent(notificationConfigurationDTO.getContent());
+        configuration.setReminderInterval(notificationConfigurationDTO.getReminderInterval());
+    }
 }

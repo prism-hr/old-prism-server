@@ -6,13 +6,7 @@ public class NotificationConfigurationRepresentation {
 
     private String content;
 
-    public NotificationConfigurationRepresentation() {
-    }
-
-    public NotificationConfigurationRepresentation(String subject, String content) {
-        this.subject = subject;
-        this.content = content;
-    }
+    private Integer reminderInterval;
 
     public String getSubject() {
         return subject;
@@ -28,5 +22,13 @@ public class NotificationConfigurationRepresentation {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Integer getReminderInterval() {
+        return reminderInterval;
+    }
+
+    public void setReminderInterval(Integer reminderInterval) {
+        this.reminderInterval = reminderInterval;
     }
 }

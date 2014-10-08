@@ -6,6 +6,7 @@ import java.util.Set;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.ParentResource;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
@@ -36,6 +38,7 @@ import com.zuehlke.pgadmissions.rest.representation.comment.AppointmentTimeslotR
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedSupervisorRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.OfferRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.UserAppointmentPreferencesRepresentation;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
@@ -55,6 +58,9 @@ public class CommentService {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private ApplicationContext applicationContext;
 
     public Comment getById(int id) {
         return entityService.getById(Comment.class, id);
@@ -200,6 +206,11 @@ public class CommentService {
 
         return new OfferRepresentation();
     }
+    
+    public Comment getRejectionComment(Application application) {
+        Comment comment = getLatestComment(application, PrismAction.APPLICATION_CONFIRM_REJECTION);
+        return comment == null ? getLatestComment(application, PrismAction.APPLICATION_TERMINATE) : comment;
+    }
 
     public void create(Comment comment) {
         Resource resource = comment.getResource();
@@ -254,6 +265,14 @@ public class CommentService {
                 entityService.delete(comment);
             }
         }
+    }
+    
+    public void processComment(Comment comment) {
+        if (comment.isApplicationAutomatedRejectionComment()) {
+            PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).withResource(comment.getApplication().getProgram());
+            comment.setRejectionReasonSystem(loader.get(PrismDisplayProperty.APPLICATION_REJECTED_SYSTEM));
+        }
+        
     }
 
     private Comment getLatestAppointmentPreferenceComment(Application application, Comment schedulingComment, User user) {

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.ACTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.APPLICATION_REJECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.CONFIRM_INTERVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.ERROR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.GLOBAL;
@@ -29,6 +30,8 @@ public enum PrismNotificationTemplateProperty {
     APPLICANT(APPLICATION, "get", "resource", "application", "user", "displayName"),
     APPLICATION_CODE(APPLICATION, "get", "resource", "application", "code"),
     PROJECT_OR_PROGRAM_TITLE(APPLICATION, "getProjectOrProgramTitle"),
+    
+    REJECTION_REASON(APPLICATION_REJECTION, "getRejectionReason"),
 
     PROGRAM_CODE(PROGRAM, "get", "resource", "program", "code"),
     PROGRAM_TITLE(PROGRAM, "get", "resource", "program", "title"),

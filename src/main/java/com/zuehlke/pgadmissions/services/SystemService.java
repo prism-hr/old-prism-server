@@ -116,7 +116,7 @@ public class SystemService {
     private UserService userService;
 
     @Autowired
-    private LocalizationService localizationService;
+    private CustomizationService customizationService;
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -290,7 +290,7 @@ public class SystemService {
             processedCategories.put(prismCategory, persistentCategory);
         }
         for (PrismDisplayProperty prismProperty : PrismDisplayProperty.values()) {
-            localizationService.createOrUpdateDisplayProperty(system, processedCategories.get(prismProperty.getCategory()), prismProperty,
+            customizationService.createOrUpdateDisplayProperty(system, processedCategories.get(prismProperty.getCategory()), prismProperty,
                     prismProperty.getDefaultValue());
         }
     }

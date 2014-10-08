@@ -19,7 +19,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.annotations.Type;
@@ -86,7 +85,6 @@ public class Comment {
     @Column(name = "declined_response", nullable = false)
     private Boolean declinedResponse;
 
-    @Size(max = 50000, message = "A maximum of 50000 characters are allowed.")
     @Lob
     private String content;
 
@@ -162,7 +160,7 @@ public class Comment {
     private RejectionReason rejectionReason;
 
     @Column(name = "application_rejection_reason_display")
-    private String rejectionReasonDisplay;
+    private String rejectionReasonSystem;
 
     @Column(name = "application_rating")
     private Integer applicationRating;
@@ -484,12 +482,12 @@ public class Comment {
         this.rejectionReason = rejectionReason;
     }
 
-    public final String getRejectionReasonDisplay() {
-        return rejectionReasonDisplay;
+    public final String getRejectionReasonSystem() {
+        return rejectionReasonSystem;
     }
 
-    public final void setRejectionReasonDisplay(String rejectionReasonDisplay) {
-        this.rejectionReasonDisplay = rejectionReasonDisplay;
+    public final void setRejectionReasonSystem(String rejectionReasonSystem) {
+        this.rejectionReasonSystem = rejectionReasonSystem;
     }
 
     public Integer getApplicationRating() {
@@ -912,5 +910,9 @@ public class Comment {
     public String getUserDisplay() {
         return user == null ? null : user.getDisplayName();
     }
-
+    
+    public String getRejectionReasonDisplay() {
+        return rejectionReason == null ? rejectionReasonSystem : rejectionReason.getName();
+    }
+    
 }

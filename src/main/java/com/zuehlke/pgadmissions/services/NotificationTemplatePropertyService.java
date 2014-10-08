@@ -2,11 +2,14 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
+import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
@@ -20,6 +23,9 @@ public class NotificationTemplatePropertyService {
 
     @Value("${application.host}")
     private String host;
+    
+    @Autowired
+    private CommentService commentService;
 
     public String get(NotificationTemplateModelDTO modelDTO, String[] properties) {
         Object tempObject = modelDTO;
@@ -50,6 +56,12 @@ public class NotificationTemplatePropertyService {
             url = host + "/#/" + resource.getResourceScope().getLowerCaseName() + "s/" + resource.getId() + "/view";
         }
         return "<a href=\"" + url + "\">View</a>";
+    }
+    
+    public String getRejectionReason(NotificationTemplateModelDTO modelDTO) {
+        Application application = (Application) modelDTO.getResource();
+        Comment rejection = commentService.getRejectionComment(application);
+        return rejection == null ? null : rejection.getRejectionReasonDisplay();
     }
     
 }

@@ -56,7 +56,7 @@ public class LocalizationDAO {
 
         Disjunction categoriesFilter = Restrictions.disjunction();
         for (PrismDisplayCategory category : categories) {
-            categoriesFilter.add(Restrictions.eq("displayCategory", category));
+            categoriesFilter.add(Restrictions.eq("displayCategory.id", category));
         }
 
         criteria.add(categoriesFilter);

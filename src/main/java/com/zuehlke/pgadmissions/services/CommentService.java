@@ -58,7 +58,7 @@ public class CommentService {
 
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -93,7 +93,7 @@ public class CommentService {
                 Comment close = nextCommentIndex == transitionCommentCount ? null : transitionComments.get(nextCommentIndex);
                 comments.addAll(commentDAO.getStateComments(resource, start, close));
             }
-            
+
         }
         return comments;
     }
@@ -206,7 +206,7 @@ public class CommentService {
 
         return new OfferRepresentation();
     }
-    
+
     public Comment getRejectionComment(Application application) {
         Comment comment = getLatestComment(application, PrismAction.APPLICATION_CONFIRM_REJECTION);
         return comment == null ? getLatestComment(application, PrismAction.APPLICATION_TERMINATE) : comment;
@@ -266,13 +266,13 @@ public class CommentService {
             }
         }
     }
-    
+
     public void processComment(Comment comment) {
         if (comment.isApplicationAutomatedRejectionComment()) {
-            PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).withResource(comment.getApplication().getProgram());
-            comment.setRejectionReasonSystem(loader.get(PrismDisplayProperty.APPLICATION_REJECTED_SYSTEM));
+            PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).withResource(comment.getApplication());
+            comment.setRejectionReasonSystem(propertyLoader.load(PrismDisplayProperty.APPLICATION_REJECTION_SYSTEM));
         }
-        
+
     }
 
     private Comment getLatestAppointmentPreferenceComment(Application application, Comment schedulingComment, User user) {
@@ -283,8 +283,7 @@ public class CommentService {
     }
 
     private OfferRepresentation buildOfferRepresentation(Comment sourceComment) {
-        return new OfferRepresentation().withPositionTitle(sourceComment.getPositionTitle())
-                .withPositionDescription(sourceComment.getPositionDescription())
+        return new OfferRepresentation().withPositionTitle(sourceComment.getPositionTitle()).withPositionDescription(sourceComment.getPositionDescription())
                 .withPositionProvisionalStartDate(sourceComment.getPositionProvisionalStartDate())
                 .withAppointmentConditions(sourceComment.getAppointmentConditions());
     }

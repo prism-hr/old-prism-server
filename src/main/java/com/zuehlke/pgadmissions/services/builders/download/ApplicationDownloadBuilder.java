@@ -1,5 +1,44 @@
 package com.zuehlke.pgadmissions.services.builders.download;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_CREATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_PERSONAL_DETAIL_COUNTRY_OF_BIRTH;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_PERSONAL_DETAIL_COUNTRY_OF_DOMICILE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_PERSONAL_DETAIL_DISABILITY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_PERSONAL_DETAIL_ETHNICITY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_PERSONAL_DETAIL_GENDER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_PERSONAL_DETAIL_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_PERSONAL_DETAIL_LANGUAGE_QUALIFICATION_AVAILABLE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_PERSONAL_DETAIL_NATIONALITY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_PERSONAL_DETAIL_PASSPORT_AVAILABLE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_PERSONAL_DETAIL_PASSPORT_EXPIRY_DATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_PERSONAL_DETAIL_PASSPORT_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_PERSONAL_DETAIL_PASSPORT_ISSUE_DATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_PERSONAL_DETAIL_PASSPORT_NAME;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_PERSONAL_DETAIL_PASSPORT_NUMBER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_PERSONAL_DETAIL_REQUIRE_VISA;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_PERSONAL_DETAIL_WORK_LANGUAGE_FIRST_LANGUAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_PROGRAM_DETAIL_CONFIRMED_START_DATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_PROGRAM_DETAIL_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_PROGRAM_DETAIL_REFERRAL_SOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_PROGRAM_DETAIL_START_DATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_SUPERVISOR_AWARE_OF_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_SUPERVISOR_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_SUPERVISOR_SUBHEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_AVERAGE_RATING;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_DATE_FORMAT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_EMAIL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_FIRST_NAME;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_FIRST_NAME_2;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_FIRST_NAME_3;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_LAST_NAME;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_NO;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_SKYPE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_TELEPHONE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_TITLE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_YES;
+import static com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize.MEDIUM;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
@@ -49,9 +88,11 @@ import com.zuehlke.pgadmissions.domain.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.ConversionUtils;
 
 @Component
@@ -65,14 +106,10 @@ public class ApplicationDownloadBuilder {
     @Value("${xml.export.logo.file.width.percentage}")
     private Float logoFileWidthPercentage;
 
-    @Value("${xml.export.provided}")
-    private String provided;
-
-    @Value("${xml.export.date.format}")
-    private String dateFormat;
-
     @Autowired
     private ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper;
+
+    private PropertyLoader pl;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -80,6 +117,7 @@ public class ApplicationDownloadBuilder {
     public void build(ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument, PdfWriter writer) throws PdfDocumentBuilderException {
         try {
             Application application = applicationDownloadDTO.getApplication();
+            pl = applicationContext.getBean(PropertyLoader.class).withResource(application);
             addCoverPage(application, pdfDocument, writer);
             writer.setPageEvent(new NewPageEvent().withApplication(application));
             addProgramSection(application, pdfDocument);
@@ -112,52 +150,60 @@ public class ApplicationDownloadBuilder {
         pdfDocument.add(applicationDownloadBuilderHelper.newSectionSeparator());
         pdfDocument.add(applicationDownloadBuilderHelper.newSectionSeparator());
 
-        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, "Application");
+        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, pl.load(APPLICATION_HEADER));
 
-        applicationDownloadBuilderHelper.addContentRowMedium("Applicant", application.getUser().getDisplayName(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium("Applicant Rating", application.getApplicationRatingAverageDisplay(), body);
-        addApplicationSummaryExtended(application, body, ApplicationDownloadBuilderFontSize.MEDIUM);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(APPLICATION_CREATOR), application.getUser().getDisplayName(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(SYSTEM_AVERAGE_RATING), application.getApplicationRatingAverageDisplay(), body);
+
+        addApplicationSummaryExtended(application, body, MEDIUM);
 
         applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         pdfDocument.newPage();
     }
 
     private void addProgramSection(Application application, Document pdfDocument) throws DocumentException {
-        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, "Program Detail");
-        addApplicationSummary(application, body, ApplicationDownloadBuilderFontSize.MEDIUM);
+        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, pl.load(APPLICATION_PROGRAM_DETAIL_HEADER));
+        addApplicationSummary(application, body, MEDIUM);
 
         ApplicationProgramDetail programDetail = application.getProgramDetail();
         boolean programDetailNull = programDetail == null;
 
-        String tentativeStartDate = programDetailNull ? null : programDetail.getStartDateDisplay(dateFormat);
+        String dateFormat = pl.load(SYSTEM_DATE_FORMAT);
+        String startDate = programDetailNull ? null : programDetail.getStartDateDisplay(dateFormat);
         String confirmedStartDate = programDetailNull ? null : application.getConfirmedStartDateDisplay(dateFormat);
 
-        applicationDownloadBuilderHelper.addContentRowMedium(confirmedStartDate == null ? "Start Date" : "Confirmed Start Date",
-                confirmedStartDate == null ? tentativeStartDate : confirmedStartDate, body);
-        applicationDownloadBuilderHelper.addContentRowMedium("How did you find us?", programDetailNull ? null : programDetail.getReferralSourceDisplay(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(
+                pl.load(APPLICATION_PROGRAM_DETAIL_START_DATE, APPLICATION_PROGRAM_DETAIL_CONFIRMED_START_DATE, confirmedStartDate == null),
+                confirmedStartDate == null ? startDate : confirmedStartDate, body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(APPLICATION_PROGRAM_DETAIL_REFERRAL_SOURCE),
+                programDetailNull ? null : programDetail.getReferralSourceDisplay(), body);
 
         applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
     }
 
     private void addSupervisorSection(Application application, Document pdfDocument) throws DocumentException {
-        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, "Supervisors");
+        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, pl.load(APPLICATION_SUPERVISOR_HEADER));
         Set<ApplicationSupervisor> supervisors = application.getSupervisors();
 
+        String subheader = pl.load(APPLICATION_SUPERVISOR_SUBHEADER);
+
         if (supervisors.isEmpty()) {
-            applicationDownloadBuilderHelper.addContentRowMedium("Supervisor", null, body);
+            applicationDownloadBuilderHelper.addContentRowMedium(subheader, null, body);
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else {
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
 
             int counter = 1;
             for (ApplicationSupervisor supervisor : supervisors) {
-                PdfPTable subBody = applicationDownloadBuilderHelper.startSubection(pdfDocument, "Supervisor (" + counter++ + ")");
+                PdfPTable subBody = applicationDownloadBuilderHelper.startSubection(pdfDocument, subheader + "(" + counter++ + ")");
 
-                applicationDownloadBuilderHelper.addContentRowMedium("Supervisor First Name", supervisor.getUser().getFirstName(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium("Supervisor Last Name", supervisor.getUser().getLastName(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium("Supervisor Email", supervisor.getUser().getEmail(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium("Is this supervisor aware of your application?",
-                        ConversionUtils.booleanToString(supervisor.getAcceptedSupervision(), "Yes", "No"), subBody);
+                User user = supervisor.getUser();
+
+                applicationDownloadBuilderHelper.addContentRowMedium(pl.load(SYSTEM_FIRST_NAME), user.getFirstName(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(pl.load(SYSTEM_LAST_NAME), user.getLastName(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(pl.load(SYSTEM_EMAIL), user.getEmail(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(pl.load(APPLICATION_SUPERVISOR_AWARE_OF_APPLICATION),
+                        pl.load(SYSTEM_YES, SYSTEM_NO, supervisor.getAcceptedSupervision()), subBody);
 
                 applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
             }
@@ -165,49 +211,57 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addPersonalDetailSection(ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument) throws DocumentException {
-        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, "Applicant Detail");
+        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, pl.load(APPLICATION_PERSONAL_DETAIL_HEADER));
         Application application = applicationDownloadDTO.getApplication();
 
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         boolean personalDetailNull = personalDetail == null;
 
-        applicationDownloadBuilderHelper.addContentRowMedium("Title", personalDetailNull ? null : personalDetail.getTitleDisplay(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(SYSTEM_TITLE), personalDetailNull ? null : personalDetail.getTitleDisplay(), body);
 
         User applicationCreator = application.getUser();
 
-        applicationDownloadBuilderHelper.addContentRowMedium("First Name", applicationCreator.getFirstName(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium("First Name 2", applicationCreator.getFirstName2(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium("First Name 3", applicationCreator.getFirstName3(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium("Last Name", applicationCreator.getLastName(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium("Email", applicationCreator.getEmail(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(SYSTEM_FIRST_NAME), applicationCreator.getFirstName(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(SYSTEM_FIRST_NAME_2), applicationCreator.getFirstName2(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(SYSTEM_FIRST_NAME_3), applicationCreator.getFirstName3(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(SYSTEM_LAST_NAME), applicationCreator.getLastName(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(SYSTEM_EMAIL), applicationCreator.getEmail(), body);
 
-        applicationDownloadBuilderHelper.addContentRowMedium("Telephone Number", personalDetail == null ? null : personalDetail.getPhone(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium("Skype", personalDetailNull ? null : personalDetail.getSkype(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(SYSTEM_TELEPHONE), personalDetailNull ? null : personalDetail.getPhone(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(SYSTEM_SKYPE), personalDetailNull ? null : personalDetail.getSkype(), body);
 
-        applicationDownloadBuilderHelper.addContentRowMedium("Gender", personalDetailNull ? null : personalDetail.getGenderDisplay(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium("Date of Birth", personalDetailNull ? null : personalDetail.getDateOfBirth(dateFormat), body);
-        applicationDownloadBuilderHelper.addContentRowMedium("Country of Birth", personalDetailNull ? null : personalDetail.getCountryDisplay(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium("Country of Domicile", personalDetailNull ? null : personalDetail.getDomicileDisplay(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium("Nationality", personalDetailNull ? null : personalDetail.getNationalityDisplay(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(APPLICATION_PERSONAL_DETAIL_GENDER),
+                personalDetailNull ? null : personalDetail.getGenderDisplay(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(PrismDisplayProperty.APPLICATION_PERSONAL_DETAIL_DATE_OF_BIRTH), personalDetailNull ? null
+                : personalDetail.getDateOfBirth(pl.load(SYSTEM_DATE_FORMAT)), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(APPLICATION_PERSONAL_DETAIL_COUNTRY_OF_BIRTH),
+                personalDetailNull ? null : personalDetail.getCountryDisplay(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(APPLICATION_PERSONAL_DETAIL_COUNTRY_OF_DOMICILE), personalDetailNull ? null
+                : personalDetail.getDomicileDisplay(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(APPLICATION_PERSONAL_DETAIL_NATIONALITY),
+                personalDetailNull ? null : personalDetail.getNationalityDisplay(), body);
 
         if (applicationDownloadDTO.isIncludeEqualOpportunitiesData()) {
-            applicationDownloadBuilderHelper.addContentRowMedium("Ethnicity", personalDetailNull ? null : personalDetail.getEthnicityDisplay(), body);
-            applicationDownloadBuilderHelper.addContentRowMedium("Disability", personalDetailNull ? null : personalDetail.getDisabilityDisplay(), body);
+            applicationDownloadBuilderHelper.addContentRowMedium(pl.load(APPLICATION_PERSONAL_DETAIL_ETHNICITY),
+                    personalDetailNull ? null : personalDetail.getEthnicityDisplay(), body);
+            applicationDownloadBuilderHelper.addContentRowMedium(pl.load(APPLICATION_PERSONAL_DETAIL_DISABILITY),
+                    personalDetailNull ? null : personalDetail.getDisabilityDisplay(), body);
         }
 
-        applicationDownloadBuilderHelper.addContentRowMedium("Do you Require a Visa to Study in the UK?",
-                ConversionUtils.booleanToString(personalDetail == null ? false : personalDetail.getVisaRequired(), "Yes", "No"), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(APPLICATION_PERSONAL_DETAIL_REQUIRE_VISA),
+                pl.load(SYSTEM_YES, SYSTEM_NO, personalDetail.getVisaRequired()), body);
 
         boolean passportAvailable = personalDetailNull ? false : personalDetail.getPassportAvailable();
 
-        applicationDownloadBuilderHelper.addContentRowMedium("Do you have a passport?", ConversionUtils.booleanToString(passportAvailable, "Yes", "No"), body);
-        applicationDownloadBuilderHelper.addContentRowMedium("Is the specified language of work your first language?", personalDetailNull ? null
-                : ConversionUtils.booleanToString(personalDetail.getFirstLanguageLocale(), "Yes", "No"), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(APPLICATION_PERSONAL_DETAIL_PASSPORT_AVAILABLE),
+                pl.load(SYSTEM_YES, SYSTEM_NO, personalDetail.getPassportAvailable()), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(APPLICATION_PERSONAL_DETAIL_WORK_LANGUAGE_FIRST_LANGUAGE),
+                personalDetailNull ? null : pl.load(SYSTEM_YES, SYSTEM_NO, personalDetail.getFirstLanguageLocale()), body);
 
         boolean languageQualificationAvailable = personalDetailNull ? false : personalDetail.getLanguageQualificationAvailable();
 
-        applicationDownloadBuilderHelper.addContentRowMedium("Do you have a language qualification?",
-                personalDetailNull ? null : ConversionUtils.booleanToString(languageQualificationAvailable, "Yes", "No"), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(APPLICATION_PERSONAL_DETAIL_LANGUAGE_QUALIFICATION_AVAILABLE), personalDetailNull ? null
+                : pl.load(SYSTEM_YES, SYSTEM_NO, languageQualificationAvailable), body);
 
         applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
 
@@ -221,12 +275,14 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addPassport(Document pdfDocument, ApplicationPassport passport) throws DocumentException {
-        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, "Passport");
+        PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, pl.load(APPLICATION_PERSONAL_DETAIL_PASSPORT_HEADER));
 
-        applicationDownloadBuilderHelper.addContentRowMedium("Passport Number", passport.getNumber(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium("Name on Passport", passport.getName(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium("Passport Issue Date", passport.getIssueDateDisplay(dateFormat), body);
-        applicationDownloadBuilderHelper.addContentRowMedium("Passport Expiry Date", passport.getExipryDateDisplay(dateFormat), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(APPLICATION_PERSONAL_DETAIL_PASSPORT_NUMBER), passport.getNumber(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(APPLICATION_PERSONAL_DETAIL_PASSPORT_NAME), passport.getName(), body);
+
+        String dateFormat = pl.load(SYSTEM_DATE_FORMAT);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(APPLICATION_PERSONAL_DETAIL_PASSPORT_ISSUE_DATE), dateFormat, body);
+        applicationDownloadBuilderHelper.addContentRowMedium(pl.load(APPLICATION_PERSONAL_DETAIL_PASSPORT_EXPIRY_DATE), dateFormat, body);
 
         applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
     }
@@ -236,7 +292,8 @@ public class ApplicationDownloadBuilder {
         PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, "Language Qualification");
 
         applicationDownloadBuilderHelper.addContentRowMedium("Qualification Type", languageQualification.getTypeDisplay(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium("Date of Examination", languageQualification.getExamDateDisplay(dateFormat), body);
+        applicationDownloadBuilderHelper
+                .addContentRowMedium("Date of Examination", languageQualification.getExamDateDisplay(pl.load(SYSTEM_DATE_FORMAT)), body);
         applicationDownloadBuilderHelper.addContentRowMedium("Overall Score", languageQualification.getOverallScore(), body);
         applicationDownloadBuilderHelper.addContentRowMedium("Reading Score", languageQualification.getReadingScore(), body);
         applicationDownloadBuilderHelper.addContentRowMedium("Essay/Writing Score", languageQualification.getWritingScore(), body);
@@ -280,7 +337,7 @@ public class ApplicationDownloadBuilder {
                 applicationDownloadBuilderHelper.addContentRowMedium("Qualification Title", qualification.getTitle(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium("Qualification Subject", qualification.getSubject(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium("Language of Study", qualification.getLanguage(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium("Start Date", qualification.getStartDateDisplay(dateFormat), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium("Start Date", qualification.getStartDateDisplay(), subBody);
 
                 boolean completed = BooleanUtils.isTrue(qualification.getCompleted());
 

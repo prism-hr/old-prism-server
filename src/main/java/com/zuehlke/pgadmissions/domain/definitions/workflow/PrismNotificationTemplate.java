@@ -17,7 +17,7 @@ public enum PrismNotificationTemplate {
     APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
             PrismNotificationTemplatePropertyCategory.APPLICATION), //
     APPLICATION_CONFIRM_REJECTION_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.APPLICATION), //
+            PrismNotificationTemplatePropertyCategory.APPLICATION, PrismNotificationTemplatePropertyCategory.APPLICATION_REJECTION), //
     APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
             PrismNotificationTemplatePropertyCategory.APPLICATION), //
     APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REQUEST, PrismScope.APPLICATION,
@@ -32,17 +32,14 @@ public enum PrismNotificationTemplate {
             PrismNotificationTemplatePropertyCategory.APPLICATION), //
     APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
             PrismNotificationTemplatePropertyCategory.APPLICATION), //
-            
     INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.INSTITUTION,
             PrismNotificationTemplatePropertyCategory.INSTITUTION), //
     INSTITUTION_IMPORT_ERROR_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.INSTITUTION,
             PrismNotificationTemplatePropertyCategory.ERROR), //
-            
     PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.PROGRAM,
             PrismNotificationTemplatePropertyCategory.PROGRAM), //
     PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.PROJECT,
             PrismNotificationTemplatePropertyCategory.PROGRAM), //
-            
     SYSTEM_COMPLETE_REGISTRATION_REQUEST(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REQUEST, PrismScope.SYSTEM), //
     SYSTEM_PASSWORD_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.SYSTEM,
             PrismNotificationTemplatePropertyCategory.NEW_PASSWORD), //
@@ -57,13 +54,12 @@ public enum PrismNotificationTemplate {
     SYSTEM_PROGRAM_TASK_REQUEST_REMINDER(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.REMINDER, PrismScope.SYSTEM,
             PrismNotificationTemplatePropertyCategory.PROGRAM), //
     SYSTEM_PROGRAM_UPDATE_NOTIFICATION(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.UPDATE, PrismScope.SYSTEM,
-            PrismNotificationTemplatePropertyCategory.PROGRAM),
-    SYSTEM_PROJECT_TASK_REQUEST(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.REQUEST, PrismScope.SYSTEM,
-            PrismNotificationTemplatePropertyCategory.PROJECT), //
+            PrismNotificationTemplatePropertyCategory.PROGRAM), SYSTEM_PROJECT_TASK_REQUEST(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.REQUEST,
+            PrismScope.SYSTEM, PrismNotificationTemplatePropertyCategory.PROJECT), //
     SYSTEM_PROJECT_TASK_REQUEST_REMINDER(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.REMINDER, PrismScope.SYSTEM,
             PrismNotificationTemplatePropertyCategory.PROJECT), //
     SYSTEM_PROJECT_UPDATE_NOTIFICATION(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.UPDATE, PrismScope.SYSTEM,
-            PrismNotificationTemplatePropertyCategory.PROJECT),
+            PrismNotificationTemplatePropertyCategory.PROJECT), //
     SYSTEM_RECOMMENDATION_NOTIFICATION(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.UPDATE, PrismScope.SYSTEM,
             PrismNotificationTemplatePropertyCategory.RECOMMENDATION);
 
@@ -94,7 +90,8 @@ public enum PrismNotificationTemplate {
                 PrismNotificationTemplate.SYSTEM_PROJECT_TASK_REQUEST_REMINDER, 3);
     }
 
-    private PrismNotificationTemplate(PrismNotificationType notificationType, PrismNotificationPurpose notificationPurpose, PrismScope scope, PrismNotificationTemplatePropertyCategory... propertyCategories) {
+    private PrismNotificationTemplate(PrismNotificationType notificationType, PrismNotificationPurpose notificationPurpose, PrismScope scope,
+            PrismNotificationTemplatePropertyCategory... propertyCategories) {
         this.notificationType = notificationType;
         this.notificationPurpose = notificationPurpose;
         this.scope = scope;

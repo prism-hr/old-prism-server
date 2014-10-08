@@ -65,22 +65,22 @@ public class NotificationService {
     private EntityService entityService;
 
     @Autowired
-    private LocalizationService localizationService;
+    private CustomizationService customizationService;
 
     public NotificationTemplate getById(PrismNotificationTemplate id) {
         return entityService.getByProperty(NotificationTemplate.class, "id", id);
     }
 
     public NotificationConfiguration getConfiguration(Resource resource, NotificationTemplate template) {
-        return localizationService.getConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
+        return customizationService.getConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
     }
 
     public void removeLocalizedConfiguration(Resource resource, NotificationTemplate template) {
-        localizationService.removeLocalizedConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
+        customizationService.removeLocalizedConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
     }
     
     public void restoreGlobalizedConfiguration(Resource resource, NotificationTemplate template) {
-        localizationService.restoreGlobalizedConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
+        customizationService.restoreGlobalizedConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
     }
 
     public Integer getReminderInterval(Resource resource, NotificationTemplate template) {

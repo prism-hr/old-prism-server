@@ -38,7 +38,6 @@ import com.zuehlke.pgadmissions.domain.ResidenceState;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -91,7 +90,7 @@ public class ApplicationService {
     private ApplicationExportService applicationExportService;
     
     @Autowired
-    private LocalizationService localizationService;
+    private CustomizationService customizationService;
 
     @Autowired
     private CompleteApplicationValidator completeApplicationValidator;
@@ -264,9 +263,6 @@ public class ApplicationService {
             purgeApplication(application, comment);
         }
         
-        if (comment.isApplicationAutomatedRejectionComment()) {
-            comment.setRejectionReasonDisplay(localizationService.getLocalizedProperty(application, PrismDisplayProperty.APPLICATION_REJECTED_DEFAULT_REASON));
-        }
     }
 
     // TODO: set values for "doRetain" (application) and "sendRecommendationEmail" (user account)

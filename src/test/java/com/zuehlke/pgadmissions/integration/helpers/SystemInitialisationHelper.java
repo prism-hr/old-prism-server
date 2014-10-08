@@ -51,7 +51,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNoti
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.LocalizationService;
+import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -106,7 +106,7 @@ public class SystemInitialisationHelper {
     private SystemService systemService;
     
     @Autowired
-    private LocalizationService localizationService;
+    private CustomizationService localizationService;
 
     @Autowired
     private UserHelper userHelper;

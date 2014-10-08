@@ -32,14 +32,17 @@ public enum PrismNotificationTemplate {
             PrismNotificationTemplatePropertyCategory.APPLICATION), //
     APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
             PrismNotificationTemplatePropertyCategory.APPLICATION), //
+            
     INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.INSTITUTION,
             PrismNotificationTemplatePropertyCategory.INSTITUTION), //
-    INSTITUTION_IMPORT_ERROR_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.SYSTEM,
+    INSTITUTION_IMPORT_ERROR_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.INSTITUTION,
             PrismNotificationTemplatePropertyCategory.ERROR), //
+            
     PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.PROGRAM,
             PrismNotificationTemplatePropertyCategory.PROGRAM), //
     PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.PROJECT,
             PrismNotificationTemplatePropertyCategory.PROGRAM), //
+            
     SYSTEM_COMPLETE_REGISTRATION_REQUEST(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REQUEST, PrismScope.SYSTEM), //
     SYSTEM_PASSWORD_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.SYSTEM,
             PrismNotificationTemplatePropertyCategory.NEW_PASSWORD), //

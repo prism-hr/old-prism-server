@@ -159,7 +159,7 @@ public class Comment {
     @JoinColumn(name = "application_rejection_reason_id")
     private RejectionReason rejectionReason;
 
-    @Column(name = "application_rejection_reason_display")
+    @Column(name = "application_rejection_reason_system")
     private String rejectionReasonSystem;
 
     @Column(name = "application_rating")
@@ -910,9 +910,9 @@ public class Comment {
     public String getUserDisplay() {
         return user == null ? null : user.getDisplayName();
     }
-    
+
     public String getRejectionReasonDisplay() {
         return rejectionReason == null ? rejectionReasonSystem : rejectionReason.getName();
     }
-    
+
 }

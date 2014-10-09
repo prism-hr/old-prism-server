@@ -11,7 +11,6 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.CustomizationDAO;
 import com.zuehlke.pgadmissions.domain.DisplayCategory;
 import com.zuehlke.pgadmissions.domain.DisplayProperty;
-import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.WorkflowDefinition;
 import com.zuehlke.pgadmissions.domain.WorkflowResource;

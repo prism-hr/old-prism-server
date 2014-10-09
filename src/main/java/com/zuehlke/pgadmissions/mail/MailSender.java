@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_EMAIL_LINK_MESSAGE;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
@@ -14,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
@@ -34,6 +37,7 @@ import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
 import com.zuehlke.pgadmissions.services.NotificationTemplatePropertyService;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 import freemarker.template.Template;
@@ -46,7 +50,7 @@ public class MailSender {
 
     @Value("${application.host}")
     private String host;
-    
+
     @Value("${context.environment}")
     private String contextEnvironment;
 
@@ -55,9 +59,6 @@ public class MailSender {
 
     @Value("${email.address.to}")
     private String emailAddressTo;
-
-    @Value("${email.broken.link.message}")
-    private String emailBrokenLinkMessage;
 
     @Autowired
     private JavaMailSender javaMailSender;
@@ -71,13 +72,17 @@ public class MailSender {
     @Autowired
     private NotificationTemplatePropertyService notificationTemplatePropertyService;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     public void sendEmail(final MailMessageDTO message) {
         final NotificationConfiguration configuration = message.getConfiguration();
         try {
             Map<String, Object> model = createNotificationModel(message.getConfiguration().getNotificationTemplate(), message.getModelDTO());
             final String subject = processTemplate(configuration.getNotificationTemplate().getId(), configuration.getSubject(), model);
             final String htmlText = processTemplate(configuration.getNotificationTemplate().getId(), configuration.getContent(), model);
-            final String plainText = mailToPlainTextConverter.getPlainText(htmlText) + "\n\n" + emailBrokenLinkMessage;
+            final String plainText = mailToPlainTextConverter.getPlainText(htmlText) + "\n\n"
+                    + applicationContext.getBean(PropertyLoader.class).load(SYSTEM_EMAIL_LINK_MESSAGE);
 
             if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat")) {
                 LOGGER.info(String.format("Sending Production Email: %s", message.toString()));
@@ -114,7 +119,8 @@ public class MailSender {
 
     public Map<String, Object> createNotificationModel(NotificationTemplate notificationTemplate, NotificationTemplateModelDTO modelDTO) {
         Map<String, Object> model = Maps.newHashMap();
-        List<PrismNotificationTemplatePropertyCategory> categories = Lists.asList(PrismNotificationTemplatePropertyCategory.GLOBAL, notificationTemplate.getId().getPropertyCategories());
+        List<PrismNotificationTemplatePropertyCategory> categories = Lists.asList(PrismNotificationTemplatePropertyCategory.GLOBAL, notificationTemplate
+                .getId().getPropertyCategories());
         for (PrismNotificationTemplatePropertyCategory propertyCategory : categories) {
             for (PrismNotificationTemplateProperty property : propertyCategory.getProperties()) {
                 List<Object> arguments = Lists.newLinkedList();

@@ -16,6 +16,8 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.FileRep
 public class CommentRepresentation {
 
     private Integer id;
+    
+    private String stateGroup;
 
     private UserRepresentation user;
 
@@ -26,8 +28,6 @@ public class CommentRepresentation {
     private String delegateRole;
 
     private PrismAction action;
-    
-    private boolean transitionComment;
 
     private Boolean declinedResponse;
 
@@ -111,6 +111,14 @@ public class CommentRepresentation {
         this.id = id;
     }
 
+    public final String getStateGroup() {
+        return stateGroup;
+    }
+
+    public final void setStateGroup(String stateGroup) {
+        this.stateGroup = stateGroup;
+    }
+
     public UserRepresentation getUser() {
         return user;
     }
@@ -149,14 +157,6 @@ public class CommentRepresentation {
 
     public void setAction(PrismAction action) {
         this.action = action;
-    }
-
-    public final boolean isTransitionComment() {
-        return transitionComment;
-    }
-
-    public final void setTransitionComment(boolean transitionComment) {
-        this.transitionComment = transitionComment;
     }
 
     public Boolean getDeclinedResponse() {

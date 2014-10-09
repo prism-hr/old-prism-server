@@ -2,16 +2,18 @@ package com.zuehlke.pgadmissions.integration.helpers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperSystem;
 
 @Service
+@Transactional
 public class SystemDataImportHelper {
     
     @Autowired
     private ImportedEntityServiceHelperSystem importedEntityServiceHelper;
 
-    public void importData() throws Exception {
+    public void verifyImport() throws Exception {
         importedEntityServiceHelper.execute();
     }
 

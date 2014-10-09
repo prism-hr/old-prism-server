@@ -34,15 +34,19 @@ public class CustomizationService {
     @Autowired
     private SystemService systemService;
 
-    public void createOrUpdateDisplayProperty(Resource resource, DisplayCategory category, PrismDisplayProperty propertyIndex, String propertyValue)
-            throws DeduplicationException {
-        createOrUpdateDisplayProperty(resource, null, category, propertyIndex, propertyValue);
+    public DisplayCategory getDisplayCategoryById(PrismDisplayCategory id) {
+        return entityService.getById(DisplayCategory.class, id);
     }
 
-    public void createOrUpdateDisplayProperty(Resource resource, PrismLocale locale, DisplayCategory category, PrismDisplayProperty propertyIndex,
-            String propertyValue) throws DeduplicationException {
+    public void createOrUpdateDisplayProperty(Resource resource, PrismDisplayProperty propertyIndex, String propertyValue) throws DeduplicationException {
+        createOrUpdateDisplayProperty(resource, null, propertyIndex, propertyValue);
+    }
+
+    public void createOrUpdateDisplayProperty(Resource resource, PrismLocale locale, PrismDisplayProperty propertyIndex, String propertyValue)
+            throws DeduplicationException {
         boolean resourceIsSystem = resource.getResourceScope() == PrismScope.SYSTEM;
         PrismLocale defaultLocale = resourceIsSystem ? resource.getSystem().getLocale() : null;
+        DisplayCategory category = getDisplayCategoryById(propertyIndex.getCategory());
         DisplayProperty transientProperty = new DisplayProperty().withResource(resource).withLocale(locale == null ? defaultLocale : locale)
                 .withDisplayCategory(category).withPropertyIndex(propertyIndex).withPropertyValue(propertyValue)
                 .withPropertyDefault(resourceIsSystem && locale == null || locale == defaultLocale ? true : false);
@@ -93,5 +97,5 @@ public class CustomizationService {
         }
         return propertiesMerged;
     }
-    
+
 }

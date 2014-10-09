@@ -879,6 +879,10 @@ public class Comment {
                 .contains(action.getId());
     }
 
+    public boolean isApplicationReferenceComment() {
+        return action.getId() == PrismAction.APPLICATION_PROVIDE_REFERENCE;
+    }
+
     public boolean isApplicationAutomatedRejectionComment() {
         return action.getId() == PrismAction.APPLICATION_TERMINATE && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED
                 && rejectionReason == null;

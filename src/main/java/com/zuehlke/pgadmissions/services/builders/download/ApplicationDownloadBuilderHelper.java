@@ -6,7 +6,9 @@ import java.net.MalformedURLException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.itextpdf.text.BadElementException;
@@ -21,8 +23,10 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderColor;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Component
@@ -34,8 +38,8 @@ public class ApplicationDownloadBuilderHelper {
     @Value("${xml.export.logo.file.width.percentage}")
     private Float logoFileWidthPercentage;
 
-    @Value("${xml.export.not.provided}")
-    private String notProvided;
+    @Autowired
+    private ApplicationContext applicationContext;
 
     public Document startDocument() {
         return new Document(PageSize.A4, 50, 50, 100, 50);
@@ -65,7 +69,8 @@ public class ApplicationDownloadBuilderHelper {
     public void addContentRow(String title, String content, ApplicationDownloadBuilderFontSize fontSize, PdfPTable table) {
         String fontSizePostfix = WordUtils.capitalizeFully(fontSize.name());
         table.addCell((PdfPCell) ReflectionUtils.invokeMethod(this, "newTitleCell" + fontSizePostfix, title));
-        table.addCell((PdfPCell) ReflectionUtils.invokeMethod(this, "newContentCell" + fontSizePostfix, content == null ? notProvided : content));
+        table.addCell((PdfPCell) ReflectionUtils.invokeMethod(this, "newContentCell" + fontSizePostfix,
+                content == null ? applicationContext.getBean(PropertyLoader.class).load(PrismDisplayProperty.SYSTEM_VALUE_NOT_PROVIDED) : content));
     }
 
     public void closeSection(Document pdfDocument, PdfPTable body) throws DocumentException {
@@ -172,7 +177,8 @@ public class ApplicationDownloadBuilderHelper {
 
         Phrase phrase;
         if (StringUtils.isBlank(content)) {
-            phrase = new Phrase(notProvided, ApplicationDownloadBuilderConfiguration.getEmptyFont(fontSize));
+            phrase = new Phrase(applicationContext.getBean(PropertyLoader.class).load(PrismDisplayProperty.SYSTEM_VALUE_NOT_PROVIDED),
+                    ApplicationDownloadBuilderConfiguration.getEmptyFont(fontSize));
         } else if (bookmarkIndex == null) {
             phrase = new Phrase(content, ApplicationDownloadBuilderConfiguration.getFont(fontSize));
         } else {

@@ -290,8 +290,7 @@ public class SystemService {
             processedCategories.put(prismCategory, persistentCategory);
         }
         for (PrismDisplayProperty prismProperty : PrismDisplayProperty.values()) {
-            customizationService.createOrUpdateDisplayProperty(system, processedCategories.get(prismProperty.getCategory()), prismProperty,
-                    prismProperty.getDefaultValue());
+            customizationService.createOrUpdateDisplayProperty(system, prismProperty, prismProperty.getDefaultValue());
         }
     }
 

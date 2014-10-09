@@ -1,5 +1,15 @@
 package com.zuehlke.pgadmissions.services.builders;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_PREFERRED_START_DATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_DATE_FORMAT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_IP_PLACEHOLDER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_NONE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_OTHER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_REFER_TO_DOCUMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_TELEPHONE_PLACEHOLDER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_VALUE_NOT_PROVIDED;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -13,6 +23,7 @@ import org.joda.time.LocalDate;
 import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -64,6 +75,7 @@ import com.zuehlke.pgadmissions.domain.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.ReferralSource;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.dto.ApplicationExportDTO;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Component
 @Scope("prototype")
@@ -74,25 +86,16 @@ public class ApplicationExportBuilder {
     @Value("${xml.export.source}")
     private String exportSource;
 
-    @Value("${xml.export.not.provided}")
-    private String exportNotProvided;
-
-    @Value("${xml.export.refer.to.document}")
-    private String exportReferToDocument;
-
-    @Value("${xml.export.ip.not.provided}")
-    private String exportIpNotProvided;
-
-    @Value("${xml.export.other.provided}")
-    private String exportOtherProvided;
-
-    @Value("${xml.export.telephone.not.provided}")
-    private String exportTelephoneNotProvided;
-
     @Autowired
     private ApplicationExportBuilderHelper applicationExportBuilderHelper;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    private PropertyLoader propertyLoader;
+
     public SubmitAdmissionsApplicationRequest build(ApplicationExportDTO applicationExportDTO) {
+        propertyLoader = applicationContext.getBean(PropertyLoader.class).withResource(applicationExportDTO.getApplication());
         SubmitAdmissionsApplicationRequest request = objectFactory.createSubmitAdmissionsApplicationRequest();
         request.setApplication(buildApplication(applicationExportDTO));
         return request;
@@ -201,8 +204,9 @@ public class ApplicationExportBuilder {
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         if (personalDetail.getPassport() == null) {
             PassportTp passportTp = objectFactory.createPassportTp();
-            passportTp.setName(exportNotProvided);
-            passportTp.setNumber(exportNotProvided);
+            String notProvided = propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED);
+            passportTp.setName(notProvided);
+            passportTp.setNumber(notProvided);
             passportTp.setExpiryDate(applicationExportBuilderHelper.buildXmlDate(new LocalDate().plusYears(1)));
             passportTp.setIssueDate(applicationExportBuilderHelper.buildXmlDate(new LocalDate().minusYears(1)));
             return passportTp;
@@ -243,7 +247,7 @@ public class ApplicationExportBuilder {
         addressTp.setAddressLine4(currentAddress.getAddressRegion());
 
         String addressCode = currentAddress.getAddressCode();
-        addressTp.setPostCode(addressCode == null ? exportNotProvided : addressCode);
+        addressTp.setPostCode(addressCode == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : addressCode);
 
         addressTp.setCountry(currentAddress.getDomicile().getCode());
         contactDtlsTp.setAddressDtls(addressTp);
@@ -262,7 +266,7 @@ public class ApplicationExportBuilder {
         addressTp.setAddressLine4(contactAddress.getAddressRegion());
 
         String addressCode = contactAddress.getAddressCode();
-        addressTp.setPostCode(addressCode == null ? exportNotProvided : addressCode);
+        addressTp.setPostCode(addressCode == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : addressCode);
 
         addressTp.setCountry(contactAddress.getDomicile().getCode());
         contactDtlsTp.setAddressDtls(addressTp);
@@ -277,13 +281,13 @@ public class ApplicationExportBuilder {
         CourseApplicationTp applicationTp = objectFactory.createCourseApplicationTp();
         applicationTp.setStartMonth(new DateTime(application.getConfirmedStartDate()));
         applicationTp.setAgreedSupervisorName(buildAgreedSupervisorName(applicationExportDTO.getPrimarySupervisor()));
-        applicationTp.setPersonalStatement(exportReferToDocument);
+        applicationTp.setPersonalStatement(propertyLoader.load(SYSTEM_REFER_TO_DOCUMENT));
         applicationTp.setSourcesOfInterest(buildSourcesOfInterest(application, applicationTp));
         applicationTp.setCreationDate(applicationExportBuilderHelper.buildXmlDate(application.getSubmittedTimestamp()));
         applicationTp.setExternalApplicationID(application.getCode());
 
         String creatorIpAddress = applicationExportDTO.getCreatorIpAddress();
-        applicationTp.setIpAddress(creatorIpAddress == null ? exportIpNotProvided : creatorIpAddress);
+        applicationTp.setIpAddress(creatorIpAddress == null ? propertyLoader.load(SYSTEM_IP_PLACEHOLDER) : creatorIpAddress);
         applicationTp.setCreationDate(applicationExportBuilderHelper.buildXmlDate(application.getSubmittedTimestamp()));
         applicationTp.setRefereeList(buildReferee(applicationExportDTO.getApplicationReferees()));
 
@@ -310,8 +314,9 @@ public class ApplicationExportBuilder {
             applicationTp.setAtasStatement(offerRecommendationComment.getPositionDescription());
 
             String conditions = offerRecommendationComment.getAppointmentConditions();
-            String offerSummary = "Recommended conditions: " + conditions == null ? "none" : conditions + "\n\n" + "Preferred Start Date: "
-                    + offerRecommendationComment.getPositionProvisionalStartDate().toString("d MMMM yyyy");
+            String offerSummary = propertyLoader.load(APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION) + ": " + conditions == null ? propertyLoader
+                    .load(SYSTEM_NONE) : conditions + "\n\n" + propertyLoader.load(APPLICATION_PREFERRED_START_DATE) + ": "
+                    + offerRecommendationComment.getPositionProvisionalStartDate().toString(propertyLoader.load(SYSTEM_DATE_FORMAT));
 
             applicationTp.setDepartmentalOfferConditions(offerSummary);
         }
@@ -330,7 +335,7 @@ public class ApplicationExportBuilder {
         ProgramStudyOptionInstance exportProgramInstance = applicationExportDTO.getExportProgramInstance();
         occurrenceTp.setAcademicYear(applicationExportBuilderHelper.buildXmlDateYearOnly(exportProgramInstance.getAcademicYear()));
         String exportInstanceIdentifier = exportProgramInstance.getIdentifier();
-        occurrenceTp.setIdentifier(exportInstanceIdentifier == null ? exportNotProvided : exportInstanceIdentifier);
+        occurrenceTp.setIdentifier(exportInstanceIdentifier == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : exportInstanceIdentifier);
         occurrenceTp.setStartDate(applicationExportBuilderHelper.buildXmlDate(exportProgramInstance.getApplicationStartDate()));
         occurrenceTp.setEndDate(applicationExportBuilderHelper.buildXmlDate(exportProgramInstance.getApplicationCloseDate()));
         return occurrenceTp;
@@ -389,7 +394,7 @@ public class ApplicationExportBuilder {
                 InstitutionTp institutionTp = objectFactory.createInstitutionTp();
 
                 String institutionCode = qualification.getInstitution().getCode();
-                institutionTp.setCode(institutionCode.startsWith("CUST") ? exportOtherProvided : institutionCode);
+                institutionTp.setCode(institutionCode.startsWith("CUST") ? propertyLoader.load(SYSTEM_OTHER) : institutionCode);
                 institutionTp.setName(qualification.getInstitution().getName());
 
                 CountryTp countryTp = objectFactory.createCountryTp();
@@ -405,9 +410,11 @@ public class ApplicationExportBuilder {
             qualificationsTp.setStartDate(applicationExportBuilderHelper.buildXmlDate(new LocalDate().minusYears(1)));
             qualificationsTp.setEndDate(applicationExportBuilderHelper.buildXmlDate(new LocalDate().plusYears(1)));
 
-            qualificationsTp.setGrade(exportNotProvided);
-            qualificationsTp.setLanguageOfInstruction(exportNotProvided);
-            qualificationsTp.setMainSubject(exportNotProvided);
+            String notProvided = propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED);
+
+            qualificationsTp.setGrade(notProvided);
+            qualificationsTp.setLanguageOfInstruction(notProvided);
+            qualificationsTp.setMainSubject(notProvided);
 
             QualificationTp qualificationTp = objectFactory.createQualificationTp();
             qualificationTp.setCode("6");
@@ -415,8 +422,8 @@ public class ApplicationExportBuilder {
             qualificationsTp.setQualification(qualificationTp);
 
             InstitutionTp institutionTp = objectFactory.createInstitutionTp();
-            institutionTp.setCode(exportOtherProvided);
-            institutionTp.setName(exportNotProvided);
+            institutionTp.setCode(propertyLoader.load(SYSTEM_OTHER));
+            institutionTp.setName(notProvided);
             CountryTp countryTp = objectFactory.createCountryTp();
             countryTp.setCode("XK");
             countryTp.setName("United Kingdom");
@@ -453,7 +460,7 @@ public class ApplicationExportBuilder {
     private RefereeListTp buildReferee(List<ApplicationReferee> exportReferees) {
         int referenceCount = exportReferees.size();
         RefereeListTp resultList = objectFactory.createRefereeListTp();
-        
+
         for (int i = 0; i < referenceCount; i++) {
             ApplicationReferee referee = exportReferees.get(i);
             RefereeTp refereeTp = objectFactory.createRefereeTp();
@@ -467,10 +474,9 @@ public class ApplicationExportBuilder {
             contactDtlsTp.setEmail(referee.getUser().getEmail());
             contactDtlsTp.setLandline(applicationExportBuilderHelper.cleanPhoneNumber(referee.getPhoneNumber()));
 
-            if (StringUtils.isBlank(referee.getPhoneNumber())) {
-                contactDtlsTp.setLandline(exportTelephoneNotProvided);
-            } else if (!ESAPI.validator().isValidInput("PhoneNumber", referee.getPhoneNumber(), "PhoneNumber", 25, false)) {
-                contactDtlsTp.setLandline(exportTelephoneNotProvided);
+            if (StringUtils.isBlank(referee.getPhoneNumber())
+                    || !ESAPI.validator().isValidInput("PhoneNumber", referee.getPhoneNumber(), "PhoneNumber", 25, false)) {
+                contactDtlsTp.setLandline(propertyLoader.load(SYSTEM_TELEPHONE_PLACEHOLDER));
             }
 
             AddressTp addressTp = objectFactory.createAddressTp();

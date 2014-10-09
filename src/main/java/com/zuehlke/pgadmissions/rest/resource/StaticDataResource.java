@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.commons.lang.WordUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -83,6 +84,9 @@ public class StaticDataResource {
     @Autowired
     private Mapper dozerBeanMapper;
 
+    @Value("${integration.google.api.key}")
+    private String googleApiKey;
+
     private ToIdFunction toIdFunction = new ToIdFunction();
 
     @RequestMapping(method = RequestMethod.GET)
@@ -92,7 +96,8 @@ public class StaticDataResource {
         List<StateAction> stateActions = entityService.list(StateAction.class);
         List<StateActionRepresentation> stateActionRepresentations = Lists.newArrayListWithExpectedSize(stateActions.size());
         for (StateAction stateAction : stateActions) {
-            stateActionRepresentations.add(new StateActionRepresentation(stateAction.getState().getId(), stateAction.getAction().getId(), stateAction.getRaisesUrgentFlag()));
+            stateActionRepresentations.add(new StateActionRepresentation(stateAction.getState().getId(), stateAction.getAction().getId(), stateAction
+                    .getRaisesUrgentFlag()));
         }
         staticData.put("stateActions", stateActionRepresentations);
 
@@ -123,7 +128,7 @@ public class StaticDataResource {
         staticData.put("currencies", currencies);
 
         // Display names for enum classes
-        for (Class<?> enumClass : new Class[]{PrismProgramType.class, PrismStudyOption.class, YesNoUnsureResponse.class, DurationUnit.class}) {
+        for (Class<?> enumClass : new Class[] { PrismProgramType.class, PrismStudyOption.class, YesNoUnsureResponse.class, DurationUnit.class }) {
             String simpleName = enumClass.getSimpleName();
             if (simpleName.startsWith("Prism")) {
                 simpleName = simpleName.replaceFirst("Prism", "");
@@ -136,7 +141,8 @@ public class StaticDataResource {
 
         List<FilterRepresentation> filters = Lists.newArrayListWithCapacity(FilterProperty.values().length);
         for (FilterProperty filterProperty : FilterProperty.values()) {
-            filters.add(new FilterRepresentation(filterProperty, filterProperty.getPermittedExpressions(), filterProperty.getPropertyType(), filterProperty.getPermittedScopes()));
+            filters.add(new FilterRepresentation(filterProperty, filterProperty.getPermittedExpressions(), filterProperty.getPropertyType(), filterProperty
+                    .getPermittedScopes()));
         }
         staticData.put("filters", filters);
 
@@ -154,10 +160,11 @@ public class StaticDataResource {
             if (template.getReminderTemplate() != null) {
                 definition.put("reminderTemplate", template.getReminderTemplate().name());
             }
-            List<PrismNotificationTemplatePropertyCategory> categories = Lists.asList(PrismNotificationTemplatePropertyCategory.GLOBAL, template.getPropertyCategories());
+            List<PrismNotificationTemplatePropertyCategory> categories = Lists.asList(PrismNotificationTemplatePropertyCategory.GLOBAL,
+                    template.getPropertyCategories());
             List<PrismNotificationTemplateProperty> properties = Lists.newLinkedList();
             for (PrismNotificationTemplateProperty property : PrismNotificationTemplateProperty.values()) {
-                if(categories.contains(property.getCategory())){
+                if (categories.contains(property.getCategory())) {
                     properties.add(property);
                 }
             }
@@ -165,6 +172,7 @@ public class StaticDataResource {
             templateDefinitions.add(definition);
         }
         staticData.put("notificationTemplates", templateDefinitions);
+        staticData.put("googleApiKey", googleApiKey);
 
         return staticData;
     }
@@ -177,9 +185,9 @@ public class StaticDataResource {
         Institution institution = entityService.getById(Institution.class, institutionId);
 
         // Display names for imported entities
-        for (Class<? extends ImportedEntity> entityClass : new Class[]{ReferralSource.class, Title.class, Ethnicity.class, Disability.class,
-                Gender.class, Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, FundingSource.class,
-                RejectionReason.class, ResidenceState.class}) {
+        for (Class<? extends ImportedEntity> entityClass : new Class[] { ReferralSource.class, Title.class, Ethnicity.class, Disability.class, Gender.class,
+                Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, FundingSource.class, RejectionReason.class,
+                ResidenceState.class }) {
             String simpleName = entityClass.getSimpleName();
             simpleName = WordUtils.uncapitalize(simpleName);
             List<? extends ImportedEntity> entities = importedEntityService.getEnabledImportedEntities(institution, entityClass);
@@ -191,7 +199,8 @@ public class StaticDataResource {
         }
 
         // Display names and min/max values for language qualification types
-        List<ImportedLanguageQualificationType> languageQualificationTypes = importedEntityService.getEnabledImportedEntities(institution, ImportedLanguageQualificationType.class);
+        List<ImportedLanguageQualificationType> languageQualificationTypes = importedEntityService.getEnabledImportedEntities(institution,
+                ImportedLanguageQualificationType.class);
         List<LanguageQualificationTypeRepresentation> languageQualificationTypeRepresentations = Lists.newArrayListWithCapacity(languageQualificationTypes
                 .size());
         for (ImportedLanguageQualificationType languageQualificationType : languageQualificationTypes) {

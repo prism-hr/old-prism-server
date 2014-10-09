@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.DisplayProperty;
-import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.WorkflowDefinition;
 import com.zuehlke.pgadmissions.domain.WorkflowResource;
@@ -39,8 +38,7 @@ public class CustomizationDAO {
                 .uniqueResult();
     }
 
-    public <T extends WorkflowResource> T getConfigurationStrict(Class<NotificationConfiguration> entityClass, Resource resource, String keyIndex,
-            WorkflowDefinition keyValue) {
+    public <T extends WorkflowResource> T getConfigurationStrict(Class<T> entityClass, Resource resource, String keyIndex, WorkflowDefinition keyValue) {
         return (T) sessionFactory.getCurrentSession().createCriteria(entityClass) //
                 .add(Restrictions.eq(keyIndex, keyValue)) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
@@ -63,24 +61,21 @@ public class CustomizationDAO {
                 .addOrder(Order.asc("propertyDefault")) //
                 .list();
     }
-    
+
     public <T extends WorkflowResource> void restoreGlobalizedConfiguration(Class<T> workflowResourceClass, String keyIndex, WorkflowDefinition keyValue,
             Resource globalizedResource, PrismScope globalizedResourceScope) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete :workflowResourceClass " //
                         + "where :keyIndex = :keyValue " //
                         + "and (institution in (" //
-                                + "from Institution " //
-                                + "where system = :system "
-                                + "and locale = :locale) " //
+                        + "from Institution " //
+                        + "where system = :system " + "and locale = :locale) " //
                         + "or program in (" //
-                                + "from Program " //
-                                + "where system = :system "
-                                + "and locale = :locale) " //
+                        + "from Program " //
+                        + "where system = :system " + "and locale = :locale) " //
                         + "or program in (" //
-                                + "from Program " //
-                                + "where institution = :institution "
-                                + "and locale = :locale))") //
+                        + "from Program " //
+                        + "where institution = :institution " + "and locale = :locale))") //
                 .setParameter("workflowResourceClass", workflowResourceClass.getSimpleName()) //
                 .setParameter("keyIndex", keyValue) //
                 .setParameter("keyValue", keyValue) //

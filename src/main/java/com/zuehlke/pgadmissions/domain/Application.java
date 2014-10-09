@@ -213,7 +213,7 @@ public class Application extends Resource {
     public void setUser(User user) {
         this.user = user;
     }
-    
+
     @Override
     public PrismLocale getLocale() {
         return program.getLocale();
@@ -624,6 +624,10 @@ public class Application extends Resource {
         parentResources.add(program);
         parentResources.add(institution);
         return parentResources;
+    }
+
+    public String getInstitutionDisplay() {
+        return institution == null ? null : institution.getTitle();
     }
 
     public String getProgramDisplay() {

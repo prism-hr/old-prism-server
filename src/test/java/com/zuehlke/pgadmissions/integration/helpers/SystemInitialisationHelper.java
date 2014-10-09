@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,8 +49,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssi
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.CustomizationService;
+import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -110,9 +109,6 @@ public class SystemInitialisationHelper {
 
     @Autowired
     private UserHelper userHelper;
-
-    @Autowired
-    private ApplicationContext applicationContext;
 
     public void verifyScopeCreation() {
         for (PrismScope scopeId : scopeService.getScopesDescending()) {
@@ -278,8 +274,6 @@ public class SystemInitialisationHelper {
 
         verifyNotificationTemplateCreation();
         verifyStateDurationCreation();
-
-        applicationContext.getBean(WorkflowConfigurationHelper.class).verifyWorkflowConfiguration();
     }
 
     public void verifySystemUserRegistration() throws Exception {

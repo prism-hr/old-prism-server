@@ -49,7 +49,7 @@ public class CustomizationDAO {
 
     public List<DisplayProperty> getDisplayProperties(Resource resource, PrismLocale locale, PrismDisplayCategory category) {
         return (List<DisplayProperty>) sessionFactory.getCurrentSession().createCriteria(DisplayProperty.class) //
-                .add(Restrictions.eq("displayCategory", category)) //
+                .add(Restrictions.eq("displayCategory.id", category)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.eq("system", resource.getSystem())) //
@@ -60,7 +60,7 @@ public class CustomizationDAO {
                 .addOrder(Order.desc("program")) //
                 .addOrder(Order.asc("institution")) //
                 .addOrder(Order.desc("system")) //
-                .addOrder(Order.desc("propertyDefault")) //
+                .addOrder(Order.asc("propertyDefault")) //
                 .list();
     }
     

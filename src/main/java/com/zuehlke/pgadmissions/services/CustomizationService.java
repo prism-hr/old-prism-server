@@ -61,12 +61,12 @@ public class CustomizationService {
         return customizationDAO.getConfiguration(entityClass, resource, keyIndex, keyValue);
     }
 
-    public <T extends WorkflowResource> T getConfigurationStrict(Class<NotificationConfiguration> entityClass, Resource resource, String keyIndex,
+    public <T extends WorkflowResource> T getConfigurationStrict(Class<T> entityClass, Resource resource, String keyIndex,
             WorkflowDefinition keyValue) {
         return customizationDAO.getConfigurationStrict(entityClass, resource, keyIndex, keyValue);
     }
 
-    public <T extends WorkflowResource> void removeLocalizedConfiguration(Class<NotificationConfiguration> entityClass, Resource resource, String keyIndex,
+    public <T extends WorkflowResource> void removeLocalizedConfiguration(Class<T> entityClass, Resource resource, String keyIndex,
             WorkflowDefinition keyValue) {
         T localizedConfiguration = getConfigurationStrict(entityClass, resource, keyIndex, keyValue);
         if (localizedConfiguration != null) {
@@ -74,7 +74,7 @@ public class CustomizationService {
         }
     }
 
-    public <T extends WorkflowResource> void restoreGlobalizedConfiguration(Class<NotificationConfiguration> entityClass, Resource resource, String keyIndex,
+    public <T extends WorkflowResource> void restoreGlobalizedConfiguration(Class<T> entityClass, Resource resource, String keyIndex,
             WorkflowDefinition keyValue) {
         T globalizedConfiguration = getConfigurationStrict(entityClass, resource, keyIndex, keyValue);
 

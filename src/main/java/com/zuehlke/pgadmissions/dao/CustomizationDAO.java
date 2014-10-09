@@ -45,6 +45,29 @@ public class CustomizationDAO {
                 .uniqueResult();
     }
 
+    public <T extends WorkflowResource> void restoreGlobalizedConfiguration(Class<T> workflowResourceClass, String keyIndex, WorkflowDefinition keyValue,
+            Resource globalizedResource, PrismScope globalizedResourceScope) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete :workflowResourceClass " //
+                        + "where :keyIndex = :keyValue " //
+                        + "and (institution in (" //
+                                + "from Institution " //
+                                + "where system = :system " + "and locale = :locale) " //
+                        + "or program in (" //
+                                + "from Program " //
+                                + "where system = :system " + "and locale = :locale) " //
+                        + "or program in (" //
+                                + "from Program " //
+                                + "where institution = :institution " + "and locale = :locale))") //
+                .setParameter("workflowResourceClass", workflowResourceClass.getSimpleName()) //
+                .setParameter("keyIndex", keyValue) //
+                .setParameter("keyValue", keyValue) //
+                .setParameter("system", globalizedResourceScope == PrismScope.SYSTEM ? globalizedResource : null) //
+                .setParameter("locale", globalizedResource.getLocale()) //
+                .setParameter("institution", globalizedResourceScope == PrismScope.INSTITUTION ? globalizedResource : null) //
+                .executeUpdate();
+    }
+    
     public List<DisplayProperty> getDisplayProperties(Resource resource, PrismLocale locale, PrismDisplayCategory category) {
         return (List<DisplayProperty>) sessionFactory.getCurrentSession().createCriteria(DisplayProperty.class) //
                 .add(Restrictions.eq("displayCategory.id", category)) //
@@ -60,29 +83,6 @@ public class CustomizationDAO {
                 .addOrder(Order.desc("system")) //
                 .addOrder(Order.asc("propertyDefault")) //
                 .list();
-    }
-
-    public <T extends WorkflowResource> void restoreGlobalizedConfiguration(Class<T> workflowResourceClass, String keyIndex, WorkflowDefinition keyValue,
-            Resource globalizedResource, PrismScope globalizedResourceScope) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "delete :workflowResourceClass " //
-                        + "where :keyIndex = :keyValue " //
-                        + "and (institution in (" //
-                        + "from Institution " //
-                        + "where system = :system " + "and locale = :locale) " //
-                        + "or program in (" //
-                        + "from Program " //
-                        + "where system = :system " + "and locale = :locale) " //
-                        + "or program in (" //
-                        + "from Program " //
-                        + "where institution = :institution " + "and locale = :locale))") //
-                .setParameter("workflowResourceClass", workflowResourceClass.getSimpleName()) //
-                .setParameter("keyIndex", keyValue) //
-                .setParameter("keyValue", keyValue) //
-                .setParameter("system", globalizedResourceScope == PrismScope.SYSTEM ? globalizedResource : null) //
-                .setParameter("locale", globalizedResource.getLocale()) //
-                .setParameter("institution", globalizedResourceScope == PrismScope.INSTITUTION ? globalizedResource : null) //
-                .executeUpdate();
     }
 
 }

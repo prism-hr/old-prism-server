@@ -58,7 +58,7 @@ public class CustomizationDAO {
                         .add(Restrictions.eq("program", resource.getProgram()))) //
                 .addOrder(Order.asc("propertyIndex")) //
                 .addOrder(Order.desc("program")) //
-                .addOrder(Order.asc("institution")) //
+                .addOrder(Order.desc("institution")) //
                 .addOrder(Order.desc("system")) //
                 .addOrder(Order.asc("propertyDefault")) //
                 .list();

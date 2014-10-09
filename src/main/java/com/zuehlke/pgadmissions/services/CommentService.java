@@ -92,8 +92,8 @@ public class CommentService {
                 int nextCommentIndex = i + 1;
                 Comment close = nextCommentIndex == transitionCommentCount ? null : transitionComments.get(nextCommentIndex);
                 comments.addAll(commentDAO.getStateComments(resource, start, close));
+                comments.add(transitionComments.get(i));
             }
-
         }
         return comments;
     }
@@ -270,7 +270,7 @@ public class CommentService {
     public void processComment(Comment comment) {
         if (comment.isApplicationAutomatedRejectionComment()) {
             PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).withResource(comment.getApplication());
-            comment.setRejectionReasonSystem(propertyLoader.load(PrismDisplayProperty.APPLICATION_REJECTION_SYSTEM));
+            comment.setRejectionReasonSystem(propertyLoader.load(PrismDisplayProperty.APPLICATION_COMMENT_REJECTION_SYSTEM));
         }
 
     }

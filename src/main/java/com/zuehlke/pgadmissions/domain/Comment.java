@@ -159,7 +159,7 @@ public class Comment {
     @JoinColumn(name = "application_rejection_reason_id")
     private RejectionReason rejectionReason;
 
-    @Column(name = "application_rejection_reason_display")
+    @Column(name = "application_rejection_reason_system")
     private String rejectionReasonSystem;
 
     @Column(name = "application_rating")
@@ -879,6 +879,10 @@ public class Comment {
                 .contains(action.getId());
     }
 
+    public boolean isApplicationReferenceComment() {
+        return action.getId() == PrismAction.APPLICATION_PROVIDE_REFERENCE;
+    }
+
     public boolean isApplicationAutomatedRejectionComment() {
         return action.getId() == PrismAction.APPLICATION_TERMINATE && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED
                 && rejectionReason == null;
@@ -910,9 +914,9 @@ public class Comment {
     public String getUserDisplay() {
         return user == null ? null : user.getDisplayName();
     }
-    
+
     public String getRejectionReasonDisplay() {
         return rejectionReason == null ? rejectionReasonSystem : rejectionReason.getName();
     }
-    
+
 }

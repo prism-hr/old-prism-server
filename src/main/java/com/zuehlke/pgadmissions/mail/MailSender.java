@@ -1,31 +1,10 @@
 package com.zuehlke.pgadmissions.mail;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_EMAIL_LINK_MESSAGE;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
-
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.MimeMessagePreparator;
-import org.springframework.stereotype.Service;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
-
+import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.User;
@@ -39,9 +18,30 @@ import com.zuehlke.pgadmissions.services.NotificationTemplatePropertyService;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
-
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springframework.stereotype.Service;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
+
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_EMAIL_LINK_MESSAGE;
 
 @Service
 public class MailSender {
@@ -79,9 +79,10 @@ public class MailSender {
         final NotificationConfiguration configuration = message.getConfiguration();
         try {
             Map<String, Object> model = createNotificationModel(message.getConfiguration().getNotificationTemplate(), message.getModelDTO());
-            final String subject = processTemplate(configuration.getNotificationTemplate().getId(), configuration.getSubject(), model);
-            final String htmlText = processTemplate(configuration.getNotificationTemplate().getId(), configuration.getContent(), model);
-            final String plainText = mailToPlainTextConverter.getPlainText(htmlText) + "\n\n"
+            final String subject = processHeader(configuration.getNotificationTemplate().getId(), configuration.getSubject(), model);
+
+            final String htmlContent = processContent(configuration.getNotificationTemplate().getId(), configuration.getContent(), model, subject);
+            final String plainTextContent = mailToPlainTextConverter.getPlainText(htmlContent) + "\n\n"
                     + applicationContext.getBean(PropertyLoader.class).load(SYSTEM_EMAIL_LINK_MESSAGE);
 
             if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat")) {
@@ -92,7 +93,7 @@ public class MailSender {
                         final MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
                         messageHelper.setTo(convertToInternetAddresses(message.getModelDTO().getUser()));
                         messageHelper.setSubject(subject);
-                        messageHelper.setText(plainText, htmlText);
+                        messageHelper.setText(plainTextContent, htmlContent);
                         messageHelper.setFrom(emailAddressFrom);
                         for (AttachmentInputSource attachment : message.getAttachments()) {
                             messageHelper.addAttachment(attachment.getAttachmentFilename(), attachment, "application/pdf");
@@ -112,8 +113,19 @@ public class MailSender {
 
     }
 
-    public String processTemplate(PrismNotificationTemplate templateId, String templateValue, Map<String, Object> model) throws IOException, TemplateException {
+    public String processHeader(PrismNotificationTemplate templateId, String templateValue, Map<String, Object> model) throws IOException, TemplateException {
         Template template = new Template(templateId.name(), new StringReader(templateValue), freemarkerConfig.getConfiguration());
+        return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+    }
+
+    public String processContent(PrismNotificationTemplate templateId, String templateValue, Map<String, Object> model, String subject) throws IOException, TemplateException {
+        Template template = new Template(templateId.name(), new StringReader(templateValue), freemarkerConfig.getConfiguration());
+        String content = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+
+        String emailTemplate = Resources.toString(Resources.getResource("email/email_template.ftl"), Charsets.UTF_8);
+        template = new Template("Email template", emailTemplate, freemarkerConfig.getConfiguration());
+
+        model = ImmutableMap.<String, Object>of("IMAGES_PATH", host + "/images/email", "SUBJECT", subject, "CONTENT", content);
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
     }
 

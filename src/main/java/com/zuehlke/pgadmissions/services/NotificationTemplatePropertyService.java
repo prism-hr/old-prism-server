@@ -1,7 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.Arrays;
+import java.util.Locale;
 
+import org.apache.commons.lang.LocaleUtils;
+import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,7 +25,7 @@ public class NotificationTemplatePropertyService {
 
     @Value("${application.host}")
     private String host;
-    
+
     @Autowired
     private CommentService commentService;
 
@@ -42,9 +46,34 @@ public class NotificationTemplatePropertyService {
     public String getProjectOrProgramTitle(NotificationTemplateModelDTO modelDTO) {
         return modelDTO.getResource().getApplication().getProjectOrProgramTitle();
     }
-    
+
     public String getPropertyOrProgramCode(NotificationTemplateModelDTO modelDTO) {
         return modelDTO.getResource().getApplication().getProjectOrProgramCode();
+    }
+
+    public String getInterviewDateTime(NotificationTemplateModelDTO modelDTO){
+        LocalDateTime dateTime = modelDTO.getComment().getInterviewDateTime();
+        return dateTime.toString();
+    }
+
+    public String getInterviewTimeZone(NotificationTemplateModelDTO modelDTO){
+        return modelDTO.getComment().getInterviewTimeZone().getDisplayName();
+    }
+
+    public String getIntervieweeInstructions(NotificationTemplateModelDTO modelDTO){
+        String instructions = modelDTO.getComment().getIntervieweeInstructions();
+        return instructions != null ? instructions : "Not provided";
+    }
+
+    public String getInterviewLocation(NotificationTemplateModelDTO modelDTO){
+        String location = modelDTO.getComment().getInterviewLocation();
+        // TODO wrap with <a href>
+        return location;
+    }
+
+    public String getHomepageControl(NotificationTemplateModelDTO modelDTO) {
+        // TODO create <a href> with homepage
+        return host;
     }
 
     public String getViewEditControl(NotificationTemplateModelDTO modelDTO) {
@@ -57,11 +86,11 @@ public class NotificationTemplatePropertyService {
         }
         return "<a href=\"" + url + "\">View</a>";
     }
-    
+
     public String getRejectionReason(NotificationTemplateModelDTO modelDTO) {
         Application application = (Application) modelDTO.getResource();
         Comment rejection = commentService.getRejectionComment(application);
         return rejection == null ? null : rejection.getRejectionReasonDisplay();
     }
-    
+
 }

@@ -19,8 +19,8 @@ import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresen
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 
-@RequestMapping("api/domiciles/{domicileId}")
 @RestController
+@RequestMapping("api/domiciles/{domicileId}")
 public class InstitutionDomicileResource {
 
     @Autowired

@@ -17,7 +17,8 @@ import com.zuehlke.pgadmissions.rest.dto.AdvertFeesAndPaymentsDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertFilterMetadataDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 
-@RestController("api/{resourceScope:projects|programs}")
+@RestController
+@RequestMapping("api/{resourceScope:projects|programs}")
 public class AdvertResource {
 
     @Autowired
@@ -45,5 +46,5 @@ public class AdvertResource {
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
         return RestApiUtils.getResourceDescriptor(resourceScope);
     }
-    
+
 }

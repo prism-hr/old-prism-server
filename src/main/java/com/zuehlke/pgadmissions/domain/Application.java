@@ -657,6 +657,14 @@ public class Application extends Resource {
     public boolean isApproved() {
         return state.getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED && state.getId() != PrismState.APPLICATION_APPROVED;
     }
+    
+    public String getProjectOrProgramTitle() {
+        return project == null ? program.getTitle() : project.getTitle(); 
+    }
+    
+    public String getProjectOrProgramCode() {
+        return project == null ? program.getCode() : project.getCode(); 
+    }
 
     @Override
     public ResourceSignature getResourceSignature() {

@@ -11,7 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismConfiguration;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowConfiguration;
 
 @Entity
 @Table(name = "WORKFLOW_CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "configuration_parameter" }),
@@ -37,7 +37,7 @@ public class WorkflowConfiguration extends WorkflowResource {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "configuration_parameter", nullable = false)
-    private PrismConfiguration parameter;
+    private PrismWorkflowConfiguration parameter;
 
     @Column(name = "minimum_required")
     private Integer minimumRequired;
@@ -83,11 +83,11 @@ public class WorkflowConfiguration extends WorkflowResource {
         this.program = program;
     }
 
-    public PrismConfiguration getParameter() {
+    public PrismWorkflowConfiguration getParameter() {
         return parameter;
     }
 
-    public void setParameter(PrismConfiguration parameter) {
+    public void setParameter(PrismWorkflowConfiguration parameter) {
         this.parameter = parameter;
     }
     
@@ -112,7 +112,7 @@ public class WorkflowConfiguration extends WorkflowResource {
         return this;
     }
     
-    public WorkflowConfiguration withParameter(PrismConfiguration parameter) {
+    public WorkflowConfiguration withParameter(PrismWorkflowConfiguration parameter) {
         this.parameter = parameter;
         return this;
     }

@@ -1,1 +1,1 @@
-REMINDER: ${systemName} Applications Require your Attention
+REMINDER: ${SYSTEM_NAME} Applications Require your Attention

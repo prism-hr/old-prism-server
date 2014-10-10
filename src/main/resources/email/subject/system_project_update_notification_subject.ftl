@@ -1,1 +1,1 @@
-Updates to your ${systemName} Projects
+Updates to your ${SYSTEM_NAME} Projects

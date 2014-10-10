@@ -1,1 +1,1 @@
-Program ${programCode} Approval - Outcome
+Program ${PROGRAM_CODE} Approval - Outcome

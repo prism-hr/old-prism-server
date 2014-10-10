@@ -10,8 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Joiner;
 import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
@@ -42,9 +40,11 @@ public class NotificationTemplatePropertyService {
     }
 
     public String getProjectOrProgramTitle(NotificationTemplateModelDTO modelDTO) {
-        Project project = modelDTO.getResource().getProject();
-        Program program = modelDTO.getResource().getProgram();
-        return project == null ? program.getTitle() : project.getTitle();
+        return modelDTO.getResource().getApplication().getProjectOrProgramTitle();
+    }
+    
+    public String getPropertyOrProgramCode(NotificationTemplateModelDTO modelDTO) {
+        return modelDTO.getResource().getApplication().getProjectOrProgramCode();
     }
 
     public String getViewEditControl(NotificationTemplateModelDTO modelDTO) {

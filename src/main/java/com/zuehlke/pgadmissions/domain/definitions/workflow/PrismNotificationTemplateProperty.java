@@ -30,6 +30,7 @@ public enum PrismNotificationTemplateProperty {
     APPLICANT(APPLICATION, "get", "resource", "application", "user", "displayName"),
     APPLICATION_CODE(APPLICATION, "get", "resource", "application", "code"),
     PROJECT_OR_PROGRAM_TITLE(APPLICATION, "getProjectOrProgramTitle"),
+    PROJECT_OR_PROGRAM_CODE(APPLICATION, "getPropertyOrProgramCode"),
     
     REJECTION_REASON(APPLICATION_REJECTION, "getRejectionReason"),
 

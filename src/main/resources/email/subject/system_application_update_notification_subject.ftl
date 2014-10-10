@@ -1,1 +1,1 @@
-Updates to your ${systemName} Applications
+Updates to your ${SYSTEM_NAME} Applications

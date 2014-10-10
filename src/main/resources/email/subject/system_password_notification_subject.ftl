@@ -1,1 +1,1 @@
-Temporary Password for ${systemName}
+Temporary Password for ${SYSTEM_NAME}

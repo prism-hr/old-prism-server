@@ -1,1 +1,1 @@
-Application ${applicationCode} for UCL ${projectOrProgramTitle}
+Application ${APPLICATION_CODE} for ${PROJECT_OR_PROGRAM_CODE}

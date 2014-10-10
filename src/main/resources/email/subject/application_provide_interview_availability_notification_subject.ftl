@@ -1,1 +1,1 @@
-${user} Application ${applicationCode} for UCL ${projectOrProgramTitle} - Interview Preference Confirmation
+${USER} Application ${APPLICATION_CODE} for ${PROJECT_OR_PROGRAM_CODE} - Interview Preference Confirmation

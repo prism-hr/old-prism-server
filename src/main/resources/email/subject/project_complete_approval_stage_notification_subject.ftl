@@ -1,1 +1,1 @@
-Project ${projectCode} Approval - Outcome
+Project ${PROJECT_CODE} Approval - Outcome

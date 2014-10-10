@@ -1,16 +1,15 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-import com.zuehlke.pgadmissions.domain.Institution;
+import java.util.Set;
+
+import org.joda.time.LocalDate;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import org.joda.time.LocalDate;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation;
-
-import java.util.Set;
 
 public class AdvertRepresentation {
 

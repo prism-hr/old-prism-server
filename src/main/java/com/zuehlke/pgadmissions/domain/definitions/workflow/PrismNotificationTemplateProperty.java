@@ -1,21 +1,11 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.ACTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.APPLICATION_REJECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.CONFIRM_INTERVIEW;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.ERROR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.NEW_PASSWORD;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.RECOMMENDATION;
-
 import java.util.List;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.*;
 
 public enum PrismNotificationTemplateProperty {
 
@@ -27,11 +17,14 @@ public enum PrismNotificationTemplateProperty {
     AUTHOR(GLOBAL, "get", "sender", "displayName"),
     AUTHOR_EMAIL(GLOBAL, "get", "sender", "email"),
 
+    INVOKER(COMMENT, "get", "comment", "user", "displayName"),
+    INVOKER_EMAIL(COMMENT, "get", "comment", "user", "email"),
+
     APPLICANT(APPLICATION, "get", "resource", "application", "user", "displayName"),
     APPLICATION_CODE(APPLICATION, "get", "resource", "application", "code"),
     PROJECT_OR_PROGRAM_TITLE(APPLICATION, "getProjectOrProgramTitle"),
     PROJECT_OR_PROGRAM_CODE(APPLICATION, "getPropertyOrProgramCode"),
-    
+
     REJECTION_REASON(APPLICATION_REJECTION, "getRejectionReason"),
 
     PROGRAM_CODE(PROGRAM, "get", "resource", "program", "code"),
@@ -43,9 +36,17 @@ public enum PrismNotificationTemplateProperty {
     INSTITUTION_CODE(INSTITUTION, "get", "resource", "institution", "code"),
     INSTITUTION_TITLE(INSTITUTION, "get", "resource", "institution", "title"),
 
+    INTERVIEW_TIME_ZONE(INTERVIEW, "getInterviewTimeZone"),
+
+    INTERVIEW_DATE_TIME(INTERVIEW_SCHEDULED, "getInterviewDateTime"),
+    INTERVIEWER_INSTRUCTIONS(INTERVIEW_SCHEDULED, "get", "comment", "interviewerInstructions"),
+    INTERVIEWEE_INSTRUCTIONS(INTERVIEW_SCHEDULED, "getIntervieweeInstructions"),
+    INTERVIEW_LOCATION(INTERVIEW_SCHEDULED, "getInterviewLocation"),
+
     ACTION_CONTROL(ACTION, "getActionControl"),
-    DIRECTIONS_CONTROL(CONFIRM_INTERVIEW, "getDirectionsControl"),
+    HOMEPAGE_CONTROL(GLOBAL, "getHomepageControl"),
     VIEW_EDIT_CONTROL(GLOBAL, "getViewEditControl"),
+    DIRECTIONS_CONTROL(CONFIRM_INTERVIEW, "getDirectionsControl"),
     NEW_PASSWORD_CONTROL(NEW_PASSWORD, "getNewPasswordControl"),
 
     RECOMMENDATIONS(RECOMMENDATION, "get", "recommendations"),

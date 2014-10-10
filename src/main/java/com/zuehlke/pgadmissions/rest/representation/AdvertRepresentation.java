@@ -1,9 +1,16 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
+import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation;
+
+import java.util.Set;
 
 public class AdvertRepresentation {
 
@@ -32,6 +39,16 @@ public class AdvertRepresentation {
     private UserRepresentation user;
 
     private PrismScope resourceScope;
+
+    private Set<PrismAdvertDomain> domains;
+
+    private Set<PrismAdvertIndustry> industries;
+
+    private Set<PrismAdvertFunction> functions;
+
+    private Set<Integer> targetInstitutions;
+
+    private Set<PrismProgramType> targetProgramTypes;
 
     public Integer getId() {
         return id;
@@ -135,5 +152,45 @@ public class AdvertRepresentation {
 
     public void setResourceScope(PrismScope resourceScope) {
         this.resourceScope = resourceScope;
+    }
+
+    public Set<PrismAdvertDomain> getDomains() {
+        return domains;
+    }
+
+    public void setDomains(Set<PrismAdvertDomain> domains) {
+        this.domains = domains;
+    }
+
+    public Set<PrismAdvertIndustry> getIndustries() {
+        return industries;
+    }
+
+    public void setIndustries(Set<PrismAdvertIndustry> industries) {
+        this.industries = industries;
+    }
+
+    public Set<PrismAdvertFunction> getFunctions() {
+        return functions;
+    }
+
+    public void setFunctions(Set<PrismAdvertFunction> functions) {
+        this.functions = functions;
+    }
+
+    public Set<Integer> getTargetInstitutions() {
+        return targetInstitutions;
+    }
+
+    public void setTargetInstitutions(Set<Integer> targetInstitutions) {
+        this.targetInstitutions = targetInstitutions;
+    }
+
+    public Set<PrismProgramType> getTargetProgramTypes() {
+        return targetProgramTypes;
+    }
+
+    public void setTargetProgramTypes(Set<PrismProgramType> targetProgramTypes) {
+        this.targetProgramTypes = targetProgramTypes;
     }
 }

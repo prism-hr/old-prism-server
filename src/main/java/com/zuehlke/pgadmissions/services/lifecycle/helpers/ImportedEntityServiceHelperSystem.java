@@ -25,10 +25,10 @@ import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.GeocodableLocation;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
-import com.zuehlke.pgadmissions.domain.System;
+import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
+import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicileRegion;
+import com.zuehlke.pgadmissions.domain.location.GeocodableLocation;
+import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.dto.InstitutionDomicileImportDTO;
 import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;

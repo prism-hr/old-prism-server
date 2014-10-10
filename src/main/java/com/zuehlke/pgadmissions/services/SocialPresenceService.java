@@ -17,9 +17,9 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.definitions.SocialPresence;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.json.InstitutionSearchResponseDTO;
 import com.zuehlke.pgadmissions.dto.json.InstitutionSearchResponseDTO.Item;
 import com.zuehlke.pgadmissions.rest.representation.SocialPresenceRepresentation;

@@ -16,7 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 public class PrismAuthenticationProvider implements AuthenticationProvider {

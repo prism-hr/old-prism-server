@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.application.Application;
 
 @Service
 @Transactional

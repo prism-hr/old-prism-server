@@ -4,7 +4,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.application.Application;
 
 public class ApplicationExportServiceMock extends ApplicationExportServiceDevelopment {
 

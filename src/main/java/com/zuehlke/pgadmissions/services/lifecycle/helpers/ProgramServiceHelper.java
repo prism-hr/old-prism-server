@@ -6,7 +6,7 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.services.ProgramService;
 
 @Component

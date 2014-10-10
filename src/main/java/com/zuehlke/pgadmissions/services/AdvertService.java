@@ -7,9 +7,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
@@ -28,17 +28,17 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
-import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.FinancialDetails;
-import com.zuehlke.pgadmissions.domain.InstitutionAddress;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
-import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
+import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
+import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicileRegion;
+import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertFeesAndPaymentsDTO;
@@ -189,13 +189,13 @@ public class AdvertService {
             List<Object> values = (List<Object>) ReflectionUtils.getProperty(metadataDTO, propertyName);
 
             if (values != null) {
-                Set<Object> persistentMetadata = (Set<Object>) ReflectionUtils.getProperty(advert, propertyName);
+                Collection<?> persistentMetadata = (Collection<?>) ReflectionUtils.getProperty(advert, propertyName);
                 persistentMetadata.clear();
 
                 boolean isTargetInstitutionsProperty = propertyName.equals("targetInstitution");
                 for (Object value : values) {
                     value = isTargetInstitutionsProperty ? institutionService.getById((Integer) value) : value;
-                    persistentMetadata.add(value);
+                    advert.addCategory(value);
                 }
             }
         }
@@ -223,7 +223,7 @@ public class AdvertService {
         return advertDAO.getAdvertsWithElapsedCurrencyConversions(baseline, activeProgramStates, activeProjectStates);
     }
 
-    private void updateFinancialDetails(FinancialDetails financialDetails, FinancialDetailsDTO financialDetailsDTO, String currencyAtLocale, LocalDate baseline)
+    private void updateFinancialDetails(AdvertFinancialDetail financialDetails, FinancialDetailsDTO financialDetailsDTO, String currencyAtLocale, LocalDate baseline)
             throws Exception {
         DurationUnit interval = financialDetailsDTO.getInterval();
         String currencySpecified = financialDetailsDTO.getCurrency();
@@ -272,7 +272,7 @@ public class AdvertService {
         return localeAddress.getDomicile().getCurrency();
     }
 
-    private void setMonetaryValues(FinancialDetails financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified, BigDecimal maximumSpecified,
+    private void setMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified, BigDecimal maximumSpecified,
             String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context) throws IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
         PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Minimum" + context, minimumSpecified);
@@ -281,7 +281,7 @@ public class AdvertService {
         PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixGenerated + "Maximum" + context, maximumGenerated);
     }
 
-    private void setConvertedMonetaryValues(FinancialDetails financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
+    private void setConvertedMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
             BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (rate.compareTo(new BigDecimal(0)) == 1) {
@@ -298,7 +298,7 @@ public class AdvertService {
                 maximumGenerated, "AtLocale");
     }
 
-    private void updateConvertedMonetaryValues(FinancialDetails financialDetails, LocalDate baseline) throws IOException, JAXBException,
+    private void updateConvertedMonetaryValues(AdvertFinancialDetail financialDetails, LocalDate baseline) throws IOException, JAXBException,
             IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         String currencySpecified = financialDetails.getCurrencySpecified();
         String currencyAtLocale = financialDetails.getCurrencyAtLocale();
@@ -376,14 +376,14 @@ public class AdvertService {
 
     private void updateFee(LocalDate baseline, Advert advert, String currencyAtLocale, FinancialDetailsDTO feeDTO) throws Exception {
         if (advert.getFee() == null) {
-            advert.setFee(new FinancialDetails());
+            advert.setFee(new AdvertFinancialDetail());
         }
         updateFinancialDetails(advert.getFee(), feeDTO, currencyAtLocale, baseline);
     }
 
     private void updatePay(LocalDate baseline, Advert advert, String currencyAtLocale, FinancialDetailsDTO payDTO) throws Exception {
         if (advert.getPay() == null) {
-            advert.setPay(new FinancialDetails());
+            advert.setPay(new AdvertFinancialDetail());
         }
         updateFinancialDetails(advert.getPay(), payDTO, currencyAtLocale, baseline);
     }

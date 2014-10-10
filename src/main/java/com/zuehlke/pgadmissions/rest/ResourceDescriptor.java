@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.rest;
 
-import com.zuehlke.pgadmissions.domain.Resource;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 
 public class ResourceDescriptor {

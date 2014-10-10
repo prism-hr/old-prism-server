@@ -28,8 +28,8 @@ import com.itextpdf.text.pdf.PdfImportedPage;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
@@ -88,7 +88,7 @@ public class ApplicationDownloadReferenceBuilder {
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
 
             PdfContentByte content = pdfWriter.getDirectContent();
-            for (com.zuehlke.pgadmissions.domain.Document input : referenceComment.getDocuments()) {
+            for (com.zuehlke.pgadmissions.domain.comment.Document input : referenceComment.getDocuments()) {
                 try {
                     PdfReader reader = new PdfReader(input.getContent());
                     for (int i = 1; i <= reader.getNumberOfPages(); i++) {

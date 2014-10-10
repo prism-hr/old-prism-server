@@ -21,7 +21,7 @@ public class ApplicationPassport {
     @GeneratedValue
     private Integer id;
 
-    @OneToOne(mappedBy = "applicationPassport")
+    @OneToOne(mappedBy = "passport")
     private ApplicationPersonalDetail applicationPersonalDetail;
 
     @ESAPIConstraint(rule = "LettersAndNumbersOnly", maxLength = 35, message = "{text.field.nonlettersandnumbers}")

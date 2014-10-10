@@ -12,8 +12,9 @@ public enum PrismLocale {
         return EN_GB;
     }
     
-    public String toString(PrismLocale locale) {
-        String[] parts = locale.name().split("_");
+    @Override
+    public String toString() {
+        String[] parts = name().split("_");
         return parts[0].toLowerCase() + "_" + parts[1];
     }
     

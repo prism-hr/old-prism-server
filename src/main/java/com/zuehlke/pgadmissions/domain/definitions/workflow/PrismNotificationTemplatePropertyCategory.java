@@ -10,6 +10,9 @@ public enum PrismNotificationTemplatePropertyCategory {
     PROGRAM, //
     PROJECT, //
     INSTITUTION, //
+    COMMENT, //
+    INTERVIEW, //
+    INTERVIEW_SCHEDULED, //
     ERROR, //
     RECOMMENDATION, //
     ACTION, //

@@ -1,0 +1,1 @@
+ALTER TABLE INTERVIEWER DROP FOREIGN KEY app_interviewer_fk, DROP COLUMN application_form_id;

@@ -4,8 +4,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
@@ -18,6 +20,9 @@ public class ApplicationPassport {
     @Id
     @GeneratedValue
     private Integer id;
+
+    @OneToOne(mappedBy = "applicationPassport")
+    private ApplicationPersonalDetail applicationPersonalDetail;
 
     @ESAPIConstraint(rule = "LettersAndNumbersOnly", maxLength = 35, message = "{text.field.nonlettersandnumbers}")
     @Column(name = "number", nullable = false)
@@ -94,13 +99,15 @@ public class ApplicationPassport {
         this.expiryDate = expiryDate;
         return this;
     }
-    
+
     public String getIssueDateDisplay(String dateFormat) {
-        return issueDate == null ? null : issueDate.toString(dateFormat);
+        return issueDate == null ? null : issueDate.toString(dateFormat,
+                LocaleUtils.toLocale(applicationPersonalDetail.getApplication().getLocale().toString()));
     }
-    
+
     public String getExipryDateDisplay(String dateFormat) {
-        return expiryDate == null ? null : expiryDate.toString(dateFormat);
+        return expiryDate == null ? null : expiryDate.toString(dateFormat,
+                LocaleUtils.toLocale(applicationPersonalDetail.getApplication().getLocale().toString()));
     }
 
 }

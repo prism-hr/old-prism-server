@@ -20,6 +20,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -649,15 +650,15 @@ public class Application extends Resource {
     }
 
     public String getSubmittedTimestampDisplay(String dateFormat) {
-        return submittedTimestamp == null ? null : submittedTimestamp.toString(dateFormat);
+        return submittedTimestamp == null ? null : submittedTimestamp.toString(dateFormat, LocaleUtils.toLocale(this.getLocale().toString()));
     }
 
     public String getClosingDateDisplay(String dateFormat) {
-        return closingDate == null ? null : closingDate.toString(dateFormat);
+        return closingDate == null ? null : closingDate.toString(dateFormat, LocaleUtils.toLocale(this.getLocale().toString()));
     }
 
     public String getConfirmedStartDateDisplay(String dateFormat) {
-        return confirmedStartDate == null ? null : confirmedStartDate.toString(dateFormat);
+        return confirmedStartDate == null ? null : confirmedStartDate.toString(dateFormat, LocaleUtils.toLocale(this.getLocale().toString()));
     }
 
     public String getApplicationRatingAverageDisplay() {
@@ -667,13 +668,13 @@ public class Application extends Resource {
     public boolean isApproved() {
         return state.getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED && state.getId() != PrismState.APPLICATION_APPROVED;
     }
-    
+
     public String getProjectOrProgramTitle() {
-        return project == null ? program.getTitle() : project.getTitle(); 
+        return project == null ? program.getTitle() : project.getTitle();
     }
-    
+
     public String getProjectOrProgramCode() {
-        return project == null ? program.getCode() : project.getCode(); 
+        return project == null ? program.getCode() : project.getCode();
     }
 
     @Override

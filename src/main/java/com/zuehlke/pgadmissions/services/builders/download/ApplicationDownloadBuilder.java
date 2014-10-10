@@ -342,8 +342,10 @@ public class ApplicationDownloadBuilder {
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PASSPORT_NAME), passport.getName(), body);
 
         String dateFormat = propertyLoader.load(SYSTEM_DATE_FORMAT);
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PASSPORT_ISSUE_DATE), dateFormat, body);
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PASSPORT_EXPIRY_DATE), dateFormat, body);
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PASSPORT_ISSUE_DATE), passport.getIssueDateDisplay(dateFormat),
+                body);
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PASSPORT_EXPIRY_DATE), passport.getExipryDateDisplay(dateFormat),
+                body);
 
         applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
     }

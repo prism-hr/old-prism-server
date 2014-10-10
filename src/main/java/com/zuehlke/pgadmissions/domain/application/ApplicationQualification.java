@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
@@ -25,7 +26,7 @@ public class ApplicationQualification {
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @ManyToOne
     @JoinColumn(name = "application_id", nullable = false, insertable = false, updatable = false)
     private Application application;
@@ -224,15 +225,15 @@ public class ApplicationQualification {
         this.completed = completed;
         return this;
     }
-    
+
     public String getStartDateDisplay(String dateFormat) {
-        return startDate == null ? null : startDate.toString(dateFormat);
+        return startDate == null ? null : startDate.toString(dateFormat, LocaleUtils.toLocale(getApplication().getLocale().toString()));
     }
-    
+
     public String getAwardDateDisplay(String dateFormat) {
-        return awardDate == null ? null : awardDate.toString(dateFormat);
+        return awardDate == null ? null : awardDate.toString(dateFormat, LocaleUtils.toLocale(getApplication().getLocale().toString()));
     }
-    
+
     public String getTypeDisplay() {
         return type == null ? null : type.getName();
     }

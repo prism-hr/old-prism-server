@@ -1,0 +1,1 @@
+Your Registration for ${SYSTEM_NAME}

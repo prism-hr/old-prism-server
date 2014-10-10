@@ -107,13 +107,13 @@ public class NotificationTemplateResource {
         Map<String, Object> model = mailSender.createNotificationModel(template, createSampleModelDTO());
         String subject = null, content = null;
         try {
-            subject = mailSender.processTemplate(template.getId(), notificationConfigurationDTO.getSubject(), model);
+            subject = mailSender.processHeader(template.getId(), notificationConfigurationDTO.getSubject(), model);
         } catch (Exception e) {
             errors.rejectValue("subject", "invalid");
         }
 
         try {
-            content = mailSender.processTemplate(template.getId(), notificationConfigurationDTO.getContent(), model);
+            content = mailSender.processContent(template.getId(), notificationConfigurationDTO.getContent(), model, subject);
         } catch (Exception e) {
             errors.rejectValue("content", "invalid");
         }

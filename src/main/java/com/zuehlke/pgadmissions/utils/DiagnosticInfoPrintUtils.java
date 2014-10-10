@@ -11,7 +11,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.user.User;
 
 public final class DiagnosticInfoPrintUtils {
 

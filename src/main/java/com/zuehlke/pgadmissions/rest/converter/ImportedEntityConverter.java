@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.rest.converter;
 
 import org.dozer.DozerConverter;
 
-import com.zuehlke.pgadmissions.domain.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 
 public class ImportedEntityConverter extends DozerConverter<ImportedEntity, Integer> {
 

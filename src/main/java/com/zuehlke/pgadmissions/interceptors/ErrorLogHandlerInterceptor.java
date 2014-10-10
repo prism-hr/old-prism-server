@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
 

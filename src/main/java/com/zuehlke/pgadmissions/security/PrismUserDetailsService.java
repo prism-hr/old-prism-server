@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Service

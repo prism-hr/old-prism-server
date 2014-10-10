@@ -2,8 +2,8 @@ package com.zuehlke.pgadmissions.rest.converter;
 
 import org.dozer.DozerConverter;
 
-import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.imported.ProgramType;
 
 public class ProgramTypeConverter extends DozerConverter<ProgramType, PrismProgramType> {
 

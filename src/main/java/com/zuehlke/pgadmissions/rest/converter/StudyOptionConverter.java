@@ -2,8 +2,8 @@ package com.zuehlke.pgadmissions.rest.converter;
 
 import org.dozer.DozerConverter;
 
-import com.zuehlke.pgadmissions.domain.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 
 public class StudyOptionConverter extends DozerConverter<ProgramStudyOption, PrismStudyOption> {
 

@@ -22,16 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.NotificationTemplate;
-import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.RoleTransition;
-import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.StateAction;
-import com.zuehlke.pgadmissions.domain.StateActionAssignment;
-import com.zuehlke.pgadmissions.domain.StateActionNotification;
-import com.zuehlke.pgadmissions.domain.StateTransition;
-import com.zuehlke.pgadmissions.domain.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
@@ -40,6 +30,16 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionT
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.workflow.Role;
+import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
+import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.domain.workflow.StateAction;
+import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
+import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
+import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
+import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.StateService;
@@ -298,7 +298,7 @@ public class WorkflowConfigurationHelper {
         for (StateAction stateAction : state.getStateActions()) {
             for (StateActionNotification notification : stateAction.getStateActionNotifications()) {
                 NotificationTemplate template = notification.getNotificationTemplate();
-                com.zuehlke.pgadmissions.domain.Scope templateScope = template.getScope();
+                com.zuehlke.pgadmissions.domain.workflow.Scope templateScope = template.getScope();
                 logger.info("Verifying notification: " + template.getId().toString());
 
                 assertTrue(state.getScope() == templateScope || templateScope.getId() == PrismScope.SYSTEM
@@ -322,7 +322,7 @@ public class WorkflowConfigurationHelper {
 
     private void verifyPropagatedActions() {
         for (StateTransition stateTransition : propagatingStateTransitions) {
-            com.zuehlke.pgadmissions.domain.Scope propagatingScope = stateTransition.getStateAction().getState().getScope();
+            com.zuehlke.pgadmissions.domain.workflow.Scope propagatingScope = stateTransition.getStateAction().getState().getScope();
 
             Set<PrismScope> parentScopes = actualParentScopes.get(propagatingScope.getId());
             Set<PrismScope> childScopes = actualChildScopes.get(propagatingScope.getId());
@@ -331,7 +331,7 @@ public class WorkflowConfigurationHelper {
                 logger.info("Verifying propagated action: " + stateTransition.getStateAction().getState().getId().toString() + " "
                         + stateTransition.getStateAction().getAction().getId().toString() + " " + propagatedAction.getId().toString());
 
-                com.zuehlke.pgadmissions.domain.Scope actionScope = propagatedAction.getScope();
+                com.zuehlke.pgadmissions.domain.workflow.Scope actionScope = propagatedAction.getScope();
                 if (actionScope.getPrecedence() > propagatingScope.getPrecedence()) {
                     assertTrue(childScopes.contains(actionScope.getId()));
                 } else {

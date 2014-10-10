@@ -3,21 +3,21 @@ package com.zuehlke.pgadmissions.components;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.Address;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationAdditionalInformation;
-import com.zuehlke.pgadmissions.domain.ApplicationAddress;
-import com.zuehlke.pgadmissions.domain.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.ApplicationPassport;
-import com.zuehlke.pgadmissions.domain.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
+import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
+import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
+import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
+import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
+import com.zuehlke.pgadmissions.domain.application.ApplicationPassport;
+import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
+import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
+import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.comment.Document;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.user.Address;
 @Component
 public class ApplicationCopyHelper {
 

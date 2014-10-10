@@ -20,13 +20,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.ParentResource;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
@@ -170,7 +170,7 @@ public class ResourceDAO {
         return (List<Integer>) criteria.list();
     }
 
-    public <T extends ParentResource> List<Integer> getMatchingParentResources(PrismScope parentScopeId, String searchTerm) {
+    public <T extends ResourceParent> List<Integer> getMatchingParentResources(PrismScope parentScopeId, String searchTerm) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(parentScopeId.getResourceClass()) //
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.disjunction() //

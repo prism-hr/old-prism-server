@@ -3,11 +3,11 @@ package com.zuehlke.pgadmissions.rest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramExtendedRepresentation;
@@ -29,7 +29,7 @@ public class RestApiUtils {
         } else if ("institutions".equals(resourceScope)) {
             return new ResourceDescriptor(Institution.class, InstitutionExtendedRepresentation.class, PrismScope.INSTITUTION);
         } else if ("systems".equals(resourceScope)) {
-            return new ResourceDescriptor(com.zuehlke.pgadmissions.domain.System.class, SystemExtendedRepresentation.class, PrismScope.SYSTEM);
+            return new ResourceDescriptor(com.zuehlke.pgadmissions.domain.system.System.class, SystemExtendedRepresentation.class, PrismScope.SYSTEM);
         }
         logger.error("Unknown resource scope " + resourceScope);
         throw new ResourceNotFoundException();

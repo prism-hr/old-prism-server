@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.dto;
 import java.util.List;
 import java.util.Map;
 
-import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
+import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
 import com.zuehlke.pgadmissions.iso.jaxb.SubdivisionType;
 
 public class InstitutionDomicileImportDTO {

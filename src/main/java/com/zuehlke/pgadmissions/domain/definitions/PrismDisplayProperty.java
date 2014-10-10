@@ -22,6 +22,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.S
 public enum PrismDisplayProperty {
 
     SYSTEM_DATE_FORMAT(SYSTEM_GLOBAL, "dd MMM yyyy"), //
+    SYSTEM_DATE_TIME_FORMAT(SYSTEM_GLOBAL, "dd MMM yyyy HH:mm"), //
     SYSTEM_YES(SYSTEM_GLOBAL, "Yes"), //
     SYSTEM_NO(SYSTEM_GLOBAL, "No"), //
     SYSTEM_VALUE_PROVIDED(SYSTEM_GLOBAL, "Provided"), //

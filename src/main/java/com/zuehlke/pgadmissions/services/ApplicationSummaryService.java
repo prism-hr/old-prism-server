@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationSummaryDAO;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationProcessing;
-import com.zuehlke.pgadmissions.domain.ApplicationProcessingSummary;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.ParentResource;
-import com.zuehlke.pgadmissions.domain.StateGroup;
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.application.ApplicationProcessing;
+import com.zuehlke.pgadmissions.domain.application.ApplicationProcessingSummary;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import com.zuehlke.pgadmissions.utils.SummaryUtils;
@@ -35,7 +35,7 @@ public class ApplicationSummaryService {
         application.setApplicationRatingAverage(SummaryUtils.computeRunningAverage(currentRatingCount, application.getApplicationRatingAverage(),
                 comment.getApplicationRating()));
 
-        for (ParentResource parentResource : application.getParentResources()) {
+        for (ResourceParent parentResource : application.getParentResources()) {
             updateApplicationSummary(parentResource, application);
         }
     }
@@ -71,7 +71,7 @@ public class ApplicationSummaryService {
         incrementApplicationEventCount(application, "applicationWithdrawnCount");
     }
 
-    private void updateApplicationSummary(ParentResource parentResource, Application application) {
+    private void updateApplicationSummary(ResourceParent parentResource, Application application) {
         Integer currentRatingCountSum = parentResource.getApplicationRatingCount();
         parentResource.setApplicationRatingCount(SummaryUtils.incrementRunningCount(currentRatingCountSum));
         parentResource.setApplicationRatingCountAverageNonZero(SummaryUtils.computeRunningAverage(currentRatingCountSum,
@@ -115,7 +115,7 @@ public class ApplicationSummaryService {
 
     private void createOrUpdateApplicationProcessingSummary(Application application, ApplicationProcessing processing, StateGroup stateGroup)
             throws DeduplicationException {
-        for (ParentResource parentResource : application.getParentResources()) {
+        for (ResourceParent parentResource : application.getParentResources()) {
             ApplicationProcessingSummary transientSummary = new ApplicationProcessingSummary().withResource(parentResource).withStateGroup(stateGroup);
             ApplicationProcessingSummary persistentSummary = entityService.getDuplicateEntity(transientSummary);
 
@@ -134,7 +134,7 @@ public class ApplicationSummaryService {
     }
 
     private void updatePreviousApplicationProcessingSummary(Application application, StateGroup previousStateGroup, Integer stateDuration) {
-        for (ParentResource parentResource : application.getParentResources()) {
+        for (ResourceParent parentResource : application.getParentResources()) {
             ApplicationProcessingSummary summary = applicationSummaryDAO.getProcessingSummary(parentResource, previousStateGroup);
             if (summary == null) {
                 continue;
@@ -145,8 +145,8 @@ public class ApplicationSummaryService {
     }
 
     private void incrementApplicationEventCount(Application application, String eventCountProperty) {
-        for (ParentResource parentResource : application.getParentResources()) {
-            ParentResource parent = (ParentResource) ReflectionUtils.getProperty(application, parentResource.getResourceScope().getLowerCaseName());
+        for (ResourceParent parentResource : application.getParentResources()) {
+            ResourceParent parent = (ResourceParent) ReflectionUtils.getProperty(application, parentResource.getResourceScope().getLowerCaseName());
             Integer currentCount = (Integer) ReflectionUtils.getProperty(parent, eventCountProperty);
             ReflectionUtils.setProperty(parent, eventCountProperty, SummaryUtils.incrementRunningCount(currentCount));
         }

@@ -9,13 +9,13 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.DisplayProperty;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.WorkflowDefinition;
-import com.zuehlke.pgadmissions.domain.WorkflowResource;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.display.DisplayProperty;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowResource;
 
 @Repository
 @SuppressWarnings("unchecked")

@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dto;
 
-import com.zuehlke.pgadmissions.domain.Application;
+import com.zuehlke.pgadmissions.domain.application.Application;
 
 public class ApplicationDownloadDTO {
     

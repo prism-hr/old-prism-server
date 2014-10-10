@@ -1,10 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.*;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -15,7 +12,17 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
+import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.user.User;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -55,7 +62,7 @@ public class CommentDAO {
                 .uniqueResult();
     }
 
-    public <T extends Resource> Comment getEarliestComment(ParentResource parentResource, Class<T> resourceClass, PrismAction actionId) {
+    public <T extends Resource> Comment getEarliestComment(ResourceParent parentResource, Class<T> resourceClass, PrismAction actionId) {
         String resourceReference = PrismScope.getResourceScope(resourceClass).getLowerCaseName();
         String parentResourceReference = parentResource.getResourceScope().getLowerCaseName();
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //

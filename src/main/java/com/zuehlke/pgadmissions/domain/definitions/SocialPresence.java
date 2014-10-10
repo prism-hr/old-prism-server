@@ -3,8 +3,8 @@ package com.zuehlke.pgadmissions.domain.definitions;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.user.User;
 
 public enum SocialPresence {
 

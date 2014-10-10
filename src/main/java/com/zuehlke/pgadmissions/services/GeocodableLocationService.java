@@ -16,11 +16,11 @@ import org.springframework.web.client.RestTemplate;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.GeocodableLocation;
-import com.zuehlke.pgadmissions.domain.GeographicLocation;
-import com.zuehlke.pgadmissions.domain.InstitutionAddress;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicileRegion;
+import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
+import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
+import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicileRegion;
+import com.zuehlke.pgadmissions.domain.location.GeocodableLocation;
+import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
 import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO;
 import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO.Results.Geometry;
 import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO.Results.Geometry.Location;

@@ -5,11 +5,11 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.ApplicationProcessing;
-import com.zuehlke.pgadmissions.domain.ApplicationProcessingSummary;
-import com.zuehlke.pgadmissions.domain.ParentResource;
-import com.zuehlke.pgadmissions.domain.StateGroup;
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.application.ApplicationProcessing;
+import com.zuehlke.pgadmissions.domain.application.ApplicationProcessingSummary;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 
 @Repository
 public class ApplicationSummaryDAO {
@@ -24,7 +24,7 @@ public class ApplicationSummaryDAO {
                 .uniqueResult();
     }
     
-    public ApplicationProcessingSummary getProcessingSummary(ParentResource summaryResource, StateGroup stateGroup) {
+    public ApplicationProcessingSummary getProcessingSummary(ResourceParent summaryResource, StateGroup stateGroup) {
         return (ApplicationProcessingSummary) sessionFactory.getCurrentSession().createCriteria(ApplicationProcessingSummary.class) //
                 .add(Restrictions.eq(summaryResource.getResourceScope().getLowerCaseName(), summaryResource)) //
                 .add(Restrictions.eq("stateGroup", stateGroup)) //

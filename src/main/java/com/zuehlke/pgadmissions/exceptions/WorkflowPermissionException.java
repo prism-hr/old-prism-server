@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.exceptions;
 
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.Resource;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
 
 public class WorkflowPermissionException extends RuntimeException {
 

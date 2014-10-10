@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.DocumentDAO;
-import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.comment.Document;
 
 @Service
 @Transactional

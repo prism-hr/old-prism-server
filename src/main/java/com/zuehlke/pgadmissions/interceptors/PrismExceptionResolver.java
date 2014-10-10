@@ -11,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
-import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
 

@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.dto;
 import java.util.List;
 
 import com.google.common.base.MoreObjects;
-import com.zuehlke.pgadmissions.domain.NotificationConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
 
 public final class MailMessageDTO {

@@ -2,23 +2,23 @@ package com.zuehlke.pgadmissions.rest.dto;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 
 public class AdvertFilterMetadataDTO {
-    
-    private List<PrismAdvertDomain> domains = Lists.newArrayList();
-    
-    private List<PrismAdvertIndustry> industries = Lists.newArrayList();
-    
-    private List<PrismAdvertFunction> functions = Lists.newArrayList();
-    
-    private List<Integer> targetInstitutions = Lists.newArrayList();
-    
-    private List<PrismProgramType> targetProgramTypes = Lists.newArrayList();
+
+    private List<PrismAdvertDomain> domains;
+
+    private List<PrismAdvertIndustry> industries;
+
+    private List<PrismAdvertFunction> functions;
+
+    private List<Integer> targetInstitutions;
+
+    private List<PrismProgramType> targetProgramTypes;
 
     public final List<PrismAdvertDomain> getDomains() {
         return domains;
@@ -59,5 +59,5 @@ public class AdvertFilterMetadataDTO {
     public final void setTargetProgramTypes(List<PrismProgramType> targetProgramTypes) {
         this.targetProgramTypes = targetProgramTypes;
     }
-    
+
 }

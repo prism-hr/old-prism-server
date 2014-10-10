@@ -1,7 +1,10 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.List;
-
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -12,17 +15,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.Application;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.CommentAppointmentTimeslot;
-import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.ParentResource;
-import com.zuehlke.pgadmissions.domain.Resource;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import java.util.List;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -170,7 +163,7 @@ public class CommentDAO {
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("stateGroup.id")) //
                                 .add(Restrictions.isNotNull("transitionStateGroup.id")) //
-                                .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id"))) //
+                                .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id")))
                         .add(Restrictions.isNotNull("action.creationScope"))) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //

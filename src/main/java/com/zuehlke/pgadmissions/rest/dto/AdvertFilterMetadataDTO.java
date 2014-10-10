@@ -9,15 +9,15 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 
 public class AdvertFilterMetadataDTO {
-    
+
     private List<PrismAdvertDomain> domains;
-    
+
     private List<PrismAdvertIndustry> industries;
-    
+
     private List<PrismAdvertFunction> functions;
-    
-    private List<Institution> targetInstitutions;
-    
+
+    private List<Integer> targetInstitutions;
+
     private List<PrismProgramType> targetProgramTypes;
 
     public final List<PrismAdvertDomain> getDomains() {
@@ -44,11 +44,11 @@ public class AdvertFilterMetadataDTO {
         this.functions = functions;
     }
 
-    public final List<Institution> getTargetInstitutions() {
+    public final List<Integer> getTargetInstitutions() {
         return targetInstitutions;
     }
 
-    public final void setTargetInstitutions(List<Institution> targetInstitutions) {
+    public final void setTargetInstitutions(List<Integer> targetInstitutions) {
         this.targetInstitutions = targetInstitutions;
     }
 
@@ -59,5 +59,5 @@ public class AdvertFilterMetadataDTO {
     public final void setTargetProgramTypes(List<PrismProgramType> targetProgramTypes) {
         this.targetProgramTypes = targetProgramTypes;
     }
-    
+
 }

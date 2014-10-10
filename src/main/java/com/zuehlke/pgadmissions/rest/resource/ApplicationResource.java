@@ -193,17 +193,6 @@ public class ApplicationResource {
         applicationSectionService.saveAdditionalInformation(applicationId, additionalInformationDTO);
     }
 
-    @RequestMapping(value = "/{applicationId}/comments", method = RequestMethod.POST)
-    public ActionOutcomeRepresentation performAction(@PathVariable Integer applicationId, @Valid @RequestBody CommentDTO commentDTO) {
-        try {
-            ActionOutcomeDTO actionOutcome = applicationService.performAction(applicationId, commentDTO);
-            return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
-        } catch (DeduplicationException e) {
-            logger.error("Unable to perform action: " + commentDTO.getAction().name() + " on application: " + applicationId.toString(), e);
-            throw new ResourceNotFoundException();
-        }
-    }
-
     @RequestMapping(value = "/{applicationId}/comments/{commentId}", method = RequestMethod.PUT)
     public void updateComment(@PathVariable Integer applicationId, @PathVariable Integer commentId, @RequestBody CommentDTO commentDTO) {
         Comment comment = commentService.getById(commentId);

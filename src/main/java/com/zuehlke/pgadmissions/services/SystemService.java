@@ -223,7 +223,8 @@ public class SystemService {
             Scope creationScope = entityService.getById(Scope.class, prismAction.getCreationScope());
             Action transientAction = new Action().withId(prismAction).withActionType(prismAction.getActionType())
                     .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
-                    .withTransitionAction(prismAction.isTransitionAction()).withScope(scope).withCreationScope(creationScope);
+                    .withTransitionAction(prismAction.isTransitionAction()).withDeclinableAction(prismAction.isDeclinableAction()).withScope(scope)
+                    .withCreationScope(creationScope);
             Action action = entityService.createOrUpdate(transientAction);
             action.getRedactions().clear();
 

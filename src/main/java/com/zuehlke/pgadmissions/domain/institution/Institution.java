@@ -102,6 +102,9 @@ public class Institution extends ResourceParent {
 
     @Column(name = "homepage", nullable = false)
     private String homepage;
+    
+    @Column(name = "helpdesk", nullable = true)
+    private String helpdesk;
 
     @Column(name = "google_id")
     private String googleId;
@@ -274,6 +277,14 @@ public class Institution extends ResourceParent {
 
     public void setHomepage(String homepage) {
         this.homepage = homepage;
+    }
+
+    public final String getHelpdesk() {
+        return helpdesk;
+    }
+
+    public final void setHelpdesk(String helpdesk) {
+        this.helpdesk = helpdesk;
     }
 
     public final String getGoogleId() {
@@ -468,6 +479,16 @@ public class Institution extends ResourceParent {
         this.summary = summary;
         return this;
     }
+    
+    public Institution withHomepage(String homepage) {
+        this.homepage = homepage;
+        return this;
+    }
+    
+    public Institution withHelpdesk(String helpdesk) {
+        this.helpdesk = helpdesk;
+        return this;
+    }
 
     public Institution withCurrency(final String currency) {
         this.currency = currency;
@@ -496,11 +517,6 @@ public class Institution extends ResourceParent {
 
     public Institution withFacebookUri(String facebookUri) {
         this.facebookUri = facebookUri;
-        return this;
-    }
-
-    public Institution withHomepage(String homepage) {
-        this.homepage = homepage;
         return this;
     }
 

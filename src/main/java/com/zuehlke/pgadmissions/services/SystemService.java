@@ -70,8 +70,14 @@ public class SystemService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SystemService.class);
 
+    @Value("${application.host}")
+    private String systemHomepage;
+
     @Value("${system.name}")
     private String systemName;
+
+    @Value("${system.helpdesk}")
+    private String systemHelpdesk;
 
     @Value("${system.user.firstName}")
     private String systemUserFirstName;
@@ -275,8 +281,9 @@ public class SystemService {
         User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail);
         State systemRunning = stateService.getById(PrismState.SYSTEM_RUNNING);
         DateTime startupTimestamp = new DateTime();
-        System transientSystem = new System().withTitle(systemName).withLocale(PrismLocale.getSystemLocale()).withUser(systemUser).withState(systemRunning)
-                .withCreatedTimestamp(startupTimestamp).withUpdatedTimestamp(startupTimestamp);
+        System transientSystem = new System().withTitle(systemName).withLocale(PrismLocale.getSystemLocale()).withHomepage(systemHomepage)
+                .withHelpdesk(systemHelpdesk).withUser(systemUser).withState(systemRunning).withCreatedTimestamp(startupTimestamp)
+                .withUpdatedTimestamp(startupTimestamp);
         System system = entityService.createOrUpdate(transientSystem);
         system.setCode(resourceService.generateResourceCode(system));
         return system;

@@ -676,7 +676,7 @@ public class Application extends Resource {
     public String getProjectOrProgramCode() {
         return project == null ? program.getCode() : project.getCode();
     }
-
+    
     @Override
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addProperty("user", user).addProperty("program", program).addProperty("project", project)

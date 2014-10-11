@@ -1,12 +1,20 @@
-Dear ${userFirstName},
+<h1>
+    Dear ${USER_FIRST_NAME},
+</h1>
 
-Your password has been reset. Your new password is:
+<p>
+    Your password has been reset. Your new password is:
+    <br/>
+    <b>${NEW_PASSWORD}</b>
+</p>
 
-${newPassword}
+<p>
+    We recommend that you log in and change your password now.
+</p>
 
-We recommend that you log in and change your password now.
+${HOMEPAGE_CONTROL}
 
-
-<a style="text-decoration:none;" href="${actionUrl}>
-    <img alt="Login and change password" title="Login and change password" width="64" height="33" src="${host}/pgadmissions/design/default/images/email/login.jpg" />
-</a>
+<p>
+    Yours sincerely,
+    <br/> ${AUTHOR}
+</p>

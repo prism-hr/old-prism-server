@@ -394,7 +394,8 @@ public class SystemService {
         for (PrismStateActionNotification prismNotification : prismStateAction.getNotifications()) {
             Role role = roleService.getById(prismNotification.getRole());
             NotificationTemplate template = notificationService.getById(prismNotification.getTemplate());
-            StateActionNotification notification = new StateActionNotification().withStateAction(stateAction).withRole(role).withNotificationTemplate(template);
+            StateActionNotification notification = new StateActionNotification().withStateAction(stateAction).withRole(role).withNotificationTemplate(template)
+                    .withNotifyInvoker(prismNotification.getNotifyInvoker());
             entityService.save(notification);
             stateAction.getStateActionNotifications().add(notification);
         }

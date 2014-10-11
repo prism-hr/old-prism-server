@@ -65,10 +65,10 @@ public class SystemInitialisationHelper {
 
     @Value("${application.host}")
     private String systemHomepage;
-    
+
     @Value("${system.name}")
     private String systemName;
-    
+
     @Value("${system.helpdesk}")
     private String systemHelpdesk;
 
@@ -110,7 +110,7 @@ public class SystemInitialisationHelper {
 
     @Autowired
     private SystemService systemService;
-    
+
     @Autowired
     private CustomizationService localizationService;
 
@@ -212,16 +212,16 @@ public class SystemInitialisationHelper {
             assertEquals(userRole.getRole().getId(), PrismRole.SYSTEM_ADMINISTRATOR);
         }
     }
-    
+
     public void verifyDisplayPropertyCreation() {
         System system = systemService.getSystem();
         for (DisplayProperty property : localizationService.getAllLocalizedProperties()) {
             assertEquals(property.getResource(), system);
             assertEquals(property.getLocale(), system.getLocale());
-            
+
             DisplayCategory displayCategory = property.getDisplayCategory();
             assertEquals(displayCategory.getScope().getId(), displayCategory.getId().getScope());
-            
+
             assertEquals(property.getPropertyIndex().getCategory(), displayCategory.getId());
             assertEquals(property.getPropertyIndex().getDefaultValue(), property.getPropertyValue());
             assertTrue(property.getPropertyDefault());
@@ -234,8 +234,7 @@ public class SystemInitialisationHelper {
             assertEquals(template.getId().getNotificationType(), template.getNotificationType());
             assertEquals(template.getId().getNotificationPurpose(), template.getNotificationPurpose());
             assertEquals(template.getId().getScope(), template.getScope().getId());
-            assertEquals(template.getId().getReminderTemplate(), (template.getReminderTemplate()) == null ? null : template
-                    .getReminderTemplate().getId());
+            assertEquals(template.getId().getReminderTemplate(), (template.getReminderTemplate()) == null ? null : template.getReminderTemplate().getId());
 
             NotificationConfiguration configuration = notificationService.getConfiguration(system, template);
             assertEquals(configuration.getNotificationTemplate(), template);
@@ -312,7 +311,7 @@ public class SystemInitialisationHelper {
 
         for (StateActionNotification stateActionNotification : stateActionNotifications) {
             PrismStateActionNotification prismStateActionNotification = new PrismStateActionNotification().withRole(stateActionNotification.getRole().getId())
-                    .withTemplate(stateActionNotification.getNotificationTemplate().getId());
+                    .withTemplate(stateActionNotification.getNotificationTemplate().getId()).withNotifyInvoker(stateActionNotification.getNotifyInvoker());
             assertTrue(prismStateAction.getNotifications().contains(prismStateActionNotification));
         }
     }

@@ -16,11 +16,11 @@ public class ApplicationPersonalDetailDTO {
     private UserDTO user;
 
     @Size(min = 6, max = 32)
-    private String messenger;
+    private String skype;
 
     @NotEmpty
     @Size(max = 50)
-    private String phoneNumber;
+    private String phone;
 
     @NotNull
     private Boolean firstLanguageEnglish;
@@ -58,7 +58,7 @@ public class ApplicationPersonalDetailDTO {
     private Integer disability;
 
     @NotNull
-    private Integer residenceCountry;
+    private Integer domicile;
 
     public UserDTO getUser() {
         return user;
@@ -68,20 +68,20 @@ public class ApplicationPersonalDetailDTO {
         this.user = user;
     }
 
-    public String getMessenger() {
-        return messenger;
+    public String getSkype() {
+        return skype;
     }
 
-    public void setMessenger(String messenger) {
-        this.messenger = messenger;
+    public void setSkype(String skype) {
+        this.skype = skype;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public Boolean getFirstLanguageEnglish() {
@@ -180,11 +180,11 @@ public class ApplicationPersonalDetailDTO {
         this.disability = disability;
     }
 
-    public Integer getResidenceCountry() {
-        return residenceCountry;
+    public Integer getDomicile() {
+        return domicile;
     }
 
-    public void setResidenceCountry(Integer residenceCountry) {
-        this.residenceCountry = residenceCountry;
+    public void setDomicile(Integer domicile) {
+        this.domicile = domicile;
     }
 }

@@ -1,15 +1,8 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import com.zuehlke.pgadmissions.domain.comment.Document;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "APPLICATION_DOCUMENT")
@@ -18,11 +11,11 @@ public class ApplicationDocument {
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "personal_statement_id")
     private Document personalStatement;
-    
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "cv_id", nullable = false)
     private Document cv;

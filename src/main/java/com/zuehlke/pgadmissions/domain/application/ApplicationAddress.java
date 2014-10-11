@@ -1,14 +1,8 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import com.zuehlke.pgadmissions.domain.user.Address;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "APPLICATION_ADDRESS")
@@ -74,11 +68,11 @@ public class ApplicationAddress {
         this.contactAddress = address;
         return this;
     }
-    
+
     public String getCurrentAddressDisplay() {
         return currentAddress == null ? null : currentAddress.getLocationString();
     }
-    
+
     public String getConcactAddressDisplay() {
         return contactAddress == null ? null : contactAddress.getLocationString();
     }

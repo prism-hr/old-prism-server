@@ -1,17 +1,10 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "APPLICATION_PASSPORT")
@@ -24,11 +17,9 @@ public class ApplicationPassport {
     @OneToOne(mappedBy = "passport")
     private ApplicationPersonalDetail applicationPersonalDetail;
 
-    @ESAPIConstraint(rule = "LettersAndNumbersOnly", maxLength = 35, message = "{text.field.nonlettersandnumbers}")
     @Column(name = "number", nullable = false)
     private String number;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
     @Column(name = "name", nullable = false)
     private String name;
 

@@ -161,7 +161,7 @@ public class ApplicationSectionService {
         Language firstNationality = importedEntityService.getById(Language.class, institution, personalDetailDTO.getFirstNationality());
         Language secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.<Language> getById(Language.class, institution,
                 personalDetailDTO.getSecondNationality()) : null;
-        Domicile residenceCountry = importedEntityService.getById(Domicile.class, institution, personalDetailDTO.getResidenceCountry());
+        Domicile residenceCountry = importedEntityService.getById(Domicile.class, institution, personalDetailDTO.getDomicile());
         Ethnicity ethnicity = importedEntityService.getById(Ethnicity.class, institution, personalDetailDTO.getEthnicity());
         Disability disability = importedEntityService.getById(Disability.class, institution, personalDetailDTO.getDisability());
         personalDetail.setTitle(title);
@@ -173,8 +173,8 @@ public class ApplicationSectionService {
         personalDetail.setFirstLanguageLocale(personalDetailDTO.getFirstLanguageEnglish());
         personalDetail.setDomicile(residenceCountry);
         personalDetail.setVisaRequired(personalDetailDTO.getVisaRequired());
-        personalDetail.setPhone(personalDetailDTO.getPhoneNumber());
-        personalDetail.setSkype(Strings.emptyToNull(personalDetailDTO.getMessenger()));
+        personalDetail.setPhone(personalDetailDTO.getPhone());
+        personalDetail.setSkype(Strings.emptyToNull(personalDetailDTO.getSkype()));
         personalDetail.setEthnicity(ethnicity);
         personalDetail.setDisability(disability);
 

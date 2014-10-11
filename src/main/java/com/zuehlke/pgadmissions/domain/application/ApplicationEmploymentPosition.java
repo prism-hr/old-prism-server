@@ -1,21 +1,11 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
+import com.zuehlke.pgadmissions.domain.user.Address;
 import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.user.Address;
-import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "APPLICATION_EMPLOYMENT_POSITION")
@@ -30,21 +20,18 @@ public class ApplicationEmploymentPosition {
     private Application application;
 
     @Column(name = "employer_name", nullable = false)
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 150)
     private String employerName;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id", nullable = false)
     private Address employerAddress;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
     @Column(name = "position", nullable = false)
     private String position;
 
     @Column(name = "is_current", nullable = false)
     private Boolean current;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 250)
     @Column(name = "remit", nullable = false)
     private String remit;
 

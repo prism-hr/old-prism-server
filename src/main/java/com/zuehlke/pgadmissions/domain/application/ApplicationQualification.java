@@ -1,23 +1,13 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
+import com.zuehlke.pgadmissions.domain.comment.Document;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.imported.QualificationType;
 import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.comment.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.QualificationType;
-import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "APPLICATION_QUALIFICATION")
@@ -32,11 +22,9 @@ public class ApplicationQualification {
     private Application application;
 
     @Column(name = "subject", nullable = false)
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
     private String subject;
 
     @Column(name = "title", nullable = false)
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
     private String title;
 
     @Column(name = "start_date", nullable = false)
@@ -47,7 +35,6 @@ public class ApplicationQualification {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate awardDate;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
     @Column(name = "qualification_language", nullable = false)
     private String language;
 
@@ -56,7 +43,6 @@ public class ApplicationQualification {
     private QualificationType type;
 
     @Column(name = "grade", nullable = false)
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
     private String grade;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)

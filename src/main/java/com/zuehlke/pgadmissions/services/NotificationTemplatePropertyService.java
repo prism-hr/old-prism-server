@@ -1,19 +1,30 @@
 package com.zuehlke.pgadmissions.services;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import freemarker.template.Template;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 import java.util.Arrays;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -24,6 +35,12 @@ public class NotificationTemplatePropertyService {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private FreeMarkerConfig freemarkerConfig;
 
     public String get(NotificationTemplateModelDTO modelDTO, String[] properties) {
         Object tempObject = modelDTO;
@@ -82,7 +99,7 @@ public class NotificationTemplatePropertyService {
         return host;
     }
 
-    public String getViewEditControl(NotificationTemplateModelDTO modelDTO) {
+    public String getViewEditControl(NotificationTemplateModelDTO modelDTO) throws Exception {
         Resource resource = modelDTO.getResource();
         String url;
         if (resource.getResourceScope() == PrismScope.SYSTEM) {
@@ -90,27 +107,30 @@ public class NotificationTemplatePropertyService {
         } else {
             url = host + "/#/" + resource.getResourceScope().getLowerCaseName() + "s/" + resource.getId() + "/view";
         }
-        return "<a href=\"" + url + "\">View</a>";
+
+        return processControlTemplate(resource, url, PrismDisplayProperty.SYSTEM_VIEW_EDIT);
     }
 
-    public String getDirectionsControl(NotificationTemplateModelDTO modelDTO) {
-        // TODO
-        return host;
+
+    public String getDirectionsControl(NotificationTemplateModelDTO modelDTO) throws Exception {
+        Resource resource = modelDTO.getResource();
+        Comment comment = modelDTO.getComment();
+        return processControlTemplate(resource, comment.getInterviewLocation(), PrismDisplayProperty.APPLICATION_COMMENT_DIRECTIONS);
     }
 
-    public String getNewPasswordControl(NotificationTemplateModelDTO modelDTO) {
-        // TODO
-        return host;
+    public String getNewPasswordControl(NotificationTemplateModelDTO modelDTO) throws Exception {
+        Resource resource = modelDTO.getResource();
+        return processControlTemplate(resource, modelDTO.getNewPassword(), PrismDisplayProperty.SYSTEM_NEW_PASSWORD);
     }
 
-    public String getHelpDeskLink(NotificationTemplateModelDTO modelDTO) {
-        // TODO
-        return host;
+    public String getHelpdeskControl(NotificationTemplateModelDTO modelDTO) throws Exception {
+        Resource resource = modelDTO.getResource();
+        return processControlTemplate(resource, resource.getHelpdesk(), PrismDisplayProperty.SYSTEM_HELPDESK);
     }
 
-    public String getInstitutionHomepageLink(NotificationTemplateModelDTO modelDTO) {
-        // TODO
-        return host;
+    public String getInstitutionHomepageLink(NotificationTemplateModelDTO modelDTO) throws Exception {
+        Resource resource = modelDTO.getResource();
+        return processControlTemplate(resource, resource.getHomepage(), PrismDisplayProperty.SYSTEM_HOMEPAGE);
     }
 
 
@@ -119,5 +139,27 @@ public class NotificationTemplatePropertyService {
         Comment rejection = commentService.getRejectionComment(application);
         return rejection == null ? null : rejection.getRejectionReasonDisplay();
     }
+
+    private String processControlTemplate(Resource resource, String linkUrl, PrismDisplayProperty linkLabel) throws Exception {
+        return processControlTemplate(resource, linkUrl, linkLabel, null, null);
+    }
+
+    private String processControlTemplate(Resource resource, String linkUrl, PrismDisplayProperty linkLabel, String declineLinkUrl, PrismDisplayProperty declineLinkLabel) throws Exception {
+        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).withResource(resource);
+        Map<String, Object> model = Maps.newHashMap();
+        ImmutableMap<String, String> link = ImmutableMap.of("url", linkUrl, "label", propertyLoader.load(linkLabel));
+        model.put("link", link);
+
+        if (declineLinkUrl != null) {
+            ImmutableMap<String, String> declineLink = ImmutableMap.of("url", declineLinkUrl, "label", propertyLoader.load(declineLinkLabel));
+            model.put("declineLink", declineLink);
+        }
+
+        String emailControlTemplate = Resources.toString(Resources.getResource("email/email_control_template.ftl"), Charsets.UTF_8);
+        Template template = new Template("Email control template", emailControlTemplate, freemarkerConfig.getConfiguration());
+
+        return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+    }
+
 
 }

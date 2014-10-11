@@ -52,6 +52,9 @@ public enum PrismDisplayProperty {
     SYSTEM_PROCEED(SYSTEM_GLOBAL, "Proceed"), //
     SYSTEM_DECLINE(SYSTEM_GLOBAL, "Decline"), //
     SYSTEM_HELPDESK(SYSTEM_GLOBAL, "Get Help"), //
+    SYSTEM_VIEW_EDIT(SYSTEM_GLOBAL, "View / Edit"),
+    SYSTEM_NEW_PASSWORD(SYSTEM_GLOBAL, "New password"),
+    SYSTEM_HOMEPAGE(SYSTEM_GLOBAL, "Homepage"),
     INSTITUTION_HEADER(INSITUTION_GLOBAL, "Institution"), //
     PROGRAM_HEADER(PROGRAM_GLOBAL, "Program"), //
     PROGRAM_STUDY_OPTION(PROGRAM_GLOBAL, "Study Option"), //
@@ -146,7 +149,8 @@ public enum PrismDisplayProperty {
     APPLICATION_COMMENT_SUITABLE_FOR_OPPORTUNITY(APPLICATION_COMMENT, "Suitable for Recruiting Position?"), //
     APPLICATION_COMMENT_DECLINED_REFEREE(APPLICATION_COMMENT, "Declined to provide a reference."), //
     APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION(APPLICATION_COMMENT, "Recommended offer conditions"), //
-    APPLICATION_COMMENT_REJECTION_SYSTEM(APPLICATION_COMMENT, "The opportunity that you applied for has been discontinued.");
+    APPLICATION_COMMENT_REJECTION_SYSTEM(APPLICATION_COMMENT, "The opportunity that you applied for has been discontinued."),
+    APPLICATION_COMMENT_DIRECTIONS(APPLICATION_COMMENT, "Directions");
 
     private PrismDisplayCategory category;
 

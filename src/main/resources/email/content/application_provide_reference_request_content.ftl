@@ -53,8 +53,10 @@ ${ACTION_CONTROL}
 
 <p>
     We look forward to receiving your feedback at your earliest convenience. Should you run into any difficulty, please
-    see our dedicated ${HELP_DESK_LINK} to access further assistance.
+    see our dedicated helpdesk to access further assistance.
 </p>
+
+
 
 <p>
     Yours sincerely,

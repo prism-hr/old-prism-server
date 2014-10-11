@@ -21,6 +21,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -915,6 +916,8 @@ public class Comment {
                 return false;
             } else if (!stateGroup.getId().equals(transitionStateGroup.getId())) {
                 return true;
+            } else if (action.getCreationScope() != null) {
+                return true;
             }
         }
         return false;
@@ -930,6 +933,18 @@ public class Comment {
 
     public String getRejectionReasonDisplay() {
         return rejectionReason == null ? rejectionReasonSystem : rejectionReason.getName();
+    }
+
+    public String getCreatedTimestampDisplay(String dateFormat) {
+        return createdTimestamp.toString(dateFormat, LocaleUtils.toLocale(getResource().getLocale().toString()));
+    }
+
+    public String getInterviewDateTimeDisplay(String dateTimeFormat) {
+        return interviewDateTime.toString(dateTimeFormat, LocaleUtils.toLocale(getResource().getLocale().toString()));
+    }
+
+    public String getPositionProvisionalStartDateDisplay(String dateFormat) {
+        return positionProvisionalStartDate.toString(dateFormat, LocaleUtils.toLocale(getResource().getLocale().toString()));
     }
 
 }

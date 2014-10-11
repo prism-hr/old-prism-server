@@ -2,12 +2,13 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
 import com.google.common.base.Objects;
 
-
 public class PrismStateActionNotification {
     
-    PrismRole role;
+    private PrismRole role;
     
-    PrismNotificationTemplate template;
+    private PrismNotificationTemplate template;
+    
+    private boolean notifyInvoker;
 
     public PrismRole getRole() {
         return role;
@@ -17,6 +18,10 @@ public class PrismStateActionNotification {
         return template;
     }
     
+    public final boolean getNotifyInvoker() {
+        return notifyInvoker;
+    }
+
     public PrismStateActionNotification withRole(PrismRole role) {
         this.role = role;
         return this;
@@ -24,6 +29,11 @@ public class PrismStateActionNotification {
     
     public PrismStateActionNotification withTemplate(PrismNotificationTemplate template) {
         this.template = template;
+        return this;
+    }
+    
+    public PrismStateActionNotification withNotifyInvoker(boolean notifyInvoker) {
+        this.notifyInvoker = notifyInvoker;
         return this;
     }
     

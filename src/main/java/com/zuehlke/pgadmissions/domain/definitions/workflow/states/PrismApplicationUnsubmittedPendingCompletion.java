@@ -30,7 +30,8 @@ public class PrismApplicationUnsubmittedPendingCompletion extends PrismWorkflowS
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() //
                         .withRole(PrismRole.APPLICATION_CREATOR) //
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_COMPLETE_NOTIFICATION))) //
+                        .withTemplate(PrismNotificationTemplate.APPLICATION_COMPLETE_NOTIFICATION)
+                        .withNotifyInvoker(true))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_VALIDATION) //

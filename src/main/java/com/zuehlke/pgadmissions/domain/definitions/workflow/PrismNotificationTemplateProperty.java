@@ -19,11 +19,15 @@ public enum PrismNotificationTemplateProperty {
 
     INVOKER(COMMENT, "get", "comment", "user", "displayName"),
     INVOKER_EMAIL(COMMENT, "get", "comment", "user", "email"),
+    OUTCOME(COMMENT, "getCommentOutcome"),
+
+    DATE_TIME(GLOBAL, "get", "comment", "createdTimestamp"),
 
     APPLICANT(APPLICATION, "get", "resource", "application", "user", "displayName"),
     APPLICATION_CODE(APPLICATION, "get", "resource", "application", "code"),
     PROJECT_OR_PROGRAM_TITLE(APPLICATION, "getProjectOrProgramTitle"),
     PROJECT_OR_PROGRAM_CODE(APPLICATION, "getPropertyOrProgramCode"),
+    STUDY_OPTION(APPLICATION, "get", "resource", "application", "programDetail", "studyOption", "name"),
 
     REJECTION_REASON(APPLICATION_REJECTION, "getRejectionReason"),
 
@@ -35,6 +39,7 @@ public enum PrismNotificationTemplateProperty {
 
     INSTITUTION_CODE(INSTITUTION, "get", "resource", "institution", "code"),
     INSTITUTION_TITLE(INSTITUTION, "get", "resource", "institution", "title"),
+    INSTITUTION_HOMEPAGE_LINK(INSTITUTION, "getInstitutionHomepageLink"),
 
     INTERVIEW_TIME_ZONE(INTERVIEW, "getInterviewTimeZone"),
 
@@ -47,7 +52,10 @@ public enum PrismNotificationTemplateProperty {
     HOMEPAGE_CONTROL(GLOBAL, "getHomepageControl"),
     VIEW_EDIT_CONTROL(GLOBAL, "getViewEditControl"),
     DIRECTIONS_CONTROL(CONFIRM_INTERVIEW, "getDirectionsControl"),
-    NEW_PASSWORD_CONTROL(NEW_PASSWORD, "getNewPasswordControl"),
+
+    NEW_PASSWORD(com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.NEW_PASSWORD, "get", "newPassword"),
+
+    HELP_DESK_LINK(GLOBAL, "getHelpDeskLink"),
 
     RECOMMENDATIONS(RECOMMENDATION, "get", "recommendations"),
     ERROR_MESSAGE(ERROR, "get", "errorMessage"),

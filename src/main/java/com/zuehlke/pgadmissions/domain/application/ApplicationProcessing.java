@@ -1,26 +1,17 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import java.math.BigDecimal;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
-import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
+import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
-@Table(name = "APPLICATION_PROCESSING", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "state_group_id" }) })
+@Table(name = "APPLICATION_PROCESSING", uniqueConstraints = {@UniqueConstraint(columnNames = {"application_id", "state_group_id"})})
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ApplicationProcessing implements IUniqueEntity {
 

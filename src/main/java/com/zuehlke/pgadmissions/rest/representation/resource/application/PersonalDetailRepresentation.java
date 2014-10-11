@@ -4,9 +4,9 @@ import org.joda.time.LocalDate;
 
 public class PersonalDetailRepresentation {
 
-    private String messenger;
+    private String skype;
 
-    private String phoneNumber;
+    private String phone;
 
     private Boolean firstLanguageEnglish;
 
@@ -32,22 +32,22 @@ public class PersonalDetailRepresentation {
 
     private Integer disability;
 
-    private Integer residenceCountry;
+    private Integer domicile;
 
-    public String getMessenger() {
-        return messenger;
+    public String getSkype() {
+        return skype;
     }
 
-    public void setMessenger(String messenger) {
-        this.messenger = messenger;
+    public void setSkype(String skype) {
+        this.skype = skype;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public Boolean getFirstLanguageEnglish() {
@@ -146,11 +146,11 @@ public class PersonalDetailRepresentation {
         this.disability = disability;
     }
 
-    public Integer getResidenceCountry() {
-        return residenceCountry;
+    public Integer getDomicile() {
+        return domicile;
     }
 
-    public void setResidenceCountry(Integer residenceCountry) {
-        this.residenceCountry = residenceCountry;
+    public void setDomicile(Integer domicile) {
+        this.domicile = domicile;
     }
 }

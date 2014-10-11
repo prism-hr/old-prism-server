@@ -51,7 +51,7 @@ public class NotificationDAO {
                 .executeUpdate();
     }
 
-    public List<UserNotificationDefinitionDTO> getIndividualRequestNotifications(Resource resource, User invoker) {
+    public List<UserNotificationDefinitionDTO> getIndividualRequestNotifications(Resource resource, User invoker, LocalDate baseline) {
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
@@ -77,7 +77,9 @@ public class NotificationDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
-                .add(Restrictions.isNull("userRole.lastNotifiedDate")) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("userRole.lastNotifiedDate")) //
+                        .add(Restrictions.lt("userRole.lastNotifiedDate", baseline))) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
@@ -110,7 +112,9 @@ public class NotificationDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
-                .add(Restrictions.lt("userRole.lastNotifiedDate", baseline)) //
+                .add(Restrictions.disjunction(). //
+                    add(Restrictions.isNull("userRole.lastNotifiedDate"))
+                    .add(Restrictions.lt("userRole.lastNotifiedDate", baseline))) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
@@ -140,7 +144,9 @@ public class NotificationDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
-                .add(Restrictions.lt("userRole.lastNotifiedDate", baseline)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("userRole.lastNotifiedDate")) //
+                        .add(Restrictions.lt("userRole.lastNotifiedDate", baseline))) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
@@ -171,7 +177,8 @@ public class NotificationDAO {
                         .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull(lastNotifiedDateReference)).add(Restrictions.lt(lastNotifiedDateReference, baseline))) //
+                        .add(Restrictions.isNull(lastNotifiedDateReference)) //
+                        .add(Restrictions.lt(lastNotifiedDateReference, baseline))) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
@@ -206,7 +213,8 @@ public class NotificationDAO {
                         .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull(lastNotifiedDateReference)).add(Restrictions.lt(lastNotifiedDateReference, baseline))) //
+                        .add(Restrictions.isNull(lastNotifiedDateReference)) //
+                        .add(Restrictions.lt(lastNotifiedDateReference, baseline))) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }

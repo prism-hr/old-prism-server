@@ -1,21 +1,12 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
+import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
+import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "APPLICATION_PROGRAM_DETAIL")
@@ -27,7 +18,7 @@ public class ApplicationProgramDetail {
 
     @OneToOne(mappedBy = "programDetail")
     private Application application;
-    
+
     @ManyToOne
     @JoinColumn(name = "study_option_id", nullable = false)
     private StudyOption studyOption;
@@ -95,42 +86,42 @@ public class ApplicationProgramDetail {
         this.id = id;
         return this;
     }
-    
+
     public ApplicationProgramDetail withStudyOption(StudyOption studyOption) {
         this.studyOption = studyOption;
         return this;
     }
-    
+
     public ApplicationProgramDetail withStartDate(LocalDate startDate) {
         this.startDate = startDate;
         return this;
     }
-    
+
     public ApplicationProgramDetail withReferralSource(ReferralSource referralSource) {
         this.referralSource = referralSource;
         return this;
     }
-    
+
     public ApplicationProgramDetail withSourceOfInterestText(String sourceOfInterestText) {
         this.sourceOfInterestText = sourceOfInterestText;
         return this;
     }
-    
+
     public ApplicationProgramDetail withApplication(Application application) {
         this.application = application;
         return this;
     }
-    
+
     public String getStartDateDisplay(String dateFormat) {
         return startDate == null ? null : startDate.toString(dateFormat, LocaleUtils.toLocale(application.getLocale().toString()));
     }
-    
+
     public String getReferralSourceDisplay() {
         return referralSource == null ? null : referralSource.getName();
     }
-    
+
     public String getStudyOptionDisplay() {
         return studyOption == null ? null : studyOption.getName();
     }
-    
+
 }

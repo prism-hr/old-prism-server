@@ -1,16 +1,9 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "APPLICATION_ADDITIONAL_INFORMATION")
@@ -22,7 +15,6 @@ public class ApplicationAdditionalInformation {
     private Integer id;
 
     @Column(name = "convictions_text")
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 400)
     private String convictionsText;
 
     @OneToOne(mappedBy = "additionalInformation")

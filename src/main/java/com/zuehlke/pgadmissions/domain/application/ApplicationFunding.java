@@ -1,21 +1,11 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
+import com.zuehlke.pgadmissions.domain.comment.Document;
+import com.zuehlke.pgadmissions.domain.imported.FundingSource;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.comment.Document;
-import com.zuehlke.pgadmissions.domain.imported.FundingSource;
-import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "APPLICATION_FUNDING")
@@ -33,7 +23,6 @@ public class ApplicationFunding {
     @JoinColumn(name = "funding_source_id", nullable = false)
     private FundingSource fundingSource;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
     @Column(name = "description", nullable = false)
     private String description;
 
@@ -138,13 +127,13 @@ public class ApplicationFunding {
         this.application = application;
         return this;
     }
-    
+
     public String getAwardDateDisplay(String dateFormat) {
         return awardDate == null ? null : awardDate.toString(dateFormat);
     }
-    
+
     public String getFundingSourceDisplay() {
-        return fundingSource == null ? null : fundingSource.getName(); 
+        return fundingSource == null ? null : fundingSource.getName();
     }
 
 }

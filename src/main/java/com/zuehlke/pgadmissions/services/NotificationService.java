@@ -78,7 +78,7 @@ public class NotificationService {
     public void removeLocalizedConfiguration(Resource resource, NotificationTemplate template) {
         customizationService.removeLocalizedConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
     }
-    
+
     public void restoreGlobalizedConfiguration(Resource resource, NotificationTemplate template) {
         customizationService.restoreGlobalizedConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
     }
@@ -221,7 +221,7 @@ public class NotificationService {
 
         sendNotification(PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION, new NotificationTemplateModelDTO(user, systemService.getSystem(), system.getUser()).withNewPassword(newPassword));
     }
-    
+
     public List<PrismNotificationTemplate> getEditableTemplates(PrismScope scope) {
         return notificationDAO.geEditableTemplates(scope);
     }
@@ -234,7 +234,7 @@ public class NotificationService {
     }
 
     private void sendIndividualRequestNotifications(Resource resource, User invoker, LocalDate baseline) {
-        List<UserNotificationDefinitionDTO> requests = notificationDAO.getIndividualRequestNotifications(resource, invoker);
+        List<UserNotificationDefinitionDTO> requests = notificationDAO.getIndividualRequestNotifications(resource, invoker, baseline);
         HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
 
         for (UserNotificationDefinitionDTO request : requests) {
@@ -280,5 +280,5 @@ public class NotificationService {
 
         mailSender.sendEmail(message);
     }
-    
+
 }

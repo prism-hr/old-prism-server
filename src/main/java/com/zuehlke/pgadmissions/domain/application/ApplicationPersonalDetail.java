@@ -1,27 +1,12 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.validation.constraints.Size;
-
+import com.google.common.base.Joiner;
+import com.zuehlke.pgadmissions.domain.imported.*;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.google.common.base.Joiner;
-import com.zuehlke.pgadmissions.domain.imported.Country;
-import com.zuehlke.pgadmissions.domain.imported.Disability;
-import com.zuehlke.pgadmissions.domain.imported.Domicile;
-import com.zuehlke.pgadmissions.domain.imported.Ethnicity;
-import com.zuehlke.pgadmissions.domain.imported.Gender;
-import com.zuehlke.pgadmissions.domain.imported.Language;
-import com.zuehlke.pgadmissions.domain.imported.Title;
+import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "APPLICATION_PERSONAL_DETAIL")
@@ -30,7 +15,7 @@ public class ApplicationPersonalDetail {
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @OneToOne(mappedBy = "personalDetail")
     private Application application;
 
@@ -187,7 +172,7 @@ public class ApplicationPersonalDetail {
     public void setPhone(String phone) {
         this.phone = phone;
     }
-    
+
     public String getSkype() {
         return skype;
     }
@@ -286,8 +271,8 @@ public class ApplicationPersonalDetail {
         return this;
     }
 
-    public ApplicationPersonalDetail withResidenceCountry(Domicile residenceCountry) {
-        this.domicile = residenceCountry;
+    public ApplicationPersonalDetail withDomicile(final Domicile domicile) {
+        this.domicile = domicile;
         return this;
     }
 
@@ -320,35 +305,35 @@ public class ApplicationPersonalDetail {
         this.disability = disability;
         return this;
     }
-    
+
     public String getDateOfBirth(String dateFormat) {
         return dateOfBirth == null ? null : dateOfBirth.toString(dateFormat);
     }
-    
+
     public String getTitleDisplay() {
         return title == null ? null : title.getName();
     }
-    
+
     public String getGenderDisplay() {
         return gender == null ? null : gender.getName();
     }
-    
+
     public String getCountryDisplay() {
         return country == null ? null : country.getName();
     }
-    
+
     public String getDomicileDisplay() {
         return domicile == null ? null : domicile.getName();
     }
-    
+
     public String getEthnicityDisplay() {
         return ethnicity == null ? null : ethnicity.getName();
     }
-    
+
     public String getDisabilityDisplay() {
         return disability == null ? null : disability.getName();
-    } 
-    
+    }
+
     public String getNationalityDisplay() {
         String first = firstNationality == null ? null : firstNationality.getName();
         String second = secondNationality == null ? null : secondNationality.getName();

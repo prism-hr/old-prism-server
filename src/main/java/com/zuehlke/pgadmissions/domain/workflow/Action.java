@@ -43,6 +43,9 @@ public class Action extends WorkflowDefinition {
     
     @Column(name = "transition_action", nullable = false)
     private Boolean transitionAction;
+    
+    @Column(name = "declinable_action", nullable = false)
+    private Boolean declinableAction;
 
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
@@ -87,7 +90,7 @@ public class Action extends WorkflowDefinition {
         this.actionCategory = actionCategory;
     }
 
-    public final Boolean isRatingAction() {
+    public final Boolean getRatingAction() {
         return ratingAction;
     }
 
@@ -95,12 +98,20 @@ public class Action extends WorkflowDefinition {
         this.ratingAction = ratingAction;
     }
 
-    public final Boolean isTransitionAction() {
+    public final Boolean getTransitionAction() {
         return transitionAction;
     }
 
     public final void setTransitionAction(Boolean transitionAction) {
         this.transitionAction = transitionAction;
+    }
+
+    public final Boolean getDeclinableAction() {
+        return declinableAction;
+    }
+
+    public final void setDeclinableAction(Boolean declinableAction) {
+        this.declinableAction = declinableAction;
     }
 
     public final Action getFallbackAction() {
@@ -161,6 +172,11 @@ public class Action extends WorkflowDefinition {
     
     public Action withTransitionAction(Boolean transitionAction) {
         this.transitionAction = transitionAction;
+        return this;
+    }
+    
+    public Action withDeclinableAction(Boolean declinableAction) {
+        this.declinableAction = declinableAction;
         return this;
     }
     

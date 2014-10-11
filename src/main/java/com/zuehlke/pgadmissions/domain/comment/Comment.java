@@ -884,7 +884,7 @@ public class Comment {
     }
 
     public boolean isRatingComment() {
-        return action.isRatingAction();
+        return action.getRatingAction();
     }
 
     public boolean isApplicationCompletionComment() {
@@ -904,7 +904,7 @@ public class Comment {
     public boolean isTransitionComment() {
         StateGroup stateGroup = state == null ? null : state.getStateGroup();
         StateGroup transitionStateGroup = transitionState == null ? null : transitionState.getStateGroup();
-        if (action.isTransitionAction()) {
+        if (action.getTransitionAction()) {
             if (action.getActionType() == PrismActionType.USER_INVOCATION) {
                 return true;
             } else if (stateGroup == null) {

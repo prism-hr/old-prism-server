@@ -51,10 +51,10 @@ public enum PrismNotificationTemplateProperty {
     HOMEPAGE_CONTROL(GLOBAL, "getHomepageControl"),
     VIEW_EDIT_CONTROL(GLOBAL, "getViewEditControl"),
     DIRECTIONS_CONTROL(CONFIRM_INTERVIEW, "getDirectionsControl"),
+    HELPDESK_CONTROL(GLOBAL, "getHelpdeskControl"),
 
     NEW_PASSWORD(com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.NEW_PASSWORD, "get", "newPassword"),
 
-    HELP_DESK_LINK(GLOBAL, "getHelpDeskLink"),
 
     RECOMMENDATIONS(RECOMMENDATION, "get", "recommendations"),
     ERROR_MESSAGE(ERROR, "get", "errorMessage"),

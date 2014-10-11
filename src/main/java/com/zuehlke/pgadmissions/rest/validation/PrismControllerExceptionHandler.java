@@ -31,9 +31,6 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
 
     private static final Logger log = LoggerFactory.getLogger(PrismControllerExceptionHandler.class);
 
-    @Autowired
-    private Mapper dozerBeanMapper;
-
     @ExceptionHandler(value = WorkflowPermissionException.class)
     public final ResponseEntity<Object> handleWorkflowPermissionsException(WorkflowPermissionException ex, WebRequest request) {
         log.error("Problem", ex);

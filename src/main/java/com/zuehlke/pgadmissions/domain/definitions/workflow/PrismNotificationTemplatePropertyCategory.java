@@ -17,7 +17,8 @@ public enum PrismNotificationTemplatePropertyCategory {
     RECOMMENDATION, //
     ACTION, //
     CONFIRM_INTERVIEW, //
-    NEW_PASSWORD;
+    NEW_PASSWORD,
+    ACCOUNT_ACTIVATION;
 
     public List<PrismNotificationTemplateProperty> getProperties() {
         return PrismNotificationTemplateProperty.getProperties(this);

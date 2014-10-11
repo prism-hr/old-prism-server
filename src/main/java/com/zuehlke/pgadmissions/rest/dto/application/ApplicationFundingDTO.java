@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.rest.dto.application;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.zuehlke.pgadmissions.rest.validation.annotation.DateNotFuture;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
@@ -28,7 +29,7 @@ public class ApplicationFundingDTO {
     private String value;
 
     @NotNull
-    @DatePast
+    @DateNotFuture
     private LocalDate awardDate;
 
     public Integer getId() {

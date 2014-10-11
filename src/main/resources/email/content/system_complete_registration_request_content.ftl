@@ -7,7 +7,7 @@
     login using the email address and password that you provided.
 </p>
 
-${ACTION_CONTROL}
+${ACTIVATE_ACCOUNT_CONTROL}
 
 <p>
     Yours sincerely,

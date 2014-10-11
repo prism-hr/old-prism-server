@@ -88,7 +88,7 @@ public class ApplicationService {
 
     @Autowired
     private ApplicationExportService applicationExportService;
-    
+
     @Autowired
     private CustomizationService customizationService;
 
@@ -240,6 +240,7 @@ public class ApplicationService {
         }
 
         if (comment.isApplicationSubmittedComment()) {
+            application.setSubmittedTimestamp(new DateTime());
             applicationSummaryService.incrementApplicationSubmittedCount(application);
         }
 
@@ -262,7 +263,7 @@ public class ApplicationService {
         if (comment.isApplicationPurgeComment()) {
             purgeApplication(application, comment);
         }
-        
+
     }
 
     // TODO: set values for "doRetain" (application) and "sendRecommendationEmail" (user account)

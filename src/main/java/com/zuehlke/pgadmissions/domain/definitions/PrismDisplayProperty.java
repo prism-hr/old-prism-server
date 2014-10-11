@@ -51,6 +51,7 @@ public enum PrismDisplayProperty {
     SYSTEM_NONE(SYSTEM_GLOBAL, "none"), //
     SYSTEM_PROCEED(SYSTEM_GLOBAL, "Proceed"), //
     SYSTEM_DECLINE(SYSTEM_GLOBAL, "Decline"), //
+    SYSTEM_ACTIVATE_ACCOUNT(SYSTEM_GLOBAL, "Activate Account"), //
     SYSTEM_HELPDESK(SYSTEM_GLOBAL, "Get Help"), //
     SYSTEM_VIEW_EDIT(SYSTEM_GLOBAL, "View / Edit"),
     SYSTEM_NEW_PASSWORD(SYSTEM_GLOBAL, "New password"),

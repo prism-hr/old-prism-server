@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.Iterator;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -264,7 +265,7 @@ public class ApplicationSectionService {
         qualification.setSubject(qualificationDTO.getSubject());
         qualification.setLanguage(qualificationDTO.getLanguage());
         qualification.setStartDate(qualificationDTO.getStartDate());
-        qualification.setCompleted(qualificationDTO.getCompleted());
+        qualification.setCompleted(BooleanUtils.isTrue(qualificationDTO.getCompleted()));
         qualification.setGrade(qualificationDTO.getGrade());
         qualification.setAwardDate(qualificationDTO.getAwardDate());
         qualification.setDocument(qualificationDocument);
@@ -304,7 +305,7 @@ public class ApplicationSectionService {
         employmentPosition.setPosition(employmentPositionDTO.getPosition());
         employmentPosition.setRemit(employmentPositionDTO.getRemit());
         employmentPosition.setStartDate(employmentPositionDTO.getStartDate());
-        employmentPosition.setCurrent(employmentPositionDTO.getCurrent());
+        employmentPosition.setCurrent(BooleanUtils.isTrue(employmentPositionDTO.getCurrent()));
         employmentPosition.setEndDate(employmentPositionDTO.getEndDate());
 
         return employmentPosition;
@@ -366,7 +367,7 @@ public class ApplicationSectionService {
 
         AddressDTO addressDTO = refereeDTO.getAddress();
         Address address = referee.getAddress();
-        
+
         if (address == null) {
             address = new Address();
             referee.setAddress(address);

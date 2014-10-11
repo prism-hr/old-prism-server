@@ -23,6 +23,12 @@ public class CompleteApplicationValidator extends LocalValidatorFactoryBean impl
         return Application.class.isAssignableFrom(clazz);
 
     }
+
+    @Override
+    public void validate(Object target, Errors errors) {
+        validate(target, errors, new Object[0]);
+    }
+
     @Override
     public void validate(Object target, Errors errors, Object... validationHints) {
         super.validate(target, errors, validationHints);

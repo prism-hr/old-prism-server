@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.rest.dto.application;
 
 import javax.validation.constraints.NotNull;
 
+import com.zuehlke.pgadmissions.rest.validation.annotation.DateNotFuture;
+import com.zuehlke.pgadmissions.rest.validation.annotation.DateNotPast;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
@@ -17,11 +19,11 @@ public class ApplicationPassportDTO {
     private String name;
 
     @NotNull
-    @DatePast
+    @DateNotFuture
     private LocalDate issueDate;
 
     @NotNull
-    @DateFuture
+    @DateNotPast
     private LocalDate expiryDate;
 
     public String getNumber() {

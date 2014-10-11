@@ -8,8 +8,10 @@ import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
@@ -82,21 +84,31 @@ public class NotificationTemplatePropertyService {
         return instructions != null ? instructions : "Not provided";
     }
 
-    public String getInterviewLocation(NotificationTemplateModelDTO modelDTO) {
-        String location = modelDTO.getComment().getInterviewLocation();
-        // TODO wrap with <a href>
-        return location;
+    public String getActionControl(NotificationTemplateModelDTO modelDTO) throws Exception {
+        Resource resource = modelDTO.getResource();
+        String url = host + "/#/" + resource.getResourceScope().getLowerCaseName();
+        if (resource.getResourceScope() != PrismScope.SYSTEM) {
+            url += "/" + resource.getId();
+        }
+
+        PrismAction action = modelDTO.getTransitionAction();
+        url += "?action=" + action.name() + "&user=" + modelDTO.getUser().getEmail();
+        String declineUrl = action.isDeclinableAction() ? url + "&decline=true" : null;
+
+        return processControlTemplate(resource, url, PrismDisplayProperty.SYSTEM_PROCEED, declineUrl, PrismDisplayProperty.SYSTEM_DECLINE);
     }
 
-
-    public String getActionControl(NotificationTemplateModelDTO modelDTO) {
-        // TODO
-        return host;
+    public String getActivateAccountControl(NotificationTemplateModelDTO modelDTO) throws Exception {
+        Resource resource = modelDTO.getResource();
+        User user = modelDTO.getUser();
+        PrismAction action = modelDTO.getTransitionAction();
+        String url = host + "/#/activate?activationCode=" + user.getActivationCode() + "&resourceId=" + resource.getId() + "&action=" + action.name();
+        return processControlTemplate(resource, url, PrismDisplayProperty.SYSTEM_ACTIVATE_ACCOUNT);
     }
 
-    public String getHomepageControl(NotificationTemplateModelDTO modelDTO) {
-        // TODO create <a href> with homepage
-        return host;
+    public String getHomepageControl(NotificationTemplateModelDTO modelDTO) throws Exception {
+        Resource resource = modelDTO.getResource();
+        return processControlTemplate(resource, host, PrismDisplayProperty.SYSTEM_HOMEPAGE);
     }
 
     public String getViewEditControl(NotificationTemplateModelDTO modelDTO) throws Exception {
@@ -112,7 +124,7 @@ public class NotificationTemplatePropertyService {
     }
 
 
-    public String getDirectionsControl(NotificationTemplateModelDTO modelDTO) throws Exception {
+    public String getInterviewDirectionsControl(NotificationTemplateModelDTO modelDTO) throws Exception {
         Resource resource = modelDTO.getResource();
         Comment comment = modelDTO.getComment();
         return processControlTemplate(resource, comment.getInterviewLocation(), PrismDisplayProperty.APPLICATION_COMMENT_DIRECTIONS);

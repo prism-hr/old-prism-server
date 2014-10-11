@@ -31,7 +31,6 @@ public class ApplicationDAO {
                 .createAlias("program", "program", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("program.locale", application.getLocale())) //
                 .add(Restrictions.isNotNull("submittedTimestamp")) //
-                .add(Restrictions.ne("id", application.getId())) //
                 .addOrder(Order.desc("submittedTimestamp")) //
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //
@@ -43,7 +42,6 @@ public class ApplicationDAO {
                 .createAlias("program", "program", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("program.locale", application.getLocale())) //
                 .add(Restrictions.isNull("submittedTimestamp")) //
-                .add(Restrictions.ne("id", application.getId())) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //

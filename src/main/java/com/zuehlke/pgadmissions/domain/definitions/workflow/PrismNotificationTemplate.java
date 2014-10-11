@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import java.util.HashMap;
-
 import com.google.common.collect.Maps;
+
+import java.util.HashMap;
 
 public enum PrismNotificationTemplate {
 
@@ -41,7 +41,7 @@ public enum PrismNotificationTemplate {
     PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.PROJECT,
             PrismNotificationTemplatePropertyCategory.PROGRAM), //
     SYSTEM_COMPLETE_REGISTRATION_REQUEST(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REQUEST, PrismScope.SYSTEM,
-            PrismNotificationTemplatePropertyCategory.ACTION), //
+            PrismNotificationTemplatePropertyCategory.ACTION, PrismNotificationTemplatePropertyCategory.ACCOUNT_ACTIVATION), //
     SYSTEM_PASSWORD_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.SYSTEM,
             PrismNotificationTemplatePropertyCategory.NEW_PASSWORD), //
     SYSTEM_APPLICATION_TASK_REQUEST(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.REQUEST, PrismScope.SYSTEM), //
@@ -92,7 +92,7 @@ public enum PrismNotificationTemplate {
     }
 
     private PrismNotificationTemplate(PrismNotificationType notificationType, PrismNotificationPurpose notificationPurpose, PrismScope scope,
-            PrismNotificationTemplatePropertyCategory... propertyCategories) {
+                                      PrismNotificationTemplatePropertyCategory... propertyCategories) {
         this.notificationType = notificationType;
         this.notificationPurpose = notificationPurpose;
         this.scope = scope;

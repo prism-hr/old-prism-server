@@ -86,7 +86,7 @@ public class MailSender {
                     + applicationContext.getBean(PropertyLoader.class).load(SYSTEM_EMAIL_LINK_MESSAGE);
 
             if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat")) {
-                LOGGER.info(String.format("Sending Production Email: %s", message.toString()));
+                LOGGER.info("Sending Production Email: " + message.toString());
                 javaMailSender.send(new MimeMessagePreparator() {
                     @Override
                     public void prepare(final MimeMessage mimeMessage) throws Exception {
@@ -100,8 +100,10 @@ public class MailSender {
                         }
                     }
                 });
+            } else if (contextEnvironment.equals("dev")) {
+                LOGGER.info("Sending Development Email: " + message.toString() + "\nSubject: " + subject + "\nContent:\n" + htmlContent);
             } else {
-                LOGGER.info(String.format("Sending Development Email: %s", message.toString()));
+                LOGGER.info("Sending Development Email: " + message.toString());
             }
         } catch (Exception e) {
             if (configuration.getNotificationTemplate().getNotificationType() == PrismNotificationType.INDIVIDUAL) {

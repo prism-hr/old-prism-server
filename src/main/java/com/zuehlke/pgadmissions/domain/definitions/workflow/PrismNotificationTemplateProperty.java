@@ -48,9 +48,10 @@ public enum PrismNotificationTemplateProperty {
     INTERVIEW_LOCATION(INTERVIEW_SCHEDULED, "getInterviewLocation"),
 
     ACTION_CONTROL(ACTION, "getActionControl"),
+    ACTIVATE_ACCOUNT_CONTROL(ACCOUNT_ACTIVATION, "getActivateAccountControl"),
     HOMEPAGE_CONTROL(GLOBAL, "getHomepageControl"),
     VIEW_EDIT_CONTROL(GLOBAL, "getViewEditControl"),
-    DIRECTIONS_CONTROL(CONFIRM_INTERVIEW, "getDirectionsControl"),
+    INTERVIEW_DIRECTIONS_CONTROL(CONFIRM_INTERVIEW, "getInterviewDirectionsControl"),
     HELPDESK_CONTROL(GLOBAL, "getHelpdeskControl"),
 
     NEW_PASSWORD(com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.NEW_PASSWORD, "get", "newPassword"),

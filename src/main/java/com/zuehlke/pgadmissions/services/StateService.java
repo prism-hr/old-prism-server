@@ -68,9 +68,6 @@ public class StateService {
     private RoleService roleService;
 
     @Autowired
-    private ScopeService scopeService;
-
-    @Autowired
     private SystemService systemService;
 
     public State getById(PrismState id) {

@@ -12,7 +12,6 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -100,7 +99,7 @@ public class NotificationDAO {
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.eq("notificationTemplate.notificationType", PrismNotificationType.INDIVIDUAL)) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("actionCategory", PrismActionCategory.CREATE_RESOURCE)) //
+                        .add(Restrictions.eq("stateActionNotification.notifyInvoker", true)) //
                         .add(Restrictions.ne("userRole.user", invoker))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.system", resource.getSystem())) //
@@ -195,7 +194,7 @@ public class NotificationDAO {
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.eq("notificationTemplate.notificationType", PrismNotificationType.SYNDICATED)) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("actionCategory", PrismActionCategory.CREATE_RESOURCE)) //
+                        .add(Restrictions.eq("stateActionNotification.notifyInvoker", true)) //
                         .add(Restrictions.ne("userRole.user", invoker))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.system", resource.getSystem())) //

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -33,6 +34,9 @@ public class StateActionNotification implements IUniqueEntity {
     @ManyToOne
     @JoinColumn(name = "notification_template_id", nullable = false)
     private NotificationTemplate notificationTemplate;
+    
+    @Column(name = "notify_invoker", nullable = false)
+    private Boolean notifyInvoker;
 
     public Integer getId() {
         return id;
@@ -66,6 +70,14 @@ public class StateActionNotification implements IUniqueEntity {
         this.notificationTemplate = notificationTemplate;
     }
 
+    public final Boolean getNotifyInvoker() {
+        return notifyInvoker;
+    }
+
+    public final void setNotifyInvoker(Boolean notifyInvoker) {
+        this.notifyInvoker = notifyInvoker;
+    }
+
     public StateActionNotification withStateAction(StateAction stateAction) {
         this.stateAction = stateAction;
         return this;
@@ -80,9 +92,15 @@ public class StateActionNotification implements IUniqueEntity {
         this.notificationTemplate = notificationTemplate;
         return this;
     }
+    
+    public StateActionNotification withNotifyInvoker(Boolean notifyInvoker) {
+        this.notifyInvoker = notifyInvoker;
+        return this;
+    }
 
     @Override
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addProperty("stateAction", stateAction).addProperty("role", role);
     }
+    
 }

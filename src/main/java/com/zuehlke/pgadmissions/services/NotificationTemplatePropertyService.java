@@ -114,7 +114,6 @@ public class NotificationTemplatePropertyService {
     }
 
 
-
     public String getRejectionReason(NotificationTemplateModelDTO modelDTO) {
         Application application = (Application) modelDTO.getResource();
         Comment rejection = commentService.getRejectionComment(application);

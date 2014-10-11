@@ -138,14 +138,15 @@ public class SystemInitialisationHelper {
         for (Action action : actionService.getActions()) {
             assertEquals(action.getId().getActionType(), action.getActionType());
             assertEquals(action.getId().getActionCategory(), action.getActionCategory());
-            assertEquals(action.getId().isRatingAction(), action.isRatingAction());
-            assertEquals(action.getId().isTransitionAction(), action.isTransitionAction());
+            assertEquals(action.getId().isRatingAction(), action.getRatingAction());
+            assertEquals(action.getId().isTransitionAction(), action.getTransitionAction());
+            assertEquals(action.getId().isDeclinableAction(), action.getDeclinableAction());
             assertEquals(PrismAction.getFallBackAction(action.getId()), action.getFallbackAction().getId());
             assertEquals(action.getId().getScope(), action.getScope().getId());
             assertEquals(action.getId().getCreationScope(), action.getCreationScope() == null ? null : action.getCreationScope().getId());
 
             if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
-                assertEquals(action.isTransitionAction(), true);
+                assertEquals(action.getTransitionAction(), true);
             }
 
             Set<ActionRedaction> redactions = action.getRedactions();

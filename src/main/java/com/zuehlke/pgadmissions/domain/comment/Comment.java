@@ -21,6 +21,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -884,7 +885,7 @@ public class Comment {
     }
 
     public boolean isRatingComment() {
-        return action.isRatingAction();
+        return action.getRatingAction();
     }
 
     public boolean isApplicationCompletionComment() {
@@ -904,7 +905,7 @@ public class Comment {
     public boolean isTransitionComment() {
         StateGroup stateGroup = state == null ? null : state.getStateGroup();
         StateGroup transitionStateGroup = transitionState == null ? null : transitionState.getStateGroup();
-        if (action.isTransitionAction()) {
+        if (action.getTransitionAction()) {
             if (action.getActionType() == PrismActionType.USER_INVOCATION) {
                 return true;
             } else if (stateGroup == null) {
@@ -914,6 +915,8 @@ public class Comment {
             } else if (transitionStateGroup == null) {
                 return false;
             } else if (!stateGroup.getId().equals(transitionStateGroup.getId())) {
+                return true;
+            } else if (action.getCreationScope() != null) {
                 return true;
             }
         }
@@ -930,6 +933,18 @@ public class Comment {
 
     public String getRejectionReasonDisplay() {
         return rejectionReason == null ? rejectionReasonSystem : rejectionReason.getName();
+    }
+
+    public String getCreatedTimestampDisplay(String dateFormat) {
+        return createdTimestamp.toString(dateFormat, LocaleUtils.toLocale(getResource().getLocale().toString()));
+    }
+
+    public String getInterviewDateTimeDisplay(String dateTimeFormat) {
+        return interviewDateTime.toString(dateTimeFormat, LocaleUtils.toLocale(getResource().getLocale().toString()));
+    }
+
+    public String getPositionProvisionalStartDateDisplay(String dateFormat) {
+        return positionProvisionalStartDate.toString(dateFormat, LocaleUtils.toLocale(getResource().getLocale().toString()));
     }
 
 }

@@ -31,7 +31,7 @@ public class NotificationTemplatePropertyService {
         for (String property : properties) {
             if (tempObject == null) {
                 String[] subArray = Arrays.copyOf(properties, i);
-                throw new NullPointerException("Value of given property (of NotificationTemplateModelDTO) is null: " + Joiner.on(".").join(subArray));
+                throw new NullPointerException("Value of given property (of NotificationTemplateModelDTO) is null: " + Joiner.on(".").join(subArray) + ", trying to get: " + Joiner.on(".").join(properties));
             }
             tempObject = ReflectionUtils.getProperty(tempObject, property);
             i++;

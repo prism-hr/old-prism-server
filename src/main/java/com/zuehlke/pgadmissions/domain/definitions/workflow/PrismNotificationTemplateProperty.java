@@ -20,8 +20,7 @@ public enum PrismNotificationTemplateProperty {
     INVOKER(COMMENT, "get", "comment", "user", "displayName"),
     INVOKER_EMAIL(COMMENT, "get", "comment", "user", "email"),
     OUTCOME(COMMENT, "getCommentOutcome"),
-
-    DATE_TIME(GLOBAL, "get", "comment", "createdTimestamp"),
+    DATE_TIME(COMMENT, "get", "comment", "createdTimestamp"),
 
     APPLICANT(APPLICATION, "get", "resource", "application", "user", "displayName"),
     APPLICATION_CODE(APPLICATION, "get", "resource", "application", "code"),

@@ -1,11 +1,8 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.Arrays;
-import java.util.Locale;
 
-import org.apache.commons.lang.LocaleUtils;
 import org.joda.time.LocalDateTime;
-import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

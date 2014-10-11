@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
 
@@ -64,6 +65,10 @@ public class CommentAppointmentTimeslot {
 
     public final Set<CommentAppointmentPreference> getAppointmentPreferences() {
         return appointmentPreferences;
+    }
+
+    public String getDateTimeDisplay(String dateTimeFormat) {
+        return dateTime.toString(dateTimeFormat, LocaleUtils.toLocale(comment.getResource().getLocale().toString()));
     }
 
     @Override

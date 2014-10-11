@@ -79,6 +79,18 @@ public abstract class Resource implements IUniqueEntity {
     public abstract void setSequenceIdentifier(String sequenceIdentifier);
 
     public abstract void addComment(Comment comment);
+    
+    public String getHomepage() {
+        return getResourceScope() == PrismScope.SYSTEM ? getSystem().getHomepage() : getInstitution().getHomepage(); 
+    }
+    
+    public String getHelpdesk() {
+        if (getResourceScope() == PrismScope.SYSTEM) {
+            return getSystem().getHelpdesk();
+        }
+        String helpdesk = getInstitution().getHelpdesk();
+        return helpdesk == null ? getSystem().getHelpdesk() : helpdesk;
+    }
 
     public Resource getParentResource() {
         PrismScope resourceScope = PrismScope.getResourceScope(this.getClass());

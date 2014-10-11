@@ -54,6 +54,12 @@ public class System extends Resource {
     @Column(name = "locale", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismLocale locale;
+    
+    @Column(name = "homepage", nullable = false)
+    private String homepage;
+    
+    @Column(name = "helpdesk", nullable = false)
+    private String helpdesk;
 
     @Column(name = "last_data_import_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -137,6 +143,22 @@ public class System extends Resource {
         this.locale = locale;
     }
 
+    public final String getHomepage() {
+        return homepage;
+    }
+
+    public final void setHomepage(String homepage) {
+        this.homepage = homepage;
+    }
+
+    public final String getHelpdesk() {
+        return helpdesk;
+    }
+
+    public final void setHelpdesk(String helpdesk) {
+        this.helpdesk = helpdesk;
+    }
+
     public final LocalDate getLastDataImportDate() {
         return lastDataImportDate;
     }
@@ -164,6 +186,16 @@ public class System extends Resource {
     
     public System withLocale(PrismLocale locale) {
         this.locale = locale;
+        return this;
+    }
+    
+    public System withHomepage(String homepage) {
+        this.homepage = homepage;
+        return this;
+    }
+    
+    public System withHelpdesk(String helpdesk) {
+        this.helpdesk = helpdesk;
         return this;
     }
 

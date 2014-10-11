@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.io.Resources;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
@@ -62,8 +63,14 @@ import com.zuehlke.pgadmissions.services.SystemService;
 @Transactional
 public class SystemInitialisationHelper {
 
+    @Value("${application.host}")
+    private String systemHomepage;
+    
     @Value("${system.name}")
     private String systemName;
+    
+    @Value("${system.helpdesk}")
+    private String systemHelpdesk;
 
     @Value("${system.user.firstName}")
     private String systemUserFirstName;
@@ -187,6 +194,9 @@ public class SystemInitialisationHelper {
     public void verifySystemCreation() {
         System system = systemService.getSystem();
         assertEquals(system.getTitle(), systemName);
+        assertEquals(system.getLocale(), PrismLocale.getSystemLocale());
+        assertEquals(system.getHomepage(), systemHomepage);
+        assertEquals(system.getHelpdesk(), systemHelpdesk);
         assertEquals(system.getCode(), resourceService.generateResourceCode(system));
         assertEquals(system.getState().getId(), PrismState.SYSTEM_RUNNING);
     }

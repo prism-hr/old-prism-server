@@ -49,6 +49,9 @@ public enum PrismDisplayProperty {
     SYSTEM_REFER_TO_DOCUMENT(SYSTEM_GLOBAL, "Refer to attached document."), //
     SYSTEM_OTHER(SYSTEM_GLOBAL, "Other"), //
     SYSTEM_NONE(SYSTEM_GLOBAL, "none"), //
+    SYSTEM_PROCEED(SYSTEM_GLOBAL, "Proceed"), //
+    SYSTEM_DECLINE(SYSTEM_GLOBAL, "Decline"), //
+    SYSTEM_HELPDESK(SYSTEM_GLOBAL, "Get Help"), //
     INSTITUTION_HEADER(INSITUTION_GLOBAL, "Institution"), //
     PROGRAM_HEADER(PROGRAM_GLOBAL, "Program"), //
     PROGRAM_STUDY_OPTION(PROGRAM_GLOBAL, "Study Option"), //

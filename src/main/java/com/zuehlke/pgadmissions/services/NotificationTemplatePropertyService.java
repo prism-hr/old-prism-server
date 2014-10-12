@@ -1,17 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.joda.time.LocalDateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
-
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
@@ -27,8 +15,18 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
-
 import freemarker.template.Template;
+import org.joda.time.LocalDateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
+
+import java.util.Arrays;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -45,6 +43,8 @@ public class NotificationTemplatePropertyService {
 
     @Autowired
     private FreeMarkerConfig freemarkerConfig;
+
+    // TODO make sure all properties (apart from controls) are html escaped
 
     public String get(NotificationTemplateModelDTO modelDTO, String[] properties) {
         Object tempObject = modelDTO;
@@ -64,6 +64,11 @@ public class NotificationTemplatePropertyService {
         return modelDTO.getComment().getTransitionState().getId().name();
     }
 
+    public String getCommentDateTime(NotificationTemplateModelDTO modelDTO) {
+        // FIXME apply locale formatting
+        return modelDTO.getComment().getCreatedTimestamp().toString();
+    }
+
     public String getProjectOrProgramTitle(NotificationTemplateModelDTO modelDTO) {
         return modelDTO.getResource().getApplication().getProjectOrProgramTitle();
     }
@@ -78,7 +83,8 @@ public class NotificationTemplatePropertyService {
     }
 
     public String getInterviewTimeZone(NotificationTemplateModelDTO modelDTO) {
-        return modelDTO.getComment().getInterviewTimeZone().getDisplayName();
+        // TODO write query to get time zone
+        return "[time zone]";
     }
 
     public String getIntervieweeInstructions(NotificationTemplateModelDTO modelDTO) {
@@ -94,7 +100,7 @@ public class NotificationTemplatePropertyService {
         }
 
         PrismAction action = modelDTO.getTransitionAction();
-        url += "?action=" + action.name() + "&user=" + modelDTO.getUser().getEmail();
+        url += "/timeline?action=" + action.name() + "&user=" + modelDTO.getUser().getEmail();
         String declineUrl = action.isDeclinableAction() ? url + "&decline=true" : null;
 
         return processControlTemplate(resource, url, PrismDisplayProperty.SYSTEM_PROCEED, declineUrl, PrismDisplayProperty.SYSTEM_DECLINE);
@@ -116,14 +122,18 @@ public class NotificationTemplatePropertyService {
     public String getViewEditControl(NotificationTemplateModelDTO modelDTO) throws Exception {
         Resource resource = modelDTO.getResource();
         PrismScope scope = resource.getResourceScope() == PrismScope.SYSTEM ? PrismScope.APPLICATION : resource.getResourceScope();
-        String url = host + "/#/" + scope.getLowerCaseName() + "/" + resource.getId() + "/view";
+        String url = host + "/#/" + scope.getLowerCaseName() + "/" + resource.getId() + "/view?user=" + modelDTO.getUser().getEmail();
         return processControlTemplate(resource, url, PrismDisplayProperty.SYSTEM_VIEW_EDIT);
     }
 
 
     public String getInterviewDirectionsControl(NotificationTemplateModelDTO modelDTO) throws Exception {
         Resource resource = modelDTO.getResource();
+        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).withResource(resource);
         Comment comment = modelDTO.getComment();
+        if (comment.getInterviewLocation() == null) {
+            return "<p>" + propertyLoader.load(PrismDisplayProperty.SYSTEM_INTERVIEW_LOCATION_NOT_SPECIFIED) + "</p>";
+        }
         return processControlTemplate(resource, comment.getInterviewLocation(), PrismDisplayProperty.APPLICATION_COMMENT_DIRECTIONS);
     }
 

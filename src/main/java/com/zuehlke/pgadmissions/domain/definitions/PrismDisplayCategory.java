@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 public enum PrismDisplayCategory {
 
     SYSTEM_GLOBAL(SYSTEM), //
-    INSITUTION_GLOBAL(INSTITUTION), //
+    INSTITUTION_GLOBAL(INSTITUTION), //
     PROGRAM_GLOBAL(PROGRAM), //
     PROJECT_GLOBAL(PROJECT), //
     APPLICATION_GLOBAL(APPLICATION), //

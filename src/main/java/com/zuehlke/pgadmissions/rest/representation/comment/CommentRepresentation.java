@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.FileRep
 public class CommentRepresentation {
 
     private Integer id;
-    
+
     private String stateGroup;
 
     private UserRepresentation user;
@@ -75,7 +75,7 @@ public class CommentRepresentation {
 
     private Boolean recruiterAcceptAppointment;
 
-    private Integer rating;
+    private Integer applicationRating;
 
     private Boolean useCustomRefereeQuestions;
 
@@ -343,12 +343,12 @@ public class CommentRepresentation {
         this.recruiterAcceptAppointment = recruiterAcceptAppointment;
     }
 
-    public Integer getRating() {
-        return rating;
+    public Integer getApplicationRating() {
+        return applicationRating;
     }
 
-    public void setRating(Integer rating) {
-        this.rating = rating;
+    public void setApplicationRating(Integer applicationRating) {
+        this.applicationRating = applicationRating;
     }
 
     public Boolean getUseCustomRefereeQuestions() {

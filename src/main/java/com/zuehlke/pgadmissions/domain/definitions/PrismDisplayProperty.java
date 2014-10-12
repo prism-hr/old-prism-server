@@ -14,7 +14,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.A
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.APPLICATION_QUALIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.APPLICATION_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.INSITUTION_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.INSTITUTION_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.PROGRAM_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.PROJECT_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.SYSTEM_GLOBAL;
@@ -56,7 +56,8 @@ public enum PrismDisplayProperty {
     SYSTEM_VIEW_EDIT(SYSTEM_GLOBAL, "View / Edit"),
     SYSTEM_NEW_PASSWORD(SYSTEM_GLOBAL, "New password"),
     SYSTEM_HOMEPAGE(SYSTEM_GLOBAL, "Homepage"),
-    INSTITUTION_HEADER(INSITUTION_GLOBAL, "Institution"), //
+    SYSTEM_INTERVIEW_LOCATION_NOT_SPECIFIED(SYSTEM_GLOBAL, "Location not specified"),
+    INSTITUTION_HEADER(INSTITUTION_GLOBAL, "Institution"), //
     PROGRAM_HEADER(PROGRAM_GLOBAL, "Program"), //
     PROGRAM_STUDY_OPTION(PROGRAM_GLOBAL, "Study Option"), //
     PROJECT_HEADER(PROJECT_GLOBAL, "Project"), //

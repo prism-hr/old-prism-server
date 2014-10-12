@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
 import org.joda.time.LocalDate;
@@ -26,8 +27,10 @@ public class CommentDTO {
 
     private PrismState transitionState;
 
+    @Valid
     private Set<CommentAssignedUserDTO> assignedUsers;
 
+    @Valid
     private List<FileDTO> documents;
 
     private YesNoUnsureResponse qualified;
@@ -44,7 +47,7 @@ public class CommentDTO {
 
     private Boolean desireToRecruit;
 
-    private Integer rating;
+    private Integer applicationRating;
 
     private LocalDateTime interviewDateTime;
 
@@ -199,12 +202,12 @@ public class CommentDTO {
         this.desireToRecruit = desireToRecruit;
     }
 
-    public Integer getRating() {
-        return rating;
+    public Integer getApplicationRating() {
+        return applicationRating;
     }
 
-    public void setRating(Integer rating) {
-        this.rating = rating;
+    public void setApplicationRating(Integer applicationRating) {
+        this.applicationRating = applicationRating;
     }
 
     public LocalDateTime getInterviewDateTime() {

@@ -3,13 +3,15 @@ package com.zuehlke.pgadmissions.rest.dto;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 
+import javax.validation.constraints.NotNull;
+
 public class CommentAssignedUserDTO {
 
+    @NotNull
     private UserDTO user;
 
+    @NotNull
     private PrismRole role;
-    
-    private PrismRoleTransitionType roleTransitionType;
 
     public UserDTO getUser() {
         return user;
@@ -27,12 +29,4 @@ public class CommentAssignedUserDTO {
         this.role = role;
     }
 
-    public final PrismRoleTransitionType getRoleTransitionType() {
-        return roleTransitionType;
-    }
-
-    public final void setRoleTransitionType(PrismRoleTransitionType roleTransitionType) {
-        this.roleTransitionType = roleTransitionType;
-    }
-    
 }

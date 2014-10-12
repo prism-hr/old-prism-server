@@ -8,7 +8,7 @@ public class PersonalDetailRepresentation {
 
     private String phone;
 
-    private Boolean firstLanguageEnglish;
+    private Boolean firstLanguageLocale;
 
     private LanguageQualificationRepresentation languageQualification;
 
@@ -50,12 +50,12 @@ public class PersonalDetailRepresentation {
         this.phone = phone;
     }
 
-    public Boolean getFirstLanguageEnglish() {
-        return firstLanguageEnglish;
+    public Boolean getFirstLanguageLocale() {
+        return firstLanguageLocale;
     }
 
-    public void setFirstLanguageEnglish(Boolean firstLanguageEnglish) {
-        this.firstLanguageEnglish = firstLanguageEnglish;
+    public void setFirstLanguageLocale(Boolean firstLanguageLocale) {
+        this.firstLanguageLocale = firstLanguageLocale;
     }
 
     public LanguageQualificationRepresentation getLanguageQualification() {

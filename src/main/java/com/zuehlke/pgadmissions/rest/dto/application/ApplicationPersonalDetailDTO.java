@@ -23,7 +23,7 @@ public class ApplicationPersonalDetailDTO {
     private String phone;
 
     @NotNull
-    private Boolean firstLanguageEnglish;
+    private Boolean firstLanguageLocale;
 
     @Valid
     private ApplicationLanguageQualificationDTO languageQualification;
@@ -84,12 +84,12 @@ public class ApplicationPersonalDetailDTO {
         this.phone = phone;
     }
 
-    public Boolean getFirstLanguageEnglish() {
-        return firstLanguageEnglish;
+    public Boolean getFirstLanguageLocale() {
+        return firstLanguageLocale;
     }
 
-    public void setFirstLanguageEnglish(Boolean firstLanguageEnglish) {
-        this.firstLanguageEnglish = firstLanguageEnglish;
+    public void setFirstLanguageLocale(Boolean firstLanguageLocale) {
+        this.firstLanguageLocale = firstLanguageLocale;
     }
 
     public ApplicationLanguageQualificationDTO getLanguageQualification() {

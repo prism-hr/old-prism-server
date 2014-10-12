@@ -115,13 +115,8 @@ public class NotificationTemplatePropertyService {
 
     public String getViewEditControl(NotificationTemplateModelDTO modelDTO) throws Exception {
         Resource resource = modelDTO.getResource();
-        String url;
-        if (resource.getResourceScope() == PrismScope.SYSTEM) {
-            url = host + "/#/system";
-        } else {
-            url = host + "/#/" + resource.getResourceScope().getLowerCaseName() + "s/" + resource.getId() + "/view";
-        }
-
+        PrismScope scope = resource.getResourceScope() == PrismScope.SYSTEM ? PrismScope.APPLICATION : resource.getResourceScope();
+        String url = host + "/#/" + scope.getLowerCaseName() + "/" + resource.getId() + "/view";
         return processControlTemplate(resource, url, PrismDisplayProperty.SYSTEM_VIEW_EDIT);
     }
 

@@ -112,9 +112,6 @@ public class NotificationDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("userRole.lastNotifiedDate")) //
-                        .add(Restrictions.lt("userRole.lastNotifiedDate", baseline))) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }

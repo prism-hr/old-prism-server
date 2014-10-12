@@ -248,7 +248,9 @@ public class NotificationService {
                 sent.put(notificationTemplate, user);
             }
 
-            setLastNotifiedDate(resource, user, request, baseline);
+            Role role = roleService.getById(request.getRoleId());
+            UserRole userRole = roleService.getUserRole(resource, user, role);
+            userRole.setLastNotifiedDate(baseline);
         }
     }
 
@@ -266,8 +268,6 @@ public class NotificationService {
                 sendNotification(notificationTemplate, new NotificationTemplateModelDTO(user, resource, sender));
                 sent.put(notificationTemplate, user);
             }
-            
-            setLastNotifiedDate(resource, user, update, baseline);
         }
     }
 
@@ -280,12 +280,6 @@ public class NotificationService {
         message.setAttachments(Lists.<AttachmentInputSource> newArrayList());
 
         mailSender.sendEmail(message);
-    }
-    
-    private void setLastNotifiedDate(Resource resource, User user, UserNotificationDefinitionDTO request, LocalDate baseline) {
-        Role role = roleService.getById(request.getRoleId());
-        UserRole userRole = roleService.getUserRole(resource, user, role);
-        userRole.setLastNotifiedDate(baseline);
     }
 
 }

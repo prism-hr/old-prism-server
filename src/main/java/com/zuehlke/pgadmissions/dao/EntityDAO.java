@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -117,10 +116,6 @@ public class EntityDAO {
         sessionFactory.getCurrentSession().clear();
     }
 
-    public <T> T getByCode(Class<T> klass, String code) {
-        return getByProperty(klass, "code", code);
-    }
-
     public Object merge(Object entity) {
         return sessionFactory.getCurrentSession().merge(entity);
     }
@@ -131,19 +126,4 @@ public class EntityDAO {
                 .executeUpdate();
     }
 
-    public <T> Integer getNotNullValueCount(Class<T> entityClass, String property, Map<String, Object> filters) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(entityClass) //
-                .setProjection(Projections.count("id"));
-
-        for (String filter : filters.keySet()) {
-            criteria.add(Restrictions.eq(filter, filters.get(filter)));
-        }
-
-        return (Integer) criteria.add(Restrictions.isNotNull(property)) //
-                .uniqueResult();
-    }
-
-    public void refresh(Object transientResource) {
-        sessionFactory.getCurrentSession().refresh(transientResource);
-    }
 }

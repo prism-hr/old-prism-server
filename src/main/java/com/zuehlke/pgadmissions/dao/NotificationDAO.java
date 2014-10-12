@@ -101,7 +101,7 @@ public class NotificationDAO {
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.eq("notificationTemplate.notificationType", PrismNotificationType.INDIVIDUAL)) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("stateActionNotification.notifyInvoker", true)) //
+                        .add(Restrictions.eq("userRole.user", resource.getUser())) //
                         .add(Restrictions.ne("userRole.user", invoker))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.system", resource.getSystem())) //
@@ -112,9 +112,9 @@ public class NotificationDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
-                .add(Restrictions.disjunction(). //
-                    add(Restrictions.isNull("userRole.lastNotifiedDate"))
-                    .add(Restrictions.lt("userRole.lastNotifiedDate", baseline))) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("userRole.lastNotifiedDate")) //
+                        .add(Restrictions.lt("userRole.lastNotifiedDate", baseline))) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
@@ -201,7 +201,7 @@ public class NotificationDAO {
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.eq("notificationTemplate.notificationType", PrismNotificationType.SYNDICATED)) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("stateActionNotification.notifyInvoker", true)) //
+                        .add(Restrictions.eq("userRole.user", resource.getUser())) //
                         .add(Restrictions.ne("userRole.user", invoker))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.system", resource.getSystem())) //

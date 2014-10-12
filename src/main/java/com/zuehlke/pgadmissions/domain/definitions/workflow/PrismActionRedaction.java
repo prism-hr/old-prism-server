@@ -6,13 +6,13 @@ public class PrismActionRedaction {
 
     private PrismRole role;
 
-    private PrismRedactionType redactionType;
+    private PrismActionRedactionType redactionType;
 
     public PrismRole getRole() {
         return role;
     }
 
-    public PrismRedactionType getRedactionType() {
+    public PrismActionRedactionType getRedactionType() {
         return redactionType;
     }
 
@@ -21,7 +21,7 @@ public class PrismActionRedaction {
         return this;
     }
 
-    public PrismActionRedaction withRedactionType(PrismRedactionType redactionType) {
+    public PrismActionRedaction withRedactionType(PrismActionRedactionType redactionType) {
         this.redactionType = redactionType;
         return this;
     }

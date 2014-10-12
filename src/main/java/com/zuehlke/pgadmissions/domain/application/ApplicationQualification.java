@@ -1,13 +1,22 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import com.zuehlke.pgadmissions.domain.comment.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.QualificationType;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import javax.persistence.*;
+import com.zuehlke.pgadmissions.domain.comment.Document;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.imported.QualificationType;
 
 @Entity
 @Table(name = "APPLICATION_QUALIFICATION")

@@ -311,7 +311,7 @@ public class SystemInitialisationHelper {
 
         for (StateActionNotification stateActionNotification : stateActionNotifications) {
             PrismStateActionNotification prismStateActionNotification = new PrismStateActionNotification().withRole(stateActionNotification.getRole().getId())
-                    .withTemplate(stateActionNotification.getNotificationTemplate().getId()).withNotifyInvoker(stateActionNotification.getNotifyInvoker());
+                    .withTemplate(stateActionNotification.getNotificationTemplate().getId());
             assertTrue(prismStateAction.getNotifications().contains(prismStateActionNotification));
         }
     }

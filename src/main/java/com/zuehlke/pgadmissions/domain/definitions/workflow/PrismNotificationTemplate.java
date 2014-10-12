@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import com.google.common.collect.Maps;
-
 import java.util.HashMap;
+
+import com.google.common.collect.Maps;
 
 public enum PrismNotificationTemplate {
 

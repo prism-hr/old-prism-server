@@ -7,8 +7,6 @@ public class PrismStateActionNotification {
     private PrismRole role;
     
     private PrismNotificationTemplate template;
-    
-    private boolean notifyInvoker;
 
     public PrismRole getRole() {
         return role;
@@ -16,10 +14,6 @@ public class PrismStateActionNotification {
 
     public PrismNotificationTemplate getTemplate() {
         return template;
-    }
-    
-    public final boolean getNotifyInvoker() {
-        return notifyInvoker;
     }
 
     public PrismStateActionNotification withRole(PrismRole role) {
@@ -29,11 +23,6 @@ public class PrismStateActionNotification {
     
     public PrismStateActionNotification withTemplate(PrismNotificationTemplate template) {
         this.template = template;
-        return this;
-    }
-    
-    public PrismStateActionNotification withNotifyInvoker(boolean notifyInvoker) {
-        this.notifyInvoker = notifyInvoker;
         return this;
     }
     

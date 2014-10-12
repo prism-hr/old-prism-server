@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowExecution;
 
@@ -61,10 +60,6 @@ public class UserRole extends WorkflowExecution {
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
-
-    @ManyToOne
-    @JoinColumn(name = "notification_template_id")
-    private NotificationTemplate notificationTemplate;
 
     @Column(name = "last_notified_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -146,14 +141,6 @@ public class UserRole extends WorkflowExecution {
 
     public void setRole(Role role) {
         this.role = role;
-    }
-
-    public final NotificationTemplate getNotificationTemplate() {
-        return notificationTemplate;
-    }
-
-    public final void setNotificationTemplate(NotificationTemplate notificationTemplate) {
-        this.notificationTemplate = notificationTemplate;
     }
 
     public final LocalDate getLastNotifiedDate() {

@@ -15,7 +15,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRedactionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 
 @Entity
 @Table(name = "ACTION_REDACTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "action_id", "role_id" }) })
@@ -36,7 +36,7 @@ public class ActionRedaction implements IUniqueEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "redaction_type", nullable = false)
-    private PrismRedactionType redactionType;
+    private PrismActionRedactionType redactionType;
 
     public Integer getId() {
         return id;
@@ -62,11 +62,11 @@ public class ActionRedaction implements IUniqueEntity {
         this.role = role;
     }
 
-    public PrismRedactionType getRedactionType() {
+    public PrismActionRedactionType getRedactionType() {
         return redactionType;
     }
 
-    public void setRedactionType(PrismRedactionType redactionType) {
+    public void setRedactionType(PrismActionRedactionType redactionType) {
         this.redactionType = redactionType;
     }
 
@@ -80,7 +80,7 @@ public class ActionRedaction implements IUniqueEntity {
         return this;
     }
     
-    public ActionRedaction withRedactionType(PrismRedactionType redactionType) {
+    public ActionRedaction withRedactionType(PrismActionRedactionType redactionType) {
         this.redactionType = redactionType;
         return this;
     }

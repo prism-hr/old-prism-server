@@ -128,11 +128,11 @@ public class NotificationService {
             Integer reminderInterval = getReminderInterval(resource, notificationTemplate);
 
             if (!sent.get(notificationTemplate).contains(user) && baseline.minusDays(reminderInterval) == userRole.getLastNotifiedDate()) {
-                sendNotification(notificationTemplate.getReminderTemplate(), new NotificationTemplateModelDTO(user, resource, invoker).withTransitionAction(reminder.getActionId()));
+                sendNotification(notificationTemplate.getReminderTemplate(),
+                        new NotificationTemplateModelDTO(user, resource, invoker).withTransitionAction(reminder.getActionId()));
                 sent.put(notificationTemplate, user);
             }
 
-            userRole.setNotificationTemplate(notificationTemplate);
             userRole.setLastNotifiedDate(baseline);
         }
     }
@@ -213,13 +213,15 @@ public class NotificationService {
     public void sendRegistrationNotification(User user, ActionOutcomeDTO actionOutcome) {
         System system = systemService.getSystem();
         sendNotification(PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST,
-                new NotificationTemplateModelDTO(user, actionOutcome.getTransitionResource(), system.getUser()).withTransitionAction(actionOutcome.getTransitionAction().getId()));
+                new NotificationTemplateModelDTO(user, actionOutcome.getTransitionResource(), system.getUser()).withTransitionAction(actionOutcome
+                        .getTransitionAction().getId()));
     }
 
     public void sendResetPasswordNotification(User user, String newPassword) {
         System system = systemService.getSystem();
 
-        sendNotification(PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION, new NotificationTemplateModelDTO(user, systemService.getSystem(), system.getUser()).withNewPassword(newPassword));
+        sendNotification(PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION,
+                new NotificationTemplateModelDTO(user, systemService.getSystem(), system.getUser()).withNewPassword(newPassword));
     }
 
     public List<PrismNotificationTemplate> getEditableTemplates(PrismScope scope) {
@@ -246,10 +248,7 @@ public class NotificationService {
                 sent.put(notificationTemplate, user);
             }
 
-            Role role = roleService.getById(request.getRoleId());
-            UserRole userRole = roleService.getUserRole(resource, user, role);
-            userRole.setNotificationTemplate(notificationTemplate);
-            userRole.setLastNotifiedDate(baseline);
+            setLastNotifiedDate(resource, user, request, baseline);
         }
     }
 
@@ -267,6 +266,8 @@ public class NotificationService {
                 sendNotification(notificationTemplate, new NotificationTemplateModelDTO(user, resource, sender));
                 sent.put(notificationTemplate, user);
             }
+            
+            setLastNotifiedDate(resource, user, update, baseline);
         }
     }
 
@@ -276,9 +277,15 @@ public class NotificationService {
 
         message.setConfiguration(configuration);
         message.setModelDTO(modelDTO);
-        message.setAttachments(Lists.<AttachmentInputSource>newArrayList());
+        message.setAttachments(Lists.<AttachmentInputSource> newArrayList());
 
         mailSender.sendEmail(message);
+    }
+    
+    private void setLastNotifiedDate(Resource resource, User user, UserNotificationDefinitionDTO request, LocalDate baseline) {
+        Role role = roleService.getById(request.getRoleId());
+        UserRole userRole = roleService.getUserRole(resource, user, role);
+        userRole.setLastNotifiedDate(baseline);
     }
 
 }

@@ -1,10 +1,15 @@
 package com.zuehlke.pgadmissions.domain.application;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
-
-import javax.persistence.*;
 
 @Entity
 @Table(name = "APPLICATION_PASSPORT")

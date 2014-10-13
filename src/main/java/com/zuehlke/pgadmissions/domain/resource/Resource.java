@@ -80,11 +80,11 @@ public abstract class Resource implements IUniqueEntity {
 
     public abstract void addComment(Comment comment);
     
-    public String getHomepage() {
+    public String getHomepageDisplay() {
         return getResourceScope() == PrismScope.SYSTEM ? getSystem().getHomepage() : getInstitution().getHomepage(); 
     }
     
-    public String getHelpdesk() {
+    public String getHelpdeskDisplay() {
         if (getResourceScope() == PrismScope.SYSTEM) {
             return getSystem().getHelpdesk();
         }

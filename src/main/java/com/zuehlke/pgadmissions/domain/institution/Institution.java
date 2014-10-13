@@ -86,7 +86,7 @@ public class Institution extends ResourceParent {
     @Column(name = "title", nullable = false, unique = true)
     @Field(analyzer = @Analyzer(definition = "institutionNameAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String title;
-    
+
     @Column(name = "locale", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismLocale locale;
@@ -102,7 +102,7 @@ public class Institution extends ResourceParent {
 
     @Column(name = "homepage", nullable = false)
     private String homepage;
-    
+
     @Column(name = "helpdesk", nullable = true)
     private String helpdesk;
 
@@ -131,7 +131,7 @@ public class Institution extends ResourceParent {
     private Document logoDocument;
 
     @JoinColumn(name = "institution_address_id")
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne
     private InstitutionAddress address;
 
     @Column(name = "is_ucl_institution", nullable = false)
@@ -229,29 +229,29 @@ public class Institution extends ResourceParent {
     public void setTitle(String title) {
         this.title = title;
     }
-    
+
     @Override
-    public final PrismLocale getLocale() {
+    public PrismLocale getLocale() {
         return locale;
     }
 
-    public final void setLocale(PrismLocale locale) {
+    public void setLocale(PrismLocale locale) {
         this.locale = locale;
     }
 
-    public final String getSummary() {
+    public String getSummary() {
         return summary;
     }
 
-    public final void setSummary(String summary) {
+    public void setSummary(String summary) {
         this.summary = summary;
     }
 
-    public final String getDescription() {
+    public String getDescription() {
         return description;
     }
 
-    public final void setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -279,67 +279,67 @@ public class Institution extends ResourceParent {
         this.homepage = homepage;
     }
 
-    public final String getHelpdesk() {
+    public String getHelpdesk() {
         return helpdesk;
     }
 
-    public final void setHelpdesk(String helpdesk) {
+    public void setHelpdesk(String helpdesk) {
         this.helpdesk = helpdesk;
     }
 
-    public final String getGoogleId() {
+    public String getGoogleId() {
         return googleId;
     }
 
-    public final void setGoogleId(String googleId) {
+    public void setGoogleId(String googleId) {
         this.googleId = googleId;
     }
 
-    public final String getLinkedinUri() {
+    public String getLinkedinUri() {
         return linkedinUri;
     }
 
-    public final void setLinkedinUri(String linkedinUri) {
+    public void setLinkedinUri(String linkedinUri) {
         this.linkedinUri = linkedinUri;
     }
 
-    public final String getTwitterUri() {
+    public String getTwitterUri() {
         return twitterUri;
     }
 
-    public final void setTwitterUri(String twitterUri) {
+    public void setTwitterUri(String twitterUri) {
         this.twitterUri = twitterUri;
     }
 
-    public final String getFacebookUri() {
+    public String getFacebookUri() {
         return facebookUri;
     }
 
-    public final void setFacebookUri(String facebookUri) {
+    public void setFacebookUri(String facebookUri) {
         this.facebookUri = facebookUri;
     }
 
-    public final PrismProgramType getDefaultProgramType() {
+    public PrismProgramType getDefaultProgramType() {
         return defaultProgramType;
     }
 
-    public final void setDefaultProgramType(PrismProgramType defaultProgramType) {
+    public void setDefaultProgramType(PrismProgramType defaultProgramType) {
         this.defaultProgramType = defaultProgramType;
     }
 
-    public final PrismStudyOption getDefaultStudyOption() {
+    public PrismStudyOption getDefaultStudyOption() {
         return defaultStudyOption;
     }
 
-    public final void setDefaultStudyOption(PrismStudyOption defaultStudyOption) {
+    public void setDefaultStudyOption(PrismStudyOption defaultStudyOption) {
         this.defaultStudyOption = defaultStudyOption;
     }
 
-    public final Document getLogoDocument() {
+    public Document getLogoDocument() {
         return logoDocument;
     }
 
-    public final void setLogoDocument(Document logoDocument) {
+    public void setLogoDocument(Document logoDocument) {
         this.logoDocument = logoDocument;
     }
 
@@ -410,22 +410,22 @@ public class Institution extends ResourceParent {
     }
 
     @Override
-    public final Integer getApplicationRatingCount() {
+    public Integer getApplicationRatingCount() {
         return applicationRatingCount;
     }
 
     @Override
-    public final void setApplicationRatingCount(Integer applicationRatingCountSum) {
+    public void setApplicationRatingCount(Integer applicationRatingCountSum) {
         this.applicationRatingCount = applicationRatingCountSum;
     }
 
     @Override
-    public final BigDecimal getApplicationRatingCountAverageNonZero() {
+    public BigDecimal getApplicationRatingCountAverageNonZero() {
         return applicationRatingCountAverageNonZero;
     }
 
     @Override
-    public final void setApplicationRatingCountAverageNonZero(BigDecimal applicationRatingCountAverage) {
+    public void setApplicationRatingCountAverageNonZero(BigDecimal applicationRatingCountAverage) {
         this.applicationRatingCountAverageNonZero = applicationRatingCountAverage;
     }
 
@@ -437,11 +437,11 @@ public class Institution extends ResourceParent {
         this.applicationRatingAverage = applicationRatingAverage;
     }
 
-    public final Set<ImportedEntityFeed> getImportedEntityFeeds() {
+    public Set<ImportedEntityFeed> getImportedEntityFeeds() {
         return importedEntityFeeds;
     }
 
-    public final Set<UserRole> getUserRoles() {
+    public Set<UserRole> getUserRoles() {
         return userRoles;
     }
 
@@ -465,11 +465,11 @@ public class Institution extends ResourceParent {
         return this;
     }
 
-    public Institution withTitle(final String title) {
+    public Institution withTitle(String title) {
         this.title = title;
         return this;
     }
-    
+
     public Institution withLocale(PrismLocale locale) {
         this.locale = locale;
         return this;
@@ -479,18 +479,18 @@ public class Institution extends ResourceParent {
         this.summary = summary;
         return this;
     }
-    
+
     public Institution withHomepage(String homepage) {
         this.homepage = homepage;
         return this;
     }
-    
+
     public Institution withHelpdesk(String helpdesk) {
         this.helpdesk = helpdesk;
         return this;
     }
 
-    public Institution withCurrency(final String currency) {
+    public Institution withCurrency(String currency) {
         this.currency = currency;
         return this;
     }
@@ -545,12 +545,12 @@ public class Institution extends ResourceParent {
         return this;
     }
 
-    public Institution withCreatedTimestamp(final DateTime createdTimestamp) {
+    public Institution withCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
         return this;
     }
 
-    public Institution withUpdatedTimestamp(final DateTime updatedTimestamp) {
+    public Institution withUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
         return this;
     }
@@ -678,15 +678,15 @@ public class Institution extends ResourceParent {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    public final Set<Program> getPrograms() {
+    public Set<Program> getPrograms() {
         return programs;
     }
 
-    public final Set<Project> getProjects() {
+    public Set<Project> getProjects() {
         return projects;
     }
 
-    public final Set<Application> getApplications() {
+    public Set<Application> getApplications() {
         return applications;
     }
 

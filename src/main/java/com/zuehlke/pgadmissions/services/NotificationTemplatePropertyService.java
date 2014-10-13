@@ -145,7 +145,8 @@ public class NotificationTemplatePropertyService {
 
     public String getHelpdeskControl(NotificationTemplateModelDTO modelDTO) throws Exception {
         Resource resource = modelDTO.getResource();
-        return processControlTemplate(resource, resource.getHelpdesk(), PrismDisplayProperty.SYSTEM_HELPDESK);
+        // FIXME get helpdesk
+        return processControlTemplate(resource, "[helpdesk url]", PrismDisplayProperty.SYSTEM_HELPDESK);
     }
 
     public String getInstitutionHomepageLink(NotificationTemplateModelDTO modelDTO) throws Exception {

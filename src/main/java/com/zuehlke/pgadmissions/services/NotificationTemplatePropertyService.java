@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
@@ -164,6 +165,9 @@ public class NotificationTemplatePropertyService {
     }
 
     private String processControlTemplate(Resource resource, String linkUrl, PrismDisplayProperty linkLabel, String declineLinkUrl, PrismDisplayProperty declineLinkLabel) throws Exception {
+        Preconditions.checkNotNull(resource);
+        Preconditions.checkNotNull(linkUrl);
+        Preconditions.checkNotNull(linkLabel);
         PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).withResource(resource);
         Map<String, Object> model = Maps.newHashMap();
         ImmutableMap<String, String> link = ImmutableMap.of("url", linkUrl, "label", propertyLoader.load(linkLabel));

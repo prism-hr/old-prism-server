@@ -108,7 +108,7 @@ public class NotificationService {
         LocalDate baseline = new LocalDate();
 
         sendIndividualRequestNotifications(resource, invoker, baseline);
-        sendIndividualUpdateNotifications(resource, comment.getAction(), invoker, baseline);
+        sendIndividualUpdateNotifications(resource, comment, invoker, baseline);
     }
 
     public <T extends Resource> void sendIndividualRequestReminders(Class<T> resourceClass, Integer resourceId, LocalDate baseline) {
@@ -254,10 +254,10 @@ public class NotificationService {
         }
     }
 
-    private void sendIndividualUpdateNotifications(Resource resource, Action action, User sender, LocalDate baseline) {
+    private void sendIndividualUpdateNotifications(Resource resource, Comment comment, User sender, LocalDate baseline) {
         State state = resource.getPreviousState();
 
-        List<UserNotificationDefinitionDTO> updates = notificationDAO.getIndividualUpdateNotifications(resource, state, action, sender, baseline);
+        List<UserNotificationDefinitionDTO> updates = notificationDAO.getIndividualUpdateNotifications(resource, state, comment.getAction(), sender, baseline);
         HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
 
         for (UserNotificationDefinitionDTO update : updates) {
@@ -265,7 +265,7 @@ public class NotificationService {
             NotificationTemplate notificationTemplate = getById(update.getNotificationTemplateId());
 
             if (!sent.get(notificationTemplate).contains(user)) {
-                sendNotification(notificationTemplate, new NotificationTemplateModelDTO(user, resource, sender));
+                sendNotification(notificationTemplate, new NotificationTemplateModelDTO(user, resource, sender).withComment(comment));
                 sent.put(notificationTemplate, user);
             }
         }

@@ -10,7 +10,7 @@
     You may wish to log in and confirm the interview arrangements.
 </p>
 
-${ACTION_CONTROL}
+${VIEW_EDIT_CONTROL}
 
 <p>
     Yours sincerely,

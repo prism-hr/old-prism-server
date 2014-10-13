@@ -13,17 +13,17 @@ public enum PrismNotificationTemplate {
     APPLICATION_COMPLETE_REQUEST_REMINDER(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REMINDER, PrismScope.APPLICATION,
             PrismNotificationTemplatePropertyCategory.APPLICATION), //
     APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.APPLICATION), //
+            PrismNotificationTemplatePropertyCategory.APPLICATION, PrismNotificationTemplatePropertyCategory.INTERVIEW_SCHEDULED), //
     APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
             PrismNotificationTemplatePropertyCategory.APPLICATION), //
     APPLICATION_CONFIRM_REJECTION_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
             PrismNotificationTemplatePropertyCategory.APPLICATION, PrismNotificationTemplatePropertyCategory.APPLICATION_REJECTION), //
     APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.APPLICATION), //
+            PrismNotificationTemplatePropertyCategory.COMMENT, PrismNotificationTemplatePropertyCategory.APPLICATION), //
     APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REQUEST, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.APPLICATION), //
+            PrismNotificationTemplatePropertyCategory.APPLICATION, PrismNotificationTemplatePropertyCategory.ACTION), //
     APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_REMINDER(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REMINDER, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.APPLICATION), //
+            PrismNotificationTemplatePropertyCategory.APPLICATION, PrismNotificationTemplatePropertyCategory.ACTION), //
     APPLICATION_PROVIDE_REFERENCE_REQUEST(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REQUEST, PrismScope.APPLICATION,
             PrismNotificationTemplatePropertyCategory.APPLICATION), //
     APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REMINDER, PrismScope.APPLICATION,
@@ -31,7 +31,7 @@ public enum PrismNotificationTemplate {
     APPLICATION_TERMINATE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
             PrismNotificationTemplatePropertyCategory.APPLICATION), //
     APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.APPLICATION), //
+            PrismNotificationTemplatePropertyCategory.COMMENT, PrismNotificationTemplatePropertyCategory.APPLICATION), //
     INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.INSTITUTION,
             PrismNotificationTemplatePropertyCategory.INSTITUTION), //
     INSTITUTION_IMPORT_ERROR_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.INSTITUTION,

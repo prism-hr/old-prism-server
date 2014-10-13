@@ -170,7 +170,7 @@ public class ApplicationSectionService {
         personalDetail.setCountry(country);
         personalDetail.setFirstNationality(firstNationality);
         personalDetail.setSecondNationality(secondNationality);
-        personalDetail.setFirstLanguageLocale(personalDetailDTO.getFirstLanguageEnglish());
+        personalDetail.setFirstLanguageLocale(personalDetailDTO.getFirstLanguageLocale());
         personalDetail.setDomicile(residenceCountry);
         personalDetail.setVisaRequired(personalDetailDTO.getVisaRequired());
         personalDetail.setPhone(personalDetailDTO.getPhone());

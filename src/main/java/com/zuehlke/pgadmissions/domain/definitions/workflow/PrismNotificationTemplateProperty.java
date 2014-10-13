@@ -1,24 +1,11 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.ACCOUNT_ACTIVATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.ACTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.APPLICATION_REJECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.CONFIRM_INTERVIEW;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.ERROR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.INTERVIEW;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.INTERVIEW_SCHEDULED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.RECOMMENDATION;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.ListMultimap;
 
 import java.util.List;
 
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.ListMultimap;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.*;
 
 public enum PrismNotificationTemplateProperty {
 
@@ -33,7 +20,7 @@ public enum PrismNotificationTemplateProperty {
     INVOKER(COMMENT, "get", "comment", "user", "displayName"),
     INVOKER_EMAIL(COMMENT, "get", "comment", "user", "email"),
     OUTCOME(COMMENT, "getCommentOutcome"),
-    DATE_TIME(COMMENT, "get", "comment", "createdTimestamp"),
+    DATE_TIME(COMMENT, "getCommentDateTime"),
 
     APPLICANT(APPLICATION, "get", "resource", "application", "user", "displayName"),
     APPLICATION_CODE(APPLICATION, "get", "resource", "application", "code"),
@@ -53,22 +40,19 @@ public enum PrismNotificationTemplateProperty {
     INSTITUTION_TITLE(INSTITUTION, "get", "resource", "institution", "title"),
     INSTITUTION_HOMEPAGE_LINK(INSTITUTION, "getInstitutionHomepageLink"),
 
-    INTERVIEW_TIME_ZONE(INTERVIEW, "getInterviewTimeZone"),
-
     INTERVIEW_DATE_TIME(INTERVIEW_SCHEDULED, "getInterviewDateTime"),
+    INTERVIEW_TIME_ZONE(INTERVIEW_SCHEDULED, "getInterviewTimeZone"),
     INTERVIEWER_INSTRUCTIONS(INTERVIEW_SCHEDULED, "get", "comment", "interviewerInstructions"),
     INTERVIEWEE_INSTRUCTIONS(INTERVIEW_SCHEDULED, "getIntervieweeInstructions"),
-    INTERVIEW_LOCATION(INTERVIEW_SCHEDULED, "getInterviewLocation"),
 
     ACTION_CONTROL(ACTION, "getActionControl"),
     ACTIVATE_ACCOUNT_CONTROL(ACCOUNT_ACTIVATION, "getActivateAccountControl"),
     HOMEPAGE_CONTROL(GLOBAL, "getHomepageControl"),
     VIEW_EDIT_CONTROL(GLOBAL, "getViewEditControl"),
-    INTERVIEW_DIRECTIONS_CONTROL(CONFIRM_INTERVIEW, "getInterviewDirectionsControl"),
+    INTERVIEW_LOCATION_CONTROL(INTERVIEW_SCHEDULED, "getInterviewDirectionsControl"),
     HELPDESK_CONTROL(GLOBAL, "getHelpdeskControl"),
 
     NEW_PASSWORD(com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.NEW_PASSWORD, "get", "newPassword"),
-
 
     RECOMMENDATIONS(RECOMMENDATION, "get", "recommendations"),
     ERROR_MESSAGE(ERROR, "get", "errorMessage"),

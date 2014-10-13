@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+    <configuration>
+        <custom-converters>
+            <converter type="com.zuehlke.pgadmissions.rest.converter.ImportedEntityConverter">
+                <class-a>com.zuehlke.pgadmissions.domain.imported.ImportedEntity</class-a>
+                <class-b>java.lang.Integer</class-b>
+            </converter>
+            <converter type="com.zuehlke.pgadmissions.rest.converter.ProgramTypeConverter">
+                <class-a>com.zuehlke.pgadmissions.domain.imported.ProgramType</class-a>
+                <class-b>com.zuehlke.pgadmissions.domain.definitions.PrismProgramType</class-b>
+            </converter>
+            <converter type="com.zuehlke.pgadmissions.rest.converter.StudyOptionConverter">
+                <class-a>com.zuehlke.pgadmissions.domain.program.ProgramStudyOption</class-a>
+                <class-b>com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption</class-b>
+            </converter>
+            <converter type="com.zuehlke.pgadmissions.rest.converter.FinancialDetailsRepresentationConverter">
+                <class-a>com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail</class-a>
+                <class-b>com.zuehlke.pgadmissions.rest.representation.FinancialDetailsRepresentation</class-b>
+            </converter>
+        </custom-converters>
+        <copy-by-references>
+            <copy-by-reference>java.util.TimeZone</copy-by-reference>
+            <copy-by-reference>org.joda.time.LocalDate</copy-by-reference>
+            <copy-by-reference>org.joda.time.LocalDateTime</copy-by-reference>
+            <copy-by-reference>org.joda.time.DateTime</copy-by-reference>
+        </copy-by-references>
+    </configuration>
+
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.advert.Advert</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.AdvertRepresentation</class-b>
+        <field>
+            <a>closingDate.closingDate</a>
+            <b>closingDate</b>
+        </field>
+    </mapping>
+
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation</class-b>
+        <field>
+            <a>creatorFirstName</a>
+            <b>user.firstName</b>
+        </field>
+        <field>
+            <a>creatorFirstName2</a>
+            <b>user.firstName2</b>
+        </field>
+        <field>
+            <a>creatorFirstName3</a>
+            <b>user.firstName3</b>
+        </field>
+        <field>
+            <a>creatorLastName</a>
+            <b>user.lastName</b>
+        </field>
+    </mapping>
+
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.resource.application.ProgramDetailRepresentation</class-b>
+        <field>
+            <a>studyOption.code</a>
+            <b>studyOption</b>
+        </field>
+    </mapping>
+
+
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.resource.Resource</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation</class-b>
+        <field>
+            <a>state.id</a>
+            <b>state</b>
+        </field>
+    </mapping>
+
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.institution.Institution</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.resource.InstitutionExtendedRepresentation</class-b>
+        <field>
+            <a>domicile.id</a>
+            <b>domicile</b>
+        </field>
+    </mapping>
+
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.institution.InstitutionAddress</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation</class-b>
+        <field>
+            <a>domicile.id</a>
+            <b>domicile</b>
+        </field>
+        <field>
+            <a>region.id</a>
+            <b>region</b>
+        </field>
+    </mapping>
+
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.comment.Comment</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation</class-b>
+        <field>
+            <a>action.id</a>
+            <b>action</b>
+        </field>
+        <field>
+            <a>transitionState.id</a>
+            <b>transitionState</b>
+        </field>
+    </mapping>
+
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.dto.ActionOutcomeDTO</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation</class-b>
+        <field>
+            <a>transitionAction.id</a>
+            <b>transitionAction</b>
+        </field>
+    </mapping>
+
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.comment.CommentAssignedUserRepresentation</class-b>
+        <field>
+            <a>role.id</a>
+            <b>role</b>
+        </field>
+    </mapping>
+
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.comment.AppointmentPreferenceRepresentation</class-b>
+        <field>
+            <a>appointmentTimeslot.dateTime</a>
+            <b>dateTime</b>
+        </field>
+    </mapping>
+
+</mappings>

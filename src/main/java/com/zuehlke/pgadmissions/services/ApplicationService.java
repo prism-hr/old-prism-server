@@ -290,7 +290,7 @@ public class ApplicationService {
                 .withSuitableForOpportunity(commentDTO.getSuitableForOpportunity()).withDesireToInterview(commentDTO.getDesireToInterview())
                 .withDesireToRecruit(commentDTO.getDesireToRecruit()).withPositionTitle(commentDTO.getPositionTitle())
                 .withPositionDescription(commentDTO.getPositionDescription()).withPositionProvisionalStartDate(positionProvisionalStartDate)
-                .withAppointmentConditions(commentDTO.getAppointmentConditions());
+                .withAppointmentConditions(commentDTO.getAppointmentConditions()).withApplicationRating(commentDTO.getApplicationRating());
 
         if (commentDTO.getResidenceState() != null) {
             ResidenceState residenceState = entityService.getById(ResidenceState.class, commentDTO.getResidenceState());

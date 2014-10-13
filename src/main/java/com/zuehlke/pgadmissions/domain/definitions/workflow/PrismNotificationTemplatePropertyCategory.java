@@ -11,12 +11,10 @@ public enum PrismNotificationTemplatePropertyCategory {
     PROJECT, //
     INSTITUTION, //
     COMMENT, //
-    INTERVIEW, //
     INTERVIEW_SCHEDULED, //
     ERROR, //
     RECOMMENDATION, //
     ACTION, //
-    CONFIRM_INTERVIEW, //
     NEW_PASSWORD,
     ACCOUNT_ACTIVATION;
 

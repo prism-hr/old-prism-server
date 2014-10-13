@@ -711,8 +711,8 @@ public class Comment {
         return this;
     }
 
-    public Comment withRejectionReason(RejectionReason rejectionReason) {
-        this.rejectionReason = rejectionReason;
+    public Comment withApplicationRating(final Integer applicationRating) {
+        this.applicationRating = applicationRating;
         return this;
     }
 

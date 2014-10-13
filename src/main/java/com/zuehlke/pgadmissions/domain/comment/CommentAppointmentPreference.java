@@ -21,9 +21,9 @@ public class CommentAppointmentPreference {
     @ManyToOne
     @JoinColumn(name = "comment_id", nullable = false, insertable = false, updatable = false)
     private Comment comment;
-    
+
     @ManyToOne
-    @JoinColumn(name = "comment_appointment_timeslot_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "comment_appointment_timeslot_id", nullable = false)
     private CommentAppointmentTimeslot appointmentTimeslot;
 
     public Integer getId() {
@@ -54,7 +54,7 @@ public class CommentAppointmentPreference {
         this.appointmentTimeslot = appointmentTimeslot;
         return this;
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hashCode(comment, appointmentTimeslot);
@@ -71,5 +71,5 @@ public class CommentAppointmentPreference {
         CommentAppointmentPreference other = (CommentAppointmentPreference) obj;
         return Objects.equal(comment, other.getComment()) && Objects.equal(appointmentTimeslot, other.getAppointmentTimeslot());
     }
-    
+
 }

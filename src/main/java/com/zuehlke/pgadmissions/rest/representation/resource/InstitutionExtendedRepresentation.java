@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
@@ -9,6 +10,10 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
     private String domicile;
 
     private String title;
+
+    private String summary;
+
+    private PrismLocale locale;
 
     private InstitutionAddressRepresentation address;
 
@@ -34,6 +39,22 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public PrismLocale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(PrismLocale locale) {
+        this.locale = locale;
     }
 
     public InstitutionAddressRepresentation getAddress() {

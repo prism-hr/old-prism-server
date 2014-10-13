@@ -1,5 +1,17 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.Arrays;
+import java.util.Map;
+
+import org.joda.time.LocalDateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
+
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
@@ -16,18 +28,8 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
-import freemarker.template.Template;
-import org.joda.time.LocalDateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import java.util.Arrays;
-import java.util.Map;
+import freemarker.template.Template;
 
 @Service
 @Transactional
@@ -53,7 +55,8 @@ public class NotificationTemplatePropertyService {
         for (String property : properties) {
             if (tempObject == null) {
                 String[] subArray = Arrays.copyOf(properties, i);
-                throw new NullPointerException("Value of given property (of NotificationTemplateModelDTO) is null: " + Joiner.on(".").join(subArray) + ", trying to get: " + Joiner.on(".").join(properties));
+                throw new NullPointerException("Value of given property (of NotificationTemplateModelDTO) is null: " + Joiner.on(".").join(subArray)
+                        + ", trying to get: " + Joiner.on(".").join(properties));
             }
             tempObject = ReflectionUtils.getProperty(tempObject, property);
             i++;
@@ -127,7 +130,6 @@ public class NotificationTemplatePropertyService {
         return processControlTemplate(resource, url, PrismDisplayProperty.SYSTEM_VIEW_EDIT);
     }
 
-
     public String getInterviewDirectionsControl(NotificationTemplateModelDTO modelDTO) throws Exception {
         Resource resource = modelDTO.getResource();
         PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).withResource(resource);
@@ -145,14 +147,13 @@ public class NotificationTemplatePropertyService {
 
     public String getHelpdeskControl(NotificationTemplateModelDTO modelDTO) throws Exception {
         Resource resource = modelDTO.getResource();
-        return processControlTemplate(resource, resource.getHelpdesk(), PrismDisplayProperty.SYSTEM_HELPDESK);
+        return processControlTemplate(resource, resource.getHelpdeskDisplay(), PrismDisplayProperty.SYSTEM_HELPDESK);
     }
 
     public String getInstitutionHomepageLink(NotificationTemplateModelDTO modelDTO) throws Exception {
         Resource resource = modelDTO.getResource();
-        return processControlTemplate(resource, resource.getHomepage(), PrismDisplayProperty.SYSTEM_HOMEPAGE);
+        return processControlTemplate(resource, resource.getHomepageDisplay(), PrismDisplayProperty.SYSTEM_HOMEPAGE);
     }
-
 
     public String getRejectionReason(NotificationTemplateModelDTO modelDTO) {
         Application application = (Application) modelDTO.getResource();
@@ -164,7 +165,8 @@ public class NotificationTemplatePropertyService {
         return processControlTemplate(resource, linkUrl, linkLabel, null, null);
     }
 
-    private String processControlTemplate(Resource resource, String linkUrl, PrismDisplayProperty linkLabel, String declineLinkUrl, PrismDisplayProperty declineLinkLabel) throws Exception {
+    private String processControlTemplate(Resource resource, String linkUrl, PrismDisplayProperty linkLabel, String declineLinkUrl,
+            PrismDisplayProperty declineLinkLabel) throws Exception {
         Preconditions.checkNotNull(resource);
         Preconditions.checkNotNull(linkUrl);
         Preconditions.checkNotNull(linkLabel);
@@ -183,6 +185,5 @@ public class NotificationTemplatePropertyService {
 
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
     }
-
 
 }

@@ -165,7 +165,7 @@ public class ApplicationTestDataProvider {
             address.setAddressCode("43-300");
             address.setDomicile(testObjectProvider.get(Domicile.class));
             referee.setAddress(address);
-            referee.setPhoneNumber("+44(0)5435435");
+            referee.setPhone("+44(0)5435435");
             referee.setSkype("szefwszystkichszefow");
             referee.setApplication(application);
             entityService.save(referee);

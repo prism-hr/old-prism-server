@@ -374,7 +374,7 @@ public class ApplicationSectionService {
         }
         copyAddress(application.getInstitution(), address, addressDTO);
 
-        referee.setPhoneNumber(refereeDTO.getPhoneNumber());
+        referee.setPhone(refereeDTO.getPhone());
         referee.setSkype(Strings.emptyToNull(refereeDTO.getSkype()));
 
         return referee;

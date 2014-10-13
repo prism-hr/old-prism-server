@@ -520,7 +520,7 @@ public class ApplicationDownloadBuilder {
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_LAST_NAME), userNull ? null : user.getLastName(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_EMAIL), userNull ? null : user.getEmail(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_ADDRESS), referee.getAddressDisplay(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_TELEPHONE), referee.getPhoneNumber(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_TELEPHONE), referee.getPhone(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_SKYPE), referee.getSkype(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_EMPLOYER_NAME), referee.getJobEmployer(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_POSITION_TITLE), referee.getJobTitle(), subBody);

@@ -89,7 +89,7 @@ public class ApplicationCopyHelper {
         to.setUser(from.getUser());
         to.setJobEmployer(from.getJobEmployer());
         to.setJobTitle(from.getJobTitle());
-        to.setPhoneNumber(from.getPhoneNumber());
+        to.setPhone(from.getPhone());
         to.setSkype(from.getSkype());
         to.setAddress(copyAddress(toInstitution, from.getAddress()));
     }

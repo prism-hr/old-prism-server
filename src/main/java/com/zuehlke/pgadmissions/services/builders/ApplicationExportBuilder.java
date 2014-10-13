@@ -472,10 +472,10 @@ public class ApplicationExportBuilder {
 
             ContactDtlsTp contactDtlsTp = objectFactory.createContactDtlsTp();
             contactDtlsTp.setEmail(referee.getUser().getEmail());
-            contactDtlsTp.setLandline(applicationExportBuilderHelper.cleanPhoneNumber(referee.getPhoneNumber()));
+            contactDtlsTp.setLandline(applicationExportBuilderHelper.cleanPhoneNumber(referee.getPhone()));
 
-            if (StringUtils.isBlank(referee.getPhoneNumber())
-                    || !ESAPI.validator().isValidInput("PhoneNumber", referee.getPhoneNumber(), "PhoneNumber", 25, false)) {
+            if (StringUtils.isBlank(referee.getPhone())
+                    || !ESAPI.validator().isValidInput("PhoneNumber", referee.getPhone(), "PhoneNumber", 25, false)) {
                 contactDtlsTp.setLandline(propertyLoader.load(SYSTEM_TELEPHONE_PLACEHOLDER));
             }
 

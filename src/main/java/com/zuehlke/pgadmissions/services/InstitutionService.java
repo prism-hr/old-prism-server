@@ -150,8 +150,8 @@ public class InstitutionService {
 
     public void save(Institution institution) {
         InstitutionAddress institutionAddress = institution.getAddress();
-        entityService.save(institutionAddress);
         entityService.save(institution);
+        entityService.save(institutionAddress);
         geocodableLocationService.setLocation(institutionAddress);
     }
 

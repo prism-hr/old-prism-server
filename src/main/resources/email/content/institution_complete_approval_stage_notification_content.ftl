@@ -9,7 +9,7 @@
     Please login for further details of this review and to access more detailed instructions on how to proceed.
 </p>
 
-${ACTION_CONTROL}
+${VIEW_EDIT_CONTROL}
 
 <p>
     Yours sincerely,

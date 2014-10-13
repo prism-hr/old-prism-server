@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
@@ -14,6 +15,8 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
     private PrismProgramType programType;
 
     private String title;
+
+    private PrismLocale locale;
 
     private PrismStudyOption[] studyOptions;
 
@@ -51,6 +54,14 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public PrismLocale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(PrismLocale locale) {
+        this.locale = locale;
     }
 
     public PrismStudyOption[] getStudyOptions() {

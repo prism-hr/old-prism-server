@@ -36,7 +36,7 @@ public class ApplicationReferee {
     private Comment comment;
 
     @Column(name = "phone", nullable = false)
-    private String phoneNumber;
+    private String phone;
 
     @Column(name = "skype")
     private String skype;
@@ -115,12 +115,12 @@ public class ApplicationReferee {
         this.user = user;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public ApplicationReferee withId(Integer id) {
@@ -135,36 +135,6 @@ public class ApplicationReferee {
 
     public ApplicationReferee withApplication(Application application) {
         this.application = application;
-        return this;
-    }
-
-    public ApplicationReferee withComment(Comment comment) {
-        this.comment = comment;
-        return this;
-    }
-
-    public ApplicationReferee withPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-        return this;
-    }
-
-    public ApplicationReferee withSkype(String skype) {
-        this.skype = skype;
-        return this;
-    }
-
-    public ApplicationReferee withJobEmployer(String jobEmployer) {
-        this.jobEmployer = jobEmployer;
-        return this;
-    }
-
-    public ApplicationReferee withJobTitle(String jobTitle) {
-        this.jobTitle = jobTitle;
-        return this;
-    }
-
-    public ApplicationReferee withAddress(Address address) {
-        this.address = address;
         return this;
     }
 

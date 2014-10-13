@@ -228,6 +228,7 @@ public class CommentService {
 
         Set<CommentAppointmentPreference> transientPreferences = comment.getAppointmentPreferences();
         Set<CommentAppointmentPreference> persistentPreferences = Sets.newHashSet(transientPreferences);
+        transientPreferences.clear();
 
         entityService.save(comment);
 

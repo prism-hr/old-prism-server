@@ -17,7 +17,7 @@ public class ApplicationRefereeDTO {
 
     @NotEmpty
     @Size(max = 50)
-    private String phoneNumber;
+    private String phone;
 
     @Size(min = 6, max = 32)
     private String skype;
@@ -49,12 +49,12 @@ public class ApplicationRefereeDTO {
         this.user = user;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getSkype() {

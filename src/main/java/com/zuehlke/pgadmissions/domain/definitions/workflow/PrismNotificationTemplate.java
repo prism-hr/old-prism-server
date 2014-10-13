@@ -7,39 +7,39 @@ import com.google.common.collect.Maps;
 public enum PrismNotificationTemplate {
 
     APPLICATION_COMPLETE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.APPLICATION), //
+            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION), //
     APPLICATION_COMPLETE_REQUEST(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REQUEST, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.APPLICATION), //
+            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION), //
     APPLICATION_COMPLETE_REQUEST_REMINDER(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REMINDER, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.APPLICATION), //
+            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION), //
     APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.APPLICATION, PrismNotificationTemplatePropertyCategory.INTERVIEW_SCHEDULED), //
+            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION, PrismNotificationTemplatePropertyCategory.INTERVIEW_SCHEDULED), //
     APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.APPLICATION), //
+            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION), //
     APPLICATION_CONFIRM_REJECTION_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.APPLICATION, PrismNotificationTemplatePropertyCategory.APPLICATION_REJECTION), //
+            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION, PrismNotificationTemplatePropertyCategory.APPLICATION_REJECTION), //
     APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.COMMENT, PrismNotificationTemplatePropertyCategory.APPLICATION), //
+            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.COMMENT, PrismNotificationTemplatePropertyCategory.APPLICATION), //
     APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REQUEST, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.APPLICATION, PrismNotificationTemplatePropertyCategory.ACTION), //
+            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION, PrismNotificationTemplatePropertyCategory.ACTION), //
     APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_REMINDER(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REMINDER, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.APPLICATION, PrismNotificationTemplatePropertyCategory.ACTION), //
+            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION, PrismNotificationTemplatePropertyCategory.ACTION), //
     APPLICATION_PROVIDE_REFERENCE_REQUEST(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REQUEST, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.APPLICATION), //
+            PrismNotificationTemplatePropertyCategory.ACTION, PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION), //
     APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REMINDER, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.APPLICATION), //
+            PrismNotificationTemplatePropertyCategory.ACTION, PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION), //
     APPLICATION_TERMINATE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.APPLICATION), //
+            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION), //
     APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.COMMENT, PrismNotificationTemplatePropertyCategory.APPLICATION), //
+            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.COMMENT, PrismNotificationTemplatePropertyCategory.APPLICATION), //
     INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.INSTITUTION,
             PrismNotificationTemplatePropertyCategory.INSTITUTION), //
     INSTITUTION_IMPORT_ERROR_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.INSTITUTION,
-            PrismNotificationTemplatePropertyCategory.ERROR), //
+            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.ERROR), //
     PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.PROGRAM,
-            PrismNotificationTemplatePropertyCategory.PROGRAM), //
+            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.PROGRAM), //
     PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.PROJECT,
-            PrismNotificationTemplatePropertyCategory.PROGRAM), //
+            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.PROGRAM), //
     SYSTEM_COMPLETE_REGISTRATION_REQUEST(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REQUEST, PrismScope.SYSTEM,
             PrismNotificationTemplatePropertyCategory.ACTION, PrismNotificationTemplatePropertyCategory.ACCOUNT_ACTIVATION), //
     SYSTEM_PASSWORD_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.SYSTEM,

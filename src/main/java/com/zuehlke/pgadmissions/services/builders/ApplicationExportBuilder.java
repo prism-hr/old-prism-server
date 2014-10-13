@@ -18,7 +18,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -279,7 +278,8 @@ public class ApplicationExportBuilder {
         Application application = applicationExportDTO.getApplication();
 
         CourseApplicationTp applicationTp = objectFactory.createCourseApplicationTp();
-        applicationTp.setStartMonth(new DateTime(application.getConfirmedStartDate()));
+        LocalDate confirmedStartDate = application.getConfirmedStartDate();
+        applicationTp.setStartMonth(confirmedStartDate == null ? null : confirmedStartDate.toDateTimeAtStartOfDay());
         applicationTp.setAgreedSupervisorName(buildAgreedSupervisorName(applicationExportDTO.getPrimarySupervisor()));
         applicationTp.setPersonalStatement(propertyLoader.load(SYSTEM_REFER_TO_DOCUMENT));
         applicationTp.setSourcesOfInterest(buildSourcesOfInterest(application, applicationTp));
@@ -474,8 +474,7 @@ public class ApplicationExportBuilder {
             contactDtlsTp.setEmail(referee.getUser().getEmail());
             contactDtlsTp.setLandline(applicationExportBuilderHelper.cleanPhoneNumber(referee.getPhone()));
 
-            if (StringUtils.isBlank(referee.getPhone())
-                    || !ESAPI.validator().isValidInput("PhoneNumber", referee.getPhone(), "PhoneNumber", 25, false)) {
+            if (StringUtils.isBlank(referee.getPhone()) || !ESAPI.validator().isValidInput("PhoneNumber", referee.getPhone(), "PhoneNumber", 25, false)) {
                 contactDtlsTp.setLandline(propertyLoader.load(SYSTEM_TELEPHONE_PLACEHOLDER));
             }
 

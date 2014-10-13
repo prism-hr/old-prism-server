@@ -4,19 +4,20 @@ import java.util.List;
 
 public enum PrismNotificationTemplatePropertyCategory {
 
-    GLOBAL, //
-    APPLICATION, //
+    SYSTEM_GLOBAL, //
+    SYSTEM_PASSWORD, //
+    SYSTEM_ACCOUNT_ACTIVATION, //
+    SYSTEM_COMMENT, //
+    SYSTEM_ACTION, //
+    APPLICATION_GLOBAL, //
+    APPLICATION_SUBMITTED, //
     APPLICATION_REJECTION, //
-    PROGRAM, //
-    PROJECT, //
-    INSTITUTION, //
-    COMMENT, //
-    INTERVIEW_SCHEDULED, //
-    ERROR, //
-    RECOMMENDATION, //
-    ACTION, //
-    NEW_PASSWORD,
-    ACCOUNT_ACTIVATION;
+    APPLICATION_RECOMMENDATION, //
+    PROGRAM_GLOBAL, //
+    PROJECT_GLOBAL, //
+    INSTITUTION_GLOBAL, //
+    INSTITUTION_DATA_IMPORT_ERROR, //
+    INTERVIEW_SCHEDULED;
 
     public List<PrismNotificationTemplateProperty> getProperties() {
         return PrismNotificationTemplateProperty.getProperties(this);

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_DATE_TIME_FORMAT;
+
 import java.util.Arrays;
 import java.util.Map;
 
@@ -69,15 +71,16 @@ public class NotificationTemplatePropertyService {
     }
 
     public String getCommentDateTime(NotificationTemplateModelDTO modelDTO) {
-        // FIXME apply locale formatting
-        return modelDTO.getComment().getCreatedTimestamp().toString();
+        Comment comment = modelDTO.getComment();
+        return modelDTO.getComment().getCreatedTimestampDisplay(
+                applicationContext.getBean(PropertyLoader.class).withResource(comment.getResource()).load(SYSTEM_DATE_TIME_FORMAT));
     }
 
     public String getProjectOrProgramTitle(NotificationTemplateModelDTO modelDTO) {
         return modelDTO.getResource().getApplication().getProjectOrProgramTitle();
     }
 
-    public String getPropertyOrProgramCode(NotificationTemplateModelDTO modelDTO) {
+    public String getProjectOrProgramCode(NotificationTemplateModelDTO modelDTO) {
         return modelDTO.getResource().getApplication().getProjectOrProgramCode();
     }
 

@@ -136,8 +136,8 @@ public class MailSender {
 
     public Map<String, Object> createNotificationModel(NotificationTemplate notificationTemplate, NotificationTemplateModelDTO modelDTO) {
         Map<String, Object> model = Maps.newHashMap();
-        List<PrismNotificationTemplatePropertyCategory> categories = Lists.asList(PrismNotificationTemplatePropertyCategory.GLOBAL, notificationTemplate
-                .getId().getPropertyCategories());
+        List<PrismNotificationTemplatePropertyCategory> categories = notificationTemplate.getId().getPropertyCategories();
+        categories.add(PrismNotificationTemplatePropertyCategory.SYSTEM_GLOBAL);
         for (PrismNotificationTemplatePropertyCategory propertyCategory : categories) {
             for (PrismNotificationTemplateProperty property : propertyCategory.getProperties()) {
                 List<Object> arguments = Lists.newLinkedList();

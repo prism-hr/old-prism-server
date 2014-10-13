@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -170,7 +171,7 @@ public class CommentDAO {
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("stateGroup.id")) //
                                 .add(Restrictions.isNotNull("transitionStateGroup.id")) //
-                                .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id")))
+                                .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id"))) //
                         .add(Restrictions.isNotNull("action.creationScope"))) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //
@@ -179,7 +180,9 @@ public class CommentDAO {
 
     public List<Comment> getStateComments(Resource resource, Comment start, Comment close) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
+                .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
                 .add(Restrictions.ge("createdTimestamp", start.getCreatedTimestamp())) //
                 .add(Restrictions.ne("id", start.getId()));
 

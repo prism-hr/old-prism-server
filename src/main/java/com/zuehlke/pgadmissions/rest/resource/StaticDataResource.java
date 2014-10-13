@@ -156,7 +156,7 @@ public class StaticDataResource {
             if (template.getReminderTemplate() != null) {
                 definition.put("reminderTemplate", template.getReminderTemplate().name());
             }
-            List<PrismNotificationTemplatePropertyCategory> categories = Lists.asList(PrismNotificationTemplatePropertyCategory.GLOBAL,
+            List<PrismNotificationTemplatePropertyCategory> categories = Lists.asList(PrismNotificationTemplatePropertyCategory.SYSTEM_GLOBAL,
                     template.getPropertyCategories());
             List<PrismNotificationTemplateProperty> properties = Lists.newLinkedList();
             for (PrismNotificationTemplateProperty property : PrismNotificationTemplateProperty.values()) {

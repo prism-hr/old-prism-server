@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 public class PrismAuthenticationProvider implements AuthenticationProvider {
 
-    private Logger log = LoggerFactory.getLogger(PrismAuthenticationProvider.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(PrismAuthenticationProvider.class);
 
     @Autowired
     private UserDetailsService userDetailsService;
@@ -39,7 +39,7 @@ public class PrismAuthenticationProvider implements AuthenticationProvider {
             authentication = new UsernamePasswordAuthenticationToken(preProcessToken.getPrincipal(), preProcessToken.getCredentials(), user.getAuthorities());
             authentication.setDetails(user);
         } catch (NoSuchAlgorithmException e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return authentication;
     }

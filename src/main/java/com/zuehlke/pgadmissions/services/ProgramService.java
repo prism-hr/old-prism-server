@@ -60,6 +60,9 @@ public class ProgramService {
 
     public void save(Program program) {
         entityService.save(program);
+        for (ProgramStudyOption studyOption : program.getStudyOptions()) {
+            entityService.save(studyOption);
+        }
     }
 
     public Program getProgramByImportedCode(Institution institution, String importedCode) {
@@ -98,6 +101,7 @@ public class ProgramService {
         Institution institution = entityService.getById(Institution.class, programDTO.getInstitution());
         Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withInstitution(institution).withImported(false);
         copyProgramDetails(program, programDTO);
+        copyStudyOptions(program, programDTO);
 
         // TODO: add global defaults
         return program;
@@ -106,6 +110,16 @@ public class ProgramService {
     public void update(Integer programId, ProgramDTO programDTO) {
         Program program = entityService.getById(Program.class, programId);
         copyProgramDetails(program, programDTO);
+
+        if (!program.getImported()) {
+            programDAO.deleteProgramStudyOptionInstances(program);
+            programDAO.deleteProgramStudyOptions(program);
+            program.getStudyOptions().clear();
+            copyStudyOptions(program, programDTO);
+            for (ProgramStudyOption studyOption : program.getStudyOptions()) {
+                entityService.save(studyOption);
+            }
+        }
     }
 
     private void copyProgramDetails(Program program, ProgramDTO programDTO) {
@@ -121,21 +135,6 @@ public class ProgramService {
             program.setProgramType(programType);
             program.setTitle(title);
             program.setLocale(programDTO.getLocale());
-
-            if (program.getId() != null) {
-                // program is persistent
-                // TODO save study options also when program is transient
-                programDAO.deleteProgramStudyOptionInstances(program);
-                programDAO.deleteProgramStudyOptions(program);
-                program.getStudyOptions().clear();
-                for (PrismStudyOption prismStudyOption : programDTO.getStudyOptions()) {
-                    StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, program.getInstitution(), prismStudyOption.name());
-                    ProgramStudyOption programStudyOption = new ProgramStudyOption().withStudyOption(studyOption).withApplicationStartDate(new LocalDate())
-                            .withApplicationCloseDate(program.getDueDate()).withEnabled(true).withProgram(program);
-                    entityService.save(programStudyOption);
-                    program.getStudyOptions().add(programStudyOption);
-                }
-            }
             advert.setTitle(title);
         }
 
@@ -144,6 +143,15 @@ public class ProgramService {
         advert.setSummary(programDTO.getSummary());
         advert.setStudyDurationMinimum(programDTO.getStudyDurationMinimum());
         advert.setStudyDurationMaximum(programDTO.getStudyDurationMaximum());
+    }
+
+    private void copyStudyOptions(Program program, ProgramDTO programDTO) {
+        for (PrismStudyOption prismStudyOption : programDTO.getStudyOptions()) {
+            StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, program.getInstitution(), prismStudyOption.name());
+            ProgramStudyOption programStudyOption = new ProgramStudyOption().withStudyOption(studyOption).withApplicationStartDate(new LocalDate())
+                    .withApplicationCloseDate(program.getDueDate()).withEnabled(true).withProgram(program);
+            program.getStudyOptions().add(programStudyOption);
+        }
     }
 
     public void postProcessProgram(Program program, Comment comment) {

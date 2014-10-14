@@ -20,6 +20,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -279,7 +280,7 @@ public class ApplicationExportBuilder {
         Application application = applicationExportDTO.getApplication();
 
         CourseApplicationTp applicationTp = objectFactory.createCourseApplicationTp();
-        applicationTp.setStartMonth(new DateTime(application.getConfirmedStartDate()));
+        applicationTp.setStartMonth(application.getConfirmedStartDate().toDateTime(LocalTime.MIDNIGHT));
         applicationTp.setAgreedSupervisorName(buildAgreedSupervisorName(applicationExportDTO.getPrimarySupervisor()));
         applicationTp.setPersonalStatement(propertyLoader.load(SYSTEM_REFER_TO_DOCUMENT));
         applicationTp.setSourcesOfInterest(buildSourcesOfInterest(application, applicationTp));

@@ -1,13 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -26,6 +18,13 @@ import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -68,22 +67,6 @@ public class ProgramService {
         return programDAO.getProgramByImportedCode(institution, importedCode);
     }
 
-    public Program create(User user, ProgramDTO programDTO) {
-        String title = programDTO.getTitle();
-
-        Advert advert = new Advert().withTitle(title);
-        // TODO: add global defaults
-        Institution institution = entityService.getById(Institution.class, programDTO.getInstitution());
-        ProgramType programType = importedEntityService.getImportedEntityByCode(ProgramType.class, institution, programDTO.getProgramType().name());
-
-        Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withTitle(title).withLocale(programDTO.getLocale())
-                .withInstitution(institution).withProgramType(programType).withRequireProjectDefinition(programDTO.getRequireProjectDefinition())
-                .withImported(false).withAdvert(advert).withDueDate(programDTO.getDueDate());
-
-        // TODO: study options
-        return program;
-    }
-
     public List<Program> getPrograms() {
         return programDAO.getPrograms();
     }
@@ -111,36 +94,53 @@ public class ProgramService {
         return actionService.executeUserAction(program, action, comment);
     }
 
+    public Program create(User user, ProgramDTO programDTO) {
+        Institution institution = entityService.getById(Institution.class, programDTO.getInstitution());
+        Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withInstitution(institution).withImported(false);
+        copyProgramDetails(program, programDTO);
+
+        // TODO: add global defaults
+        return program;
+    }
+
     public void update(Integer programId, ProgramDTO programDTO) {
         Program program = entityService.getById(Program.class, programId);
+        copyProgramDetails(program, programDTO);
+    }
+
+    private void copyProgramDetails(Program program, ProgramDTO programDTO) {
+        if (program.getAdvert() == null) {
+            program.setAdvert(new Advert());
+        }
         Advert advert = program.getAdvert();
 
-        ProgramType programType = importedEntityService
-                .getImportedEntityByCode(ProgramType.class, program.getInstitution(), programDTO.getProgramType().name());
-
-        program.setDueDate(programDTO.getDueDate());
-        program.setRequireProjectDefinition(programDTO.getRequireProjectDefinition());
-
         if (!program.getImported()) {
+            ProgramType programType = importedEntityService.getImportedEntityByCode(ProgramType.class, program.getInstitution(), programDTO.getProgramType().name());
             String title = programDTO.getTitle();
-            
+
             program.setProgramType(programType);
             program.setTitle(title);
             program.setLocale(programDTO.getLocale());
 
-            programDAO.deleteProgramStudyOptionInstances(program);
-            programDAO.deleteProgramStudyOptions(program);
-            program.getStudyOptions().clear();
-            for (PrismStudyOption prismStudyOption : programDTO.getStudyOptions()) {
-                StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, program.getInstitution(), prismStudyOption.name());
-                ProgramStudyOption programStudyOption = new ProgramStudyOption().withStudyOption(studyOption).withApplicationStartDate(new LocalDate())
-                        .withApplicationCloseDate(program.getDueDate()).withEnabled(true).withProgram(program);
-                entityService.save(programStudyOption);
-                program.getStudyOptions().add(programStudyOption);
+            if (program.getId() != null) {
+                // program is persistent
+                // TODO save study options also when program is transient
+                programDAO.deleteProgramStudyOptionInstances(program);
+                programDAO.deleteProgramStudyOptions(program);
+                program.getStudyOptions().clear();
+                for (PrismStudyOption prismStudyOption : programDTO.getStudyOptions()) {
+                    StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, program.getInstitution(), prismStudyOption.name());
+                    ProgramStudyOption programStudyOption = new ProgramStudyOption().withStudyOption(studyOption).withApplicationStartDate(new LocalDate())
+                            .withApplicationCloseDate(program.getDueDate()).withEnabled(true).withProgram(program);
+                    entityService.save(programStudyOption);
+                    program.getStudyOptions().add(programStudyOption);
+                }
             }
             advert.setTitle(title);
         }
 
+        program.setDueDate(programDTO.getDueDate());
+        program.setRequireProjectDefinition(programDTO.getRequireProjectDefinition());
         advert.setSummary(programDTO.getSummary());
         advert.setStudyDurationMinimum(programDTO.getStudyDurationMinimum());
         advert.setStudyDurationMaximum(programDTO.getStudyDurationMaximum());

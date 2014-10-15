@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
+
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
@@ -48,7 +50,6 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
 
     @Value("${context.environment}")
     private String contextEnvironment;
-
     @Autowired
     private ImportedEntityService importedEntityService;
 
@@ -59,12 +60,24 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
     private NotificationService notificationService;
 
     public void execute() throws DeduplicationException {
+        int errorCount = 0;
+        Institution lastInstitution = null;
         institutionService.populateDefaultImportedEntityFeeds();
         for (ImportedEntityFeed importedEntityFeed : importedEntityService.getImportedEntityFeeds()) {
             String maxRedirects = null;
             if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat")
                     || (!importedEntityFeed.isAuthenticated() && importedEntityFeed.getImportedEntityType() != PrismImportedEntity.INSTITUTION)) {
                 try {
+                    Institution thisInstitution = importedEntityFeed.getInstitution();
+                    if (lastInstitution != null) {
+                        if (thisInstitution.getId() != lastInstitution.getId()) {
+                            if (lastInstitution.getState().getId() == INSTITUTION_APPROVED && errorCount == 0) {
+                                institutionService.initializeInstitution(lastInstitution);
+                            }
+                            lastInstitution = thisInstitution;
+                            errorCount = 0;
+                        }
+                    }
                     maxRedirects = System.getProperty("http.maxRedirects");
                     System.setProperty("http.maxRedirects", "5");
                     importEntities(importedEntityFeed);
@@ -76,6 +89,7 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
                         errorMessage += "\n" + cause.toString();
                     }
                     notificationService.sendDataImportErrorNotifications(importedEntityFeed.getInstitution(), errorMessage);
+                    errorCount++;
                 } finally {
                     Authenticator.setDefault(null);
                     if (maxRedirects != null) {
@@ -115,7 +129,6 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
                 }
 
                 importedEntityService.setLastImportedTimestamp(importedEntityFeed);
-                // TODO: state change to institution ready to use.
             }
         } catch (Exception e) {
             throw new DataImportException("Error during the import of file: " + fileLocation, e);

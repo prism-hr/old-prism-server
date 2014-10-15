@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_STARTUP;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -185,6 +187,13 @@ public class InstitutionService {
 
     public SocialPresenceRepresentation getSocialProfiles(String institutionTitle) throws IOException {
         return socialPresenceService.getPotentialInstitutionProfiles(institutionTitle);
+    }
+    
+    public void initializeInstitution(Institution lastInstitution) throws DeduplicationException {
+        Action action = actionService.getById(INSTITUTION_STARTUP);
+        Comment comment = new Comment().withUser(systemService.getSystem().getUser()).withCreatedTimestamp(new DateTime())
+                .withAction(action).withDeclinedResponse(false);
+        actionService.executeSystemAction(lastInstitution, action, comment);
     }
 
     private void setLogoDocument(Institution institution, InstitutionDTO institutionDTO, PrismAction actionId) {

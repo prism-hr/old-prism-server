@@ -9,24 +9,26 @@ public class NotificationTemplateModelDTO {
 
     private User user;
 
+    private User author;
+    
+    private User invoker;
+    
     private Resource resource;
-
-    private User sender;
 
     private Comment comment;
 
     private PrismAction transitionAction;
 
-    private String errorMessage;
+    private String dataImportErrorMessage;
 
-    private String recommendations;
+    private String applicationRecommendation;
 
     private String newPassword;
 
-    public NotificationTemplateModelDTO(User user, Resource resource, User sender) {
+    public NotificationTemplateModelDTO(User user, User author, Resource resource) {
         this.user = user;
+        this.author = author;
         this.resource = resource;
-        this.sender = sender;
     }
 
     public User getUser() {
@@ -37,8 +39,16 @@ public class NotificationTemplateModelDTO {
         return resource;
     }
 
-    public User getSender() {
-        return sender;
+    public User getAuthor() {
+        return author;
+    }
+
+    public final User getInvoker() {
+        return invoker;
+    }
+
+    public final void setInvoker(User invoker) {
+        this.invoker = invoker;
     }
 
     public Comment getComment() {
@@ -49,12 +59,16 @@ public class NotificationTemplateModelDTO {
         return transitionAction;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public void setTransitionAction(PrismAction transitionAction) {
+        this.transitionAction = transitionAction;
+    }
+    
+    public String getDataImportErrorMessage() {
+        return dataImportErrorMessage;
     }
 
-    public String getRecommendations() {
-        return recommendations;
+    public String getApplicationRecommendation() {
+        return applicationRecommendation;
     }
 
     public String getNewPassword() {
@@ -71,13 +85,13 @@ public class NotificationTemplateModelDTO {
         return this;
     }
 
-    public NotificationTemplateModelDTO withErrorMessage(final String errorMessage) {
-        this.errorMessage = errorMessage;
+    public NotificationTemplateModelDTO withDataImportErrorMessage(final String dataImportErrorMessage) {
+        this.dataImportErrorMessage = dataImportErrorMessage;
         return this;
     }
 
-    public NotificationTemplateModelDTO withRecommendations(final String recommendations) {
-        this.recommendations = recommendations;
+    public NotificationTemplateModelDTO withApplicationRecommendation(final String applicationRecommendation) {
+        this.applicationRecommendation = applicationRecommendation;
         return this;
     }
 
@@ -85,6 +99,5 @@ public class NotificationTemplateModelDTO {
         this.newPassword = newPassword;
         return this;
     }
-
 
 }

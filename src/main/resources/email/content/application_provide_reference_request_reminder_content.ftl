@@ -1,10 +1,10 @@
 <h1>
-    Dear ${USER_FIRST_NAME},
+    Dear ${TEMPLATE_USER_FIRST_NAME},
 </h1>
 
 <p>
-    This is a gentle reminder that ${APPLICANT} has nominated you as their referee for Application ${APPLICATION_CODE}
-    , ${STUDY_OPTION} at ${INSTITUTION_HOMEPAGE_LINK} in ${PROJECT_OR_PROGRAM_TITLE}.
+    This is a gentle reminder that ${APPLICATION_CREATOR_FULL_NAME} has nominated you as their referee for Application ${APPLICATION_CODE}
+    , ${APPLICATION_PROGRAM_TYPE} at ${INSTITUTION_HOMEPAGE} in ${APPLICATION_PROJECT_OR_PROGRAM_TITLE}.
 </p>
 <p>
     The Programme Admissions Panel would still very much appreciate your feedback on their suitability for
@@ -29,7 +29,7 @@
 </ul>
 </p>
 
-${ACTION_CONTROL}
+${ACTION_COMPLETE}
 
 <p>
     The timely collection of references is crucial for us to consider our applicants, therefore we hope you
@@ -37,8 +37,8 @@ ${ACTION_CONTROL}
 </p>
 
 <p>
-    Should you run into any difficulty, please
-    see our dedicated ${HELP_DESK_LINK} to access further assistance.
+    We look forward to receiving your feedback at your earliest convenience. Should you run into any difficulty, please
+    see our dedicated ${TEMPLATE_HELPDESK} to access further assistance.
 </p>
 
 <p>
@@ -47,6 +47,6 @@ ${ACTION_CONTROL}
 
 <p>
     Yours sincerely,
-    <br/> ${AUTHOR}
+    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>
 

@@ -1,1 +1,1 @@
-${SYSTEM_NAME} Projects Require your Attention
+${TEMPLATE_SYSTEM_TITLE} Projects Require your Attention

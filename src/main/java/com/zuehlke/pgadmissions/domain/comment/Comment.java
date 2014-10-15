@@ -928,7 +928,7 @@ public class Comment {
     }
 
     public String getUserDisplay() {
-        return user == null ? null : user.getDisplayName();
+        return user == null ? null : user.getFullName();
     }
 
     public String getRejectionReasonDisplay() {
@@ -940,11 +940,16 @@ public class Comment {
     }
 
     public String getInterviewDateTimeDisplay(String dateTimeFormat) {
-        return interviewDateTime.toString(dateTimeFormat, LocaleUtils.toLocale(getResource().getLocale().toString()));
+        return interviewDateTime == null ? null : interviewDateTime.toString(dateTimeFormat, LocaleUtils.toLocale(getResource().getLocale().toString()));
     }
 
     public String getPositionProvisionalStartDateDisplay(String dateFormat) {
-        return positionProvisionalStartDate.toString(dateFormat, LocaleUtils.toLocale(getResource().getLocale().toString()));
+        return positionProvisionalStartDate == null ? null : positionProvisionalStartDate.toString(dateFormat,
+                LocaleUtils.toLocale(getResource().getLocale().toString()));
     }
 
+    public String getInterviewTimeZoneDisplay() {
+        return interviewTimeZone == null ? null : interviewTimeZone.getDisplayName(LocaleUtils.toLocale(getResource().getLocale().toString()));
+    }
+    
 }

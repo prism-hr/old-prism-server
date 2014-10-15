@@ -138,9 +138,9 @@ public class NotificationTemplateResource {
         Program program = new Program().withTitle("Sample program").withCode("PROGRAM1");
         Project project = new Project().withTitle("Sample Project").withCode("PROJECT1");
         Application application = new Application().withCode("APP1").withProject(project).withProgram(program).withSystem(system).withUser(user);
-        NotificationTemplateModelDTO modelDTO = new NotificationTemplateModelDTO(user, application, sender);
-        modelDTO.withTransitionAction(PrismAction.APPLICATION_ASSIGN_REVIEWERS).withErrorMessage("An error occurred")
-                .withNewPassword("s3cr3t").withRecommendations("recommendations1");
+        NotificationTemplateModelDTO modelDTO = new NotificationTemplateModelDTO(user, sender, application);
+        modelDTO.withTransitionAction(PrismAction.APPLICATION_ASSIGN_REVIEWERS).withDataImportErrorMessage("An error occurred")
+                .withNewPassword("s3cr3t").withApplicationRecommendation("recommendations1");
         return modelDTO;
     }
 }

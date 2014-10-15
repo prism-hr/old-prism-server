@@ -1,1 +1,1 @@
-${SYSTEM_NAME} Programs Require your Attention
+${TEMPLATE_SYSTEM_TITLE} Programs Require your Attention

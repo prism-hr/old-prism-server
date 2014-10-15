@@ -1,27 +1,38 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_STUDY_OPTION_FULL_TIME;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_STUDY_OPTION_MODULAR_FLEXIBLE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_STUDY_OPTION_PART_TIME;
+
 import java.util.List;
 
 import com.google.common.collect.Lists;
 
 public enum PrismStudyOption {
 
-    FULL_TIME(new String[]{"f+++++"}),
-    PART_TIME(new String[]{"p+++++"}),
-    MODULAR_FLEXIBLE(new String[]{"b+++++"});
-    
+    FULL_TIME(PROGRAM_STUDY_OPTION_FULL_TIME, new String[] { "f+++++" }), //
+    PART_TIME(PROGRAM_STUDY_OPTION_PART_TIME,new String[] { "p+++++" }), //
+    MODULAR_FLEXIBLE(PROGRAM_STUDY_OPTION_MODULAR_FLEXIBLE, new String[] { "b+++++" });
+
+    private PrismDisplayProperty displayProperty;
+
     private String[] externalCodes;
-    
+
     private static final List<String> stringValues = Lists.newArrayList();
-    
+
     static {
         for (PrismStudyOption studyOption : PrismStudyOption.values()) {
             stringValues.add(studyOption.name());
         }
     }
-    
-    private PrismStudyOption(String[] externalCodes) {
+
+    private PrismStudyOption(PrismDisplayProperty displayProperty, String[] externalCodes) {
+        this.displayProperty = displayProperty;
         this.externalCodes = externalCodes;
+    }
+
+    public final PrismDisplayProperty getDisplayProperty() {
+        return displayProperty;
     }
 
     public static PrismStudyOption findValueFromString(String toSearchIn) {
@@ -40,9 +51,9 @@ public enum PrismStudyOption {
         }
         return null;
     }
-    
+
     public final String[] getExternalCodes() {
         return externalCodes;
     }
-    
+
 }

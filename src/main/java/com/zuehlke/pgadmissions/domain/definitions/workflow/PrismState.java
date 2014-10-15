@@ -42,6 +42,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicat
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismInstitutionApproval;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismInstitutionApprovalPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismInstitutionApproved;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismInstitutionApprovedCompleted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismInstitutionRejected;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismInstitutionWithdrawn;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProgramApproval;
@@ -111,6 +112,7 @@ public enum PrismState {
     INSTITUTION_APPROVAL(PrismStateGroup.INSTITUTION_APPROVAL, 28, PrismScope.INSTITUTION, PrismInstitutionApproval.class), //
     INSTITUTION_APPROVAL_PENDING_CORRECTION(PrismStateGroup.INSTITUTION_APPROVAL, 28, PrismScope.INSTITUTION, PrismInstitutionApprovalPendingCorrection.class), //
     INSTITUTION_APPROVED(PrismStateGroup.INSTITUTION_APPROVED, null, PrismScope.INSTITUTION, PrismInstitutionApproved.class), //
+    INSTITUTION_APPROVED_COMPLETED(PrismStateGroup.INSTITUTION_APPROVED, null, PrismScope.INSTITUTION, PrismInstitutionApprovedCompleted.class), //
     INSTITUTION_REJECTED(PrismStateGroup.INSTITUTION_REJECTED, null, PrismScope.INSTITUTION, PrismInstitutionRejected.class), //
     INSTITUTION_WITHDRAWN(PrismStateGroup.INSTITUTION_WITHDRAWN, null, PrismScope.INSTITUTION, PrismInstitutionWithdrawn.class), //
     PROGRAM_APPROVAL(PrismStateGroup.PROGRAM_APPROVAL, 28, PrismScope.PROGRAM, PrismProgramApproval.class), //

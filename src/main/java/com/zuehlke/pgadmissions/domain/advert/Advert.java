@@ -138,6 +138,10 @@ public class Advert {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
+    private Set<AdvertCompetency> competencies = Sets.newHashSet();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "advert_id", nullable = false)
     private Set<AdvertTargetInstitution> targetInstitutions = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -270,6 +274,10 @@ public class Advert {
         return functions;
     }
 
+    public final Set<AdvertCompetency> getCompetencies() {
+        return competencies;
+    }
+
     public final Set<AdvertTargetInstitution> getTargetInstitutions() {
         return targetInstitutions;
     }
@@ -335,6 +343,8 @@ public class Advert {
             addFunction((PrismAdvertFunction) advertFilter);
         } else if (advertFilterType == PrismAdvertIndustry.class) {
             addIndustry((PrismAdvertIndustry) advertFilter);
+        } else if (advertFilterType == String.class) {
+            addCompetency((String) advertFilter);
         } else if (advertFilterType == Institution.class) {
             addTargetInstitution((Institution) advertFilter);
         } else if (advertFilterType == PrismProgramType.class) {
@@ -358,6 +368,12 @@ public class Advert {
         AdvertIndustry industry = new AdvertIndustry().withAdvert(this);
         industry.setIndustry(industryId);
         industries.add(industry);
+    }
+
+    private void addCompetency(String competencyId) {
+        AdvertCompetency competency = new AdvertCompetency().withAdvert(this);
+        competency.setCompetency(competencyId);
+        competencies.add(competency);
     }
 
     private void addTargetInstitution(Institution institution) {

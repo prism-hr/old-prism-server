@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityService
 @Service
 public class MaintenanceService {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(MaintenanceService.class);
     
     @Value("${maintenance.run}")
     private Boolean maintenanceRun;
@@ -57,11 +57,11 @@ public class MaintenanceService {
                 execute(task);
             }
         });
-        logger.info("Scheduling maintenance task " + task.name());
+        LOGGER.info("Scheduling maintenance task " + task.name());
     }
 
     private void execute(final MaintenanceTask task) {
-        logger.info("Executing maintenance task " + task.name());
+        LOGGER.info("Executing maintenance task " + task.name());
         try {
             if (applicationContext.isActive()) {
                 applicationContext.getBean(task.getExecutor()).execute();
@@ -69,7 +69,7 @@ public class MaintenanceService {
         } catch (BeansException e) {
             throw new Error(e);
         } catch (Exception e) {
-            logger.error("Error executing maintenance task " + task.name(), e);
+            LOGGER.error("Error executing maintenance task " + task.name(), e);
         }
     }
 

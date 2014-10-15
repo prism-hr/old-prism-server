@@ -1,20 +1,20 @@
 <h1>
-    Dear ${USER_FIRST_NAME},
+    Dear ${TEMPLATE_USER_FIRST_NAME},
 </h1>
 
 <p>
     Your password has been reset. Your new password is:
     <br/>
-    <b>${NEW_PASSWORD}</b>
+    <b>${SYSTEM_USER_NEW_PASSWORD}</b>
 </p>
 
 <p>
     We recommend that you log in and change your password now.
 </p>
 
-${HOMEPAGE_CONTROL}
+${SYSTEM_USER_ACCOUNT}
 
 <p>
     Yours sincerely,
-    <br/> ${AUTHOR}
+    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>

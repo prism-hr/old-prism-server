@@ -1,17 +1,22 @@
 <h1>
-    Dear ${USER_FIRST_NAME},
+    Dear ${TEMPLATE_USER_FIRST_NAME},
 </h1>
 
 <p>
-    Your request has now been reviewed by our staff and ...
-</p>
-<p>
-    Please login for further details of this review and to access more detailed instructions on how to proceed.
+    Your request to create a new ${TEMLATE_SYSTEM_TITLE} Institution ${INSTITUTION_CODE} has been reviewed.
 </p>
 
-${VIEW_EDIT_CONTROL}
+<p>
+	The reviewers comments were are as follows: ${COMMENT_CONTENT}.
+</p>
+
+<p>
+	${COMMENT_TRANSITION_OUTCOME}
+</p>
+
+${TEMPLATE_VIEW_EDIT}
 
 <p>
     Yours sincerely,
-    <br/> ${AUTHOR}
+    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>

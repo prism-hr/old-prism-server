@@ -1,10 +1,10 @@
 <h1>
-    Dear ${USER_FIRST_NAME},
+    Dear ${TEMPLATE_USER_FIRST_NAME},
 </h1>
 
 <p>
     Our Programme Director has completed their assessment of your Application ${APPLICATION_CODE}
-    for ${PROJECT_OR_PROGRAM_TITLE}.
+    for ${APPLICATION_PROJECT_OR_PROGRAM_TITLE}.
 </p>
 <p>
     We are pleased to inform you that your Application has been advanced to UCL Admissions for final approval. If this
@@ -23,10 +23,10 @@
 </p>
 <p>
     UCL Admissions aim to be in contact with you within 5 working days. Should you have any further questions on your
-    Application, you should now contact <a id="feedbackButton" href="mailto:admissions@ucl.ac.uk">UCL Admissions</a>.
+    Application, you should now contact <a href="mailto:admissions@ucl.ac.uk">UCL Admissions</a>.
 </p>
 
 <p>
     Yours sincerely,
-    <br/> ${AUTHOR}
+    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>

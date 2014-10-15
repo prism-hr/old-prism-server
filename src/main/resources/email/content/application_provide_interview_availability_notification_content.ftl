@@ -1,19 +1,19 @@
 <h1>
-    Dear ${USER_FIRST_NAME},
+    Dear ${TEMPLATE_USER_FIRST_NAME},
 </h1>
 
 <p>
-    The interview participant ${INVOKER} has provided their preferences for the interview of ${APPLICANT} in connection
-    with Application ${APPLICATION_CODE} for ${PROJECT_OR_PROGRAM_TITLE}.
+    The interview participant ${TEMPLATE_INVOKER_FULL_NAME} has provided their preferences for the interview of ${APPLICATION_CREATOR_FULL_NAME} in connection
+    with Application ${APPLICATION_CODE} for ${APPLICATION_PROJECT_OR_PROGRAM_TITLE}.
 </p>
 <p>
     You may wish to log in and confirm the interview arrangements.
 </p>
 
-${VIEW_EDIT_CONTROL}
+${TEMPLATE_VIEW_EDIT}
 
 <p>
     Yours sincerely,
-    <br/> ${AUTHOR}
+    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>
 

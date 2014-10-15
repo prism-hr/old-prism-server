@@ -296,7 +296,13 @@ public class PrismApplicationReviewPendingFeedback extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REVIEW_PENDING_COMPLETION) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REVIEWED_OUTCOME), // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REVIEWED_OUTCOME)
+                        .withRoleTransitions(Arrays.asList( // 
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.APPLICATION_REVIEWER) //
+                                .withTransitionType(PrismRoleTransitionType.UPDATE) //
+                                .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
+                                .withRestrictToOwner(true))), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REVIEW_PENDING_FEEDBACK) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 

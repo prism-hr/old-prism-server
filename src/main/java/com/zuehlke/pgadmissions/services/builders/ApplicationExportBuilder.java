@@ -18,12 +18,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
 import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -79,7 +78,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationExportDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Component
-@Scope("prototype")
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ApplicationExportBuilder {
 
     private final ObjectFactory objectFactory = new ObjectFactory();
@@ -280,7 +279,8 @@ public class ApplicationExportBuilder {
         Application application = applicationExportDTO.getApplication();
 
         CourseApplicationTp applicationTp = objectFactory.createCourseApplicationTp();
-        applicationTp.setStartMonth(application.getConfirmedStartDate().toDateTime(LocalTime.MIDNIGHT));
+        LocalDate confirmedStartDate = application.getConfirmedStartDate();
+        applicationTp.setStartMonth(confirmedStartDate == null ? null : confirmedStartDate.toDateTimeAtStartOfDay());
         applicationTp.setAgreedSupervisorName(buildAgreedSupervisorName(applicationExportDTO.getPrimarySupervisor()));
         applicationTp.setPersonalStatement(propertyLoader.load(SYSTEM_REFER_TO_DOCUMENT));
         applicationTp.setSourcesOfInterest(buildSourcesOfInterest(application, applicationTp));
@@ -475,8 +475,7 @@ public class ApplicationExportBuilder {
             contactDtlsTp.setEmail(referee.getUser().getEmail());
             contactDtlsTp.setLandline(applicationExportBuilderHelper.cleanPhoneNumber(referee.getPhone()));
 
-            if (StringUtils.isBlank(referee.getPhone())
-                    || !ESAPI.validator().isValidInput("PhoneNumber", referee.getPhone(), "PhoneNumber", 25, false)) {
+            if (StringUtils.isBlank(referee.getPhone()) || !ESAPI.validator().isValidInput("PhoneNumber", referee.getPhone(), "PhoneNumber", 25, false)) {
                 contactDtlsTp.setLandline(propertyLoader.load(SYSTEM_TELEPHONE_PLACEHOLDER));
             }
 

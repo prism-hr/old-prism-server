@@ -53,15 +53,50 @@ public enum PrismDisplayProperty {
     SYSTEM_DECLINE(SYSTEM_GLOBAL, "Decline"), //
     SYSTEM_ACTIVATE_ACCOUNT(SYSTEM_GLOBAL, "Activate Account"), //
     SYSTEM_HELPDESK(SYSTEM_GLOBAL, "Get Help"), //
-    SYSTEM_VIEW_EDIT(SYSTEM_GLOBAL, "View / Edit"),
-    SYSTEM_NEW_PASSWORD(SYSTEM_GLOBAL, "New password"),
-    SYSTEM_HOMEPAGE(SYSTEM_GLOBAL, "Homepage"),
-    SYSTEM_INTERVIEW_LOCATION_NOT_SPECIFIED(SYSTEM_GLOBAL, "Location not specified"),
+    SYSTEM_VIEW_EDIT(SYSTEM_GLOBAL, "View/Edit"), //
+    SYSTEM_NEW_PASSWORD(SYSTEM_GLOBAL, "New password"), //
+    SYSTEM_HOMEPAGE(SYSTEM_GLOBAL, "Homepage"), //
+    SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR(SYSTEM_GLOBAL, "Property value unavailable"), //
+    SYSTEM_HELPDESK_REPORT(SYSTEM_GLOBAL, "Please report this matter to our helpdesk"), //
+    SYSTEM_APPLICATION_LIST(SYSTEM_GLOBAL, "Applications"), //
+    SYSTEM_PROJECT_LIST(SYSTEM_GLOBAL, "Projects"), //
+    SYSTEM_PROGRAM_LIST(SYSTEM_GLOBAL, "Programs"), //
+    SYSTEM_INSTITUTION_LIST(SYSTEM_GLOBAL, "Institutions"), //
+    SYSTEM_USER_ACCOUNT(SYSTEM_GLOBAL, "User Account"), //
+    SYSTEM_COMMENT_CONTENT_NOT_PROVIDED(SYSTEM_GLOBAL, "No comment provided"), //
     INSTITUTION_HEADER(INSTITUTION_GLOBAL, "Institution"), //
-    PROGRAM_HEADER(PROGRAM_GLOBAL, "Program"), //
-    PROGRAM_STUDY_OPTION(PROGRAM_GLOBAL, "Study Option"), //
+    INSTITUTION_APPROVED(
+            INSTITUTION_GLOBAL,
+            "We are pleased to tell you that your institution has been approved. We will send you a message with further instructions when your institution is ready to use. If you do not receive this message within 1 hour, please contact our helpdesk."), //
+    INSTITUTION_CORRECTION(INSTITUTION_GLOBAL, "Further information is required to activate your institution. Please login to address the reviewers comments."), //
+    INSTITUTION_REJECTED(INSTITUTION_GLOBAL, "We are sorry to inform you that your institution has been rejected."), PROGRAM_HEADER(PROGRAM_GLOBAL, "Program"), //
+    PROGRAM_APPROVED(INSTITUTION_GLOBAL,
+            "We are pleased to tell you that your program has been approved. You may now login to create users and projects, and manage your recruitment."), PROGRAM_CORRECTION(
+            INSTITUTION_GLOBAL, "Further information is required to activate your program. Please login to address the reviewers comments."), PROGRAM_REJECTED(
+            INSTITUTION_GLOBAL, "We are sorry to inform you that your program has been rejected."), PROGRAM_STUDY_OPTION(PROGRAM_GLOBAL, "Study Option"), //
+    PROGRAM_STUDY_OPTION_FULL_TIME(PROGRAM_GLOBAL, "Full Time"), //
+    PROGRAM_STUDY_OPTION_PART_TIME(PROGRAM_GLOBAL, "Part Time"), //
+    PROGRAM_STUDY_OPTION_MODULAR_FLEXIBLE(PROGRAM_GLOBAL, "Modular/Flexible"), //
+    PROGRAM_CATEGORY_STUDY(PROGRAM_GLOBAL, "Degrees"), //
+    PROGRAM_CATEGORY_FUNDING(PROGRAM_GLOBAL, "Scholarships"), //
+    PROGRAM_CATEGORY_EXPERIENCE(PROGRAM_GLOBAL, "Internships"), //
+    PROGRAM_CATEGORY_WORK(PROGRAM_GLOBAL, "Jobs"), //
+    PROGRAM_CATEGORY_LEARNING(PROGRAM_GLOBAL, "Courses"), //
+    PROGRAM_TYPE_STUDY_UNDERGRADUATE(PROGRAM_GLOBAL, "Undergraduate Study"), //
+    PROGRAM_TYPE_STUDY_POSTGRADUATE_TAUGHT(PROGRAM_GLOBAL, "Postgraduate (Taught) Study"), //
+    PROGRAM_TYPE_STUDY_POSTGRADUATE_RESEARCH(PROGRAM_GLOBAL, "Postgraduate (Research) Study"), //
+    PROGRAM_TYPE_SCHOLARSHIP_UNDERGRADUATE(PROGRAM_GLOBAL, "Undergraduate Study Scholarship"), //
+    PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_TAUGHT(PROGRAM_GLOBAL, "Postgraduate (Taught) Study Scholarship"), //
+    PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_RESEARCH(PROGRAM_GLOBAL, "Postgraduate (Research) Study Scholarship"), //
+    PROGRAM_TYPE_WORK_EXPERIENCE(PROGRAM_GLOBAL, "Work Experience"), //
+    PROGRAM_TYPE_EMPLOYMENT(PROGRAM_GLOBAL, "Employment"), //
+    PROGRAM_TYPE_EMPLOYMENT_SECONDMENT(PROGRAM_GLOBAL, "Secondment"), //
+    PROGRAM_TYPE_TRAINING(PROGRAM_GLOBAL, "Training"), //
     PROJECT_HEADER(PROJECT_GLOBAL, "Project"), //
-    APPLICATION_HEADER(APPLICATION_GLOBAL, "Application"), //
+    PROJECT_APPROVED(INSTITUTION_GLOBAL,
+            "We are pleased to tell you that your project has been approved. You may now login to create users and manage your recruitment."), PROJECT_CORRECTION(
+            INSTITUTION_GLOBAL, "Further information is required to activate your project. Please login to address the reviewers comments."), PROJECT_REJECTED(
+            INSTITUTION_GLOBAL, "We are sorry to inform you that your project has been rejected."), APPLICATION_HEADER(APPLICATION_GLOBAL, "Application"), //
     APPLICATION_CREATOR(APPLICATION_GLOBAL, "Applicant"), //
     APPLICATION_QUALIFIICATION_TYPE(APPLICATION_GLOBAL, "Qualification Type"), //
     APPLICATION_PROOF_OF_AWARD(APPLICATION_GLOBAL, "Proof of Award"), //
@@ -151,8 +186,9 @@ public enum PrismDisplayProperty {
     APPLICATION_COMMENT_SUITABLE_FOR_OPPORTUNITY(APPLICATION_COMMENT, "Suitable for Recruiting Position?"), //
     APPLICATION_COMMENT_DECLINED_REFEREE(APPLICATION_COMMENT, "Declined to provide a reference."), //
     APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION(APPLICATION_COMMENT, "Recommended offer conditions"), //
-    APPLICATION_COMMENT_REJECTION_SYSTEM(APPLICATION_COMMENT, "The opportunity that you applied for has been discontinued."),
-    APPLICATION_COMMENT_DIRECTIONS(APPLICATION_COMMENT, "Directions");
+    APPLICATION_COMMENT_REJECTION_SYSTEM(APPLICATION_COMMENT, "The opportunity that you applied for has been discontinued."), //
+    APPLICATION_COMMENT_DIRECTIONS(APPLICATION_COMMENT, "Directions"), //
+    APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED(APPLICATION_COMMENT, "No directions provided. Please contact the interviewer for further information.");
 
     private PrismDisplayCategory category;
 

@@ -1,22 +1,22 @@
 <h1>
-    Dear ${USER_FIRST_NAME},
+    Dear ${TEMPLATE_USER_FIRST_NAME},
 </h1>
 
 <p>
-    Thank you for your recent request to advertise the ${PROGRAM_TITLE} opportunity to our user network.
+    Your request to create a new ${TEMLATE_SYSTEM_TITLE} Program ${PROGRAM_CODE} has been reviewed.
 </p>
 
 <p>
-    Your request has now been reviewed by our staff and the application has been ${OUTCOME}.
+	The reviewers comments were are as follows: ${COMMENT_CONTENT}.
 </p>
 
 <p>
-    Please login for further details of this review and to access more detailed instructions on how to proceed.
+	${COMMENT_TRANSITION_OUTCOME}
 </p>
 
-${ACTION_CONTROL}
+${TEMPLATE_VIEW_EDIT}
 
 <p>
     Yours sincerely,
-    <br/> ${AUTHOR}
+    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>

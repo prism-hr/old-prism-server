@@ -14,7 +14,7 @@
     </tr>
     <tr>
         <td colspan="3">
-            ${CONTENT}
+        ${CONTENT}
         </td>
     </tr>
     <tr>

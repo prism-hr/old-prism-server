@@ -45,7 +45,6 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
@@ -126,17 +125,25 @@ public class ResourceResource {
 
         // set visible comments
         List<Comment> comments = commentService.getVisibleComments(resource, currentUser);
-        representation.setComments(Lists.<CommentRepresentation>newArrayListWithExpectedSize(comments.size()));
-        String currentStateGroup = null;
-        for (Comment comment : comments) {
+        List<List<CommentRepresentation>> resourceTimeline = Lists.newLinkedList();
+        List<CommentRepresentation> stateTimeline = Lists.newLinkedList();
+        String stateGroup = null;
+        int commentCount = comments.size();
+        for (int i = 0; i < commentCount; i++) {
+            Comment comment = comments.get(i);
+            stateGroup = stateGroup == null ? comment.getState().getStateGroup().getId().name() : stateGroup;
             CommentRepresentation commentRepresentation = dozerBeanMapper.map(comment, CommentRepresentation.class);
-            if (comment.isTransitionComment()) {
-                State transitionState = comment.getState();
-                currentStateGroup = transitionState == null ? currentStateGroup : transitionState.getStateGroup().getId().name();
+            commentRepresentation.setStateGroup(comment.isApplicationReferenceComment() ? "CUSTOM" : stateGroup);
+            stateTimeline.add(commentRepresentation);
+            if (comment.isTransitionComment() && i > 0) {
+                stateGroup = comment.getTransitionState().getStateGroup().getId().name();
+                resourceTimeline.add(Lists.reverse(Lists.newLinkedList(stateTimeline)));
+                stateTimeline = Lists.newLinkedList();
+            } else if (i == (commentCount - 1)) {
+                resourceTimeline.add(Lists.newLinkedList(stateTimeline));
             }
-            commentRepresentation.setStateGroup(comment.isApplicationReferenceComment() ? "CUSTOM" : currentStateGroup);
-            representation.getComments().add(commentRepresentation);
         }
+        representation.setComments(Lists.reverse(resourceTimeline));
 
         // set list of available actions
         List<ActionRepresentation> permittedActions = actionService.getPermittedActions(resource, currentUser);

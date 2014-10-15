@@ -172,6 +172,7 @@ public enum PrismAction {
                     .withRedactionType(ALL_CONTENT)), null), //
     APPLICATION_WITHDRAW(USER_INVOCATION, WITHDRAW_RESOURCE, false, true, false, APPLICATION, null, null, null), //
     INSTITUTION_COMPLETE_APPROVAL_STAGE(USER_INVOCATION, PROCESS_RESOURCE, false, true, false, INSTITUTION, null, null, null), //
+    INSTITUTION_STARTUP(SYSTEM_INVOCATION, INITIALISE_RESOURCE, false, false, false, INSTITUTION, null, null, null), //
     INSTITUTION_VIEW_EDIT(USER_INVOCATION, VIEW_EDIT_RESOURCE, false, false, false, INSTITUTION, null, null, null), //
     INSTITUTION_CORRECT(USER_INVOCATION, PROCESS_RESOURCE, false, true, false, INSTITUTION, null, null, null), //
     INSTITUTION_CREATE_PROGRAM(USER_INVOCATION, CREATE_RESOURCE, false, true, false, INSTITUTION, PROGRAM, null, null), //

@@ -1,1 +1,1 @@
-Updates to your ${SYSTEM_NAME} Programs
+Updates to your ${TEMPLATE_SYSTEM_TITLE} Programs

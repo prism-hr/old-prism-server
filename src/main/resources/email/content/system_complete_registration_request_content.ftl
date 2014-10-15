@@ -1,5 +1,5 @@
 <h1>
-    Dear ${USER_FIRST_NAME},
+    Dear ${TEMPLATE_USER_FIRST_NAME},
 </h1>
 
 <p>
@@ -7,10 +7,10 @@
     login using the email address and password that you provided.
 </p>
 
-${ACTIVATE_ACCOUNT_CONTROL}
+${SYSTEM_USER_ACCOUNT_ACTIVATION}
 
 <p>
     Yours sincerely,
-    <br/> ${AUTHOR}
+    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>
 

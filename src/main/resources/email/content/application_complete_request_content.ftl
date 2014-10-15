@@ -1,14 +1,14 @@
 <h1>
-    Dear ${USER_FIRST_NAME},
+    Dear ${TEMPLATE_USER_FIRST_NAME},
 </h1>
 
 <p>
-    Please complete your Application ${APPLICATION_CODE} for ${PROJECT_OR_PROGRAM_TITLE}.
+    Please complete your Application ${APPLICATION_CODE} for ${APPLICATION_PROJECT_OR_PROGRAM_TITLE}.
 </p>
 
-${ACTION_CONTROL}
+${ACTION_COMPLETE}
 
 <p>
     Yours sincerely,
-    <br/> ${AUTHOR}
+    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>

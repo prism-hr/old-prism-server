@@ -669,12 +669,16 @@ public class Application extends Resource {
         return state.getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED && state.getId() != PrismState.APPLICATION_APPROVED;
     }
 
-    public String getProjectOrProgramTitle() {
+    public String getProjectOrProgramTitleDisplay() {
         return project == null ? program.getTitle() : project.getTitle();
     }
 
-    public String getProjectOrProgramCode() {
+    public String getProjectOrProgramCodeDisplay() {
         return project == null ? program.getCode() : project.getCode();
+    }
+    
+    public String getStudyOptionDisplay() {
+        return programDetail == null ? null : programDetail.getStudyOptionDisplay();
     }
 
     @Override

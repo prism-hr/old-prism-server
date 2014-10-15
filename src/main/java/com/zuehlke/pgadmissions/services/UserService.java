@@ -112,7 +112,7 @@ public class UserService {
             throw new ResourceNotFoundException();
         }
 
-        user.setUserAccount(new UserAccount().withPassword(encryptionUtils.getMD5Hash(registrationDTO.getPassword())).withSendRecommendationNotification(false)
+        user.setUserAccount(new UserAccount().withPassword(encryptionUtils.getMD5Hash(registrationDTO.getPassword())).withSendApplicationRecommendationNotification(false)
                 .withEnabled(false));
 
         ActionOutcomeDTO outcome = actionService.getRegistrationOutcome(user, registrationDTO, referrer);

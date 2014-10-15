@@ -22,5 +22,5 @@ public abstract class AdvertFilterCategory implements IUniqueEntity {
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addProperty("advert", getAdvert());
     }
-     
+    
 }

@@ -197,17 +197,17 @@ public class NotificationService {
         System system = systemService.getSystem();
         for (User user : userService.getUsersForResourceAndRole(institution, PrismRole.INSTITUTION_ADMINISTRATOR)) {
             NotificationTemplate template = getById(PrismNotificationTemplate.INSTITUTION_IMPORT_ERROR_NOTIFICATION);
-            sendNotification(template, new NotificationTemplateModelDTO(user, institution, system.getUser()).withErrorMessage(errorMessage));
+            sendNotification(template, new NotificationTemplateModelDTO(user, institution, system.getUser()).withDataImportErrorMessage(errorMessage));
         }
     }
 
     public void sendRecommendationNotification(User transientUser, LocalDate baseline) {
         User persistentUser = userService.getById(transientUser.getId());
         System system = systemService.getSystem();
-        NotificationTemplate template = getById(PrismNotificationTemplate.SYSTEM_RECOMMENDATION_NOTIFICATION);
+        NotificationTemplate template = getById(PrismNotificationTemplate.SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION);
         String recommendations = advertService.getRecommendedAdvertsForEmail(persistentUser);
-        sendNotification(template, new NotificationTemplateModelDTO(persistentUser, system, system.getUser()).withRecommendations(recommendations));
-        persistentUser.getUserAccount().setLastNotifiedDateRecommendation(baseline);
+        sendNotification(template, new NotificationTemplateModelDTO(persistentUser, system, system.getUser()).withApplicationRecommendation(recommendations));
+        persistentUser.getUserAccount().setLastNotifiedDateApplicationRecommendation(baseline);
     }
 
     public void sendRegistrationNotification(User user, ActionOutcomeDTO actionOutcome) {

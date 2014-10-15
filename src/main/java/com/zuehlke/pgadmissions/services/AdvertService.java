@@ -32,7 +32,9 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicileRegion;
@@ -222,7 +224,11 @@ public class AdvertService {
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         return advertDAO.getAdvertsWithElapsedCurrencyConversions(baseline, activeProgramStates, activeProjectStates);
     }
-
+    
+    public List<String> getPossibleCompetencies(Institution institution, PrismLocale locale) {
+        return advertDAO.getPossibleCompetencies(institution, locale);
+    }
+    
     private void updateFinancialDetails(AdvertFinancialDetail financialDetails, FinancialDetailsDTO financialDetailsDTO, String currencyAtLocale, LocalDate baseline)
             throws Exception {
         DurationUnit interval = financialDetailsDTO.getInterval();

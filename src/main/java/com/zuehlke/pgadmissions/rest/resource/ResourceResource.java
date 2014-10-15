@@ -124,10 +124,10 @@ public class ResourceResource {
         AbstractResourceRepresentation representation = dozerBeanMapper.map(resource, resourceDescriptor.getRepresentationType());
 
         // set visible comments
-        List<Comment> comments = commentService.getVisibleComments(resource, currentUser);
-        List<List<CommentRepresentation>> resourceTimeline = Lists.newLinkedList();
-        List<CommentRepresentation> stateTimeline = Lists.newLinkedList();
         String stateGroup = null;
+        List<CommentRepresentation> stateTimeline = Lists.newLinkedList();
+        List<List<CommentRepresentation>> resourceTimeline = Lists.newLinkedList();
+        List<Comment> comments = commentService.getVisibleComments(resource, currentUser);
         int commentCount = comments.size();
         for (int i = 0; i < commentCount; i++) {
             Comment comment = comments.get(i);

@@ -29,7 +29,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
@@ -57,7 +56,6 @@ import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentati
 import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceUserRolesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProjectExtendedRepresentation;
@@ -124,26 +122,7 @@ public class ResourceResource {
         AbstractResourceRepresentation representation = dozerBeanMapper.map(resource, resourceDescriptor.getRepresentationType());
 
         // set visible comments
-        String stateGroup = null;
-        List<CommentRepresentation> stateTimeline = Lists.newLinkedList();
-        List<List<CommentRepresentation>> resourceTimeline = Lists.newLinkedList();
-        List<Comment> comments = commentService.getVisibleComments(resource, currentUser);
-        int commentCount = comments.size();
-        for (int i = 0; i < commentCount; i++) {
-            Comment comment = comments.get(i);
-            stateGroup = stateGroup == null ? comment.getState().getStateGroup().getId().name() : stateGroup;
-            CommentRepresentation commentRepresentation = dozerBeanMapper.map(comment, CommentRepresentation.class);
-            commentRepresentation.setStateGroup(comment.isApplicationReferenceComment() ? "CUSTOM" : stateGroup);
-            stateTimeline.add(commentRepresentation);
-            if (comment.isTransitionComment() && i > 0) {
-                stateGroup = comment.getTransitionState().getStateGroup().getId().name();
-                resourceTimeline.add(Lists.reverse(Lists.newLinkedList(stateTimeline)));
-                stateTimeline = Lists.newLinkedList();
-            } else if (i == (commentCount - 1)) {
-                resourceTimeline.add(Lists.newLinkedList(stateTimeline));
-            }
-        }
-        representation.setComments(Lists.reverse(resourceTimeline));
+        representation.setComments(commentService.getVisibleComments(resource, currentUser));
 
         // set list of available actions
         List<ActionRepresentation> permittedActions = actionService.getPermittedActions(resource, currentUser);

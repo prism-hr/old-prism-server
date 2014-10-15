@@ -23,6 +23,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -176,6 +178,10 @@ public class ActionService {
         return actionDAO.getViewEditAction(resource);
     }
 
+    public PrismAction getTransitionAction(State state, NotificationTemplate notificationTemplate) {
+        return actionDAO.getTransitionAction(state, notificationTemplate);
+    }
+    
     public void throwWorkflowPermissionException(Resource resource, Action action) {
         throwWorkflowPermissionException(resource, action, null);
     }

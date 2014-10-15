@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.A
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_ACTIVATE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_APPLICATION_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_COMMENT_CONTENT_NOT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_DATE_FORMAT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_DATE_TIME_FORMAT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_DECLINE;
@@ -38,6 +39,8 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -127,8 +130,8 @@ public class NotificationTemplatePropertyLoader {
     public String getTemplateViewEdit() throws IOException, TemplateException {
         Resource resource = templateModelDTO.getResource();
         PrismScope scope = resource.getResourceScope() == SYSTEM ? APPLICATION : resource.getResourceScope();
-        String url = resource.getSystem().getHomepage() + "/#/" + scope.getLowerCaseName() + "/" + resource.getId() + "/view?user="
-                + templateModelDTO.getUser().getEmail();
+        String url = resource.getSystem().getHomepage() + "/#/" + scope.getLowerCaseName() + "/" + resource.getId() + "/view?activationCode="
+                + templateModelDTO.getUser().getActivationCode();
         return buildRedirectionControl(url, SYSTEM_VIEW_EDIT);
     }
 
@@ -141,17 +144,24 @@ public class NotificationTemplatePropertyLoader {
 
         PrismAction action = templateModelDTO.getTransitionAction();
 
-        url += "/timeline?action=" + action.name() + "&user=" + templateModelDTO.getUser().getEmail();
+        url += "/timeline?action=" + action.name() + "&activationCode=" + templateModelDTO.getUser().getActivationCode();
         String declineUrl = action.isDeclinableAction() ? url + "&decline=true" : null;
         return buildRedirectionControl(url, SYSTEM_PROCEED, declineUrl, SYSTEM_DECLINE);
     }
 
-    public String getCommentTransitionState() {
-        return templateModelDTO.getComment().getTransitionState().getId().name();
+    public String getCommentContent() {
+        String content = templateModelDTO.getComment().getContent();
+        return content == null ? propertyLoader.load(SYSTEM_COMMENT_CONTENT_NOT_PROVIDED) : "\"" + content + "\"";
     }
-
+    
     public String getCommentDateTime() {
         return templateModelDTO.getComment().getCreatedTimestampDisplay(propertyLoader.load(SYSTEM_DATE_TIME_FORMAT));
+    }
+    
+    public String getCommentTransitionOutcome() {
+        String resourceName = templateModelDTO.getResource().getResourceScope().name();
+        String statePostfix = Iterables.getLast(Lists.newArrayList(templateModelDTO.getComment().getTransitionState().getId().name().split("_")));
+        return propertyLoader.load(PrismDisplayProperty.valueOf(resourceName + "_" + statePostfix));
     }
 
     public String getApplicationCreatorFullName() {

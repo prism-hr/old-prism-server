@@ -109,7 +109,9 @@ public class ResourceDAO {
                 .add(Projections.property("user.firstName"), "creatorFirstName") //
                 .add(Projections.property("user.firstName2"), "creatorFirstName2") //
                 .add(Projections.property("user.firstName3"), "creatorFirstName3") //
-                .add(Projections.property("user.lastName"), "creatorLastName").add(Projections.property("code"), "code");
+                .add(Projections.property("user.lastName"), "creatorLastName") //
+                .add(Projections.property("user.email"), "creatorEmail") //
+                .add(Projections.property("code"), "code");
 
         addResourceListCustomColumns(scopeId, projectionList);
 

@@ -63,9 +63,17 @@ public enum PrismDisplayProperty {
     SYSTEM_PROGRAM_LIST(SYSTEM_GLOBAL, "Programs"), //
     SYSTEM_INSTITUTION_LIST(SYSTEM_GLOBAL, "Institutions"), //
     SYSTEM_USER_ACCOUNT(SYSTEM_GLOBAL, "User Account"), //
+    SYSTEM_COMMENT_CONTENT_NOT_PROVIDED(SYSTEM_GLOBAL, "No comment provided"), //
     INSTITUTION_HEADER(INSTITUTION_GLOBAL, "Institution"), //
-    PROGRAM_HEADER(PROGRAM_GLOBAL, "Program"), //
-    PROGRAM_STUDY_OPTION(PROGRAM_GLOBAL, "Study Option"), //
+    INSTITUTION_APPROVED(
+            INSTITUTION_GLOBAL,
+            "We are pleased to tell you that your institution has been approved. We will send you a message with further instructions when your institution is ready to use. If you do not receive this message within 1 hour, please contact our helpdesk."), //
+    INSTITUTION_CORRECTION(INSTITUTION_GLOBAL, "Further information is required to activate your institution. Please login to address the reviewers comments."), //
+    INSTITUTION_REJECTED(INSTITUTION_GLOBAL, "We are sorry to inform you that your institution has been rejected."), PROGRAM_HEADER(PROGRAM_GLOBAL, "Program"), //
+    PROGRAM_APPROVED(INSTITUTION_GLOBAL,
+            "We are pleased to tell you that your program has been approved. You may now login to create users and projects, and manage your recruitment."), PROGRAM_CORRECTION(
+            INSTITUTION_GLOBAL, "Further information is required to activate your program. Please login to address the reviewers comments."), PROGRAM_REJECTED(
+            INSTITUTION_GLOBAL, "We are sorry to inform you that your program has been rejected."), PROGRAM_STUDY_OPTION(PROGRAM_GLOBAL, "Study Option"), //
     PROGRAM_STUDY_OPTION_FULL_TIME(PROGRAM_GLOBAL, "Full Time"), //
     PROGRAM_STUDY_OPTION_PART_TIME(PROGRAM_GLOBAL, "Part Time"), //
     PROGRAM_STUDY_OPTION_MODULAR_FLEXIBLE(PROGRAM_GLOBAL, "Modular/Flexible"), //
@@ -85,7 +93,10 @@ public enum PrismDisplayProperty {
     PROGRAM_TYPE_EMPLOYMENT_SECONDMENT(PROGRAM_GLOBAL, "Secondment"), //
     PROGRAM_TYPE_TRAINING(PROGRAM_GLOBAL, "Training"), //
     PROJECT_HEADER(PROJECT_GLOBAL, "Project"), //
-    APPLICATION_HEADER(APPLICATION_GLOBAL, "Application"), //
+    PROJECT_APPROVED(INSTITUTION_GLOBAL,
+            "We are pleased to tell you that your project has been approved. You may now login to create users and manage your recruitment."), PROJECT_CORRECTION(
+            INSTITUTION_GLOBAL, "Further information is required to activate your project. Please login to address the reviewers comments."), PROJECT_REJECTED(
+            INSTITUTION_GLOBAL, "We are sorry to inform you that your project has been rejected."), APPLICATION_HEADER(APPLICATION_GLOBAL, "Application"), //
     APPLICATION_CREATOR(APPLICATION_GLOBAL, "Applicant"), //
     APPLICATION_QUALIFIICATION_TYPE(APPLICATION_GLOBAL, "Qualification Type"), //
     APPLICATION_PROOF_OF_AWARD(APPLICATION_GLOBAL, "Proof of Award"), //

@@ -6,6 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.APPLICATION_INTERVIEW_SCHEDULED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.APPLICATION_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.COMMENT_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.COMMENT_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.INSTITUTION_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.INSTITUTION_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.PROGRAM_GLOBAL;
@@ -42,8 +43,9 @@ public enum PrismNotificationTemplateProperty {
     TEMPLATE_HELPDESK(TEMPLATE_GLOBAL, false), //
     TEMPLATE_VIEW_EDIT(TEMPLATE_GLOBAL, false), //
     ACTION_COMPLETE(ACTION_GLOBAL, false), //
-    COMMENT_TRANSITION_STATE(COMMENT_GLOBAL, true), //
+    COMMENT_CONTENT(COMMENT_GLOBAL, true), //
     COMMENT_DATE_TIME(COMMENT_GLOBAL, true), //
+    COMMENT_TRANSITION_OUTCOME(COMMENT_TRANSITION, true), //
     APPLICATION_CREATOR_FULL_NAME(APPLICATION_GLOBAL, true), //
     APPLICATION_CODE(APPLICATION_GLOBAL, true), //
     APPLICATION_PROJECT_OR_PROGRAM_TITLE(APPLICATION_GLOBAL, true), //

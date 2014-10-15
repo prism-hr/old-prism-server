@@ -49,6 +49,10 @@ public class NotificationTemplateModelDTO {
         return transitionAction;
     }
 
+    public void setTransitionAction(PrismAction transitionAction) {
+        this.transitionAction = transitionAction;
+    }
+    
     public String getDataImportErrorMessage() {
         return dataImportErrorMessage;
     }

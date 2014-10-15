@@ -148,6 +148,7 @@ public class SystemInitialisationHelper {
             assertEquals(action.getId().isRatingAction(), action.getRatingAction());
             assertEquals(action.getId().isTransitionAction(), action.getTransitionAction());
             assertEquals(action.getId().isDeclinableAction(), action.getDeclinableAction());
+            assertEquals(action.getId().isEmphasizedAction(), action.getEmphasizedAction());
             assertEquals(PrismAction.getFallBackAction(action.getId()), action.getFallbackAction().getId());
             assertEquals(action.getId().getScope(), action.getScope().getId());
             assertEquals(action.getId().getCreationScope(), action.getCreationScope() == null ? null : action.getCreationScope().getId());

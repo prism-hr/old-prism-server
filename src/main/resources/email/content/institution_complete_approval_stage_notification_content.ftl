@@ -3,10 +3,15 @@
 </h1>
 
 <p>
-    Your request has now been reviewed by our staff and ...
+    Your request to create a new ${TEMLATE_SYSTEM_TITLE} Institution ${INSTITUTION_CODE} has been reviewed.
 </p>
+
 <p>
-    Please login for further details of this review and to access more detailed instructions on how to proceed.
+	The reviewers comments were are as follows: ${COMMENT_CONTENT}.
+</p>
+
+<p>
+	${COMMENT_TRANSITION_OUTCOME}
 </p>
 
 ${TEMPLATE_VIEW_EDIT}

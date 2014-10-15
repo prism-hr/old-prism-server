@@ -10,6 +10,7 @@ import org.joda.time.LocalDateTime;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.FileRepresentation;
 
@@ -17,7 +18,7 @@ public class CommentRepresentation {
 
     private Integer id;
 
-    private String stateGroup;
+    private PrismStateGroup stateGroup;
 
     private UserRepresentation user;
 
@@ -28,6 +29,8 @@ public class CommentRepresentation {
     private String delegateRole;
 
     private PrismAction action;
+    
+    private Boolean emphasizedAction;
 
     private Boolean declinedResponse;
 
@@ -111,11 +114,11 @@ public class CommentRepresentation {
         this.id = id;
     }
 
-    public final String getStateGroup() {
+    public final PrismStateGroup getStateGroup() {
         return stateGroup;
     }
 
-    public final void setStateGroup(String stateGroup) {
+    public final void setStateGroup(PrismStateGroup stateGroup) {
         this.stateGroup = stateGroup;
     }
 
@@ -157,6 +160,14 @@ public class CommentRepresentation {
 
     public void setAction(PrismAction action) {
         this.action = action;
+    }
+    
+    public final Boolean getEmphasizedAction() {
+        return emphasizedAction;
+    }
+
+    public final void setEmphasizedAction(Boolean emphasizedAction) {
+        this.emphasizedAction = emphasizedAction;
     }
 
     public Boolean getDeclinedResponse() {

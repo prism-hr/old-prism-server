@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.integration.helpers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.zuehlke.pgadmissions.rest.dto.ResourceActionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,8 +57,8 @@ public class UserHelper {
         Resource resource = resourceService.getById(resourceScope.getResourceClass(), resourceId);
         assertEquals(testContextReferrer, resource.getReferrer());
 
-        userService.activateUser(user.getId());
+        userService.activateUser(user.getId(), new ResourceActionDTO(actionId, resourceId));
         assertTrue(user.isEnabled());
     }
-    
+
 }

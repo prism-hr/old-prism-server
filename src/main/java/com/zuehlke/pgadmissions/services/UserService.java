@@ -7,6 +7,8 @@ import java.util.TreeMap;
 
 import javax.xml.bind.JAXBException;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.rest.dto.ResourceActionDTO;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
@@ -223,7 +225,7 @@ public class UserService {
         return Lists.newArrayList();
     }
 
-    public boolean activateUser(Integer userId) {
+    public boolean activateUser(Integer userId, ResourceActionDTO resourceAction) {
         User user = getById(userId);
         boolean wasEnabled = user.getUserAccount().getEnabled();
         user.getUserAccount().setEnabled(true);

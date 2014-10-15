@@ -87,10 +87,12 @@ public class CommentService {
         List<Comment> comments = Lists.newLinkedList();
         if (!actionService.getPermittedActions(resource, user).isEmpty()) {
             LinkedList<Comment> transitionComments = Lists.newLinkedList(commentDAO.getStateGroupTransitionComments(resource));
-            transitionComments.add(0, null);
-            for (int i = 1; i < transitionComments.size(); i++) {
-                comments.addAll(commentDAO.getStateComments(resource, transitionComments.get(i), transitionComments.get(i - 1)));
+            int transitionCommentCount = transitionComments.size();
+            for (int i = 0; i < transitionCommentCount; i++) {
                 comments.add(transitionComments.get(i));
+                int closeCommentIndex = i + 1;
+                comments.addAll(commentDAO.getStateComments(resource, transitionComments.get(i), closeCommentIndex == transitionCommentCount ? null
+                        : transitionComments.get(closeCommentIndex)));
             }
         }
         return comments;

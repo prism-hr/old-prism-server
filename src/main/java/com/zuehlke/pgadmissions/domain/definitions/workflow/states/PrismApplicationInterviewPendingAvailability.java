@@ -459,7 +459,18 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_INTERVIEW_PENDING_SCHEDULING) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_INTERVIEW_RSVPED_OUTCOME)))); //
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_INTERVIEW_RSVPED_OUTCOME)
+                        .withRoleTransitions(Arrays.asList( // 
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.APPLICATION_POTENTIAL_INTERVIEWEE) //
+                                .withTransitionType(PrismRoleTransitionType.UPDATE) //
+                                .withTransitionRole(PrismRole.APPLICATION_INTERVIEWEE) //
+                                .withRestrictToOwner(true), // 
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.APPLICATION_POTENTIAL_INTERVIEWER) //
+                                .withTransitionType(PrismRoleTransitionType.UPDATE) //
+                                .withTransitionRole(PrismRole.APPLICATION_INTERVIEWER) //
+                                .withRestrictToOwner(true)))))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_PROVIDE_REFERENCE) //

@@ -1,68 +1,90 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import java.util.HashMap;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationPurpose.REMINDER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationPurpose.REQUEST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationPurpose.UPDATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.ACTION_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.APPLICATION_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.APPLICATION_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.APPLICATION_INTERVIEW_SCHEDULED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.APPLICATION_REJECTED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.COMMENT_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.INSTITUTION_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.INSTITUTION_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.PROGRAM_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.PROJECT_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.SYSTEM_APPLICATION_MARKETING;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.SYSTEM_APPLICATION_SYNDICATED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.SYSTEM_INSTITUTION_SYNDICATED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.SYSTEM_PROGRAM_SYNDICATED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.SYSTEM_PROJECT_SYNDICATED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.SYSTEM_USER_ACCOUNT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.SYSTEM_USER_PASSWORD;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.TEMPLATE_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType.INDIVIDUAL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType.SYNDICATED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
+import java.util.HashMap;
+import java.util.List;
+
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public enum PrismNotificationTemplate {
 
-    APPLICATION_COMPLETE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION), //
-    APPLICATION_COMPLETE_REQUEST(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REQUEST, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION), //
-    APPLICATION_COMPLETE_REQUEST_REMINDER(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REMINDER, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION), //
-    APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION, PrismNotificationTemplatePropertyCategory.INTERVIEW_SCHEDULED), //
-    APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION), //
-    APPLICATION_CONFIRM_REJECTION_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION, PrismNotificationTemplatePropertyCategory.APPLICATION_REJECTION), //
-    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.COMMENT, PrismNotificationTemplatePropertyCategory.APPLICATION), //
-    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REQUEST, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION, PrismNotificationTemplatePropertyCategory.ACTION), //
-    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_REMINDER(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REMINDER, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION, PrismNotificationTemplatePropertyCategory.ACTION), //
-    APPLICATION_PROVIDE_REFERENCE_REQUEST(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REQUEST, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.ACTION, PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION), //
-    APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REMINDER, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.ACTION, PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION), //
-    APPLICATION_TERMINATE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.APPLICATION), //
-    APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.APPLICATION,
-            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.COMMENT, PrismNotificationTemplatePropertyCategory.APPLICATION), //
-    INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.INSTITUTION,
-            PrismNotificationTemplatePropertyCategory.INSTITUTION), //
-    INSTITUTION_IMPORT_ERROR_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.INSTITUTION,
-            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.ERROR), //
-    PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.PROGRAM,
-            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.PROGRAM), //
-    PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.PROJECT,
-            PrismNotificationTemplatePropertyCategory.INSTITUTION, PrismNotificationTemplatePropertyCategory.PROGRAM), //
-    SYSTEM_COMPLETE_REGISTRATION_REQUEST(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.REQUEST, PrismScope.SYSTEM,
-            PrismNotificationTemplatePropertyCategory.ACTION, PrismNotificationTemplatePropertyCategory.ACCOUNT_ACTIVATION), //
-    SYSTEM_PASSWORD_NOTIFICATION(PrismNotificationType.INDIVIDUAL, PrismNotificationPurpose.UPDATE, PrismScope.SYSTEM,
-            PrismNotificationTemplatePropertyCategory.NEW_PASSWORD), //
-    SYSTEM_APPLICATION_TASK_REQUEST(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.REQUEST, PrismScope.SYSTEM), //
-    SYSTEM_APPLICATION_TASK_REQUEST_REMINDER(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.REMINDER, PrismScope.SYSTEM), //
-    SYSTEM_APPLICATION_UPDATE_NOTIFICATION(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.UPDATE, PrismScope.SYSTEM), //
-    SYSTEM_INSTITUTION_TASK_REQUEST(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.REQUEST, PrismScope.SYSTEM), //
-    SYSTEM_INSTITUTION_TASK_REQUEST_REMINDER(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.REMINDER, PrismScope.SYSTEM), //
-    SYSTEM_INSTITUTION_UPDATE_NOTIFICATION(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.UPDATE, PrismScope.SYSTEM), //
-    SYSTEM_PROGRAM_TASK_REQUEST(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.REQUEST, PrismScope.SYSTEM,
-            PrismNotificationTemplatePropertyCategory.PROGRAM), //
-    SYSTEM_PROGRAM_TASK_REQUEST_REMINDER(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.REMINDER, PrismScope.SYSTEM,
-            PrismNotificationTemplatePropertyCategory.PROGRAM), //
-    SYSTEM_PROGRAM_UPDATE_NOTIFICATION(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.UPDATE, PrismScope.SYSTEM,
-            PrismNotificationTemplatePropertyCategory.PROGRAM), SYSTEM_PROJECT_TASK_REQUEST(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.REQUEST,
-            PrismScope.SYSTEM, PrismNotificationTemplatePropertyCategory.PROJECT), //
-    SYSTEM_PROJECT_TASK_REQUEST_REMINDER(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.REMINDER, PrismScope.SYSTEM,
-            PrismNotificationTemplatePropertyCategory.PROJECT), //
-    SYSTEM_PROJECT_UPDATE_NOTIFICATION(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.UPDATE, PrismScope.SYSTEM,
-            PrismNotificationTemplatePropertyCategory.PROJECT), //
-    SYSTEM_RECOMMENDATION_NOTIFICATION(PrismNotificationType.SYNDICATED, PrismNotificationPurpose.UPDATE, PrismScope.SYSTEM,
-            PrismNotificationTemplatePropertyCategory.RECOMMENDATION);
+    APPLICATION_COMPLETE_NOTIFICATION(INDIVIDUAL, UPDATE, APPLICATION, Lists.newArrayList(INSTITUTION_GLOBAL, PROGRAM_GLOBAL, PROJECT_GLOBAL,
+            APPLICATION_GLOBAL, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
+    APPLICATION_COMPLETE_REQUEST(INDIVIDUAL, REQUEST, APPLICATION, Lists.newArrayList(INSTITUTION_GLOBAL, PROGRAM_GLOBAL, PROJECT_GLOBAL, APPLICATION_GLOBAL,
+            ACTION_GLOBAL, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
+    APPLICATION_COMPLETE_REQUEST_REMINDER(INDIVIDUAL, REMINDER, APPLICATION, Lists.newArrayList(INSTITUTION_GLOBAL, PROGRAM_GLOBAL, PROJECT_GLOBAL,
+            APPLICATION_GLOBAL, ACTION_GLOBAL, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
+    APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION(INDIVIDUAL, UPDATE, APPLICATION, Lists.newArrayList(INSTITUTION_GLOBAL, PROGRAM_GLOBAL,
+            PROJECT_GLOBAL, APPLICATION_GLOBAL, APPLICATION_INTERVIEW_SCHEDULED, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
+    APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION(INDIVIDUAL, UPDATE, APPLICATION, Lists.newArrayList(INSTITUTION_GLOBAL, PROGRAM_GLOBAL,
+            PROJECT_GLOBAL, APPLICATION_GLOBAL, APPLICATION_APPROVED, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
+    APPLICATION_CONFIRM_REJECTION_NOTIFICATION(INDIVIDUAL, UPDATE, APPLICATION, Lists.newArrayList(INSTITUTION_GLOBAL, PROGRAM_GLOBAL, PROJECT_GLOBAL,
+            APPLICATION_GLOBAL, APPLICATION_REJECTED, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
+    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION(INDIVIDUAL, UPDATE, APPLICATION, Lists.newArrayList(INSTITUTION_GLOBAL, PROGRAM_GLOBAL,
+            PROJECT_GLOBAL, APPLICATION_GLOBAL, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
+    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST(INDIVIDUAL, REQUEST, APPLICATION, Lists.newArrayList(INSTITUTION_GLOBAL, PROGRAM_GLOBAL, PROJECT_GLOBAL,
+            APPLICATION_GLOBAL, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
+    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_REMINDER(INDIVIDUAL, REMINDER, APPLICATION, Lists.newArrayList(INSTITUTION_GLOBAL, PROGRAM_GLOBAL,
+            PROJECT_GLOBAL, APPLICATION_GLOBAL, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
+    APPLICATION_PROVIDE_REFERENCE_REQUEST(INDIVIDUAL, REQUEST, APPLICATION, Lists.newArrayList(INSTITUTION_GLOBAL, PROGRAM_GLOBAL, PROJECT_GLOBAL,
+            APPLICATION_GLOBAL, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
+    APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER(INDIVIDUAL, REMINDER, APPLICATION, Lists.newArrayList(INSTITUTION_GLOBAL, PROGRAM_GLOBAL, PROJECT_GLOBAL,
+            APPLICATION_GLOBAL, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
+    APPLICATION_TERMINATE_NOTIFICATION(INDIVIDUAL, UPDATE, APPLICATION, Lists.newArrayList(INSTITUTION_GLOBAL, PROGRAM_GLOBAL, PROJECT_GLOBAL,
+            APPLICATION_GLOBAL, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
+    APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION(INDIVIDUAL, UPDATE, APPLICATION, Lists.newArrayList(INSTITUTION_GLOBAL, PROGRAM_GLOBAL,
+            PROJECT_GLOBAL, APPLICATION_GLOBAL, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
+    INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION(INDIVIDUAL, UPDATE, INSTITUTION, Lists.newArrayList(INSTITUTION_GLOBAL, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
+    INSTITUTION_IMPORT_ERROR_NOTIFICATION(INDIVIDUAL, UPDATE, INSTITUTION, Lists.newArrayList(INSTITUTION_GLOBAL, INSTITUTION_APPROVED, COMMENT_GLOBAL,
+            TEMPLATE_GLOBAL)), //
+    PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION(INDIVIDUAL, UPDATE, PROGRAM, Lists.newArrayList(INSTITUTION_GLOBAL, PROGRAM_GLOBAL, COMMENT_GLOBAL,
+            TEMPLATE_GLOBAL)), //
+    PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION(INDIVIDUAL, UPDATE, PROJECT, Lists.newArrayList(INSTITUTION_GLOBAL, PROGRAM_GLOBAL, PROJECT_GLOBAL,
+            COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
+    SYSTEM_COMPLETE_REGISTRATION_REQUEST(INDIVIDUAL, REQUEST, SYSTEM, Lists.newArrayList(SYSTEM_USER_ACCOUNT, TEMPLATE_GLOBAL)), //
+    SYSTEM_PASSWORD_NOTIFICATION(INDIVIDUAL, UPDATE, SYSTEM, Lists.newArrayList(SYSTEM_USER_PASSWORD, TEMPLATE_GLOBAL)), //
+    SYSTEM_APPLICATION_TASK_REQUEST(SYNDICATED, REQUEST, SYSTEM, Lists.newArrayList(SYSTEM_APPLICATION_SYNDICATED, TEMPLATE_GLOBAL)), //
+    SYSTEM_APPLICATION_TASK_REQUEST_REMINDER(SYNDICATED, REMINDER, SYSTEM, Lists.newArrayList(SYSTEM_APPLICATION_SYNDICATED, TEMPLATE_GLOBAL)), //
+    SYSTEM_APPLICATION_UPDATE_NOTIFICATION(SYNDICATED, UPDATE, SYSTEM, Lists.newArrayList(SYSTEM_APPLICATION_SYNDICATED, TEMPLATE_GLOBAL)), //
+    SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION(SYNDICATED, UPDATE, SYSTEM, Lists.newArrayList(SYSTEM_APPLICATION_MARKETING, TEMPLATE_GLOBAL)), //
+    SYSTEM_INSTITUTION_TASK_REQUEST(SYNDICATED, REQUEST, SYSTEM, Lists.newArrayList(SYSTEM_INSTITUTION_SYNDICATED, TEMPLATE_GLOBAL)), //
+    SYSTEM_INSTITUTION_TASK_REQUEST_REMINDER(SYNDICATED, REMINDER, SYSTEM, Lists.newArrayList(SYSTEM_INSTITUTION_SYNDICATED, TEMPLATE_GLOBAL)), //
+    SYSTEM_INSTITUTION_UPDATE_NOTIFICATION(SYNDICATED, UPDATE, SYSTEM, Lists.newArrayList(SYSTEM_INSTITUTION_SYNDICATED, TEMPLATE_GLOBAL)), //
+    SYSTEM_PROGRAM_TASK_REQUEST(SYNDICATED, REQUEST, SYSTEM, Lists.newArrayList(SYSTEM_PROGRAM_SYNDICATED, TEMPLATE_GLOBAL)), //
+    SYSTEM_PROGRAM_TASK_REQUEST_REMINDER(SYNDICATED, REMINDER, SYSTEM, Lists.newArrayList(SYSTEM_PROGRAM_SYNDICATED, TEMPLATE_GLOBAL)), //
+    SYSTEM_PROGRAM_UPDATE_NOTIFICATION(SYNDICATED, UPDATE, SYSTEM, Lists.newArrayList(SYSTEM_PROGRAM_SYNDICATED, TEMPLATE_GLOBAL)), //
+    SYSTEM_PROJECT_TASK_REQUEST(SYNDICATED, REQUEST, SYSTEM, Lists.newArrayList(SYSTEM_PROJECT_SYNDICATED, TEMPLATE_GLOBAL)), //
+    SYSTEM_PROJECT_TASK_REQUEST_REMINDER(SYNDICATED, REMINDER, SYSTEM, Lists.newArrayList(SYSTEM_PROJECT_SYNDICATED, TEMPLATE_GLOBAL)), //
+    SYSTEM_PROJECT_UPDATE_NOTIFICATION(SYNDICATED, UPDATE, SYSTEM, Lists.newArrayList(SYSTEM_PROJECT_SYNDICATED, TEMPLATE_GLOBAL)); //
 
     private final PrismNotificationType notificationType;
 
@@ -70,7 +92,7 @@ public enum PrismNotificationTemplate {
 
     private final PrismScope scope;
 
-    private final PrismNotificationTemplatePropertyCategory[] propertyCategories;
+    private final List<PrismNotificationTemplatePropertyCategory> propertyCategories;
 
     private static final HashMap<PrismNotificationTemplate, PrismReminderDefinition> reminderDefinitions = Maps.newHashMap();
 
@@ -92,7 +114,7 @@ public enum PrismNotificationTemplate {
     }
 
     private PrismNotificationTemplate(PrismNotificationType notificationType, PrismNotificationPurpose notificationPurpose, PrismScope scope,
-                                      PrismNotificationTemplatePropertyCategory... propertyCategories) {
+            List<PrismNotificationTemplatePropertyCategory> propertyCategories) {
         this.notificationType = notificationType;
         this.notificationPurpose = notificationPurpose;
         this.scope = scope;
@@ -111,7 +133,7 @@ public enum PrismNotificationTemplate {
         return scope;
     }
 
-    public PrismNotificationTemplatePropertyCategory[] getPropertyCategories() {
+    public List<PrismNotificationTemplatePropertyCategory> getPropertyCategories() {
         return propertyCategories;
     }
 

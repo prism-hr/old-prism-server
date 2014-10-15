@@ -1,1 +1,1 @@
-Application ${APPLICATION_CODE} for ${PROJECT_OR_PROGRAM_CODE} - Pending Completion
+Application ${APPLICATION_CODE} for ${APPLICATION_PROJECT_OR_PROGRAM_CODE} - Pending Completion

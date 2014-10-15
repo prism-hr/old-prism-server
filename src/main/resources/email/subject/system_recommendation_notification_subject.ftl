@@ -1,1 +1,1 @@
-Updates to your ${SYSTEM_NAME} Projects
+Updates to your ${TEMPLATE_SYSTEM_TITLE} Projects

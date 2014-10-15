@@ -14,6 +14,8 @@ public class AdvertFilterMetadataDTO {
     private List<PrismAdvertIndustry> industries;
 
     private List<PrismAdvertFunction> functions;
+    
+    private List<String> competencies;
 
     private List<Integer> targetInstitutions;
 
@@ -41,6 +43,14 @@ public class AdvertFilterMetadataDTO {
 
     public final void setFunctions(List<PrismAdvertFunction> functions) {
         this.functions = functions;
+    }
+
+    public final List<String> getCompetencies() {
+        return competencies;
+    }
+
+    public final void setCompetencies(List<String> competencies) {
+        this.competencies = competencies;
     }
 
     public final List<Integer> getTargetInstitutions() {

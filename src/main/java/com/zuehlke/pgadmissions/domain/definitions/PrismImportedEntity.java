@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.imported.Country;
 import com.zuehlke.pgadmissions.domain.imported.Disability;
 import com.zuehlke.pgadmissions.domain.imported.Domicile;
@@ -67,6 +70,16 @@ public enum PrismImportedEntity {
     private String defaultLocation;
 
     private String schemaLocation;
+    
+    private static final List<PrismImportedEntity> defaultLocations = Lists.newArrayList();
+    
+    static {
+        for (PrismImportedEntity entity : values()) {
+            if (entity.defaultLocation != null) {
+                defaultLocations.add(entity);
+            }
+        }
+    }
 
     private PrismImportedEntity(Class<?> jaxbClass, String jaxbPropertyName, Class<?> entityClass, String defaultLocation, String schemaLocation) {
         this.jaxbClass = jaxbClass;
@@ -95,5 +108,9 @@ public enum PrismImportedEntity {
     public final String getSchemaLocation() {
         return schemaLocation;
     }
-
+    
+    public static final List<PrismImportedEntity> getDefaultLocations() {
+        return defaultLocations;
+    }
+    
 }

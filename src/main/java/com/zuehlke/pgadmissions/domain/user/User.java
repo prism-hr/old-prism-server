@@ -165,7 +165,7 @@ public class User implements UserDetails, IUniqueEntity {
     public void setEmail(String email) {
         this.email = email;
     }
-    
+
     public final Document getPortraitDocument() {
         return portraitDocument;
     }
@@ -268,10 +268,6 @@ public class User implements UserDetails, IUniqueEntity {
 
     public final void setDocuments(Set<Document> documents) {
         this.documents = documents;
-    }
-
-    public String getDisplayName() {
-        return firstName + " " + lastName;
     }
 
     public User withId(Integer id) {

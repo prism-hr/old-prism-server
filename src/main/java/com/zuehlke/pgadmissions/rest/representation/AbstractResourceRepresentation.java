@@ -36,7 +36,7 @@ public class AbstractResourceRepresentation {
 
     private List<PrismState> nextStates;
 
-    private List<CommentRepresentation> comments;
+    private List<List<CommentRepresentation>> comments;
 
     private List<ResourceUserRolesRepresentation> users;
 
@@ -128,11 +128,11 @@ public class AbstractResourceRepresentation {
         this.nextStates = nextStates;
     }
 
-    public List<CommentRepresentation> getComments() {
+    public List<List<CommentRepresentation>> getComments() {
         return comments;
     }
 
-    public void setComments(List<CommentRepresentation> comments) {
+    public void setComments(List<List<CommentRepresentation>> comments) {
         this.comments = comments;
     }
 

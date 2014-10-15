@@ -170,15 +170,16 @@ public class CommentDAO {
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("stateGroup.id")) //
                                 .add(Restrictions.isNotNull("transitionStateGroup.id")) //
-                                .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id")))
+                                .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id"))) //
                         .add(Restrictions.isNotNull("action.creationScope"))) //
-                .addOrder(Order.desc("createdTimestamp")) //
-                .addOrder(Order.desc("id")) //
+                .addOrder(Order.asc("createdTimestamp")) //
+                .addOrder(Order.asc("id")) //
                 .list();
     }
 
     public List<Comment> getStateComments(Resource resource, Comment start, Comment close) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
                 .add(Restrictions.ge("createdTimestamp", start.getCreatedTimestamp())) //
                 .add(Restrictions.ne("id", start.getId()));

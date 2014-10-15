@@ -1,1 +1,1 @@
-REMINDER: ${SYSTEM_NAME} Programs Require your Attention
+REMINDER: ${TEMPLATE_SYSTEM_TITLE} Programs Require your Attention

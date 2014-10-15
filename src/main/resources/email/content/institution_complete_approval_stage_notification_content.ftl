@@ -1,5 +1,5 @@
 <h1>
-    Dear ${USER_FIRST_NAME},
+    Dear ${TEMPLATE_USER_FIRST_NAME},
 </h1>
 
 <p>
@@ -9,9 +9,9 @@
     Please login for further details of this review and to access more detailed instructions on how to proceed.
 </p>
 
-${VIEW_EDIT_CONTROL}
+${TEMPLATE_VIEW_EDIT}
 
 <p>
     Yours sincerely,
-    <br/> ${AUTHOR}
+    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>

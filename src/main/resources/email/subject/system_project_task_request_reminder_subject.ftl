@@ -1,1 +1,1 @@
-REMINDER: ${SYSTEM_NAME} Projects Require your Attention
+REMINDER: ${TEMPLATE_SYSTEM_TITLE} Projects Require your Attention

@@ -1,17 +1,17 @@
 <h1>
-    Dear ${USER_FIRST_NAME},
+    Dear ${TEMPLATE_USER_FIRST_NAME},
 </h1>
 
 <p>
-    One or more new programme requests have been submitted for your consideration.
+    One or more new program requests have been submitted for your consideration.
 </p>
 <p>
-    Please login to view the requests and to check any updates. Details can be found in the Programme Requests tab.
+    Please login to view the requests and to check any updates. Details can be found in the Program Requests tab.
 </p>
 
-${HOMEPAGE_CONTROL}
+${SYSTEM_PROGRAM_HOMEPAGE}
 
 <p>
     Yours sincerely,
-    <br/> ${AUTHOR}
+    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>

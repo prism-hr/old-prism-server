@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.SYSTEM_APPLICATION_SYNDICATED;
 import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 import java.util.List;
 import java.util.Map;
 
 import com.zuehlke.pgadmissions.domain.definitions.*;
+
 import org.apache.commons.lang.WordUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,8 +158,8 @@ public class StaticDataResource {
             if (template.getReminderTemplate() != null) {
                 definition.put("reminderTemplate", template.getReminderTemplate().name());
             }
-            List<PrismNotificationTemplatePropertyCategory> categories = Lists.asList(PrismNotificationTemplatePropertyCategory.GLOBAL,
-                    template.getPropertyCategories());
+            List<PrismNotificationTemplatePropertyCategory> categories = template.getPropertyCategories();
+            categories.add(SYSTEM_APPLICATION_SYNDICATED);
             List<PrismNotificationTemplateProperty> properties = Lists.newLinkedList();
             for (PrismNotificationTemplateProperty property : PrismNotificationTemplateProperty.values()) {
                 if (categories.contains(property.getCategory())) {

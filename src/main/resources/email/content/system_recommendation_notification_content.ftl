@@ -1,19 +1,14 @@
 <h1>
-    Dear ${USER_FIRST_NAME},
+    Dear ${TEMPLATE_USER_FIRST_NAME},
 </h1>
 
 <p>
-    One or more of the postgraduate research applications assigned to you have recently been updated.
+    Please find below our current recommended opportunities for you.
 </p>
 
-<p>
-    Please login to view the applications and see the updates. Updates can be found in the application
-    timeline.
-</p>
-
-${HOMEPAGE_CONTROL}
+${SYSTEM_APPLICATION_RECOMMENDATION}
 
 <p>
     Yours sincerely,
-    <br/> ${AUTHOR}
+    <br/> ${TEMPLATE_AUTHOR_FULL_name}
 </p>

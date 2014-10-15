@@ -1,9 +1,9 @@
 <h1>
-    Dear ${USER_FIRST_NAME},
+    Dear ${TEMPLATE_USER_FIRST_NAME},
 </h1>
 
 <p>
-    Thank you for your Application ${APPLICATION_CODE} for ${PROJECT_OR_PROGRAM_TITLE}.
+    Thank you for your Application ${APPLICATION_CODE} for ${APPLICATION_PROJECT_OR_PROGRAM_TITLE}.
 </p>
 
 <p>
@@ -16,7 +16,7 @@
     see a timeline of all events and processing steps that have taken place on it.
 </p>
 
-${VIEW_EDIT_CONTROL}
+${TEMPLATE_VIEW_EDIT}
 
 <p>
     Note that we do not contact Referees immediately after you submit your application.
@@ -30,5 +30,5 @@ ${VIEW_EDIT_CONTROL}
 
 <p>
     Yours sincerely,
-    <br/> ${AUTHOR}
+    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>

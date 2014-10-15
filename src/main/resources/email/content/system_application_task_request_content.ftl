@@ -1,5 +1,5 @@
 <h1>
-    Dear ${USER_FIRST_NAME},
+    Dear ${TEMPLATE_USER_FIRST_NAME},
 </h1>
 
 <p>
@@ -11,7 +11,7 @@
     process them efficiently.
 </p>
 
-${HOMEPAGE_CONTROL}
+${SYSTEM_APPLICATION_HOMEPAGE}
 
 <p>
     It is important to our applicants and to our performance in recruiting them that we are able to
@@ -21,5 +21,5 @@ ${HOMEPAGE_CONTROL}
 
 <p>
     Yours sincerely,
-    <br/> ${AUTHOR}
+    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>

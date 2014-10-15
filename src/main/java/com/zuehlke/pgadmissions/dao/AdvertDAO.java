@@ -13,8 +13,11 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.advert.AdvertCompetency;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 
 @Repository
@@ -63,17 +66,13 @@ public class AdvertDAO {
     }
 
     public List<Advert> getAdvertsWithElapsedClosingDates(LocalDate baseline) {
-        return (List<Advert>) sessionFactory.getCurrentSession()
-                .createCriteria(Advert.class)
-                //
-                .createAlias("closingDate", "closingDate", JoinType.LEFT_OUTER_JOIN)
-                //
-                .createAlias("closingDates", "otherClosingDate", JoinType.LEFT_OUTER_JOIN)
-                //
-                .add(Restrictions
-                        .disjunction()
-                        .add(Restrictions.lt("closingDate.closingDate", baseline))
-                        .add(Restrictions.conjunction().add(Restrictions.isNull("closingDate.id"))
+        return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .createAlias("closingDate", "closingDate", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("closingDates", "otherClosingDate", JoinType.LEFT_OUTER_JOIN) //
+                .add(Restrictions //
+                        .disjunction() //
+                        .add(Restrictions.lt("closingDate.closingDate", baseline)) //
+                        .add(Restrictions.conjunction().add(Restrictions.isNull("closingDate.id")) //
                                 .add(Restrictions.ge("otherClosingDate.closingDate", baseline)))) //
                 .list();
     }
@@ -106,6 +105,19 @@ public class AdvertDAO {
                                 .add(Restrictions.isNotNull("pay.currencySpecified")) //
                                 .add(Restrictions.isNotNull("pay.currencyAtLocale")) //
                                 .add(Restrictions.neProperty("pay.currencySpecified", "pay.currencyAtLocale")))).list();
+    }
+
+    public List<String> getPossibleCompetencies(Institution institution, PrismLocale locale) {
+        return (List<String>) sessionFactory.getCurrentSession().createCriteria(AdvertCompetency.class) //
+                .setProjection(Projections.groupProperty("competency")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.program", "program", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.project", "project", JoinType.LEFT_OUTER_JOIN) //
+                .add(Restrictions.eq("advert.locale", locale)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eqOrIsNull("program.institution", institution)) //
+                        .add(Restrictions.eqOrIsNull("project.institution", institution))) //
+                .list();
     }
 
 }

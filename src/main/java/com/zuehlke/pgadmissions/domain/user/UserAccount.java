@@ -38,12 +38,12 @@ public class UserAccount {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime temporaryPasswordExpiryTimestamp;
     
-    @Column(name = "send_recommendation_notification", nullable = false)
-    private Boolean sendRecommendationNotification;
+    @Column(name = "send_application_recommendation_notification", nullable = false)
+    private Boolean sendApplicationRecommendationNotification;
     
-    @Column(name = "last_notified_date_recommendation")
+    @Column(name = "last_notified_date_application_recommendation")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate lastNotifiedDateRecommendation;
+    private LocalDate lastNotifiedDateApplicationRecommendation;
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
@@ -84,20 +84,20 @@ public class UserAccount {
         this.enabled = enabled;
     }
 
-    public final Boolean isSendRecommendationNotification() {
-        return sendRecommendationNotification;
+    public final Boolean getSendApplicationRecommendationNotification() {
+        return sendApplicationRecommendationNotification;
     }
 
-    public final void setSendRecommendationNotification(Boolean sendRecommendationNotification) {
-        this.sendRecommendationNotification = sendRecommendationNotification;
+    public final void setSendApplicationRecommendationNotification(Boolean sendApplicationRecommendationNotification) {
+        this.sendApplicationRecommendationNotification = sendApplicationRecommendationNotification;
     }
 
-    public final LocalDate getLastNotifiedDateRecommendation() {
-        return lastNotifiedDateRecommendation;
+    public final LocalDate getLastNotifiedDateApplicationRecommendation() {
+        return lastNotifiedDateApplicationRecommendation;
     }
 
-    public final void setLastNotifiedDateRecommendation(LocalDate lastNotifiedDateRecommendation) {
-        this.lastNotifiedDateRecommendation = lastNotifiedDateRecommendation;
+    public final void setLastNotifiedDateApplicationRecommendation(LocalDate lastNotifiedDateApplicationRecommendation) {
+        this.lastNotifiedDateApplicationRecommendation = lastNotifiedDateApplicationRecommendation;
     }
 
     public Map<Scope, ResourceListFilter> getFilters() {
@@ -109,8 +109,8 @@ public class UserAccount {
         return this;
     }
 
-    public UserAccount withSendRecommendationNotification(Boolean sendRecommendationNotification) {
-        this.sendRecommendationNotification = sendRecommendationNotification;
+    public UserAccount withSendApplicationRecommendationNotification(Boolean sendApplicationRecommendationNotification) {
+        this.sendApplicationRecommendationNotification = sendApplicationRecommendationNotification;
         return this;
     }
     

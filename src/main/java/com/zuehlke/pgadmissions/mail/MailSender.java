@@ -1,6 +1,9 @@
 package com.zuehlke.pgadmissions.mail;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_EMAIL_LINK_MESSAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_HELPDESK_REPORT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR;
+import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -26,7 +29,6 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
@@ -38,8 +40,8 @@ import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplate;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
-import com.zuehlke.pgadmissions.services.NotificationTemplatePropertyService;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
+import com.zuehlke.pgadmissions.services.helpers.NotificationTemplatePropertyLoader;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
@@ -62,6 +64,9 @@ public class MailSender {
 
     @Value("${email.address.to}")
     private String emailAddressTo;
+    
+    @Value("${email.location}")
+    private String emailTemplateLocation;
 
     @Autowired
     private JavaMailSender javaMailSender;
@@ -71,9 +76,6 @@ public class MailSender {
 
     @Autowired
     private MailToPlainTextConverter mailToPlainTextConverter;
-
-    @Autowired
-    private NotificationTemplatePropertyService notificationTemplatePropertyService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -123,31 +125,32 @@ public class MailSender {
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
     }
 
-    public String processContent(PrismNotificationTemplate templateId, String templateValue, Map<String, Object> model, String subject) throws IOException, TemplateException {
+    public String processContent(PrismNotificationTemplate templateId, String templateValue, Map<String, Object> model, String subject) throws IOException,
+            TemplateException {
         Template template = new Template(templateId.name(), new StringReader(templateValue), freemarkerConfig.getConfiguration());
         String content = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
 
-        String emailTemplate = Resources.toString(Resources.getResource("email/email_template.ftl"), Charsets.UTF_8);
+        String emailTemplate = Resources.toString(Resources.getResource(emailTemplateLocation), Charsets.UTF_8);
         template = new Template("Email template", emailTemplate, freemarkerConfig.getConfiguration());
 
-        model = ImmutableMap.<String, Object>of("IMAGES_PATH", host + "/images/email", "SUBJECT", subject, "CONTENT", content);
+        model = ImmutableMap.<String, Object> of("IMAGES_PATH", host + "/images/email", "SUBJECT", subject, "CONTENT", content);
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
     }
 
     public Map<String, Object> createNotificationModel(NotificationTemplate notificationTemplate, NotificationTemplateModelDTO modelDTO) {
         Map<String, Object> model = Maps.newHashMap();
         List<PrismNotificationTemplatePropertyCategory> categories = notificationTemplate.getId().getPropertyCategories();
-        categories.add(PrismNotificationTemplatePropertyCategory.SYSTEM_GLOBAL);
+        NotificationTemplatePropertyLoader loader = applicationContext.getBean(NotificationTemplatePropertyLoader.class).withTemplateModelDTO(modelDTO);
         for (PrismNotificationTemplatePropertyCategory propertyCategory : categories) {
             for (PrismNotificationTemplateProperty property : propertyCategory.getProperties()) {
-                List<Object> arguments = Lists.newLinkedList();
-                arguments.add(modelDTO);
-                if (property.getMethodArguments().length > 0) {
-                    arguments.add(property.getMethodArguments());
+                String value = (String) ReflectionUtils.invokeMethod(loader, property.getMethodName());
+                boolean valueNull = value == null;
+                if (valueNull) {
+                    PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).withResource(modelDTO.getResource());
+                    value = "[" + propertyLoader.load(SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR) + ". " + propertyLoader.load(SYSTEM_HELPDESK_REPORT) + ": "
+                            + modelDTO.getResource().getSystem().getHelpdesk() + "]";
                 }
-                Object value = ReflectionUtils.invokeMethod(notificationTemplatePropertyService, property.getGetterMethod(), arguments.toArray());
-                model.put(property.name(), value);
-                model.put("HOST", host);
+                model.put(property.name(), !property.isEscapeHtml() || valueNull ? value : escapeHtml(value));
             }
         }
         return model;

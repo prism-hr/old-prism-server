@@ -30,7 +30,7 @@ public class ApplicationDownloadService {
 
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper;
 
@@ -87,7 +87,7 @@ public class ApplicationDownloadService {
 
             return baos.toByteArray();
         } catch (Exception e) {
-            LOGGER.error("Error downloading applications for " + currentUser.getDisplayName(), e);
+            LOGGER.error("Error downloading applications for " + currentUser.getFullName(), e);
         }
 
         return null;

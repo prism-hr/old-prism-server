@@ -11,22 +11,22 @@ public class NotificationTemplateModelDTO {
 
     private Resource resource;
 
-    private User sender;
+    private User author;
 
     private Comment comment;
 
     private PrismAction transitionAction;
 
-    private String errorMessage;
+    private String dataImportErrorMessage;
 
-    private String recommendations;
+    private String applicationRecommendation;
 
     private String newPassword;
 
-    public NotificationTemplateModelDTO(User user, Resource resource, User sender) {
+    public NotificationTemplateModelDTO(User user, Resource resource, User author) {
         this.user = user;
         this.resource = resource;
-        this.sender = sender;
+        this.author = author;
     }
 
     public User getUser() {
@@ -37,8 +37,8 @@ public class NotificationTemplateModelDTO {
         return resource;
     }
 
-    public User getSender() {
-        return sender;
+    public User getAuthor() {
+        return author;
     }
 
     public Comment getComment() {
@@ -49,12 +49,12 @@ public class NotificationTemplateModelDTO {
         return transitionAction;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public String getDataImportErrorMessage() {
+        return dataImportErrorMessage;
     }
 
-    public String getRecommendations() {
-        return recommendations;
+    public String getApplicationRecommendation() {
+        return applicationRecommendation;
     }
 
     public String getNewPassword() {
@@ -71,13 +71,13 @@ public class NotificationTemplateModelDTO {
         return this;
     }
 
-    public NotificationTemplateModelDTO withErrorMessage(final String errorMessage) {
-        this.errorMessage = errorMessage;
+    public NotificationTemplateModelDTO withDataImportErrorMessage(final String dataImportErrorMessage) {
+        this.dataImportErrorMessage = dataImportErrorMessage;
         return this;
     }
 
-    public NotificationTemplateModelDTO withRecommendations(final String recommendations) {
-        this.recommendations = recommendations;
+    public NotificationTemplateModelDTO withApplicationRecommendation(final String applicationRecommendation) {
+        this.applicationRecommendation = applicationRecommendation;
         return this;
     }
 
@@ -85,6 +85,5 @@ public class NotificationTemplateModelDTO {
         this.newPassword = newPassword;
         return this;
     }
-
 
 }

@@ -1,5 +1,5 @@
 <h1>
-    Dear ${USER_FIRST_NAME},
+    Dear ${TEMPLATE_USER_FIRST_NAME},
 </h1>
 
 <p>
@@ -7,16 +7,16 @@
 </p>
 
 <p>
-    Your request has now been reviewed by our staff and the application has been ${OUTCOME}.
+    Your request has now been reviewed by our staff and the application has been ${COMMENT_TRANSITION_STATE}.
 </p>
 
 <p>
     Please login for further details of this review and to access more detailed instructions on how to proceed.
 </p>
 
-${ACTION_CONTROL}
+${ACTION_COMPLETE}
 
 <p>
     Yours sincerely,
-    <br/> ${AUTHOR}
+    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>

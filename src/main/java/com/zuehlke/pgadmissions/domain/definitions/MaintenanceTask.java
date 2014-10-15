@@ -7,6 +7,7 @@ import com.zuehlke.pgadmissions.services.lifecycle.helpers.ApplicationExportServ
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.DocumentServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperInstitution;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperSystem;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.InstitutionServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.NotificationServiceHelperRecommendation;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.NotificationServiceHelperWorkflow;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.ProgramServiceHelper;
@@ -20,6 +21,7 @@ public enum MaintenanceTask {
     SYSTEM_EXECUTE_PROPAGATED_STATE_TRANSITION(StateServiceHelperPropagation.class, false),
     SYSTEM_IMPORT_SYSTEM_REFERENCE_DATA(ImportedEntityServiceHelperSystem.class, true),
     SYSTEM_IMPORT_INSTITUTION_REFERENCE_DATA(ImportedEntityServiceHelperInstitution.class, true),
+    SYSTEM_STARTUP_INSTITUTION(InstitutionServiceHelper.class, true), 
     SYSTEM_UPDATE_PROGRAM_STUDY_OPTION(ProgramServiceHelper.class, true),
     SYSTEM_UPDATE_ADVERT_CLOSING_DATE(AdvertServiceHelperClosingDate.class, true),
     SYSTEM_UPDATE_ADVERT_EXCHANGE_RATE(AdvertServiceHelperExchangeRate.class, true),

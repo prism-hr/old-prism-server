@@ -391,6 +391,27 @@ public class Project extends ResourceParent {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
+    public Project withUser(final User user) {
+        this.user = user;
+        return this;
+    }
+
+    public Project withSystem(final System system) {
+        this.system = system;
+        return this;
+    }
+
+    public Project withInstitution(final Institution institution) {
+        this.institution = institution;
+        return this;
+    }
+
+    public Project withProgram(final Program program) {
+        this.program = program;
+        return this;
+    }
+
+
     public Project withTitle(final String title) {
         this.title = title;
         return this;

@@ -305,6 +305,7 @@ public class ApplicationService {
         }
         if (commentDTO.getRejectionReason() != null) {
             RejectionReason rejectionReason = entityService.getById(RejectionReason.class, commentDTO.getRejectionReason());
+            comment.setRejectionReason(rejectionReason);
             comment.setContent(rejectionReason.getName());
         }
         if (commentDTO.getAppointmentTimeslots() != null) {

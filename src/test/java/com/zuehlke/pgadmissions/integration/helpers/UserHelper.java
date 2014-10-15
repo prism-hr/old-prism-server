@@ -56,7 +56,7 @@ public class UserHelper {
         Resource resource = resourceService.getById(resourceScope.getResourceClass(), resourceId);
         assertEquals(testContextReferrer, resource.getReferrer());
 
-        userService.activateUser(user.getId());
+        userService.activateUser(user.getId(), actionId);
         assertTrue(user.isEnabled());
     }
     

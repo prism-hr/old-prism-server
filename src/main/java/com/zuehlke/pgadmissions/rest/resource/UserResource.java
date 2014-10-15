@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
@@ -116,12 +117,12 @@ public class UserResource {
     }
 
     @RequestMapping(value = "/activate", method = RequestMethod.PUT)
-    public Map<String, String> activateAccount(@RequestParam String activationCode) {
+    public Map<String, String> activateAccount(@RequestParam String activationCode, @RequestParam(required=false) PrismAction actionId) {
         User user = userService.getUserByActivationCode(activationCode);
         if (user == null) {
             throw new ResourceNotFoundException();
         }
-        userService.activateUser(user.getId());
+        userService.activateUser(user.getId(), actionId);
         return ImmutableMap.of("status", "ACTIVATED", "user", user.getEmail());
     }
 

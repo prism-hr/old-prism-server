@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -223,11 +224,9 @@ public class UserService {
         return Lists.newArrayList();
     }
 
-    public boolean activateUser(Integer userId) {
+    public void activateUser(Integer userId, PrismAction actionId) {
         User user = getById(userId);
-        boolean wasEnabled = user.getUserAccount().getEnabled();
         user.getUserAccount().setEnabled(true);
-        return !wasEnabled;
     }
 
     public List<User> getEnabledResourceUsers(Resource resource) {

@@ -54,6 +54,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.SystemService;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -73,6 +74,9 @@ public class NotificationTemplatePropertyLoader {
     @Autowired
     private AdvertService advertService;
 
+    @Autowired
+    private SystemService systemService;
+    
     @Autowired
     private FreeMarkerConfig freemarkerConfig;
 
@@ -108,11 +112,11 @@ public class NotificationTemplatePropertyLoader {
     }
 
     public String getTemplateInvokerFullName() {
-        return templateModelDTO.getComment().getUserDisplay();
+        return templateModelDTO.getInvoker().getFullName();
     }
 
     public String getTemplateInvokerEmail() {
-        return templateModelDTO.getComment().getUser().getEmail();
+        return templateModelDTO.getInvoker().getEmail();
     }
 
     public String getTemplateSystemTitle() {
@@ -120,11 +124,11 @@ public class NotificationTemplatePropertyLoader {
     }
 
     public String getTemplateSystemHomepage() {
-        return templateModelDTO.getComment().getResource().getSystem().getHomepage();
+        return templateModelDTO.getResource().getSystem().getHomepage();
     }
 
     public String getTemplateHelpdesk() throws IOException, TemplateException {
-        return buildRedirectionControl(templateModelDTO.getComment().getResource().getHelpdeskDisplay(), SYSTEM_HELPDESK);
+        return buildRedirectionControl(templateModelDTO.getResource().getHelpdeskDisplay(), SYSTEM_HELPDESK);
     }
 
     public String getTemplateViewEdit() throws IOException, TemplateException {
@@ -310,6 +314,12 @@ public class NotificationTemplatePropertyLoader {
 
     public NotificationTemplatePropertyLoader withTemplateModelDTO(NotificationTemplateModelDTO notificationTemplateModelDTO) {
         this.templateModelDTO = notificationTemplateModelDTO;
+        Comment comment = notificationTemplateModelDTO.getComment();
+        if (comment == null) {
+            templateModelDTO.setInvoker(systemService.getSystem().getUser());
+        } else {
+            templateModelDTO.setInvoker(comment.getUser());
+        }
         propertyLoader = applicationContext.getBean(PropertyLoader.class).withResource(notificationTemplateModelDTO.getResource());
         return this;
     }

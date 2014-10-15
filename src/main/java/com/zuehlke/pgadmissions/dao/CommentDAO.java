@@ -159,6 +159,11 @@ public class CommentDAO {
 
     public Comment getLatestVisibleComment(Resource resource) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
+                .createAlias("transitionState", "transitionState", JoinType.INNER_JOIN) //
+                .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.ne("action.actionCategory", PrismActionCategory.ESCALATE_RESOURCE)) //

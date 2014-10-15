@@ -9,9 +9,11 @@ public class NotificationTemplateModelDTO {
 
     private User user;
 
-    private Resource resource;
-
     private User author;
+    
+    private User invoker;
+    
+    private Resource resource;
 
     private Comment comment;
 
@@ -23,10 +25,10 @@ public class NotificationTemplateModelDTO {
 
     private String newPassword;
 
-    public NotificationTemplateModelDTO(User user, Resource resource, User author) {
+    public NotificationTemplateModelDTO(User user, User author, Resource resource) {
         this.user = user;
-        this.resource = resource;
         this.author = author;
+        this.resource = resource;
     }
 
     public User getUser() {
@@ -39,6 +41,14 @@ public class NotificationTemplateModelDTO {
 
     public User getAuthor() {
         return author;
+    }
+
+    public final User getInvoker() {
+        return invoker;
+    }
+
+    public final void setInvoker(User invoker) {
+        this.invoker = invoker;
     }
 
     public Comment getComment() {

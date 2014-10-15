@@ -90,7 +90,7 @@ public class InstitutionDAO {
     public List<Integer> getInstitutionsToActivate() {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
                 .setProjection(Projections.property("id")) //
-                .add(Restrictions.eq("state", INSTITUTION_APPROVED)) //
+                .add(Restrictions.eq("state.id", INSTITUTION_APPROVED)) //
                 .add(Restrictions.isNotEmpty("importedEntityFeeds")) //
                 .list();
     }

@@ -1,9 +1,8 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-
 import javax.validation.constraints.NotNull;
+
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 
 public class CommentAssignedUserDTO {
 

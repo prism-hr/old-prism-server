@@ -221,10 +221,10 @@ public class NotificationDAO {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .setProjection(Projections.property("id")) //
                 .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("userAccount.sendRecommendationNotification", true)) //
+                .add(Restrictions.eq("userAccount.sendApplicationRecommendationNotification", true)) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("userAccount.lastNotifiedDateRecommendation")) //
-                        .add(Restrictions.lt("userAccount.lastNotifiedDateRecommendation", lastSentBaseline))) //
+                        .add(Restrictions.isNull("userAccount.sendApplicationRecommendationNotification")) //
+                        .add(Restrictions.lt("userAccount.lastNotifiedDateApplicationRecommendation", lastSentBaseline))) //
                 .list();
     }
 

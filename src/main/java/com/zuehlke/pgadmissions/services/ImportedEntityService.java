@@ -158,7 +158,8 @@ public class ImportedEntityService {
             throws DataImportException, DeduplicationException {
         String domicileCode = institutionDefinition.getDomicile();
 
-        Domicile domicile = entityService.getByProperties(Domicile.class, ImmutableMap.of("code", (Object) domicileCode, "enabled", true));
+        Domicile domicile = entityService.getByProperties(Domicile.class,
+                ImmutableMap.of("institution", (Object) institution, "code", (Object) domicileCode, "enabled", true));
         ImportedInstitution transientImportedInstitution = new ImportedInstitution().withInstitution(institution).withDomicile(domicile)
                 .withCode(institutionDefinition.getCode()).withName(institutionDefinition.getName()).withEnabled(true);
 
@@ -270,6 +271,10 @@ public class ImportedEntityService {
                 .withNestedLevel(region.getNestedLevel() + 1).withName(name).withRegionType(categories.get(subdivision.getCategoryId()));
         return geocodableLocationService.getOrCreate(transientNestedRegion);
 
+    }
+
+    public List<Integer> getPendingImportEntityFeeds(Integer institutionId) {
+        return importedEntityDAO.getPendingImportedEntityFeeds(institutionId);
     }
 
     private Program mergeProgram(Institution institution, Programme programDefinition) throws DeduplicationException {

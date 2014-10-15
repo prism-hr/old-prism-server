@@ -1,10 +1,10 @@
 <h1>
-    Dear ${USER_FIRST_NAME},
+    Dear ${TEMPLATE_USER_FIRST_NAME},
 </h1>
 
 <p>
-${APPLICANT} has submitted an Application ${APPLICATION_CODE} for ${STUDY_OPTION} at
-${INSTITUTION_HOMEPAGE_LINK} in ${PROJECT_OR_PROGRAM_TITLE}.
+${APPLICATION_CREATOR_FULL_NAME} has submitted an Application ${APPLICATION_CODE} for ${APPLICATION_PROGRAM_TYPE} at
+${INSTITUTION_HOMEPAGE} in ${APPLICATION_PROJECT_OR_PROGRAM_TITLE}.
 </p>
 <p>
     They have nominated you as one of their referees and we would very much appreciate your feedback on their
@@ -34,7 +34,7 @@ ${INSTITUTION_HOMEPAGE_LINK} in ${PROJECT_OR_PROGRAM_TITLE}.
 <br/>
 </p>
 
-${ACTION_CONTROL}
+${ACTION_COMPLETE}
 
 <p>
     We kindly ask our Referees to submit their feedback using our linked admissions portal, (rather than submitting
@@ -53,12 +53,12 @@ ${ACTION_CONTROL}
 
 <p>
     We look forward to receiving your feedback at your earliest convenience. Should you run into any difficulty, please
-    see our dedicated helpdesk to access further assistance.
+    see our dedicated ${TEMPLATE_HELPDESK} to access further assistance.
 </p>
 
 
 
 <p>
     Yours sincerely,
-    <br/> ${AUTHOR}
+    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>

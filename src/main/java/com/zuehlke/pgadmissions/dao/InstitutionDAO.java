@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
+
 import java.util.List;
 
 import org.hibernate.SessionFactory;
@@ -31,7 +33,7 @@ public class InstitutionDAO {
                 .addOrder(Order.asc("name")) //
                 .list();
     }
-    
+
     public List<InstitutionDomicileRegion> getRegionsByDomicile(InstitutionDomicile domicile) {
         return sessionFactory.getCurrentSession().createCriteria(InstitutionDomicileRegion.class) //
                 .add(Restrictions.eq("domicile", domicile)) //
@@ -69,7 +71,7 @@ public class InstitutionDAO {
                 .list();
 
     }
-    
+
     public List<InstitutionSuggestionDTO> getSimilarImportedInsitutions(Integer domicileId, String searchTerm) {
         return (List<InstitutionSuggestionDTO>) sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class, "institution") //
                 .setProjection(Projections.projectionList() //
@@ -84,5 +86,13 @@ public class InstitutionDAO {
                 .setResultTransformer(Transformers.aliasToBean(InstitutionSuggestionDTO.class)) //
                 .list();
     }
-    
+
+    public List<Integer> getInstitutionsToActivate() {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
+                .setProjection(Projections.property("id")) //
+                .add(Restrictions.eq("state.id", INSTITUTION_APPROVED)) //
+                .add(Restrictions.isNotEmpty("importedEntityFeeds")) //
+                .list();
+    }
+
 }

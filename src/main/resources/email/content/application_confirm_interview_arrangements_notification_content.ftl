@@ -1,30 +1,30 @@
 <h1>
-    Dear ${USER_FIRST_NAME},
+    Dear ${TEMPLATE_USER_FIRST_NAME},
 </h1>
 
 
 <p>
-    We can confirm the arrangements for your interview of ${APPLICANT} in connection with
-    Application ${APPLICATION_CODE} for ${PROJECT_OR_PROGRAM_TITLE}.
+    We can confirm the arrangements for your interview of ${APPLICATION_CREATOR_FULL_NAME} in connection with
+    Application ${APPLICATION_CODE} for ${TEMPLATE_PROJECT_OR_PROGRAM_TITLE}.
 </p>
 <p>
-    The interview will take place at ${INTERVIEW_DATE_TIME} (${INTERVIEW_TIME_ZONE}).
+    The interview will take place at ${APPLICATION_INTERVIEW_DATE_TIME} (${APPLICATION_INTERVIEW_TIME_ZONE}).
 </p>
 <p>
     Interviewer instructions:
 </p>
-<p>${INTERVIEWER_INSTRUCTIONS}</p>
+<p>${APPLICATION_INTERVIEWER_INSTRUCTIONS}</p>
 
 <p>
     Interviewee instructions:
 </p>
-<p>${INTERVIEWEE_INSTRUCTIONS}</p>
+<p>${APPLICATION_INTERVIEWEE_INSTRUCTIONS}</p>
 
-${INTERVIEW_LOCATION_CONTROL}
+${APPLICATION_INTERVIEW_LOCATION}
 
-${VIEW_EDIT_CONTROL}
+${TEMPLATE_VIEW_EDIT}
 
 <p>
     Yours sincerely,
-    <br/> ${AUTHOR}
+    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>

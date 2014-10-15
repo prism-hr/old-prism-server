@@ -1,1 +1,1 @@
-Updates to your ${SYSTEM_NAME} Applications
+Updates to your ${TEMPLATE_SYSTEM_TITLE} Applications

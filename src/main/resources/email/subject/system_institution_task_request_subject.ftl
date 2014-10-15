@@ -1,1 +1,1 @@
-${SYSTEM_NAME} Institutions Require your Attention
+${TEMPLATE_SYSTEM_TITLE} Institutions Require your Attention

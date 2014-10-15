@@ -48,7 +48,6 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
 
     @Value("${context.environment}")
     private String contextEnvironment;
-
     @Autowired
     private ImportedEntityService importedEntityService;
 
@@ -115,7 +114,6 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
                 }
 
                 importedEntityService.setLastImportedTimestamp(importedEntityFeed);
-                // TODO: state change to institution ready to use.
             }
         } catch (Exception e) {
             throw new DataImportException("Error during the import of file: " + fileLocation, e);

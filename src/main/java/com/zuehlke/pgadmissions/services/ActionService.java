@@ -175,7 +175,7 @@ public class ActionService {
     public Action getViewEditAction(Resource resource) {
         return actionDAO.getViewEditAction(resource);
     }
-
+    
     public void throwWorkflowPermissionException(Resource resource, Action action) {
         throwWorkflowPermissionException(resource, action, null);
     }

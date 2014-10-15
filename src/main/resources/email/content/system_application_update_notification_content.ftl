@@ -1,5 +1,5 @@
 <h1>
-    Dear ${USER_FIRST_NAME},
+    Dear ${TEMPLATE_USER_FIRST_NAME},
 </h1>
 
 <p>
@@ -9,10 +9,10 @@
     Please login to view the applications and see the updates. Updates can be found in the application timeline.
 </p>
 
-${ACTION_CONTROL}
+${ACTION_COMPLETE}
 
 <p>
     Yours sincerely,
-    <br/> ${AUTHOR}
+    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>
 

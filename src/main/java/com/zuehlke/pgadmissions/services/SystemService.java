@@ -229,8 +229,8 @@ public class SystemService {
             Scope creationScope = entityService.getById(Scope.class, prismAction.getCreationScope());
             Action transientAction = new Action().withId(prismAction).withActionType(prismAction.getActionType())
                     .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
-                    .withTransitionAction(prismAction.isTransitionAction()).withDeclinableAction(prismAction.isDeclinableAction()).withScope(scope)
-                    .withCreationScope(creationScope);
+                    .withTransitionAction(prismAction.isTransitionAction()).withDeclinableAction(prismAction.isDeclinableAction())
+                    .withEmphasizedAction(prismAction.isEmphasizedAction()).withScope(scope).withCreationScope(creationScope);
             Action action = entityService.createOrUpdate(transientAction);
             action.getRedactions().clear();
 
@@ -439,7 +439,7 @@ public class SystemService {
             Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                     .addAssignedUser(user, roleService.getCreatorRole(system), PrismRoleTransitionType.CREATE);
             ActionOutcomeDTO outcome = actionService.executeSystemAction(system, action, comment);
-            notificationService.sendRegistrationNotification(user, outcome);
+            notificationService.sendRegistrationNotification(user, outcome, comment);
         }
     }
 

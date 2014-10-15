@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_STARTUP;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -104,7 +106,7 @@ public class InstitutionService {
                 .withHomepage(institutionDTO.getHomepage()).withUclInstitution(false).withDefaultProgramType(institutionDTO.getDefaultProgramType())
                 .withDefaultStudyOption(institutionDTO.getDefaultStudyOption()).withGoogleId(institutionDTO.getGoogleIdentifier())
                 .withLinkedinUri(institutionDTO.getLinkedinIdentifier()).withCurrency(institutionDTO.getCurrency()).withUser(user);
-        
+
         address.setInstitution(institution);
         setLogoDocument(institution, institutionDTO, PrismAction.SYSTEM_CREATE_INSTITUTION);
         return institution;
@@ -157,10 +159,8 @@ public class InstitutionService {
 
     public void populateDefaultImportedEntityFeeds() throws DeduplicationException {
         for (Institution institution : institutionDAO.getInstitutionsWithoutImportedEntityFeeds()) {
-            for (PrismImportedEntity importedEntityType : PrismImportedEntity.values()) {
-                if (importedEntityType.getDefaultLocation() != null) {
-                    importedEntityService.getOrCreateImportedEntityFeed(institution, importedEntityType, importedEntityType.getDefaultLocation());
-                }
+            for (PrismImportedEntity importedEntityType : PrismImportedEntity.getDefaultLocations()) {
+                importedEntityService.getOrCreateImportedEntityFeed(institution, importedEntityType, importedEntityType.getDefaultLocation());
             }
         }
     }
@@ -185,6 +185,18 @@ public class InstitutionService {
 
     public SocialPresenceRepresentation getSocialProfiles(String institutionTitle) throws IOException {
         return socialPresenceService.getPotentialInstitutionProfiles(institutionTitle);
+    }
+
+    public void initializeInstitution(Integer institutionId) throws DeduplicationException {
+        Institution institution = getById(institutionId);
+        Action action = actionService.getById(INSTITUTION_STARTUP);
+        Comment comment = new Comment().withUser(systemService.getSystem().getUser()).withCreatedTimestamp(new DateTime()).withAction(action)
+                .withDeclinedResponse(false);
+        actionService.executeSystemAction(institution, action, comment);
+    }
+    
+    public List<Integer> getInstitutionsToActivate() {
+        return institutionDAO.getInstitutionsToActivate();
     }
 
     private void setLogoDocument(Institution institution, InstitutionDTO institutionDTO, PrismAction actionId) {

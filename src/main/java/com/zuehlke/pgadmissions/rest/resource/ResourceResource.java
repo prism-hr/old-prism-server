@@ -167,13 +167,13 @@ public class ResourceResource {
             userRolesRepresentations.add(new ResourceUserRolesRepresentation(userRepresentation, roles));
         }
         representation.setUsers(userRolesRepresentations);
-        MethodUtils.invokeMethod(this, "enrich" + resource.getClass().getSimpleName() + "Representation", new Object[]{resource, representation});
+        MethodUtils.invokeMethod(this, "enrich" + resource.getClass().getSimpleName() + "Representation", new Object[] { resource, representation });
         return representation;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public List<ResourceListRowRepresentation> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor,
-                                                            @RequestParam(required = false) String filter, @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
+            @RequestParam(required = false) String filter, @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
         ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
         DateTime baseline = new DateTime().minusDays(1);
@@ -213,7 +213,7 @@ public class ResourceResource {
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)
     public void addUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                            @RequestBody Map<String, PrismRole> body) throws Exception {
+            @RequestBody Map<String, PrismRole> body) throws Exception {
         PrismRole role = body.get("role");
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
@@ -224,7 +224,7 @@ public class ResourceResource {
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles/{role}", method = RequestMethod.DELETE)
     public void deleteUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @PathVariable PrismRole role,
-                               @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
+            @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
 
@@ -234,7 +234,7 @@ public class ResourceResource {
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
     public UserRepresentation addUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                                      @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) throws Exception {
+            @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         UserRepresentation newUser = userRolesRepresentation.getUser();
 
@@ -265,7 +265,6 @@ public class ResourceResource {
         }
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     public void enrichApplicationRepresentation(Application application, ApplicationExtendedRepresentation applicationRepresentation) {
         List<User> interested = userService.getUsersInterestedInApplication(application);
         List<User> potentiallyInterested = userService.getUsersPotentiallyInterestedInApplication(application, interested);
@@ -299,19 +298,15 @@ public class ResourceResource {
         applicationRepresentation.setAvailableStudyOptions(availableStudyOptions);
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     public void enrichProjectRepresentation(Project program, ProjectExtendedRepresentation programRepresentation) {
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     public void enrichProgramRepresentation(Program program, ProgramExtendedRepresentation programRepresentation) {
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     public void enrichInstitutionRepresentation(Institution institution, InstitutionExtendedRepresentation institutionRepresentation) {
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     public void enrichSystemRepresentation(System system, SystemExtendedRepresentation systemRepresentation) {
     }
 

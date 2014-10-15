@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.joda.time.LocalDate;
@@ -53,7 +54,7 @@ public class ImportedEntityDAO {
         return sessionFactory.getCurrentSession().createCriteria(entityClass) //
                 .add(Restrictions.eq("institution", institution)) //
                 .add(Restrictions.eq("enabled", true)) //
-                .addOrder(Order.asc("name"))
+                .addOrder(Order.asc("name")) //
                 .list();
     }
     
@@ -61,7 +62,7 @@ public class ImportedEntityDAO {
         return sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class)//
                 .add(Restrictions.eq("domicile", domicile)) //
                 .add(Restrictions.eq("enabled", true)) //
-                .addOrder(Order.asc("name"))
+                .addOrder(Order.asc("name")) //
                 .list();
     }
 
@@ -93,7 +94,7 @@ public class ImportedEntityDAO {
     public void disableAllEntities(Class<?> entityClass, Institution institution) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update " + entityClass.getSimpleName() + " " //
-                    + "set enabled = false "
+                    + "set enabled = false " //
                     + "where institution = :institution") //
                 .setParameter("institution", institution) // 
                 .executeUpdate();
@@ -101,9 +102,9 @@ public class ImportedEntityDAO {
     
     public void disableAllImportedPrograms(Institution institution, LocalDate baseline) {
         sessionFactory.getCurrentSession().createQuery( //
-                "update Program "
-                    + "set dueDate = :dueDate "
-                    + "where institution = :institution "
+                "update Program " //
+                    + "set dueDate = :dueDate " //
+                    + "where institution = :institution " //
                         + "and imported is true")
                 .setParameter("institution", institution)
                 .setParameter("dueDate", baseline)
@@ -116,9 +117,9 @@ public class ImportedEntityDAO {
                     + "set enabled = false, "
                         + "defaultStartDate = null " //
                     + "where program in (" //
-                        + "select id "
+                        + "select id " //
                             + "from Program " //
-                        + "where institution = :institution "
+                        + "where institution = :institution " //
                             + "and imported is true)") //
                 .setParameter("institution", institution) //
                 .executeUpdate();
@@ -129,13 +130,21 @@ public class ImportedEntityDAO {
                 "update ProgramStudyOptionInstance " //
                     + "set enabled = false " //
                     + "where programStudyOption in (" //
-                        + "select programStudyOption.id "
-                            + "from Program join programStudyOptions programStudyOption "
-                        + "where institution = :institution "
+                        + "select programStudyOption.id " //
+                            + "from Program join programStudyOptions programStudyOption " //
+                        + "where institution = :institution " //
                             + "and imported is true)") //
                 .setParameter("institution", institution) //
                 .executeUpdate();
         
+    }
+    
+    public List<Integer> getPendingImportedEntityFeeds(Integer institutionId) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class) //
+                .setProjection(Projections.property("id")) //
+                .add(Restrictions.eq("institution.id", institutionId)) //
+                .add(Restrictions.isNull("lastImportedTimestamp")) //
+                .list();
     }
     
 }

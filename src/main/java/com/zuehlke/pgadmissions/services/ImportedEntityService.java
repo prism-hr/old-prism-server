@@ -271,6 +271,10 @@ public class ImportedEntityService {
         return geocodableLocationService.getOrCreate(transientNestedRegion);
 
     }
+    
+    public List<Integer> getPendingImportEntityFeeds(Integer institutionId) {
+        return importedEntityDAO.getPendingImportedEntityFeeds(institutionId);
+    }
 
     private Program mergeProgram(Institution institution, Programme programDefinition) throws DeduplicationException {
         User proxyCreator = institution.getUser();

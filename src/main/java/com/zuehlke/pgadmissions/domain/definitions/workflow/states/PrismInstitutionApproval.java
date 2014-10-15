@@ -28,7 +28,10 @@ public class PrismInstitutionApproval extends PrismWorkflowState {
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.SYSTEM_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.SYSTEM_INSTITUTION_UPDATE_NOTIFICATION))) //
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_INSTITUTION_UPDATE_NOTIFICATION),
+                    new PrismStateActionNotification() // 
+                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
+                        .withTemplate(PrismNotificationTemplate.INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( //
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.INSTITUTION_APPROVAL_PENDING_CORRECTION) // 

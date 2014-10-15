@@ -67,7 +67,7 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
                 .withNotifications(Arrays.asList( //
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION)))); //
+                        .withTemplate(PrismNotificationTemplate.INSTITUTION_STARTUP_NOTIFICATION)))); //
     }
 
 }

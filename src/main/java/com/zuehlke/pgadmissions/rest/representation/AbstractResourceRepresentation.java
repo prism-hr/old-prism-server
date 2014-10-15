@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
 import java.util.List;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -36,7 +37,7 @@ public class AbstractResourceRepresentation {
 
     private List<PrismState> nextStates;
 
-    private List<List<CommentRepresentation>> comments;
+    private Set<Set<CommentRepresentation>> comments;
 
     private List<ResourceUserRolesRepresentation> users;
 
@@ -128,11 +129,11 @@ public class AbstractResourceRepresentation {
         this.nextStates = nextStates;
     }
 
-    public List<List<CommentRepresentation>> getComments() {
+    public Set<Set<CommentRepresentation>> getComments() {
         return comments;
     }
 
-    public void setComments(List<List<CommentRepresentation>> comments) {
+    public void setComments(Set<Set<CommentRepresentation>> comments) {
         this.comments = comments;
     }
 
@@ -177,5 +178,3 @@ public class AbstractResourceRepresentation {
     }
 
 }
-
-

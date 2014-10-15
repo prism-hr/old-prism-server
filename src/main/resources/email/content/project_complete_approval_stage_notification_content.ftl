@@ -3,18 +3,18 @@
 </h1>
 
 <p>
-    Thank you for your recent request to advertise the ${PROJECT_TITLE} opportunity to our user network.
+    Your request to create a new ${TEMLATE_SYSTEM_TITLE} Project ${PROJECT_CODE} has been reviewed.
 </p>
 
 <p>
-    Your request has now been reviewed by our staff and the application has been ${COMMENT_TRANSITION_STATE}.
+	The reviewers comments were are as follows: ${COMMENT_CONTENT}.
 </p>
 
 <p>
-    Please login for further details of this review and to access more detailed instructions on how to proceed.
+	${COMMENT_TRANSITION_OUTCOME}
 </p>
 
-${ACTION_COMPLETE}
+${TEMPLATE_VIEW_EDIT}
 
 <p>
     Yours sincerely,

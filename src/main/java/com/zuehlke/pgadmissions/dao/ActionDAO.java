@@ -21,6 +21,8 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.ActionRedaction;
+import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
@@ -221,6 +223,14 @@ public class ActionDAO {
                 .createAlias("stateTransition.propagatedActions", "propagatedAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("id", stateTransitionPendingId)) //
                 .list();
+    }
+    
+    public PrismAction getTransitionAction(State state, NotificationTemplate notificationTemplate) {
+        return (PrismAction) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.groupProperty("action.id")) //
+                .add(Restrictions.eq("state", state)) //
+                .add(Restrictions.eq("notificationTemplate", notificationTemplate)) //
+                .uniqueResult();           
     }
 
 }

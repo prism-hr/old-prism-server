@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.mail;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_EMAIL_LINK_MESSAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_HELPDESK_REPORT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR;
-import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -14,6 +13,7 @@ import java.util.Map;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
@@ -31,6 +31,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplateProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory;
@@ -40,6 +41,7 @@ import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplate;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
 import com.zuehlke.pgadmissions.services.helpers.NotificationTemplatePropertyLoader;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -48,7 +50,7 @@ import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-@Service
+@Component
 public class MailSender {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MailSender.class);
@@ -67,6 +69,9 @@ public class MailSender {
     
     @Value("${email.location}")
     private String emailTemplateLocation;
+    
+    @Autowired
+    private ActionService actionService;
 
     @Autowired
     private JavaMailSender javaMailSender;
@@ -139,6 +144,8 @@ public class MailSender {
 
     public Map<String, Object> createNotificationModel(NotificationTemplate notificationTemplate, NotificationTemplateModelDTO modelDTO) {
         Map<String, Object> model = Maps.newHashMap();
+        PrismAction transitionActionId = modelDTO.getTransitionAction();
+        modelDTO.setTransitionAction(transitionActionId == null ? actionService.getTransitionAction(modelDTO.getResource().getState(), notificationTemplate) : transitionActionId);
         List<PrismNotificationTemplatePropertyCategory> categories = notificationTemplate.getId().getPropertyCategories();
         NotificationTemplatePropertyLoader loader = applicationContext.getBean(NotificationTemplatePropertyLoader.class).withTemplateModelDTO(modelDTO);
         for (PrismNotificationTemplatePropertyCategory propertyCategory : categories) {
@@ -150,7 +157,7 @@ public class MailSender {
                     value = "[" + propertyLoader.load(SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR) + ". " + propertyLoader.load(SYSTEM_HELPDESK_REPORT) + ": "
                             + modelDTO.getResource().getSystem().getHelpdesk() + "]";
                 }
-                model.put(property.name(), !property.isEscapeHtml() || valueNull ? value : escapeHtml(value));
+                model.put(property.name(), !property.isEscapeHtml() || valueNull ? value : StringEscapeUtils.escapeHtml(value));
             }
         }
         return model;

@@ -14,12 +14,12 @@ public class MailSenderMock extends MailSender {
 
     public void sendEmail(final MailMessageDTO message) {
         sentMessages.add(message);
-        super.sendEmail(message);
     }
 
     public MailMessageDTO assertEmailSent(User recipient, PrismNotificationTemplate templateId) {
         for (MailMessageDTO message : sentMessages) {
-            if (HibernateUtils.sameEntities(recipient, message.getModelDTO().getUser()) && templateId == message.getConfiguration().getNotificationTemplate().getId()) {
+            if (HibernateUtils.sameEntities(recipient, message.getModelDTO().getUser())
+                    && templateId == message.getConfiguration().getNotificationTemplate().getId()) {
                 sentMessages.remove(message);
                 return message;
             }
@@ -31,8 +31,8 @@ public class MailSenderMock extends MailSender {
         if (!sentMessages.isEmpty()) {
             StringBuilder sb = new StringBuilder("Unexpected messages sent: ");
             for (MailMessageDTO message : sentMessages) {
-                sb.append("Template: ").append(message.getConfiguration().getNotificationTemplate().getId()).append(", recipient:").append(message.getModelDTO().getUser())
-                        .append("; ");
+                sb.append("Template: ").append(message.getConfiguration().getNotificationTemplate().getId()).append(", recipient:")
+                        .append(message.getModelDTO().getUser()).append("; ");
             }
             throw new AssertionError(sb);
         }

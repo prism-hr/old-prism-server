@@ -27,6 +27,8 @@ public class ResourceConsoleListRowDTO {
 
     private String creatorLastName;
 
+    private String creatorEmail;
+    
     private String code;
 
     private String institutionTitle;
@@ -40,8 +42,6 @@ public class ResourceConsoleListRowDTO {
     private PrismState stateId;
 
     private PrismStateGroup stateGroupId;
-
-    private String creatorEmail;
 
     private DateTime updatedTimestamp;
 

@@ -107,7 +107,7 @@ public class NotificationService {
         User invoker = comment.getAuthor();
         LocalDate baseline = new LocalDate();
 
-        sendIndividualRequestNotifications(resource, invoker, baseline);
+        sendIndividualRequestNotifications(resource, comment, invoker, baseline);
         sendIndividualUpdateNotifications(resource, comment, invoker, baseline);
     }
 
@@ -211,10 +211,15 @@ public class NotificationService {
     }
 
     public void sendRegistrationNotification(User user, ActionOutcomeDTO actionOutcome) {
+        sendRegistrationNotification(user, actionOutcome, null);
+    }
+    
+    public void sendRegistrationNotification(User user, ActionOutcomeDTO actionOutcome, Comment comment) {
         System system = systemService.getSystem();
-        sendNotification(PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST,
-                new NotificationTemplateModelDTO(user, actionOutcome.getTransitionResource(), system.getUser()).withTransitionAction(actionOutcome
-                        .getTransitionAction().getId()));
+        sendNotification(
+                PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST,
+                new NotificationTemplateModelDTO(user, actionOutcome.getTransitionResource(), system.getUser()).withComment(comment).withTransitionAction(
+                        actionOutcome.getTransitionAction().getId()));
     }
 
     public void sendResetPasswordNotification(User user, String newPassword) {
@@ -235,7 +240,7 @@ public class NotificationService {
         configuration.setReminderInterval(notificationConfigurationDTO.getReminderInterval());
     }
 
-    private void sendIndividualRequestNotifications(Resource resource, User invoker, LocalDate baseline) {
+    private void sendIndividualRequestNotifications(Resource resource, Comment comment, User invoker, LocalDate baseline) {
         List<UserNotificationDefinitionDTO> requests = notificationDAO.getIndividualRequestNotifications(resource, invoker, baseline);
         HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
 
@@ -244,7 +249,8 @@ public class NotificationService {
             NotificationTemplate notificationTemplate = getById(request.getNotificationTemplateId());
 
             if (!sent.get(notificationTemplate).contains(user)) {
-                sendNotification(notificationTemplate, new NotificationTemplateModelDTO(user, resource, invoker).withTransitionAction(request.getActionId()));
+                sendNotification(notificationTemplate,
+                        new NotificationTemplateModelDTO(user, resource, invoker).withComment(comment).withTransitionAction(request.getActionId()));
                 sent.put(notificationTemplate, user);
             }
 

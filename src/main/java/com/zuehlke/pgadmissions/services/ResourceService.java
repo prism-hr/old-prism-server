@@ -166,6 +166,7 @@ public class ResourceService {
 
         resource.setCode(generateResourceCode(resource));
         entityService.save(resource);
+        entityService.flush();
     }
 
     public String generateResourceCode(Resource resource) {
@@ -256,8 +257,8 @@ public class ResourceService {
         return resourceDAO.getRecentlyUpdatedResources(resourceClass, rangeStart, rangeClose);
     }
 
-    
-    
+
+
     public <T extends Resource> List<ResourceConsoleListRowDTO> getResourceConsoleList(PrismScope scopeId, ResourceListFilterDTO filter,
             String lastSequenceIdentifier) throws DeduplicationException {
         User user = userService.getCurrentUser();
@@ -272,7 +273,7 @@ public class ResourceService {
         Set<Integer> assignedResources = getAssignedResources(user, scopeId, parentScopeIds, filter, lastSequenceIdentifier, maxRecords);
         return resourceDAO.getResourceConsoleList(user, scopeId, parentScopeIds, assignedResources, filter, lastSequenceIdentifier, maxRecords);
     }
-    
+
     public Integer getResourceId(Resource resource) {
         return resource == null ? null : resource.getId();
     }
@@ -364,7 +365,7 @@ public class ResourceService {
         }
         return null;
     }
-    
+
     public void filterResourceListData(ResourceListRowRepresentation representation, User currentUser) {
         switch (representation.getResourceScope()) {
         case APPLICATION:

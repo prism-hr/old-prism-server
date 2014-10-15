@@ -140,11 +140,13 @@ public class StateService {
         commentService.create(comment);
         resource.addComment(comment);
 
+        State state = resource.getState();
         StateTransition stateTransition = getStateTransition(resource, action, comment);
 
-        if (stateTransition != null) {
+        if (stateTransition == null) {
+            commentService.recordStateTransition(comment, state, state);
+        } else {
             State transitionState = stateTransition.getTransitionState();
-            State state = resource.getState();
             state = state == null ? transitionState : state;
 
             resourceService.recordStateTransition(resource, state, transitionState);
@@ -161,8 +163,6 @@ public class StateService {
             }
 
             notificationService.sendWorkflowNotifications(resource, comment);
-        } else {
-            commentService.recordStateTransition(comment, resource.getState(), resource.getState());
         }
 
         resourceService.updateResource(resource, comment);

@@ -11,8 +11,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.P
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_TYPE_TRAINING;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_TYPE_WORK_EXPERIENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.EXPERIENCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.LEARNING;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.FUNDING;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.LEARNING;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.STUDY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.WORK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramTypeVisibility.EXTERNAL;

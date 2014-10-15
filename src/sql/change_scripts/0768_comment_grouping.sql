@@ -10,3 +10,11 @@ UPDATE COMMENT
 SET transition_state_id = state_id
 WHERE transition_state_id IS NULL
 ;
+
+DELETE 
+FROM display_property
+;
+
+DELETE
+FROM display_category
+;

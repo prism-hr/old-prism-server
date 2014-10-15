@@ -31,7 +31,6 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplateProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory;
@@ -41,7 +40,6 @@ import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplate;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
-import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
 import com.zuehlke.pgadmissions.services.helpers.NotificationTemplatePropertyLoader;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -66,12 +64,9 @@ public class MailSender {
 
     @Value("${email.address.to}")
     private String emailAddressTo;
-    
+
     @Value("${email.location}")
     private String emailTemplateLocation;
-    
-    @Autowired
-    private ActionService actionService;
 
     @Autowired
     private JavaMailSender javaMailSender;
@@ -144,8 +139,6 @@ public class MailSender {
 
     public Map<String, Object> createNotificationModel(NotificationTemplate notificationTemplate, NotificationTemplateModelDTO modelDTO) {
         Map<String, Object> model = Maps.newHashMap();
-        PrismAction transitionActionId = modelDTO.getTransitionAction();
-        modelDTO.setTransitionAction(transitionActionId == null ? actionService.getTransitionAction(modelDTO.getResource().getState(), notificationTemplate) : transitionActionId);
         List<PrismNotificationTemplatePropertyCategory> categories = notificationTemplate.getId().getPropertyCategories();
         NotificationTemplatePropertyLoader loader = applicationContext.getBean(NotificationTemplatePropertyLoader.class).withTemplateModelDTO(modelDTO);
         for (PrismNotificationTemplatePropertyCategory propertyCategory : categories) {

@@ -108,6 +108,7 @@ public class CommentService {
                 for (Comment stateComment : stateComments) {
                     stateTimeline.add(getCommentRepresentation(stateComment, stateGroupId));
                 }
+                timeline.add(stateTimeline);
             }
             Iterables.getLast(timeline).add(getCommentRepresentation(Iterables.getLast(transitionComments), stateGroupId));
         }

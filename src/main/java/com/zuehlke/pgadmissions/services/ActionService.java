@@ -200,7 +200,7 @@ public class ActionService {
     }
 
     private void authenticateActionInvocation(User currentUser, Action action, User owner, User delegateOwner) {
-        if (currentUser == null && action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
+        if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             return;
         } else if (owner != null && Objects.equal(owner.getId(), currentUser.getId())) {
             return;

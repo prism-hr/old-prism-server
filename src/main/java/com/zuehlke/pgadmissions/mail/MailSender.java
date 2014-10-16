@@ -35,11 +35,13 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTem
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplateProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
+import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplate;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
+import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
 import com.zuehlke.pgadmissions.services.helpers.NotificationTemplatePropertyLoader;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -53,9 +55,6 @@ public class MailSender {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MailSender.class);
 
-    @Value("${application.host}")
-    private String host;
-
     @Value("${context.environment}")
     private String contextEnvironment;
 
@@ -67,6 +66,9 @@ public class MailSender {
 
     @Value("${email.location}")
     private String emailTemplateLocation;
+
+    @Autowired
+    private SystemService systemService;
 
     @Autowired
     private JavaMailSender javaMailSender;
@@ -133,17 +135,27 @@ public class MailSender {
         String emailTemplate = Resources.toString(Resources.getResource(emailTemplateLocation), Charsets.UTF_8);
         template = new Template("Email template", emailTemplate, freemarkerConfig.getConfiguration());
 
-        model = ImmutableMap.<String, Object> of("IMAGES_PATH", host + "/images/email", "SUBJECT", subject, "CONTENT", content);
+        model = ImmutableMap.<String, Object> of("IMAGES_PATH", systemService.getSystem().getHomepage() + "/images/email", "SUBJECT", subject, "CONTENT",
+                content);
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
     }
 
     public Map<String, Object> createNotificationModel(NotificationTemplate notificationTemplate, NotificationTemplateModelDTO modelDTO) {
+        return createNotificationModel(notificationTemplate, modelDTO, false);
+    }
+
+    public Map<String, Object> createNotificationModelForValidation(NotificationTemplate notificationTemplate) {
+        System system = systemService.getSystem();
+        return createNotificationModel(notificationTemplate, new NotificationTemplateModelDTO().withResource(system), true);
+    }
+
+    private Map<String, Object> createNotificationModel(NotificationTemplate notificationTemplate, NotificationTemplateModelDTO modelDTO, boolean validationMode) {
         Map<String, Object> model = Maps.newHashMap();
         List<PrismNotificationTemplatePropertyCategory> categories = notificationTemplate.getId().getPropertyCategories();
         NotificationTemplatePropertyLoader loader = applicationContext.getBean(NotificationTemplatePropertyLoader.class).withTemplateModelDTO(modelDTO);
         for (PrismNotificationTemplatePropertyCategory propertyCategory : categories) {
             for (PrismNotificationTemplateProperty property : propertyCategory.getProperties()) {
-                String value = (String) ReflectionUtils.invokeMethod(loader, property.getMethodName());
+                String value = validationMode ? "placeholder" : (String) ReflectionUtils.invokeMethod(loader, property.getMethodName());
                 boolean valueNull = value == null;
                 if (valueNull) {
                     PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).withResource(modelDTO.getResource());

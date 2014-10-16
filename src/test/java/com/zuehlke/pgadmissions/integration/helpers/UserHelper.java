@@ -1,5 +1,12 @@
 package com.zuehlke.pgadmissions.integration.helpers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
@@ -12,12 +19,6 @@ import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 @Service
 @Transactional

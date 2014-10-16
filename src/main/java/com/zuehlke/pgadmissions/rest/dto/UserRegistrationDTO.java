@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -17,7 +18,7 @@ public class UserRegistrationDTO {
     @NotEmpty
     @Email
     private String email;
-    
+
     private String activationCode;
 
     @NotEmpty
@@ -27,6 +28,7 @@ public class UserRegistrationDTO {
     @NotNull
     private Integer resourceId;
 
+    @Valid
     private ActionDTO action;
 
     public String getFirstName() {
@@ -99,7 +101,7 @@ public class UserRegistrationDTO {
         this.email = email;
         return this;
     }
-    
+
     public UserRegistrationDTO withActivationCode(final String activationCode) {
         this.activationCode = activationCode;
         return this;

@@ -10,6 +10,9 @@ public class ResourceActionDTO {
 
     private Integer resourceId;
 
+    public ResourceActionDTO() {
+    }
+
     public ResourceActionDTO(PrismAction actionId, Integer resourceId) {
         this.actionId = actionId;
         this.resourceId = resourceId;

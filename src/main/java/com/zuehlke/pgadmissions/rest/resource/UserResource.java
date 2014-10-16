@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.rest.resource;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
@@ -103,13 +102,13 @@ public class UserResource {
         try {
             userService.registerUser(userRegistrationDTO, referrer);
         } catch (Exception e) {
-            LOGGER.error("Unable to submit registration for user: " + userRegistrationDTO.getEmail());
+            LOGGER.error("Unable to submit registration for user: " + userRegistrationDTO.getEmail(), e);
             throw new ResourceNotFoundException();
         }
     }
 
     @RequestMapping(value = "/activate", method = RequestMethod.PUT)
-    public Map<String, String> activateAccount(@RequestParam String activationCode, ResourceActionDTO resourceAction) {
+    public Map<String, Object> activateAccount(@RequestParam String activationCode, ResourceActionDTO resourceAction) {
         User user = userService.getUserByActivationCode(activationCode);
         if (user == null) {
             throw new ResourceNotFoundException();
@@ -121,7 +120,8 @@ public class UserResource {
             userService.activateUser(user.getId(), resourceAction);
             status = "ACTIVATED";
         }
-        return ImmutableMap.of("status", status, "user", user.getEmail());
+        UserRepresentation userRepresentation = dozerBeanMapper.map(user, UserRepresentation.class);
+        return ImmutableMap.of("status", status, "user", userRepresentation);
     }
 
     @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)

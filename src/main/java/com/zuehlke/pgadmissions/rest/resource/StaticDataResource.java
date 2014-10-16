@@ -6,6 +6,7 @@ import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 import java.util.List;
 import java.util.Map;
 
+import com.zuehlke.pgadmissions.domain.definitions.*;
 import org.apache.commons.lang.WordUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +21,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplateProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory;
@@ -130,7 +125,8 @@ public class StaticDataResource {
         staticData.put("currencies", currencies);
 
         // Display names for enum classes
-        for (Class<?> enumClass : new Class[] { PrismProgramType.class, PrismStudyOption.class, YesNoUnsureResponse.class, DurationUnit.class }) {
+        for (Class<?> enumClass : new Class[] { PrismProgramType.class, PrismStudyOption.class, YesNoUnsureResponse.class,
+                DurationUnit.class, PrismAdvertDomain.class, PrismAdvertFunction.class, PrismAdvertIndustry.class }) {
             String simpleName = enumClass.getSimpleName();
             if (simpleName.startsWith("Prism")) {
                 simpleName = simpleName.replaceFirst("Prism", "");

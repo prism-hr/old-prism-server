@@ -12,8 +12,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -181,10 +179,6 @@ public class Application extends Resource {
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "APPLICATION_SECONDARY_PROJECT", joinColumns = @JoinColumn(name = "application_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "secondary_project_id", nullable = false))
-    private Set<Project> secondaryProjects = Sets.newHashSet();
 
     @OneToMany(mappedBy = "application")
     private Set<Comment> comments = Sets.newHashSet();
@@ -613,11 +607,7 @@ public class Application extends Resource {
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
-
-    public final Set<Project> getSecondaryProjects() {
-        return secondaryProjects;
-    }
-
+    
     @Override
     public void addComment(Comment comment) {
         comments.add(comment);

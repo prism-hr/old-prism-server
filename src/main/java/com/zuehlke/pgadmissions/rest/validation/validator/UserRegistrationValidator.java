@@ -1,14 +1,14 @@
 package com.zuehlke.pgadmissions.rest.validation.validator;
 
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
-import com.zuehlke.pgadmissions.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
 public class UserRegistrationValidator extends LocalValidatorFactoryBean implements Validator {

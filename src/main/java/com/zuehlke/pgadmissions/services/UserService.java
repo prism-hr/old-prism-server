@@ -99,7 +99,6 @@ public class UserService {
             user.setActivationCode(encryptionUtils.generateUUID());
             entityService.save(user);
             user.setParentUser(user);
-            entityService.flush();
         } else {
             user = duplicateUser;
         }

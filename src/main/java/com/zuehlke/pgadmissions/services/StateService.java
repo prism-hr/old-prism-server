@@ -158,6 +158,8 @@ public class StateService {
             commentService.processComment(comment);
 
             roleService.executeRoleTransitions(stateTransition, comment);
+            
+            entityService.flush();
 
             if (stateTransition.getPropagatedActions().size() > 0) {
                 StateTransitionPending transientTransitionPending = new StateTransitionPending().withResource(resource).withStateTransition(stateTransition);

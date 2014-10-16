@@ -166,7 +166,6 @@ public class ResourceService {
 
         resource.setCode(generateResourceCode(resource));
         entityService.save(resource);
-        entityService.flush();
     }
 
     public String generateResourceCode(Resource resource) {

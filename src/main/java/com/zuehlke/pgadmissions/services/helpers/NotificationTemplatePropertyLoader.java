@@ -308,7 +308,7 @@ public class NotificationTemplatePropertyLoader {
         User user = templateModelDTO.getUser();
         PrismAction action = templateModelDTO.getTransitionAction();
         String url = resource.getSystem().getHomepage() + "/#/activate?activationCode=" + user.getActivationCode() + "&resourceId=" + resource.getId()
-                + "&action=" + action.name();
+                + "&actionId=" + action.name();
         return buildRedirectionControl(url, SYSTEM_ACTIVATE_ACCOUNT);
     }
 

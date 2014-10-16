@@ -16,6 +16,8 @@ public class AdvertFilterMetadataDTO {
     private List<PrismAdvertFunction> functions;
     
     private List<String> competencies;
+    
+    private List<String> themes;
 
     private List<Integer> targetInstitutions;
 
@@ -51,6 +53,14 @@ public class AdvertFilterMetadataDTO {
 
     public final void setCompetencies(List<String> competencies) {
         this.competencies = competencies;
+    }
+
+    public final List<String> getThemes() {
+        return themes;
+    }
+
+    public final void setThemes(List<String> themes) {
+        this.themes = themes;
     }
 
     public final List<Integer> getTargetInstitutions() {

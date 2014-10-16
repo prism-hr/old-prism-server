@@ -36,6 +36,8 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
+import com.zuehlke.pgadmissions.rest.representation.TimelineRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.TimelineRepresentation.TimelineCommentGroupRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.AppointmentTimeslotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
@@ -89,28 +91,30 @@ public class CommentService {
         return commentDAO.getEarliestComment(parentResource, resourceClass, actionId);
     }
 
-    public Set<Set<CommentRepresentation>> getVisibleComments(Resource resource, User user) {
+    public TimelineRepresentation getTimeline(Resource resource, User user) {
         PrismStateGroup stateGroupId = resource.getState().getStateGroup().getId();
-        
-        Set<Set<CommentRepresentation>> timeline = Sets.newLinkedHashSet();
+
+        TimelineRepresentation timeline = new TimelineRepresentation();
         if (!actionService.getPermittedActions(resource, user).isEmpty()) {
             Comment latestVisibleComment = commentDAO.getLatestVisibleComment(resource);
 
-            List<Comment> transitionComments = Lists.newLinkedList(commentDAO.getStateGroupTransitionComments(resource, latestVisibleComment));
+            List<Comment> transitionComments = Lists.newLinkedList();
+            transitionComments.add(latestVisibleComment);
+            transitionComments.addAll(commentDAO.getStateGroupTransitionComments(resource));
             for (int i = 0; i < (transitionComments.size() - 1); i++) {
                 Comment transitionComment = transitionComments.get(i);
-                stateGroupId = i == 0 ? stateGroupId : transitionComment.getState().getStateGroup().getId();
 
-                Set<CommentRepresentation> stateTimeline = Sets.newLinkedHashSet();
-                stateTimeline.add(getCommentRepresentation(transitionComments.get(i), stateGroupId));
+                TimelineCommentGroupRepresentation commentGroup = new TimelineCommentGroupRepresentation().withStateGroup(
+                        stateGroupId = i == 0 ? stateGroupId : transitionComment.getState().getStateGroup().getId()).addComment(
+                        dozerBeanMapper.map(transitionComment, CommentRepresentation.class));
 
                 List<Comment> stateComments = commentDAO.getStateComments(resource, transitionComment, transitionComments.get(i + 1));
                 for (Comment stateComment : stateComments) {
-                    stateTimeline.add(getCommentRepresentation(stateComment, stateGroupId));
+                    commentGroup.addComment(dozerBeanMapper.map(stateComment, CommentRepresentation.class));
                 }
-                timeline.add(stateTimeline);
+                timeline.addCommentGroup(commentGroup);
             }
-            Iterables.getLast(timeline).add(getCommentRepresentation(Iterables.getLast(transitionComments), stateGroupId));
+            Iterables.getLast(timeline.getCommentGroups()).addComment(dozerBeanMapper.map(Iterables.getLast(transitionComments), CommentRepresentation.class));
         }
         return timeline;
     }
@@ -268,8 +272,8 @@ public class CommentService {
         }
     }
 
-    public <T extends Resource> List<Comment> getTransitionComments(Class<T> resourceClass, Integer resourceId, DateTime rangeStart, DateTime rangeClose) {
-        return commentDAO.getStateTransitionComments(resourceClass, resourceId, rangeStart, rangeClose);
+    public <T extends Resource> List<Comment> getRecentComments(Class<T> resourceClass, Integer resourceId, DateTime rangeStart, DateTime rangeClose) {
+        return commentDAO.getRecentComments(resourceClass, resourceId, rangeStart, rangeClose);
     }
 
     public void recordStateTransition(Comment comment, State state, State transitionState) {
@@ -341,12 +345,6 @@ public class CommentService {
             PrismRoleTransitionType transitionType = assignee.getRoleTransitionType();
             comment.addAssignedUser(assignee.getUser(), assignee.getRole(), transitionType == null ? PrismRoleTransitionType.CREATE : transitionType);
         }
-    }
-
-    private CommentRepresentation getCommentRepresentation(Comment stateComment, PrismStateGroup stateGroupId) {
-        CommentRepresentation representation = dozerBeanMapper.map(stateComment, CommentRepresentation.class);
-        representation.setStateGroup(stateGroupId);
-        return representation;
     }
 
 }

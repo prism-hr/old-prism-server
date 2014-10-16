@@ -148,12 +148,11 @@ public class CommentDAO {
                 .list();
     }
 
-    public <T extends Resource> List<Comment> getStateTransitionComments(Class<T> resourceClass, Integer resourceId, DateTime rangeStart, DateTime rangeClose) {
+    public <T extends Resource> List<Comment> getRecentComments(Class<T> resourceClass, Integer resourceId, DateTime rangeStart, DateTime rangeClose) {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(PrismScope.getResourceScope(resourceClass).getLowerCaseName() + ".id", resourceId)) //
                 .add(Restrictions.between("createdTimestamp", rangeStart, rangeClose)) //
-                .add(Restrictions.eq("action.transitionAction", true)) //
                 .list();
     }
 
@@ -182,7 +181,7 @@ public class CommentDAO {
                 .uniqueResult();
     }
 
-    public List<Comment> getStateGroupTransitionComments(Resource resource, Comment latestVisibleComment) {
+    public List<Comment> getStateGroupTransitionComments(Resource resource) {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
@@ -190,17 +189,14 @@ public class CommentDAO {
                 .createAlias("transitionState", "transitionState", JoinType.INNER_JOIN) //
                 .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
+                .add(Restrictions.eq("action.transitionAction", true)) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("id", latestVisibleComment.getId())) //
+                        .add(Restrictions.eq("transitionStateGroup.repeatable", true)) //
                         .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq("action.transitionAction", true)) //
-                                .add(Restrictions.disjunction() //
-                                        .add(Restrictions.eq("transitionStateGroup.repeatable", true)) //
-                                        .add(Restrictions.conjunction() //
-                                                .add(Restrictions.isNotNull("stateGroup.id")) //
-                                                .add(Restrictions.isNotNull("transitionStateGroup.id")) //
-                                                .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id"))) //
-                                        .add(Restrictions.isNotNull("action.creationScope"))))) //
+                                .add(Restrictions.isNotNull("stateGroup.id")) //
+                                .add(Restrictions.isNotNull("transitionStateGroup.id")) //
+                                .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id"))) //
+                        .add(Restrictions.isNotNull("action.creationScope"))) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //
                 .list();

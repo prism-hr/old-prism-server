@@ -139,6 +139,8 @@ public class StateService {
 
         commentService.create(comment);
         resource.addComment(comment);
+        
+        entityService.flush();
 
         State state = resource.getState();
         StateTransition stateTransition = getStateTransition(resource, action, comment);

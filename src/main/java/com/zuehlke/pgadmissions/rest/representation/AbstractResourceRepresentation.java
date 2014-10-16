@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
 import java.util.List;
-import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -10,7 +9,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhanceme
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
 
 public class AbstractResourceRepresentation {
@@ -37,7 +35,7 @@ public class AbstractResourceRepresentation {
 
     private List<PrismState> nextStates;
 
-    private Set<Set<CommentRepresentation>> comments;
+    private TimelineRepresentation timeline;
 
     private List<ResourceUserRolesRepresentation> users;
 
@@ -129,12 +127,12 @@ public class AbstractResourceRepresentation {
         this.nextStates = nextStates;
     }
 
-    public Set<Set<CommentRepresentation>> getComments() {
-        return comments;
+    public final TimelineRepresentation getTimeline() {
+        return timeline;
     }
 
-    public void setComments(Set<Set<CommentRepresentation>> comments) {
-        this.comments = comments;
+    public final void setTimeline(TimelineRepresentation timeline) {
+        this.timeline = timeline;
     }
 
     public List<ResourceUserRolesRepresentation> getUsers() {

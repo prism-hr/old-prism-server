@@ -30,14 +30,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.UserActivateDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.CurrentUserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
@@ -107,18 +106,13 @@ public class UserResource {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public void submitRegistration(@RequestHeader(value = "referer", required = false) String referrer,
-                                   @Valid @RequestBody UserRegistrationDTO userRegistrationDTO) throws WorkflowEngineException {
-        try {
-            userService.registerUser(userRegistrationDTO, referrer);
-        } catch (Exception e) {
-            LOGGER.error("Unable to submit registration for user: " + userRegistrationDTO.getEmail(), e);
-            throw new ResourceNotFoundException();
-        }
+                                   @Valid @RequestBody UserRegistrationDTO userRegistrationDTO) throws Exception {
+        userService.registerUser(userRegistrationDTO, referrer);
     }
 
     @RequestMapping(value = "/activate", method = RequestMethod.PUT)
-    public Map<String, Object> activateAccount(@RequestParam String activationCode, @RequestParam PrismAction actionId, @RequestParam Integer resourceId) {
-        User user = userService.getUserByActivationCode(activationCode);
+    public Map<String, Object> activateAccount(@RequestBody UserActivateDTO activateDTO) {
+        User user = userService.getUserByActivationCode(activateDTO.getActivationCode());
         if (user == null) {
             throw new ResourceNotFoundException();
         }
@@ -126,7 +120,7 @@ public class UserResource {
         if (user.getUserAccount() == null) {
             status = "NOT_REGISTERED";
         } else {
-            userService.activateUser(user.getId(), actionId, resourceId);
+            userService.activateUser(user.getId(), activateDTO.getActionId(), activateDTO.getResourceId());
             status = "ACTIVATED";
         }
         UserRepresentation userRepresentation = dozerBeanMapper.map(user, UserRepresentation.class);

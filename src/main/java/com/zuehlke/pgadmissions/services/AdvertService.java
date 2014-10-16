@@ -14,6 +14,8 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,6 +107,7 @@ public class AdvertService {
     }
 
     // TODO: internal application link and other summary information (e.g. pay/fee according to user requirements)
+    // TODO: base it on the recommendation rules defined in PrismProgramType
     public String getRecommendedAdvertsForEmail(User user) {
         List<Advert> adverts = getRecommendedAdverts(user);
         List<String> recommendations = Lists.newLinkedList();
@@ -188,6 +191,7 @@ public class AdvertService {
         Field[] properties = metadataDTO.getClass().getDeclaredFields();
         for (Field property : properties) {
             String propertyName = property.getName();
+            String propertySetterName = "add" + WordUtils.capitalize(StringUtils.removeEnd(propertyName, "s"));
             List<Object> values = (List<Object>) ReflectionUtils.getProperty(metadataDTO, propertyName);
 
             if (values != null) {
@@ -197,7 +201,7 @@ public class AdvertService {
                 boolean isTargetInstitutionsProperty = propertyName.equals("targetInstitution");
                 for (Object value : values) {
                     value = isTargetInstitutionsProperty ? institutionService.getById((Integer) value) : value;
-                    advert.addCategory(value);
+                    ReflectionUtils.invokeMethod(advert, propertySetterName, value);
                 }
             }
         }

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
+
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -75,14 +77,19 @@ public class RoleService {
         return null;
     }
 
-    public void updateUserRole(Resource resource, User user, PrismRole role, PrismRoleTransitionType transitionType) throws DeduplicationException {
-        User invoker = userService.getCurrentUser();
-        Action action = actionService.getViewEditAction(resource);
-
-        Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false);
-        comment.getAssignedUsers().add(new CommentAssignedUser().withUser(user).withRole(entityService.getById(Role.class, role)).withRoleTransitionType(transitionType));
-
-        actionService.executeUserAction(resource, action, comment);
+    public void updateUserRole(Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) throws DeduplicationException {
+        if (roles.length > 0) {
+            User invoker = userService.getCurrentUser();
+            Action action = actionService.getViewEditAction(resource);
+    
+            Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false);
+            for (PrismRole role : roles) {
+                comment.getAssignedUsers().add(
+                        new CommentAssignedUser().withUser(user).withRole(entityService.getById(Role.class, role)).withRoleTransitionType(transitionType));
+            }
+    
+            actionService.executeUserAction(resource, action, comment);
+        }
     }
 
     public List<PrismRole> getActionOwnerRoles(User user, Resource resource, Action action) {
@@ -134,6 +141,11 @@ public class RoleService {
                 }
             }
         }
+    }
+
+    public void deleteUserRoles(Resource resource, User user) throws DeduplicationException {
+        List<PrismRole> roles = roleDAO.getUserRoles(resource, user);
+        updateUserRole(resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
     }
 
     private List<User> getRoleTransitionUsers(Comment comment, RoleTransition roleTransition) throws WorkflowEngineException {
@@ -198,21 +210,21 @@ public class RoleService {
         PrismRoleTransitionType roleTransitionType = roleTransition.getRoleTransitionType();
 
         switch (roleTransitionType) {
-            case BRANCH:
-                executeBranchUserRole(transientRole, transientTransitionRole, comment);
-                break;
-            case CREATE:
-                executeCreateUserRole(transientTransitionRole);
-                break;
-            case DELETE:
-                executeRemoveUserRole(transientTransitionRole, comment);
-                break;
-            case RETIRE:
-                executeRemoveUserRole(transientTransitionRole, comment);
-                break;
-            case UPDATE:
-                executeUpdateUserRole(transientRole, transientTransitionRole, comment);
-                break;
+        case BRANCH:
+            executeBranchUserRole(transientRole, transientTransitionRole, comment);
+            break;
+        case CREATE:
+            executeCreateUserRole(transientTransitionRole);
+            break;
+        case DELETE:
+            executeRemoveUserRole(transientTransitionRole, comment);
+            break;
+        case RETIRE:
+            executeRemoveUserRole(transientTransitionRole, comment);
+            break;
+        case UPDATE:
+            executeUpdateUserRole(transientRole, transientTransitionRole, comment);
+            break;
         }
 
     }

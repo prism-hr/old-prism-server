@@ -151,5 +151,16 @@ public class RoleDAO {
                 .setParameterList("activeRoles", activeRoles) //
                 .executeUpdate();
     }
+    
+    public void deleteUserRoles(Resource resource, User user) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete UserRole " //
+                        + "where :resourceReference = :resource " //
+                        + "and user = :user") //
+                .setParameter("resourceReference", resource.getResourceScope().getLowerCaseName()) //
+                .setParameter("resource", resource)
+                .setParameter("user", user) //
+                .executeUpdate();
+    }
 
 }

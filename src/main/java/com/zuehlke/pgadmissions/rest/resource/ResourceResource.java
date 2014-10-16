@@ -46,7 +46,6 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestApiUtils;
 import com.zuehlke.pgadmissions.rest.dto.ActionDTO;
@@ -196,8 +195,7 @@ public class ResourceResource {
         PrismRole role = body.get("role");
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
-
-        roleService.updateUserRole(resource, user, role, PrismRoleTransitionType.CREATE);
+        roleService.updateUserRole(resource, user, PrismRoleTransitionType.CREATE, role);
         // TODO: return validation error if workflow engine exception is thrown.
     }
 
@@ -206,8 +204,7 @@ public class ResourceResource {
             @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
-
-        roleService.updateUserRole(resource, user, role, PrismRoleTransitionType.DELETE);
+        roleService.updateUserRole(resource, user, PrismRoleTransitionType.DELETE, role);
         // TODO: return validation error if workflow engine exception is thrown.
     }
 
@@ -225,11 +222,10 @@ public class ResourceResource {
 
     @RequestMapping(value = "{resourceId}/users/{userId}", method = RequestMethod.DELETE)
     public void removeUser(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor)
-            throws WorkflowEngineException {
+            throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
-
-        // TODO implement remove user
+        roleService.deleteUserRoles(resource, user);
     }
 
     @RequestMapping(value = "/{resourceId}/comments", method = RequestMethod.POST)

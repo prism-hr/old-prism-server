@@ -175,7 +175,7 @@ public class ActionService {
     public Action getViewEditAction(Resource resource) {
         return actionDAO.getViewEditAction(resource);
     }
-    
+
     public void throwWorkflowPermissionException(Resource resource, Action action) {
         throwWorkflowPermissionException(resource, action, null);
     }
@@ -202,7 +202,7 @@ public class ActionService {
     private void authenticateActionInvocation(User currentUser, Action action, User owner, User delegateOwner) {
         if (currentUser == null && action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             return;
-        } else if (Objects.equal(owner.getId(), currentUser.getId())) {
+        } else if (owner != null && Objects.equal(owner.getId(), currentUser.getId())) {
             return;
         } else if (delegateOwner != null && Objects.equal(delegateOwner.getId(), currentUser.getId())) {
             return;

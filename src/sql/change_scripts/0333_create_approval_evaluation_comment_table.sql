@@ -1,0 +1,7 @@
+CREATE TABLE APPROVAL_EVALUATION_COMMENT (
+  id INTEGER UNSIGNED NOT NULL,
+  approval_id INTEGER UNSIGNED,
+  CONSTRAINT approval_evaluation_comment_fk FOREIGN KEY (id) REFERENCES COMMENT(id),
+  CONSTRAINT approval_eval_com_approval_fk FOREIGN KEY (approval_id) REFERENCES APPROVAL_ROUND(id)
+)
+ENGINE = InnoDB;

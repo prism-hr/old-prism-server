@@ -113,7 +113,7 @@ public class NotificationService {
     }
 
     public <T extends Resource> void sendIndividualRequestReminders(Class<T> resourceClass, Integer resourceId, LocalDate baseline) {
-        User invoker = systemService.getSystem().getUser();
+        User author = systemService.getSystem().getUser();
         Resource resource = resourceService.getById(resourceClass, resourceId);
 
         List<UserNotificationDefinitionDTO> reminders = notificationDAO.getIndividualRequestReminders(resource, baseline);
@@ -130,7 +130,8 @@ public class NotificationService {
 
             if (!sent.get(notificationTemplate).contains(user) && baseline.minusDays(reminderInterval) == userRole.getLastNotifiedDate()) {
                 sendNotification(notificationTemplate.getReminderTemplate(),
-                        new NotificationTemplateModelDTO(user, invoker, resource).withTransitionAction(reminder.getActionId()));
+                        new NotificationTemplateModelDTO().withUser(user).withAuthor(author).withResource(resource)
+                                .withTransitionAction(reminder.getActionId()));
                 sent.put(notificationTemplate, user);
             }
 
@@ -139,7 +140,7 @@ public class NotificationService {
     }
 
     public <T extends Resource> void sendSyndicatedRequestNotifications(Class<T> resourceClass, Integer resourceId, LocalDate baseline) {
-        User invoker = systemService.getSystem().getUser();
+        User author = systemService.getSystem().getUser();
         Resource resource = resourceService.getById(resourceClass, resourceId);
 
         List<UserNotificationDefinitionDTO> definitions = notificationDAO.getSyndicatedRequestNotifications(resource, baseline);
@@ -156,10 +157,8 @@ public class NotificationService {
 
             if (!sent.get(notificationTemplate).contains(user) && (lastNotifiedDate == null || doSendReminder)) {
                 NotificationTemplate sendTemplate = doSendReminder ? notificationTemplate.getReminderTemplate() : notificationTemplate;
-                sendNotification(
-                        sendTemplate,
-                        new NotificationTemplateModelDTO(user, invoker, resource).withTransitionAction(PrismAction.valueOf("SYSTEM_VIEW_"
-                                + resource.getResourceScope().name() + "_LIST")));
+                sendNotification(sendTemplate, new NotificationTemplateModelDTO().withUser(user).withAuthor(author).withResource(resource)
+                        .withTransitionAction(PrismAction.valueOf("SYSTEM_VIEW_" + resource.getResourceScope().name() + "_LIST")));
                 user.setLastNotifiedDate(resource.getClass(), baseline);
                 sent.put(notificationTemplate, user);
             }
@@ -167,13 +166,13 @@ public class NotificationService {
     }
 
     public <T extends Resource> void sendSyndicatedUpdateNotifications(Class<T> resourceClass, Integer resourceId, Comment transitionComment, LocalDate baseline) {
-        User invoker = transitionComment.getAuthor();
+        User author = transitionComment.getAuthor();
         Resource resource = resourceService.getById(resourceClass, resourceId);
 
         State state = transitionComment.getState();
         Action action = transitionComment.getAction();
 
-        List<UserNotificationDefinitionDTO> updates = notificationDAO.getSyndicatedUpdateNotifications(resource, state, action, invoker, baseline);
+        List<UserNotificationDefinitionDTO> updates = notificationDAO.getSyndicatedUpdateNotifications(resource, state, action, author, baseline);
         HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
 
         for (UserNotificationDefinitionDTO update : updates) {
@@ -181,7 +180,7 @@ public class NotificationService {
             NotificationTemplate notificationTemplate = getById(update.getNotificationTemplateId());
 
             if (!sent.get(notificationTemplate).contains(user)) {
-                sendNotification(notificationTemplate, new NotificationTemplateModelDTO(user, invoker, resource));
+                sendNotification(notificationTemplate, new NotificationTemplateModelDTO().withUser(user).withAuthor(author).withResource(resource));
                 user.setLastNotifiedDate(resource.getClass(), baseline);
                 sent.put(notificationTemplate, user);
             }
@@ -201,7 +200,8 @@ public class NotificationService {
         System system = systemService.getSystem();
         for (User user : userService.getUsersForResourceAndRole(institution, PrismRole.INSTITUTION_ADMINISTRATOR)) {
             NotificationTemplate template = getById(PrismNotificationTemplate.INSTITUTION_IMPORT_ERROR_NOTIFICATION);
-            sendNotification(template, new NotificationTemplateModelDTO(user, system.getUser(), institution).withDataImportErrorMessage(errorMessage));
+            sendNotification(template, new NotificationTemplateModelDTO().withUser(user).withAuthor(system.getUser()).withResource(institution)
+                    .withDataImportErrorMessage(errorMessage));
         }
     }
 
@@ -210,7 +210,8 @@ public class NotificationService {
         System system = systemService.getSystem();
         NotificationTemplate template = getById(PrismNotificationTemplate.SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION);
         String recommendations = advertService.getRecommendedAdvertsForEmail(persistentUser);
-        sendNotification(template, new NotificationTemplateModelDTO(persistentUser, system.getUser(), system).withApplicationRecommendation(recommendations));
+        sendNotification(template, new NotificationTemplateModelDTO().withUser(persistentUser).withAuthor(system.getUser()).withResource(system)
+                .withApplicationRecommendation(recommendations));
         persistentUser.getUserAccount().setLastNotifiedDateApplicationRecommendation(baseline);
     }
 
@@ -222,15 +223,14 @@ public class NotificationService {
         System system = systemService.getSystem();
         sendNotification(
                 PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST,
-                new NotificationTemplateModelDTO(user, system.getUser(), actionOutcome.getTransitionResource()).withComment(comment).withTransitionAction(
-                        actionOutcome.getTransitionAction().getId()));
+                new NotificationTemplateModelDTO().withUser(user).withAuthor(system.getUser()).withResource(actionOutcome.getTransitionResource())
+                        .withComment(comment).withTransitionAction(actionOutcome.getTransitionAction().getId()));
     }
 
     public void sendResetPasswordNotification(User user, String newPassword) {
         System system = systemService.getSystem();
-
-        sendNotification(PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION,
-                new NotificationTemplateModelDTO(user,  system.getUser(), systemService.getSystem()).withNewPassword(newPassword));
+        sendNotification(PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION, new NotificationTemplateModelDTO().withUser(user).withAuthor(system.getUser())
+                .withResource(system).withNewPassword(newPassword));
     }
 
     public List<PrismNotificationTemplate> getEditableTemplates(PrismScope scope) {
@@ -244,8 +244,8 @@ public class NotificationService {
         configuration.setReminderInterval(notificationConfigurationDTO.getReminderInterval());
     }
 
-    private void sendIndividualRequestNotifications(Resource resource, Comment comment, User sender, LocalDate baseline) {
-        List<UserNotificationDefinitionDTO> requests = notificationDAO.getIndividualRequestNotifications(resource, sender, baseline);
+    private void sendIndividualRequestNotifications(Resource resource, Comment comment, User author, LocalDate baseline) {
+        List<UserNotificationDefinitionDTO> requests = notificationDAO.getIndividualRequestNotifications(resource, author, baseline);
         HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
 
         for (UserNotificationDefinitionDTO request : requests) {
@@ -253,8 +253,10 @@ public class NotificationService {
             NotificationTemplate notificationTemplate = getById(request.getNotificationTemplateId());
 
             if (!sent.get(notificationTemplate).contains(user)) {
-                sendNotification(notificationTemplate,
-                        new NotificationTemplateModelDTO(user, sender, resource).withComment(comment).withTransitionAction(request.getActionId()));
+                sendNotification(
+                        notificationTemplate,
+                        new NotificationTemplateModelDTO().withUser(user).withAuthor(author).withResource(resource).withComment(comment)
+                                .withTransitionAction(request.getActionId()));
                 sent.put(notificationTemplate, user);
             }
 
@@ -264,10 +266,10 @@ public class NotificationService {
         }
     }
 
-    private void sendIndividualUpdateNotifications(Resource resource, Comment comment, User sender, LocalDate baseline) {
+    private void sendIndividualUpdateNotifications(Resource resource, Comment comment, User author, LocalDate baseline) {
         State state = resource.getPreviousState();
 
-        List<UserNotificationDefinitionDTO> updates = notificationDAO.getIndividualUpdateNotifications(resource, state, comment.getAction(), sender, baseline);
+        List<UserNotificationDefinitionDTO> updates = notificationDAO.getIndividualUpdateNotifications(resource, state, comment.getAction(), author, baseline);
         HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
 
         for (UserNotificationDefinitionDTO update : updates) {
@@ -275,7 +277,8 @@ public class NotificationService {
             NotificationTemplate notificationTemplate = getById(update.getNotificationTemplateId());
 
             if (!sent.get(notificationTemplate).contains(user)) {
-                sendNotification(notificationTemplate, new NotificationTemplateModelDTO(user, sender, resource).withComment(comment));
+                sendNotification(notificationTemplate,
+                        new NotificationTemplateModelDTO().withUser(user).withAuthor(author).withResource(resource).withComment(comment));
                 sent.put(notificationTemplate, user);
             }
         }

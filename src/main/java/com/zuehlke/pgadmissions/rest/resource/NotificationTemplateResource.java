@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.rest.resource;
 
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 
 import org.dozer.Mapper;
@@ -16,16 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.ImmutableMap;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.system.System;
-import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplate;
-import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.mail.MailSender;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
@@ -104,7 +96,8 @@ public class NotificationTemplateResource {
             errors.rejectValue("reminderInterval", "notNull");
         }
 
-        Map<String, Object> model = mailSender.createNotificationModel(template, createSampleModelDTO());
+        Map<String, Object> model = mailSender.createNotificationModelForValidation(template);
+        
         String subject = null, content = null;
         try {
             subject = mailSender.processHeader(template.getId(), notificationConfigurationDTO.getSubject(), model);
@@ -128,19 +121,5 @@ public class NotificationTemplateResource {
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
         return RestApiUtils.getResourceDescriptor(resourceScope);
     }
-
-    @PostConstruct
-    public NotificationTemplateModelDTO createSampleModelDTO() {
-        User user = new User().withFirstName("Franciszek").withLastName("Pieczka").withEmail("franek@pieczka.pl");
-        User sender = new User().withFirstName("Jozef").withLastName("Oleksy").withEmail("jozef@oleksy.pl");
-
-        System system = new System().withTitle("PRiSM");
-        Program program = new Program().withTitle("Sample program").withCode("PROGRAM1");
-        Project project = new Project().withTitle("Sample Project").withCode("PROJECT1");
-        Application application = new Application().withCode("APP1").withProject(project).withProgram(program).withSystem(system).withUser(user);
-        NotificationTemplateModelDTO modelDTO = new NotificationTemplateModelDTO(user, sender, application);
-        modelDTO.withTransitionAction(PrismAction.APPLICATION_ASSIGN_REVIEWERS).withDataImportErrorMessage("An error occurred")
-                .withNewPassword("s3cr3t").withApplicationRecommendation("recommendations1");
-        return modelDTO;
-    }
+    
 }

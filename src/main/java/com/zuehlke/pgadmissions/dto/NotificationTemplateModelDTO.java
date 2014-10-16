@@ -10,9 +10,9 @@ public class NotificationTemplateModelDTO {
     private User user;
 
     private User author;
-    
+
     private User invoker;
-    
+
     private Resource resource;
 
     private Comment comment;
@@ -24,12 +24,6 @@ public class NotificationTemplateModelDTO {
     private String applicationRecommendation;
 
     private String newPassword;
-
-    public NotificationTemplateModelDTO(User user, User author, Resource resource) {
-        this.user = user;
-        this.author = author;
-        this.resource = resource;
-    }
 
     public User getUser() {
         return user;
@@ -62,7 +56,7 @@ public class NotificationTemplateModelDTO {
     public void setTransitionAction(PrismAction transitionAction) {
         this.transitionAction = transitionAction;
     }
-    
+
     public String getDataImportErrorMessage() {
         return dataImportErrorMessage;
     }
@@ -73,6 +67,21 @@ public class NotificationTemplateModelDTO {
 
     public String getNewPassword() {
         return newPassword;
+    }
+
+    public NotificationTemplateModelDTO withUser(User user) {
+        this.user = user;
+        return this;
+    }
+
+    public NotificationTemplateModelDTO withAuthor(User author) {
+        this.author = author;
+        return this;
+    }
+
+    public NotificationTemplateModelDTO withResource(Resource resource) {
+        this.resource = resource;
+        return this;
     }
 
     public NotificationTemplateModelDTO withComment(final Comment comment) {

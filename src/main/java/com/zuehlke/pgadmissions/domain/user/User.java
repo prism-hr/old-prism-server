@@ -262,14 +262,6 @@ public class User implements UserDetails, IUniqueEntity {
         return userRoles;
     }
 
-    public final Set<Document> getDocuments() {
-        return documents;
-    }
-
-    public final void setDocuments(Set<Document> documents) {
-        this.documents = documents;
-    }
-
     public User withId(Integer id) {
         this.id = id;
         return this;

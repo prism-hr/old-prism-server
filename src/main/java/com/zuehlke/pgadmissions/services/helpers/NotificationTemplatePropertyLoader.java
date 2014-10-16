@@ -20,8 +20,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SECONDARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.io.IOException;
 import java.util.Map;
@@ -47,11 +45,8 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.SystemService;
@@ -76,7 +71,7 @@ public class NotificationTemplatePropertyLoader {
 
     @Autowired
     private SystemService systemService;
-    
+
     @Autowired
     private FreeMarkerConfig freemarkerConfig;
 
@@ -128,40 +123,26 @@ public class NotificationTemplatePropertyLoader {
     }
 
     public String getTemplateHelpdesk() throws IOException, TemplateException {
-        return buildRedirectionControl(templateModelDTO.getResource().getHelpdeskDisplay(), SYSTEM_HELPDESK);
+        return buildRedirectionControl(SYSTEM_HELPDESK);
     }
 
     public String getTemplateViewEdit() throws IOException, TemplateException {
-        Resource resource = templateModelDTO.getResource();
-        PrismScope scope = resource.getResourceScope() == SYSTEM ? APPLICATION : resource.getResourceScope();
-        String url = resource.getSystem().getHomepage() + "/#/" + scope.getLowerCaseName() + "/" + resource.getId() + "/view?activationCode="
-                + templateModelDTO.getUser().getActivationCode();
-        return buildRedirectionControl(url, SYSTEM_VIEW_EDIT);
+        return buildRedirectionControl(SYSTEM_VIEW_EDIT);
     }
 
     public String getActionComplete() throws IOException, TemplateException {
-        Resource resource = templateModelDTO.getResource();
-        String url = resource.getSystem().getHomepage() + "/#/" + resource.getResourceScope().getLowerCaseName();
-        if (resource.getResourceScope() != SYSTEM) {
-            url += "/" + resource.getId();
-        }
-
-        PrismAction action = templateModelDTO.getTransitionAction();
-
-        url += "/timeline?action=" + action.name() + "&activationCode=" + templateModelDTO.getUser().getActivationCode();
-        String declineUrl = action.isDeclinableAction() ? url + "&decline=true" : null;
-        return buildRedirectionControl(url, SYSTEM_PROCEED, declineUrl, SYSTEM_DECLINE);
+        return buildRedirectionControl(SYSTEM_PROCEED, SYSTEM_DECLINE);
     }
 
     public String getCommentContent() {
         String content = templateModelDTO.getComment().getContent();
         return content == null ? propertyLoader.load(SYSTEM_COMMENT_CONTENT_NOT_PROVIDED) : "\"" + content + "\"";
     }
-    
+
     public String getCommentDateTime() {
         return templateModelDTO.getComment().getCreatedTimestampDisplay(propertyLoader.load(SYSTEM_DATE_TIME_FORMAT));
     }
-    
+
     public String getCommentTransitionOutcome() {
         String resourceName = templateModelDTO.getResource().getResourceScope().name();
         String statePostfix = Iterables.getLast(Lists.newArrayList(templateModelDTO.getComment().getTransitionState().getId().name().split("_")));
@@ -276,7 +257,7 @@ public class NotificationTemplatePropertyLoader {
     }
 
     public String getSystemApplicationHomepage() throws IOException, TemplateException {
-        return buildRedirectionControl(templateModelDTO.getResource().getSystem().getHomepage() + "/#/applications", SYSTEM_APPLICATION_LIST);
+        return buildRedirectionControl(SYSTEM_APPLICATION_LIST);
     }
 
     public String getSystemApplicationRecommendation() {
@@ -284,32 +265,27 @@ public class NotificationTemplatePropertyLoader {
     }
 
     public String getSystemProjectHomepage() throws IOException, TemplateException {
-        return buildRedirectionControl(templateModelDTO.getResource().getSystem().getHomepage() + "/#/projects", SYSTEM_PROJECT_LIST);
+        return buildRedirectionControl(SYSTEM_PROJECT_LIST);
     }
 
     public String getSystemProgramHomepage() throws IOException, TemplateException {
-        return buildRedirectionControl(templateModelDTO.getResource().getSystem().getHomepage() + "/#/programs", SYSTEM_PROGRAM_LIST);
+        return buildRedirectionControl(SYSTEM_PROGRAM_LIST);
     }
 
     public String getSystemInstitutionHomepage() throws IOException, TemplateException {
-        return buildRedirectionControl(templateModelDTO.getResource().getSystem().getHomepage() + "/#/institutions", SYSTEM_INSTITUTION_LIST);
+        return buildRedirectionControl(SYSTEM_INSTITUTION_LIST);
     }
 
     public String getSystemUserNewPassword() throws IOException, TemplateException {
-        return buildRedirectionControl(templateModelDTO.getNewPassword(), SYSTEM_NEW_PASSWORD);
+        return buildRedirectionControl(SYSTEM_NEW_PASSWORD);
     }
 
     public String getSystemUserAccountManagement() throws IOException, TemplateException {
-        return buildRedirectionControl(templateModelDTO.getResource().getSystem().getHomepage() + "/#/account", SYSTEM_USER_ACCOUNT);
+        return buildRedirectionControl(SYSTEM_USER_ACCOUNT);
     }
 
     public String getSystemUserAccountActivation() throws IOException, TemplateException {
-        Resource resource = templateModelDTO.getResource();
-        User user = templateModelDTO.getUser();
-        PrismAction action = templateModelDTO.getTransitionAction();
-        String url = resource.getSystem().getHomepage() + "/#/activate?activationCode=" + user.getActivationCode() + "&resourceId=" + resource.getId()
-                + "&actionId=" + action.name();
-        return buildRedirectionControl(url, SYSTEM_ACTIVATE_ACCOUNT);
+        return buildRedirectionControl(SYSTEM_ACTIVATE_ACCOUNT);
     }
 
     public NotificationTemplatePropertyLoader withTemplateModelDTO(NotificationTemplateModelDTO notificationTemplateModelDTO) {
@@ -324,18 +300,29 @@ public class NotificationTemplatePropertyLoader {
         return this;
     }
 
-    private String buildRedirectionControl(String linkUrl, PrismDisplayProperty linkLabel) throws IOException, TemplateException {
-        return buildRedirectionControl(linkUrl, linkLabel, null, null);
+    private String buildRedirectionControl(PrismDisplayProperty linkLabel) throws IOException, TemplateException {
+        return buildRedirectionControl(linkLabel, null);
+    }
+    
+    private String buildRedirectionControl(String uri, PrismDisplayProperty linkLabel) throws IOException, TemplateException {
+        return buildRedirectionControl(uri, linkLabel, null);
     }
 
-    private String buildRedirectionControl(String linkUrl, PrismDisplayProperty linkLabel, String declineLinkUrl, PrismDisplayProperty declineLinkLabel)
-            throws IOException, TemplateException {
+    private String buildRedirectionControl(PrismDisplayProperty linkLabel, PrismDisplayProperty declineLinkLabel) throws IOException, TemplateException {
+        Resource resource = templateModelDTO.getResource();
+        String uri = resource.getSystem().getHomepage() + "/#/activate?resourceId=" + resource.getId() + "&actionId="
+                + templateModelDTO.getTransitionAction().name() + "&activationCode=" + templateModelDTO.getUser().getActivationCode();
+        return buildRedirectionControl(uri, linkLabel, declineLinkLabel);
+    }
+
+    private String buildRedirectionControl(String uri, PrismDisplayProperty linkLabel, PrismDisplayProperty declineLinkLabel) throws IOException,
+            TemplateException {
         Map<String, Object> model = Maps.newHashMap();
-        ImmutableMap<String, String> link = ImmutableMap.of("url", linkUrl, "label", propertyLoader.load(linkLabel));
+        ImmutableMap<String, String> link = ImmutableMap.of("url", uri, "label", propertyLoader.load(linkLabel));
         model.put("link", link);
 
-        if (declineLinkUrl != null) {
-            ImmutableMap<String, String> declineLink = ImmutableMap.of("url", declineLinkUrl, "label", propertyLoader.load(declineLinkLabel));
+        if (declineLinkLabel != null) {
+            ImmutableMap<String, String> declineLink = ImmutableMap.of("url", uri + "&decline=true", "label", propertyLoader.load(declineLinkLabel));
             model.put("declineLink", declineLink);
         }
 
@@ -354,4 +341,5 @@ public class NotificationTemplatePropertyLoader {
         }
         return null;
     }
+
 }

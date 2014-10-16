@@ -1,12 +1,5 @@
 package com.zuehlke.pgadmissions.integration.helpers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
@@ -15,11 +8,16 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
 import com.zuehlke.pgadmissions.rest.dto.ActionDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceActionDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @Service
 @Transactional
@@ -57,7 +55,7 @@ public class UserHelper {
         Resource resource = resourceService.getById(resourceScope.getResourceClass(), resourceId);
         assertEquals(testContextReferrer, resource.getReferrer());
 
-        userService.activateUser(user.getId(), new ResourceActionDTO(actionId, resourceId));
+        userService.activateUser(user.getId(), actionId, resourceId);
         assertTrue(user.isEnabled());
     }
 

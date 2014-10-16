@@ -1,21 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
-
-import javax.xml.bind.JAXBException;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -23,6 +7,7 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -33,12 +18,25 @@ import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.rest.dto.ResourceActionDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserAccountDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.SocialPresenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.xml.bind.JAXBException;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
 
 @Service
 @Transactional
@@ -224,7 +222,7 @@ public class UserService {
         return Lists.newArrayList();
     }
 
-    public boolean activateUser(Integer userId, ResourceActionDTO resourceAction) {
+    public boolean activateUser(Integer userId, PrismAction actionId, Integer resourceId) {
         User user = getById(userId);
         boolean wasEnabled = user.getUserAccount().getEnabled();
         user.getUserAccount().setEnabled(true);
@@ -242,5 +240,6 @@ public class UserService {
     public SocialPresenceRepresentation getSocialProfiles(String firstName, String lastName) throws IOException {
         return socialPresenceService.getPotentialUserProfiles(firstName, lastName);
     }
+
 
 }

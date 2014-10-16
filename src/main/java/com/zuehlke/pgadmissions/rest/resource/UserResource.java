@@ -2,13 +2,13 @@ package com.zuehlke.pgadmissions.rest.resource;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.dto.ResourceActionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.CurrentUserRepresentation;
@@ -108,7 +108,7 @@ public class UserResource {
     }
 
     @RequestMapping(value = "/activate", method = RequestMethod.PUT)
-    public Map<String, Object> activateAccount(@RequestParam String activationCode, ResourceActionDTO resourceAction) {
+    public Map<String, Object> activateAccount(@RequestParam String activationCode, @RequestParam PrismAction actionId, @RequestParam Integer resourceId) {
         User user = userService.getUserByActivationCode(activationCode);
         if (user == null) {
             throw new ResourceNotFoundException();
@@ -117,7 +117,7 @@ public class UserResource {
         if (user.getUserAccount() == null) {
             status = "NOT_REGISTERED";
         } else {
-            userService.activateUser(user.getId(), resourceAction);
+            userService.activateUser(user.getId(), actionId, resourceId);
             status = "ACTIVATED";
         }
         UserRepresentation userRepresentation = dozerBeanMapper.map(user, UserRepresentation.class);

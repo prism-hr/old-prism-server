@@ -546,8 +546,9 @@ public class ApplicationDownloadBuilder {
         ApplicationDocument documentSection = applicationDownloadDTO.getApplication().getDocument();
 
         boolean includeAttachments = applicationDownloadDTO.isIncludeAttachments();
-        addDocument(body, propertyLoader.load(APPLICATION_DOCUMENT_PERSONAL_STATEMENT_APPENDIX), documentSection.getPersonalStatement(), includeAttachments);
-        addDocument(body, propertyLoader.load(APPLICATION_DOUCMENT_CV_APPENDIX), documentSection.getCv(), includeAttachments);
+        addDocument(body, propertyLoader.load(APPLICATION_DOCUMENT_PERSONAL_STATEMENT_APPENDIX),
+                documentSection == null ? null : documentSection.getPersonalStatement(), includeAttachments);
+        addDocument(body, propertyLoader.load(APPLICATION_DOUCMENT_CV_APPENDIX), documentSection == null ? null : documentSection.getCv(), includeAttachments);
 
         applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
     }

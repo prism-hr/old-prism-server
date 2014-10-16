@@ -142,6 +142,10 @@ public class Advert {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
+    private Set<AdvertTheme> themes = Sets.newHashSet();
+    
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "advert_id", nullable = false)
     private Set<AdvertTargetInstitution> targetInstitutions = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -278,6 +282,10 @@ public class Advert {
         return competencies;
     }
 
+    public final Set<AdvertTheme> getThemes() {
+        return themes;
+    }
+
     public final Set<AdvertTargetInstitution> getTargetInstitutions() {
         return targetInstitutions;
     }
@@ -335,54 +343,37 @@ public class Advert {
         return pay != null && !pay.getCurrencySpecified().equals(pay.getCurrencyAtLocale());
     }
 
-    public void addCategory(Object advertFilter) {
-        Class<?> advertFilterType = advertFilter.getClass();
-        if (advertFilterType == PrismAdvertDomain.class) {
-            addDomain((PrismAdvertDomain) advertFilter);
-        } else if (advertFilterType == PrismAdvertFunction.class) {
-            addFunction((PrismAdvertFunction) advertFilter);
-        } else if (advertFilterType == PrismAdvertIndustry.class) {
-            addIndustry((PrismAdvertIndustry) advertFilter);
-        } else if (advertFilterType == String.class) {
-            addCompetency((String) advertFilter);
-        } else if (advertFilterType == Institution.class) {
-            addTargetInstitution((Institution) advertFilter);
-        } else if (advertFilterType == PrismProgramType.class) {
-            addTargetProgramType((PrismProgramType) advertFilter);
-        }
-    }
-
-    private void addDomain(PrismAdvertDomain domainId) {
+    public void addDomain(PrismAdvertDomain domainId) {
         AdvertDomain domain = new AdvertDomain().withAdvert(this);
         domain.setDomain(domainId);
         domains.add(domain);
     }
 
-    private void addFunction(PrismAdvertFunction functionId) {
+    public void addFunction(PrismAdvertFunction functionId) {
         AdvertFunction function = new AdvertFunction().withAdvert(this);
         function.setFunction(functionId);
         functions.add(function);
     }
 
-    private void addIndustry(PrismAdvertIndustry industryId) {
+    public void addIndustry(PrismAdvertIndustry industryId) {
         AdvertIndustry industry = new AdvertIndustry().withAdvert(this);
         industry.setIndustry(industryId);
         industries.add(industry);
     }
 
-    private void addCompetency(String competencyId) {
+    public void addCompetency(String competencyId) {
         AdvertCompetency competency = new AdvertCompetency().withAdvert(this);
         competency.setCompetency(competencyId);
         competencies.add(competency);
     }
 
-    private void addTargetInstitution(Institution institution) {
+    public void addTargetInstitution(Institution institution) {
         AdvertTargetInstitution targetInstitution = new AdvertTargetInstitution().withAdvert(this);
         targetInstitution.setInstitution(institution);
         targetInstitutions.add(targetInstitution);
     }
 
-    private void addTargetProgramType(PrismProgramType programTypeId) {
+    public void addTargetProgramType(PrismProgramType programTypeId) {
         AdvertTargetProgramType targetProgramType = new AdvertTargetProgramType().withAdvert(this);
         targetProgramType.setProgramType(programTypeId);
         targetProgramTypes.add(targetProgramType);

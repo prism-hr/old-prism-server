@@ -137,7 +137,7 @@ public class ResourceResource {
         representation.setActionEnhancements(permittedActionEnhancements);
 
         // set list of user to roles mappings
-        List<User> users = userService.getEnabledResourceUsers(resource);
+        List<User> users = userService.getResourceUsers(resource);
         List<ResourceUserRolesRepresentation> userRolesRepresentations = Lists.newArrayListWithCapacity(users.size());
         for (User user : users) {
             UserRepresentation userRepresentation = dozerBeanMapper.map(user, UserRepresentation.class);
@@ -217,7 +217,6 @@ public class ResourceResource {
         User user = userService.getOrCreateUserWithRoles(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource,
                 userRolesRepresentation.getRoles());
         return dozerBeanMapper.map(user, UserRepresentation.class);
-        // TODO: return validation error if workflow engine exception is thrown.
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}", method = RequestMethod.DELETE)

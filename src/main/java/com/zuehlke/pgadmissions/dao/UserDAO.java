@@ -221,9 +221,11 @@ public class UserDAO {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user"))
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
-                .add(Restrictions.eq("userAccount.enabled", true)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("userAccount.password")) //
+                        .add(Restrictions.eq("userAccount.enabled", true))) //
                 .list();
     }
     

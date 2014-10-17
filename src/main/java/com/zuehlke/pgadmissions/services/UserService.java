@@ -229,7 +229,7 @@ public class UserService {
         return !wasEnabled;
     }
 
-    public List<User> getEnabledResourceUsers(Resource resource) {
+    public List<User> getResourceUsers(Resource resource) {
         return userDAO.getEnabledResourceUsers(resource);
     }
 

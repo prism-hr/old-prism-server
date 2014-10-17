@@ -323,6 +323,10 @@ public class StateService {
     }
 
     public StateTransition getProgramViewEditOutcome(Resource resource, Comment comment) {
+        if (comment.getTransitionState() == null) {
+            PrismState transitionStateId = resource.getState().getId();
+            return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
+        }
         return getUserDefinedNextState(resource, comment);
     }
 
@@ -331,7 +335,7 @@ public class StateService {
     }
 
     private StateTransition getUserDefinedNextState(Resource resource, Comment comment) {
-        if(comment.getTransitionState() == null){
+        if(comment.getTransitionState() == null) {
             return null;
         }
         PrismState transitionStateId = comment.getTransitionState().getId();

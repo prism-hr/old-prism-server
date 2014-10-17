@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
+import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -465,4 +466,22 @@ public class CommentRepresentation {
     public void setAppointmentPreferences(Set<AppointmentPreferenceRepresentation> appointmentPreferences) {
         this.appointmentPreferences = appointmentPreferences;
     }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        final CommentRepresentation other = (CommentRepresentation) object;
+        return Objects.equal(id, other.getId());
+    }
+    
 }

@@ -30,7 +30,7 @@ public class InstitutionAddress extends GeocodableLocation {
     @ManyToOne
     @JoinColumn(name = "institution_domicile_region_id")
     private InstitutionDomicileRegion region;
-    
+
     @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
@@ -49,7 +49,7 @@ public class InstitutionAddress extends GeocodableLocation {
 
     @Column(name = "address_code")
     private String addressCode;
-    
+
     @Embedded
     private GeographicLocation location;
 
@@ -124,7 +124,7 @@ public class InstitutionAddress extends GeocodableLocation {
     public void setAddressCode(String addressCode) {
         this.addressCode = addressCode;
     }
-    
+
     @Override
     public final GeographicLocation getLocation() {
         return location;
@@ -135,43 +135,48 @@ public class InstitutionAddress extends GeocodableLocation {
         this.location = location;
     }
 
-    public InstitutionAddress withDomicile(InstitutionDomicile domicile) {
-        this.domicile = domicile;
+    public InstitutionAddress withLocation(final GeographicLocation location) {
+        this.location = location;
         return this;
     }
 
-    public InstitutionAddress withRegion(InstitutionDomicileRegion region) {
-        this.region = region;
-        return this;
-    }
-
-    public InstitutionAddress withAddressLine1(String addressLine1) {
-        this.addressLine1 = addressLine1;
-        return this;
-    }
-
-    public InstitutionAddress withAddressLine2(String addressLine2) {
-        this.addressLine2 = addressLine2;
-        return this;
-    }
-
-    public InstitutionAddress withAddressTown(String addressTown) {
-        this.addressTown = addressTown;
-        return this;
-    }
-
-    public InstitutionAddress withAddressDistrict(String addressDistrict) {
-        this.addressDistrict = addressDistrict;
-        return this;
-    }
-
-    public InstitutionAddress withAddressCode(String addressCode) {
+    public InstitutionAddress withAddressCode(final String addressCode) {
         this.addressCode = addressCode;
         return this;
     }
 
-    public InstitutionAddress withLocation(GeographicLocation location) {
-        this.location = location;
+    public InstitutionAddress withAddressDistrict(final String addressDistrict) {
+        this.addressDistrict = addressDistrict;
+        return this;
+    }
+
+    public InstitutionAddress withAddressTown(final String addressTown) {
+        this.addressTown = addressTown;
+        return this;
+    }
+
+    public InstitutionAddress withAddressLine2(final String addressLine2) {
+        this.addressLine2 = addressLine2;
+        return this;
+    }
+
+    public InstitutionAddress withAddressLine1(final String addressLine1) {
+        this.addressLine1 = addressLine1;
+        return this;
+    }
+
+    public InstitutionAddress withInstitution(final Institution institution) {
+        this.institution = institution;
+        return this;
+    }
+
+    public InstitutionAddress withRegion(final InstitutionDomicileRegion region) {
+        this.region = region;
+        return this;
+    }
+
+    public InstitutionAddress withDomicile(final InstitutionDomicile domicile) {
+        this.domicile = domicile;
         return this;
     }
 
@@ -179,11 +184,11 @@ public class InstitutionAddress extends GeocodableLocation {
     public String getLocationString() {
         return Joiner.on(", ").join(getAddressTokens()) + ", " + Joiner.on(", ").join(getDomicileTokens());
     }
-    
+
     public List<String> getAddressTokens() {
         return filterLocationTokens(addressLine1, addressLine2, addressTown, addressDistrict, addressCode);
     }
-    
+
     public List<String> getDomicileTokens() {
         return filterLocationTokens(region == null ? null : region.getName(), domicile.getName());
     }

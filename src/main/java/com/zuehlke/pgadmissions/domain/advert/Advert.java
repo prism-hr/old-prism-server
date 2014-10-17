@@ -73,7 +73,7 @@ public class Advert {
     @Column(name = "apply_link")
     private String applyLink;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "institution_address_id")
     private InstitutionAddress address;
 
@@ -143,7 +143,7 @@ public class Advert {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
     private Set<AdvertTheme> themes = Sets.newHashSet();
-    
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
     private Set<AdvertTargetInstitution> targetInstitutions = Sets.newHashSet();

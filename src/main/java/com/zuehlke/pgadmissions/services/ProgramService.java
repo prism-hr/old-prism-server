@@ -1,13 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -16,6 +8,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.imported.ProgramType;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
@@ -26,6 +19,14 @@ import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
+import org.dozer.Mapper;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -54,6 +55,9 @@ public class ProgramService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AdvertService advertService;
 
     public Program getById(Integer id) {
         return entityService.getById(Program.class, id);
@@ -144,6 +148,7 @@ public class ProgramService {
         advert.setSummary(programDTO.getSummary());
         advert.setStudyDurationMinimum(programDTO.getStudyDurationMinimum());
         advert.setStudyDurationMaximum(programDTO.getStudyDurationMaximum());
+        advert.setAddress(advertService.createAddressCopy(program.getInstitution().getAddress()));
     }
 
     private void copyStudyOptions(Program program, ProgramDTO programDTO) {

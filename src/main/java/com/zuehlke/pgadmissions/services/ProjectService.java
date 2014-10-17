@@ -1,13 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
@@ -22,6 +14,13 @@ import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -44,6 +43,9 @@ public class ProjectService {
 
     @Autowired
     private SystemService systemService;
+
+    @Autowired
+    private AdvertService advertService;
 
     public Project getById(Integer id) {
         return entityService.getById(Project.class, id);
@@ -96,6 +98,7 @@ public class ProjectService {
         advert.setSummary(projectDTO.getSummary());
         advert.setStudyDurationMinimum(projectDTO.getStudyDurationMinimum());
         advert.setStudyDurationMaximum(projectDTO.getStudyDurationMaximum());
+        advert.setAddress(advertService.createAddressCopy(project.getInstitution().getAddress()));
     }
 
     public LocalDate resolveDueDateBaseline(Project project, Comment comment) {

@@ -151,6 +151,7 @@ public class MailSender {
 
     private Map<String, Object> createNotificationModel(NotificationTemplate notificationTemplate, NotificationTemplateModelDTO modelDTO, boolean validationMode) {
         Map<String, Object> model = Maps.newHashMap();
+        LOGGER.info("Getting properties for " + notificationTemplate.getId().name() + " for " + modelDTO.getResource().getCode());
         List<PrismNotificationTemplatePropertyCategory> categories = notificationTemplate.getId().getPropertyCategories();
         NotificationTemplatePropertyLoader loader = applicationContext.getBean(NotificationTemplatePropertyLoader.class).withTemplateModelDTO(modelDTO);
         for (PrismNotificationTemplatePropertyCategory propertyCategory : categories) {

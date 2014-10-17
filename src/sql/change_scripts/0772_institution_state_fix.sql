@@ -1,4 +1,4 @@
-INSERT INTO STATE (id, state_group_id, scope_id)
+INSERT IGNORE INTO STATE (id, state_group_id, scope_id)
 VALUES("INSTITUTION_APPROVED_COMPLETED", "INSTITUTION_APPROVED", "INSTITUTION")
 ;
 

@@ -13,6 +13,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -61,36 +62,33 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
         institutionService.populateDefaultImportedEntityFeeds();
         for (ImportedEntityFeed importedEntityFeed : importedEntityService.getImportedEntityFeeds()) {
             String maxRedirects = null;
-            if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat")
-                    || (!importedEntityFeed.isAuthenticated() && importedEntityFeed.getImportedEntityType() != PrismImportedEntity.INSTITUTION)) {
-                try {
-                    maxRedirects = System.getProperty("http.maxRedirects");
-                    System.setProperty("http.maxRedirects", "5");
-                    importEntities(importedEntityFeed);
-                } catch (DataImportException e) {
-                    LOGGER.error("Error importing reference data", e);
-                    String errorMessage = e.getMessage();
-                    Throwable cause = e.getCause();
-                    if (cause != null) {
-                        errorMessage += "\n" + cause.toString();
-                    }
-                    notificationService.sendDataImportErrorNotifications(importedEntityFeed.getInstitution(), errorMessage);
-                } finally {
-                    Authenticator.setDefault(null);
-                    if (maxRedirects != null) {
-                        System.setProperty("http.maxRedirects", maxRedirects);
-                    } else {
-                        System.clearProperty("http.maxRedirects");
-                    }
+            try {
+                maxRedirects = System.getProperty("http.maxRedirects");
+                System.setProperty("http.maxRedirects", "5");
+                importEntities(importedEntityFeed);
+            } catch (DataImportException e) {
+                LOGGER.error("Error importing reference data", e);
+                String errorMessage = e.getMessage();
+                Throwable cause = e.getCause();
+                if (cause != null) {
+                    errorMessage += "\n" + cause.toString();
                 }
-            } else {
-                LOGGER.info("Skipping the import from file: " + importedEntityFeed.getLocation());
+                notificationService.sendDataImportErrorNotifications(importedEntityFeed.getInstitution(), errorMessage);
+            } finally {
+                Authenticator.setDefault(null);
+                if (maxRedirects != null) {
+                    System.setProperty("http.maxRedirects", maxRedirects);
+                } else {
+                    System.clearProperty("http.maxRedirects");
+                }
             }
         }
     }
 
     private void importEntities(ImportedEntityFeed importedEntityFeed) throws DataImportException {
         String fileLocation = importedEntityFeed.getLocation();
+
+        Institution institution = importedEntityFeed.getInstitution();
 
         try {
             List unmarshalled = unmarshalEntities(importedEntityFeed);
@@ -101,22 +99,25 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
 
                 Class<ImportedEntity> importedEntityClass = (Class<ImportedEntity>) importedEntityFeed.getImportedEntityType().getEntityClass();
 
-                Institution institution = importedEntityFeed.getInstitution();
-                if (importedEntityClass.equals(Program.class)) {
-                    mergeImportedPrograms(institution, (List<ProgrammeOccurrence>) unmarshalled);
-                } else if (importedEntityClass.equals(ImportedInstitution.class)) {
-                    mergeImportedInstitutions(institution, (List<com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution>) unmarshalled);
-                } else if (importedEntityClass.equals(ImportedLanguageQualificationType.class)) {
-                    mergeImportedLanguageQualificationTypes(institution,
-                            (List<com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType>) unmarshalled);
-                } else {
-                    mergeImportedEntities(importedEntityClass, institution, (List<Object>) unmarshalled);
-                }
+                if ((!BooleanUtils.isTrue(institution.getUclInstitution() && !contextEnvironment.equals("prod")))) {
+                    if (importedEntityClass.equals(Program.class)) {
+                        mergeImportedPrograms(institution, (List<ProgrammeOccurrence>) unmarshalled);
+                    } else if (importedEntityClass.equals(ImportedInstitution.class)) {
+                        mergeImportedInstitutions(institution, (List<com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution>) unmarshalled);
+                    } else if (importedEntityClass.equals(ImportedLanguageQualificationType.class)) {
+                        mergeImportedLanguageQualificationTypes(institution,
+                                (List<com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType>) unmarshalled);
+                    } else {
+                        mergeImportedEntities(importedEntityClass, institution, (List<Object>) unmarshalled);
+                    }
 
-                importedEntityService.setLastImportedTimestamp(importedEntityFeed);
+                    importedEntityService.setLastImportedTimestamp(importedEntityFeed);
+                } else {
+                    LOGGER.info("Skipped the import from file " + fileLocation + " for: " + institution.getCode());
+                }
             }
         } catch (Exception e) {
-            throw new DataImportException("Error during the import of file: " + fileLocation, e);
+            throw new DataImportException("Error during the import of file: " + fileLocation + " for " + institution.getCode(), e);
         }
     }
 

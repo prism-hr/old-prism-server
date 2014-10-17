@@ -186,6 +186,10 @@ public class Application extends Resource {
     @OneToMany(mappedBy = "application")
     private Set<UserRole> userRoles = Sets.newHashSet();
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_id", nullable = false)
+    private Set<ApplicationTheme> themes = Sets.newHashSet();
+
     @Transient
     private Boolean acceptedTerms;
 
@@ -463,6 +467,10 @@ public class Application extends Resource {
         return userRoles;
     }
 
+    public final Set<ApplicationTheme> getThemes() {
+        return themes;
+    }
+
     public Application withId(Integer id) {
         this.id = id;
         return this;
@@ -607,7 +615,7 @@ public class Application extends Resource {
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
-    
+
     @Override
     public void addComment(Comment comment) {
         comments.add(comment);
@@ -666,7 +674,7 @@ public class Application extends Resource {
     public String getProjectOrProgramCodeDisplay() {
         return project == null ? program.getCode() : project.getCode();
     }
-    
+
     public String getStudyOptionDisplay() {
         return programDetail == null ? null : programDetail.getStudyOptionDisplay();
     }

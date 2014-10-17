@@ -11,6 +11,7 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.Domicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
@@ -28,28 +29,28 @@ public class ImportedEntityDAO {
     public <T extends ImportedEntity> T getById(Integer id) {
         return (T) sessionFactory.getCurrentSession().get(ImportedEntity.class, id);
     }
-    
+
     public <T extends ImportedEntity> T getImportedEntityByCode(Class<? extends ImportedEntity> entityClass, Institution institution, String code) {
         return (T) sessionFactory.getCurrentSession().createCriteria(entityClass) //
                 .add(Restrictions.eq("institution", institution)) //
                 .add(Restrictions.eq("code", code)) //
                 .uniqueResult();
     }
-    
+
     public ImportedInstitution getImportedInstitutionByCode(Domicile domicile, String code) {
         return (ImportedInstitution) sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class) //
                 .add(Restrictions.eq("domicile", domicile)) //
                 .add(Restrictions.eq("code", code)) //
                 .uniqueResult();
     }
-    
+
     public ImportedInstitution getImportedInstitutionByName(Domicile domicile, String name) {
         return (ImportedInstitution) sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class) //
                 .add(Restrictions.eq("domicile", domicile)) //
                 .add(Restrictions.eq("name", name)) //
                 .uniqueResult();
     }
-    
+
     public <T extends ImportedEntity> List<T> getEnabledImportedEntities(Institution institution, Class<T> entityClass) {
         return sessionFactory.getCurrentSession().createCriteria(entityClass) //
                 .add(Restrictions.eq("institution", institution)) //
@@ -57,7 +58,7 @@ public class ImportedEntityDAO {
                 .addOrder(Order.asc("name")) //
                 .list();
     }
-    
+
     public List<ImportedInstitution> getEnabledImportedInstitutions(Domicile domicile) {
         return sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class)//
                 .add(Restrictions.eq("domicile", domicile)) //
@@ -83,7 +84,7 @@ public class ImportedEntityDAO {
     public void update(ImportedEntity entity) {
         sessionFactory.getCurrentSession().update(entity);
     }
-    
+
     public void disableAllEntities(Class<?> entityClass) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update " + entityClass.getSimpleName() + " " //
@@ -94,33 +95,29 @@ public class ImportedEntityDAO {
     public void disableAllEntities(Class<?> entityClass, Institution institution) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update " + entityClass.getSimpleName() + " " //
-                    + "set enabled = false " //
-                    + "where institution = :institution") //
-                .setParameter("institution", institution) // 
+                        + "set enabled = false " //
+                        + "where institution = :institution") //
+                .setParameter("institution", institution) //
                 .executeUpdate();
     }
-    
+
     public void disableAllImportedPrograms(Institution institution, LocalDate baseline) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update Program " //
-                    + "set dueDate = :dueDate " //
-                    + "where institution = :institution " //
-                        + "and imported is true")
-                .setParameter("institution", institution)
-                .setParameter("dueDate", baseline)
-                .executeUpdate();
+                        + "set dueDate = :dueDate " //
+                        + "where institution = :institution " //
+                        + "and imported is true").setParameter("institution", institution).setParameter("dueDate", baseline).executeUpdate();
     }
-    
+
     public void disableAllImportedProgramStudyOptions(Institution institution) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update ProgramStudyOption " //
-                    + "set enabled = false, "
-                        + "defaultStartDate = null " //
-                    + "where program in (" //
+                        + "set enabled = false, " + "defaultStartDate = null " //
+                        + "where program in (" //
                         + "select id " //
-                            + "from Program " //
+                        + "from Program " //
                         + "where institution = :institution " //
-                            + "and imported is true)") //
+                        + "and imported is true)") //
                 .setParameter("institution", institution) //
                 .executeUpdate();
     }
@@ -128,23 +125,24 @@ public class ImportedEntityDAO {
     public void disableAllImportedProgramStudyOptionInstances(Institution institution) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update ProgramStudyOptionInstance " //
-                    + "set enabled = false " //
-                    + "where programStudyOption in (" //
+                        + "set enabled = false " //
+                        + "where programStudyOption in (" //
                         + "select programStudyOption.id " //
-                            + "from Program join programStudyOptions programStudyOption " //
+                        + "from Program join programStudyOptions programStudyOption " //
                         + "where institution = :institution " //
-                            + "and imported is true)") //
+                        + "and imported is true)") //
                 .setParameter("institution", institution) //
                 .executeUpdate();
-        
+
     }
-    
+
     public List<Integer> getPendingImportedEntityFeeds(Integer institutionId) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class) //
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.eq("institution.id", institutionId)) //
+                .add(Restrictions.ne("importedEntityType", PrismImportedEntity.PROGRAM)) //
                 .add(Restrictions.isNull("lastImportedTimestamp")) //
                 .list();
     }
-    
+
 }

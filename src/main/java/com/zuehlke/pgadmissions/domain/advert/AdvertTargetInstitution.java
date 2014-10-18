@@ -56,6 +56,11 @@ public class AdvertTargetInstitution extends AdvertFilterCategory {
     }
 
     @Override
+    public Object getValue() {
+        return getInstitution();
+    }
+
+    @Override
     public ResourceSignature getResourceSignature() {
         return super.getResourceSignature().addProperty("institution", institution);
     }

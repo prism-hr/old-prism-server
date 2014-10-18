@@ -54,6 +54,11 @@ public class AdvertTheme extends AdvertFilterCategory {
     }
 
     @Override
+    public Object getValue() {
+        return getTheme();
+    }
+
+    @Override
     public ResourceSignature getResourceSignature() {
         return super.getResourceSignature().addProperty("theme", theme);
     }

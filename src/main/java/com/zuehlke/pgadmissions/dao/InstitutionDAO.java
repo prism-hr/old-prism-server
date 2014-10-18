@@ -4,11 +4,14 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.IN
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.advert.AdvertCompetency;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -95,4 +98,26 @@ public class InstitutionDAO {
                 .list();
     }
 
+    public List<String> getCompetencies(Institution institution, PrismLocale locale) {
+        return (List<String>) sessionFactory.getCurrentSession().createCriteria(AdvertCompetency.class) //
+                .setProjection(Projections.groupProperty("competency")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.program", "program", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.project", "project", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("project.program", "projectProgram", JoinType.LEFT_OUTER_JOIN) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.isNull("project.institution")) //
+                                .add(Restrictions.eq("program.institution", institution))//
+                                .add(Restrictions.eq("program.locale", locale))) //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.isNull("program.institution")) //
+                                .add(Restrictions.eq("projectProgram.institution", institution)) //
+                                .add(Restrictions.eq("projectProgram.locale", locale)))) //
+                .list();
+    }
+
+    public List<Institution> list() {
+        return sessionFactory.getCurrentSession().createCriteria(Institution.class).list();
+    }
 }

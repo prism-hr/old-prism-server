@@ -59,6 +59,11 @@ public class AdvertFunction extends AdvertFilterCategory {
     }
 
     @Override
+    public Object getValue() {
+        return getFunction();
+    }
+
+    @Override
     public ResourceSignature getResourceSignature() {
         return super.getResourceSignature().addProperty("function", function);
     }

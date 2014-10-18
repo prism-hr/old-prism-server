@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 @Table(name = "ADVERT_TARGET_PROGRAM_TYPE", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "program_type" }),
         @UniqueConstraint(columnNames = { "program_type", "advert_id" }) })
 public class AdvertTargetProgramType extends AdvertFilterCategory {
-    
+
     @Id
     @GeneratedValue
     private Integer id;
@@ -56,6 +56,11 @@ public class AdvertTargetProgramType extends AdvertFilterCategory {
 
     public final void setProgramType(PrismProgramType programType) {
         this.programType = programType;
+    }
+
+    @Override
+    public Object getValue() {
+        return getProgramType();
     }
 
     @Override

@@ -107,17 +107,4 @@ public class AdvertDAO {
                                 .add(Restrictions.neProperty("pay.currencySpecified", "pay.currencyAtLocale")))).list();
     }
 
-    public List<String> getPossibleCompetencies(Institution institution, PrismLocale locale) {
-        return (List<String>) sessionFactory.getCurrentSession().createCriteria(AdvertCompetency.class) //
-                .setProjection(Projections.groupProperty("competency")) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert.program", "program", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.project", "project", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions.eq("advert.locale", locale)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eqOrIsNull("program.institution", institution)) //
-                        .add(Restrictions.eqOrIsNull("project.institution", institution))) //
-                .list();
-    }
-
 }

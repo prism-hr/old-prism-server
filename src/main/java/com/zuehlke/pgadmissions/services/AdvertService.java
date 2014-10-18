@@ -6,11 +6,11 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.advert.AdvertDomain;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicileRegion;
@@ -132,7 +132,7 @@ public class AdvertService {
     }
 
     public void saveAdvertDetails(Class<? extends Resource> resourceClass, Integer resourceId, AdvertDetailsDTO advertDetailsDTO)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InterruptedException, IOException, JAXBException {
+            throws Exception {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) PropertyUtils.getSimpleProperty(resource, "advert");
         InstitutionAddressDTO addressDTO = advertDetailsDTO.getAddress();
@@ -175,6 +175,16 @@ public class AdvertService {
         }
 
         advert.setLastCurrencyConversionDate(baseline);
+    }
+
+    public void saveCategories(Class<? extends Resource> resourceClass, Integer resourceId, AdvertCategoriesDTO categoriesDTO) throws Exception {
+        Resource resource = resourceService.getById(resourceClass, resourceId);
+        Advert advert = (Advert) PropertyUtils.getSimpleProperty(resource, "advert");
+
+        advert.getDomains().clear();
+        for (PrismAdvertDomain domain : categoriesDTO.getDomains()) {
+            advert.getDomains().add(new AdvertDomain().withAdvert(advert).withDomain(domain));
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -221,10 +231,6 @@ public class AdvertService {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         return advertDAO.getAdvertsWithElapsedCurrencyConversions(baseline, activeProgramStates, activeProjectStates);
-    }
-
-    public List<String> getPossibleCompetencies(Institution institution, PrismLocale locale) {
-        return advertDAO.getPossibleCompetencies(institution, locale);
     }
 
     public InstitutionAddress createAddressCopy(InstitutionAddress address) {

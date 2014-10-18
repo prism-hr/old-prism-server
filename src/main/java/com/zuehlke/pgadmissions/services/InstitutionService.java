@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -194,7 +195,7 @@ public class InstitutionService {
                 .withDeclinedResponse(false);
         actionService.executeSystemAction(institution, action, comment);
     }
-    
+
     public List<Integer> getInstitutionsToActivate() {
         return institutionDAO.getInstitutionsToActivate();
     }
@@ -218,4 +219,11 @@ public class InstitutionService {
         }
     }
 
+    public List<String> getCompetencies(Institution institution, PrismLocale locale) {
+        return institutionDAO.getCompetencies(institution, locale);
+    }
+
+    public List<Institution> list() {
+        return institutionDAO.list();
+    }
 }

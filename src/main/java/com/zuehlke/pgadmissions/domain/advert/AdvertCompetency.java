@@ -54,6 +54,11 @@ public class AdvertCompetency extends AdvertFilterCategory {
     }
 
     @Override
+    public Object getValue() {
+        return getCompetency();
+    }
+
+    @Override
     public ResourceSignature getResourceSignature() {
         return super.getResourceSignature().addProperty("competency", competency);
     }

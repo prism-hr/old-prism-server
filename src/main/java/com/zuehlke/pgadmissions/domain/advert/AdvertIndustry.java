@@ -59,6 +59,11 @@ public class AdvertIndustry extends AdvertFilterCategory {
     }
 
     @Override
+    public Object getValue() {
+        return getIndustry();
+    }
+
+    @Override
     public ResourceSignature getResourceSignature() {
         return super.getResourceSignature().addProperty("industry", industry);
     }

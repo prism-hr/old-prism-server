@@ -25,7 +25,7 @@ public class OpportunitiesResource {
     @Autowired
     private Mapper dozerBeanMapper;
 
-    @RequestMapping(method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(method = RequestMethod.GET)
     public List<AdvertRepresentation> getAdverts() {
         List<Advert> adverts = advertService.getActiveAdverts();
         List<AdvertRepresentation> representations = Lists.newArrayListWithExpectedSize(adverts.size());

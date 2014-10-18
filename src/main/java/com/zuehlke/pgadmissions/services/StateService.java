@@ -315,25 +315,33 @@ public class StateService {
     public StateTransition getProgramApprovedOutcome(Resource resource, Comment comment) {
         return getUserDefinedNextState(resource, comment);
     }
-
+    
     public StateTransition getProgramExpiredOutcome(Resource resource, Comment comment) {
         PrismState transitionStateId = BooleanUtils.isTrue(resource.getProgram().getImported()) ? PrismState.PROGRAM_DISABLED_PENDING_IMPORT_REACTIVATION
                 : PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION;
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
+    
+    public StateTransition getInstitutionViewEditOutcome(Resource resource, Comment comment) {
+        return getViewEditNextState(resource, comment);
+    }
 
     public StateTransition getProgramViewEditOutcome(Resource resource, Comment comment) {
+        return getViewEditNextState(resource, comment);
+    }
+
+    public StateTransition getProjectViewEditOutcome(Resource resource, Comment comment) {
+        return getViewEditNextState(resource, comment);
+    }
+
+    private StateTransition getViewEditNextState(Resource resource, Comment comment) {
         if (comment.getTransitionState() == null) {
             PrismState transitionStateId = resource.getState().getId();
             return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
         }
         return getUserDefinedNextState(resource, comment);
     }
-
-    public StateTransition getProjectViewEditOutcome(Resource resource, Comment comment) {
-        return getUserDefinedNextState(resource, comment);
-    }
-
+    
     private StateTransition getUserDefinedNextState(Resource resource, Comment comment) {
         if(comment.getTransitionState() == null) {
             return null;

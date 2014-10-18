@@ -37,16 +37,19 @@ public class Action extends WorkflowDefinition {
     @Column(name = "action_category", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismActionCategory actionCategory;
-    
+
     @Column(name = "rating_action", nullable = false)
     private Boolean ratingAction;
-    
+
     @Column(name = "transition_action", nullable = false)
     private Boolean transitionAction;
-    
+
     @Column(name = "declinable_action", nullable = false)
     private Boolean declinableAction;
-    
+
+    @Column(name = "visible_action", nullable = false)
+    private Boolean visibleAction;
+
     @Column(name = "emphasized_action", nullable = false)
     private Boolean emphasizedAction;
 
@@ -57,14 +60,14 @@ public class Action extends WorkflowDefinition {
     @ManyToOne
     @JoinColumn(name = "fallback_action_id")
     private Action fallbackAction;
-    
+
     @ManyToOne
     @JoinColumn(name = "creation_scope_id")
     private Scope creationScope;
 
     @OneToMany(mappedBy = "action")
     private Set<ActionRedaction> redactions = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "action")
     private Set<StateAction> stateActions = Sets.newHashSet();
 
@@ -115,6 +118,14 @@ public class Action extends WorkflowDefinition {
 
     public final void setDeclinableAction(Boolean declinableAction) {
         this.declinableAction = declinableAction;
+    }
+
+    public final Boolean getVisibleAction() {
+        return visibleAction;
+    }
+
+    public final void setVisibleAction(Boolean visibleAction) {
+        this.visibleAction = visibleAction;
     }
 
     public final Boolean getEmphasizedAction() {
@@ -170,32 +181,37 @@ public class Action extends WorkflowDefinition {
         this.actionType = actionType;
         return this;
     }
-    
+
     public Action withActionCategory(PrismActionCategory actionCategory) {
         this.actionCategory = actionCategory;
         return this;
     }
-    
+
     public Action withRatingAction(Boolean ratingAction) {
         this.ratingAction = ratingAction;
         return this;
     }
-    
+
     public Action withTransitionAction(Boolean transitionAction) {
         this.transitionAction = transitionAction;
         return this;
     }
-    
+
     public Action withDeclinableAction(Boolean declinableAction) {
         this.declinableAction = declinableAction;
         return this;
     }
-    
+
+    public Action withVisibleAction(Boolean visibleAction) {
+        this.visibleAction = visibleAction;
+        return this;
+    }
+
     public Action withEmphasizedAction(Boolean emphasizedAction) {
         this.emphasizedAction = emphasizedAction;
         return this;
     }
-    
+
     public Action withFallbackAction(Action fallbackAction) {
         this.fallbackAction = fallbackAction;
         return this;

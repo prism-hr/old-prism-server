@@ -164,6 +164,7 @@ public class CommentDAO {
                 .createAlias("transitionState", "transitionState", JoinType.INNER_JOIN) //
                 .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
+                .add(Restrictions.eq("action.visibleAction", true)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.ne("action.actionCategory", PrismActionCategory.ESCALATE_RESOURCE)) //
                         .add(Restrictions.conjunction() //

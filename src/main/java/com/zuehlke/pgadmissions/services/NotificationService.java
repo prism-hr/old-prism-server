@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
 import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.mail.MailSender;
 import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
@@ -149,18 +150,18 @@ public class NotificationService {
         List<UserNotificationDefinitionDTO> requests = notificationDAO.getSyndicatedRequestNotifications(resource, baseline);
         HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
 
-        if (requests.size() > 0 ) {
+        if (requests.size() > 0) {
             PrismAction transitionActionId = PrismAction.valueOf("SYSTEM_VIEW_" + resource.getResourceScope().name() + "_LIST");
-    
+
             for (UserNotificationDefinitionDTO definition : requests) {
                 User user = userService.getById(definition.getUserId());
-    
+
                 NotificationTemplate notificationTemplate = getById(definition.getNotificationTemplateId());
                 LocalDate lastNotifiedDate = user.getLastNotifiedDate(resource.getClass());
-    
+
                 Integer reminderInterval = getReminderInterval(resource, notificationTemplate);
                 boolean doSendReminder = baseline.minusDays(reminderInterval) == lastNotifiedDate;
-    
+
                 if (!sent.get(notificationTemplate).contains(user) && (lastNotifiedDate == null || doSendReminder)) {
                     NotificationTemplate sendTemplate = doSendReminder ? notificationTemplate.getReminderTemplate() : notificationTemplate;
                     sendNotification(sendTemplate, new NotificationTemplateModelDTO().withUser(user).withAuthor(author).withResource(resource)
@@ -188,7 +189,7 @@ public class NotificationService {
             for (UserNotificationDefinitionDTO update : updates) {
                 User user = userService.getById(update.getUserId());
                 NotificationTemplate notificationTemplate = getById(update.getNotificationTemplateId());
-    
+
                 if (!sent.get(notificationTemplate).contains(user)) {
                     sendNotification(notificationTemplate, new NotificationTemplateModelDTO().withUser(user).withAuthor(author).withResource(resource)
                             .withTransitionAction(transitionActionId));
@@ -249,11 +250,19 @@ public class NotificationService {
         return notificationDAO.geEditableTemplates(scope);
     }
 
-    public void saveConfiguration(Resource resource, NotificationTemplate template, NotificationConfigurationDTO notificationConfigurationDTO) {
+    public void saveConfiguration(Resource resource, NotificationTemplate template, NotificationConfigurationDTO notificationConfigurationDTO)
+            throws DeduplicationException {
         NotificationConfiguration configuration = getConfiguration(resource, template);
-        configuration.setSubject(notificationConfigurationDTO.getSubject());
-        configuration.setContent(notificationConfigurationDTO.getContent());
-        configuration.setReminderInterval(notificationConfigurationDTO.getReminderInterval());
+        if (resource == configuration.getResource()) {
+            configuration.setSubject(notificationConfigurationDTO.getSubject());
+            configuration.setContent(notificationConfigurationDTO.getContent());
+            configuration.setReminderInterval(notificationConfigurationDTO.getReminderInterval());
+        } else {
+            configuration = new NotificationConfiguration().withResource(resource).withNotificationTemplate(template)
+                    .withSubject(notificationConfigurationDTO.getSubject()).withContent(notificationConfigurationDTO.getContent())
+                    .withReminderInterval(notificationConfigurationDTO.getReminderInterval());
+            entityService.createOrUpdate(configuration);
+        }
     }
 
     private void sendIndividualRequestNotifications(Resource resource, Comment comment, User author, LocalDate baseline) {
@@ -286,16 +295,14 @@ public class NotificationService {
 
         if (updates.size() > 0) {
             PrismAction transitionActionId = actionService.getViewEditAction(resource).getId();
-    
+
             for (UserNotificationDefinitionDTO update : updates) {
                 User user = userService.getById(update.getUserId());
                 NotificationTemplate notificationTemplate = getById(update.getNotificationTemplateId());
-    
+
                 if (!sent.get(notificationTemplate).contains(user)) {
-                    sendNotification(
-                            notificationTemplate,
-                            new NotificationTemplateModelDTO().withUser(user).withAuthor(author).withResource(resource).withComment(comment)
-                                    .withTransitionAction(transitionActionId));
+                    sendNotification(notificationTemplate, new NotificationTemplateModelDTO().withUser(user).withAuthor(author).withResource(resource)
+                            .withComment(comment).withTransitionAction(transitionActionId));
                     sent.put(notificationTemplate, user);
                 }
             }

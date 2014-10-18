@@ -44,10 +44,8 @@ public class NotificationTemplateResource {
     private Mapper dozerBeanMapper;
 
     @RequestMapping(value = "/{resourceId}/notificationTemplates/{notificationTemplateId}", method = RequestMethod.GET)
-    public NotificationConfigurationRepresentation getNotificationTemplateVersion(
-            @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @PathVariable Integer resourceId,
-            @PathVariable String notificationTemplateId) throws Exception {
+    public NotificationConfigurationRepresentation getNotificationTemplateVersion(@ModelAttribute ResourceDescriptor resourceDescriptor,
+            @PathVariable Integer resourceId, @PathVariable String notificationTemplateId) throws Exception {
 
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         NotificationTemplate template = notificationService.getById(PrismNotificationTemplate.valueOf(notificationTemplateId));
@@ -55,41 +53,21 @@ public class NotificationTemplateResource {
     }
 
     @RequestMapping(value = "/{resourceId}/notificationTemplates/{notificationTemplateId}", method = RequestMethod.PUT)
-    public void updateNotificationTemplateVersion(
-            @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @PathVariable Integer resourceId,
-            @PathVariable String notificationTemplateId,
-            @Valid @RequestBody NotificationConfigurationDTO notificationConfigurationDTO,
+    public void updateNotificationConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
+            @PathVariable String notificationTemplateId, @Valid @RequestBody NotificationConfigurationDTO notificationConfigurationDTO,
             BindingResult validationErrors) throws Exception {
         NotificationTemplate template = notificationService.getById(PrismNotificationTemplate.valueOf(notificationTemplateId));
 
-        validateAndCreatePreview(template, notificationConfigurationDTO, validationErrors);
+        validate(template, notificationConfigurationDTO, validationErrors);
         if (validationErrors.hasErrors()) {
             throw new PrismValidationException("Invalid notification configuration", validationErrors);
         }
 
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         notificationService.saveConfiguration(resource, template, notificationConfigurationDTO);
-
-        // TODO save notification version
     }
 
-    @RequestMapping(value = "/notificationTemplates/{notificationTemplateId}/preview", method = RequestMethod.POST)
-    public Map<String, String> getNotificationTemplatePreview(
-            @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @PathVariable String notificationTemplateId,
-            @Valid @RequestBody NotificationConfigurationDTO notificationConfigurationDTO,
-            BindingResult validationErrors) throws Exception {
-        NotificationTemplate template = notificationService.getById(PrismNotificationTemplate.valueOf(notificationTemplateId));
-
-        Map<String, String> preview = validateAndCreatePreview(template, notificationConfigurationDTO, validationErrors);
-        if (validationErrors.hasErrors()) {
-            throw new PrismValidationException("Invalid notification configuration", validationErrors);
-        }
-        return preview;
-    }
-
-    private Map<String, String> validateAndCreatePreview(NotificationTemplate template, NotificationConfigurationDTO notificationConfigurationDTO, BindingResult errors) {
+    private Map<String, String> validate(NotificationTemplate template, NotificationConfigurationDTO notificationConfigurationDTO, BindingResult errors) {
         if (template.getId().getReminderTemplate() == null && notificationConfigurationDTO.getReminderInterval() != null) {
             errors.rejectValue("reminderInterval", "forbidden");
         } else if (template.getId().getReminderTemplate() != null && notificationConfigurationDTO.getReminderInterval() == null) {
@@ -97,7 +75,7 @@ public class NotificationTemplateResource {
         }
 
         Map<String, Object> model = mailSender.createNotificationModelForValidation(template);
-        
+
         String subject = null, content = null;
         try {
             subject = mailSender.processHeader(template.getId(), notificationConfigurationDTO.getSubject(), model);
@@ -121,5 +99,5 @@ public class NotificationTemplateResource {
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
         return RestApiUtils.getResourceDescriptor(resourceScope);
     }
-    
+
 }

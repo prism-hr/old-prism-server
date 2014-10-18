@@ -252,17 +252,10 @@ public class NotificationService {
 
     public void saveConfiguration(Resource resource, NotificationTemplate template, NotificationConfigurationDTO notificationConfigurationDTO)
             throws DeduplicationException {
-        NotificationConfiguration configuration = getConfiguration(resource, template);
-        if (resource == configuration.getResource()) {
-            configuration.setSubject(notificationConfigurationDTO.getSubject());
-            configuration.setContent(notificationConfigurationDTO.getContent());
-            configuration.setReminderInterval(notificationConfigurationDTO.getReminderInterval());
-        } else {
-            configuration = new NotificationConfiguration().withResource(resource).withNotificationTemplate(template)
-                    .withSubject(notificationConfigurationDTO.getSubject()).withContent(notificationConfigurationDTO.getContent())
-                    .withReminderInterval(notificationConfigurationDTO.getReminderInterval());
-            entityService.createOrUpdate(configuration);
-        }
+        NotificationConfiguration configuration = new NotificationConfiguration().withResource(resource).withNotificationTemplate(template)
+                .withSubject(notificationConfigurationDTO.getSubject()).withContent(notificationConfigurationDTO.getContent())
+                .withReminderInterval(notificationConfigurationDTO.getReminderInterval());
+        entityService.createOrUpdate(configuration);
     }
 
     private void sendIndividualRequestNotifications(Resource resource, Comment comment, User author, LocalDate baseline) {

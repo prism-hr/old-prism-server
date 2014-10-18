@@ -102,8 +102,7 @@ public class CommentService {
                 return timeline;
             } else {
                 List<Comment> transitionComments = Lists.newLinkedList();
-                transitionComments.add(latestVisibleComment);
-                transitionComments.addAll(commentDAO.getStateGroupTransitionComments(resource));
+                transitionComments.addAll(commentDAO.getStateGroupTransitionComments(resource, latestVisibleComment));
                 
                 for (int i = 0; i < (transitionComments.size() - 1); i++) {
                     Comment transitionComment = transitionComments.get(i);

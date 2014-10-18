@@ -181,22 +181,25 @@ public class CommentDAO {
                 .uniqueResult();
     }
 
-    public List<Comment> getStateGroupTransitionComments(Resource resource) {
+    public List<Comment> getStateGroupTransitionComments(Resource resource, Comment latestVisibleComment) {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
                 .createAlias("transitionState", "transitionState", JoinType.INNER_JOIN) //
                 .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
-                .add(Restrictions.eq("action.transitionAction", true)) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("transitionStateGroup.repeatable", true)) //
+                        .add(Restrictions.eq("id", latestVisibleComment.getId())) //
                         .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("stateGroup.id")) //
-                                .add(Restrictions.isNotNull("transitionStateGroup.id")) //
-                                .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id"))) //
-                        .add(Restrictions.isNotNull("action.creationScope"))) //
+                                .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
+                                .add(Restrictions.eq("action.transitionAction", true)) //
+                                .add(Restrictions.disjunction() //
+                                        .add(Restrictions.eq("transitionStateGroup.repeatable", true)) //
+                                        .add(Restrictions.conjunction() //
+                                                .add(Restrictions.isNotNull("stateGroup.id")) //
+                                                .add(Restrictions.isNotNull("transitionStateGroup.id")) //
+                                                .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id"))) //
+                                        .add(Restrictions.isNotNull("action.creationScope"))))) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //
                 .list();
@@ -206,8 +209,9 @@ public class CommentDAO {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
-                .add(Restrictions.ne("action.actionCategory", PrismActionCategory.ESCALATE_RESOURCE)) //
-                .add(Restrictions.le("createdTimestamp", start.getCreatedTimestamp())).add(Restrictions.ne("id", start.getId()));
+                .add(Restrictions.eq("action.visibleAction", true)) //
+                .add(Restrictions.le("createdTimestamp", start.getCreatedTimestamp())) //
+                .add(Restrictions.ne("id", start.getId()));
 
         if (close != null) {
             criteria.add(Restrictions.ge("createdTimestamp", close.getCreatedTimestamp())) //

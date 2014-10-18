@@ -56,6 +56,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.rest.validation.validator.comment.AssignInterviewersCommentCustomValidator;
@@ -274,6 +275,10 @@ public enum PrismAction {
         this.validationDefinition = validationDefinition;
     }
 
+    public static void main(String[] args) {
+        System.out.println(Joiner.on("\n").join(PrismAction.values()));
+    }
+    
     public PrismActionType getActionType() {
         return actionType;
     }

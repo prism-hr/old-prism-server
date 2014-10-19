@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -21,9 +22,11 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -206,13 +209,21 @@ public class CommentDAO {
                 .list();
     }
 
-    public List<Comment> getStateComments(Resource resource, Comment start, Comment close) {
+    public List<Comment> getStateComments(Resource resource, Comment start, Comment close, PrismStateGroup stateGroupId,
+            Set<CommentRepresentation> previousStateComments) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .createAlias("state", "state") //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
                 .add(Restrictions.eq("action.visibleAction", true)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eqOrIsNull("state.stateGroup.id", stateGroupId))) //
                 .add(Restrictions.le("createdTimestamp", start.getCreatedTimestamp())) //
                 .add(Restrictions.ne("id", start.getId()));
+
+        for (CommentRepresentation previousStateComment : previousStateComments) {
+            criteria.add(Restrictions.ne("id", previousStateComment.getId()));
+        }
 
         if (close != null) {
             criteria.add(Restrictions.ge("createdTimestamp", close.getCreatedTimestamp())) //

@@ -44,7 +44,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertFeesAndPaymentsDTO;
-import com.zuehlke.pgadmissions.rest.dto.AdvertFilterMetadataDTO;
+import com.zuehlke.pgadmissions.rest.dto.AdvertCategoriesDTO;
 import com.zuehlke.pgadmissions.rest.dto.FinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
@@ -182,7 +182,7 @@ public class AdvertService {
     }
 
     @SuppressWarnings("unchecked")
-    public void saveFilterMetadata(Class<? extends Resource> resourceClass, Integer resourceId, AdvertFilterMetadataDTO metadataDTO) {
+    public void saveCategories(Class<? extends Resource> resourceClass, Integer resourceId, AdvertCategoriesDTO metadataDTO) {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
 

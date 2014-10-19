@@ -7,7 +7,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 
-public class AdvertFilterMetadataDTO {
+public class AdvertCategoriesDTO {
 
     private List<PrismAdvertDomain> domains;
 

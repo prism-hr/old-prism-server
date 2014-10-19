@@ -274,10 +274,6 @@ public enum PrismAction {
         this.validationDefinition = validationDefinition;
     }
     
-    public static void main(String[] args) {
-        System.out.println(Joiner.on("\n").join(PrismAction.values()));
-    }
-    
     public PrismActionType getActionType() {
         return actionType;
     }

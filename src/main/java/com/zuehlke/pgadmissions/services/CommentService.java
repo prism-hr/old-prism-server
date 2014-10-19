@@ -97,27 +97,35 @@ public class CommentService {
         TimelineRepresentation timeline = new TimelineRepresentation();
         if (!actionService.getPermittedActions(resource, user).isEmpty()) {
             Comment latestVisibleComment = commentDAO.getLatestVisibleComment(resource);
-            
+
             if (latestVisibleComment == null) {
                 return timeline;
             } else {
                 List<Comment> transitionComments = Lists.newLinkedList();
                 transitionComments.addAll(commentDAO.getStateGroupTransitionComments(resource, latestVisibleComment));
-                
-                for (int i = 0; i < (transitionComments.size() - 1); i++) {
-                    Comment transitionComment = transitionComments.get(i);
+
+                int transitionCommentCount = transitionComments.size();
+                if (transitionCommentCount == 1) {
+                    timeline.addCommentGroup(new TimelineCommentGroupRepresentation().withStateGroup(stateGroupId).addComment(
+                            dozerBeanMapper.map(latestVisibleComment, CommentRepresentation.class)));
+                } else {
+                    for (int i = 0; i < (transitionCommentCount - 1); i++) {
+                        Comment transitionComment = transitionComments.get(i);
     
-                    TimelineCommentGroupRepresentation commentGroup = new TimelineCommentGroupRepresentation().withStateGroup(
-                            stateGroupId = i == 0 ? stateGroupId : transitionComment.getState().getStateGroup().getId()).addComment(
-                            dozerBeanMapper.map(transitionComment, CommentRepresentation.class));
+                        TimelineCommentGroupRepresentation commentGroup = new TimelineCommentGroupRepresentation().withStateGroup(
+                                stateGroupId = i == 0 ? stateGroupId : transitionComment.getState().getStateGroup().getId()).addComment(
+                                dozerBeanMapper.map(transitionComment, CommentRepresentation.class));
     
-                    List<Comment> stateComments = commentDAO.getStateComments(resource, transitionComment, transitionComments.get(i + 1));
-                    for (Comment stateComment : stateComments) {
-                        commentGroup.addComment(dozerBeanMapper.map(stateComment, CommentRepresentation.class));
+                        List<Comment> stateComments = commentDAO.getStateComments(resource, transitionComment, transitionComments.get(i + 1));
+                        for (Comment stateComment : stateComments) {
+                            commentGroup.addComment(dozerBeanMapper.map(stateComment, CommentRepresentation.class));
+                        }
+                        timeline.addCommentGroup(commentGroup);
                     }
-                    timeline.addCommentGroup(commentGroup);
                 }
-                Iterables.getLast(timeline.getCommentGroups()).addComment(dozerBeanMapper.map(Iterables.getLast(transitionComments), CommentRepresentation.class));
+
+                Iterables.getLast(timeline.getCommentGroups()).addComment(
+                        dozerBeanMapper.map(Iterables.getLast(transitionComments), CommentRepresentation.class));
                 return timeline;
             }
         }

@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestApiUtils;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertFeesAndPaymentsDTO;
-import com.zuehlke.pgadmissions.rest.dto.AdvertFilterMetadataDTO;
+import com.zuehlke.pgadmissions.rest.dto.AdvertCategoriesDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 
@@ -42,8 +42,8 @@ public class AdvertResource {
 
     @RequestMapping(value = "/categories", method = RequestMethod.PUT)
     public void updateCategories(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-            @Valid @RequestBody AdvertFilterMetadataDTO categoriesDTO) throws Exception {
-        advertService.saveFilterMetadata(resourceDescriptor.getType(), resourceId, categoriesDTO);
+            @Valid @RequestBody AdvertCategoriesDTO categoriesDTO) throws Exception {
+        advertService.saveCategories(resourceDescriptor.getType(), resourceId, categoriesDTO);
     }
 
     @ModelAttribute

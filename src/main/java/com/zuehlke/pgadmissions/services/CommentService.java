@@ -103,8 +103,8 @@ public class CommentService {
             } else {
                 List<Comment> transitionComments = Lists.newLinkedList();
                 transitionComments.addAll(commentDAO.getStateGroupTransitionComments(resource, latestVisibleComment));
-
                 int transitionCommentCount = transitionComments.size();
+                
                 if (transitionCommentCount == 1) {
                     timeline.addCommentGroup(new TimelineCommentGroupRepresentation().withStateGroup(stateGroupId).addComment(
                             dozerBeanMapper.map(latestVisibleComment, CommentRepresentation.class)));

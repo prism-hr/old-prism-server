@@ -1,0 +1,1 @@
+ALTER TABLE APPLICATION_FORM_EMPLOYMENT_POSITION ADD COLUMN employer_address varchar(1000) NOT NULL DEFAULT 'NOT GIVEN', ADD COLUMN employer_country_id INTEGER unsigned, ADD CONSTRAINT employer_country_fk FOREIGN KEY (employer_country_id) REFERENCES COUNTRIES(id);

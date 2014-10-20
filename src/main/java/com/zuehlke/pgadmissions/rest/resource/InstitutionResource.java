@@ -35,16 +35,16 @@ public class InstitutionResource {
     @Autowired
     private InstitutionService institutionService;
 
-    @Autowired
-    private Mapper dozerBeanMapper;
-
     @RequestMapping(method = RequestMethod.GET, params = "type=simple")
     @ResponseBody
     public List<ImportedEntityRepresentation> getInstitutions() {
         List<Institution> institutions = institutionService.list();
         List<ImportedEntityRepresentation> institutionRepresentations = Lists.newArrayListWithCapacity(institutions.size());
         for (Institution institution : institutions) {
-            institutionRepresentations.add(dozerBeanMapper.map(institution, ImportedEntityRepresentation.class));
+            ImportedEntityRepresentation institutionRepresentation = new ImportedEntityRepresentation();
+            institutionRepresentation.setId(institution.getId());
+            institutionRepresentation.setName(institution.getTitle() + " - " + institution.getAddress().getLocationString());
+            institutionRepresentations.add(institutionRepresentation);
         }
         return institutionRepresentations;
     }
@@ -52,9 +52,9 @@ public class InstitutionResource {
     @RequestMapping(value = "/{institutionId}/categoryTags", method = RequestMethod.GET, params = {"locale", "category"})
     public List<String> getCategoryTags(@PathVariable Integer institutionId, @RequestParam PrismLocale locale, @RequestParam String category) throws Exception {
         Institution institution = institutionService.getById(institutionId);
-        if(category.equals("competencies")) {
+        if (category.equals("competencies")) {
             return advertService.getLocalizedTags(institution, locale, AdvertCompetency.class);
-        } else if(category.equals("themes")) {
+        } else if (category.equals("themes")) {
             return advertService.getLocalizedTags(institution, locale, AdvertTheme.class);
         }
         log.error("Unknown category: " + category);

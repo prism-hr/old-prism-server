@@ -70,6 +70,7 @@ public class ApplicationSectionService {
     private UserService userService;
 
     // TODO: link action calls
+    // TODO: validate selection of themes
     public void saveProgramDetail(Integer applicationId, ApplicationProgramDetailDTO programDetailDTO) throws DeduplicationException {
         Application application = entityService.getById(Application.class, applicationId);
         Institution institution = application.getInstitution();
@@ -101,6 +102,13 @@ public class ApplicationSectionService {
                 supervisorsIterator.remove();
             }
         }
+        
+        application.getThemes().clear();
+        entityService.flush();
+        for (String theme : programDetailDTO.getThemes()) {
+            application.addTheme(theme);
+        }
+        
         for (ApplicationSupervisorDTO supervisorDTO : programDetailDTO.getSupervisors()) {
             UserDTO userDTO = supervisorDTO.getUser();
             User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());

@@ -50,9 +50,19 @@ public class ApplicationTheme {
     public final void setTheme(String theme) {
         this.theme = theme;
     }
+    
+    public ApplicationTheme withApplication(Application application) {
+        this.application = application;
+        return this;
+    }
+    
+    public ApplicationTheme withTheme(String theme) {
+        this.theme = theme;
+        return this;
+    }
 
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addProperty("application", application).addProperty("theme", theme);
     }
-    
+
 }

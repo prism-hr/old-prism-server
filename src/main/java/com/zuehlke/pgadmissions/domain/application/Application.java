@@ -576,6 +576,11 @@ public class Application extends Resource {
         return this;
     }
 
+    public void addTheme(String themeId) {
+        ApplicationTheme theme = new ApplicationTheme().withApplication(this).withTheme(themeId);
+        themes.add(theme);
+    }
+
     @Override
     public State getState() {
         return state;

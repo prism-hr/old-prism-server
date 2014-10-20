@@ -455,7 +455,7 @@ public class ApplicationSectionService {
 
     private void executeUpdateAction(Application application, Action action, User invoker, PrismDisplayProperty messageIndex) throws DeduplicationException {
         Comment comment = new Comment().withUser(invoker).withAction(action)
-                .withContent(applicationContext.getBean(PropertyLoader.class).withResource(application).load(messageIndex))
+                .withContent(applicationContext.getBean(PropertyLoader.class).withResource(application).load(messageIndex)).withDeclinedResponse(false)
                 .withCreatedTimestamp(new DateTime());
         actionService.executeUserAction(application, action, comment);
     }

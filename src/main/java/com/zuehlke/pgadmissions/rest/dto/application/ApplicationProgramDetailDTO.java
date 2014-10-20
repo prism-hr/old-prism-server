@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 
 import org.joda.time.LocalDate;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
 public class ApplicationProgramDetailDTO {
@@ -19,7 +20,7 @@ public class ApplicationProgramDetailDTO {
     @NotNull
     private Integer referralSource;
 
-    private List<String> themes;
+    private List<String> themes = Lists.newArrayList();
 
     private List<ApplicationSupervisorDTO> supervisors;
 

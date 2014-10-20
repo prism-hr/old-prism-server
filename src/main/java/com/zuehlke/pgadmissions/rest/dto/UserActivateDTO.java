@@ -1,9 +1,10 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.NotNull;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
 public class UserActivateDTO {
 

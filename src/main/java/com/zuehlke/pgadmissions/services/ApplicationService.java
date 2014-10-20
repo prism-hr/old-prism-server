@@ -32,10 +32,12 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.Document;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
 import com.zuehlke.pgadmissions.domain.imported.ResidenceState;
+import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -50,6 +52,7 @@ import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRecommendedStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationValidator;
 
 @Service
@@ -93,6 +96,9 @@ public class ApplicationService {
     private CustomizationService customizationService;
 
     @Autowired
+    private ImportedEntityService importedEntityService;
+
+    @Autowired
     private CompleteApplicationValidator completeApplicationValidator;
 
     public Application getById(Integer id) {
@@ -123,10 +129,15 @@ public class ApplicationService {
         return entityService.getByProperty(Application.class, "code", code);
     }
 
-    // TODO: handle null response - study option expired
-    public LocalDate getEarliestStartDate(Application application) {
-        ProgramStudyOption studyOption = programService.getEnabledProgramStudyOption(application.getProgram(), application.getProgramDetail().getStudyOption());
-
+    public ApplicationRecommendedStartDateRepresentation getRecommendedStartDate(Integer applicationId, PrismStudyOption studyOptionId) {
+        Application application = getById(applicationId);
+        StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, application.getInstitution(), studyOptionId.name());
+        ProgramStudyOption programStudyOption = programService.getEnabledProgramStudyOption(application.getProgram(), studyOption);
+        return new ApplicationRecommendedStartDateRepresentation().withEarliestDate(getEarliestStartDate(programStudyOption))
+                .withRecommendedDate(getRecommendedStartDate(application, programStudyOption)).withLatestDate(getLatestStartDate(programStudyOption));
+    }
+    
+    public LocalDate getEarliestStartDate(ProgramStudyOption studyOption) {
         if (studyOption == null) {
             return null;
         }
@@ -138,34 +149,10 @@ public class ApplicationService {
         return earliestStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
     }
 
-    // TODO: handle null response - study option expired
-    public LocalDate getRecommendedStartDate(Application application) {
-        ProgramStudyOption studyOption = programService.getEnabledProgramStudyOption(application.getProgram(), application.getProgramDetail().getStudyOption());
-
-        if (studyOption == null) {
-            return null;
-        }
-
-        LocalDate studyOptionStart = studyOption.getApplicationStartDate();
-        LocalDate studyOptionClose = studyOption.getApplicationCloseDate();
-
-        LocalDate recommendedStartDate = application.getRecommendedStartDate();
-
-        if (recommendedStartDate.isAfter(studyOptionClose)) {
-            recommendedStartDate = studyOptionClose;
-        } else if (recommendedStartDate.isBefore(studyOptionStart)) {
-            recommendedStartDate = studyOptionStart;
-        }
-
-        return recommendedStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
-    }
-
-    // TODO: handle null response - study option expired
-    public LocalDate getLatestStartDate(Application application) {
-        ProgramStudyOption studyOption = programService.getEnabledProgramStudyOption(application.getProgram(), application.getProgramDetail().getStudyOption());
+    public LocalDate getLatestStartDate(ProgramStudyOption studyOption) {
         return studyOption == null ? null : studyOption.getApplicationCloseDate().withDayOfWeek(DateTimeConstants.MONDAY);
     }
-
+    
     public String getApplicationExportReference(Application application) {
         return applicationDAO.getApplicationExportReference(application);
     }
@@ -400,6 +387,25 @@ public class ApplicationService {
             previousApplication = applicationDAO.getPreviousUnsubmittedApplication(application);
         }
         return previousApplication;
+    }
+    
+    private LocalDate getRecommendedStartDate(Application application, ProgramStudyOption studyOption) {
+        if (studyOption == null) {
+            return null;
+        }
+
+        LocalDate studyOptionStart = studyOption.getApplicationStartDate();
+        LocalDate studyOptionClose = studyOption.getApplicationCloseDate();
+
+        LocalDate recommendedStartDate = application.getRecommendedStartDate();
+
+        if (recommendedStartDate.isAfter(studyOptionClose)) {
+            recommendedStartDate = studyOptionClose;
+        } else if (recommendedStartDate.isBefore(studyOptionStart)) {
+            recommendedStartDate = studyOptionStart;
+        }
+
+        return recommendedStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
     }
 
 }

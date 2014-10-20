@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import org.joda.time.LocalDate;
 
+import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
+
 public class QualificationRepresentation {
 
     private Integer id;

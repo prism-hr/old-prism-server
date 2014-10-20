@@ -222,9 +222,7 @@ public class NotificationService {
         User persistentUser = userService.getById(transientUser.getId());
         System system = systemService.getSystem();
         NotificationTemplate template = getById(PrismNotificationTemplate.SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION);
-        String recommendations = advertService.getRecommendedAdvertsForEmail(persistentUser);
-        sendNotification(template, new NotificationTemplateModelDTO().withUser(persistentUser).withAuthor(system.getUser()).withResource(system)
-                .withApplicationRecommendation(recommendations));
+        sendNotification(template, new NotificationTemplateModelDTO().withUser(persistentUser).withAuthor(system.getUser()).withResource(system));
         persistentUser.getUserAccount().setLastNotifiedDateApplicationRecommendation(baseline);
     }
 

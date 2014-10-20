@@ -64,6 +64,7 @@ public enum PrismDisplayProperty {
     SYSTEM_INSTITUTION_LIST(SYSTEM_GLOBAL, "Institutions"), //
     SYSTEM_USER_ACCOUNT(SYSTEM_GLOBAL, "User Account"), //
     SYSTEM_COMMENT_CONTENT_NOT_PROVIDED(SYSTEM_GLOBAL, "No comment provided"), //
+    SYSTEM_APPLY(SYSTEM_GLOBAL, "Apply Now"), //
     INSTITUTION_HEADER(INSTITUTION_GLOBAL, "Institution"), //
     INSTITUTION_APPROVED(
             INSTITUTION_GLOBAL,

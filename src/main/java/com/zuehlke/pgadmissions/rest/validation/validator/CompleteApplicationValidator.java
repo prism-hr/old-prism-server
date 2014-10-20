@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.validation.validator;
 
+import java.util.List;
+
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,13 +12,20 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
+import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
+import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 
 @Component
 public class CompleteApplicationValidator extends LocalValidatorFactoryBean implements Validator {
 
     @Autowired
     private ApplicationService applicationService;
+    
+    @Autowired
+    private ProgramService programService;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -46,13 +55,25 @@ public class CompleteApplicationValidator extends LocalValidatorFactoryBean impl
         if (programDetail != null) {
             errors.pushNestedPath("programDetail");
             LocalDate startDate = programDetail.getStartDate();
-            LocalDate earliestStartDate = applicationService.getEarliestStartDate(application);
-            LocalDate latestStartDate = applicationService.getLatestStartDate(application);
-
-            if (startDate.isBefore(earliestStartDate)) {
-                errors.rejectValue("startDate", "notBefore", new Object[]{earliestStartDate}, null);
-            } else if (startDate.isAfter(latestStartDate)) {
-                errors.rejectValue("startDate", "notAfter", new Object[]{latestStartDate}, null);
+            
+            Program program = application.getProgram();
+            ProgramStudyOption studyOption = programService.getEnabledProgramStudyOption(program, programDetail.getStudyOption());
+            
+            if (studyOption == null) {
+                List<ProgramStudyOption> otherStudyOptions = programService.getEnabledProgramStudyOptions(program);
+                if (otherStudyOptions.isEmpty()) {
+                    throw new CannotApplyException();
+                }
+                errors.rejectValue("studyOption", "notAvailable");
+            } else {
+                LocalDate earliestStartDate = applicationService.getEarliestStartDate(studyOption);
+                LocalDate latestStartDate = applicationService.getLatestStartDate(studyOption);
+    
+                if (startDate.isBefore(earliestStartDate)) {
+                    errors.rejectValue("startDate", "notBefore", new Object[]{earliestStartDate}, null);
+                } else if (startDate.isAfter(latestStartDate)) {
+                    errors.rejectValue("startDate", "notAfter", new Object[]{latestStartDate}, null);
+                }
             }
 
             errors.popNestedPath();

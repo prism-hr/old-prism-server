@@ -19,6 +19,8 @@ public class ApplicationProgramDetailDTO {
     @NotNull
     private Integer referralSource;
 
+    private List<String> themes;
+
     private List<ApplicationSupervisorDTO> supervisors;
 
     public PrismStudyOption getStudyOption() {
@@ -52,4 +54,13 @@ public class ApplicationProgramDetailDTO {
     public void setSupervisors(List<ApplicationSupervisorDTO> supervisors) {
         this.supervisors = supervisors;
     }
+
+    public final List<String> getThemes() {
+        return themes;
+    }
+
+    public final void setThemes(List<String> themes) {
+        this.themes = themes;
+    }
+
 }

@@ -108,7 +108,8 @@ public enum PrismState {
     APPLICATION_WITHDRAWN_PENDING_CORRECTION(PrismStateGroup.APPLICATION_WITHDRAWN, //
             28, PrismScope.APPLICATION, PrismApplicationWithdrawnPendingCorrection.class), //
     APPLICATION_WITHDRAWN_COMPLETED_PURGED(PrismStateGroup.APPLICATION_WITHDRAWN, null, PrismScope.APPLICATION, PrismApplicationWithdrawnCompletedPurged.class), //
-    APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_PURGED(PrismStateGroup.APPLICATION_WITHDRAWN, null, PrismScope.APPLICATION, PrismApplicationWithdrawnCompletedPurged.class), //
+    APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_PURGED(PrismStateGroup.APPLICATION_WITHDRAWN, null, PrismScope.APPLICATION,
+            PrismApplicationWithdrawnCompletedPurged.class), //
     INSTITUTION_APPROVAL(PrismStateGroup.INSTITUTION_APPROVAL, 28, PrismScope.INSTITUTION, PrismInstitutionApproval.class), //
     INSTITUTION_APPROVAL_PENDING_CORRECTION(PrismStateGroup.INSTITUTION_APPROVAL, 28, PrismScope.INSTITUTION, PrismInstitutionApprovalPendingCorrection.class), //
     INSTITUTION_APPROVED(PrismStateGroup.INSTITUTION_APPROVED, null, PrismScope.INSTITUTION, PrismInstitutionApproved.class), //
@@ -178,10 +179,6 @@ public enum PrismState {
         return workflowStateClass;
     }
 
-    public static List<PrismStateAction> getStateActions() {
-        return (List) workflowStateDefinitions.values(); 
-    }
-    
     public static List<PrismStateAction> getStateActions(PrismState state) {
         return workflowStateDefinitions.containsKey(state) ? workflowStateDefinitions.get(state).getStateActions() : new ArrayList<PrismStateAction>();
     }

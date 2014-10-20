@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -209,8 +208,7 @@ public class CommentDAO {
                 .list();
     }
 
-    public List<Comment> getStateComments(Resource resource, Comment start, Comment close, PrismStateGroup stateGroupId,
-            Set<CommentRepresentation> previousStateComments) {
+    public List<Comment> getStateComments(Resource resource, Comment start, Comment close, PrismStateGroup stateGroupId, Set<Integer> exclusions) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("state", "state") //
@@ -221,8 +219,8 @@ public class CommentDAO {
                 .add(Restrictions.le("createdTimestamp", start.getCreatedTimestamp())) //
                 .add(Restrictions.ne("id", start.getId()));
 
-        for (CommentRepresentation previousStateComment : previousStateComments) {
-            criteria.add(Restrictions.ne("id", previousStateComment.getId()));
+        for (Integer exclusion : exclusions) {
+            criteria.add(Restrictions.ne("id", exclusion));
         }
 
         if (close != null) {

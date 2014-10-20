@@ -108,8 +108,8 @@ public class CommentService {
                         timeline.addCommentGroup(new TimelineCommentGroupRepresentation().withStateGroup(stateGroupId));
                         stateGroupId = resource.getPreviousState().getStateGroup().getId();
                     }
-
-                    Set<CommentRepresentation> previousComments = Sets.newHashSet();
+                    
+                    Set<Integer> exclusions = Sets.newHashSet();
                     for (int i = 0; i < (transitionCommentCount - 1); i++) {
                         Comment current = transitionComments.get(i);
                         Comment previous = transitionComments.get(i + 1);
@@ -118,19 +118,19 @@ public class CommentService {
                                 stateGroupId = i == 0 ? stateGroupId : current.getState().getStateGroup().getId()).addComment(
                                 dozerBeanMapper.map(current, CommentRepresentation.class));
 
-                        List<Comment> stateComments = commentDAO.getStateComments(resource, current, previous, stateGroupId, previousComments);
+                        List<Comment> stateComments = commentDAO.getStateComments(resource, current, previous, stateGroupId, exclusions);
+                        exclusions.clear();
+                        
                         for (Comment stateComment : stateComments) {
                             commentGroup.addComment(dozerBeanMapper.map(stateComment, CommentRepresentation.class));
+                            exclusions.add(stateComment.getId());
                         }
                         timeline.addCommentGroup(commentGroup);
-
-                        previousComments.clear();
-                        previousComments.addAll(commentGroup.getComments());
                     }
+                    
+                    Iterables.getLast(timeline.getCommentGroups()).addComment(
+                            dozerBeanMapper.map(Iterables.getLast(transitionComments), CommentRepresentation.class));
                 }
-
-                Iterables.getLast(timeline.getCommentGroups()).addComment(
-                        dozerBeanMapper.map(Iterables.getLast(transitionComments), CommentRepresentation.class));
             }
         }
         return timeline;

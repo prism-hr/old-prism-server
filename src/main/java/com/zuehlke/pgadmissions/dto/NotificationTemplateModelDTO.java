@@ -21,8 +21,6 @@ public class NotificationTemplateModelDTO {
 
     private String dataImportErrorMessage;
 
-    private String applicationRecommendation;
-
     private String newPassword;
 
     public User getUser() {
@@ -61,10 +59,6 @@ public class NotificationTemplateModelDTO {
         return dataImportErrorMessage;
     }
 
-    public String getApplicationRecommendation() {
-        return applicationRecommendation;
-    }
-
     public String getNewPassword() {
         return newPassword;
     }
@@ -96,11 +90,6 @@ public class NotificationTemplateModelDTO {
 
     public NotificationTemplateModelDTO withDataImportErrorMessage(final String dataImportErrorMessage) {
         this.dataImportErrorMessage = dataImportErrorMessage;
-        return this;
-    }
-
-    public NotificationTemplateModelDTO withApplicationRecommendation(final String applicationRecommendation) {
-        this.applicationRecommendation = applicationRecommendation;
         return this;
     }
 

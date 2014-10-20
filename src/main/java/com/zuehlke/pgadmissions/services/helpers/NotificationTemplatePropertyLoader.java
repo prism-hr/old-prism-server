@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.A
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_ACTIVATE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_APPLICATION_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_APPLY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_COMMENT_CONTENT_NOT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_DATE_FORMAT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_DATE_TIME_FORMAT;
@@ -22,6 +23,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,17 +38,23 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.SystemService;
@@ -260,8 +268,23 @@ public class NotificationTemplatePropertyLoader {
         return buildRedirectionControl(SYSTEM_APPLICATION_LIST);
     }
 
-    public String getSystemApplicationRecommendation() {
-        return advertService.getRecommendedAdvertsForEmail(templateModelDTO.getUser());
+    public String getSystemApplicationRecommendation() throws IOException, TemplateException {
+        List<Advert> adverts = advertService.getRecommendedAdverts(templateModelDTO.getUser());
+        List<String> recommendations = Lists.newLinkedList();
+
+        for (Advert advert : adverts) {
+            Program program = advert.getProgram();
+            Project project = advert.getProject();
+            Resource resource = project == null ? program : project;
+
+            String applyUri = advert.getApplyLink();
+            applyUri = applyUri == null ? buildRedirectionUri(resource, templateModelDTO.getTransitionAction(), templateModelDTO.getUser()) : applyUri;
+
+            recommendations.add("<p>" + program.getTitle() + project == null ? "<br/>" : "<br/>" + project == null ? "" : project.getTitle() + "<br/>"
+                    + buildRedirectionControl(applyUri, SYSTEM_APPLY) + "</p>");
+        }
+
+        return Joiner.on("").join(recommendations);
     }
 
     public String getSystemProjectHomepage() throws IOException, TemplateException {
@@ -303,15 +326,14 @@ public class NotificationTemplatePropertyLoader {
     private String buildRedirectionControl(PrismDisplayProperty linkLabel) throws IOException, TemplateException {
         return buildRedirectionControl(linkLabel, null);
     }
-    
+
     private String buildRedirectionControl(String uri, PrismDisplayProperty linkLabel) throws IOException, TemplateException {
         return buildRedirectionControl(uri, linkLabel, null);
     }
 
     private String buildRedirectionControl(PrismDisplayProperty linkLabel, PrismDisplayProperty declineLinkLabel) throws IOException, TemplateException {
         Resource resource = templateModelDTO.getResource();
-        String uri = resource.getSystem().getHomepage() + "/#/activate?resourceId=" + resource.getId() + "&actionId="
-                + templateModelDTO.getTransitionAction().name() + "&activationCode=" + templateModelDTO.getUser().getActivationCode();
+        String uri = buildRedirectionUri(resource, templateModelDTO.getTransitionAction(), templateModelDTO.getUser());
         return buildRedirectionControl(uri, linkLabel, declineLinkLabel);
     }
 
@@ -330,6 +352,12 @@ public class NotificationTemplatePropertyLoader {
         Template template = new Template("Email Control Template", emailControlTemplate, freemarkerConfig.getConfiguration());
 
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+    }
+
+    private String buildRedirectionUri(Resource resource, PrismAction actionId, User user) {
+        String uri = resource.getSystem().getHomepage() + "/#/activate?resourceId=" + resource.getId() + "&actionId=" + actionId.name() + "&activationCode="
+                + user.getActivationCode();
+        return uri;
     }
 
     private String getConfirmedAssignedUser(PrismRole roleId) {

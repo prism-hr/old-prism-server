@@ -145,11 +145,11 @@ public class Advert {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
-    private Set<AdvertTargetInstitution> targetInstitutions = Sets.newHashSet();
+    private Set<AdvertInstitution> institutions = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
-    private Set<AdvertTargetProgramType> targetProgramTypes = Sets.newHashSet();
+    private Set<AdvertProgramType> programTypes = Sets.newHashSet();
 
     @OneToOne(mappedBy = "advert")
     private Program program;
@@ -285,12 +285,12 @@ public class Advert {
         return themes;
     }
 
-    public final Set<AdvertTargetInstitution> getTargetInstitutions() {
-        return targetInstitutions;
+    public final Set<AdvertInstitution> getInstitutions() {
+        return institutions;
     }
 
-    public final Set<AdvertTargetProgramType> getTargetProgramTypes() {
-        return targetProgramTypes;
+    public final Set<AdvertProgramType> getProgramTypes() {
+        return programTypes;
     }
 
     public Program getProgram() {
@@ -366,16 +366,22 @@ public class Advert {
         competencies.add(competency);
     }
 
-    public void addTargetInstitution(Institution institution) {
-        AdvertTargetInstitution targetInstitution = new AdvertTargetInstitution().withAdvert(this);
-        targetInstitution.setInstitution(institution);
-        targetInstitutions.add(targetInstitution);
+    public void addTheme(String themeId) {
+        AdvertTheme theme = new AdvertTheme().withAdvert(this);
+        theme.setTheme(themeId);
+        themes.add(theme);
     }
 
-    public void addTargetProgramType(PrismProgramType programTypeId) {
-        AdvertTargetProgramType targetProgramType = new AdvertTargetProgramType().withAdvert(this);
-        targetProgramType.setProgramType(programTypeId);
-        targetProgramTypes.add(targetProgramType);
+    public void addInstitution(Institution institution) {
+        AdvertInstitution advertInstitution = new AdvertInstitution().withAdvert(this);
+        advertInstitution.setInstitution(institution);
+        institutions.add(advertInstitution);
+    }
+
+    public void addProgramType(PrismProgramType programTypeId) {
+        AdvertProgramType advertProgramType = new AdvertProgramType().withAdvert(this);
+        advertProgramType.setProgramType(programTypeId);
+        programTypes.add(advertProgramType);
     }
 
 }

@@ -1,31 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.net.URI;
-import java.net.URLEncoder;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.xml.bind.JAXBException;
-
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
-import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -42,12 +16,32 @@ import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
-import com.zuehlke.pgadmissions.rest.dto.AdvertDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.AdvertFeesAndPaymentsDTO;
-import com.zuehlke.pgadmissions.rest.dto.AdvertCategoriesDTO;
-import com.zuehlke.pgadmissions.rest.dto.FinancialDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.*;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.text.WordUtils;
+import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+
+import javax.xml.bind.JAXBException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 @Service
 @Transactional
@@ -186,19 +180,18 @@ public class AdvertService {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
 
-        Field[] properties = metadataDTO.getClass().getDeclaredFields();
-        for (Field property : properties) {
-            String propertyName = property.getName();
-            String propertySetterName = "add" + WordUtils.capitalize(StringUtils.removeEnd(propertyName, "s"));
-            List<Object> values = (List<Object>) ReflectionUtils.getProperty(metadataDTO, propertyName);
+        for (String propertyName : new String[]{"domain", "industry", "function", "competency", "theme", "institution", "programType"}) {
+            String propertySetterName = "add" + WordUtils.capitalize(propertyName);
+            List<Object> values = (List<Object>) ReflectionUtils.getProperty(metadataDTO, pluralize(propertyName));
 
             if (values != null) {
-                Collection<?> persistentMetadata = (Collection<?>) ReflectionUtils.getProperty(advert, propertyName);
+                Collection<?> persistentMetadata = (Collection<?>) ReflectionUtils.getProperty(advert, pluralize(propertyName));
                 persistentMetadata.clear();
+                entityService.flush();
 
-                boolean isTargetInstitutionsProperty = propertyName.equals("targetInstitution");
+                boolean isInstitutionsProperty = propertyName.equals("institution");
                 for (Object value : values) {
-                    value = isTargetInstitutionsProperty ? institutionService.getById((Integer) value) : value;
+                    value = isInstitutionsProperty ? institutionService.getById((Integer) value) : value;
                     ReflectionUtils.invokeMethod(advert, propertySetterName, value);
                 }
             }
@@ -207,18 +200,18 @@ public class AdvertService {
 
     public void updateCurrencyConversion(Advert transientAdvert) throws IOException, JAXBException, IllegalAccessException, InvocationTargetException,
             NoSuchMethodException {
-        Advert peristentAdvert = getById(transientAdvert.getId());
+        Advert persistentAdvert = getById(transientAdvert.getId());
         LocalDate baseline = new LocalDate();
 
-        if (peristentAdvert.hasConvertedFee()) {
-            updateConvertedMonetaryValues(peristentAdvert.getFee(), baseline);
+        if (persistentAdvert.hasConvertedFee()) {
+            updateConvertedMonetaryValues(persistentAdvert.getFee(), baseline);
         }
 
-        if (peristentAdvert.hasConvertedPay()) {
-            updateConvertedMonetaryValues(peristentAdvert.getPay(), baseline);
+        if (persistentAdvert.hasConvertedPay()) {
+            updateConvertedMonetaryValues(persistentAdvert.getPay(), baseline);
         }
 
-        peristentAdvert.setLastCurrencyConversionDate(baseline);
+        persistentAdvert.setLastCurrencyConversionDate(baseline);
     }
 
     public List<Advert> getAdvertsWithElapsedCurrencyConversions(LocalDate baseline) {

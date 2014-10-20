@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
+import java.util.List;
 import java.util.Set;
 
 import org.joda.time.LocalDate;
@@ -45,9 +46,13 @@ public class AdvertRepresentation {
 
     private Set<PrismAdvertFunction> functions;
 
-    private Set<Integer> targetInstitutions;
+    private List<String> competencies;
 
-    private Set<PrismProgramType> targetProgramTypes;
+    private List<String> themes;
+
+    private Set<Integer> institutions;
+
+    private Set<PrismProgramType> programTypes;
 
     public Integer getId() {
         return id;
@@ -177,19 +182,35 @@ public class AdvertRepresentation {
         this.functions = functions;
     }
 
-    public Set<Integer> getTargetInstitutions() {
-        return targetInstitutions;
+    public List<String> getCompetencies() {
+        return competencies;
     }
 
-    public void setTargetInstitutions(Set<Integer> targetInstitutions) {
-        this.targetInstitutions = targetInstitutions;
+    public void setCompetencies(List<String> competencies) {
+        this.competencies = competencies;
     }
 
-    public Set<PrismProgramType> getTargetProgramTypes() {
-        return targetProgramTypes;
+    public List<String> getThemes() {
+        return themes;
     }
 
-    public void setTargetProgramTypes(Set<PrismProgramType> targetProgramTypes) {
-        this.targetProgramTypes = targetProgramTypes;
+    public void setThemes(List<String> themes) {
+        this.themes = themes;
+    }
+
+    public Set<Integer> getInstitutions() {
+        return institutions;
+    }
+
+    public void setInstitutions(Set<Integer> institutions) {
+        this.institutions = institutions;
+    }
+
+    public Set<PrismProgramType> getProgramTypes() {
+        return programTypes;
+    }
+
+    public void setProgramTypes(Set<PrismProgramType> programTypes) {
+        this.programTypes = programTypes;
     }
 }

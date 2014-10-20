@@ -1,24 +1,10 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_STARTUP;
-
-import java.io.IOException;
-import java.util.List;
-
-import javax.xml.bind.JAXBException;
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
-
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
+import com.zuehlke.pgadmissions.domain.advert.AdvertFilterCategory;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
@@ -33,6 +19,19 @@ import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.representation.SocialPresenceRepresentation;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+
+import javax.xml.bind.JAXBException;
+import java.io.IOException;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_STARTUP;
 
 @Service
 @Transactional
@@ -219,8 +218,8 @@ public class InstitutionService {
         }
     }
 
-    public List<String> getCompetencies(Institution institution, PrismLocale locale) {
-        return institutionDAO.getCompetencies(institution, locale);
+    public List<String> getCategoryTags(Institution institution, PrismLocale locale, Class<? extends AdvertFilterCategory> clazz) {
+        return institutionDAO.getCategoryTags(institution, locale, clazz);
     }
 
     public List<Institution> list() {

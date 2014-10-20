@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 @Entity
 @Table(name = "ADVERT_INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "institution_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "advert_id" }) })
-public class AdvertTargetInstitution extends AdvertFilterCategory {
+public class AdvertInstitution extends AdvertFilterCategory {
 
     @Id
     @GeneratedValue

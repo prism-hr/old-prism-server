@@ -14,14 +14,14 @@ public class AdvertCategoriesDTO {
     private List<PrismAdvertIndustry> industries;
 
     private List<PrismAdvertFunction> functions;
-    
+
     private List<String> competencies;
-    
+
     private List<String> themes;
 
-    private List<Integer> targetInstitutions;
+    private List<Integer> institutions;
 
-    private List<PrismProgramType> targetProgramTypes;
+    private List<PrismProgramType> programTypes;
 
     public final List<PrismAdvertDomain> getDomains() {
         return domains;
@@ -63,20 +63,20 @@ public class AdvertCategoriesDTO {
         this.themes = themes;
     }
 
-    public final List<Integer> getTargetInstitutions() {
-        return targetInstitutions;
+    public final List<Integer> getInstitutions() {
+        return institutions;
     }
 
-    public final void setTargetInstitutions(List<Integer> targetInstitutions) {
-        this.targetInstitutions = targetInstitutions;
+    public final void setInstitutions(List<Integer> institutions) {
+        this.institutions = institutions;
     }
 
-    public final List<PrismProgramType> getTargetProgramTypes() {
-        return targetProgramTypes;
+    public final List<PrismProgramType> getProgramTypes() {
+        return programTypes;
     }
 
-    public final void setTargetProgramTypes(List<PrismProgramType> targetProgramTypes) {
-        this.targetProgramTypes = targetProgramTypes;
+    public final void setProgramTypes(List<PrismProgramType> programTypes) {
+        this.programTypes = programTypes;
     }
 
 }

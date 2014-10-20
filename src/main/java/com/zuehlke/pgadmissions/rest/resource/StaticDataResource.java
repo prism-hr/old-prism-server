@@ -132,7 +132,6 @@ public class StaticDataResource {
         List<String> currencies = institutionService.listAvailableCurrencies();
         staticData.put("currencies", currencies);
 
-        // Display names for enum classes
         for (Class<?> enumClass : new Class[] { PrismProgramType.class, PrismStudyOption.class, YesNoUnsureResponse.class,
                 DurationUnit.class, PrismAdvertDomain.class, PrismAdvertFunction.class, PrismAdvertIndustry.class }) {
             String simpleName = enumClass.getSimpleName();

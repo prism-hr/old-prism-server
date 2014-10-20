@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.IN
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.advert.AdvertCompetency;
+import com.zuehlke.pgadmissions.domain.advert.AdvertFilterCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
@@ -98,9 +99,10 @@ public class InstitutionDAO {
                 .list();
     }
 
-    public List<String> getCompetencies(Institution institution, PrismLocale locale) {
-        return (List<String>) sessionFactory.getCurrentSession().createCriteria(AdvertCompetency.class) //
-                .setProjection(Projections.groupProperty("competency")) //
+    public List<String> getCategoryTags(Institution institution, PrismLocale locale, Class<? extends AdvertFilterCategory> clazz) {
+        String propertyName = clazz.getSimpleName().replace("Advert", "").toLowerCase();
+        return (List<String>) sessionFactory.getCurrentSession().createCriteria(clazz) //
+                .setProjection(Projections.groupProperty(propertyName)) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.program", "program", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.project", "project", JoinType.LEFT_OUTER_JOIN) //

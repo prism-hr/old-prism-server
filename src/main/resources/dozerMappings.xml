@@ -24,10 +24,6 @@
 
             <!-- Advert category converter definitions -->
             <converter type="com.zuehlke.pgadmissions.rest.converter.AdvertCategoryConverter">
-                <class-a>com.zuehlke.pgadmissions.domain.advert.AdvertCompetency</class-a>
-                <class-b>java.lang.String</class-b>
-            </converter>
-            <converter type="com.zuehlke.pgadmissions.rest.converter.AdvertCategoryConverter">
                 <class-a>com.zuehlke.pgadmissions.domain.advert.AdvertDomain</class-a>
                 <class-b>com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain</class-b>
             </converter>
@@ -40,11 +36,19 @@
                 <class-b>com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry</class-b>
             </converter>
             <converter type="com.zuehlke.pgadmissions.rest.converter.AdvertCategoryConverter">
-                <class-a>com.zuehlke.pgadmissions.domain.advert.AdvertTargetInstitution</class-a>
+                <class-a>com.zuehlke.pgadmissions.domain.advert.AdvertCompetency</class-a>
+                <class-b>java.lang.String</class-b>
+            </converter>
+            <converter type="com.zuehlke.pgadmissions.rest.converter.AdvertCategoryConverter">
+                <class-a>com.zuehlke.pgadmissions.domain.advert.AdvertTheme</class-a>
+                <class-b>java.lang.String</class-b>
+            </converter>
+            <converter type="com.zuehlke.pgadmissions.rest.converter.AdvertCategoryConverter">
+                <class-a>com.zuehlke.pgadmissions.domain.advert.AdvertInstitution</class-a>
                 <class-b>java.lang.Integer</class-b>
             </converter>
             <converter type="com.zuehlke.pgadmissions.rest.converter.AdvertCategoryConverter">
-                <class-a>com.zuehlke.pgadmissions.domain.advert.AdvertTargetProgramType</class-a>
+                <class-a>com.zuehlke.pgadmissions.domain.advert.AdvertProgramType</class-a>
                 <class-b>com.zuehlke.pgadmissions.domain.definitions.PrismProgramType</class-b>
             </converter>
         </custom-converters>

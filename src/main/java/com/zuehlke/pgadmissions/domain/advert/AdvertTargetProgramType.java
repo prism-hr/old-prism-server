@@ -14,7 +14,7 @@ import javax.persistence.UniqueConstraint;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 
 @Entity
-@Table(name = "ADVERT_TARGET_PROGRAM_TYPE", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "program_type" }),
+@Table(name = "ADVERT_PROGRAM_TYPE", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "program_type" }),
         @UniqueConstraint(columnNames = { "program_type", "advert_id" }) })
 public class AdvertTargetProgramType extends AdvertFilterCategory {
 

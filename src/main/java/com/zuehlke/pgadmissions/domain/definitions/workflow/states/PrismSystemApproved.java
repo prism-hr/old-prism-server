@@ -4,12 +4,14 @@ import java.util.Arrays;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 
@@ -80,6 +82,10 @@ public class PrismSystemApproved extends PrismWorkflowState {
              .withAction(PrismAction.SYSTEM_STARTUP) //
              .withRaisesUrgentFlag(false) //
              .withDefaultAction(false) //
+             .withNotifications(Arrays.asList( // 
+                 new PrismStateActionNotification() // 
+                    .withRole(PrismRole.SYSTEM_ADMINISTRATOR) // 
+                    .withTemplate(PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST))) //
              .withTransitions(Arrays.asList( // 
                  new PrismStateTransition() // 
                      .withTransitionState(PrismState.SYSTEM_RUNNING) // 

@@ -1,0 +1,10 @@
+CREATE TABLE ADVERT_COMPETENCY (
+	id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	advert_id INT(10) UNSIGNED NOT NULL,
+	competency VARCHAR(50) NOT NULL,
+	PRIMARY KEY (id),
+	UNIQUE INDEX (advert_id, competency),
+	UNIQUE INDEX (competency, advert_id),
+	FOREIGN KEY (advert_id) REFERENCES ADVERT (id)
+) ENGINE = INNODB
+;

@@ -56,7 +56,7 @@ public class ResourceListFilterService {
                         .withValueDateClose(constraintDTO.getValueDateClose()).withValueDecimalStart(constraintDTO.getValueDecimalStart())
                         .withValueDecimalClose(constraintDTO.getValueDecimalClose());
     
-                if (filterProperty == FilterProperty.STATE_GROUP) {
+                if (filterProperty == FilterProperty.STATE_GROUP_TITLE) {
                     transientConstraint.setValueStateGroup(stateService.getStateGroupById(constraintDTO.getValueStateGroup()));
                 }
     

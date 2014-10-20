@@ -256,8 +256,6 @@ public class ResourceService {
         return resourceDAO.getRecentlyUpdatedResources(resourceClass, rangeStart, rangeClose);
     }
 
-
-
     public <T extends Resource> List<ResourceConsoleListRowDTO> getResourceConsoleList(PrismScope scopeId, ResourceListFilterDTO filter,
             String lastSequenceIdentifier) throws DeduplicationException {
         User user = userService.getCurrentUser();
@@ -281,12 +279,9 @@ public class ResourceService {
             String lastSequenceIdentifier, Integer maxRecords) {
         Set<Integer> assigned = Sets.newHashSet();
         Junction conditions = getFilterConditions(scopeId, filter);
-        List<Integer> scopeResources = resourceDAO.getAssignedResources(user, scopeId, filter, conditions, lastSequenceIdentifier, maxRecords);
-        assigned.addAll(scopeResources);
+        assigned.addAll(resourceDAO.getAssignedResources(user, scopeId, filter, conditions, lastSequenceIdentifier, maxRecords));
         for (PrismScope parentScopeId : parentScopeIds) {
-            List<Integer> parentScopeResources = resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, conditions, lastSequenceIdentifier,
-                    maxRecords);
-            assigned.addAll(parentScopeResources);
+            assigned.addAll(resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, conditions, lastSequenceIdentifier, maxRecords));
         }
         return assigned;
     }
@@ -323,9 +318,9 @@ public class ResourceService {
                         ResourceListConstraintBuilder.appendDateTimeFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
                                 constraint.computeValueDateTimeStart(), constraint.computeValueDateTimeClose(), negated);
                         break;
-                    case INSTITUTION:
-                    case PROGRAM:
-                    case PROJECT:
+                    case INSTITUTION_TITLE:
+                    case PROGRAM_TITLE:
+                    case PROJECT_TITLE:
                         List<Integer> parentResourceIds = resourceDAO.getMatchingParentResources(PrismScope.valueOf(property.name()),
                                 constraint.getValueString());
                         ResourceListConstraintBuilder.appendPropertyInFilterCriterion(conditions, propertyName, parentResourceIds, negated);
@@ -337,7 +332,7 @@ public class ResourceService {
                         ResourceListConstraintBuilder.appendDecimalFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
                                 constraint.getValueDecimalStart(), constraint.getValueDecimalClose(), negated);
                         break;
-                    case STATE_GROUP:
+                    case STATE_GROUP_TITLE:
                         List<PrismState> stateIds = stateService.getStatesByStateGroup(constraint.getValueStateGroup());
                         ResourceListConstraintBuilder.appendPropertyInFilterCriterion(conditions, propertyName, stateIds, negated);
                         break;
@@ -354,6 +349,8 @@ public class ResourceService {
                                 PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.APPLICATION_SUGGESTED_SUPERVISOR, PrismRole.APPLICATION_PRIMARY_SUPERVISOR,
                                 PrismRole.APPLICATION_SECONDARY_SUPERVISOR), negated);
                         break;
+                    case THEME:
+                        ResourceListConstraintBuilder.appendStringFilterCriterion(conditions, propertyName, constraint.getValueString(), negated);
                     }
                 } else {
                     ResourceListConstraintBuilder.throwResourceFilterListMissingPropertyError(scopeId, property);

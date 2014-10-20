@@ -1,5 +1,19 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
+import static com.zuehlke.pgadmissions.domain.definitions.FilterExpression.BETWEEN;
+import static com.zuehlke.pgadmissions.domain.definitions.FilterExpression.CONTAIN;
+import static com.zuehlke.pgadmissions.domain.definitions.FilterExpression.EQUAL;
+import static com.zuehlke.pgadmissions.domain.definitions.FilterExpression.GREATER;
+import static com.zuehlke.pgadmissions.domain.definitions.FilterExpression.LESSER;
+import static com.zuehlke.pgadmissions.domain.definitions.FilterPropertyType.DATE;
+import static com.zuehlke.pgadmissions.domain.definitions.FilterPropertyType.NUMBER;
+import static com.zuehlke.pgadmissions.domain.definitions.FilterPropertyType.STATE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.FilterPropertyType.STRING;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -9,36 +23,23 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public enum FilterProperty {
 
-    USER("user.id", Arrays.asList(FilterExpression.CONTAIN), FilterPropertyType.STRING, Arrays.asList(PrismScope.APPLICATION)),
-    CODE("code", Arrays.asList(FilterExpression.CONTAIN), FilterPropertyType.STRING, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
-    INSTITUTION("institution.id", Arrays.asList(FilterExpression.CONTAIN), FilterPropertyType.STRING, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM)),
-    PROGRAM("program.id", Arrays.asList(FilterExpression.CONTAIN), FilterPropertyType.STRING, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT)),
-    PROJECT("project.id", Arrays.asList(FilterExpression.CONTAIN), FilterPropertyType.STRING, Arrays.asList(PrismScope.APPLICATION)),
-    TITLE("title", Arrays.asList(FilterExpression.CONTAIN), FilterPropertyType.STRING, Arrays.asList(PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
-    STATE_GROUP("state.id", Arrays.asList(FilterExpression.EQUAL), FilterPropertyType.STATE_GROUP, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
-    CREATED_TIMESTAMP("createdTimestamp", Arrays.asList(FilterExpression.BETWEEN, FilterExpression.GREATER, FilterExpression.LESSER),
-            FilterPropertyType.DATE, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
-    SUBMITTED_TIMESTAMP("submittedTimestamp",
-            Arrays.asList(FilterExpression.BETWEEN, FilterExpression.EQUAL, FilterExpression.GREATER, FilterExpression.LESSER),
-            FilterPropertyType.DATE, Arrays.asList(PrismScope.APPLICATION)),
-    UPDATED_TIMESTAMP("updatedTimestamp",
-            Arrays.asList(FilterExpression.BETWEEN, FilterExpression.EQUAL, FilterExpression.GREATER, FilterExpression.LESSER),
-            FilterPropertyType.DATE, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
-    DUE_DATE("dueDate",
-            Arrays.asList(FilterExpression.BETWEEN, FilterExpression.EQUAL, FilterExpression.GREATER, FilterExpression.LESSER),
-            FilterPropertyType.DATE, Arrays.asList(PrismScope.APPLICATION)),
-    CLOSING_DATE("closingDate",
-            Arrays.asList(FilterExpression.BETWEEN, FilterExpression.EQUAL, FilterExpression.GREATER, FilterExpression.LESSER),
-            FilterPropertyType.DATE, Arrays.asList(PrismScope.APPLICATION)),
-    CONFIRMED_START_DATE("confirmed_start_date",
-            Arrays.asList(FilterExpression.BETWEEN, FilterExpression.EQUAL, FilterExpression.GREATER, FilterExpression.LESSER),
-            FilterPropertyType.DATE, Arrays.asList(PrismScope.APPLICATION)),
-    RATING("applicationRatingAverage", Arrays.asList(FilterExpression.BETWEEN, FilterExpression.GREATER, FilterExpression.LESSER),
-            FilterPropertyType.NUMBER, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
-    REFERRER("referrer",
-            Arrays.asList(FilterExpression.CONTAIN),
-            FilterPropertyType.STRING, Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.INSTITUTION)),
-    SUPERVISOR("id", Arrays.asList(FilterExpression.CONTAIN), FilterPropertyType.STRING, Arrays.asList(PrismScope.APPLICATION));
+    USER("user.id", Arrays.asList(CONTAIN), STRING, Arrays.asList(APPLICATION)), //
+    CODE("code", Arrays.asList(CONTAIN), STRING, Arrays.asList(APPLICATION, PROJECT, PROGRAM, INSTITUTION)), //
+    INSTITUTION_TITLE("institution.id", Arrays.asList(CONTAIN), STRING, Arrays.asList(APPLICATION, PROJECT, PROGRAM)), //
+    PROGRAM_TITLE("program.id", Arrays.asList(CONTAIN), STRING, Arrays.asList(APPLICATION, PROJECT)), //
+    PROJECT_TITLE("project.id", Arrays.asList(CONTAIN), STRING, Arrays.asList(APPLICATION)), //
+    TITLE("title", Arrays.asList(CONTAIN), STRING, Arrays.asList(PROJECT, PROGRAM, INSTITUTION)), //
+    STATE_GROUP_TITLE("state.id", Arrays.asList(EQUAL), STATE_GROUP, Arrays.asList(APPLICATION, PROJECT, PROGRAM, INSTITUTION)), //
+    CREATED_TIMESTAMP("createdTimestamp", Arrays.asList(BETWEEN, GREATER, LESSER), DATE, Arrays.asList(APPLICATION, PROJECT, PROGRAM, INSTITUTION)), //
+    SUBMITTED_TIMESTAMP("submittedTimestamp", Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER), DATE, Arrays.asList(APPLICATION)), //
+    UPDATED_TIMESTAMP("updatedTimestamp", Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER), DATE, Arrays.asList(APPLICATION, PROJECT, PROGRAM, INSTITUTION)), //
+    DUE_DATE("dueDate", Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER), DATE, Arrays.asList(APPLICATION)), //
+    CLOSING_DATE("closingDate", Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER), DATE, Arrays.asList(APPLICATION)), //
+    CONFIRMED_START_DATE("confirmed_start_date", Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER), DATE, Arrays.asList(APPLICATION)), //
+    RATING("applicationRatingAverage", Arrays.asList(BETWEEN, GREATER, LESSER), NUMBER, Arrays.asList(APPLICATION, PROJECT, PROGRAM, INSTITUTION)), //
+    REFERRER("referrer", Arrays.asList(CONTAIN), STRING, Arrays.asList(APPLICATION, PROJECT, PROGRAM, INSTITUTION)), //
+    SUPERVISOR("id", Arrays.asList(FilterExpression.CONTAIN), STRING, Arrays.asList(APPLICATION)), //
+    THEME("theme", Arrays.asList(CONTAIN), STRING, Arrays.asList(APPLICATION));
 
     private String propertyName;
 

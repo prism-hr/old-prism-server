@@ -13,8 +13,12 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.advert.AdvertFilterCategory;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 
 @Repository
@@ -53,9 +57,11 @@ public class AdvertDAO {
                 .add(Restrictions.neProperty("advert", "application.advert")) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("recommendedAdvert.program")).add(Restrictions.in("program.state.id", activeProgramStates))) //
+                                .add(Restrictions.isNotNull("recommendedAdvert.program")) //
+                                .add(Restrictions.in("program.state.id", activeProgramStates))) //
                         .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("recommendedAdvert.project")).add(Restrictions.in("project.state.id", activeProjectStates)))) //
+                                .add(Restrictions.isNotNull("recommendedAdvert.project")) //
+                                .add(Restrictions.in("project.state.id", activeProjectStates)))) //
                 .addOrder(Order.desc("application.submittedTimestamp")) //
                 .addOrder(Order.desc("recommendedAdvert.sequenceIdentifier")) //
                 .setMaxResults(25) //
@@ -102,6 +108,38 @@ public class AdvertDAO {
                                 .add(Restrictions.isNotNull("pay.currencySpecified")) //
                                 .add(Restrictions.isNotNull("pay.currencyAtLocale")) //
                                 .add(Restrictions.neProperty("pay.currencySpecified", "pay.currencyAtLocale")))).list();
+    }
+
+    public List<String> getLocalizedTags(Institution institution, PrismLocale locale, Class<? extends AdvertFilterCategory> clazz) {
+        String propertyName = clazz.getSimpleName().replace("Advert", "").toLowerCase();
+        return (List<String>) sessionFactory.getCurrentSession().createCriteria(clazz) //
+                .setProjection(Projections.groupProperty(propertyName)) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.program", "program", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.project", "project", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("project.program", "projectProgram", JoinType.LEFT_OUTER_JOIN) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.isNull("project.institution")) //
+                                .add(Restrictions.eq("program.institution", institution))//
+                                .add(Restrictions.eq("program.locale", locale))) //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.isNull("program.institution")) //
+                                .add(Restrictions.eq("projectProgram.institution", institution)) //
+                                .add(Restrictions.eq("projectProgram.locale", locale)))) //
+                .list();
+    }
+
+    public List<String> getLocalizedThemes(Application application) {
+        return (List<String>) sessionFactory.getCurrentSession().createCriteria(AdvertTheme.class) //
+                .setProjection(Projections.groupProperty("theme")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("project", "project", JoinType.LEFT_OUTER_JOIN) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eqOrIsNull("program", application.getProgram())) //
+                        .add(Restrictions.eqOrIsNull("project", application.getProject()))) //
+                .list();
     }
 
 }

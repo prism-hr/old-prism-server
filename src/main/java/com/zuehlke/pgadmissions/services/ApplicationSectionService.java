@@ -1,12 +1,14 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
@@ -61,6 +63,9 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
 public class ApplicationSectionService {
 
     @Autowired
+    private ActionService actionService;
+
+    @Autowired
     private EntityService entityService;
 
     @Autowired
@@ -69,7 +74,6 @@ public class ApplicationSectionService {
     @Autowired
     private UserService userService;
 
-    // TODO: link action calls
     // TODO: validate selection of themes
     public void saveProgramDetail(Integer applicationId, ApplicationProgramDetailDTO programDetailDTO) throws DeduplicationException {
         Application application = entityService.getById(Application.class, applicationId);
@@ -78,6 +82,9 @@ public class ApplicationSectionService {
         if (programDetail == null) {
             programDetail = new ApplicationProgramDetail();
             application.setProgramDetail(programDetail);
+        } else {
+            // Action action = actionService.getViewEditAction(application);
+            // actionService.executeUserAction(resource, action, comment);
         }
 
         StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, institution, programDetailDTO.getStudyOption().name());
@@ -102,13 +109,10 @@ public class ApplicationSectionService {
                 supervisorsIterator.remove();
             }
         }
-        
-        application.getThemes().clear();
-        entityService.flush();
-        for (String theme : programDetailDTO.getThemes()) {
-            application.addTheme(theme);
-        }
-        
+
+        List<String> themes = programDetailDTO.getThemes();
+        application.setTheme(themes.isEmpty() ? null : Joiner.on("|").join(themes));
+
         for (ApplicationSupervisorDTO supervisorDTO : programDetailDTO.getSupervisors()) {
             UserDTO userDTO = supervisorDTO.getUser();
             User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());

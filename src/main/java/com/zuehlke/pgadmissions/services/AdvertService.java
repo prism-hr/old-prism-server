@@ -21,13 +21,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
@@ -38,13 +37,12 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicileRegion;
-import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
+import com.zuehlke.pgadmissions.rest.dto.AdvertCategoriesDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertFeesAndPaymentsDTO;
-import com.zuehlke.pgadmissions.rest.dto.AdvertCategoriesDTO;
 import com.zuehlke.pgadmissions.rest.dto.FinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
@@ -83,6 +81,9 @@ public class AdvertService {
 
     @Autowired
     private GeocodableLocationService geocodableLocationService;
+    
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -102,23 +103,6 @@ public class AdvertService {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         return advertDAO.getRecommendedAdverts(user, activeProgramStates, activeProjectStates);
-    }
-
-    // TODO: internal application link and other summary information (e.g. pay/fee according to user requirements)
-    // TODO: base it on the recommendation rules defined in PrismProgramType
-    public String getRecommendedAdvertsForEmail(User user) {
-        List<Advert> adverts = getRecommendedAdverts(user);
-        List<String> recommendations = Lists.newLinkedList();
-
-        for (Advert advert : adverts) {
-            Project project = advert.getProject();
-            String applyLink = advert.getApplyLink();
-
-            recommendations.add(advert.getProgram().getTitle() + "<br/>" + project == null ? ""
-                    : project.getTitle() + "<br/>" + applyLink == null ? "whatever the internal application link is" : applyLink);
-        }
-
-        return Joiner.on("<br/>").join(recommendations);
     }
 
     public List<Advert> getAdvertsWithElapsedClosingDates(LocalDate baseline) {

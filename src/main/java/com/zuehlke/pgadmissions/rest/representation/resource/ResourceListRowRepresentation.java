@@ -9,7 +9,6 @@ import org.joda.time.LocalDate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
 
 public class ResourceListRowRepresentation {
 

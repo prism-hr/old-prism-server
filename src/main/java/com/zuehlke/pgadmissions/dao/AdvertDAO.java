@@ -1,16 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.List;
-
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFilterCategory;
@@ -20,6 +9,16 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -131,14 +130,14 @@ public class AdvertDAO {
     }
 
     public List<String> getLocalizedThemes(Application application) {
-        return (List<String>) sessionFactory.getCurrentSession().createCriteria(AdvertTheme.class) //
-                .setProjection(Projections.groupProperty("theme")) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("project", "project", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eqOrIsNull("program", application.getProgram())) //
-                        .add(Restrictions.eqOrIsNull("project", application.getProject()))) //
+        return (List<String>) sessionFactory.getCurrentSession().createCriteria(AdvertTheme.class)
+                .setProjection(Projections.groupProperty("theme"))
+                .createAlias("advert", "advert", JoinType.INNER_JOIN)
+                .createAlias("advert.program", "program", JoinType.LEFT_OUTER_JOIN)
+                .createAlias("advert.project", "project", JoinType.LEFT_OUTER_JOIN)
+                .add(Restrictions.disjunction()
+                        .add(Restrictions.eqOrIsNull("program.id", application.getProgram().getId()))
+                        .add(Restrictions.eqOrIsNull("project.id", application.getProject() == null ? null : application.getProject().getId())))
                 .list();
     }
 

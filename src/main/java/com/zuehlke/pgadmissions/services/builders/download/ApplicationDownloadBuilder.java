@@ -9,7 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.A
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_DOCUMENT_HEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_DOCUMENT_PERSONAL_STATEMENT_APPENDIX;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_DOUCMENT_CV_APPENDIX;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_DOCUMENT_CV_APPENDIX;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_EMPLOYER_NAME;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_EMPLOYMENT_POSITION_EMPLOYER_ADDRESS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_EMPLOYMENT_POSITION_HEADER;
@@ -64,7 +64,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.A
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_QUALIFICATION_SUBHEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_QUALIFICATION_SUBJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_QUALIFICATION_TITLE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_QUALIFIICATION_TYPE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_QUALIFICATION_TYPE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_REFEREE_HEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_REFEREE_REFERENCE_APPENDIX;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_REFEREE_REFERENCE_COMMENT;
@@ -356,7 +356,7 @@ public class ApplicationDownloadBuilder {
         PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_HEADER));
 
         applicationDownloadBuilderHelper
-                .addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFIICATION_TYPE), languageQualification.getTypeDisplay(), body);
+                .addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_TYPE), languageQualification.getTypeDisplay(), body);
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_EXAM_DATE),
                 languageQualification.getExamDateDisplay(propertyLoader.load(SYSTEM_DATE_FORMAT)), body);
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_OVERALL_SCORE),
@@ -410,7 +410,7 @@ public class ApplicationDownloadBuilder {
                         : institution.getDomicileDisplay(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_PROVIDER), institutionNull ? null
                         : institution.getName(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFIICATION_TYPE), qualification.getTypeDisplay(),
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_TYPE), qualification.getTypeDisplay(),
                         subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_TITLE), qualification.getTitle(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_SUBJECT), qualification.getSubject(),
@@ -548,7 +548,7 @@ public class ApplicationDownloadBuilder {
         boolean includeAttachments = applicationDownloadDTO.isIncludeAttachments();
         addDocument(body, propertyLoader.load(APPLICATION_DOCUMENT_PERSONAL_STATEMENT_APPENDIX),
                 documentSection == null ? null : documentSection.getPersonalStatement(), includeAttachments);
-        addDocument(body, propertyLoader.load(APPLICATION_DOUCMENT_CV_APPENDIX), documentSection == null ? null : documentSection.getCv(), includeAttachments);
+        addDocument(body, propertyLoader.load(APPLICATION_DOCUMENT_CV_APPENDIX), documentSection == null ? null : documentSection.getCv(), includeAttachments);
 
         applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
     }
@@ -588,7 +588,7 @@ public class ApplicationDownloadBuilder {
                         } else if (document.getApplicationPersonalStatement() != null) {
                             pdfDocument.add(new Chunk(" - " + propertyLoader.load(APPLICATION_DOCUMENT_PERSONAL_STATEMENT_APPENDIX)));
                         } else if (document.getApplicationCv() != null) {
-                            pdfDocument.add(new Chunk(" - " + propertyLoader.load(APPLICATION_DOUCMENT_CV_APPENDIX)));
+                            pdfDocument.add(new Chunk(" - " + propertyLoader.load(APPLICATION_DOCUMENT_CV_APPENDIX)));
                         }
 
                         try {

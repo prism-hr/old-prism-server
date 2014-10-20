@@ -101,7 +101,7 @@ public enum PrismDisplayProperty {
             INSTITUTION_GLOBAL, "Further information is required to activate your project. Please login to address the reviewers comments."), PROJECT_REJECTED(
             INSTITUTION_GLOBAL, "We are sorry to inform you that your project has been rejected."), APPLICATION_HEADER(APPLICATION_GLOBAL, "Application"), //
     APPLICATION_CREATOR(APPLICATION_GLOBAL, "Applicant"), //
-    APPLICATION_QUALIFIICATION_TYPE(APPLICATION_GLOBAL, "Qualification Type"), //
+    APPLICATION_QUALIFICATION_TYPE(APPLICATION_GLOBAL, "Qualification Type"), //
     APPLICATION_PROOF_OF_AWARD(APPLICATION_GLOBAL, "Proof of Award"), //
     APPLICATION_START_DATE(APPLICATION_GLOBAL, "Start Date"), //
     APPLICATION_CONFIRMED_START_DATE(APPLICATION_GLOBAL, "Confirmed Start Date"), //
@@ -182,7 +182,7 @@ public enum PrismDisplayProperty {
             "Having considered the whole application, including both written and spoken feedback from referees, we are happy to make an appointment based upon the information available to us."), //
     APPLICATION_DOCUMENT_HEADER(APPLICATION_DOCUMENT, "Documents"), //
     APPLICATION_DOCUMENT_PERSONAL_STATEMENT_APPENDIX(APPLICATION_DOCUMENT, "Personal Statement"), //
-    APPLICATION_DOUCMENT_CV_APPENDIX(APPLICATION_DOCUMENT, "CV/Resume"), //
+    APPLICATION_DOCUMENT_CV_APPENDIX(APPLICATION_DOCUMENT, "CV/Resume"), //
     APPLICATION_ADDITIONAL_INFORMATION_HEADER(APPLICATION_ADDITIONAL_INFORMATION, "Additional Information"), //
     APPLICATION_ADDITIONAL_INFORMATION_CONVICTION(APPLICATION_ADDITIONAL_INFORMATION, "Unspent Criminal Convictions"), //
     APPLICATION_COMMENT_SUITABLE_FOR_INSTITUTION(APPLICATION_COMMENT, "Suitable for Recruiting Institution?"), //

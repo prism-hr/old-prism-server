@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ProjectRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -13,22 +15,20 @@ import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresen
 
 public class ApplicationExtendedRepresentation extends AbstractResourceRepresentation {
 
-    private InstitutionRepresentation institution;
+    private ProgramRepresentation program;
 
-    private String programTitle;
-
-    private String projectTitle;
+    private ProjectRepresentation project;
 
     private LocalDate closingDate;
 
     private DateTime submittedTimestamp;
 
     private ProgramDetailRepresentation programDetail;
-    
+
     private List<String> possibleThemes;
-    
+
     private List<ApplicationSuggestedSupervisorRepresentation> supervisors;
-    
+
     private PersonalDetailRepresentation personalDetail;
 
     private ApplicationAddressRepresentation address;
@@ -59,28 +59,22 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
 
     private List<PrismStudyOption> availableStudyOptions;
 
-    public InstitutionRepresentation getInstitution() {
-        return institution;
+    private List<String> themes;
+
+    public ProgramRepresentation getProgram() {
+        return program;
     }
 
-    public void setInstitution(InstitutionRepresentation institution) {
-        this.institution = institution;
+    public void setProgram(ProgramRepresentation program) {
+        this.program = program;
     }
 
-    public String getProgramTitle() {
-        return programTitle;
+    public ProjectRepresentation getProject() {
+        return project;
     }
 
-    public void setProgramTitle(String programTitle) {
-        this.programTitle = programTitle;
-    }
-
-    public String getProjectTitle() {
-        return projectTitle;
-    }
-
-    public void setProjectTitle(String projectTitle) {
-        this.projectTitle = projectTitle;
+    public void setProject(ProjectRepresentation project) {
+        this.project = project;
     }
 
     public LocalDate getClosingDate() {
@@ -122,7 +116,7 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
     public void setSupervisors(List<ApplicationSuggestedSupervisorRepresentation> supervisors) {
         this.supervisors = supervisors;
     }
-    
+
     public PersonalDetailRepresentation getPersonalDetail() {
         return personalDetail;
     }
@@ -241,5 +235,13 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
 
     public void setAvailableStudyOptions(List<PrismStudyOption> availableStudyOptions) {
         this.availableStudyOptions = availableStudyOptions;
+    }
+
+    public List<String> getThemes() {
+        return themes;
+    }
+
+    public void setThemes(List<String> themes) {
+        this.themes = themes;
     }
 }

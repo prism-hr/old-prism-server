@@ -45,11 +45,11 @@ public class AdvertTheme extends AdvertFilterCategory {
         this.advert = advert;
     }
 
-    public final String getTheme() {
+    public String getTheme() {
         return theme;
     }
 
-    public final void setTheme(String theme) {
+    public void setTheme(String theme) {
         this.theme = theme;
     }
 

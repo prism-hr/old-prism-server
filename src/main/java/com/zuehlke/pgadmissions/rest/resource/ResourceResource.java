@@ -1,41 +1,11 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.validation.Valid;
-
-import org.apache.commons.beanutils.MethodUtils;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.dozer.Mapper;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
@@ -55,22 +25,25 @@ import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentati
 import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceUserRolesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionExtendedRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ProgramExtendedRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ProjectExtendedRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.SystemExtendedRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.*;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.CommentService;
-import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.ProgramService;
-import com.zuehlke.pgadmissions.services.ResourceService;
-import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.StateService;
-import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.*;
+import org.apache.commons.beanutils.MethodUtils;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.dozer.Mapper;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("api/{resourceScope:applications|projects|programs|institutions|systems}")
@@ -80,7 +53,7 @@ public class ResourceResource {
 
     @Autowired
     private AdvertService advertService;
-    
+
     @Autowired
     private EntityService entityService;
 
@@ -149,13 +122,13 @@ public class ResourceResource {
             userRolesRepresentations.add(new ResourceUserRolesRepresentation(userRepresentation, roles));
         }
         representation.setUsers(userRolesRepresentations);
-        MethodUtils.invokeMethod(this, "enrich" + resource.getClass().getSimpleName() + "Representation", new Object[] { resource, representation });
+        MethodUtils.invokeMethod(this, "enrich" + resource.getClass().getSimpleName() + "Representation", new Object[]{resource, representation});
         return representation;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public List<ResourceListRowRepresentation> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestParam(required = false) String filter, @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
+                                                            @RequestParam(required = false) String filter, @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
         ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
         DateTime baseline = new DateTime().minusDays(1);
@@ -195,7 +168,7 @@ public class ResourceResource {
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)
     public void addUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestBody Map<String, PrismRole> body) throws Exception {
+                            @RequestBody Map<String, PrismRole> body) throws Exception {
         PrismRole role = body.get("role");
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
@@ -205,7 +178,7 @@ public class ResourceResource {
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles/{role}", method = RequestMethod.DELETE)
     public void deleteUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @PathVariable PrismRole role,
-            @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
+                               @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
         roleService.updateUserRole(resource, user, PrismRoleTransitionType.DELETE, role);
@@ -214,7 +187,7 @@ public class ResourceResource {
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
     public UserRepresentation addUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) throws Exception {
+                                      @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         UserRepresentation newUser = userRolesRepresentation.getUser();
 
@@ -257,9 +230,6 @@ public class ResourceResource {
             potentiallyInterestedRepresentations.add(dozerBeanMapper.map(user, UserRepresentation.class));
         }
 
-        applicationRepresentation.setProgramTitle(application.getProgram().getTitle());
-        applicationRepresentation.setProjectTitle(application.getProject() != null ? application.getProject().getTitle() : null);
-
         applicationRepresentation.setUsersInterestedInApplication(interestedRepresentations);
         applicationRepresentation.setUsersPotentiallyInterestedInApplication(potentiallyInterestedRepresentations);
 
@@ -269,7 +239,7 @@ public class ResourceResource {
         applicationRepresentation.setOfferRecommendation(commentService.getOfferRecommendation(application));
         applicationRepresentation.setAssignedSupervisors(commentService.getApplicationSupervisors(application));
         applicationRepresentation.setPossibleThemes(advertService.getLocalizedThemes(application));
-        
+
         List<ProgramStudyOption> enabledProgramStudyOptions = programService.getEnabledProgramStudyOptions(application.getProgram());
         List<PrismStudyOption> availableStudyOptions = Lists.newArrayListWithCapacity(enabledProgramStudyOptions.size());
         for (ProgramStudyOption studyOption : enabledProgramStudyOptions) {

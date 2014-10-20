@@ -70,11 +70,13 @@ public enum PrismDisplayProperty {
             INSTITUTION_GLOBAL,
             "We are pleased to tell you that your institution has been approved. We will send you a message with further instructions when your institution is ready to use. If you do not receive this message within 1 hour, please contact our helpdesk."), //
     INSTITUTION_CORRECTION(INSTITUTION_GLOBAL, "Further information is required to activate your institution. Please login to address the reviewers comments."), //
-    INSTITUTION_REJECTED(INSTITUTION_GLOBAL, "We are sorry to inform you that your institution has been rejected."), PROGRAM_HEADER(PROGRAM_GLOBAL, "Program"), //
+    INSTITUTION_REJECTED(INSTITUTION_GLOBAL, "We are sorry to inform you that your institution has been rejected."), //
+    PROGRAM_HEADER(PROGRAM_GLOBAL, "Program"), //
     PROGRAM_APPROVED(INSTITUTION_GLOBAL,
-            "We are pleased to tell you that your program has been approved. You may now login to create users and projects, and manage your recruitment."), PROGRAM_CORRECTION(
-            INSTITUTION_GLOBAL, "Further information is required to activate your program. Please login to address the reviewers comments."), PROGRAM_REJECTED(
-            INSTITUTION_GLOBAL, "We are sorry to inform you that your program has been rejected."), PROGRAM_STUDY_OPTION(PROGRAM_GLOBAL, "Study Option"), //
+            "We are pleased to tell you that your program has been approved. You may now login to create users and projects, and manage your recruitment."), //
+    PROGRAM_CORRECTION(INSTITUTION_GLOBAL, "Further information is required to activate your program. Please login to address the reviewers comments."), //
+    PROGRAM_REJECTED(INSTITUTION_GLOBAL, "We are sorry to inform you that your program has been rejected."), //
+    PROGRAM_STUDY_OPTION(PROGRAM_GLOBAL, "Study Option"), //
     PROGRAM_STUDY_OPTION_FULL_TIME(PROGRAM_GLOBAL, "Full Time"), //
     PROGRAM_STUDY_OPTION_PART_TIME(PROGRAM_GLOBAL, "Part Time"), //
     PROGRAM_STUDY_OPTION_MODULAR_FLEXIBLE(PROGRAM_GLOBAL, "Modular/Flexible"), //
@@ -189,7 +191,17 @@ public enum PrismDisplayProperty {
     APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION(APPLICATION_COMMENT, "Recommended offer conditions"), //
     APPLICATION_COMMENT_REJECTION_SYSTEM(APPLICATION_COMMENT, "The opportunity that you applied for has been discontinued."), //
     APPLICATION_COMMENT_DIRECTIONS(APPLICATION_COMMENT, "Directions"), //
-    APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED(APPLICATION_COMMENT, "No directions provided. Please contact the interviewer for further information.");
+    APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED(APPLICATION_COMMENT, "No directions provided. Please contact the interviewer for further information."), //
+    APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL(APPLICATION_COMMENT, "Updated the program details section."), //
+    APPLICATION_COMMENT_UPDATED_SUPERVISOR(APPLICATION_COMMENT, "Updated the supervisors section."), //
+    APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL(APPLICATION_COMMENT, "Updated the personal detail section."), //
+    APPLICATION_COMMENT_UPDATED_ADDRESS(APPLICATION_COMMENT, "Updated the address section."), //
+    APPLICATION_COMMENT_UPDATED_QUALIFICATION(APPLICATION_COMMENT, "Updated the qualification section."), //
+    APPLICATION_COMMENT_UPDATED_EMPLOYMENT(APPLICATION_COMMENT, "Updated the employment section."), //
+    APPLICATION_COMMENT_UPDATED_FUNDING(APPLICATION_COMMENT, "Updated the funding section."), //
+    APPLICATION_COMMENT_UPDATED_REFEREE(APPLICATION_COMMENT, "Updated the referee section."), //
+    APPLICATION_COMMENT_UPDATED_DOCUMENT(APPLICATION_COMMENT, "Updated the document section."), //
+    APPLICATION_COMMENT_ADDITIONAL_INFORMATION(APPLICATION_COMMENT, "Updated the additional information session.");
 
     private PrismDisplayCategory category;
 

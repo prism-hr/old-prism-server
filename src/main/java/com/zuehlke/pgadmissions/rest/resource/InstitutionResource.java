@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ImportedEntityRepresentation;
+import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 
 @RestController
@@ -28,6 +29,9 @@ public class InstitutionResource {
 
     private static final Logger log = LoggerFactory.getLogger(InstitutionResource.class);
 
+    @Autowired
+    private AdvertService advertService;
+    
     @Autowired
     private InstitutionService institutionService;
 
@@ -49,9 +53,9 @@ public class InstitutionResource {
     public List<String> getCategoryTags(@PathVariable Integer institutionId, @RequestParam PrismLocale locale, @RequestParam String category) throws Exception {
         Institution institution = institutionService.getById(institutionId);
         if(category.equals("competencies")) {
-            return institutionService.getCategoryTags(institution, locale, AdvertCompetency.class);
+            return advertService.getLocalizedTags(institution, locale, AdvertCompetency.class);
         } else if(category.equals("themes")) {
-            return institutionService.getCategoryTags(institution, locale, AdvertTheme.class);
+            return advertService.getLocalizedTags(institution, locale, AdvertTheme.class);
         }
         log.error("Unknown category: " + category);
         throw new ResourceNotFoundException();

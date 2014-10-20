@@ -12,6 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -123,6 +124,10 @@ public class Application extends Resource {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_additional_information_id", unique = true)
     private ApplicationAdditionalInformation additionalInformation;
+    
+    @Lob
+    @Column(name = "theme")
+    private String theme;
 
     @Column(name = "application_rating_count")
     private Integer applicationRatingCount;
@@ -185,10 +190,6 @@ public class Application extends Resource {
 
     @OneToMany(mappedBy = "application")
     private Set<UserRole> userRoles = Sets.newHashSet();
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_id", nullable = false)
-    private Set<ApplicationTheme> themes = Sets.newHashSet();
 
     @Transient
     private Boolean acceptedTerms;
@@ -379,6 +380,14 @@ public class Application extends Resource {
         this.additionalInformation = additionalInformation;
     }
 
+    public final String getTheme() {
+        return theme;
+    }
+
+    public final void setTheme(String theme) {
+        this.theme = theme;
+    }
+
     public final Integer getApplicationRatingCount() {
         return applicationRatingCount;
     }
@@ -466,11 +475,7 @@ public class Application extends Resource {
     public final Set<UserRole> getUserRoles() {
         return userRoles;
     }
-
-    public final Set<ApplicationTheme> getThemes() {
-        return themes;
-    }
-
+    
     public Application withId(Integer id) {
         this.id = id;
         return this;
@@ -574,11 +579,6 @@ public class Application extends Resource {
     public Application withParentResource(Resource parentResource) {
         setParentResource(parentResource);
         return this;
-    }
-
-    public void addTheme(String themeId) {
-        ApplicationTheme theme = new ApplicationTheme().withApplication(this).withTheme(themeId);
-        themes.add(theme);
     }
 
     @Override

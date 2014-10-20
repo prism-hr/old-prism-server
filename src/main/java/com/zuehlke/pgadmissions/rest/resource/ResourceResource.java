@@ -63,6 +63,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepr
 import com.zuehlke.pgadmissions.rest.representation.resource.SystemExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
 import com.zuehlke.pgadmissions.services.ActionService;
+import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -75,8 +76,11 @@ import com.zuehlke.pgadmissions.services.UserService;
 @RequestMapping("api/{resourceScope:applications|projects|programs|institutions|systems}")
 public class ResourceResource {
 
-    private static final Logger logger = LoggerFactory.getLogger(ResourceResource.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceResource.class);
 
+    @Autowired
+    private AdvertService advertService;
+    
     @Autowired
     private EntityService entityService;
 
@@ -234,7 +238,7 @@ public class ResourceResource {
             return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
         } catch (Exception e) {
             PrismAction actionId = commentDTO.getAction();
-            logger.error("Could not perform action " + actionId + " on " + actionId.getScope().getLowerCaseName() + " id " + resourceId.toString());
+            LOGGER.error("Could not perform action " + actionId + " on " + actionId.getScope().getLowerCaseName() + " id " + resourceId.toString());
             throw e;
         }
     }
@@ -264,6 +268,8 @@ public class ResourceResource {
 
         applicationRepresentation.setOfferRecommendation(commentService.getOfferRecommendation(application));
         applicationRepresentation.setAssignedSupervisors(commentService.getApplicationSupervisors(application));
+        applicationRepresentation.setPossibleThemes(advertService.getLocalizedThemes(application));
+        
         List<ProgramStudyOption> enabledProgramStudyOptions = programService.getEnabledProgramStudyOptions(application.getProgram());
         List<PrismStudyOption> availableStudyOptions = Lists.newArrayListWithCapacity(enabledProgramStudyOptions.size());
         for (ProgramStudyOption studyOption : enabledProgramStudyOptions) {

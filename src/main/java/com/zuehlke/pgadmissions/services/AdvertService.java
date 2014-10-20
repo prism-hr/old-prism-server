@@ -30,9 +30,13 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.advert.AdvertFilterCategory;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
+import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicileRegion;
@@ -87,7 +91,7 @@ public class AdvertService {
     public Advert getById(Integer id) {
         return entityService.getById(Advert.class, id);
     }
-
+    
     // TODO: user filters
     public List<Advert> getActiveAdverts() {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
@@ -211,6 +215,14 @@ public class AdvertService {
                 .withAddressTown(address.getAddressTown()).withAddressDistrict(address.getAddressDistrict()).withAddressCode(address.getAddressCode());
         entityService.save(newAddress);
         return newAddress;
+    }
+
+    public List<String> getLocalizedTags(Institution institution, PrismLocale locale, Class<? extends AdvertFilterCategory> clazz) {
+        return advertDAO.getLocalizedTags(institution, locale, clazz);
+    }
+
+    public List<String> getLocalizedThemes(Application application) {
+        return advertDAO.getLocalizedThemes(application);
     }
 
     private void updateFinancialDetails(AdvertFinancialDetail financialDetails, FinancialDetailsDTO financialDetailsDTO, String currencyAtLocale,

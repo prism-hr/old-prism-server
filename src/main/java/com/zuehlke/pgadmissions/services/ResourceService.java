@@ -321,7 +321,7 @@ public class ResourceService {
                     case INSTITUTION_TITLE:
                     case PROGRAM_TITLE:
                     case PROJECT_TITLE:
-                        List<Integer> parentResourceIds = resourceDAO.getMatchingParentResources(PrismScope.valueOf(property.name()),
+                        List<Integer> parentResourceIds = resourceDAO.getMatchingParentResources(PrismScope.valueOf(property.name().replace("_TITLE", "")),
                                 constraint.getValueString());
                         ResourceListConstraintBuilder.appendPropertyInFilterCriterion(conditions, propertyName, parentResourceIds, negated);
                         break;

@@ -1,10 +1,16 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_COMMENT_UPDATED_ADDRESS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL;
+
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +32,9 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.Document;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.imported.Country;
 import com.zuehlke.pgadmissions.domain.imported.Disability;
 import com.zuehlke.pgadmissions.domain.imported.Domicile;
@@ -43,6 +51,7 @@ import com.zuehlke.pgadmissions.domain.imported.Title;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.Address;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.AddressDTO;
@@ -57,6 +66,7 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
@@ -74,17 +84,22 @@ public class ApplicationSectionService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     // TODO: validate selection of themes
     public void saveProgramDetail(Integer applicationId, ApplicationProgramDetailDTO programDetailDTO) throws DeduplicationException {
+        User userCurrent = userService.getCurrentUser();
         Application application = entityService.getById(Application.class, applicationId);
+        Action action = validateUpdateAction(application, userCurrent);
+
         Institution institution = application.getInstitution();
         ApplicationProgramDetail programDetail = application.getProgramDetail();
         if (programDetail == null) {
             programDetail = new ApplicationProgramDetail();
             application.setProgramDetail(programDetail);
         } else {
-            // Action action = actionService.getViewEditAction(application);
-            // actionService.executeUserAction(resource, action, comment);
+            executeUpdateAction(application, action, userCurrent, APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL);
         }
 
         StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, institution, programDetailDTO.getStudyOption().name());
@@ -123,7 +138,9 @@ public class ApplicationSectionService {
 
     public ApplicationSupervisor saveSupervisor(Integer applicationId, Integer supervisorId, ApplicationSupervisorDTO supervisorDTO)
             throws DeduplicationException {
+        User userCurrent = userService.getCurrentUser();
         Application application = entityService.getById(Application.class, applicationId);
+        Action action = validateUpdateAction(application, userCurrent);
 
         ApplicationSupervisor supervisor;
         if (supervisorId != null) {
@@ -131,6 +148,7 @@ public class ApplicationSectionService {
         } else {
             supervisor = new ApplicationSupervisor();
             application.getSupervisors().add(supervisor);
+            executeUpdateAction(application, action, userCurrent, PrismDisplayProperty.APPLICATION_COMMENT_UPDATED_SUPERVISOR);
         }
 
         UserDTO userDTO = supervisorDTO.getUser();
@@ -148,23 +166,26 @@ public class ApplicationSectionService {
         application.getSupervisors().remove(supervisor);
     }
 
-    public void savePersonalDetail(Integer applicationId, ApplicationPersonalDetailDTO personalDetailDTO) {
-        User currentUser = userService.getCurrentUser();
+    public void savePersonalDetail(Integer applicationId, ApplicationPersonalDetailDTO personalDetailDTO) throws DeduplicationException {
+        User userCurrent = userService.getCurrentUser();
         Application application = entityService.getById(Application.class, applicationId);
+        Action action = validateUpdateAction(application, userCurrent);
+
         Institution institution = application.getInstitution();
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         if (personalDetail == null) {
             personalDetail = new ApplicationPersonalDetail();
             application.setPersonalDetail(personalDetail);
+        } else {
+            executeUpdateAction(application, action, userCurrent, APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL);
         }
 
-        User user = application.getUser();
-        if (currentUser.getId().equals(user.getId())) {
-            // only applicant can change his own user details
-            user.setFirstName(personalDetailDTO.getUser().getFirstName());
-            user.setFirstName2(Strings.emptyToNull(personalDetailDTO.getUser().getFirstName2()));
-            user.setFirstName3(Strings.emptyToNull(personalDetailDTO.getUser().getFirstName3()));
-            user.setLastName(personalDetailDTO.getUser().getLastName());
+        User userCreator = application.getUser();
+        if (userCurrent.getId().equals(userCreator.getId())) {
+            userCreator.setFirstName(personalDetailDTO.getUser().getFirstName());
+            userCreator.setFirstName2(Strings.emptyToNull(personalDetailDTO.getUser().getFirstName2()));
+            userCreator.setFirstName3(Strings.emptyToNull(personalDetailDTO.getUser().getFirstName3()));
+            userCreator.setLastName(personalDetailDTO.getUser().getLastName());
         }
 
         Title title = importedEntityService.getById(Title.class, institution, personalDetailDTO.getTitle());
@@ -228,14 +249,19 @@ public class ApplicationSectionService {
         }
     }
 
-    public void saveAddress(Integer applicationId, ApplicationAddressDTO addressDTO) {
+    public void saveAddress(Integer applicationId, ApplicationAddressDTO addressDTO) throws DeduplicationException {
+        User userCurrent = userService.getCurrentUser();
         Application application = entityService.getById(Application.class, applicationId);
+        Action action = validateUpdateAction(application, userCurrent);
+
         Institution institution = application.getInstitution();
 
         ApplicationAddress address = application.getAddress();
         if (address == null) {
             address = new ApplicationAddress();
             application.setAddress(address);
+        } else {
+            executeUpdateAction(application, action, userCurrent, APPLICATION_COMMENT_UPDATED_ADDRESS);
         }
 
         AddressDTO currentAddressDTO = addressDTO.getCurrentAddress();
@@ -417,6 +443,21 @@ public class ApplicationSectionService {
         to.setAddressTown(from.getAddressTown());
         to.setAddressRegion(Strings.emptyToNull(from.getAddressRegion()));
         to.setAddressCode(Strings.emptyToNull(from.getAddressCode()));
+    }
+
+    private Action validateUpdateAction(Application application, User user) {
+        Action action = actionService.getViewEditAction(application);
+        if (!actionService.checkActionAvailable(application, action, user)) {
+            actionService.throwWorkflowPermissionException(application, action);
+        }
+        return action;
+    }
+
+    private void executeUpdateAction(Application application, Action action, User invoker, PrismDisplayProperty messageIndex) throws DeduplicationException {
+        Comment comment = new Comment().withUser(invoker).withAction(action)
+                .withContent(applicationContext.getBean(PropertyLoader.class).withResource(application).load(messageIndex))
+                .withCreatedTimestamp(new DateTime());
+        actionService.executeUserAction(application, action, comment);
     }
 
 }

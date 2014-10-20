@@ -136,7 +136,23 @@ public class ApplicationService {
         return new ApplicationRecommendedStartDateRepresentation().withEarliestDate(getEarliestStartDate(programStudyOption))
                 .withRecommendedDate(getRecommendedStartDate(application, programStudyOption)).withLatestDate(getLatestStartDate(programStudyOption));
     }
+    
+    public LocalDate getEarliestStartDate(ProgramStudyOption studyOption) {
+        if (studyOption == null) {
+            return null;
+        }
 
+        LocalDate baseline = new LocalDate();
+        LocalDate studyOptionStart = studyOption.getApplicationStartDate();
+
+        LocalDate earliestStartDate = studyOptionStart.isBefore(baseline) ? baseline : studyOptionStart;
+        return earliestStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
+    }
+
+    public LocalDate getLatestStartDate(ProgramStudyOption studyOption) {
+        return studyOption == null ? null : studyOption.getApplicationCloseDate().withDayOfWeek(DateTimeConstants.MONDAY);
+    }
+    
     public String getApplicationExportReference(Application application) {
         return applicationDAO.getApplicationExportReference(application);
     }
@@ -372,19 +388,7 @@ public class ApplicationService {
         }
         return previousApplication;
     }
-
-    private LocalDate getEarliestStartDate(ProgramStudyOption studyOption) {
-        if (studyOption == null) {
-            return null;
-        }
-
-        LocalDate baseline = new LocalDate();
-        LocalDate studyOptionStart = studyOption.getApplicationStartDate();
-
-        LocalDate earliestStartDate = studyOptionStart.isBefore(baseline) ? baseline : studyOptionStart;
-        return earliestStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
-    }
-
+    
     private LocalDate getRecommendedStartDate(Application application, ProgramStudyOption studyOption) {
         if (studyOption == null) {
             return null;
@@ -402,10 +406,6 @@ public class ApplicationService {
         }
 
         return recommendedStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
-    }
-
-    private LocalDate getLatestStartDate(ProgramStudyOption studyOption) {
-        return studyOption == null ? null : studyOption.getApplicationCloseDate().withDayOfWeek(DateTimeConstants.MONDAY);
     }
 
 }

@@ -108,12 +108,13 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/personalDetail", method = RequestMethod.PUT)
-    public void savePersonalDetail(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationPersonalDetailDTO personalDetailDTO) {
+    public void savePersonalDetail(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationPersonalDetailDTO personalDetailDTO)
+            throws DeduplicationException {
         applicationSectionService.savePersonalDetail(applicationId, personalDetailDTO);
     }
 
     @RequestMapping(value = "/{applicationId}/address", method = RequestMethod.PUT)
-    public void saveAddress(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationAddressDTO addressDTO) {
+    public void saveAddress(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationAddressDTO addressDTO) throws DeduplicationException {
         applicationSectionService.saveAddress(applicationId, addressDTO);
     }
 

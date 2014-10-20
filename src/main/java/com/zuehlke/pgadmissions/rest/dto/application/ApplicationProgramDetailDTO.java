@@ -59,7 +59,7 @@ public class ApplicationProgramDetailDTO {
         return themes;
     }
 
-    public final void setThemes(List<String> themes) {
+    public final void setAdvertThemes(List<String> themes) {
         this.themes = themes;
     }
 

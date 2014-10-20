@@ -23,11 +23,13 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
 
     private DateTime submittedTimestamp;
 
-    private PersonalDetailRepresentation personalDetail;
-
-    private List<ApplicationSuggestedSupervisorRepresentation> supervisors;
-
     private ProgramDetailRepresentation programDetail;
+    
+    private List<String> possibleThemes;
+    
+    private List<ApplicationSuggestedSupervisorRepresentation> supervisors;
+    
+    private PersonalDetailRepresentation personalDetail;
 
     private ApplicationAddressRepresentation address;
 
@@ -97,14 +99,6 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
         this.submittedTimestamp = submittedTimestamp;
     }
 
-    public PersonalDetailRepresentation getPersonalDetail() {
-        return personalDetail;
-    }
-
-    public void setPersonalDetail(PersonalDetailRepresentation personalDetail) {
-        this.personalDetail = personalDetail;
-    }
-
     public ProgramDetailRepresentation getProgramDetail() {
         return programDetail;
     }
@@ -113,12 +107,28 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
         this.programDetail = programDetail;
     }
 
+    public final List<String> getPossibleThemes() {
+        return possibleThemes;
+    }
+
+    public final void setPossibleThemes(List<String> possibleThemes) {
+        this.possibleThemes = possibleThemes;
+    }
+
     public List<ApplicationSuggestedSupervisorRepresentation> getSupervisors() {
         return supervisors;
     }
 
     public void setSupervisors(List<ApplicationSuggestedSupervisorRepresentation> supervisors) {
         this.supervisors = supervisors;
+    }
+    
+    public PersonalDetailRepresentation getPersonalDetail() {
+        return personalDetail;
+    }
+
+    public void setPersonalDetail(PersonalDetailRepresentation personalDetail) {
+        this.personalDetail = personalDetail;
     }
 
     public ApplicationAddressRepresentation getAddress() {

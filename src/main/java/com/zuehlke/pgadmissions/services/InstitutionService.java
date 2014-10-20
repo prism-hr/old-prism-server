@@ -16,10 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
-import com.zuehlke.pgadmissions.domain.advert.AdvertFilterCategory;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
@@ -220,11 +218,8 @@ public class InstitutionService {
         }
     }
 
-    public List<String> getCategoryTags(Institution institution, PrismLocale locale, Class<? extends AdvertFilterCategory> clazz) {
-        return institutionDAO.getCategoryTags(institution, locale, clazz);
-    }
-
     public List<Institution> list() {
         return institutionDAO.list();
     }
+    
 }

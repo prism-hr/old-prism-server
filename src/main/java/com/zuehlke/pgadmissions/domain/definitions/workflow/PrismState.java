@@ -178,6 +178,10 @@ public enum PrismState {
         return workflowStateClass;
     }
 
+    public static List<PrismStateAction> getStateActions() {
+        return (List) workflowStateDefinitions.values(); 
+    }
+    
     public static List<PrismStateAction> getStateActions(PrismState state) {
         return workflowStateDefinitions.containsKey(state) ? workflowStateDefinitions.get(state).getStateActions() : new ArrayList<PrismStateAction>();
     }

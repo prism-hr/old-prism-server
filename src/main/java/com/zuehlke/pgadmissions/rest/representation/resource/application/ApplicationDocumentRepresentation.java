@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
+import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
+
 public class ApplicationDocumentRepresentation {
 
     private FileRepresentation personalStatement;

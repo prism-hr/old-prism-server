@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Preconditions;
@@ -24,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
@@ -36,6 +38,7 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRecommendedStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.comment.CommentDTOValidator;
 import com.zuehlke.pgadmissions.services.ApplicationSectionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -45,13 +48,13 @@ import com.zuehlke.pgadmissions.services.CommentService;
 @RequestMapping(value = { "api/applications" })
 public class ApplicationResource {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    private ApplicationSectionService applicationSectionService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationResource.class);
 
     @Autowired
     private ApplicationService applicationService;
+
+    @Autowired
+    private ApplicationSectionService applicationSectionService;
 
     @Autowired
     private Mapper dozerBeanMapper;
@@ -62,12 +65,17 @@ public class ApplicationResource {
     @Autowired
     private CommentService commentService;
 
+    @RequestMapping(value = "/{applicationId}/recommendedStartDate", method = RequestMethod.GET)
+    private ApplicationRecommendedStartDateRepresentation getRecommendedStartDate(@PathVariable Integer applicationId, @RequestParam PrismStudyOption studyOptionId) {
+        return applicationService.getRecommendedStartDate(applicationId, studyOptionId);
+    }
+
     @RequestMapping(value = "/{applicationId}/programDetail", method = RequestMethod.PUT)
     public void saveProgramDetail(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationProgramDetailDTO programDetailDTO) {
         try {
             applicationSectionService.saveProgramDetail(applicationId, programDetailDTO);
         } catch (DeduplicationException e) {
-            logger.error("Unable to save program detail for application: " + applicationId.toString(), e);
+            LOGGER.error("Unable to save program detail for application: " + applicationId.toString(), e);
             throw new ResourceNotFoundException();
         }
     }
@@ -78,7 +86,7 @@ public class ApplicationResource {
             ApplicationSupervisor supervisor = applicationSectionService.saveSupervisor(applicationId, null, supervisorDTO);
             return ImmutableMap.of("id", (Object) supervisor.getId());
         } catch (DeduplicationException e) {
-            logger.error("Unable to save supervisor for application: " + applicationId.toString(), e);
+            LOGGER.error("Unable to save supervisor for application: " + applicationId.toString(), e);
             throw new ResourceNotFoundException();
         }
     }
@@ -89,7 +97,7 @@ public class ApplicationResource {
         try {
             applicationSectionService.saveSupervisor(applicationId, supervisorId, supervisorDTO);
         } catch (DeduplicationException e) {
-            logger.error("Unable to delete supervisor for application: " + applicationId.toString(), e);
+            LOGGER.error("Unable to delete supervisor for application: " + applicationId.toString(), e);
             throw new ResourceNotFoundException();
         }
     }
@@ -166,7 +174,7 @@ public class ApplicationResource {
             ApplicationReferee referee = applicationSectionService.saveReferee(applicationId, null, refereeDTO);
             return ImmutableMap.of("id", (Object) referee.getId());
         } catch (DeduplicationException e) {
-            logger.error("Unable to create referee for application: " + applicationId.toString(), e);
+            LOGGER.error("Unable to create referee for application: " + applicationId.toString(), e);
             throw new ResourceNotFoundException();
         }
     }
@@ -176,7 +184,7 @@ public class ApplicationResource {
         try {
             applicationSectionService.saveReferee(applicationId, refereeId, refereeDTO);
         } catch (DeduplicationException e) {
-            logger.error("Unable to delete referee for application: " + applicationId.toString(), e);
+            LOGGER.error("Unable to delete referee for application: " + applicationId.toString(), e);
             throw new ResourceNotFoundException();
         }
     }

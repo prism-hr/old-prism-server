@@ -9,7 +9,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhanceme
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ActionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 
 public class AbstractResourceRepresentation {
 

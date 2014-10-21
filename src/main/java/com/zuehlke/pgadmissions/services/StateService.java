@@ -169,7 +169,7 @@ public class StateService {
             notificationService.sendWorkflowNotifications(resource, comment);
         }
 
-        resourceService.updateResource(resource, comment);
+        resourceService.postProcessResource(resource, comment);
         return stateTransition;
     }
 

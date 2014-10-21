@@ -17,7 +17,6 @@ import com.zuehlke.pgadmissions.rest.dto.AdvertClosingDateDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertFeesAndPaymentsDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.ResourceService;
 
 @RestController
 @RequestMapping("api/{resourceScope:projects|programs}/{resourceId}")
@@ -26,13 +25,10 @@ public class AdvertResource {
     @Autowired
     private AdvertService advertService;
 
-    @Autowired
-    private ResourceService resourceService;
-
     @RequestMapping(value = "/closingDate", method = RequestMethod.PUT)
     public void updateClosingDate(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @Valid @RequestBody AdvertClosingDateDTO advertClosingDateDTO) throws Exception {
-        advertService.updateClosingDate(resourceDescriptor.getType(), resourceId, advertClosingDateDTO);
+        advertService.updateAdvert(resourceDescriptor.getType(), resourceId, advertClosingDateDTO);
     }
 
     @RequestMapping(value = "/closingDate", method = RequestMethod.DELETE)
@@ -50,13 +46,13 @@ public class AdvertResource {
     @RequestMapping(value = "/feesAndPayments", method = RequestMethod.PUT)
     public void updateFeesAndPayments(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @Valid @RequestBody AdvertFeesAndPaymentsDTO feesAndPaymentsDTO) throws Exception {
-        advertService.updateFeesAndPayments(resourceDescriptor.getType(), resourceId, feesAndPaymentsDTO);
+        advertService.updateAdvert(resourceDescriptor.getType(), resourceId, feesAndPaymentsDTO);
     }
 
     @RequestMapping(value = "/categories", method = RequestMethod.PUT)
     public void updateCategories(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @Valid @RequestBody AdvertCategoriesDTO categoriesDTO) throws Exception {
-        advertService.updateCategories(resourceDescriptor.getType(), resourceId, categoriesDTO);
+        advertService.updateAdvert(resourceDescriptor.getType(), resourceId, categoriesDTO);
     }
 
     @ModelAttribute

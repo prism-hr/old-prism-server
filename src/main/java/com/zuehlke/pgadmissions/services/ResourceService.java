@@ -66,6 +66,9 @@ public class ResourceService {
     private ActionService actionService;
 
     @Autowired
+    private AdvertService advertService;
+    
+    @Autowired
     private ApplicationService applicationService;
 
     @Autowired
@@ -106,19 +109,28 @@ public class ResourceService {
         return resource == null ? null : resource.getId();
     }
 
-    public ActionOutcomeDTO performAction(Integer resourceId, CommentDTO commentDTO) throws DeduplicationException, InterruptedException, IOException,
+    public ActionOutcomeDTO executeAction(Integer resourceId, CommentDTO commentDTO) throws DeduplicationException, InterruptedException, IOException,
             JAXBException {
-        switch (commentDTO.getAction().getScope()) {
-        case INSTITUTION:
-            return institutionService.performAction(resourceId, commentDTO);
-        case PROGRAM:
-            return programService.performAction(resourceId, commentDTO);
-        case PROJECT:
-            return projectService.performAction(resourceId, commentDTO);
+        PrismAction actionId = commentDTO.getAction();
+        PrismScope resourceScope = actionId.getScope();
+        switch (resourceScope) {
         case APPLICATION:
-            return applicationService.performAction(resourceId, commentDTO);
+            return applicationService.executeAction(resourceId, commentDTO);
         default:
-            throw new Error("Action " + commentDTO.getAction() + " could not be performed");
+            User user = userService.getById(commentDTO.getUser());
+            Resource resource = getById(resourceScope.getResourceClass(), resourceId);
+            Action action = actionService.getById(actionId);
+
+            State transitionState = stateService.getById(commentDTO.getTransitionState());
+            Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withAction(action).withTransitionState(transitionState)
+                    .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
+
+            Object resourceDTO = commentDTO.fetchResouceDTO();
+            if (resourceDTO != null) {
+                updateResource(resourceScope, resourceId, resourceDTO);
+            }
+
+            return actionService.executeUserAction(resource, action, comment);
         }
     }
 
@@ -213,7 +225,7 @@ public class ResourceService {
         resource.setDueDate(baseline.plusDays(stateDuration == null ? 0 : stateDuration.getDuration()));
     }
 
-    public void updateResource(Resource resource, Comment comment) throws DeduplicationException {
+    public void postProcessResource(Resource resource, Comment comment) throws DeduplicationException {
         DateTime baselineTime = new DateTime();
         LocalDate baselineDate = baselineTime.toLocalDate();
 
@@ -246,6 +258,26 @@ public class ResourceService {
         }
     }
 
+    public void executeUpdate(Resource resource, PrismDisplayProperty messageIndex) throws DeduplicationException {
+        executeUpdate(resource, messageIndex, null);
+    }
+    
+    public void executeUpdate(Resource resource, PrismDisplayProperty messageIndex, CommentAssignedUser assignee) throws DeduplicationException {
+        User userCurrent = userService.getCurrentUser();
+        Action action = actionService.getViewEditAction(resource);
+
+        Comment comment = new Comment().withUser(userCurrent).withAction(action)
+                .withContent(applicationContext.getBean(PropertyLoader.class).withResource(resource).load(messageIndex)).withDeclinedResponse(false)
+                .withCreatedTimestamp(new DateTime());
+        
+        if (assignee != null) {
+            comment.addAssignedUser(assignee.getUser(), assignee.getRole(), assignee.getRoleTransitionType());
+            entityService.evict(assignee);
+        }
+
+        actionService.executeUserAction(resource, action, comment);
+    }
+    
     public Resource getOperativeResource(Resource resource, Action action) {
         return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
     }
@@ -271,7 +303,7 @@ public class ResourceService {
             String lastSequenceIdentifier) throws DeduplicationException {
         User user = userService.getCurrentUser();
         if (scopeId == PrismScope.SYSTEM) {
-            throw new Error("The system resource does not support resource listing");
+            throw new Error();
         }
 
         List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(scopeId);
@@ -281,27 +313,18 @@ public class ResourceService {
         Set<Integer> assignedResources = getAssignedResources(user, scopeId, parentScopeIds, filter, lastSequenceIdentifier, maxRecords);
         return resourceDAO.getResourceConsoleList(user, scopeId, parentScopeIds, assignedResources, filter, lastSequenceIdentifier, maxRecords);
     }
-    
-    public void executeUpdate(Resource resource, PrismDisplayProperty messageIndex, CommentAssignedUser... assignees) throws DeduplicationException {
-        User userCurrent = userService.getCurrentUser();
-        Action action = actionService.getViewEditAction(resource);
 
-        Comment comment = new Comment().withUser(userCurrent).withAction(action)
-                .withContent(applicationContext.getBean(PropertyLoader.class).withResource(resource).load(messageIndex)).withDeclinedResponse(false)
-                .withCreatedTimestamp(new DateTime());
-
-        for (CommentAssignedUser assignee : assignees) {
-            comment.addAssignedUser(assignee.getUser(), assignee.getRole(), assignee.getRoleTransitionType());
-            entityService.evict(assignee);
+    public void filterResourceListData(ResourceListRowRepresentation representation, User currentUser) {
+        switch (representation.getResourceScope()) {
+        case APPLICATION:
+            applicationService.filterResourceListData(representation, currentUser);
+            break;
+        case INSTITUTION:
+        case PROGRAM:
+        case PROJECT:
+        case SYSTEM:
+            break;
         }
-
-        actionService.executeUserAction(resource, action, comment);
-    }
-    
-    public void validateView(Resource resource) {
-        User userCurrent = userService.getCurrentUser();
-        Action action = actionService.getViewEditAction(resource);
-        actionService.validateUserAction(resource, action, userCurrent);
     }
 
     private Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter,
@@ -391,19 +414,6 @@ public class ResourceService {
         return null;
     }
 
-    public void filterResourceListData(ResourceListRowRepresentation representation, User currentUser) {
-        switch (representation.getResourceScope()) {
-        case APPLICATION:
-            applicationService.filterResourceListData(representation, currentUser);
-            break;
-        case INSTITUTION:
-        case PROGRAM:
-        case PROJECT:
-        case SYSTEM:
-            break;
-        }
-    }
-
     private void appendUserRoleFilterCriteria(PrismScope scopeId, Junction conditions, ResourceListFilterConstraintDTO constraint, String propertyName,
             List<PrismRole> valueRoles, Boolean negated) {
         boolean doAddCondition = false;
@@ -419,6 +429,22 @@ public class ResourceService {
         }
         if (doAddCondition) {
             conditions.add(condition);
+        }
+    }
+
+    public void updateResource(PrismScope resourceScope, Integer resourceId, Object resourceDTO) {
+        switch (resourceScope) {
+        case INSTITUTION:
+            institutionService.update(resourceId, (InstitutionDTO) resourceDTO);
+            break;
+        case PROGRAM:
+            programService.update(resourceId, (ProgramDTO) resourceDTO);
+            break;
+        case PROJECT:
+            projectService.update(resourceId, (ProjectDTO) resourceDTO);
+            break;
+        default:
+            throw new Error();
         }
     }
 

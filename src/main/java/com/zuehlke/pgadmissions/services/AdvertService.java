@@ -38,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertFilterCategory;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -119,10 +120,32 @@ public class AdvertService {
         return advertDAO.getAdvertsWithElapsedClosingDates(baseline);
     }
 
-    public void updateAdvert(Class<? extends Resource> resourceClass, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) throws Exception {
+    public void updateAdvert(Class<? extends Resource> resourceClass, Integer resourceId, Object sectionDTO) throws Exception {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
 
+        PrismDisplayProperty messageIndex;
+        Class<?> sectionClass = sectionDTO.getClass();
+        if (sectionClass.equals(AdvertDetailsDTO.class)) {
+            updateDetail(resource, advert, (AdvertDetailsDTO) sectionDTO);
+            messageIndex = PROGRAM_COMMENT_UPDATED_ADVERT;
+        } else if (sectionClass.equals(AdvertFeesAndPaymentsDTO.class)) {
+            updateFeesAndPayments(resource, advert, (AdvertFeesAndPaymentsDTO) sectionDTO);
+            messageIndex = PROGRAM_COMMENT_UPDATED_FEE_AND_PAYMENT;
+        } else if (sectionClass.equals(AdvertCategoriesDTO.class)) {
+            updateCategories(resource, advert, (AdvertCategoriesDTO) sectionDTO);
+            messageIndex = PROGRAM_COMMENT_UPDATED_CATEGORY;
+        } else if (sectionClass.equals(AdvertClosingDateDTO.class)) {
+            updateClosingDate(resource, advert, (AdvertClosingDateDTO) sectionDTO);
+            messageIndex = PROGRAM_COMMENT_UPDATED_CLOSING_DATE;
+        } else {
+            throw new Error();
+        }
+
+        resourceService.executeUpdate(resource, messageIndex);
+    }
+
+    private void updateDetail(Resource resource, Advert advert, AdvertDetailsDTO advertDetailsDTO) throws Exception {
         InstitutionAddressDTO addressDTO = advertDetailsDTO.getAddress();
         InstitutionDomicile country = entityService.getById(InstitutionDomicile.class, addressDTO.getDomicile());
         InstitutionDomicileRegion region = entityService.getById(InstitutionDomicileRegion.class, addressDTO.getRegion());
@@ -142,15 +165,10 @@ public class AdvertService {
         address.setAddressCode(addressDTO.getAddressCode());
 
         geocodableLocationService.setLocation(address);
-        resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_ADVERT);
     }
 
-    public void updateFeesAndPayments(Class<? extends Resource> resourceClass, Integer resourceId, AdvertFeesAndPaymentsDTO feesAndPaymentsDTO) throws Exception {
+    private void updateFeesAndPayments(Resource resource, Advert advert, AdvertFeesAndPaymentsDTO feesAndPaymentsDTO) throws Exception {
         LocalDate baseline = new LocalDate();
-
-        Resource resource = resourceService.getById(resourceClass, resourceId);
-        Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
-
         String currencyAtLocale = getCurrencyAtLocale(advert);
 
         FinancialDetailsDTO feeDTO = feesAndPaymentsDTO.getFee();
@@ -164,14 +182,10 @@ public class AdvertService {
         }
 
         advert.setLastCurrencyConversionDate(baseline);
-        resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_FEE_AND_PAYMENT);
     }
 
     @SuppressWarnings("unchecked")
-    public void updateCategories(Class<? extends Resource> resourceClass, Integer resourceId, AdvertCategoriesDTO categoriesDTO) throws DeduplicationException {
-        Resource resource = resourceService.getById(resourceClass, resourceId);
-        Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
-
+    private void updateCategories(Resource resource, Advert advert, AdvertCategoriesDTO categoriesDTO) throws DeduplicationException {
         for (String propertyName : new String[] { "domain", "industry", "function", "competency", "theme", "institution", "programType" }) {
             String propertySetterName = "add" + WordUtils.capitalize(propertyName);
             List<Object> values = (List<Object>) ReflectionUtils.getProperty(categoriesDTO, pluralize(propertyName));
@@ -188,15 +202,9 @@ public class AdvertService {
                 }
             }
         }
-
-        resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CATEGORY);
     }
 
-    public void updateClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, AdvertClosingDateDTO closingDateDTO)
-            throws DeduplicationException {
-        Resource resource = resourceService.getById(resourceClass, resourceId);
-        Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
-
+    private void updateClosingDate(Resource resource, Advert advert, AdvertClosingDateDTO closingDateDTO) throws DeduplicationException {
         AdvertClosingDate transientClosingDate = new AdvertClosingDate().withAdvert(advert).withClosingDate(closingDateDTO.getClosingDate())
                 .withStudyPlaces(closingDateDTO.getStudyPlaces());
         AdvertClosingDate persistentClosingDate = entityService.getDuplicateEntity(transientClosingDate);
@@ -207,8 +215,6 @@ public class AdvertService {
             persistentClosingDate.setStudyPlaces(transientClosingDate.getStudyPlaces());
             entityService.evict(transientClosingDate);
         }
-
-        resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CLOSING_DATE);
     }
 
     public void deleteClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, Integer closingDateId) throws DeduplicationException {

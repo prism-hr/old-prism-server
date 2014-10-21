@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
@@ -24,6 +27,8 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
+import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
@@ -35,16 +40,24 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
+import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRecommendedStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.comment.CommentDTOValidator;
+import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationSectionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
+import com.zuehlke.pgadmissions.services.ProgramService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
 @RequestMapping(value = { "api/applications" })
 public class ApplicationResource {
 
+    @Autowired
+    private AdvertService advertService;
+    
     @Autowired
     private ApplicationService applicationService;
 
@@ -52,13 +65,19 @@ public class ApplicationResource {
     private ApplicationSectionService applicationSectionService;
 
     @Autowired
+    private CommentService commentService;
+    
+    @Autowired
+    private ProgramService programService;
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
     private Mapper dozerBeanMapper;
 
     @Autowired
     private CommentDTOValidator commentDTOValidator;
-
-    @Autowired
-    private CommentService commentService;
 
     @RequestMapping(value = "/{applicationId}/recommendedStartDate", method = RequestMethod.GET)
     private ApplicationRecommendedStartDateRepresentation getRecommendedStartDate(@PathVariable Integer applicationId,
@@ -189,6 +208,38 @@ public class ApplicationResource {
     @InitBinder(value = "commentDTO")
     public void configureCommentBinding(WebDataBinder binder) {
         binder.setValidator(commentDTOValidator);
+    }
+    
+    public void enrichApplicationRepresentation(Application application, ApplicationExtendedRepresentation applicationRepresentation) {
+        List<User> interested = userService.getUsersInterestedInApplication(application);
+        List<User> potentiallyInterested = userService.getUsersPotentiallyInterestedInApplication(application, interested);
+        List<UserRepresentation> interestedRepresentations = Lists.newArrayListWithCapacity(interested.size());
+        List<UserRepresentation> potentiallyInterestedRepresentations = Lists.newArrayListWithCapacity(potentiallyInterested.size());
+
+        for (User user : interested) {
+            interestedRepresentations.add(dozerBeanMapper.map(user, UserRepresentation.class));
+        }
+
+        for (User user : potentiallyInterested) {
+            potentiallyInterestedRepresentations.add(dozerBeanMapper.map(user, UserRepresentation.class));
+        }
+
+        applicationRepresentation.setUsersInterestedInApplication(interestedRepresentations);
+        applicationRepresentation.setUsersPotentiallyInterestedInApplication(potentiallyInterestedRepresentations);
+
+        applicationRepresentation.setAppointmentTimeslots(commentService.getAppointmentTimeslots(application));
+        applicationRepresentation.setAppointmentPreferences(commentService.getAppointmentPreferences(application));
+
+        applicationRepresentation.setOfferRecommendation(commentService.getOfferRecommendation(application));
+        applicationRepresentation.setAssignedSupervisors(commentService.getApplicationSupervisors(application));
+        applicationRepresentation.setPossibleThemes(advertService.getLocalizedThemes(application));
+
+        List<ProgramStudyOption> enabledProgramStudyOptions = programService.getEnabledProgramStudyOptions(application.getProgram());
+        List<PrismStudyOption> availableStudyOptions = Lists.newArrayListWithCapacity(enabledProgramStudyOptions.size());
+        for (ProgramStudyOption studyOption : enabledProgramStudyOptions) {
+            availableStudyOptions.add(studyOption.getStudyOption().getPrismStudyOption());
+        }
+        applicationRepresentation.setAvailableStudyOptions(availableStudyOptions);
     }
 
 }

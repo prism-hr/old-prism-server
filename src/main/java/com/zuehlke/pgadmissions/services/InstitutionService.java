@@ -25,10 +25,7 @@ import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicileRegion;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.representation.SocialPresenceRepresentation;
@@ -163,24 +160,6 @@ public class InstitutionService {
                 importedEntityService.getOrCreateImportedEntityFeed(institution, importedEntityType, importedEntityType.getDefaultLocation());
             }
         }
-    }
-
-    public ActionOutcomeDTO performAction(Integer institutionId, CommentDTO commentDTO) throws DeduplicationException {
-        Institution institution = entityService.getById(Institution.class, institutionId);
-        PrismAction actionId = commentDTO.getAction();
-
-        Action action = actionService.getById(actionId);
-        User user = userService.getById(commentDTO.getUser());
-        State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
-        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withAction(action).withTransitionState(transitionState)
-                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
-
-        InstitutionDTO institutionDTO = commentDTO.getInstitution();
-        if (institutionDTO != null) {
-            update(institutionId, institutionDTO);
-        }
-
-        return actionService.executeUserAction(institution, action, comment);
     }
 
     public SocialPresenceRepresentation getSocialProfiles(String institutionTitle) throws IOException {

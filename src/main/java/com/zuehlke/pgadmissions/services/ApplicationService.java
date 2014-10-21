@@ -146,11 +146,18 @@ public class ApplicationService {
         LocalDate studyOptionStart = studyOption.getApplicationStartDate();
 
         LocalDate earliestStartDate = studyOptionStart.isBefore(baseline) ? baseline : studyOptionStart;
-        return earliestStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
+        earliestStartDate = earliestStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
+        return earliestStartDate.isBefore(baseline) ? earliestStartDate.plusWeeks(1) : earliestStartDate;
     }
 
     public LocalDate getLatestStartDate(ProgramStudyOption studyOption) {
-        return studyOption == null ? null : studyOption.getApplicationCloseDate().withDayOfWeek(DateTimeConstants.MONDAY);
+        if (studyOption == null) {
+            return null;
+        }
+        
+        LocalDate closeDate = studyOption.getApplicationCloseDate();
+        LocalDate latestStartDate = closeDate.withDayOfWeek(DateTimeConstants.MONDAY);
+        return latestStartDate.isAfter(closeDate) ? latestStartDate.minusWeeks(1) : latestStartDate;
     }
     
     public String getApplicationExportReference(Application application) {
@@ -254,7 +261,7 @@ public class ApplicationService {
     }
 
     // TODO: set values for "doRetain" (application) and "sendRecommendationEmail" (user account)
-    public ActionOutcomeDTO performAction(@PathVariable Integer applicationId, @Valid @RequestBody CommentDTO commentDTO) throws DeduplicationException {
+    public ActionOutcomeDTO executeAction(@PathVariable Integer applicationId, @Valid @RequestBody CommentDTO commentDTO) throws DeduplicationException {
         Application application = entityService.getById(Application.class, applicationId);
         PrismAction actionId = commentDTO.getAction();
 
@@ -404,8 +411,10 @@ public class ApplicationService {
         } else if (recommendedStartDate.isBefore(studyOptionStart)) {
             recommendedStartDate = studyOptionStart;
         }
-
-        return recommendedStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
+        
+        LocalDate baseline = new LocalDate();
+        recommendedStartDate = recommendedStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
+        return recommendedStartDate.isBefore(baseline) ? recommendedStartDate.plusWeeks(1) : recommendedStartDate;
     }
 
 }

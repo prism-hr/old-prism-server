@@ -16,7 +16,8 @@ import com.zuehlke.pgadmissions.domain.location.GeocodableLocation;
 import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
 
 @Entity
-@Table(name = "INSTITUTION_DOMICILE_REGION", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_domicile_id", "parent_region_id", "region_type", "name"})})
+@Table(name = "INSTITUTION_DOMICILE_REGION", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_domicile_id", "parent_region_id",
+        "region_type", "name" }) })
 public class InstitutionDomicileRegion extends GeocodableLocation {
 
     @Id
@@ -29,7 +30,7 @@ public class InstitutionDomicileRegion extends GeocodableLocation {
     @ManyToOne
     @JoinColumn(name = "parent_region_id")
     private InstitutionDomicileRegion parentRegion;
-    
+
     @Column(name = "nested_path", nullable = false)
     private String nestedPath;
 
@@ -41,7 +42,7 @@ public class InstitutionDomicileRegion extends GeocodableLocation {
 
     @Column(name = "name", nullable = false)
     private String name;
-    
+
     @Embedded
     private GeographicLocation location;
 
@@ -143,22 +144,22 @@ public class InstitutionDomicileRegion extends GeocodableLocation {
         this.parentRegion = parentRegion;
         return this;
     }
-    
+
     public InstitutionDomicileRegion withName(String name) {
         this.name = name;
         return this;
     }
-    
+
     public InstitutionDomicileRegion withLocation(GeographicLocation location) {
         this.location = location;
         return this;
     }
-    
+
     public InstitutionDomicileRegion withNestedPath(String nestedPath) {
         this.nestedPath = nestedPath;
         return this;
     }
-    
+
     public InstitutionDomicileRegion withNestedLevel(Integer nestedLevel) {
         this.nestedLevel = nestedLevel;
         return this;
@@ -173,10 +174,16 @@ public class InstitutionDomicileRegion extends GeocodableLocation {
         this.enabled = enabled;
         return this;
     }
-    
+
     @Override
     public String getLocationString() {
         return buildLocationString(name, parentRegion == null ? null : parentRegion.getName(), domicile.getName());
     }
-    
+
+    @Override
+    public ResourceSignature getResourceSignature() {
+        return new ResourceSignature().addProperty("domicile", domicile).addProperty("parentRegion", parentRegion).addProperty("regionType", regionType)
+                .addProperty("name", name);
+    }
+
 }

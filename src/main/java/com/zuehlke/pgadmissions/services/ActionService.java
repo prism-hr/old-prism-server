@@ -190,7 +190,16 @@ public class ActionService {
         throw new WorkflowEngineException("Error executing " + action.getId().name() + " on " + resource.getCode() + ". Explanation was \"" + message + "\".");
     }
 
-    public boolean checkActionAvailable(Resource resource, Action action, User invoker) {
+    public void validateUserAction(Resource resource, Action action, User invoker) {
+        if (checkActionAvailable(resource, action, invoker)) {
+            return;
+        } else if (checkDelegateActionAvailable(resource, action, invoker)) {
+            return;
+        }
+        throwWorkflowPermissionException(resource, action);
+    }
+    
+    private boolean checkActionAvailable(Resource resource, Action action, User invoker) {
         return actionDAO.getPermittedAction(resource, action, invoker) != null;
     }
 

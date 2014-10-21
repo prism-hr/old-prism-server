@@ -112,7 +112,7 @@ public class Advert {
             @AttributeOverride(name = "converted", column = @Column(name = "pay_converted")) })
     private AdvertFinancialDetail pay;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_closing_date_id", unique = true)
     private AdvertClosingDate closingDate;
 
@@ -340,6 +340,10 @@ public class Advert {
 
     public boolean hasConvertedPay() {
         return pay != null && !pay.getCurrencySpecified().equals(pay.getCurrencyAtLocale());
+    }
+
+    public void addClosingDate(AdvertClosingDate closingDate) {
+        closingDates.add(closingDate);
     }
 
     public void addDomain(PrismAdvertDomain domainId) {

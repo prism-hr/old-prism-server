@@ -12,9 +12,12 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
+import com.google.common.base.Objects;
+import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+
 @Entity
 @Table(name = "ADVERT_CLOSING_DATE", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "closing_date" }) })
-public class AdvertClosingDate {
+public class AdvertClosingDate implements IUniqueEntity {
 
     @Id
     @GeneratedValue
@@ -63,23 +66,41 @@ public class AdvertClosingDate {
         this.id = id;
     }
 
-    public AdvertClosingDate withId(Integer id) {
-        this.id = id;
-        return this;
-    }
-    
     public AdvertClosingDate withAdvert(Advert advert) {
         this.advert = advert;
         return this;
     }
-    
+
     public AdvertClosingDate withClosingDate(LocalDate closingDate) {
         this.closingDate = closingDate;
         return this;
     }
-    
+
     public AdvertClosingDate withStudyPlaces(Integer studyPlaces) {
         this.studyPlaces = studyPlaces;
         return this;
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(advert, closingDate);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        final AdvertClosingDate other = (AdvertClosingDate) object;
+        return Objects.equal(advert, other.getAdvert()) && Objects.equal(closingDate, other.getClosingDate());
+    }
+
+    @Override
+    public ResourceSignature getResourceSignature() {
+        return new ResourceSignature().addProperty("advert", advert).addProperty("closingDate", closingDate);
+    }
+
 }

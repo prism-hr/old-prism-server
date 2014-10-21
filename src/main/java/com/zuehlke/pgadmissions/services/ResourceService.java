@@ -14,6 +14,7 @@ import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +22,10 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -50,6 +53,7 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
@@ -91,8 +95,15 @@ public class ResourceService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     public <T extends Resource> Resource getById(Class<T> resourceClass, Integer id) {
         return entityService.getById(resourceClass, id);
+    }
+
+    public Integer getResourceId(Resource resource) {
+        return resource == null ? null : resource.getId();
     }
 
     public ActionOutcomeDTO performAction(Integer resourceId, CommentDTO commentDTO) throws DeduplicationException, InterruptedException, IOException,
@@ -270,9 +281,27 @@ public class ResourceService {
         Set<Integer> assignedResources = getAssignedResources(user, scopeId, parentScopeIds, filter, lastSequenceIdentifier, maxRecords);
         return resourceDAO.getResourceConsoleList(user, scopeId, parentScopeIds, assignedResources, filter, lastSequenceIdentifier, maxRecords);
     }
+    
+    public void executeUpdate(Resource resource, PrismDisplayProperty messageIndex, CommentAssignedUser... assignees) throws DeduplicationException {
+        User userCurrent = userService.getCurrentUser();
+        Action action = actionService.getViewEditAction(resource);
 
-    public Integer getResourceId(Resource resource) {
-        return resource == null ? null : resource.getId();
+        Comment comment = new Comment().withUser(userCurrent).withAction(action)
+                .withContent(applicationContext.getBean(PropertyLoader.class).withResource(resource).load(messageIndex)).withDeclinedResponse(false)
+                .withCreatedTimestamp(new DateTime());
+
+        for (CommentAssignedUser assignee : assignees) {
+            comment.addAssignedUser(assignee.getUser(), assignee.getRole(), assignee.getRoleTransitionType());
+            entityService.evict(assignee);
+        }
+
+        actionService.executeUserAction(resource, action, comment);
+    }
+    
+    public void validateView(Resource resource) {
+        User userCurrent = userService.getCurrentUser();
+        Action action = actionService.getViewEditAction(resource);
+        actionService.validateUserAction(resource, action, userCurrent);
     }
 
     private Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter,

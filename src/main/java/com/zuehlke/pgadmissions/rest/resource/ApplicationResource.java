@@ -1,28 +1,48 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
+import java.util.Map;
+
+import javax.validation.Valid;
+
+import org.dozer.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.zuehlke.pgadmissions.domain.application.*;
+import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
+import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
+import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.*;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationEmploymentPositionDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationFundingDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRecommendedStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.comment.CommentDTOValidator;
 import com.zuehlke.pgadmissions.services.ApplicationSectionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
-import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.Map;
 
 @RestController
-@RequestMapping(value = {"api/applications"})
+@RequestMapping(value = { "api/applications" })
 public class ApplicationResource {
 
     @Autowired
@@ -42,7 +62,7 @@ public class ApplicationResource {
 
     @RequestMapping(value = "/{applicationId}/recommendedStartDate", method = RequestMethod.GET)
     private ApplicationRecommendedStartDateRepresentation getRecommendedStartDate(@PathVariable Integer applicationId,
-                                                                                  @RequestParam PrismStudyOption studyOptionId) {
+            @RequestParam PrismStudyOption studyOptionId) {
         return applicationService.getRecommendedStartDate(applicationId, studyOptionId);
     }
 
@@ -61,7 +81,7 @@ public class ApplicationResource {
 
     @RequestMapping(value = "/{applicationId}/supervisors/{supervisorId}", method = RequestMethod.PUT)
     public void deleteSupervisor(@PathVariable Integer applicationId, @PathVariable Integer supervisorId,
-                                 @Valid @RequestBody ApplicationSupervisorDTO supervisorDTO) throws DeduplicationException {
+            @Valid @RequestBody ApplicationSupervisorDTO supervisorDTO) throws DeduplicationException {
         applicationSectionService.saveSupervisor(applicationId, supervisorId, supervisorDTO);
     }
 
@@ -90,46 +110,48 @@ public class ApplicationResource {
 
     @RequestMapping(value = "/{applicationId}/qualifications/{qualificationId}", method = RequestMethod.PUT)
     public void updateQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId,
-                                    @Valid @RequestBody ApplicationQualificationDTO qualificationDTO) throws DeduplicationException {
+            @Valid @RequestBody ApplicationQualificationDTO qualificationDTO) throws DeduplicationException {
         applicationSectionService.saveQualification(applicationId, qualificationId, qualificationDTO);
     }
 
     @RequestMapping(value = "/{applicationId}/qualifications/{qualificationId}", method = RequestMethod.DELETE)
-    public void deleteQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId) {
+    public void deleteQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId) throws DeduplicationException {
         applicationSectionService.deleteQualification(applicationId, qualificationId);
     }
 
     @RequestMapping(value = "/{applicationId}/employmentPositions", method = RequestMethod.POST)
     public Map<String, Object> createEmploymentPosition(@PathVariable Integer applicationId,
-                                                        @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
+            @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) throws DeduplicationException {
         ApplicationEmploymentPosition employmentPosition = applicationSectionService.saveEmploymentPosition(applicationId, null, employmentPositionDTO);
         return ImmutableMap.of("id", (Object) employmentPosition.getId());
     }
 
     @RequestMapping(value = "/{applicationId}/employmentPositions/{employmentPositionId}", method = RequestMethod.PUT)
     public void updateEmploymentPosition(@PathVariable Integer applicationId, @PathVariable Integer employmentPositionId,
-                                         @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
+            @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) throws DeduplicationException {
         applicationSectionService.saveEmploymentPosition(applicationId, employmentPositionId, employmentPositionDTO);
     }
 
     @RequestMapping(value = "/{applicationId}/employmentPositions/{employmentPositionId}", method = RequestMethod.DELETE)
-    public void deleteEmploymentPosition(@PathVariable Integer applicationId, @PathVariable Integer employmentPositionId) {
+    public void deleteEmploymentPosition(@PathVariable Integer applicationId, @PathVariable Integer employmentPositionId) throws DeduplicationException {
         applicationSectionService.deleteEmploymentPosition(applicationId, employmentPositionId);
     }
 
     @RequestMapping(value = "/{applicationId}/fundings", method = RequestMethod.POST)
-    public Map<String, Object> createFunding(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationFundingDTO fundingDTO) {
+    public Map<String, Object> createFunding(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationFundingDTO fundingDTO)
+            throws DeduplicationException {
         ApplicationFunding funding = applicationSectionService.saveFunding(applicationId, null, fundingDTO);
         return ImmutableMap.of("id", (Object) funding.getId());
     }
 
     @RequestMapping(value = "/{applicationId}/fundings/{fundingId}", method = RequestMethod.PUT)
-    public void updateFunding(@PathVariable Integer applicationId, @PathVariable Integer fundingId, @Valid @RequestBody ApplicationFundingDTO fundingDTO) {
+    public void updateFunding(@PathVariable Integer applicationId, @PathVariable Integer fundingId, @Valid @RequestBody ApplicationFundingDTO fundingDTO)
+            throws DeduplicationException {
         applicationSectionService.saveFunding(applicationId, fundingId, fundingDTO);
     }
 
     @RequestMapping(value = "/{applicationId}/fundings/{fundingId}", method = RequestMethod.DELETE)
-    public void deleteFunding(@PathVariable Integer applicationId, @PathVariable Integer fundingId) {
+    public void deleteFunding(@PathVariable Integer applicationId, @PathVariable Integer fundingId) throws DeduplicationException {
         applicationSectionService.deleteFunding(applicationId, fundingId);
     }
 
@@ -147,12 +169,13 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/referees/{refereeId}", method = RequestMethod.DELETE)
-    public void updateReferee(@PathVariable Integer applicationId, @PathVariable Integer refereeId) {
+    public void updateReferee(@PathVariable Integer applicationId, @PathVariable Integer refereeId) throws DeduplicationException {
         applicationSectionService.deleteReferee(applicationId, refereeId);
     }
 
     @RequestMapping(value = "/{applicationId}/additionalInformation", method = RequestMethod.PUT)
-    public void saveAdditionalInformation(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationAdditionalInformationDTO additionalInformationDTO) {
+    public void saveAdditionalInformation(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationAdditionalInformationDTO additionalInformationDTO)
+            throws DeduplicationException {
         applicationSectionService.saveAdditionalInformation(applicationId, additionalInformationDTO);
     }
 
@@ -167,6 +190,5 @@ public class ApplicationResource {
     public void configureCommentBinding(WebDataBinder binder) {
         binder.setValidator(commentDTOValidator);
     }
-
 
 }

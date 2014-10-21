@@ -148,7 +148,7 @@ public class PrismProgramApproved extends PrismWorkflowState {
                 .withTransitions(Arrays.asList( //
                         new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_APPROVAL) // 
-                        .withTransitionAction(PrismAction.PROGRAM_CREATE_PROJECT) //
+                        .withTransitionAction(PrismAction.SYSTEM_VIEW_PROJECT_LIST) //
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_CREATED_OUTCOME)
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
@@ -172,7 +172,7 @@ public class PrismProgramApproved extends PrismWorkflowState {
                                 .withMaximumPermitted(1))),
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_APPROVED) // 
-                        .withTransitionAction(PrismAction.PROGRAM_CREATE_PROJECT) //
+                        .withTransitionAction(PrismAction.PROJECT_VIEW_EDIT) //
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_CREATED_OUTCOME)
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //

@@ -1,5 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_COMMENT_UPDATED_ADVERT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_COMMENT_UPDATED_CATEGORY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_COMMENT_UPDATED_CLOSING_DATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_COMMENT_UPDATED_FEE_AND_PAYMENT;
 import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 import java.io.IOException;
@@ -43,7 +47,9 @@ import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicileRegion;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.AdvertCategoriesDTO;
+import com.zuehlke.pgadmissions.rest.dto.AdvertClosingDateDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertFeesAndPaymentsDTO;
 import com.zuehlke.pgadmissions.rest.dto.FinancialDetailsDTO;
@@ -91,7 +97,11 @@ public class AdvertService {
     public Advert getById(Integer id) {
         return entityService.getById(Advert.class, id);
     }
-    
+
+    public AdvertClosingDate getClosingDateById(Integer id) {
+        return entityService.getById(AdvertClosingDate.class, id);
+    }
+
     // TODO: user filters
     public List<Advert> getActiveAdverts() {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
@@ -109,21 +119,11 @@ public class AdvertService {
         return advertDAO.getAdvertsWithElapsedClosingDates(baseline);
     }
 
-    public void updateAdvertClosingDate(Advert transientAdvert, LocalDate baseline) {
-        Advert persistentAdvert = getById(transientAdvert.getId());
-        AdvertClosingDate nextClosingDate = advertDAO.getNextAdvertClosingDate(persistentAdvert, baseline);
-        persistentAdvert.setClosingDate(nextClosingDate);
-
-        if (persistentAdvert.isProjectAdvert() && nextClosingDate == null) {
-            persistentAdvert.getProject().setDueDate(baseline);
-        }
-    }
-
-    public void saveAdvertDetails(Class<? extends Resource> resourceClass, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) throws Exception {
+    public void updateAdvert(Class<? extends Resource> resourceClass, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) throws Exception {
         Resource resource = resourceService.getById(resourceClass, resourceId);
-        Advert advert = (Advert) PropertyUtils.getSimpleProperty(resource, "advert");
-        InstitutionAddressDTO addressDTO = advertDetailsDTO.getAddress();
+        Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
 
+        InstitutionAddressDTO addressDTO = advertDetailsDTO.getAddress();
         InstitutionDomicile country = entityService.getById(InstitutionDomicile.class, addressDTO.getDomicile());
         InstitutionDomicileRegion region = entityService.getById(InstitutionDomicileRegion.class, addressDTO.getRegion());
 
@@ -141,13 +141,14 @@ public class AdvertService {
         address.setAddressCode(addressDTO.getAddressCode());
 
         geocodableLocationService.setLocation(address);
+        resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_ADVERT);
     }
 
-    public void saveFeesAndPayments(Class<? extends Resource> resourceClass, Integer resourceId, AdvertFeesAndPaymentsDTO feesAndPaymentsDTO) throws Exception {
+    public void updateFeesAndPayments(Class<? extends Resource> resourceClass, Integer resourceId, AdvertFeesAndPaymentsDTO feesAndPaymentsDTO) throws Exception {
         LocalDate baseline = new LocalDate();
 
         Resource resource = resourceService.getById(resourceClass, resourceId);
-        Advert advert = (Advert) PropertyUtils.getSimpleProperty(resource, "advert");
+        Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
 
         String currencyAtLocale = getCurrencyAtLocale(advert);
 
@@ -162,16 +163,17 @@ public class AdvertService {
         }
 
         advert.setLastCurrencyConversionDate(baseline);
+        resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_FEE_AND_PAYMENT);
     }
 
     @SuppressWarnings("unchecked")
-    public void saveCategories(Class<? extends Resource> resourceClass, Integer resourceId, AdvertCategoriesDTO metadataDTO) {
+    public void updateCategories(Class<? extends Resource> resourceClass, Integer resourceId, AdvertCategoriesDTO categoriesDTO) throws DeduplicationException {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
 
         for (String propertyName : new String[] { "domain", "industry", "function", "competency", "theme", "institution", "programType" }) {
             String propertySetterName = "add" + WordUtils.capitalize(propertyName);
-            List<Object> values = (List<Object>) ReflectionUtils.getProperty(metadataDTO, pluralize(propertyName));
+            List<Object> values = (List<Object>) ReflectionUtils.getProperty(categoriesDTO, pluralize(propertyName));
 
             if (values != null) {
                 Collection<?> persistentMetadata = (Collection<?>) ReflectionUtils.getProperty(advert, pluralize(propertyName));
@@ -185,6 +187,46 @@ public class AdvertService {
                 }
             }
         }
+
+        resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CATEGORY);
+    }
+
+    public void updateClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, AdvertClosingDateDTO closingDateDTO)
+            throws DeduplicationException {
+        Resource resource = resourceService.getById(resourceClass, resourceId);
+        Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
+
+        AdvertClosingDate transientClosingDate = new AdvertClosingDate().withAdvert(advert).withClosingDate(closingDateDTO.getClosingDate())
+                .withStudyPlaces(closingDateDTO.getStudyPlaces());
+        AdvertClosingDate persistentClosingDate = entityService.getDuplicateEntity(transientClosingDate);
+
+        if (persistentClosingDate == null) {
+            advert.addClosingDate(transientClosingDate);
+        } else {
+            persistentClosingDate.setStudyPlaces(transientClosingDate.getStudyPlaces());
+            entityService.evict(transientClosingDate);
+        }
+
+        resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CLOSING_DATE);
+    }
+
+    public void deleteClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, Integer closingDateId) throws DeduplicationException {
+        Resource resource = resourceService.getById(resourceClass, resourceId);
+        Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
+        AdvertClosingDate closingDate = getClosingDateById(closingDateId);
+        if (closingDate != null && closingDate.getAdvert().equals(advert)) {
+            advert.getClosingDates().remove(closingDate);
+            if (closingDate.equals(advert.getClosingDate())) {
+                advert.setClosingDate(advertDAO.getNextAdvertClosingDate(advert, new LocalDate()));
+            }
+        }
+        resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CLOSING_DATE);
+    }
+
+    public void updateClosingDate(Advert transientAdvert, LocalDate baseline) {
+        Advert persistentAdvert = getById(transientAdvert.getId());
+        AdvertClosingDate nextClosingDate = advertDAO.getNextAdvertClosingDate(persistentAdvert, baseline);
+        persistentAdvert.setClosingDate(nextClosingDate);
     }
 
     public void updateCurrencyConversion(Advert transientAdvert) throws IOException, JAXBException, IllegalAccessException, InvocationTargetException,
@@ -223,49 +265,6 @@ public class AdvertService {
 
     public List<String> getLocalizedThemes(Application application) {
         return advertDAO.getLocalizedThemes(application);
-    }
-
-    private void updateFinancialDetails(AdvertFinancialDetail financialDetails, FinancialDetailsDTO financialDetailsDTO, String currencyAtLocale,
-            LocalDate baseline) throws Exception {
-        DurationUnit interval = financialDetailsDTO.getInterval();
-        String currencySpecified = financialDetailsDTO.getCurrency();
-
-        financialDetails.setInterval(interval);
-        financialDetails.setCurrencySpecified(currencySpecified);
-        financialDetails.setCurrencyAtLocale(currencyAtLocale);
-
-        String intervalPrefixSpecified = interval.name().toLowerCase();
-        BigDecimal minimumSpecified = financialDetailsDTO.getMinimum();
-        BigDecimal maximumSpecified = financialDetailsDTO.getMaximum();
-
-        String intervalPrefixGenerated;
-        BigDecimal minimumGenerated;
-        BigDecimal maximumGenerated;
-
-        if (interval == DurationUnit.MONTH) {
-            intervalPrefixGenerated = DurationUnit.YEAR.name().toLowerCase();
-            minimumGenerated = minimumSpecified.multiply(new BigDecimal(12));
-            maximumGenerated = maximumSpecified.multiply(new BigDecimal(12));
-        } else {
-            intervalPrefixGenerated = DurationUnit.MONTH.name().toLowerCase();
-            minimumGenerated = minimumSpecified.divide(new BigDecimal(12), 2, RoundingMode.HALF_UP);
-            maximumGenerated = maximumSpecified.divide(new BigDecimal(12), 2, RoundingMode.HALF_UP);
-        }
-
-        setMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated, minimumGenerated,
-                maximumGenerated, "Specified");
-        if (currencySpecified.equals(currencyAtLocale)) {
-            setMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated, minimumGenerated,
-                    maximumGenerated, "AtLocale");
-        } else {
-            try {
-                BigDecimal rate = getExchangeRate(currencySpecified, currencyAtLocale, baseline);
-                setConvertedMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated,
-                        minimumGenerated, maximumGenerated, rate);
-            } catch (Exception e) {
-                lOGGER.error("Problem performing currency conversion", e);
-            }
-        }
     }
 
     private String getCurrencyAtLocale(Advert advert) {
@@ -388,6 +387,49 @@ public class AdvertService {
             advert.setPay(new AdvertFinancialDetail());
         }
         updateFinancialDetails(advert.getPay(), payDTO, currencyAtLocale, baseline);
+    }
+
+    private void updateFinancialDetails(AdvertFinancialDetail financialDetails, FinancialDetailsDTO financialDetailsDTO, String currencyAtLocale,
+            LocalDate baseline) throws Exception {
+        DurationUnit interval = financialDetailsDTO.getInterval();
+        String currencySpecified = financialDetailsDTO.getCurrency();
+
+        financialDetails.setInterval(interval);
+        financialDetails.setCurrencySpecified(currencySpecified);
+        financialDetails.setCurrencyAtLocale(currencyAtLocale);
+
+        String intervalPrefixSpecified = interval.name().toLowerCase();
+        BigDecimal minimumSpecified = financialDetailsDTO.getMinimum();
+        BigDecimal maximumSpecified = financialDetailsDTO.getMaximum();
+
+        String intervalPrefixGenerated;
+        BigDecimal minimumGenerated;
+        BigDecimal maximumGenerated;
+
+        if (interval == DurationUnit.MONTH) {
+            intervalPrefixGenerated = DurationUnit.YEAR.name().toLowerCase();
+            minimumGenerated = minimumSpecified.multiply(new BigDecimal(12));
+            maximumGenerated = maximumSpecified.multiply(new BigDecimal(12));
+        } else {
+            intervalPrefixGenerated = DurationUnit.MONTH.name().toLowerCase();
+            minimumGenerated = minimumSpecified.divide(new BigDecimal(12), 2, RoundingMode.HALF_UP);
+            maximumGenerated = maximumSpecified.divide(new BigDecimal(12), 2, RoundingMode.HALF_UP);
+        }
+
+        setMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated, minimumGenerated,
+                maximumGenerated, "Specified");
+        if (currencySpecified.equals(currencyAtLocale)) {
+            setMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated, minimumGenerated,
+                    maximumGenerated, "AtLocale");
+        } else {
+            try {
+                BigDecimal rate = getExchangeRate(currencySpecified, currencyAtLocale, baseline);
+                setConvertedMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated,
+                        minimumGenerated, maximumGenerated, rate);
+            } catch (Exception e) {
+                lOGGER.error("Problem performing currency conversion", e);
+            }
+        }
     }
 
 }

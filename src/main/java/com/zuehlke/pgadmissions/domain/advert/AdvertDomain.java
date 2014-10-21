@@ -58,16 +58,6 @@ public class AdvertDomain extends AdvertFilterCategory {
         this.domain = domain;
     }
 
-    public AdvertDomain withDomain(final PrismAdvertDomain domain) {
-        this.domain = domain;
-        return this;
-    }
-
-    public AdvertDomain withAdvert(final Advert advert) {
-        this.advert = advert;
-        return this;
-    }
-
     @Override
     public Object getValue() {
         return getDomain();

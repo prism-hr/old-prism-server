@@ -187,4 +187,5 @@ public class ApplicationResource {
     public void configureCommentBinding(WebDataBinder binder) {
         binder.setValidator(commentDTOValidator);
     }
+    
 }

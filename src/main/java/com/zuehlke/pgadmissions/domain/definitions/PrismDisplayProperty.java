@@ -14,7 +14,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.A
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.APPLICATION_QUALIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.APPLICATION_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.INSTITUTION_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.INSTITUTION_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.PROGRAM_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.PROGRAM_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.PROJECT_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.SYSTEM_GLOBAL;
@@ -71,6 +73,9 @@ public enum PrismDisplayProperty {
             "We are pleased to tell you that your institution has been approved. We will send you a message with further instructions when your institution is ready to use. If you do not receive this message within 1 hour, please contact our helpdesk."), //
     INSTITUTION_CORRECTION(INSTITUTION_GLOBAL, "Further information is required to activate your institution. Please login to address the reviewers comments."), //
     INSTITUTION_REJECTED(INSTITUTION_GLOBAL, "We are sorry to inform you that your institution has been rejected."), //
+    INSTITUTION_COMMENT_UPDATED_NOTIFICATION(INSTITUTION_COMMENT, "Updated notification configuration"), //
+    INSTITUTION_COMMENT_RESTORED_NOTIFICATION_DEFAULT(INSTITUTION_COMMENT, "Restored default notification template"), //
+    INSTITUTION_COMMENT_OVERWROTE_NOTIFICATION_CUSTOM(INSTITUTION_COMMENT, "Overwrote customized notification templates"), //
     PROGRAM_HEADER(PROGRAM_GLOBAL, "Program"), //
     PROGRAM_APPROVED(INSTITUTION_GLOBAL,
             "We are pleased to tell you that your program has been approved. You may now login to create users and projects, and manage your recruitment."), //
@@ -95,6 +100,10 @@ public enum PrismDisplayProperty {
     PROGRAM_TYPE_EMPLOYMENT(PROGRAM_GLOBAL, "Employment"), //
     PROGRAM_TYPE_EMPLOYMENT_SECONDMENT(PROGRAM_GLOBAL, "Secondment"), //
     PROGRAM_TYPE_TRAINING(PROGRAM_GLOBAL, "Training"), //
+    PROGRAM_COMMENT_UPDATED_ADVERT(PROGRAM_COMMENT, "Updated advert"), //
+    PROGRAM_COMMENT_UPDATED_FEE_AND_PAYMENT(PROGRAM_COMMENT, "Updated fees and payments"), //
+    PROGRAM_COMMENT_UPDATED_CATEGORY(PROGRAM_COMMENT, "Updated categories"), //
+    PROGRAM_COMMENT_UPDATED_CLOSING_DATE(PROGRAM_COMMENT, "Updated closing dates"), //
     PROJECT_HEADER(PROJECT_GLOBAL, "Project"), //
     PROJECT_APPROVED(INSTITUTION_GLOBAL,
             "We are pleased to tell you that your project has been approved. You may now login to create users and manage your recruitment."), PROJECT_CORRECTION(
@@ -201,7 +210,7 @@ public enum PrismDisplayProperty {
     APPLICATION_COMMENT_UPDATED_FUNDING(APPLICATION_COMMENT, "Updated the funding section."), //
     APPLICATION_COMMENT_UPDATED_REFEREE(APPLICATION_COMMENT, "Updated the referee section."), //
     APPLICATION_COMMENT_UPDATED_DOCUMENT(APPLICATION_COMMENT, "Updated the document section."), //
-    APPLICATION_COMMENT_ADDITIONAL_INFORMATION(APPLICATION_COMMENT, "Updated the additional information session.");
+    APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION(APPLICATION_COMMENT, "Updated the additional information session.");
 
     private PrismDisplayCategory category;
 

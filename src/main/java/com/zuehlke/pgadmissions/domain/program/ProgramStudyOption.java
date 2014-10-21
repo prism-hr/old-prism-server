@@ -1,28 +1,20 @@
 package com.zuehlke.pgadmissions.domain.program;
 
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import com.google.common.base.Function;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
-@Table(name = "PROGRAM_STUDY_OPTION", uniqueConstraints = @UniqueConstraint(columnNames = { "program_id", "study_option_id" }))
+@Table(name = "PROGRAM_STUDY_OPTION", uniqueConstraints = @UniqueConstraint(columnNames = {"program_id", "study_option_id"}))
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ProgramStudyOption implements IUniqueEntity {
 
@@ -133,5 +125,4 @@ public class ProgramStudyOption implements IUniqueEntity {
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addProperty("program", program).addProperty("studyOption", studyOption);
     }
-
 }

@@ -17,6 +17,8 @@ public class InstitutionAddressRepresentation {
 
     private String addressCode;
 
+    private String locationString;
+
     public String getDomicile() {
         return domicile;
     }
@@ -71,5 +73,13 @@ public class InstitutionAddressRepresentation {
 
     public void setAddressCode(String addressCode) {
         this.addressCode = addressCode;
+    }
+
+    public String getLocationString() {
+        return locationString;
+    }
+
+    public void setLocationString(String locationString) {
+        this.locationString = locationString;
     }
 }

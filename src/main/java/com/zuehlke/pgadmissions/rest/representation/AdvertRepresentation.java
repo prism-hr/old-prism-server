@@ -3,12 +3,10 @@ package com.zuehlke.pgadmissions.rest.representation;
 import java.util.List;
 import java.util.Set;
 
+import com.zuehlke.pgadmissions.domain.definitions.*;
+import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation;
 
@@ -53,6 +51,10 @@ public class AdvertRepresentation {
     private Set<Integer> institutions;
 
     private Set<PrismProgramType> programTypes;
+
+    private Set<PrismStudyOption> studyOptions;
+
+    private InstitutionRepresentation institution;
 
     public Integer getId() {
         return id;
@@ -213,4 +215,21 @@ public class AdvertRepresentation {
     public void setProgramTypes(Set<PrismProgramType> programTypes) {
         this.programTypes = programTypes;
     }
+
+    public Set<PrismStudyOption> getStudyOptions() {
+        return studyOptions;
+    }
+
+    public void setStudyOptions(Set<PrismStudyOption> studyOptions) {
+        this.studyOptions = studyOptions;
+    }
+
+    public InstitutionRepresentation getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(InstitutionRepresentation institution) {
+        this.institution = institution;
+    }
+
 }

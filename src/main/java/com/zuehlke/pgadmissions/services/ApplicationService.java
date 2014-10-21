@@ -365,7 +365,7 @@ public class ApplicationService {
         List<User> supervisorUsers = roleService.getRoleUsers(application, supervisorRole);
 
         for (User supervisorUser : supervisorUsers) {
-            application.getSupervisors().add(new ApplicationSupervisor().withUser(supervisorUser).withAware(true));
+            application.getSupervisors().add(new ApplicationSupervisor().withUser(supervisorUser).withAcceptedSupervision(true));
         }
     }
 

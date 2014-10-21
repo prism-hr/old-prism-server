@@ -61,6 +61,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateDuration;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
 
@@ -438,7 +439,8 @@ public class SystemService {
             Action action = actionService.getById(PrismAction.SYSTEM_STARTUP);
             Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                     .addAssignedUser(user, roleService.getCreatorRole(system), PrismRoleTransitionType.CREATE);
-            actionService.executeSystemAction(system, action, comment);
+            ActionOutcomeDTO outcome = actionService.executeSystemAction(system, action, comment);
+            notificationService.sendRegistrationNotification(user, outcome, comment);
         }
     }
 

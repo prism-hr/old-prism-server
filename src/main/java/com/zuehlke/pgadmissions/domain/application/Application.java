@@ -683,6 +683,10 @@ public class Application extends Resource {
         return programDetail == null ? null : programDetail.getStudyOptionDisplay();
     }
 
+    public boolean isSubmitted() {
+        return submittedTimestamp != null;
+    }
+
     @Override
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addProperty("user", user).addProperty("program", program).addProperty("project", project)

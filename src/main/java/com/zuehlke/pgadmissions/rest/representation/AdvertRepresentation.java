@@ -3,12 +3,16 @@ package com.zuehlke.pgadmissions.rest.representation;
 import java.util.List;
 import java.util.Set;
 
-import com.zuehlke.pgadmissions.domain.definitions.*;
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
 import org.joda.time.LocalDate;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
 
 public class AdvertRepresentation {
 
@@ -20,7 +24,9 @@ public class AdvertRepresentation {
 
     private String description;
 
-    private String applyLink;
+    private String homepage;
+    
+    private String applyHomepage;
 
     private InstitutionAddressRepresentation address;
 
@@ -47,10 +53,12 @@ public class AdvertRepresentation {
     private List<String> competencies;
 
     private List<String> themes;
+    
+    private List<Integer> institutions;
 
-    private Set<Integer> institutions;
+    private List<PrismProgramType> programTypes;
 
-    private Set<PrismProgramType> programTypes;
+    private PrismProgramType programType;
 
     private Set<PrismStudyOption> studyOptions;
 
@@ -88,12 +96,20 @@ public class AdvertRepresentation {
         this.description = description;
     }
 
-    public String getApplyLink() {
-        return applyLink;
+    public final String getHomepage() {
+        return homepage;
     }
 
-    public void setApplyLink(String applyLink) {
-        this.applyLink = applyLink;
+    public final void setHomepage(String homepage) {
+        this.homepage = homepage;
+    }
+
+    public final String getApplyHomepage() {
+        return applyHomepage;
+    }
+
+    public final void setApplyHomepage(String applyHomepage) {
+        this.applyHomepage = applyHomepage;
     }
 
     public InstitutionAddressRepresentation getAddress() {
@@ -200,20 +216,28 @@ public class AdvertRepresentation {
         this.themes = themes;
     }
 
-    public Set<Integer> getInstitutions() {
+    public final List<Integer> getInstitutions() {
         return institutions;
     }
 
-    public void setInstitutions(Set<Integer> institutions) {
+    public final void setInstitutions(List<Integer> institutions) {
         this.institutions = institutions;
     }
 
-    public Set<PrismProgramType> getProgramTypes() {
+    public final List<PrismProgramType> getProgramTypes() {
         return programTypes;
     }
 
-    public void setProgramTypes(Set<PrismProgramType> programTypes) {
+    public final void setProgramTypes(List<PrismProgramType> programTypes) {
         this.programTypes = programTypes;
+    }
+
+    public final PrismProgramType getProgramType() {
+        return programType;
+    }
+
+    public final void setProgramType(PrismProgramType programType) {
+        this.programType = programType;
     }
 
     public Set<PrismStudyOption> getStudyOptions() {

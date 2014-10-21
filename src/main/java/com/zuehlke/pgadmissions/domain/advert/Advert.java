@@ -69,8 +69,11 @@ public class Advert {
     @Field(analyzer = @Analyzer(definition = "advertAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String description;
 
-    @Column(name = "apply_link")
-    private String applyLink;
+    @Column(name = "homepage")
+    private String homepage;
+    
+    @Column(name = "apply_homepage")
+    private String applyHomepage;
 
     @OneToOne
     @JoinColumn(name = "institution_address_id")
@@ -193,12 +196,20 @@ public class Advert {
         this.description = description;
     }
 
-    public String getApplyLink() {
-        return applyLink;
+    public final String getHomepage() {
+        return homepage;
     }
 
-    public void setApplyLink(String applyLink) {
-        this.applyLink = applyLink;
+    public final void setHomepage(String homepage) {
+        this.homepage = homepage;
+    }
+
+    public String getApplyHomepage() {
+        return applyHomepage;
+    }
+
+    public void setApplyHomepage(String applyHomepage) {
+        this.applyHomepage = applyHomepage;
     }
 
     public InstitutionAddress getAddress() {

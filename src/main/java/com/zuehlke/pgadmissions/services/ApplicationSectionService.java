@@ -9,11 +9,15 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.A
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_COMMENT_UPDATED_QUALIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_COMMENT_UPDATED_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_COMMENT_UPDATED_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_ADMITTER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SUGGESTED_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -25,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
@@ -40,6 +45,8 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.Document;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.imported.Country;
 import com.zuehlke.pgadmissions.domain.imported.Disability;
 import com.zuehlke.pgadmissions.domain.imported.Domicile;
@@ -56,6 +63,7 @@ import com.zuehlke.pgadmissions.domain.imported.Title;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.Address;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.AddressDTO;
@@ -86,7 +94,7 @@ public class ApplicationSectionService {
 
     @Autowired
     private ResourceService resourceService;
-    
+
     @Autowired
     private RoleService roleService;
 
@@ -462,12 +470,26 @@ public class ApplicationSectionService {
         to.setAddressCode(Strings.emptyToNull(from.getAddressCode()));
     }
 
-    private void executeUpdate(Application application, PrismDisplayProperty messageIndex, CommentAssignedUser... assignees)
-            throws DeduplicationException {
+    private void executeUpdate(Application application, PrismDisplayProperty messageIndex) throws DeduplicationException {
+        executeUpdate(application, messageIndex, null);
+    }
+
+    private void executeUpdate(Application application, PrismDisplayProperty messageIndex, CommentAssignedUser assignee) throws DeduplicationException {
+        User userCurrent = userService.getCurrentUser();
+        List<PrismActionEnhancement> userEnhancements = actionService.getPermittedActionEnhancements(application, userCurrent);
+        List<PrismActionEnhancement> permittedEnhancements = Lists.newArrayList(APPLICATION_VIEW_EDIT_AS_CREATOR, APPLICATION_VIEW_EDIT_AS_ADMITTER);
+
+        if (assignee != null && assignee.getRole().getId() == PrismRole.APPLICATION_REFEREE) {
+            permittedEnhancements.add(APPLICATION_VIEW_EDIT_AS_RECRUITER);
+        }
+
+        if (Collections.disjoint(userEnhancements, permittedEnhancements)) {
+            Action action = actionService.getViewEditAction(application);
+            actionService.throwWorkflowPermissionException(application, action);
+        }
+
         if (application.isSubmitted()) {
-            resourceService.executeUpdate(application, messageIndex, assignees);
-        } else {
-            resourceService.validateView(application);
+            resourceService.executeUpdate(application, messageIndex, assignee);
         }
     }
 

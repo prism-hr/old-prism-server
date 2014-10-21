@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +11,6 @@ import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.imported.ProgramType;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -20,11 +18,6 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 
 @Service
@@ -80,24 +73,6 @@ public class ProgramService {
 
     public ProgramStudyOptionInstance getFirstEnabledProgramStudyOptionInstance(Program program, StudyOption studyOption) {
         return programDAO.getFirstEnabledProgramStudyOptionInstance(program, studyOption);
-    }
-
-    public ActionOutcomeDTO performAction(Integer programId, CommentDTO commentDTO) throws DeduplicationException {
-        Program program = entityService.getById(Program.class, programId);
-        PrismAction actionId = commentDTO.getAction();
-
-        Action action = actionService.getById(actionId);
-        User user = userService.getById(commentDTO.getUser());
-        State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
-        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withAction(action).withTransitionState(transitionState)
-                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
-
-        ProgramDTO programDTO = commentDTO.getProgram();
-        if (programDTO != null) {
-            update(programId, programDTO);
-        }
-
-        return actionService.executeUserAction(program, action, comment);
     }
 
     public Program create(User user, ProgramDTO programDTO) {

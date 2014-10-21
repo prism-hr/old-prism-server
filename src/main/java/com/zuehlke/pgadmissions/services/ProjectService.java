@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,15 +11,9 @@ import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
 
 @Service
@@ -54,24 +47,6 @@ public class ProjectService {
 
     public void save(Project project) {
         entityService.save(project);
-    }
-
-    public ActionOutcomeDTO performAction(Integer projectId, CommentDTO commentDTO) throws DeduplicationException {
-        Project project = entityService.getById(Project.class, projectId);
-        PrismAction actionId = commentDTO.getAction();
-
-        Action action = actionService.getById(actionId);
-        User user = userService.getById(commentDTO.getUser());
-        State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
-        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withAction(action).withTransitionState(transitionState)
-                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
-
-        ProjectDTO projectDTO = commentDTO.getProject();
-        if (projectDTO != null) {
-            update(projectId, projectDTO);
-        }
-
-        return actionService.executeUserAction(project, action, comment);
     }
 
     public Project create(User user, ProjectDTO projectDTO) {

@@ -353,4 +353,18 @@ public class CommentDTO {
     public void setProject(ProjectDTO project) {
         this.project = project;
     }
+
+    public Object fetchResouceDTO() {
+        switch (action.getScope()) {
+        case INSTITUTION:
+            return institution;
+        case PROGRAM:
+            return program;
+        case PROJECT:
+            return project;
+        default:
+            throw new Error();
+        }
+    }
+
 }

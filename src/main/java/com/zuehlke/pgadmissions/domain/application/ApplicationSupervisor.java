@@ -72,8 +72,8 @@ public class ApplicationSupervisor {
         return this;
     }
 
-    public ApplicationSupervisor withAware(boolean aware) {
-        this.acceptedSupervision = aware;
+    public ApplicationSupervisor withAcceptedSupervision(Boolean acceptedSupervision) {
+        this.acceptedSupervision = acceptedSupervision;
         return this;
     }
 

@@ -5,8 +5,6 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.dozer.Mapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -27,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
@@ -48,8 +45,6 @@ import com.zuehlke.pgadmissions.services.CommentService;
 @RequestMapping(value = { "api/applications" })
 public class ApplicationResource {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationResource.class);
-
     @Autowired
     private ApplicationService applicationService;
 
@@ -66,44 +61,32 @@ public class ApplicationResource {
     private CommentService commentService;
 
     @RequestMapping(value = "/{applicationId}/recommendedStartDate", method = RequestMethod.GET)
-    private ApplicationRecommendedStartDateRepresentation getRecommendedStartDate(@PathVariable Integer applicationId, @RequestParam PrismStudyOption studyOptionId) {
+    private ApplicationRecommendedStartDateRepresentation getRecommendedStartDate(@PathVariable Integer applicationId,
+            @RequestParam PrismStudyOption studyOptionId) {
         return applicationService.getRecommendedStartDate(applicationId, studyOptionId);
     }
 
     @RequestMapping(value = "/{applicationId}/programDetail", method = RequestMethod.PUT)
-    public void saveProgramDetail(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationProgramDetailDTO programDetailDTO) {
-        try {
-            applicationSectionService.saveProgramDetail(applicationId, programDetailDTO);
-        } catch (DeduplicationException e) {
-            LOGGER.error("Unable to save program detail for application: " + applicationId.toString(), e);
-            throw new ResourceNotFoundException();
-        }
+    public void saveProgramDetail(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationProgramDetailDTO programDetailDTO)
+            throws DeduplicationException {
+        applicationSectionService.saveProgramDetail(applicationId, programDetailDTO);
     }
 
     @RequestMapping(value = "/{applicationId}/supervisors", method = RequestMethod.POST)
-    public Map<String, Object> createRsupervisor(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationSupervisorDTO supervisorDTO) {
-        try {
-            ApplicationSupervisor supervisor = applicationSectionService.saveSupervisor(applicationId, null, supervisorDTO);
-            return ImmutableMap.of("id", (Object) supervisor.getId());
-        } catch (DeduplicationException e) {
-            LOGGER.error("Unable to save supervisor for application: " + applicationId.toString(), e);
-            throw new ResourceNotFoundException();
-        }
+    public Map<String, Object> createSupervisor(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationSupervisorDTO supervisorDTO)
+            throws DeduplicationException {
+        ApplicationSupervisor supervisor = applicationSectionService.saveSupervisor(applicationId, null, supervisorDTO);
+        return ImmutableMap.of("id", (Object) supervisor.getId());
     }
 
     @RequestMapping(value = "/{applicationId}/supervisors/{supervisorId}", method = RequestMethod.PUT)
     public void deleteSupervisor(@PathVariable Integer applicationId, @PathVariable Integer supervisorId,
-            @Valid @RequestBody ApplicationSupervisorDTO supervisorDTO) {
-        try {
-            applicationSectionService.saveSupervisor(applicationId, supervisorId, supervisorDTO);
-        } catch (DeduplicationException e) {
-            LOGGER.error("Unable to delete supervisor for application: " + applicationId.toString(), e);
-            throw new ResourceNotFoundException();
-        }
+            @Valid @RequestBody ApplicationSupervisorDTO supervisorDTO) throws DeduplicationException {
+        applicationSectionService.saveSupervisor(applicationId, supervisorId, supervisorDTO);
     }
 
     @RequestMapping(value = "/{applicationId}/supervisors/{supervisorId}", method = RequestMethod.DELETE)
-    public void updateSupervisor(@PathVariable Integer applicationId, @PathVariable Integer supervisorId) {
+    public void updateSupervisor(@PathVariable Integer applicationId, @PathVariable Integer supervisorId) throws DeduplicationException {
         applicationSectionService.deleteSupervisor(applicationId, supervisorId);
     }
 
@@ -119,14 +102,15 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/qualifications", method = RequestMethod.POST)
-    public Map<String, Object> createQualification(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationQualificationDTO qualificationDTO) {
+    public Map<String, Object> createQualification(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationQualificationDTO qualificationDTO)
+            throws DeduplicationException {
         ApplicationQualification qualification = applicationSectionService.saveQualification(applicationId, null, qualificationDTO);
         return ImmutableMap.of("id", (Object) qualification.getId());
     }
 
     @RequestMapping(value = "/{applicationId}/qualifications/{qualificationId}", method = RequestMethod.PUT)
     public void updateQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId,
-            @Valid @RequestBody ApplicationQualificationDTO qualificationDTO) {
+            @Valid @RequestBody ApplicationQualificationDTO qualificationDTO) throws DeduplicationException {
         applicationSectionService.saveQualification(applicationId, qualificationId, qualificationDTO);
     }
 
@@ -170,24 +154,16 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/referees", method = RequestMethod.POST)
-    public Map<String, Object> createReferee(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationRefereeDTO refereeDTO) {
-        try {
-            ApplicationReferee referee = applicationSectionService.saveReferee(applicationId, null, refereeDTO);
-            return ImmutableMap.of("id", (Object) referee.getId());
-        } catch (DeduplicationException e) {
-            LOGGER.error("Unable to create referee for application: " + applicationId.toString(), e);
-            throw new ResourceNotFoundException();
-        }
+    public Map<String, Object> createReferee(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationRefereeDTO refereeDTO)
+            throws DeduplicationException {
+        ApplicationReferee referee = applicationSectionService.saveReferee(applicationId, null, refereeDTO);
+        return ImmutableMap.of("id", (Object) referee.getId());
     }
 
     @RequestMapping(value = "/{applicationId}/referees/{refereeId}", method = RequestMethod.PUT)
-    public void deleteReferee(@PathVariable Integer applicationId, @PathVariable Integer refereeId, @Valid @RequestBody ApplicationRefereeDTO refereeDTO) {
-        try {
-            applicationSectionService.saveReferee(applicationId, refereeId, refereeDTO);
-        } catch (DeduplicationException e) {
-            LOGGER.error("Unable to delete referee for application: " + applicationId.toString(), e);
-            throw new ResourceNotFoundException();
-        }
+    public void deleteReferee(@PathVariable Integer applicationId, @PathVariable Integer refereeId, @Valid @RequestBody ApplicationRefereeDTO refereeDTO)
+            throws DeduplicationException {
+        applicationSectionService.saveReferee(applicationId, refereeId, refereeDTO);
     }
 
     @RequestMapping(value = "/{applicationId}/referees/{refereeId}", method = RequestMethod.DELETE)
@@ -211,4 +187,5 @@ public class ApplicationResource {
     public void configureCommentBinding(WebDataBinder binder) {
         binder.setValidator(commentDTOValidator);
     }
+    
 }

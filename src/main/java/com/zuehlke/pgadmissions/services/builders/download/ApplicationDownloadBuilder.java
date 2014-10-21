@@ -7,9 +7,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.A
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_CODE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_CONFIRMED_START_DATE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_CREATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_DOCUMENT_CV_APPENDIX;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_DOCUMENT_HEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_DOCUMENT_PERSONAL_STATEMENT_APPENDIX;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_DOCUMENT_CV_APPENDIX;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_EMPLOYER_NAME;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_EMPLOYMENT_POSITION_EMPLOYER_ADDRESS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_EMPLOYMENT_POSITION_HEADER;

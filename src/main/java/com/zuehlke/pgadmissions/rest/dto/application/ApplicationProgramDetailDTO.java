@@ -21,9 +21,7 @@ public class ApplicationProgramDetailDTO {
     private Integer referralSource;
 
     private List<String> themes = Lists.newArrayList();
-
-    private List<ApplicationSupervisorDTO> supervisors;
-
+    
     public PrismStudyOption getStudyOption() {
         return studyOption;
     }
@@ -47,15 +45,7 @@ public class ApplicationProgramDetailDTO {
     public void setReferralSource(Integer referralSource) {
         this.referralSource = referralSource;
     }
-
-    public List<ApplicationSupervisorDTO> getSupervisors() {
-        return supervisors;
-    }
-
-    public void setSupervisors(List<ApplicationSupervisorDTO> supervisors) {
-        this.supervisors = supervisors;
-    }
-
+    
     public final List<String> getThemes() {
         return themes;
     }

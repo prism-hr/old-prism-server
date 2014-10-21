@@ -12,7 +12,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -681,6 +680,10 @@ public class Application extends Resource {
 
     public String getStudyOptionDisplay() {
         return programDetail == null ? null : programDetail.getStudyOptionDisplay();
+    }
+
+    public boolean isSubmitted() {
+        return submittedTimestamp != null;
     }
 
     @Override

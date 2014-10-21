@@ -20,7 +20,7 @@ public class AdvertServiceHelperClosingDate extends AbstractServiceHelper {
         LocalDate baseline = new LocalDate();
         List<Advert> adverts = advertService.getAdvertsWithElapsedClosingDates(baseline);
         for (Advert advert : adverts) {
-            advertService.updateAdvertClosingDate(advert, baseline);
+            advertService.updateClosingDate(advert, baseline);
         }
     }
     

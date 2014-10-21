@@ -1,10 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_COMMENT_UPDATED_ADDRESS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_COMMENT_UPDATED_EMPLOYMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_COMMENT_UPDATED_FUNDING;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_COMMENT_UPDATED_QUALIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_COMMENT_UPDATED_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_COMMENT_UPDATED_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SUGGESTED_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
@@ -12,7 +17,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -33,7 +37,6 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.Document;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
@@ -53,7 +56,6 @@ import com.zuehlke.pgadmissions.domain.imported.Title;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.Address;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.AddressDTO;
@@ -68,7 +70,6 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
-import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
@@ -84,6 +85,9 @@ public class ApplicationSectionService {
     private ImportedEntityService importedEntityService;
 
     @Autowired
+    private ResourceService resourceService;
+    
+    @Autowired
     private RoleService roleService;
 
     @Autowired
@@ -94,9 +98,7 @@ public class ApplicationSectionService {
 
     // TODO: validate selection of themes
     public void saveProgramDetail(Integer applicationId, ApplicationProgramDetailDTO programDetailDTO) throws DeduplicationException {
-        User userCurrent = userService.getCurrentUser();
         Application application = entityService.getById(Application.class, applicationId);
-        Action action = validateUpdateAction(application, userCurrent);
 
         Institution institution = application.getInstitution();
         ApplicationProgramDetail programDetail = application.getProgramDetail();
@@ -114,49 +116,50 @@ public class ApplicationSectionService {
         List<String> themes = programDetailDTO.getThemes();
         application.setTheme(themes.isEmpty() ? null : Joiner.on("|").join(themes));
 
-        executeUpdateAction(application, action, userCurrent, APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL);
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL);
     }
 
     public ApplicationSupervisor saveSupervisor(Integer applicationId, Integer supervisorId, ApplicationSupervisorDTO supervisorDTO)
             throws DeduplicationException {
-        User userCurrent = userService.getCurrentUser();
         Application application = entityService.getById(Application.class, applicationId);
-        Action action = validateUpdateAction(application, userCurrent);
 
         ApplicationSupervisor supervisor;
-        UserDTO userDTO = supervisorDTO.getUser();
         if (supervisorId == null) {
-            User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
-            supervisor = new ApplicationSupervisor().withUser(user).withAcceptedSupervision(supervisorDTO.getAcceptedSupervision());
+            supervisor = new ApplicationSupervisor();
             application.getSupervisors().add(supervisor);
-            executeUpdateAction(application, action, userCurrent, APPLICATION_COMMENT_UPDATED_SUPERVISOR,
-                    new CommentAssignedUser().withUser(user).withRole(roleService.getById(APPLICATION_SUGGESTED_SUPERVISOR)).withRoleTransitionType(CREATE));
         } else {
             supervisor = entityService.getByProperties(ApplicationSupervisor.class, ImmutableMap.of("application", application, "id", supervisorId));
-            supervisor.setAcceptedSupervision(supervisorDTO.getAcceptedSupervision());
         }
 
+        UserDTO userDTO = supervisorDTO.getUser();
+        User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
+
+        supervisor.setUser(user);
+        supervisor.setAcceptedSupervision(supervisorDTO.getAcceptedSupervision());
+
+        CommentAssignedUser assignee = null;
+        if (application.isSubmitted()) {
+            assignee = new CommentAssignedUser().withUser(user).withRole(roleService.getById(APPLICATION_SUGGESTED_SUPERVISOR)).withRoleTransitionType(CREATE);
+        }
+
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_SUPERVISOR, assignee);
         return supervisor;
     }
 
     public void deleteSupervisor(Integer applicationId, Integer supervisorId) throws DeduplicationException {
-        User userCurrent = userService.getCurrentUser();
         Application application = entityService.getById(Application.class, applicationId);
-        Action action = validateUpdateAction(application, userCurrent);
 
         ApplicationSupervisor supervisor = entityService.getByProperties(ApplicationSupervisor.class,
                 ImmutableMap.of("application", application, "id", supervisorId));
         User user = supervisor.getUser();
         application.getSupervisors().remove(supervisor);
 
-        executeUpdateAction(application, action, userCurrent, APPLICATION_COMMENT_UPDATED_SUPERVISOR,
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_SUPERVISOR,
                 new CommentAssignedUser().withUser(user).withRole(roleService.getById(APPLICATION_SUGGESTED_SUPERVISOR)).withRoleTransitionType(DELETE));
     }
 
     public void savePersonalDetail(Integer applicationId, ApplicationPersonalDetailDTO personalDetailDTO) throws DeduplicationException {
-        User userCurrent = userService.getCurrentUser();
         Application application = entityService.getById(Application.class, applicationId);
-        Action action = validateUpdateAction(application, userCurrent);
 
         Institution institution = application.getInstitution();
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
@@ -165,7 +168,7 @@ public class ApplicationSectionService {
             application.setPersonalDetail(personalDetail);
         }
 
-        saveUserDetail(personalDetailDTO, userCurrent, application);
+        saveUserDetail(personalDetailDTO, userService.getCurrentUser(), application);
 
         Title title = importedEntityService.getById(Title.class, institution, personalDetailDTO.getTitle());
         Gender gender = importedEntityService.getById(Gender.class, institution, personalDetailDTO.getGender());
@@ -193,13 +196,11 @@ public class ApplicationSectionService {
         saveLanguageQualification(personalDetailDTO, institution, personalDetail);
         savePassport(personalDetailDTO, personalDetail);
 
-        executeUpdateAction(application, action, userCurrent, APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL);
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL);
     }
 
     public void saveAddress(Integer applicationId, ApplicationAddressDTO addressDTO) throws DeduplicationException {
-        User userCurrent = userService.getCurrentUser();
         Application application = entityService.getById(Application.class, applicationId);
-        Action action = validateUpdateAction(application, userCurrent);
 
         Institution institution = application.getInstitution();
 
@@ -225,14 +226,12 @@ public class ApplicationSectionService {
         }
         copyAddress(institution, contactAddress, contactAddressDTO);
 
-        executeUpdateAction(application, action, userCurrent, APPLICATION_COMMENT_UPDATED_ADDRESS);
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDRESS);
     }
 
     public ApplicationQualification saveQualification(Integer applicationId, Integer qualificationId, ApplicationQualificationDTO qualificationDTO)
             throws DeduplicationException {
-        User userCurrent = userService.getCurrentUser();
         Application application = entityService.getById(Application.class, applicationId);
-        Action action = validateUpdateAction(application, userCurrent);
 
         ApplicationQualification qualification;
         if (qualificationId == null) {
@@ -258,20 +257,23 @@ public class ApplicationSectionService {
         qualification.setGrade(qualificationDTO.getGrade());
         qualification.setAwardDate(qualificationDTO.getAwardDate());
         qualification.setDocument(qualificationDocument);
-        
-        executeUpdateAction(application, action, userCurrent, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
+
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
         return qualification;
     }
 
-    public void deleteQualification(Integer applicationId, Integer qualificationId) {
+    public void deleteQualification(Integer applicationId, Integer qualificationId) throws DeduplicationException {
         Application application = entityService.getById(Application.class, applicationId);
+
         ApplicationQualification qualification = entityService.getByProperties(ApplicationQualification.class,
                 ImmutableMap.of("application", application, "id", qualificationId));
         application.getQualifications().remove(qualification);
+
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
     }
 
     public ApplicationEmploymentPosition saveEmploymentPosition(Integer applicationId, Integer employmentPositionId,
-            ApplicationEmploymentPositionDTO employmentPositionDTO) {
+            ApplicationEmploymentPositionDTO employmentPositionDTO) throws DeduplicationException {
         Application application = entityService.getById(Application.class, applicationId);
 
         ApplicationEmploymentPosition employmentPosition;
@@ -299,25 +301,27 @@ public class ApplicationSectionService {
         employmentPosition.setCurrent(BooleanUtils.isTrue(employmentPositionDTO.getCurrent()));
         employmentPosition.setEndDate(employmentPositionDTO.getEndDate());
 
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_EMPLOYMENT);
         return employmentPosition;
     }
 
-    public void deleteEmploymentPosition(Integer applicationId, Integer employmentPositionId) {
+    public void deleteEmploymentPosition(Integer applicationId, Integer employmentPositionId) throws DeduplicationException {
         Application application = entityService.getById(Application.class, applicationId);
         ApplicationEmploymentPosition employmentPosition = entityService.getByProperties(ApplicationEmploymentPosition.class,
                 ImmutableMap.of("application", application, "id", employmentPositionId));
         application.getEmploymentPositions().remove(employmentPosition);
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_EMPLOYMENT);
     }
 
-    public ApplicationFunding saveFunding(Integer applicationId, Integer fundingId, ApplicationFundingDTO fundingDTO) {
+    public ApplicationFunding saveFunding(Integer applicationId, Integer fundingId, ApplicationFundingDTO fundingDTO) throws DeduplicationException {
         Application application = entityService.getById(Application.class, applicationId);
 
         ApplicationFunding funding;
-        if (fundingId != null) {
-            funding = entityService.getByProperties(ApplicationFunding.class, ImmutableMap.of("application", application, "id", fundingId));
-        } else {
+        if (fundingId == null) {
             funding = new ApplicationFunding();
             application.getFundings().add(funding);
+        } else {
+            funding = entityService.getByProperties(ApplicationFunding.class, ImmutableMap.of("application", application, "id", fundingId));
         }
 
         FundingSource fundingSource = importedEntityService.getById(FundingSource.class, application.getInstitution(), fundingDTO.getFundingSource());
@@ -329,24 +333,26 @@ public class ApplicationSectionService {
         funding.setAwardDate(fundingDTO.getAwardDate());
         funding.setDocument(fundingDocument);
 
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_FUNDING);
         return funding;
     }
 
-    public void deleteFunding(Integer applicationId, Integer fundingId) {
+    public void deleteFunding(Integer applicationId, Integer fundingId) throws DeduplicationException {
         Application application = entityService.getById(Application.class, applicationId);
         ApplicationFunding funding = entityService.getByProperties(ApplicationFunding.class, ImmutableMap.of("application", application, "id", fundingId));
         application.getFundings().remove(funding);
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_FUNDING);
     }
 
     public ApplicationReferee saveReferee(Integer applicationId, Integer refereeId, ApplicationRefereeDTO refereeDTO) throws DeduplicationException {
         Application application = entityService.getById(Application.class, applicationId);
 
         ApplicationReferee referee;
-        if (refereeId != null) {
-            referee = entityService.getByProperties(ApplicationReferee.class, ImmutableMap.of("application", application, "id", refereeId));
-        } else {
+        if (refereeId == null) {
             referee = new ApplicationReferee();
             application.getReferees().add(referee);
+        } else {
+            referee = entityService.getByProperties(ApplicationReferee.class, ImmutableMap.of("application", application, "id", refereeId));
         }
 
         UserDTO userDTO = refereeDTO.getUser();
@@ -364,20 +370,26 @@ public class ApplicationSectionService {
             referee.setAddress(address);
         }
         copyAddress(application.getInstitution(), address, addressDTO);
-
         referee.setPhone(refereeDTO.getPhone());
         referee.setSkype(Strings.emptyToNull(refereeDTO.getSkype()));
 
+        CommentAssignedUser assignee = null;
+        if (application.isSubmitted()) {
+            assignee = new CommentAssignedUser().withUser(user).withRole(roleService.getById(APPLICATION_REFEREE)).withRoleTransitionType(CREATE);
+        }
+
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE, assignee);
         return referee;
     }
 
-    public void deleteReferee(Integer applicationId, Integer refereeId) {
+    public void deleteReferee(Integer applicationId, Integer refereeId) throws DeduplicationException {
         Application application = entityService.getById(Application.class, applicationId);
         ApplicationReferee referee = entityService.getByProperties(ApplicationReferee.class, ImmutableMap.of("application", application, "id", refereeId));
         application.getReferees().remove(referee);
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE);
     }
 
-    public void saveAdditionalInformation(Integer applicationId, ApplicationAdditionalInformationDTO additionalInformationDTO) {
+    public void saveAdditionalInformation(Integer applicationId, ApplicationAdditionalInformationDTO additionalInformationDTO) throws DeduplicationException {
         Application application = entityService.getById(Application.class, applicationId);
         ApplicationAdditionalInformation additionalInformation = application.getAdditionalInformation();
         if (additionalInformation == null) {
@@ -386,6 +398,7 @@ public class ApplicationSectionService {
         }
 
         additionalInformation.setConvictionsText(Strings.emptyToNull(additionalInformationDTO.getConvictionsText()));
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION);
     }
 
     private void saveUserDetail(ApplicationPersonalDetailDTO personalDetailDTO, User userCurrent, Application application) {
@@ -449,27 +462,12 @@ public class ApplicationSectionService {
         to.setAddressCode(Strings.emptyToNull(from.getAddressCode()));
     }
 
-    private Action validateUpdateAction(Application application, User user) {
-        Action action = actionService.getViewEditAction(application);
-        if (!actionService.checkActionAvailable(application, action, user)) {
-            actionService.throwWorkflowPermissionException(application, action);
-        }
-        return action;
-    }
-
-    private void executeUpdateAction(Application application, Action action, User invoker, PrismDisplayProperty messageIndex, CommentAssignedUser... assignees)
+    private void executeUpdate(Application application, PrismDisplayProperty messageIndex, CommentAssignedUser... assignees)
             throws DeduplicationException {
         if (application.isSubmitted()) {
-            Comment comment = new Comment().withUser(invoker).withAction(action)
-                    .withContent(applicationContext.getBean(PropertyLoader.class).withResource(application).load(messageIndex)).withDeclinedResponse(false)
-                    .withCreatedTimestamp(new DateTime());
-
-            for (CommentAssignedUser assignee : assignees) {
-                comment.addAssignedUser(assignee.getUser(), assignee.getRole(), assignee.getRoleTransitionType());
-                entityService.evict(assignee);
-            }
-
-            actionService.executeUserAction(application, action, comment);
+            resourceService.executeUpdate(application, messageIndex, assignees);
+        } else {
+            resourceService.validateView(application);
         }
     }
 

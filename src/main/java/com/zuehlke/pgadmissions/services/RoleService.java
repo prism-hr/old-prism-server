@@ -81,13 +81,13 @@ public class RoleService {
         if (roles.length > 0) {
             User invoker = userService.getCurrentUser();
             Action action = actionService.getViewEditAction(resource);
-    
+
             Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false);
             for (PrismRole role : roles) {
                 comment.getAssignedUsers().add(
                         new CommentAssignedUser().withUser(user).withRole(entityService.getById(Role.class, role)).withRoleTransitionType(transitionType));
             }
-    
+
             actionService.executeUserAction(resource, action, comment);
         }
     }
@@ -99,6 +99,15 @@ public class RoleService {
     public boolean hasUserRole(Resource resource, User user, PrismRole roleId) {
         Role role = getById(roleId);
         return roleDAO.getUserRole(resource, user, role) != null;
+    }
+    
+    public boolean hasAnyUserRole(Resource resource, User user, PrismRole... roleIds) {
+        for (PrismRole roleId : roleIds) {
+            if (hasUserRole(resource, user, roleId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<PrismRole> getUserRoles(Resource resource, User user) {

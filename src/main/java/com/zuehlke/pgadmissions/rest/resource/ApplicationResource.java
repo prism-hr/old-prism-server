@@ -115,41 +115,43 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/qualifications/{qualificationId}", method = RequestMethod.DELETE)
-    public void deleteQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId) {
+    public void deleteQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId) throws DeduplicationException {
         applicationSectionService.deleteQualification(applicationId, qualificationId);
     }
 
     @RequestMapping(value = "/{applicationId}/employmentPositions", method = RequestMethod.POST)
     public Map<String, Object> createEmploymentPosition(@PathVariable Integer applicationId,
-            @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
+            @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) throws DeduplicationException {
         ApplicationEmploymentPosition employmentPosition = applicationSectionService.saveEmploymentPosition(applicationId, null, employmentPositionDTO);
         return ImmutableMap.of("id", (Object) employmentPosition.getId());
     }
 
     @RequestMapping(value = "/{applicationId}/employmentPositions/{employmentPositionId}", method = RequestMethod.PUT)
     public void updateEmploymentPosition(@PathVariable Integer applicationId, @PathVariable Integer employmentPositionId,
-            @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) {
+            @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) throws DeduplicationException {
         applicationSectionService.saveEmploymentPosition(applicationId, employmentPositionId, employmentPositionDTO);
     }
 
     @RequestMapping(value = "/{applicationId}/employmentPositions/{employmentPositionId}", method = RequestMethod.DELETE)
-    public void deleteEmploymentPosition(@PathVariable Integer applicationId, @PathVariable Integer employmentPositionId) {
+    public void deleteEmploymentPosition(@PathVariable Integer applicationId, @PathVariable Integer employmentPositionId) throws DeduplicationException {
         applicationSectionService.deleteEmploymentPosition(applicationId, employmentPositionId);
     }
 
     @RequestMapping(value = "/{applicationId}/fundings", method = RequestMethod.POST)
-    public Map<String, Object> createFunding(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationFundingDTO fundingDTO) {
+    public Map<String, Object> createFunding(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationFundingDTO fundingDTO)
+            throws DeduplicationException {
         ApplicationFunding funding = applicationSectionService.saveFunding(applicationId, null, fundingDTO);
         return ImmutableMap.of("id", (Object) funding.getId());
     }
 
     @RequestMapping(value = "/{applicationId}/fundings/{fundingId}", method = RequestMethod.PUT)
-    public void updateFunding(@PathVariable Integer applicationId, @PathVariable Integer fundingId, @Valid @RequestBody ApplicationFundingDTO fundingDTO) {
+    public void updateFunding(@PathVariable Integer applicationId, @PathVariable Integer fundingId, @Valid @RequestBody ApplicationFundingDTO fundingDTO)
+            throws DeduplicationException {
         applicationSectionService.saveFunding(applicationId, fundingId, fundingDTO);
     }
 
     @RequestMapping(value = "/{applicationId}/fundings/{fundingId}", method = RequestMethod.DELETE)
-    public void deleteFunding(@PathVariable Integer applicationId, @PathVariable Integer fundingId) {
+    public void deleteFunding(@PathVariable Integer applicationId, @PathVariable Integer fundingId) throws DeduplicationException {
         applicationSectionService.deleteFunding(applicationId, fundingId);
     }
 
@@ -167,12 +169,13 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/referees/{refereeId}", method = RequestMethod.DELETE)
-    public void updateReferee(@PathVariable Integer applicationId, @PathVariable Integer refereeId) {
+    public void updateReferee(@PathVariable Integer applicationId, @PathVariable Integer refereeId) throws DeduplicationException {
         applicationSectionService.deleteReferee(applicationId, refereeId);
     }
 
     @RequestMapping(value = "/{applicationId}/additionalInformation", method = RequestMethod.PUT)
-    public void saveAdditionalInformation(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationAdditionalInformationDTO additionalInformationDTO) {
+    public void saveAdditionalInformation(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationAdditionalInformationDTO additionalInformationDTO)
+            throws DeduplicationException {
         applicationSectionService.saveAdditionalInformation(applicationId, additionalInformationDTO);
     }
 
@@ -187,5 +190,5 @@ public class ApplicationResource {
     public void configureCommentBinding(WebDataBinder binder) {
         binder.setValidator(commentDTOValidator);
     }
-    
+
 }

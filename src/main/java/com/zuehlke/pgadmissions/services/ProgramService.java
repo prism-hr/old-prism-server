@@ -94,7 +94,6 @@ public class ProgramService {
 
         ProgramDTO programDTO = commentDTO.getProgram();
         if (programDTO != null) {
-            // modify program
             update(programId, programDTO);
         }
 
@@ -166,7 +165,6 @@ public class ProgramService {
         }
     }
 
-    // TODO handle case where there are no enabled study options
     public List<ProgramStudyOption> getEnabledProgramStudyOptions(Program program) {
         return programDAO.getEnabledProgramStudyOptions(program);
     }
@@ -202,4 +200,5 @@ public class ProgramService {
             persistentProgram.setDueDate(baseline);
         }
     }
+    
 }

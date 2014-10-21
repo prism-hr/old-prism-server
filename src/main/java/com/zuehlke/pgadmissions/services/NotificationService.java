@@ -1,5 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.INSTITUTION_COMMENT_OVERWROTE_NOTIFICATION_CUSTOM;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.INSTITUTION_COMMENT_RESTORED_NOTIFICATION_DEFAULT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.INSTITUTION_COMMENT_UPDATED_NOTIFICATION;
+
 import java.util.List;
 
 import org.joda.time.LocalDate;
@@ -80,12 +84,23 @@ public class NotificationService {
         return customizationService.getConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
     }
 
-    public void removeLocalizedConfiguration(Resource resource, NotificationTemplate template) {
+    public void updateConfiguration(Resource resource, NotificationTemplate template, NotificationConfigurationDTO notificationConfigurationDTO)
+            throws DeduplicationException {
+        NotificationConfiguration configuration = new NotificationConfiguration().withResource(resource).withNotificationTemplate(template)
+                .withSubject(notificationConfigurationDTO.getSubject()).withContent(notificationConfigurationDTO.getContent())
+                .withReminderInterval(notificationConfigurationDTO.getReminderInterval());
+        entityService.createOrUpdate(configuration);
+        resourceService.executeUpdate(resource, INSTITUTION_COMMENT_UPDATED_NOTIFICATION);
+    }
+    
+    public void removeLocalizedConfiguration(Resource resource, NotificationTemplate template) throws DeduplicationException {
         customizationService.removeLocalizedConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
+        resourceService.executeUpdate(resource, INSTITUTION_COMMENT_RESTORED_NOTIFICATION_DEFAULT);
     }
 
-    public void restoreGlobalizedConfiguration(Resource resource, NotificationTemplate template) {
+    public void restoreGlobalizedConfiguration(Resource resource, NotificationTemplate template) throws DeduplicationException {
         customizationService.restoreGlobalizedConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
+        resourceService.executeUpdate(resource, INSTITUTION_COMMENT_OVERWROTE_NOTIFICATION_CUSTOM);
     }
 
     public Integer getReminderInterval(Resource resource, NotificationTemplate template) {
@@ -246,14 +261,6 @@ public class NotificationService {
 
     public List<PrismNotificationTemplate> getEditableTemplates(PrismScope scope) {
         return notificationDAO.geEditableTemplates(scope);
-    }
-
-    public void saveConfiguration(Resource resource, NotificationTemplate template, NotificationConfigurationDTO notificationConfigurationDTO)
-            throws DeduplicationException {
-        NotificationConfiguration configuration = new NotificationConfiguration().withResource(resource).withNotificationTemplate(template)
-                .withSubject(notificationConfigurationDTO.getSubject()).withContent(notificationConfigurationDTO.getContent())
-                .withReminderInterval(notificationConfigurationDTO.getReminderInterval());
-        entityService.createOrUpdate(configuration);
     }
 
     private void sendIndividualRequestNotifications(Resource resource, Comment comment, User author, LocalDate baseline) {

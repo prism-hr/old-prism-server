@@ -277,7 +277,7 @@ public class NotificationTemplatePropertyLoader {
             Project project = advert.getProject();
             Resource resource = project == null ? program : project;
 
-            String applyUri = advert.getApplyLink();
+            String applyUri = advert.getApplyHomepage();
             applyUri = applyUri == null ? buildRedirectionUri(resource, templateModelDTO.getTransitionAction(), templateModelDTO.getUser()) : applyUri;
 
             recommendations.add("<p>" + program.getTitle() + project == null ? "<br/>" : "<br/>" + project == null ? "" : project.getTitle() + "<br/>"

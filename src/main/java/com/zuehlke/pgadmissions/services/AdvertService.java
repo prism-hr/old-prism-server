@@ -128,7 +128,8 @@ public class AdvertService {
         InstitutionDomicileRegion region = entityService.getById(InstitutionDomicileRegion.class, addressDTO.getRegion());
 
         advert.setDescription(advertDetailsDTO.getDescription());
-        advert.setApplyLink(advertDetailsDTO.getApplyLink());
+        advert.setHomepage(advertDetailsDTO.getHomepage());
+        advert.setApplyHomepage(advertDetailsDTO.getApplyHomepage());
 
         InstitutionAddress address = advert.getAddress();
         address.setDomicile(country);

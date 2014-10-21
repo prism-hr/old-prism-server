@@ -124,7 +124,7 @@ public class Application extends Resource {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_additional_information_id", unique = true)
     private ApplicationAdditionalInformation additionalInformation;
-    
+
     @Lob
     @Column(name = "theme")
     private String theme;
@@ -475,7 +475,7 @@ public class Application extends Resource {
     public final Set<UserRole> getUserRoles() {
         return userRoles;
     }
-    
+
     public Application withId(Integer id) {
         this.id = id;
         return this;
@@ -682,6 +682,10 @@ public class Application extends Resource {
 
     public String getStudyOptionDisplay() {
         return programDetail == null ? null : programDetail.getStudyOptionDisplay();
+    }
+
+    public boolean isSubmitted() {
+        return submittedTimestamp != null;
     }
 
     @Override

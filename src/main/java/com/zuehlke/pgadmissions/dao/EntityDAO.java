@@ -126,4 +126,8 @@ public class EntityDAO {
                 .executeUpdate();
     }
 
+    public void evict(Object entity) {
+        sessionFactory.getCurrentSession().evict(entity);
+    }
+
 }

@@ -57,7 +57,7 @@ public class NotificationTemplateResource {
         }
 
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        notificationService.saveConfiguration(resource, template, notificationConfigurationDTO);
+        notificationService.updateConfiguration(resource, template, notificationConfigurationDTO);
     }
 
     @RequestMapping(value = "/{resourceId}/notificationTemplates/{notificationTemplateId}", method = RequestMethod.DELETE)

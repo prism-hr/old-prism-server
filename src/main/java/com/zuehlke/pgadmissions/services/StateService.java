@@ -139,7 +139,7 @@ public class StateService {
 
         commentService.create(comment);
         resource.addComment(comment);
-        
+
         entityService.flush();
 
         State state = resource.getState();
@@ -158,7 +158,7 @@ public class StateService {
             commentService.processComment(comment);
 
             roleService.executeRoleTransitions(stateTransition, comment);
-            
+
             entityService.flush();
 
             if (stateTransition.getPropagatedActions().size() > 0) {
@@ -302,6 +302,14 @@ public class StateService {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
 
+    public StateTransition getProjectCreatedOutcome(Resource resource, Comment comment) {
+        PrismState transitionStateId = PrismState.PROJECT_APPROVAL;
+        if (roleService.hasAnyUserRole(resource, comment.getUser(), PrismRole.INSTITUTION_ADMINISTRATOR, PrismRole.PROGRAM_ADMINISTRATOR)) {
+            transitionStateId = PrismState.PROJECT_APPROVED;
+        }
+        return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
+    }
+
     public StateTransition getApplicationRecruitedOutcome(Resource resource, Comment comment) {
         Comment recruitedComment = commentService.getEarliestComment((ResourceParent) resource, Resource.class,
                 PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
@@ -315,13 +323,13 @@ public class StateService {
     public StateTransition getProgramApprovedOutcome(Resource resource, Comment comment) {
         return getUserDefinedNextState(resource, comment);
     }
-    
+
     public StateTransition getProgramExpiredOutcome(Resource resource, Comment comment) {
         PrismState transitionStateId = BooleanUtils.isTrue(resource.getProgram().getImported()) ? PrismState.PROGRAM_DISABLED_PENDING_IMPORT_REACTIVATION
                 : PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION;
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
-    
+
     public StateTransition getInstitutionViewEditOutcome(Resource resource, Comment comment) {
         return getViewEditNextState(resource, comment);
     }
@@ -341,9 +349,9 @@ public class StateService {
         }
         return getUserDefinedNextState(resource, comment);
     }
-    
+
     private StateTransition getUserDefinedNextState(Resource resource, Comment comment) {
-        if(comment.getTransitionState() == null) {
+        if (comment.getTransitionState() == null) {
             return null;
         }
         PrismState transitionStateId = comment.getTransitionState().getId();

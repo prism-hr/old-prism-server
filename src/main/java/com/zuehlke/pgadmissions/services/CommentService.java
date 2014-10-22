@@ -123,7 +123,6 @@ public class CommentService {
                 stateGroupId = close == null ? null : close.getTransitionState().getStateGroup().getId();
                 previousStateComments = stateComments;
             }
-
         }
 
         return timeline;

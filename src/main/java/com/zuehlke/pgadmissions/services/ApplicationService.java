@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
+
 import java.util.List;
 
 import javax.validation.Valid;
@@ -32,6 +34,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.Document;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -44,6 +47,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
@@ -52,7 +56,7 @@ import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRecommendedStartDateRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationValidator;
 
 @Service
@@ -129,22 +133,21 @@ public class ApplicationService {
         return entityService.getByProperty(Application.class, "code", code);
     }
 
-    public ApplicationRecommendedStartDateRepresentation getRecommendedStartDate(Integer applicationId, PrismStudyOption studyOptionId) {
+    public ApplicationStartDateRepresentation getStartDateRepresentation(Integer applicationId, PrismStudyOption studyOptionId) {
+        LocalDate baseline = new LocalDate();
         Application application = getById(applicationId);
         StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, application.getInstitution(), studyOptionId.name());
         ProgramStudyOption programStudyOption = programService.getEnabledProgramStudyOption(application.getProgram(), studyOption);
-        return new ApplicationRecommendedStartDateRepresentation().withEarliestDate(getEarliestStartDate(programStudyOption))
-                .withRecommendedDate(getRecommendedStartDate(application, programStudyOption)).withLatestDate(getLatestStartDate(programStudyOption));
+        return new ApplicationStartDateRepresentation().withEarliestDate(getEarliestStartDate(programStudyOption, baseline))
+                .withRecommendedDate(getRecommendedStartDate(application, programStudyOption, baseline)).withLatestDate(getLatestStartDate(programStudyOption));
     }
-    
-    public LocalDate getEarliestStartDate(ProgramStudyOption studyOption) {
+
+    public LocalDate getEarliestStartDate(ProgramStudyOption studyOption, LocalDate baseline) {
         if (studyOption == null) {
             return null;
         }
 
-        LocalDate baseline = new LocalDate();
         LocalDate studyOptionStart = studyOption.getApplicationStartDate();
-
         LocalDate earliestStartDate = studyOptionStart.isBefore(baseline) ? baseline : studyOptionStart;
         earliestStartDate = earliestStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
         return earliestStartDate.isBefore(baseline) ? earliestStartDate.plusWeeks(1) : earliestStartDate;
@@ -154,12 +157,12 @@ public class ApplicationService {
         if (studyOption == null) {
             return null;
         }
-        
+
         LocalDate closeDate = studyOption.getApplicationCloseDate();
         LocalDate latestStartDate = closeDate.withDayOfWeek(DateTimeConstants.MONDAY);
         return latestStartDate.isAfter(closeDate) ? latestStartDate.minusWeeks(1) : latestStartDate;
     }
-    
+
     public String getApplicationExportReference(Application application) {
         return applicationDAO.getApplicationExportReference(application);
     }
@@ -395,26 +398,33 @@ public class ApplicationService {
         }
         return previousApplication;
     }
-    
-    private LocalDate getRecommendedStartDate(Application application, ProgramStudyOption studyOption) {
+
+    private LocalDate getRecommendedStartDate(Application application, ProgramStudyOption studyOption, LocalDate baseline) {
         if (studyOption == null) {
             return null;
         }
 
-        LocalDate studyOptionStart = studyOption.getApplicationStartDate();
-        LocalDate studyOptionClose = studyOption.getApplicationCloseDate();
+        LocalDate earliest = getEarliestStartDate(studyOption, baseline);
+        LocalDate latest = getLatestStartDate(studyOption);
 
-        LocalDate recommendedStartDate = application.getRecommendedStartDate();
+        PrismProgramType programType = application.getProgram().getProgramType().getPrismProgramType();
+        DefaultStartDateDTO defaults = programType.getDefaultStartDate(baseline);
 
-        if (recommendedStartDate.isAfter(studyOptionClose)) {
-            recommendedStartDate = studyOptionClose;
-        } else if (recommendedStartDate.isBefore(studyOptionStart)) {
-            recommendedStartDate = studyOptionStart;
-        }
+        LocalDate immediate = defaults.getImmediate();
+        LocalDate scheduled = defaults.getScheduled();
         
-        LocalDate baseline = new LocalDate();
-        recommendedStartDate = recommendedStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
-        return recommendedStartDate.isBefore(baseline) ? recommendedStartDate.plusWeeks(1) : recommendedStartDate;
+        LocalDate recommended = application.getDefaultStartType() == SCHEDULED ? scheduled : immediate;
+        recommended = recommended.isBefore(earliest) ? earliest.plusWeeks(programType.getDefaultStartDelay()) : recommended;
+
+        if (recommended.isBefore(earliest)) {
+            recommended = earliest.plusWeeks(programType.getDefaultStartDelay());
+        }
+
+        if (recommended.isAfter(latest)) {
+            recommended = immediate.isAfter(latest) ? latest : immediate;
+        }
+
+        return recommended;
     }
 
 }

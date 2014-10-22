@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import org.joda.time.LocalDate;
 
-public class ApplicationRecommendedStartDateRepresentation {
+public class ApplicationStartDateRepresentation {
 
     private LocalDate earliestDate;
     
@@ -34,17 +34,17 @@ public class ApplicationRecommendedStartDateRepresentation {
         this.latestDate = latestDate;
     }
     
-    public ApplicationRecommendedStartDateRepresentation withEarliestDate(LocalDate earliestDate) {
+    public ApplicationStartDateRepresentation withEarliestDate(LocalDate earliestDate) {
         this.earliestDate = earliestDate;
         return this;
     }
     
-    public ApplicationRecommendedStartDateRepresentation withRecommendedDate(LocalDate recommendedDate) {
+    public ApplicationStartDateRepresentation withRecommendedDate(LocalDate recommendedDate) {
         this.recommendedDate = recommendedDate;
         return this;
     }
     
-    public ApplicationRecommendedStartDateRepresentation withLatestDate(LocalDate latestDate) {
+    public ApplicationStartDateRepresentation withLatestDate(LocalDate latestDate) {
         this.latestDate = latestDate;
         return this;
     }

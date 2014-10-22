@@ -42,7 +42,7 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRecommendedStartDateRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.comment.CommentDTOValidator;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationSectionService;
@@ -57,7 +57,7 @@ public class ApplicationResource {
 
     @Autowired
     private AdvertService advertService;
-    
+
     @Autowired
     private ApplicationService applicationService;
 
@@ -66,23 +66,22 @@ public class ApplicationResource {
 
     @Autowired
     private CommentService commentService;
-    
+
     @Autowired
     private ProgramService programService;
-    
+
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private Mapper dozerBeanMapper;
 
     @Autowired
     private CommentDTOValidator commentDTOValidator;
 
-    @RequestMapping(value = "/{applicationId}/recommendedStartDate", method = RequestMethod.GET)
-    private ApplicationRecommendedStartDateRepresentation getRecommendedStartDate(@PathVariable Integer applicationId,
-            @RequestParam PrismStudyOption studyOptionId) {
-        return applicationService.getRecommendedStartDate(applicationId, studyOptionId);
+    @RequestMapping(value = "/{applicationId}/startDate", method = RequestMethod.GET)
+    private ApplicationStartDateRepresentation getStartDateRepresentation(@PathVariable Integer applicationId, @RequestParam PrismStudyOption studyOptionId) {
+        return applicationService.getStartDateRepresentation(applicationId, studyOptionId);
     }
 
     @RequestMapping(value = "/{applicationId}/programDetail", method = RequestMethod.PUT)
@@ -209,7 +208,7 @@ public class ApplicationResource {
     public void configureCommentBinding(WebDataBinder binder) {
         binder.setValidator(commentDTOValidator);
     }
-    
+
     public void enrichApplicationRepresentation(Application application, ApplicationExtendedRepresentation applicationRepresentation) {
         List<User> interested = userService.getUsersInterestedInApplication(application);
         List<User> potentiallyInterested = userService.getUsersPotentiallyInterestedInApplication(application, interested);

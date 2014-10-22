@@ -535,10 +535,6 @@ public class Program extends ResourceParent {
         return this;
     }
 
-    public LocalDate getRecommendedStartDate() {
-        return programType.getPrismProgramType().getRecommendedStartDate();
-    }
-
     @Override
     public ResourceSignature getResourceSignature() {
         ResourceSignature signature = new ResourceSignature().addProperty("institution", institution);

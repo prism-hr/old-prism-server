@@ -66,7 +66,7 @@ public class CompleteApplicationValidator extends LocalValidatorFactoryBean impl
                 }
                 errors.rejectValue("studyOption", "notAvailable");
             } else {
-                LocalDate earliestStartDate = applicationService.getEarliestStartDate(studyOption);
+                LocalDate earliestStartDate = applicationService.getEarliestStartDate(studyOption, new LocalDate());
                 LocalDate latestStartDate = applicationService.getLatestStartDate(studyOption);
     
                 if (startDate.isBefore(earliestStartDate)) {

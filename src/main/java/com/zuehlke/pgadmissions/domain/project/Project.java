@@ -411,7 +411,6 @@ public class Project extends ResourceParent {
         return this;
     }
 
-
     public Project withTitle(final String title) {
         this.title = title;
         return this;
@@ -425,10 +424,6 @@ public class Project extends ResourceParent {
     @Override
     public void addComment(Comment comment) {
         comments.add(comment);
-    }
-
-    public LocalDate getRecommendedStartDate() {
-        return program.getProgramType().getPrismProgramType().getImmediateStartDate();
     }
 
     @Override

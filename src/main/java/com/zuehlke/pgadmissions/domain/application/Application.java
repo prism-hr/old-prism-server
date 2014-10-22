@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.domain.application;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.IMMEDIATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Set;
@@ -29,6 +32,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -624,10 +628,6 @@ public class Application extends Resource {
         comments.add(comment);
     }
 
-    public LocalDate getRecommendedStartDate() {
-        return project == null ? program.getRecommendedStartDate() : project.getRecommendedStartDate();
-    }
-
     public Set<ResourceParent> getParentResources() {
         Set<ResourceParent> parentResources = Sets.newLinkedHashSet();
         if (project != null) {
@@ -670,6 +670,10 @@ public class Application extends Resource {
         return state.getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED && state.getId() != PrismState.APPLICATION_APPROVED;
     }
 
+    public boolean isSubmitted() {
+        return submittedTimestamp != null;
+    }
+
     public String getProjectOrProgramTitleDisplay() {
         return project == null ? program.getTitle() : project.getTitle();
     }
@@ -682,8 +686,8 @@ public class Application extends Resource {
         return programDetail == null ? null : programDetail.getStudyOptionDisplay();
     }
 
-    public boolean isSubmitted() {
-        return submittedTimestamp != null;
+    public PrismProgramStartType getDefaultStartType() {
+        return project == null && program.getProgramType().getPrismProgramType().getDefaultStartType() == SCHEDULED ? SCHEDULED : IMMEDIATE;
     }
 
     @Override

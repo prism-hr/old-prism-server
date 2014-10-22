@@ -8,6 +8,7 @@ import org.dozer.DozerConverter;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
+@SuppressWarnings("rawtypes")
 public class SeparatedStringToListConverter extends DozerConverter<String, List> {
 
     public SeparatedStringToListConverter() {
@@ -26,4 +27,5 @@ public class SeparatedStringToListConverter extends DozerConverter<String, List>
     public String convertFrom(List source, String destination) {
         throw new UnsupportedOperationException();
     }
+    
 }

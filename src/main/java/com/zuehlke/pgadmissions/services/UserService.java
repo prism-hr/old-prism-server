@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -35,6 +36,7 @@ import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.UserAccountDTO;
+import com.zuehlke.pgadmissions.rest.dto.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.SocialPresenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
@@ -52,9 +54,6 @@ public class UserService {
 
     @Autowired
     private RoleService roleService;
-
-    @Autowired
-    private EncryptionUtils encryptionUtils;
 
     @Autowired
     private NotificationService notificationService;
@@ -90,21 +89,6 @@ public class UserService {
                 .withLastName(user.getLastName()).withEmail(user.getEmail());
     }
 
-    public User getOrCreateUser(String firstName, String lastName, String email) throws DeduplicationException {
-        User user;
-        User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email);
-        User duplicateUser = entityService.getDuplicateEntity(transientUser);
-        if (duplicateUser == null) {
-            user = transientUser;
-            user.setActivationCode(encryptionUtils.generateUUID());
-            entityService.save(user);
-            user.setParentUser(user);
-        } else {
-            user = duplicateUser;
-        }
-        return user;
-    }
-
     public User registerUser(UserRegistrationDTO registrationDTO, String referrer) throws DeduplicationException, InterruptedException, IOException,
             JAXBException {
         User user = getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail());
@@ -113,11 +97,26 @@ public class UserService {
             throw new ResourceNotFoundException();
         }
 
-        user.setUserAccount(new UserAccount().withPassword(encryptionUtils.getMD5Hash(registrationDTO.getPassword()))
+        user.setUserAccount(new UserAccount().withPassword(EncryptionUtils.getMD5(registrationDTO.getPassword()))
                 .withSendApplicationRecommendationNotification(false).withEnabled(false));
 
         ActionOutcomeDTO outcome = actionService.getRegistrationOutcome(user, registrationDTO, referrer);
         notificationService.sendRegistrationNotification(user, outcome);
+        return user;
+    }
+
+    public User getOrCreateUser(String firstName, String lastName, String email) throws DeduplicationException {
+        User user;
+        User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email);
+        User duplicateUser = entityService.getDuplicateEntity(transientUser);
+        if (duplicateUser == null) {
+            user = transientUser;
+            user.setActivationCode(EncryptionUtils.getUUID());
+            entityService.save(user);
+            user.setParentUser(user);
+        } else {
+            user = duplicateUser;
+        }
         return user;
     }
 
@@ -126,6 +125,32 @@ public class UserService {
         User user = getOrCreateUser(firstName, lastName, email);
         roleService.updateUserRole(resource, user, PrismRoleTransitionType.CREATE, roles.toArray(new PrismRole[roles.size()]));
         return user;
+    }
+
+    public boolean activateUser(Integer userId, PrismAction actionId, Integer resourceId) {
+        User user = getById(userId);
+        boolean wasEnabled = user.getUserAccount().getEnabled();
+        user.getUserAccount().setEnabled(true);
+        return !wasEnabled;
+    }
+
+    public void updateUser(User user, UserDTO userDTO) {
+        String firstName = userDTO.getFirstName();
+        String lastName = userDTO.getLastName();
+        
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setFullName(firstName + " " + lastName);
+        
+        user.setFirstName2(Strings.emptyToNull(userDTO.getFirstName2()));
+        user.setFirstName3(Strings.emptyToNull(userDTO.getFirstName3()));
+
+        String email = userDTO.getEmail();
+        user.setEmail(email == null ? user.getEmail() : email);
+
+        String password = userDTO.getPassword();
+        UserAccount account = user.getUserAccount();
+        account.setPassword(password == null ? account.getPassword() : EncryptionUtils.getMD5(password));
     }
 
     public User getUserByEmail(String email) {
@@ -137,13 +162,12 @@ public class UserService {
     }
 
     public void resetPassword(String email) {
-        // TODO send activation link if account disabled
-        User storedUser = getUserByEmail(email);
-        if (storedUser != null) {
-            String newPassword = encryptionUtils.generateUserPassword();
-            notificationService.sendResetPasswordNotification(storedUser, newPassword);
-            storedUser.getUserAccount().setTemporaryPassword(encryptionUtils.getMD5Hash(newPassword));
-            storedUser.getUserAccount().setTemporaryPasswordExpiryTimestamp(new DateTime().plusHours(1));
+        User user = getUserByEmail(email);
+        if (user != null) {
+            String newPassword = EncryptionUtils.getTemporaryPassword();
+            notificationService.sendResetPasswordNotification(user, newPassword);
+            user.getUserAccount().setTemporaryPassword(EncryptionUtils.getMD5(newPassword));
+            user.getUserAccount().setTemporaryPasswordExpiryTimestamp(new DateTime().plusHours(1));
         }
     }
 
@@ -220,13 +244,6 @@ public class UserService {
         }
 
         return Lists.newArrayList();
-    }
-
-    public boolean activateUser(Integer userId, PrismAction actionId, Integer resourceId) {
-        User user = getById(userId);
-        boolean wasEnabled = user.getUserAccount().getEnabled();
-        user.getUserAccount().setEnabled(true);
-        return !wasEnabled;
     }
 
     public List<User> getResourceUsers(Resource resource) {

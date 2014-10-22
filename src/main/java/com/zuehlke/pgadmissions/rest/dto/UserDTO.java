@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import javax.validation.constraints.Size;
+
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -20,7 +22,11 @@ public class UserDTO {
     @NotEmpty
     @Email
     private String email;
-
+    
+    @NotEmpty
+    @Size(min = 8, max = 15)
+    private String password;
+    
     public Integer getId() {
         return id;
     }
@@ -68,4 +74,13 @@ public class UserDTO {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public final String getPassword() {
+        return password;
+    }
+
+    public final void setPassword(String password) {
+        this.password = password;
+    }
+    
 }

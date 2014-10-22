@@ -593,6 +593,31 @@ public class PrismApplicationInterviewPendingScheduling extends PrismWorkflowSta
             .withAction(PrismAction.APPLICATION_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
+                .withTransitions(Arrays.asList( //
+                    new PrismStateTransition() //
+                        .withTransitionState(PrismState.APPLICATION_INTERVIEW_PENDING_SCHEDULING) //
+                        .withTransitionAction(PrismAction.APPLICATION_VIEW_EDIT) //
+                        .withRoleTransitions(Arrays.asList( //
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.APPLICATION_REFEREE) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.APPLICATION_REFEREE) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.APPLICATION_REFEREE) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
+                                .withTransitionRole(PrismRole.APPLICATION_REFEREE) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
+                                .withTransitionRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
+                                .withRestrictToOwner(false))))) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //

@@ -147,31 +147,56 @@ public class PrismApplicationValidation extends PrismWorkflowState {
             .withAction(PrismAction.APPLICATION_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
-                .withAssignments(Arrays.asList( // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_CREATOR) //
-                        .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR), //
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) //
-                        .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_ADMITTER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.INSTITUTION_ADMITTER) //
-                        .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_ADMITTER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
-                        .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_APPROVER) //
-                        .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_VIEWER) // 
-                        .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROJECT_ADMINISTRATOR) // 
-                        .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) // 
-                        .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER)))); //
+                .withTransitions(Arrays.asList( //
+                    new PrismStateTransition() //
+                        .withTransitionState(PrismState.APPLICATION_VALIDATION) //
+                        .withTransitionAction(PrismAction.APPLICATION_VIEW_EDIT) //
+                        .withRoleTransitions(Arrays.asList( //
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.APPLICATION_REFEREE) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.APPLICATION_REFEREE) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.APPLICATION_REFEREE) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
+                                .withTransitionRole(PrismRole.APPLICATION_REFEREE) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
+                                .withTransitionType(PrismRoleTransitionType.CREATE) //
+                                .withTransitionRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
+                                .withRestrictToOwner(false),
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
+                                .withTransitionType(PrismRoleTransitionType.DELETE) //
+                                .withTransitionRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
+                                .withRestrictToOwner(false))))) //
+                    .withAssignments(Arrays.asList( // 
+                        new PrismStateActionAssignment() // 
+                            .withRole(PrismRole.APPLICATION_CREATOR) //
+                            .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR), //
+                        new PrismStateActionAssignment() // 
+                            .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) //
+                            .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_ADMITTER), // 
+                        new PrismStateActionAssignment() // 
+                            .withRole(PrismRole.INSTITUTION_ADMITTER) //
+                            .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_ADMITTER), // 
+                        new PrismStateActionAssignment() // 
+                            .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
+                            .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER), // 
+                        new PrismStateActionAssignment() // 
+                            .withRole(PrismRole.PROGRAM_APPROVER) //
+                            .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER), // 
+                        new PrismStateActionAssignment() // 
+                            .withRole(PrismRole.PROGRAM_VIEWER) // 
+                            .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER), // 
+                        new PrismStateActionAssignment() // 
+                            .withRole(PrismRole.PROJECT_ADMINISTRATOR) // 
+                            .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER), // 
+                        new PrismStateActionAssignment() // 
+                            .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) // 
+                            .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_WITHDRAW) //

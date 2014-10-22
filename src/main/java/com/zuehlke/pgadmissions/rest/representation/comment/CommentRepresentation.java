@@ -7,9 +7,9 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
-import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
@@ -30,7 +30,7 @@ public class CommentRepresentation {
     private String delegateRole;
 
     private PrismAction action;
-    
+
     private Boolean emphasizedAction;
 
     private Boolean declinedResponse;
@@ -107,6 +107,8 @@ public class CommentRepresentation {
 
     private Set<AppointmentPreferenceRepresentation> appointmentPreferences;
 
+    private Set<PrismActionRedactionType> redactions;
+
     public Integer getId() {
         return id;
     }
@@ -162,7 +164,7 @@ public class CommentRepresentation {
     public void setAction(PrismAction action) {
         this.action = action;
     }
-    
+
     public final Boolean getEmphasizedAction() {
         return emphasizedAction;
     }
@@ -466,22 +468,13 @@ public class CommentRepresentation {
     public void setAppointmentPreferences(Set<AppointmentPreferenceRepresentation> appointmentPreferences) {
         this.appointmentPreferences = appointmentPreferences;
     }
-    
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
+
+    public final Set<PrismActionRedactionType> getRedactions() {
+        return redactions;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (object == null) {
-            return false;
-        }
-        if (getClass() != object.getClass()) {
-            return false;
-        }
-        final CommentRepresentation other = (CommentRepresentation) object;
-        return Objects.equal(id, other.getId());
+    public final void setRedactions(Set<PrismActionRedactionType> redactions) {
+        this.redactions = redactions;
     }
-    
+
 }

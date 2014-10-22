@@ -29,6 +29,19 @@ public class RoleDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
+    public List<PrismRole> getRoles(Resource resource, User user) {
+        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.property("role.id")) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("system", resource.getSystem())) //
+                        .add(Restrictions.eq("institution", resource.getInstitution())) //
+                        .add(Restrictions.eq("program", resource.getProgram())) //
+                        .add(Restrictions.eq("project", resource.getProject())) //
+                        .add(Restrictions.eq("application", resource.getApplication()))) //
+                        .list();
+    }
+    
     public UserRole getUserRole(Resource resource, User user, Role role) {
         return (UserRole) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
@@ -59,12 +72,12 @@ public class RoleDAO {
                 .setProjection(Projections.property("excludedUserRole.id")) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.excludedRoles", "excludedRole", JoinType.INNER_JOIN) //
-                .createAlias("excludedRole.userRoles", "excludedUserRole")
-                .add(Restrictions.eq(resourceReference, resource))
+                .createAlias("excludedRole.userRoles", "excludedUserRole") //
+                .add(Restrictions.eq(resourceReference, resource)) //
                 .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.ne("role", role))
-                .add(Restrictions.eq("excludedUserRole." + resourceReference, resource))
-                .add(Restrictions.eq("excludedUserRole.user", user))
+                .add(Restrictions.ne("role", role)) //
+                .add(Restrictions.eq("excludedUserRole." + resourceReference, resource)) //
+                .add(Restrictions.eq("excludedUserRole.user", user)) //
                 .list();
     }
 
@@ -128,13 +141,6 @@ public class RoleDAO {
                 .setProjection(Projections.groupProperty("role.id"))
                 .add(Restrictions.eq("user", user))
                 .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource))
-                .list();
-    }
-
-    public List<PrismRole> getRoles(Class<? extends Resource> resourceType) {
-        return sessionFactory.getCurrentSession().createCriteria(Role.class)
-                .setProjection(Projections.property("id"))
-                .add(Restrictions.eq("scope.id", PrismScope.getResourceScope(resourceType)))
                 .list();
     }
 

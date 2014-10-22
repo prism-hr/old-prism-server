@@ -5,8 +5,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.I
 import java.io.IOException;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
-
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +84,7 @@ public class InstitutionService {
         return institutionDAO.getUclInstitution();
     }
 
-    public Institution create(User user, InstitutionDTO institutionDTO) throws InterruptedException, IOException, JAXBException {
+    public Institution create(User user, InstitutionDTO institutionDTO) {
         InstitutionAddressDTO institutionAddressDTO = institutionDTO.getAddress();
         InstitutionDomicile institutionAddressCountry = entityService.getById(InstitutionDomicile.class, institutionAddressDTO.getDomicile());
         InstitutionDomicileRegion institutionAddressRegion = entityService.getById(InstitutionDomicileRegion.class, institutionAddressDTO.getRegion());

@@ -1,11 +1,8 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-
-import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.criterion.Disjunction;
@@ -109,8 +106,7 @@ public class ResourceService {
         return resource == null ? null : resource.getId();
     }
 
-    public ActionOutcomeDTO executeAction(Integer resourceId, CommentDTO commentDTO) throws DeduplicationException, InterruptedException, IOException,
-            JAXBException {
+    public ActionOutcomeDTO executeAction(Integer resourceId, CommentDTO commentDTO) throws DeduplicationException {
         PrismAction actionId = commentDTO.getAction();
         PrismScope resourceScope = actionId.getScope();
         switch (resourceScope) {
@@ -137,8 +133,7 @@ public class ResourceService {
         }
     }
 
-    public ActionOutcomeDTO createResource(User user, Action action, Object newResourceDTO, String referrer) throws DeduplicationException,
-            InterruptedException, IOException, JAXBException {
+    public ActionOutcomeDTO createResource(User user, Action action, Object newResourceDTO, String referrer) throws DeduplicationException {
         Resource resource = null;
 
         switch (action.getCreationScope().getId()) {

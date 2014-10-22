@@ -47,10 +47,10 @@ public enum PrismDisplayProperty {
     SYSTEM_PAGE(SYSTEM_GLOBAL, "Page"), //
     SYSTEM_CLOSING_DATE(SYSTEM_GLOBAL, "Closing Date"), //
     SYSTEM_COMMENT_HEADER(SYSTEM_GLOBAL, "Comment"), //
-    SYSTEM_EMAIL_LINK_MESSAGE(SYSTEM_GLOBAL, "If you are unable to follow the links in this message, copy and paste them directly into your browser."), //
+    SYSTEM_EMAIL_LINK_MESSAGE(SYSTEM_GLOBAL, "If you are unable to follow the links in this message, copy and paste them directly into your browser"), //
     SYSTEM_TELEPHONE_PLACEHOLDER(SYSTEM_GLOBAL, "+44 (0) 0000 000 000"), //
     SYSTEM_IP_PLACEHOLDER(SYSTEM_GLOBAL, "127.0.0.1"), //
-    SYSTEM_REFER_TO_DOCUMENT(SYSTEM_GLOBAL, "Refer to attached document."), //
+    SYSTEM_REFER_TO_DOCUMENT(SYSTEM_GLOBAL, "Refer to attached document"), //
     SYSTEM_OTHER(SYSTEM_GLOBAL, "Other"), //
     SYSTEM_NONE(SYSTEM_GLOBAL, "none"), //
     SYSTEM_PROCEED(SYSTEM_GLOBAL, "Proceed"), //
@@ -72,13 +72,15 @@ public enum PrismDisplayProperty {
     SYSTEM_COMMENT_UPDATED_USER_ROLE(SYSTEM_COMMENT, "Updated system user roles"), //
     SYSTEM_COMMENT_UPDATED_NOTIFICATION(SYSTEM_COMMENT, "Updated system notification configuration"), //
     SYSTEM_COMMENT_RESTORED_NOTIFICATION_GLOBAL(SYSTEM_COMMENT, "Restored system global notification template"), //
+    SYSTEM_COMMENT_INITIALIZED_SYSTEM(SYSTEM_COMMENT, "System initialised and ready to use"), //
+    SYSTEM_COMMENT_INITIALIZED_INSTITUTION(SYSTEM_COMMENT, "Institution initialised and ready to use"), //
     INSTITUTION_HEADER(INSTITUTION_GLOBAL, "Institution"), //
     INSTITUTION_COMMENT_APPROVED(
             INSTITUTION_COMMENT,
-            "We are pleased to tell you that your institution has been approved. We will send you a message with further instructions when your institution is ready to use. If you do not receive this message within 1 hour, please contact our helpdesk."), //
+            "We are pleased to tell you that your institution has been approved. We will send you a message with further instructions when your institution is ready to use. If you do not receive this message within 1 hour, please contact our helpdesk"), //
     INSTITUTION_COMMENT_CORRECTION(INSTITUTION_COMMENT,
-            "Further information is required to activate your institution. Please login to address the reviewers comments."), //
-    INSTITUTION_COMMENT_REJECTED(INSTITUTION_COMMENT, "We are sorry to inform you that your institution has been rejected."), //
+            "Further information is required to activate your institution. Please login to address the reviewers comments"), //
+    INSTITUTION_COMMENT_REJECTED(INSTITUTION_COMMENT, "We are sorry to inform you that your institution has been rejected"), //
     INSTITUTION_COMMENT_UPDATED(INSTITUTION_COMMENT, "Updated institution"), //
     INSTITUTION_COMMENT_UPDATED_USER_ROLE(INSTITUTION_COMMENT, "Updated institution user roles"), //
     INSTITUTION_COMMENT_UPDATED_NOTIFICATION(INSTITUTION_COMMENT, "Updated institution notification configuration"), //
@@ -105,9 +107,9 @@ public enum PrismDisplayProperty {
     PROGRAM_TYPE_EMPLOYMENT_SECONDMENT(PROGRAM_GLOBAL, "Secondment"), //
     PROGRAM_TYPE_TRAINING(PROGRAM_GLOBAL, "Training"), //
     PROGRAM_COMMENT_APPROVED(PROGRAM_COMMENT,
-            "We are pleased to tell you that your program has been approved. You may now login to create users and projects, and manage your recruitment."), //
-    PROGRAM_COMMENT_CORRECTION(PROGRAM_COMMENT, "Further information is required to activate your program. Please login to address the reviewers comments."), //
-    PROGRAM_COMMENT_REJECTED(PROGRAM_COMMENT, "We are sorry to inform you that your program has been rejected."), //
+            "We are pleased to tell you that your program has been approved. You may now login to create users and projects, and manage your recruitment"), //
+    PROGRAM_COMMENT_CORRECTION(PROGRAM_COMMENT, "Further information is required to activate your program. Please login to address the reviewers comments"), //
+    PROGRAM_COMMENT_REJECTED(PROGRAM_COMMENT, "We are sorry to inform you that your program has been rejected"), //
     PROGRAM_COMMENT_UPDATED(PROGRAM_COMMENT, "Updated program"), //
     PROGRAM_COMMENT_UPDATED_USER_ROLE(PROGRAM_COMMENT, "Updated program user roles"), //
     PROGRAM_COMMENT_UPDATED_NOTIFICATION(PROGRAM_COMMENT, "Updated program notification configuration"), //
@@ -118,9 +120,9 @@ public enum PrismDisplayProperty {
     PROGRAM_COMMENT_UPDATED_CLOSING_DATE(PROGRAM_COMMENT, "Updated program closing dates"), //
     PROJECT_HEADER(PROJECT_GLOBAL, "Project"), //
     PROJECT_COMMENT_APPROVED(PROJECT_COMMENT,
-            "We are pleased to tell you that your project has been approved. You may now login to create users and manage your recruitment."), //
-    PROJECT_COMMENT_CORRECTION(PROJECT_COMMENT, "Further information is required to activate your project. Please login to address the reviewers comments."), //
-    PROJECT_COMMENT_REJECTED(PROJECT_COMMENT, "We are sorry to inform you that your project has been rejected."), //
+            "We are pleased to tell you that your project has been approved. You may now login to create users and manage your recruitment"), //
+    PROJECT_COMMENT_CORRECTION(PROJECT_COMMENT, "Further information is required to activate your project. Please login to address the reviewers comments"), //
+    PROJECT_COMMENT_REJECTED(PROJECT_COMMENT, "We are sorry to inform you that your project has been rejected"), //
     PROJECT_COMMENT_UPDATED(PROJECT_COMMENT, "Updated project"), //
     PROJECT_COMMENT_UPDATED_USER_ROLE(PROJECT_COMMENT, "Updated project user roles"), //
     PROJECT_COMMENT_UPDATED_ADVERT(PROJECT_COMMENT, "Updated project advert"), //
@@ -189,7 +191,7 @@ public enum PrismDisplayProperty {
     APPLICATION_QUALIFICATION_EQUIVALENT_HEADER(APPLICATION_QUALIFICATION, "Equivalent Experience"), //
     APPLICATION_QUALIFICATION_EXPERIENCE_MESSAGE(
             APPLICATION_QUALIFICATION,
-            "We consider that the applicant has experience equivalent to the typical academic entrance requirements for our program. It is therefore our recommendation that an appointment be made."), //
+            "We consider that the applicant has experience equivalent to the typical academic entrance requirements for our program. It is therefore our recommendation that an appointment be made"), //
     APPLICATION_EMPLOYMENT_POSITION_HEADER(APPLICATION_EMPLOYMENT_POSITION, "Employment Positions"), //
     APPLICATION_EMPLOYMENT_POSITION_SUBHEADER(APPLICATION_EMPLOYMENT_POSITION, "Position"), //
     APPLICATION_EMPLOYMENT_POSITION_EMPLOYER_ADDRESS(APPLICATION_EMPLOYMENT_POSITION, "Employer Address"), //
@@ -207,7 +209,7 @@ public enum PrismDisplayProperty {
     APPLICATION_REFEREE_REFERENCE_COMMENT(APPLICATION_REFEREE, "Reference Comment"), //
     APPLICATION_REFEREE_REFERENCE_COMMENT_EQUIVALENT(
             APPLICATION_REFEREE,
-            "Having considered the whole application, including both written and spoken feedback from referees, we are happy to make an appointment based upon the information available to us."), //
+            "Having considered the whole application, including both written and spoken feedback from referees, we are happy to make an appointment based upon the information available to us"), //
     APPLICATION_DOCUMENT_HEADER(APPLICATION_DOCUMENT, "Documents"), //
     APPLICATION_DOCUMENT_PERSONAL_STATEMENT_APPENDIX(APPLICATION_DOCUMENT, "Personal Statement"), //
     APPLICATION_DOCUMENT_CV_APPENDIX(APPLICATION_DOCUMENT, "CV/Resume"), //
@@ -215,21 +217,21 @@ public enum PrismDisplayProperty {
     APPLICATION_ADDITIONAL_INFORMATION_CONVICTION(APPLICATION_ADDITIONAL_INFORMATION, "Unspent Criminal Convictions"), //
     APPLICATION_COMMENT_SUITABLE_FOR_INSTITUTION(APPLICATION_COMMENT, "Suitable for Recruiting Institution?"), //
     APPLICATION_COMMENT_SUITABLE_FOR_OPPORTUNITY(APPLICATION_COMMENT, "Suitable for Recruiting Position?"), //
-    APPLICATION_COMMENT_DECLINED_REFEREE(APPLICATION_COMMENT, "Declined to provide a reference."), //
+    APPLICATION_COMMENT_DECLINED_REFEREE(APPLICATION_COMMENT, "Declined to provide a reference"), //
     APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION(APPLICATION_COMMENT, "Recommended offer conditions"), //
-    APPLICATION_COMMENT_REJECTION_SYSTEM(APPLICATION_COMMENT, "The opportunity that you applied for has been discontinued."), //
+    APPLICATION_COMMENT_REJECTION_SYSTEM(APPLICATION_COMMENT, "The opportunity that you applied for has been discontinued"), //
     APPLICATION_COMMENT_DIRECTIONS(APPLICATION_COMMENT, "Directions"), //
-    APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED(APPLICATION_COMMENT, "No directions provided. Please contact the interviewer for further information."), //
-    APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL(APPLICATION_COMMENT, "Updated the program details section."), //
-    APPLICATION_COMMENT_UPDATED_SUPERVISOR(APPLICATION_COMMENT, "Updated the supervisors section."), //
-    APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL(APPLICATION_COMMENT, "Updated the personal detail section."), //
-    APPLICATION_COMMENT_UPDATED_ADDRESS(APPLICATION_COMMENT, "Updated the address section."), //
-    APPLICATION_COMMENT_UPDATED_QUALIFICATION(APPLICATION_COMMENT, "Updated the qualification section."), //
-    APPLICATION_COMMENT_UPDATED_EMPLOYMENT(APPLICATION_COMMENT, "Updated the employment section."), //
-    APPLICATION_COMMENT_UPDATED_FUNDING(APPLICATION_COMMENT, "Updated the funding section."), //
-    APPLICATION_COMMENT_UPDATED_REFEREE(APPLICATION_COMMENT, "Updated the referee section."), //
-    APPLICATION_COMMENT_UPDATED_DOCUMENT(APPLICATION_COMMENT, "Updated the document section."), //
-    APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION(APPLICATION_COMMENT, "Updated the additional information session.");
+    APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED(APPLICATION_COMMENT, "No directions provided. Please contact the interviewer for further information"), //
+    APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL(APPLICATION_COMMENT, "Updated the program details section"), //
+    APPLICATION_COMMENT_UPDATED_SUPERVISOR(APPLICATION_COMMENT, "Updated the supervisors section"), //
+    APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL(APPLICATION_COMMENT, "Updated the personal detail section"), //
+    APPLICATION_COMMENT_UPDATED_ADDRESS(APPLICATION_COMMENT, "Updated the address section"), //
+    APPLICATION_COMMENT_UPDATED_QUALIFICATION(APPLICATION_COMMENT, "Updated the qualification section"), //
+    APPLICATION_COMMENT_UPDATED_EMPLOYMENT(APPLICATION_COMMENT, "Updated the employment section"), //
+    APPLICATION_COMMENT_UPDATED_FUNDING(APPLICATION_COMMENT, "Updated the funding section"), //
+    APPLICATION_COMMENT_UPDATED_REFEREE(APPLICATION_COMMENT, "Updated the referee section"), //
+    APPLICATION_COMMENT_UPDATED_DOCUMENT(APPLICATION_COMMENT, "Updated the document section"), //
+    APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION(APPLICATION_COMMENT, "Updated the additional information section");
 
     private PrismDisplayCategory category;
 

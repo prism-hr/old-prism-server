@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_COMMENT_INITIALIZED_INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_STARTUP;
 
 import java.io.IOException;
@@ -9,6 +10,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -27,6 +29,7 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.representation.SocialPresenceRepresentation;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
@@ -63,6 +66,9 @@ public class InstitutionService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     public Institution getById(Integer id) {
         return entityService.getById(Institution.class, id);
@@ -167,8 +173,9 @@ public class InstitutionService {
     public void initializeInstitution(Integer institutionId) throws DeduplicationException {
         Institution institution = getById(institutionId);
         Action action = actionService.getById(INSTITUTION_STARTUP);
-        Comment comment = new Comment().withUser(systemService.getSystem().getUser()).withCreatedTimestamp(new DateTime()).withAction(action)
-                .withDeclinedResponse(false);
+        Comment comment = new Comment().withAction(action)
+                .withContent(applicationContext.getBean(PropertyLoader.class).load(SYSTEM_COMMENT_INITIALIZED_INSTITUTION)).withDeclinedResponse(false)
+                .withUser(systemService.getSystem().getUser()).withCreatedTimestamp(new DateTime());
         actionService.executeSystemAction(institution, action, comment);
     }
 
@@ -198,5 +205,5 @@ public class InstitutionService {
     public List<Institution> list() {
         return institutionDAO.list();
     }
-    
+
 }

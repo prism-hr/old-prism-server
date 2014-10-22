@@ -45,8 +45,8 @@ public class CustomizationDAO {
                 .uniqueResult();
     }
 
-    public <T extends WorkflowResource> void restoreGlobalizedConfiguration(Class<T> workflowResourceClass, String keyIndex, WorkflowDefinition keyValue,
-            Resource globalizedResource, PrismScope globalizedResourceScope) {
+    public <T extends WorkflowResource> void restoreGlobalConfiguration(Class<T> entityClass, Resource resource, String keyIndex, WorkflowDefinition keyValue) {
+        PrismScope resourceScope = resource.getResourceScope();
         sessionFactory.getCurrentSession().createQuery( //
                 "delete :workflowResourceClass " //
                         + "where :keyIndex = :keyValue " //
@@ -59,15 +59,15 @@ public class CustomizationDAO {
                         + "or program in (" //
                                 + "from Program " //
                                 + "where institution = :institution " + "and locale = :locale))") //
-                .setParameter("workflowResourceClass", workflowResourceClass.getSimpleName()) //
+                .setParameter("workflowResourceClass", entityClass.getSimpleName()) //
                 .setParameter("keyIndex", keyValue) //
                 .setParameter("keyValue", keyValue) //
-                .setParameter("system", globalizedResourceScope == PrismScope.SYSTEM ? globalizedResource : null) //
-                .setParameter("locale", globalizedResource.getLocale()) //
-                .setParameter("institution", globalizedResourceScope == PrismScope.INSTITUTION ? globalizedResource : null) //
+                .setParameter("system", resourceScope == PrismScope.SYSTEM ? resource : null) //
+                .setParameter("locale", resource.getLocale()) //
+                .setParameter("institution", resourceScope == PrismScope.INSTITUTION ? resource : null) //
                 .executeUpdate();
     }
-    
+
     public List<DisplayProperty> getDisplayProperties(Resource resource, PrismLocale locale, PrismDisplayCategory category) {
         return (List<DisplayProperty>) sessionFactory.getCurrentSession().createCriteria(DisplayProperty.class) //
                 .add(Restrictions.eq("displayCategory.id", category)) //

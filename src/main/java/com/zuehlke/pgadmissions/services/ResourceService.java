@@ -121,8 +121,8 @@ public class ResourceService {
             Resource resource = getById(resourceScope.getResourceClass(), resourceId);
             Action action = actionService.getById(actionId);
 
-            String commentContent = actionId.name().endsWith("VIEW_EDIT") ? applicationContext.getBean(PropertyLoader.class).load(
-                    PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED")) : commentDTO.getContent();
+            String commentContent = actionId.name().endsWith("VIEW_EDIT") ? applicationContext.getBean(PropertyLoader.class).withResource(resource)
+                    .load(PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED")) : commentDTO.getContent();
 
             State transitionState = stateService.getById(commentDTO.getTransitionState());
             Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -24,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
@@ -46,6 +49,9 @@ public class RoleService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     public Role getById(PrismRole roleId) {
         return entityService.getByProperty(Role.class, "id", roleId);
@@ -82,10 +88,13 @@ public class RoleService {
             User invoker = userService.getCurrentUser();
             Action action = actionService.getViewEditAction(resource);
 
-            Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false);
+            PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).withResource(resource);
+
+            Comment comment = new Comment().withAction(action).withUser(invoker)
+                    .withContent(loader.load(PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE")))
+                    .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
             for (PrismRole role : roles) {
-                comment.getAssignedUsers().add(
-                        new CommentAssignedUser().withUser(user).withRole(entityService.getById(Role.class, role)).withRoleTransitionType(transitionType));
+                comment.addAssignedUser(user, getById(role), transitionType);
             }
 
             actionService.executeUserAction(resource, action, comment);
@@ -100,7 +109,7 @@ public class RoleService {
         Role role = getById(roleId);
         return roleDAO.getUserRole(resource, user, role) != null;
     }
-    
+
     public boolean hasAnyUserRole(Resource resource, User user, PrismRole... roleIds) {
         for (PrismRole roleId : roleIds) {
             if (hasUserRole(resource, user, roleId)) {

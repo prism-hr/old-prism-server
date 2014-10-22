@@ -6,7 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.A
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_REFEREE_REFERENCE_APPENDIX;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_REFEREE_REFERENCE_COMMENT_EQUIVALENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_REFEREE_SUBHEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_COMMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_COMMENT_HEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_NO;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_RATING;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_YES;
@@ -69,7 +69,7 @@ public class ApplicationDownloadReferenceBuilder {
     public void addReferenceComment(Document pdfDocument, PdfPTable body, PdfWriter pdfWriter, Application application, Comment referenceComment)
             throws DocumentException {
         PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).withResource(application);
-        String comment = propertyLoader.load(SYSTEM_COMMENT);
+        String comment = propertyLoader.load(SYSTEM_COMMENT_HEADER);
 
         if (referenceComment == null) {
             applicationDownloadBuilderHelper.addContentRowMedium(comment,

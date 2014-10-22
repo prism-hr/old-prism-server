@@ -1,20 +1,20 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-import java.util.Set;
+import java.util.List;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
 
 public class TimelineRepresentation {
 
-    private Set<TimelineCommentGroupRepresentation> commentGroups = Sets.newLinkedHashSet();
+    private List<TimelineCommentGroupRepresentation> commentGroups = Lists.newLinkedList();
 
-    public final Set<TimelineCommentGroupRepresentation> getCommentGroups() {
-        return commentGroups;
+    public final List<TimelineCommentGroupRepresentation> getCommentGroups() {
+        return Lists.reverse(commentGroups);
     }
 
-    public final void setCommentGroups(Set<TimelineCommentGroupRepresentation> commentGroups) {
+    public final void setCommentGroups(List<TimelineCommentGroupRepresentation> commentGroups) {
         this.commentGroups = commentGroups;
     }
 
@@ -26,7 +26,7 @@ public class TimelineRepresentation {
 
         private PrismStateGroup stateGroup;
 
-        private Set<CommentRepresentation> comments = Sets.newLinkedHashSet();
+        private List<CommentRepresentation> comments = Lists.newLinkedList();
 
         public final PrismStateGroup getStateGroup() {
             return stateGroup;
@@ -36,11 +36,11 @@ public class TimelineRepresentation {
             this.stateGroup = stateGroup;
         }
 
-        public final Set<CommentRepresentation> getComments() {
-            return comments;
+        public final List<CommentRepresentation> getComments() {
+            return Lists.reverse(comments);
         }
 
-        public final void setComments(Set<CommentRepresentation> comments) {
+        public final void setComments(List<CommentRepresentation> comments) {
             this.comments = comments;
         }
 

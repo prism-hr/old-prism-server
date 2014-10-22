@@ -102,7 +102,7 @@ public class ResourceResource {
 
         AbstractResourceRepresentation representation = dozerBeanMapper.map(resource, resourceDescriptor.getRepresentationType());
 
-        representation.setTimeline(commentService.getTimeline(resource, currentUser));
+        representation.setTimeline(commentService.getComments(resource, currentUser));
 
         List<ActionRepresentation> permittedActions = actionService.getPermittedActions(resource, currentUser);
         if (permittedActions.isEmpty()) {

@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.services.SystemService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
 @Service
-public class LifeCycleTest {
+public class LifecycleTest {
     
     @Autowired
     private SystemService systemService;

@@ -67,7 +67,7 @@ public class ResourceService {
 
     @Autowired
     private AdvertService advertService;
-    
+
     @Autowired
     private ApplicationService applicationService;
 
@@ -121,8 +121,11 @@ public class ResourceService {
             Resource resource = getById(resourceScope.getResourceClass(), resourceId);
             Action action = actionService.getById(actionId);
 
+            String commentContent = actionId.name().endsWith("VIEW_EDIT") ? applicationContext.getBean(PropertyLoader.class).load(
+                    PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED")) : commentDTO.getContent();
+
             State transitionState = stateService.getById(commentDTO.getTransitionState());
-            Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withAction(action).withTransitionState(transitionState)
+            Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
                     .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
 
             Object resourceDTO = commentDTO.fetchResouceDTO();
@@ -261,7 +264,7 @@ public class ResourceService {
     public void executeUpdate(Resource resource, PrismDisplayProperty messageIndex) throws DeduplicationException {
         executeUpdate(resource, messageIndex, null);
     }
-    
+
     public void executeUpdate(Resource resource, PrismDisplayProperty messageIndex, CommentAssignedUser assignee) throws DeduplicationException {
         User userCurrent = userService.getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
@@ -269,7 +272,7 @@ public class ResourceService {
         Comment comment = new Comment().withUser(userCurrent).withAction(action)
                 .withContent(applicationContext.getBean(PropertyLoader.class).withResource(resource).load(messageIndex)).withDeclinedResponse(false)
                 .withCreatedTimestamp(new DateTime());
-        
+
         if (assignee != null) {
             comment.addAssignedUser(assignee.getUser(), assignee.getRole(), assignee.getRoleTransitionType());
             entityService.evict(assignee);
@@ -277,7 +280,7 @@ public class ResourceService {
 
         actionService.executeUserAction(resource, action, comment);
     }
-    
+
     public Resource getOperativeResource(Resource resource, Action action) {
         return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
     }

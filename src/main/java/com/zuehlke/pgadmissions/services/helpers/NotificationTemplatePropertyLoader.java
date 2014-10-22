@@ -153,8 +153,8 @@ public class NotificationTemplatePropertyLoader {
 
     public String getCommentTransitionOutcome() {
         String resourceName = templateModelDTO.getResource().getResourceScope().name();
-        String statePostfix = Iterables.getLast(Lists.newArrayList(templateModelDTO.getComment().getTransitionState().getId().name().split("_")));
-        return propertyLoader.load(PrismDisplayProperty.valueOf(resourceName + "_" + statePostfix));
+        String outcomePostfix = Iterables.getLast(Lists.newArrayList(templateModelDTO.getComment().getTransitionState().getId().name().split("_")));
+        return propertyLoader.load(PrismDisplayProperty.valueOf(resourceName + "_COMMENT_" + outcomePostfix));
     }
 
     public String getApplicationCreatorFullName() {

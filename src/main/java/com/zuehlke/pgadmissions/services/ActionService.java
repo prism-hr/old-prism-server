@@ -1,16 +1,14 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-
-import javax.xml.bind.JAXBException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
@@ -18,13 +16,16 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
@@ -39,13 +40,16 @@ public class ActionService {
     private ActionDAO actionDAO;
 
     @Autowired
-    private StateService stateService;
+    private EntityService entityService;
 
     @Autowired
     private ResourceService resourceService;
 
     @Autowired
-    private EntityService entityService;
+    private RoleService roleService;
+
+    @Autowired
+    private StateService stateService;
 
     @Autowired
     private UserService userService;
@@ -140,6 +144,21 @@ public class ActionService {
                 .withTransitionAction(transitionAction);
     }
 
+    public ActionOutcomeDTO getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO, String referrer) throws DeduplicationException {
+        Action action = getById(registrationDTO.getAction().getActionId());
+        if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
+            Object operativeResourceDTO = registrationDTO.getAction().getOperativeResourceDTO();
+            return resourceService.createResource(user, action, operativeResourceDTO, referrer);
+        } else {
+            Resource resource = entityService.getById(action.getScope().getId().getResourceClass(), registrationDTO.getResourceId());
+            return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(resource).withTransitionAction(action);
+        }
+    }
+
+    public Action getViewEditAction(Resource resource) {
+        return actionDAO.getViewEditAction(resource);
+    }
+
     public Action getRedirectAction(Action action, User actionOwner, Resource duplicateResource) {
         if (action.getActionType() == PrismActionType.USER_INVOCATION) {
             return actionDAO.getUserRedirectAction(duplicateResource, actionOwner);
@@ -160,20 +179,15 @@ public class ActionService {
         return actionDAO.getPropagatedActions(stateTransitionPendingId);
     }
 
-    public ActionOutcomeDTO getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO, String referrer) throws DeduplicationException,
-            InterruptedException, IOException, JAXBException {
-        Action action = getById(registrationDTO.getAction().getActionId());
-        if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
-            Object operativeResourceDTO = registrationDTO.getAction().getOperativeResourceDTO();
-            return resourceService.createResource(user, action, operativeResourceDTO, referrer);
-        } else {
-            Resource resource = entityService.getById(action.getScope().getId().getResourceClass(), registrationDTO.getResourceId());
-            return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(resource).withTransitionAction(action);
-        }
-    }
+    public HashMultimap<PrismAction, PrismActionRedactionType> getRedactions(Resource resource, User user) {
+        List<PrismRole> roleIds = roleService.getRoles(resource, user);
+        List<ActionRedactionDTO> redactions = actionDAO.getRedactions(resource, roleIds);
 
-    public Action getViewEditAction(Resource resource) {
-        return actionDAO.getViewEditAction(resource);
+        HashMultimap<PrismAction, PrismActionRedactionType> actionRedactions = HashMultimap.create();
+        for (ActionRedactionDTO redaction : redactions) {
+            actionRedactions.put(redaction.getActionId(), redaction.getRedactionType());
+        }
+        return actionRedactions;
     }
 
     public void throwWorkflowPermissionException(Resource resource, Action action) {
@@ -198,7 +212,7 @@ public class ActionService {
         }
         throwWorkflowPermissionException(resource, action);
     }
-    
+
     private boolean checkActionAvailable(Resource resource, Action action, User invoker) {
         return actionDAO.getPermittedAction(resource, action, invoker) != null;
     }

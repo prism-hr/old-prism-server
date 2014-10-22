@@ -14,16 +14,16 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
+import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 
 @Repository
@@ -132,20 +132,16 @@ public class ActionDAO {
                 .list();
     }
 
-    public List<PrismActionRedactionType> getRedactions(User user, Resource resource, Action action) {
-        return (List<PrismActionRedactionType>) sessionFactory.getCurrentSession().createCriteria(ActionRedaction.class)
-                .setProjection(Projections.groupProperty("redactionType")) //
-                .createAlias("role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("action", action)) //
-                .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
-                        .add(Restrictions.eq("userRole.project", resource.getProject())) //
-                        .add(Restrictions.eq("userRole.program", resource.getProgram())) //
-                        .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
-                        .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
+    public List<ActionRedactionDTO> getRedactions(Resource resource, List<PrismRole> roleIds) {
+        return (List<ActionRedactionDTO>) sessionFactory.getCurrentSession().createCriteria(CommentDAO.class, "comment")
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("action.id"), "actionId") //
+                        .add(Projections.groupProperty("redaction.redactionType"), "redactionType")) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .createAlias("action.redactions", "redaction", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.in("redaction.role.id", roleIds)) //
+                .setResultTransformer(Transformers.aliasToBean(ActionRedactionDTO.class)) //
                 .list();
     }
 

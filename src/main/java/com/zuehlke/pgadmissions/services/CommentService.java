@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
@@ -24,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.comment.Document;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
@@ -99,6 +101,8 @@ public class CommentService {
             PrismStateGroup stateGroupId = null;
             List<Comment> previousStateComments = Lists.newArrayList();
 
+            HashMultimap<PrismAction, PrismActionRedactionType> redactions = actionService.getRedactions(resource, user);
+
             for (int i = 0; i < transitionCommentCount; i++) {
                 Comment start = transitionComments.get(i);
                 Comment close = i == (transitionCommentCount - 1) ? null : transitionComments.get(i + 1);
@@ -109,7 +113,9 @@ public class CommentService {
                 TimelineCommentGroupRepresentation commentGroup = new TimelineCommentGroupRepresentation().withStateGroup(stateGroupId);
 
                 for (Comment comment : stateComments) {
-                    commentGroup.addComment(dozerBeanMapper.map(comment, CommentRepresentation.class));
+                    CommentRepresentation representation = dozerBeanMapper.map(comment, CommentRepresentation.class);
+                    representation.setRedactions(redactions.get(comment.getAction().getId()));
+                    commentGroup.addComment(representation);
                 }
 
                 timeline.addCommentGroup(commentGroup);

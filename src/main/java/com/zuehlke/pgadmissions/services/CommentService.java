@@ -93,31 +93,31 @@ public class CommentService {
     public TimelineRepresentation getComments(Resource resource, User user) {
         TimelineRepresentation timeline = new TimelineRepresentation();
         List<Comment> transitionComments = commentDAO.getStateGroupTransitionComments(resource);
-        
+
         int transitionCommentCount = transitionComments.size();
         if (transitionCommentCount > 0) {
             PrismStateGroup stateGroupId = null;
             List<Comment> previousStateComments = Lists.newArrayList();
-            
-            for (int i = 0 ; i < transitionCommentCount; i++) {
+
+            for (int i = 0; i < transitionCommentCount; i++) {
                 Comment start = transitionComments.get(i);
                 Comment close = i == (transitionCommentCount - 1) ? null : transitionComments.get(i + 1);
 
                 stateGroupId = stateGroupId == null ? start.getState().getStateGroup().getId() : stateGroupId;
                 List<Comment> stateComments = commentDAO.getStateComments(resource, start, close, stateGroupId, previousStateComments);
-                
+
                 TimelineCommentGroupRepresentation commentGroup = new TimelineCommentGroupRepresentation().withStateGroup(stateGroupId);
-                
+
                 for (Comment comment : stateComments) {
                     commentGroup.addComment(dozerBeanMapper.map(comment, CommentRepresentation.class));
                 }
-                
+
                 timeline.addCommentGroup(commentGroup);
-                
+
                 stateGroupId = close == null ? null : close.getTransitionState().getStateGroup().getId();
                 previousStateComments = stateComments;
             }
-            
+
         }
 
         return timeline;

@@ -18,8 +18,6 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -34,27 +32,11 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 public class UserDAO {
 
     @Autowired
-    private EncryptionUtils encryptionUtils;
-
-    @Autowired
     private SessionFactory sessionFactory;
 
     public User getUserByActivationCode(String activationCode) {
         return (User) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .add(Restrictions.eq("activationCode", activationCode)) //
-                .uniqueResult();
-    }
-
-    public Integer getNumberOfActiveApplicationsForApplicant(User user) {
-        return (Integer) sessionFactory.getCurrentSession().createCriteria(Application.class) //
-                .setProjection(Projections.count("id")) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.not(Restrictions.not(Restrictions.in("state.id", Arrays.asList(PrismState.APPLICATION_APPROVED_PENDING_EXPORT,
-                        PrismState.APPLICATION_APPROVED_PENDING_CORRECTION, PrismState.APPLICATION_APPROVED_COMPLETED))))) //
-                .add(Restrictions.not(Restrictions.not(Restrictions.in("state.id", Arrays.asList(PrismState.APPLICATION_REJECTED_PENDING_EXPORT,
-                        PrismState.APPLICATION_REJECTED_PENDING_CORRECTION, PrismState.APPLICATION_REJECTED_COMPLETED))))) //
-                .add(Restrictions.not(Restrictions.eq("state,stateGroup", PrismStateGroup.APPLICATION_WITHDRAWN))) //
                 .uniqueResult();
     }
 
@@ -178,7 +160,7 @@ public class UserDAO {
         return (User) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("email", email)) //
-                .add(Restrictions.eq("userAccount.password", encryptionUtils.getMD5Hash(password))) //
+                .add(Restrictions.eq("userAccount.password", EncryptionUtils.getMD5(password))) //
                 .add(Restrictions.eq("enabled", true)) //
                 .uniqueResult();
     }
@@ -216,11 +198,10 @@ public class UserDAO {
                 .setResultTransformer(Transformers.aliasToBean(UserRepresentation.class)) //
                 .list();
     }
-    
+
     public List<User> getEnabledResourceUsers(Resource resource) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("user"))
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .setProjection(Projections.groupProperty("user")).createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
                 .add(Restrictions.disjunction() //
@@ -228,14 +209,13 @@ public class UserDAO {
                         .add(Restrictions.eq("userAccount.enabled", true))) //
                 .list();
     }
-    
+
     public List<Integer> getMatchingUsers(String searchTerm) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.ilike("fullName", searchTerm, MatchMode.ANYWHERE)) //
-                        .add(Restrictions.ilike("email", searchTerm, MatchMode.ANYWHERE)))
-                .list();
+                        .add(Restrictions.ilike("email", searchTerm, MatchMode.ANYWHERE))).list();
     }
 
 }

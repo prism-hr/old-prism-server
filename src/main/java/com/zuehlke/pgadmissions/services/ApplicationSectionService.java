@@ -87,6 +87,9 @@ public class ApplicationSectionService {
     private ActionService actionService;
 
     @Autowired
+    private ApplicationService applicationService;
+
+    @Autowired
     private EntityService entityService;
 
     @Autowired
@@ -105,10 +108,10 @@ public class ApplicationSectionService {
     private ApplicationContext applicationContext;
 
     // TODO: validate selection of themes
-    public void saveProgramDetail(Integer applicationId, ApplicationProgramDetailDTO programDetailDTO) throws DeduplicationException {
-        Application application = entityService.getById(Application.class, applicationId);
-
+    public void updateProgramDetail(Integer applicationId, ApplicationProgramDetailDTO programDetailDTO) throws DeduplicationException {
+        Application application = applicationService.getById(applicationId);
         Institution institution = application.getInstitution();
+        
         ApplicationProgramDetail programDetail = application.getProgramDetail();
         if (programDetail == null) {
             programDetail = new ApplicationProgramDetail();
@@ -127,9 +130,9 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL);
     }
 
-    public ApplicationSupervisor saveSupervisor(Integer applicationId, Integer supervisorId, ApplicationSupervisorDTO supervisorDTO)
+    public ApplicationSupervisor updateSupervisor(Integer applicationId, Integer supervisorId, ApplicationSupervisorDTO supervisorDTO)
             throws DeduplicationException {
-        Application application = entityService.getById(Application.class, applicationId);
+        Application application = applicationService.getById(applicationId);
 
         ApplicationSupervisor supervisor;
         if (supervisorId == null) {
@@ -155,7 +158,7 @@ public class ApplicationSectionService {
     }
 
     public void deleteSupervisor(Integer applicationId, Integer supervisorId) throws DeduplicationException {
-        Application application = entityService.getById(Application.class, applicationId);
+        Application application = applicationService.getById(applicationId);
 
         ApplicationSupervisor supervisor = entityService.getByProperties(ApplicationSupervisor.class,
                 ImmutableMap.of("application", application, "id", supervisorId));
@@ -166,17 +169,17 @@ public class ApplicationSectionService {
                 new CommentAssignedUser().withUser(user).withRole(roleService.getById(APPLICATION_SUGGESTED_SUPERVISOR)).withRoleTransitionType(DELETE));
     }
 
-    public void savePersonalDetail(Integer applicationId, ApplicationPersonalDetailDTO personalDetailDTO) throws DeduplicationException {
-        Application application = entityService.getById(Application.class, applicationId);
-
+    public void updatePersonalDetail(Integer applicationId, ApplicationPersonalDetailDTO personalDetailDTO) throws DeduplicationException {
+        Application application = applicationService.getById(applicationId);
         Institution institution = application.getInstitution();
+        
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         if (personalDetail == null) {
             personalDetail = new ApplicationPersonalDetail();
             application.setPersonalDetail(personalDetail);
         }
 
-        saveUserDetail(personalDetailDTO, userService.getCurrentUser(), application);
+        updateUserDetail(personalDetailDTO, userService.getCurrentUser(), application);
 
         Title title = importedEntityService.getById(Title.class, institution, personalDetailDTO.getTitle());
         Gender gender = importedEntityService.getById(Gender.class, institution, personalDetailDTO.getGender());
@@ -201,17 +204,16 @@ public class ApplicationSectionService {
         personalDetail.setEthnicity(ethnicity);
         personalDetail.setDisability(disability);
 
-        saveLanguageQualification(personalDetailDTO, institution, personalDetail);
-        savePassport(personalDetailDTO, personalDetail);
+        updateLanguageQualification(personalDetailDTO, institution, personalDetail);
+        updatePassport(personalDetailDTO, personalDetail);
 
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL);
     }
 
-    public void saveAddress(Integer applicationId, ApplicationAddressDTO addressDTO) throws DeduplicationException {
-        Application application = entityService.getById(Application.class, applicationId);
-
+    public void updateAddress(Integer applicationId, ApplicationAddressDTO addressDTO) throws DeduplicationException {
+        Application application = applicationService.getById(applicationId);
         Institution institution = application.getInstitution();
-
+        
         ApplicationAddress address = application.getAddress();
         if (address == null) {
             address = new ApplicationAddress();
@@ -237,9 +239,9 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDRESS);
     }
 
-    public ApplicationQualification saveQualification(Integer applicationId, Integer qualificationId, ApplicationQualificationDTO qualificationDTO)
+    public ApplicationQualification updateQualification(Integer applicationId, Integer qualificationId, ApplicationQualificationDTO qualificationDTO)
             throws DeduplicationException {
-        Application application = entityService.getById(Application.class, applicationId);
+        Application application = applicationService.getById(applicationId);
 
         ApplicationQualification qualification;
         if (qualificationId == null) {
@@ -271,7 +273,7 @@ public class ApplicationSectionService {
     }
 
     public void deleteQualification(Integer applicationId, Integer qualificationId) throws DeduplicationException {
-        Application application = entityService.getById(Application.class, applicationId);
+        Application application = applicationService.getById(applicationId);
 
         ApplicationQualification qualification = entityService.getByProperties(ApplicationQualification.class,
                 ImmutableMap.of("application", application, "id", qualificationId));
@@ -280,9 +282,9 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
     }
 
-    public ApplicationEmploymentPosition saveEmploymentPosition(Integer applicationId, Integer employmentPositionId,
+    public ApplicationEmploymentPosition updateEmploymentPosition(Integer applicationId, Integer employmentPositionId,
             ApplicationEmploymentPositionDTO employmentPositionDTO) throws DeduplicationException {
-        Application application = entityService.getById(Application.class, applicationId);
+        Application application = applicationService.getById(applicationId);
 
         ApplicationEmploymentPosition employmentPosition;
         if (employmentPositionId != null) {
@@ -314,15 +316,15 @@ public class ApplicationSectionService {
     }
 
     public void deleteEmploymentPosition(Integer applicationId, Integer employmentPositionId) throws DeduplicationException {
-        Application application = entityService.getById(Application.class, applicationId);
+        Application application = applicationService.getById(applicationId);
         ApplicationEmploymentPosition employmentPosition = entityService.getByProperties(ApplicationEmploymentPosition.class,
                 ImmutableMap.of("application", application, "id", employmentPositionId));
         application.getEmploymentPositions().remove(employmentPosition);
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_EMPLOYMENT);
     }
 
-    public ApplicationFunding saveFunding(Integer applicationId, Integer fundingId, ApplicationFundingDTO fundingDTO) throws DeduplicationException {
-        Application application = entityService.getById(Application.class, applicationId);
+    public ApplicationFunding updateFunding(Integer applicationId, Integer fundingId, ApplicationFundingDTO fundingDTO) throws DeduplicationException {
+        Application application = applicationService.getById(applicationId);
 
         ApplicationFunding funding;
         if (fundingId == null) {
@@ -346,14 +348,14 @@ public class ApplicationSectionService {
     }
 
     public void deleteFunding(Integer applicationId, Integer fundingId) throws DeduplicationException {
-        Application application = entityService.getById(Application.class, applicationId);
+        Application application = applicationService.getById(applicationId);
         ApplicationFunding funding = entityService.getByProperties(ApplicationFunding.class, ImmutableMap.of("application", application, "id", fundingId));
         application.getFundings().remove(funding);
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_FUNDING);
     }
 
-    public ApplicationReferee saveReferee(Integer applicationId, Integer refereeId, ApplicationRefereeDTO refereeDTO) throws DeduplicationException {
-        Application application = entityService.getById(Application.class, applicationId);
+    public ApplicationReferee updateReferee(Integer applicationId, Integer refereeId, ApplicationRefereeDTO refereeDTO) throws DeduplicationException {
+        Application application = applicationService.getById(applicationId);
 
         ApplicationReferee referee;
         if (refereeId == null) {
@@ -391,14 +393,15 @@ public class ApplicationSectionService {
     }
 
     public void deleteReferee(Integer applicationId, Integer refereeId) throws DeduplicationException {
-        Application application = entityService.getById(Application.class, applicationId);
+        Application application = applicationService.getById(applicationId);
         ApplicationReferee referee = entityService.getByProperties(ApplicationReferee.class, ImmutableMap.of("application", application, "id", refereeId));
         application.getReferees().remove(referee);
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE);
     }
 
-    public void saveAdditionalInformation(Integer applicationId, ApplicationAdditionalInformationDTO additionalInformationDTO) throws DeduplicationException {
-        Application application = entityService.getById(Application.class, applicationId);
+    public void updateAdditionalInformation(Integer applicationId, ApplicationAdditionalInformationDTO additionalInformationDTO) throws DeduplicationException {
+        Application application = applicationService.getById(applicationId);
+        
         ApplicationAdditionalInformation additionalInformation = application.getAdditionalInformation();
         if (additionalInformation == null) {
             additionalInformation = new ApplicationAdditionalInformation();
@@ -409,17 +412,15 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION);
     }
 
-    private void saveUserDetail(ApplicationPersonalDetailDTO personalDetailDTO, User userCurrent, Application application) {
+    private void updateUserDetail(ApplicationPersonalDetailDTO personalDetailDTO, User userCurrent, Application application) {
         User userCreator = application.getUser();
         if (userCurrent.getId().equals(userCreator.getId())) {
-            userCreator.setFirstName(personalDetailDTO.getUser().getFirstName());
-            userCreator.setFirstName2(Strings.emptyToNull(personalDetailDTO.getUser().getFirstName2()));
-            userCreator.setFirstName3(Strings.emptyToNull(personalDetailDTO.getUser().getFirstName3()));
-            userCreator.setLastName(personalDetailDTO.getUser().getLastName());
+            UserDTO userDTO = personalDetailDTO.getUser();
+            userService.updateUser(userCreator, userDTO);
         }
     }
 
-    private void savePassport(ApplicationPersonalDetailDTO personalDetailDTO, ApplicationPersonalDetail personalDetail) {
+    private void updatePassport(ApplicationPersonalDetailDTO personalDetailDTO, ApplicationPersonalDetail personalDetail) {
         ApplicationPassportDTO passportDTO = personalDetailDTO.getPassport();
         if (passportDTO == null) {
             personalDetail.setPassport(null);
@@ -436,7 +437,7 @@ public class ApplicationSectionService {
         }
     }
 
-    private void saveLanguageQualification(ApplicationPersonalDetailDTO personalDetailDTO, Institution institution, ApplicationPersonalDetail personalDetail) {
+    private void updateLanguageQualification(ApplicationPersonalDetailDTO personalDetailDTO, Institution institution, ApplicationPersonalDetail personalDetail) {
         ApplicationLanguageQualificationDTO languageQualificationDTO = personalDetailDTO.getLanguageQualification();
         if (languageQualificationDTO == null) {
             personalDetail.setLanguageQualification(null);

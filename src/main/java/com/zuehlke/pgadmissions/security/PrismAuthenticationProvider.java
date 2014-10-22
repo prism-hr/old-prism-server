@@ -26,9 +26,6 @@ public class PrismAuthenticationProvider implements AuthenticationProvider {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    @Autowired
-    private EncryptionUtils encryptionUtils;
-
     @Override
     @Transactional
     public Authentication authenticate(Authentication preProcessToken) throws AuthenticationException {
@@ -62,13 +59,14 @@ public class PrismAuthenticationProvider implements AuthenticationProvider {
     }
 
     private boolean checkPassword(User user, String providedPassword) {
-        return StringUtils.equals(user.getUserAccount().getPassword(), encryptionUtils.getMD5Hash(providedPassword))
+        return StringUtils.equals(user.getUserAccount().getPassword(), EncryptionUtils.getMD5(providedPassword))
                 || checkTemporaryPassword(user, providedPassword);
     }
 
     private boolean checkTemporaryPassword(User user, String providedPassword) {
         DateTime temporaryPasswordExpiryTimestamp = user.getUserAccount().getTemporaryPasswordExpiryTimestamp();
         return temporaryPasswordExpiryTimestamp != null && new DateTime().isAfter(temporaryPasswordExpiryTimestamp)
-                && StringUtils.equals(user.getUserAccount().getTemporaryPassword(), encryptionUtils.getMD5Hash(providedPassword));
+                && StringUtils.equals(user.getUserAccount().getTemporaryPassword(), EncryptionUtils.getMD5(providedPassword));
     }
+
 }

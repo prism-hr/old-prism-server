@@ -1,20 +1,20 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_COMMENT_INITIALIZED_SYSTEM;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.hibernate.SessionFactory;
-import org.hibernate.search.FullTextSession;
-import org.hibernate.search.Search;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +24,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
+import com.zuehlke.pgadmissions.dao.SystemDAO;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory;
@@ -64,6 +65,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 public class SystemService {
@@ -98,6 +100,9 @@ public class SystemService {
     private Boolean initializeNotifications;
 
     @Autowired
+    private SystemDAO systemDAO;
+    
+    @Autowired
     private EntityService entityService;
 
     @Autowired
@@ -125,7 +130,7 @@ public class SystemService {
     private CustomizationService customizationService;
 
     @Autowired
-    private SessionFactory sessionFactory;
+    private ApplicationContext applicationContext;
 
     @Transactional
     public System getSystem() {
@@ -182,8 +187,7 @@ public class SystemService {
 
     @Transactional
     public void initializeSearchIndex() throws InterruptedException {
-        FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
-        fullTextSession.createIndexer().startAndWait();
+        systemDAO.initializeSearchIndex();
     }
 
     @Transactional
@@ -437,7 +441,9 @@ public class SystemService {
         User user = system.getUser();
         if (user.getUserAccount() == null) {
             Action action = actionService.getById(PrismAction.SYSTEM_STARTUP);
-            Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
+            Comment comment = new Comment().withAction(action)
+                    .withContent(applicationContext.getBean(PropertyLoader.class).load(SYSTEM_COMMENT_INITIALIZED_SYSTEM)).withDeclinedResponse(false)
+                    .withUser(user).withCreatedTimestamp(new DateTime())
                     .addAssignedUser(user, roleService.getCreatorRole(system), PrismRoleTransitionType.CREATE);
             ActionOutcomeDTO outcome = actionService.executeSystemAction(system, action, comment);
             notificationService.sendRegistrationNotification(user, outcome, comment);

@@ -20,6 +20,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.P
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.PROGRAM_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.PROJECT_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.PROJECT_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.SYSTEM_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.SYSTEM_GLOBAL;
 
 public enum PrismDisplayProperty {
@@ -45,7 +46,7 @@ public enum PrismDisplayProperty {
     SYSTEM_SEE(SYSTEM_GLOBAL, "See"), //
     SYSTEM_PAGE(SYSTEM_GLOBAL, "Page"), //
     SYSTEM_CLOSING_DATE(SYSTEM_GLOBAL, "Closing Date"), //
-    SYSTEM_COMMENT(SYSTEM_GLOBAL, "Comment"), //
+    SYSTEM_COMMENT_HEADER(SYSTEM_GLOBAL, "Comment"), //
     SYSTEM_EMAIL_LINK_MESSAGE(SYSTEM_GLOBAL, "If you are unable to follow the links in this message, copy and paste them directly into your browser."), //
     SYSTEM_TELEPHONE_PLACEHOLDER(SYSTEM_GLOBAL, "+44 (0) 0000 000 000"), //
     SYSTEM_IP_PLACEHOLDER(SYSTEM_GLOBAL, "127.0.0.1"), //
@@ -68,6 +69,9 @@ public enum PrismDisplayProperty {
     SYSTEM_USER_ACCOUNT(SYSTEM_GLOBAL, "User Account"), //
     SYSTEM_COMMENT_CONTENT_NOT_PROVIDED(SYSTEM_GLOBAL, "No comment provided"), //
     SYSTEM_APPLY(SYSTEM_GLOBAL, "Apply Now"), //
+    SYSTEM_COMMENT_UPDATED_USER_ROLE(SYSTEM_COMMENT, "Updated system user roles"), //
+    SYSTEM_COMMENT_UPDATED_NOTIFICATION(SYSTEM_COMMENT, "Updated system notification configuration"), //
+    SYSTEM_COMMENT_RESTORED_NOTIFICATION_GLOBAL(SYSTEM_COMMENT, "Restored system global notification template"), //
     INSTITUTION_HEADER(INSTITUTION_GLOBAL, "Institution"), //
     INSTITUTION_COMMENT_APPROVED(
             INSTITUTION_COMMENT,
@@ -76,9 +80,10 @@ public enum PrismDisplayProperty {
             "Further information is required to activate your institution. Please login to address the reviewers comments."), //
     INSTITUTION_COMMENT_REJECTED(INSTITUTION_COMMENT, "We are sorry to inform you that your institution has been rejected."), //
     INSTITUTION_COMMENT_UPDATED(INSTITUTION_COMMENT, "Updated institution"), //
-    INSTITUTION_COMMENT_UPDATED_NOTIFICATION(INSTITUTION_COMMENT, "Updated notification configuration"), //
-    INSTITUTION_COMMENT_RESTORED_NOTIFICATION_DEFAULT(INSTITUTION_COMMENT, "Restored default notification template"), //
-    INSTITUTION_COMMENT_OVERWROTE_NOTIFICATION_CUSTOM(INSTITUTION_COMMENT, "Overwrote customized notification templates"), //
+    INSTITUTION_COMMENT_UPDATED_USER_ROLE(INSTITUTION_COMMENT, "Updated institution user roles"), //
+    INSTITUTION_COMMENT_UPDATED_NOTIFICATION(INSTITUTION_COMMENT, "Updated institution notification configuration"), //
+    INSTITUTION_COMMENT_RESTORED_NOTIFICATION_DEFAULT(INSTITUTION_COMMENT, "Restored system default notification template"), //
+    INSTITUTION_COMMENT_RESTORED_NOTIFICATION_GLOBAL(INSTITUTION_COMMENT, "Restored institution global notification template"), //
     PROGRAM_HEADER(PROGRAM_GLOBAL, "Program"), //
     PROGRAM_STUDY_OPTION(PROGRAM_GLOBAL, "Study Option"), //
     PROGRAM_STUDY_OPTION_FULL_TIME(PROGRAM_GLOBAL, "Full Time"), //
@@ -104,16 +109,24 @@ public enum PrismDisplayProperty {
     PROGRAM_COMMENT_CORRECTION(PROGRAM_COMMENT, "Further information is required to activate your program. Please login to address the reviewers comments."), //
     PROGRAM_COMMENT_REJECTED(PROGRAM_COMMENT, "We are sorry to inform you that your program has been rejected."), //
     PROGRAM_COMMENT_UPDATED(PROGRAM_COMMENT, "Updated program"), //
-    PROGRAM_COMMENT_UPDATED_ADVERT(PROGRAM_COMMENT, "Updated advert"), //
-    PROGRAM_COMMENT_UPDATED_FEE_AND_PAYMENT(PROGRAM_COMMENT, "Updated fees and payments"), //
-    PROGRAM_COMMENT_UPDATED_CATEGORY(PROGRAM_COMMENT, "Updated categories"), //
-    PROGRAM_COMMENT_UPDATED_CLOSING_DATE(PROGRAM_COMMENT, "Updated closing dates"), //
+    PROGRAM_COMMENT_UPDATED_USER_ROLE(PROGRAM_COMMENT, "Updated program user roles"), //
+    PROGRAM_COMMENT_UPDATED_NOTIFICATION(PROGRAM_COMMENT, "Updated program notification configuration"), //
+    PROGRAM_COMMENT_RESTORED_NOTIFICATION_DEFAULT(PROGRAM_COMMENT, "Restored institution default notification template"), //
+    PROGRAM_COMMENT_UPDATED_ADVERT(PROGRAM_COMMENT, "Updated program advert"), //
+    PROGRAM_COMMENT_UPDATED_FEE_AND_PAYMENT(PROGRAM_COMMENT, "Updated program fees and payments"), //
+    PROGRAM_COMMENT_UPDATED_CATEGORY(PROGRAM_COMMENT, "Updated program categories"), //
+    PROGRAM_COMMENT_UPDATED_CLOSING_DATE(PROGRAM_COMMENT, "Updated program closing dates"), //
     PROJECT_HEADER(PROJECT_GLOBAL, "Project"), //
     PROJECT_COMMENT_APPROVED(PROJECT_COMMENT,
             "We are pleased to tell you that your project has been approved. You may now login to create users and manage your recruitment."), //
     PROJECT_COMMENT_CORRECTION(PROJECT_COMMENT, "Further information is required to activate your project. Please login to address the reviewers comments."), //
     PROJECT_COMMENT_REJECTED(PROJECT_COMMENT, "We are sorry to inform you that your project has been rejected."), //
     PROJECT_COMMENT_UPDATED(PROJECT_COMMENT, "Updated project"), //
+    PROJECT_COMMENT_UPDATED_USER_ROLE(PROJECT_COMMENT, "Updated project user roles"), //
+    PROJECT_COMMENT_UPDATED_ADVERT(PROJECT_COMMENT, "Updated project advert"), //
+    PROJECT_COMMENT_UPDATED_FEE_AND_PAYMENT(PROJECT_COMMENT, "Updated project fees and payments"), //
+    PROJECT_COMMENT_UPDATED_CATEGORY(PROJECT_COMMENT, "Updated project categories"), //
+    PROJECT_COMMENT_UPDATED_CLOSING_DATE(PROJECT_COMMENT, "Updated project closing dates"), //
     APPLICATION_HEADER(APPLICATION_GLOBAL, "Application"), //
     APPLICATION_CREATOR(APPLICATION_GLOBAL, "Applicant"), //
     APPLICATION_QUALIFICATION_TYPE(APPLICATION_GLOBAL, "Qualification Type"), //

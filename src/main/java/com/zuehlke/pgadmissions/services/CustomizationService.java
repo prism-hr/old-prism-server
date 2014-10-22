@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -60,28 +61,26 @@ public class CustomizationService {
         return customizationDAO.getConfiguration(entityClass, resource, keyIndex, keyValue);
     }
 
-    public <T extends WorkflowResource> T getConfigurationStrict(Class<T> entityClass, Resource resource, String keyIndex,
-            WorkflowDefinition keyValue) {
+    public <T extends WorkflowResource> T getConfigurationStrict(Class<T> entityClass, Resource resource, String keyIndex, WorkflowDefinition keyValue) {
         return customizationDAO.getConfigurationStrict(entityClass, resource, keyIndex, keyValue);
     }
 
-    public <T extends WorkflowResource> void removeLocalizedConfiguration(Class<T> entityClass, Resource resource, String keyIndex,
-            WorkflowDefinition keyValue) {
-        T localizedConfiguration = getConfigurationStrict(entityClass, resource, keyIndex, keyValue);
-        if (localizedConfiguration != null) {
-            entityService.delete(localizedConfiguration);
+    public <T extends WorkflowResource> void restoreDefaultConfiguration(Class<T> entityClass, Resource resource, String keyIndex, WorkflowDefinition keyValue) {
+        if (Arrays.asList(PrismScope.INSTITUTION, PrismScope.PROGRAM).contains(resource.getResourceScope())) {
+            T configuration = getConfigurationStrict(entityClass, resource, keyIndex, keyValue);
+            if (configuration != null) {
+                entityService.delete(configuration);
+            }
+        } else {
+            throw new Error();
         }
     }
 
-    public <T extends WorkflowResource> void restoreGlobalizedConfiguration(Class<T> entityClass, Resource resource, String keyIndex,
-            WorkflowDefinition keyValue) {
-        T globalizedConfiguration = getConfigurationStrict(entityClass, resource, keyIndex, keyValue);
-
-        Resource globalizedResource = globalizedConfiguration.getResource();
-        PrismScope globalizedResourceScope = globalizedResource.getResourceScope();
-
-        if (globalizedResourceScope == PrismScope.SYSTEM || globalizedResourceScope == PrismScope.INSTITUTION) {
-            customizationDAO.restoreGlobalizedConfiguration(entityClass, keyIndex, keyValue, globalizedResource, globalizedResourceScope);
+    public <T extends WorkflowResource> void restoreGlobalConfiguration(Class<T> entityClass, Resource resource, String keyIndex, WorkflowDefinition keyValue) {
+        if (Arrays.asList(PrismScope.SYSTEM, PrismScope.INSTITUTION).contains(resource.getResourceScope())) {
+            customizationDAO.restoreGlobalConfiguration(entityClass, resource, keyIndex, keyValue);
+        } else {
+            throw new Error();
         }
     }
 

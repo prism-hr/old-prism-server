@@ -1,5 +1,9 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PURGE_RESOURCE;
+
+import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
@@ -205,7 +209,7 @@ public class ActionDAO {
                 .setProjection(Projections.property("action.id")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("action.actionCategory", PrismActionCategory.ESCALATE_RESOURCE)) //
+                .add(Restrictions.in("action.actionCategory", Arrays.asList(ESCALATE_RESOURCE, PURGE_RESOURCE))) //
                 .addOrder(Order.desc("scope.precedence")) //
                 .list();
     }

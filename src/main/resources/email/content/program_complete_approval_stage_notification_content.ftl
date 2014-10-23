@@ -3,7 +3,7 @@
 </h1>
 
 <p>
-    Your request to create a new ${TEMLATE_SYSTEM_TITLE} Program ${PROGRAM_CODE} has been reviewed.
+    Your request to create a new ${TEMPLATE_SYSTEM_TITLE} Program ${PROGRAM_CODE} has been reviewed.
 </p>
 
 <p>

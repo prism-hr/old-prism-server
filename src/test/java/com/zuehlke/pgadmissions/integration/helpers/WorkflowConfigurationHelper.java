@@ -93,7 +93,7 @@ public class WorkflowConfigurationHelper {
         if (state == null) {
             state = stateService.getById(PrismState.SYSTEM_RUNNING);
         }
-        
+
         statesVisited.add(state);
         logger.info("Verifying state: " + state.getId().toString());
         assertEquals(state.getScope(), state.getStateGroup().getScope());
@@ -111,7 +111,7 @@ public class WorkflowConfigurationHelper {
 
     private void verifyTransitionState(State state, State transitionState) {
         statesVisited.add(transitionState);
-        
+
         int statePrecedence = state.getScope().getPrecedence();
         int transitionStatePrecedence = transitionState.getScope().getPrecedence();
 
@@ -159,7 +159,7 @@ public class WorkflowConfigurationHelper {
                 }
             }
 
-            if (actionCategory == PrismActionCategory.ESCALATE_RESOURCE) {
+            if (actionCategory == PrismActionCategory.ESCALATE_RESOURCE || actionCategory == PrismActionCategory.PURGE_RESOURCE) {
                 escalationActions.add(action);
             }
 
@@ -171,7 +171,7 @@ public class WorkflowConfigurationHelper {
             verifyStateTransitions(stateAction);
         }
 
-        boolean actionsEmpty = state.getStateActions().isEmpty();     
+        boolean actionsEmpty = state.getStateActions().isEmpty();
         assertTrue(actionsEmpty || userDefaultActions.size() == 1);
         assertTrue(systemDefaultActions.size() <= 1);
         assertTrue(actionsEmpty || viewEditActions.size() >= 1);

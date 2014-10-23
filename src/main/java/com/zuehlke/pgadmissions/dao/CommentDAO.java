@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
+
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -164,14 +166,19 @@ public class CommentDAO {
                 .createAlias("transitionState", "transitionState", JoinType.INNER_JOIN) //
                 .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
-                .add(Restrictions.eq("action.transitionAction", true)) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("transitionStateGroup.repeatable", true)) //
                         .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("stateGroup.id")) //
-                                .add(Restrictions.isNotNull("transitionStateGroup.id")) //
-                                .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id"))) //
-                        .add(Restrictions.isNotNull("action.creationScope"))) //
+                                .add(Restrictions.eq("action.transitionAction", true)) //
+                                .add(Restrictions.disjunction() //
+                                        .add(Restrictions.eq("transitionStateGroup.repeatable", true)) //
+                                        .add(Restrictions.conjunction() //
+                                                .add(Restrictions.isNotNull("stateGroup.id")) //
+                                                .add(Restrictions.isNotNull("transitionStateGroup.id")) //
+                                                .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id"))) //
+                                        .add(Restrictions.isNotNull("action.creationScope")))) //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.eq("action.actionCategory", ESCALATE_RESOURCE)) //
+                                .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id")))) //
                 .addOrder(Order.asc("createdTimestamp")) //
                 .addOrder(Order.asc("id")) //
                 .list();

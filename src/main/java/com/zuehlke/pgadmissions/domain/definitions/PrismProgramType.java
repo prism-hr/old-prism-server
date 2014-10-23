@@ -34,20 +34,20 @@ import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
 
 public enum PrismProgramType {
 
-    STUDY_UNDERGRADUATE(STUDY, 36, 48, EXTERNAL, SCHEDULED, SEPTEMBER, 3, MONDAY, 4, PROGRAM_TYPE_STUDY_UNDERGRADUATE, new String[] {}), //
-    STUDY_POSTGRADUATE_TAUGHT(STUDY, 12, 24, EXTERNAL, SCHEDULED, SEPTEMBER, 3, MONDAY, 4, PROGRAM_TYPE_STUDY_POSTGRADUATE_TAUGHT, new String[] {}), //
-    STUDY_POSTGRADUATE_RESEARCH(STUDY, 12, 48, EXTERNAL, SCHEDULED, SEPTEMBER, 3, MONDAY, 4, PROGRAM_TYPE_STUDY_POSTGRADUATE_RESEARCH, new String[] { "mres",
-            "md(res)", "research degree", "engineering doctorate" }), //
-    SCHOLARSHIP_UNDERGRADUATE(FUNDING, 36, 48, INTERNAL, SCHEDULED, SEPTEMBER, 3, MONDAY, 4, PROGRAM_TYPE_SCHOLARSHIP_UNDERGRADUATE, new String[] {}), //
-    SCHOLARSHIP_POSTGRADUATE_TAUGHT(FUNDING, 12, 24, INTERNAL, SCHEDULED, SEPTEMBER, 3, MONDAY, 4, PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_TAUGHT,
+    STUDY_UNDERGRADUATE(STUDY, 36, 48, EXTERNAL, SCHEDULED, SEPTEMBER, 3, MONDAY, 4, 3, PROGRAM_TYPE_STUDY_UNDERGRADUATE, new String[] {}), //
+    STUDY_POSTGRADUATE_TAUGHT(STUDY, 12, 24, EXTERNAL, SCHEDULED, SEPTEMBER, 3, MONDAY, 4, 3, PROGRAM_TYPE_STUDY_POSTGRADUATE_TAUGHT, new String[] {}), //
+    STUDY_POSTGRADUATE_RESEARCH(STUDY, 12, 48, EXTERNAL, SCHEDULED, SEPTEMBER, 3, MONDAY, 4, 3, PROGRAM_TYPE_STUDY_POSTGRADUATE_RESEARCH, new String[] {
+            "mres", "md(res)", "research degree", "engineering doctorate" }), //
+    SCHOLARSHIP_UNDERGRADUATE(FUNDING, 36, 48, INTERNAL, SCHEDULED, SEPTEMBER, 3, MONDAY, 4, 1, PROGRAM_TYPE_SCHOLARSHIP_UNDERGRADUATE, new String[] {}), //
+    SCHOLARSHIP_POSTGRADUATE_TAUGHT(FUNDING, 12, 24, INTERNAL, SCHEDULED, SEPTEMBER, 3, MONDAY, 4, 3, PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_TAUGHT,
             new String[] {}), //
-    SCHOLARSHIP_POSTGRADUATE_RESEARCH(FUNDING, 12, 48, INTERNAL, SCHEDULED, SEPTEMBER, 3, MONDAY, 4, PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_RESEARCH,
+    SCHOLARSHIP_POSTGRADUATE_RESEARCH(FUNDING, 12, 48, INTERNAL, SCHEDULED, SEPTEMBER, 3, MONDAY, 4, 3, PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_RESEARCH,
             new String[] {}), //
-    WORK_EXPERIENCE(EXPERIENCE, null, null, EXTERNAL, IMMEDIATE, null, null, MONDAY, 4, PROGRAM_TYPE_WORK_EXPERIENCE, new String[] {}), //
-    EMPLOYMENT(WORK, null, null, EXTERNAL, IMMEDIATE, null, null, MONDAY, 4, PROGRAM_TYPE_EMPLOYMENT, new String[] {}), //
-    EMPLOYMENT_SECONDMENT(WORK, null, null, INTERNAL, IMMEDIATE, null, null, MONDAY, 4, PROGRAM_TYPE_EMPLOYMENT_SECONDMENT,
+    WORK_EXPERIENCE(EXPERIENCE, null, null, EXTERNAL, IMMEDIATE, null, null, MONDAY, 4, 1, PROGRAM_TYPE_WORK_EXPERIENCE, new String[] {}), //
+    EMPLOYMENT(WORK, null, null, EXTERNAL, IMMEDIATE, null, null, MONDAY, 4, 1, PROGRAM_TYPE_EMPLOYMENT, new String[] {}), //
+    EMPLOYMENT_SECONDMENT(WORK, null, null, INTERNAL, IMMEDIATE, null, null, MONDAY, 4, 1, PROGRAM_TYPE_EMPLOYMENT_SECONDMENT,
             new String[] { "visiting research" }), //
-    TRAINING(LEARNING, null, null, INTERNAL, IMMEDIATE, null, null, MONDAY, 4, PROGRAM_TYPE_TRAINING, new String[] {}); //
+    TRAINING(LEARNING, null, null, INTERNAL, IMMEDIATE, null, null, MONDAY, 4, 1, PROGRAM_TYPE_TRAINING, new String[] {}); //
 
     private PrismProgramCategory programCategory;
 
@@ -66,6 +66,8 @@ public enum PrismProgramType {
     private Integer defaultStartDay;
 
     private Integer defaultStartDelay;
+
+    private Integer defaultStartBuffer;
 
     private PrismDisplayProperty displayProperty;
 
@@ -135,7 +137,7 @@ public enum PrismProgramType {
 
     private PrismProgramType(PrismProgramCategory programClass, Integer defaultMinimumDurationMonth, Integer defaultMaximumDurationMonth,
             PrismProgramTypeVisibility defaultVisibility, PrismProgramStartType defaultStartType, Integer defaultStartMonth, Integer defaultStartWeek,
-            Integer defaultStartDay, Integer defaultStartDelay, PrismDisplayProperty displayProperty, String[] prefixes) {
+            Integer defaultStartDay, Integer defaultStartDelay, Integer defaultStartBuffer, PrismDisplayProperty displayProperty, String[] prefixes) {
         this.programCategory = programClass;
         this.defaultMinimumDurationMonth = defaultMinimumDurationMonth;
         this.defaultMaximumDurationMonth = defaultMaximumDurationMonth;
@@ -145,6 +147,7 @@ public enum PrismProgramType {
         this.defaultStartWeek = defaultStartWeek;
         this.defaultStartDay = defaultStartDay;
         this.defaultStartDelay = defaultStartDelay;
+        this.defaultStartBuffer = defaultStartBuffer;
         this.displayProperty = displayProperty;
         this.prefixes = prefixes;
     }
@@ -183,6 +186,10 @@ public enum PrismProgramType {
 
     public final Integer getDefaultStartDelay() {
         return defaultStartDelay;
+    }
+
+    public final Integer getDefaultStartBuffer() {
+        return defaultStartBuffer;
     }
 
     public final PrismDisplayProperty getDisplayProperty() {

@@ -91,7 +91,11 @@ public class PrismProjectApprovalPendingCorrection extends PrismWorkflowState {
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
                     new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR)))); //
+                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR),
+                    new PrismStateActionAssignment() // 
+                        .withRole(PrismRole.PROJECT_ADMINISTRATOR), //
+                    new PrismStateActionAssignment() // 
+                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR)))); //
         
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_WITHDRAW) //

@@ -150,7 +150,7 @@ public class ApplicationService {
         LocalDate studyOptionStart = studyOption.getApplicationStartDate();
         LocalDate earliestStartDate = studyOptionStart.isBefore(baseline) ? baseline : studyOptionStart;
         earliestStartDate = earliestStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
-        return earliestStartDate.isBefore(baseline) ? earliestStartDate.plusWeeks(1) : earliestStartDate;
+        return earliestStartDate.isBefore(studyOptionStart) ? earliestStartDate.plusWeeks(1) : earliestStartDate;
     }
 
     public LocalDate getLatestStartDate(ProgramStudyOption studyOption) {
@@ -158,7 +158,8 @@ public class ApplicationService {
             return null;
         }
 
-        LocalDate closeDate = studyOption.getApplicationCloseDate();
+        LocalDate closeDate = studyOption.getApplicationCloseDate().plusMonths(
+                studyOption.getProgram().getProgramType().getPrismProgramType().getDefaultStartBuffer());
         LocalDate latestStartDate = closeDate.withDayOfWeek(DateTimeConstants.MONDAY);
         return latestStartDate.isAfter(closeDate) ? latestStartDate.minusWeeks(1) : latestStartDate;
     }
@@ -412,9 +413,8 @@ public class ApplicationService {
 
         LocalDate immediate = defaults.getImmediate();
         LocalDate scheduled = defaults.getScheduled();
-        
+
         LocalDate recommended = application.getDefaultStartType() == SCHEDULED ? scheduled : immediate;
-        recommended = recommended.isBefore(earliest) ? earliest.plusWeeks(programType.getDefaultStartDelay()) : recommended;
 
         if (recommended.isBefore(earliest)) {
             recommended = earliest.plusWeeks(programType.getDefaultStartDelay());

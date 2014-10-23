@@ -18,17 +18,27 @@ public class PrismInstitutionApprovedCompleted extends PrismWorkflowState {
     @Override
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
+            .withAction(PrismAction.INSTITUTION_EMAIL_CREATOR) //
+            .withRaisesUrgentFlag(false) //
+            .withDefaultAction(false) //
+                .withAssignments(Arrays.asList( // 
+                    new PrismStateActionAssignment() // 
+                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
+        
+        stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.INSTITUTION_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
-            .withActionEnhancement(PrismActionEnhancement.INSTITUTION_VIEW_EDIT_AS_USER) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
+                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) //
+                        .withActionEnhancement(PrismActionEnhancement.INSTITUTION_VIEW_EDIT_AS_USER), // 
                     new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.INSTITUTION_ADMITTER), // 
+                        .withRole(PrismRole.INSTITUTION_ADMITTER) //
+                        .withActionEnhancement(PrismActionEnhancement.INSTITUTION_VIEW_AS_USER), // 
                     new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR))) //
+                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR) //
+                        .withActionEnhancement(PrismActionEnhancement.INSTITUTION_VIEW_EDIT_AS_USER))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.INSTITUTION_APPROVED) // 

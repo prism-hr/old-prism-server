@@ -34,7 +34,17 @@ public class PrismProjectDisabledPendingReactivation extends PrismWorkflowState 
                         .withTransitionState(PrismState.PROJECT_DISABLED_PENDING_REACTIVATION) // 
                         .withTransitionAction(PrismAction.PROJECT_CONCLUDE) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME)))); //
-    
+        
+        stateActions.add(new PrismStateAction() //
+            .withAction(PrismAction.PROJECT_EMAIL_CREATOR) //
+            .withRaisesUrgentFlag(false) //
+            .withDefaultAction(false) //
+                .withAssignments(Arrays.asList( // 
+                    new PrismStateActionAssignment() // 
+                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), //
+                    new PrismStateActionAssignment() // 
+                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR)))); //
+        
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_VIEW_EDIT) //
             .withRaisesUrgentFlag(true) //

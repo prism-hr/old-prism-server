@@ -69,6 +69,8 @@ public class PrismProgramApproval extends PrismWorkflowState {
             .withDefaultAction(true) //
             .withActionEnhancement(PrismActionEnhancement.PROGRAM_VIEW_AS_USER) //
                 .withAssignments(Arrays.asList( // 
+                    new PrismStateActionAssignment() //
+                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), //
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR)))); //
         

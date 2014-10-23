@@ -37,6 +37,14 @@ public class PrismProgramApproved extends PrismWorkflowState {
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.APPLICATION_TERMINATE,  //
                                 PrismAction.PROJECT_TERMINATE))))); //
+        
+        stateActions.add(new PrismStateAction() //
+            .withAction(PrismAction.PROGRAM_EMAIL_CREATOR) //
+            .withRaisesUrgentFlag(false) //
+            .withDefaultAction(false)  //
+                .withAssignments(Arrays.asList( // 
+                    new PrismStateActionAssignment() // 
+                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_VIEW_EDIT) //

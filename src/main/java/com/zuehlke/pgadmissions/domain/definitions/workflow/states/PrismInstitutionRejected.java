@@ -13,6 +13,14 @@ public class PrismInstitutionRejected extends PrismWorkflowState {
     @Override
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
+            .withAction(PrismAction.INSTITUTION_EMAIL_CREATOR) //
+            .withRaisesUrgentFlag(false) //
+            .withDefaultAction(false) //
+                .withAssignments(Arrays.asList( // 
+                    new PrismStateActionAssignment() // 
+                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //        
+        
+        stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.INSTITUTION_VIEW_EDIT) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true)

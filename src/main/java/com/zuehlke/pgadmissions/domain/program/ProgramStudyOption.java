@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 
 @Entity
-@Table(name = "PROGRAM_STUDY_OPTION", uniqueConstraints = @UniqueConstraint(columnNames = {"program_id", "study_option_id"}))
+@Table(name = "PROGRAM_STUDY_OPTION", uniqueConstraints = @UniqueConstraint(columnNames = { "program_id", "study_option_id" }))
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ProgramStudyOption implements IUniqueEntity {
 
@@ -133,4 +133,5 @@ public class ProgramStudyOption implements IUniqueEntity {
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addProperty("program", program).addProperty("studyOption", studyOption);
     }
+
 }

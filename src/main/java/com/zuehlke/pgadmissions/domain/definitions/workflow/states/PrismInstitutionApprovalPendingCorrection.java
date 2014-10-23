@@ -53,7 +53,9 @@ public class PrismInstitutionApprovalPendingCorrection extends PrismWorkflowStat
             .withActionEnhancement(PrismActionEnhancement.INSTITUTION_VIEW_AS_USER) //
                 .withAssignments(Arrays.asList( //
                     new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR)))); //
+                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR),
+                    new PrismStateActionAssignment() // 
+                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.INSTITUTION_WITHDRAW) //

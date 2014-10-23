@@ -69,6 +69,8 @@ public class PrismInstitutionApproval extends PrismWorkflowState {
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
                 .withAssignments(Arrays.asList( //
+                    new PrismStateActionAssignment()
+                        .withRole(PrismRole.SYSTEM_ADMINISTRATOR), //
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR)))); //
         

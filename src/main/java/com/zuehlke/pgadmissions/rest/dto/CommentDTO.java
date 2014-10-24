@@ -33,19 +33,9 @@ public class CommentDTO {
     @Valid
     private List<FileDTO> documents;
 
-    private YesNoUnsureResponse qualified;
+    private YesNoUnsureResponse eligible;
 
-    private YesNoUnsureResponse competentInWorkLanguage;
-
-    private Integer residenceState;
-
-    private Boolean suitableForInstitution;
-
-    private Boolean suitableForOpportunity;
-
-    private Boolean desireToInterview;
-
-    private Boolean desireToRecruit;
+    private Boolean interested;
 
     private Integer applicationRating;
 
@@ -146,60 +136,20 @@ public class CommentDTO {
         this.documents = documents;
     }
 
-    public YesNoUnsureResponse getQualified() {
-        return qualified;
+    public YesNoUnsureResponse getEligible() {
+        return eligible;
     }
 
-    public void setQualified(YesNoUnsureResponse qualified) {
-        this.qualified = qualified;
+    public void setEligible(YesNoUnsureResponse eligible) {
+        this.eligible = eligible;
     }
 
-    public YesNoUnsureResponse getCompetentInWorkLanguage() {
-        return competentInWorkLanguage;
+    public final Boolean getInterested() {
+        return interested;
     }
 
-    public void setCompetentInWorkLanguage(YesNoUnsureResponse competentInWorkLanguage) {
-        this.competentInWorkLanguage = competentInWorkLanguage;
-    }
-
-    public Integer getResidenceState() {
-        return residenceState;
-    }
-
-    public void setResidenceState(Integer residenceState) {
-        this.residenceState = residenceState;
-    }
-
-    public Boolean getSuitableForInstitution() {
-        return suitableForInstitution;
-    }
-
-    public void setSuitableForInstitution(Boolean suitableForInstitution) {
-        this.suitableForInstitution = suitableForInstitution;
-    }
-
-    public Boolean getSuitableForOpportunity() {
-        return suitableForOpportunity;
-    }
-
-    public void setSuitableForOpportunity(Boolean suitableForOpportunity) {
-        this.suitableForOpportunity = suitableForOpportunity;
-    }
-
-    public Boolean getDesireToInterview() {
-        return desireToInterview;
-    }
-
-    public void setDesireToInterview(Boolean desireToInterview) {
-        this.desireToInterview = desireToInterview;
-    }
-
-    public Boolean getDesireToRecruit() {
-        return desireToRecruit;
-    }
-
-    public void setDesireToRecruit(Boolean desireToRecruit) {
-        this.desireToRecruit = desireToRecruit;
+    public final void setInterested(Boolean interested) {
+        this.interested = interested;
     }
 
     public Integer getApplicationRating() {

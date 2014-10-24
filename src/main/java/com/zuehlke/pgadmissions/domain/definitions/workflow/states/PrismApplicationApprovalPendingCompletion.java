@@ -226,7 +226,7 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
                                 .withRestrictToOwner(false)))))); //
     
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.APPLICATION_CONFIRM_SUPERVISION) //
+            .withAction(PrismAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(false) //
             .withNotificationTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_TASK_REQUEST) //

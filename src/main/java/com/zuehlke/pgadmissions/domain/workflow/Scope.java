@@ -10,12 +10,13 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 @Entity
 @Table(name = "SCOPE")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Scope extends WorkflowDefinition {
+public class Scope implements IUniqueEntity {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -65,6 +66,11 @@ public class Scope extends WorkflowDefinition {
     public Scope withShortCode(String shortCode) {
         this.shortCode = shortCode;
         return this;
+    }
+
+    @Override
+    public ResourceSignature getResourceSignature() {
+        return new ResourceSignature().addProperty("id", id);
     }
     
 }

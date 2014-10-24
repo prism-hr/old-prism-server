@@ -96,7 +96,7 @@ public class UserResource {
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public Map<String, String> authenticate(@RequestParam(required = false, value = "username") String username,
-                                            @RequestParam(required = false, value = "password") String password) {
+            @RequestParam(required = false, value = "password") String password) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
         Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -106,7 +106,7 @@ public class UserResource {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public void submitRegistration(@RequestHeader(value = "referer", required = false) String referrer,
-                                   @Valid @RequestBody UserRegistrationDTO userRegistrationDTO) throws Exception {
+            @Valid @RequestBody UserRegistrationDTO userRegistrationDTO) throws Exception {
         userService.registerUser(userRegistrationDTO, referrer);
     }
 

@@ -76,8 +76,9 @@ public class Action extends WorkflowDefinition {
         return id;
     }
 
-    public void setId(PrismAction id) {
-        this.id = id;
+    @Override
+    public void setId(Enum<?> id) {
+        this.id = (PrismAction) id;
     }
 
     public PrismActionType getActionType() {
@@ -144,10 +145,12 @@ public class Action extends WorkflowDefinition {
         this.fallbackAction = fallbackAction;
     }
 
+    @Override
     public Scope getScope() {
         return scope;
     }
 
+    @Override
     public void setScope(Scope scope) {
         this.scope = scope;
     }

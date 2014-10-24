@@ -82,9 +82,7 @@ public class CommentDAO {
     public List<Comment> getApplicationAssessmentComments(Application application) {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq("application", application)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNotNull("desireToInterview")) //
-                        .add(Restrictions.isNotNull("desireToRecruit"))) //
+                .add(Restrictions.eq("applicationInterested", true)) //
                 .addOrder(Order.asc("user")) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //

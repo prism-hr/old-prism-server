@@ -40,8 +40,9 @@ public class StateGroup extends WorkflowDefinition {
         return id;
     }
 
-    public void setId(PrismStateGroup id) {
-        this.id = id;
+    @Override
+    public void setId(Enum<?> id) {
+        this.id = (PrismStateGroup) id;
     }
 
     public int getSequenceOrder() {
@@ -60,10 +61,12 @@ public class StateGroup extends WorkflowDefinition {
         this.repeatable = repeatable;
     }
 
+    @Override
     public Scope getScope() {
         return scope;
     }
 
+    @Override
     public void setScope(Scope scope) {
         this.scope = scope;
     }

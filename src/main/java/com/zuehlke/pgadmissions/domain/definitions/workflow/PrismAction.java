@@ -121,7 +121,11 @@ public enum PrismAction {
                     .addResolution(APPOINTMENT_CONDITIONS).build()), //
     APPLICATION_CONFIRM_REJECTION(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, APPLICATION, null, null, PrismActionValidationDefinition
             .builder().addResolution(REJECTION_REASON, NOT_NULL).build()), //
-    APPLICATION_CONFIRM_SUPERVISION(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, APPLICATION, null, Arrays.asList(
+    APPLICATION_CONFIRM_PRIMARY_SUPERVISION(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, APPLICATION, null, Arrays.asList(
+            new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT), new PrismActionRedaction().withRole(APPLICATION_REFEREE)
+                    .withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder().addResolution(RECRUITER_ACCEPT_APPOINTMENT, NOT_NULL)
+            .setCustomValidator(new ConfirmSupervisionCommentCustomValidator()).build()), //
+    APPLICATION_CONFIRM_SECONDARY_SUPERVISION(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, APPLICATION, null, Arrays.asList(
             new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT), new PrismActionRedaction().withRole(APPLICATION_REFEREE)
                     .withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder().addResolution(RECRUITER_ACCEPT_APPOINTMENT, NOT_NULL)
             .addResolution(CONTENT).addResolution(ASSIGNED_USERS).addResolution(POSITION_TITLE).addResolution(POSITION_DESCRIPTION)
@@ -274,7 +278,7 @@ public enum PrismAction {
         this.redactions = redactions == null ? Collections.<PrismActionRedaction> emptyList() : redactions;
         this.validationDefinition = validationDefinition;
     }
-    
+
     public PrismActionType getActionType() {
         return actionType;
     }

@@ -6,8 +6,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -82,10 +80,6 @@ public class Program extends ResourceParent {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
     @Column(name = "title", nullable = false)
     private String title;
-    
-    @Column(name = "locale", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PrismLocale locale;
 
     @Column(name = "require_project_definition", nullable = false)
     private Boolean requireProjectDefinition;
@@ -139,7 +133,7 @@ public class Program extends ResourceParent {
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
-    
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "PROGRAM_RELATION", joinColumns = @JoinColumn(name = "program_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "program_relation_id", nullable = false))
     private Set<Program> programRelations = Sets.newHashSet();
@@ -207,7 +201,6 @@ public class Program extends ResourceParent {
     public void setProject(Project project) {
     }
 
-
     @Override
     public Application getApplication() {
         return null;
@@ -219,7 +212,7 @@ public class Program extends ResourceParent {
     }
 
     @Override
-    public void setReferrer (String referrer) {
+    public void setReferrer(String referrer) {
         this.referrer = referrer;
     }
 
@@ -265,15 +258,6 @@ public class Program extends ResourceParent {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    @Override
-    public final PrismLocale getLocale() {
-        return locale;
-    }
-
-    public final void setLocale(PrismLocale locale) {
-        this.locale = locale;
     }
 
     public Boolean getRequireProjectDefinition() {
@@ -438,7 +422,7 @@ public class Program extends ResourceParent {
     public void addComment(Comment comment) {
         comments.add(comment);
     }
-    
+
     public final Set<ProgramStudyOption> getStudyOptions() {
         return studyOptions;
     }
@@ -477,11 +461,6 @@ public class Program extends ResourceParent {
 
     public Program withTitle(String title) {
         setTitle(title);
-        return this;
-    }
-    
-    public Program withLocale(PrismLocale locale) {
-        this.locale = locale;
         return this;
     }
 
@@ -533,6 +512,11 @@ public class Program extends ResourceParent {
     public Program withUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
         return this;
+    }
+
+    @Override
+    public PrismLocale getLocale() {
+        return institution.getLocale();
     }
 
     @Override

@@ -1,5 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -13,12 +19,12 @@ import com.zuehlke.pgadmissions.dao.CustomizationDAO;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.display.DisplayCategory;
 import com.zuehlke.pgadmissions.domain.display.DisplayProperty;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowResource;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceConfiguration;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 
 @Service
@@ -34,22 +40,19 @@ public class CustomizationService {
     @Autowired
     private SystemService systemService;
 
+    @Autowired
+    private UserService userService;
+
     public DisplayCategory getDisplayCategoryById(PrismDisplayCategory id) {
         return entityService.getById(DisplayCategory.class, id);
     }
 
-    public void createOrUpdateDisplayProperty(Resource resource, PrismDisplayProperty propertyIndex, String propertyValue) throws DeduplicationException {
-        createOrUpdateDisplayProperty(resource, null, propertyIndex, propertyValue);
-    }
-
-    public void createOrUpdateDisplayProperty(Resource resource, PrismLocale locale, PrismDisplayProperty propertyIndex, String propertyValue)
-            throws DeduplicationException {
-        boolean resourceIsSystem = resource.getResourceScope() == PrismScope.SYSTEM;
-        PrismLocale defaultLocale = resourceIsSystem ? resource.getSystem().getLocale() : null;
-        DisplayCategory category = getDisplayCategoryById(propertyIndex.getCategory());
-        DisplayProperty transientProperty = new DisplayProperty().withResource(resource).withLocale(locale == null ? defaultLocale : locale)
-                .withDisplayCategory(category).withPropertyIndex(propertyIndex).withPropertyValue(propertyValue)
-                .withPropertyDefault(resourceIsSystem && locale == null || locale == defaultLocale ? true : false);
+    public void createOrUpdateDisplayProperty(Resource resource, DisplayCategory category, PrismProgramType programType, PrismLocale locale,
+            PrismDisplayProperty propertyIndex, String propertyValue) throws DeduplicationException {
+        boolean systemDefault = ((category.getScope().getId().isProgramTypeConfigurationOwner() && programType == null) || programType == getSystemProgramType())
+                && locale == getSystemLocale();
+        DisplayProperty transientProperty = new DisplayProperty().withResource(resource).withProgramType(programType).withLocale(locale)
+                .withDisplayCategory(category).withPropertyIndex(propertyIndex).withPropertyValue(propertyValue).withSystemDefault(systemDefault);
         entityService.createOrUpdate(transientProperty);
     }
 
@@ -57,17 +60,14 @@ public class CustomizationService {
         return entityService.list(DisplayProperty.class);
     }
 
-    public <T extends WorkflowResource> T getConfiguration(Class<T> entityClass, Resource resource, String keyIndex, WorkflowDefinition keyValue) {
-        return customizationDAO.getConfiguration(entityClass, resource, keyIndex, keyValue);
+    public <T extends WorkflowResourceConfiguration> T getConfiguration(Class<T> entityClass, Resource resource, String keyIndex, WorkflowDefinition keyValue) {
+        return customizationDAO.getConfiguration(entityClass, resource, userService.getCurrentUser().getLocale(), keyIndex, keyValue);
     }
 
-    public <T extends WorkflowResource> T getConfigurationStrict(Class<T> entityClass, Resource resource, String keyIndex, WorkflowDefinition keyValue) {
-        return customizationDAO.getConfigurationStrict(entityClass, resource, keyIndex, keyValue);
-    }
-
-    public <T extends WorkflowResource> void restoreDefaultConfiguration(Class<T> entityClass, Resource resource, String keyIndex, WorkflowDefinition keyValue) {
-        if (Arrays.asList(PrismScope.INSTITUTION, PrismScope.PROGRAM).contains(resource.getResourceScope())) {
-            T configuration = getConfigurationStrict(entityClass, resource, keyIndex, keyValue);
+    public <T extends WorkflowResourceConfiguration> void restoreDefaultConfiguration(Class<T> entityClass, Resource resource, PrismProgramType programType,
+            PrismLocale locale, String keyIndex, WorkflowDefinition keyValue) {
+        if (Arrays.asList(INSTITUTION, PROGRAM).contains(resource.getResourceScope())) {
+            T configuration = customizationDAO.getConfigurationToEdit(entityClass, resource, programType, locale, keyIndex, keyValue);
             if (configuration != null) {
                 entityService.delete(configuration);
             }
@@ -76,9 +76,10 @@ public class CustomizationService {
         }
     }
 
-    public <T extends WorkflowResource> void restoreGlobalConfiguration(Class<T> entityClass, Resource resource, String keyIndex, WorkflowDefinition keyValue) {
-        if (Arrays.asList(PrismScope.SYSTEM, PrismScope.INSTITUTION).contains(resource.getResourceScope())) {
-            customizationDAO.restoreGlobalConfiguration(entityClass, resource, keyIndex, keyValue);
+    public <T extends WorkflowResourceConfiguration> void restoreGlobalConfiguration(Class<T> entityClass, Resource resource, PrismProgramType programType,
+            PrismLocale locale, String keyIndex, WorkflowDefinition keyValue) {
+        if (Arrays.asList(SYSTEM, INSTITUTION).contains(resource.getResourceScope())) {
+            customizationDAO.restoreGlobalConfiguration(entityClass, resource, programType, locale, keyIndex, keyValue);
         } else {
             throw new Error();
         }

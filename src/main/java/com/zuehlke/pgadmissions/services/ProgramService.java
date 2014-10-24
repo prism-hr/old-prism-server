@@ -107,12 +107,12 @@ public class ProgramService {
         Advert advert = program.getAdvert();
 
         if (!program.getImported()) {
-            ProgramType programType = importedEntityService.getImportedEntityByCode(ProgramType.class, program.getInstitution(), programDTO.getProgramType().name());
+            ProgramType programType = importedEntityService.getImportedEntityByCode(ProgramType.class, program.getInstitution(), programDTO.getProgramType()
+                    .name());
             String title = programDTO.getTitle();
 
             program.setProgramType(programType);
             program.setTitle(title);
-            program.setLocale(programDTO.getLocale());
             advert.setTitle(title);
         }
 
@@ -175,5 +175,5 @@ public class ProgramService {
             persistentProgram.setDueDate(baseline);
         }
     }
-    
+
 }

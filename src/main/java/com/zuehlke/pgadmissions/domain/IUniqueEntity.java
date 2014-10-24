@@ -30,12 +30,16 @@ public interface IUniqueEntity {
         }
 
         public ResourceSignature addProperty(String key, Object value) {
-            properties.put(key, value);
+            if (!(key == null || value == null)) {
+                properties.put(key, value);
+            }
             return this;
         }
 
         public ResourceSignature addExclusion(String key, Object value) {
-            exclusions.put(key, value);
+            if (!(key == null || value == null)) {
+                exclusions.put(key, value);
+            }
             return this;
         }
 

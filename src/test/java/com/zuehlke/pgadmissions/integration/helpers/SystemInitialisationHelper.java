@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.integration.helpers;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -46,6 +47,7 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
+import com.zuehlke.pgadmissions.domain.workflow.StateDuration;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
@@ -224,9 +226,12 @@ public class SystemInitialisationHelper {
             DisplayCategory displayCategory = property.getDisplayCategory();
             assertEquals(displayCategory.getScope().getId(), displayCategory.getId().getScope());
 
+            assertNull(property.getProgramType());
+            assertEquals(property.getLocale(), PrismLocale.getSystemLocale());
             assertEquals(property.getPropertyIndex().getCategory(), displayCategory.getId());
             assertEquals(property.getPropertyIndex().getDefaultValue(), property.getPropertyValue());
-            assertTrue(property.getPropertyDefault());
+            assertTrue(property.getSystemDefault());
+            assertTrue(property.getSystemDefault());
         }
     }
 
@@ -239,8 +244,11 @@ public class SystemInitialisationHelper {
             assertEquals(template.getId().getReminderTemplate(), (template.getReminderTemplate()) == null ? null : template.getReminderTemplate().getId());
 
             NotificationConfiguration configuration = notificationService.getConfiguration(system, template);
+            assertNull(configuration.getProgramType());
+            assertEquals(configuration.getLocale(), getSystemLocale());
             assertEquals(configuration.getNotificationTemplate(), template);
             assertEquals(template.getId().getReminderInterval(), configuration.getReminderInterval());
+            assertTrue(configuration.getSystemDefault());
 
             assertEquals(getFileContent(defaultEmailSubjectDirectory + template.getId().getInitialTemplateSubject()), configuration.getSubject());
             assertEquals(getFileContent(defaultEmailContentDirectory + template.getId().getInitialTemplateContent()), configuration.getContent());
@@ -250,7 +258,12 @@ public class SystemInitialisationHelper {
     public void verifyStateDurationCreation() {
         System system = systemService.getSystem();
         for (State state : stateService.getConfigurableStates()) {
-            assertEquals(state.getId().getDuration(), stateService.getStateDuration(system, state).getDuration());
+            StateDuration stateDuration = stateService.getStateDuration(system, state);
+            
+            assertNull(stateDuration.getProgramType());
+            assertEquals(stateDuration.getLocale(), getSystemLocale());
+            assertEquals(state.getId().getDuration(), stateDuration.getDuration());
+            assertTrue(stateDuration.getSystemDefault());
         }
     }
 

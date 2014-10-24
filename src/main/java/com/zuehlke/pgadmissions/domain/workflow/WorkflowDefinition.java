@@ -5,8 +5,14 @@ import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 
 public abstract class WorkflowDefinition implements IUniqueEntity {
 
-    public abstract Object getId();
+    public abstract Enum<?> getId();
 
+    public abstract void setId(Enum<?> id);
+
+    public abstract Scope getScope();
+
+    public abstract void setScope(Scope scope);
+    
     @Override
     public int hashCode() {
         return Objects.hashCode(getId());

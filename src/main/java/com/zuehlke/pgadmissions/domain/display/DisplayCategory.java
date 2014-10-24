@@ -21,35 +21,39 @@ public class DisplayCategory extends WorkflowDefinition {
     @Column(name = "id", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismDisplayCategory id;
-    
+
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
 
+    @Override
     public final PrismDisplayCategory getId() {
         return id;
     }
 
-    public final void setId(PrismDisplayCategory id) {
-        this.id = id;
+    @Override
+    public final void setId(Enum<?> id) {
+        this.id = (PrismDisplayCategory) id;
     }
 
+    @Override
     public final Scope getScope() {
         return scope;
     }
 
+    @Override
     public final void setScope(Scope scope) {
         this.scope = scope;
     }
-    
+
     public DisplayCategory withId(PrismDisplayCategory id) {
         this.id = id;
         return this;
     }
-    
+
     public DisplayCategory withScope(Scope scope) {
         this.scope = scope;
         return this;
     }
-    
+
 }

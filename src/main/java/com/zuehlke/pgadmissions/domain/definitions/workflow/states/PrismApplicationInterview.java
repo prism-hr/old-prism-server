@@ -57,7 +57,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
+                        .withTransitionAction(PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_INTERVIEW_SCHEDULED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
@@ -73,7 +73,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
                                 .withMinimumPermitted(1))), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
+                        .withTransitionAction(PrismAction.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_INTERVIEW_SCHEDULED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //

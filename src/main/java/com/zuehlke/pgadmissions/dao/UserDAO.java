@@ -215,7 +215,8 @@ public class UserDAO {
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.ilike("fullName", searchTerm, MatchMode.ANYWHERE)) //
-                        .add(Restrictions.ilike("email", searchTerm, MatchMode.ANYWHERE))).list();
+                        .add(Restrictions.ilike("email", searchTerm, MatchMode.ANYWHERE))) //
+                .list();
     }
 
 }

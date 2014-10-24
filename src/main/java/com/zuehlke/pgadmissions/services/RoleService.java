@@ -98,6 +98,7 @@ public class RoleService {
             }
 
             actionService.executeUserAction(resource, action, comment);
+            notificationService.sendInvitationNotifications(comment);
         }
     }
 

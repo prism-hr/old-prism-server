@@ -74,7 +74,6 @@ public class UserService {
         return entityService.getById(User.class, id);
     }
 
-    @Transactional
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof User) {

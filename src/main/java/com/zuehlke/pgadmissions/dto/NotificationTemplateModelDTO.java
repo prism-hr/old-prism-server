@@ -73,6 +73,11 @@ public class NotificationTemplateModelDTO {
         return this;
     }
 
+    public NotificationTemplateModelDTO withInvoker(User invoker) {
+        this.invoker = invoker;
+        return this;
+    }
+
     public NotificationTemplateModelDTO withResource(Resource resource) {
         this.resource = resource;
         return this;

@@ -1,5 +1,14 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.INSTITUTION_IMPORT_ERROR_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.SYSTEM_INVITATION_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+
 import java.util.List;
 
 import org.joda.time.LocalDate;
@@ -12,10 +21,10 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.NotificationDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -223,8 +232,8 @@ public class NotificationService {
 
     public void sendDataImportErrorNotifications(Institution institution, String errorMessage) {
         System system = systemService.getSystem();
-        for (User user : userService.getUsersForResourceAndRole(institution, PrismRole.INSTITUTION_ADMINISTRATOR)) {
-            NotificationTemplate template = getById(PrismNotificationTemplate.INSTITUTION_IMPORT_ERROR_NOTIFICATION);
+        for (User user : userService.getUsersForResourceAndRole(institution, INSTITUTION_ADMINISTRATOR)) {
+            NotificationTemplate template = getById(INSTITUTION_IMPORT_ERROR_NOTIFICATION);
             sendNotification(template, new NotificationTemplateModelDTO().withUser(user).withAuthor(system.getUser()).withResource(institution)
                     .withDataImportErrorMessage(errorMessage));
         }
@@ -233,9 +242,22 @@ public class NotificationService {
     public void sendRecommendationNotification(User transientUser, LocalDate baseline) {
         User persistentUser = userService.getById(transientUser.getId());
         System system = systemService.getSystem();
-        NotificationTemplate template = getById(PrismNotificationTemplate.SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION);
+        NotificationTemplate template = getById(SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION);
         sendNotification(template, new NotificationTemplateModelDTO().withUser(persistentUser).withAuthor(system.getUser()).withResource(system));
         persistentUser.getUserAccount().setLastNotifiedDateApplicationRecommendation(baseline);
+    }
+
+    public void sendInvitationNotifications(Comment comment) {
+        NotificationTemplate template = getById(SYSTEM_INVITATION_NOTIFICATION);
+        System system = systemService.getSystem();
+
+        for (CommentAssignedUser assignee : comment.getAssignedUsers()) {
+            User invitee = assignee.getUser();
+            if (assignee.getRoleTransitionType() == CREATE && invitee.getUserAccount() == null) {
+                sendNotification(template, new NotificationTemplateModelDTO().withUser(invitee).withAuthor(system.getUser()).withInvoker(comment.getUser())
+                        .withResource(system).withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST));
+            }
+        }
     }
 
     public void sendRegistrationNotification(User user, ActionOutcomeDTO actionOutcome) {
@@ -245,15 +267,15 @@ public class NotificationService {
     public void sendRegistrationNotification(User user, ActionOutcomeDTO actionOutcome, Comment comment) {
         System system = systemService.getSystem();
         sendNotification(
-                PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST,
+                SYSTEM_COMPLETE_REGISTRATION_REQUEST,
                 new NotificationTemplateModelDTO().withUser(user).withAuthor(system.getUser()).withResource(actionOutcome.getTransitionResource())
                         .withComment(comment).withTransitionAction(actionOutcome.getTransitionAction().getId()));
     }
 
     public void sendResetPasswordNotification(User user, String newPassword) {
         System system = systemService.getSystem();
-        sendNotification(PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION, new NotificationTemplateModelDTO().withUser(user).withAuthor(system.getUser())
-                .withResource(system).withNewPassword(newPassword));
+        sendNotification(SYSTEM_PASSWORD_NOTIFICATION, new NotificationTemplateModelDTO().withUser(user).withAuthor(system.getUser()).withResource(system)
+                .withNewPassword(newPassword));
     }
 
     public List<PrismNotificationTemplate> getEditableTemplates(PrismScope scope) {

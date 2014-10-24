@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<languageQualificationTypes>
+	<languageQualificationType>
+		<code>CUST000001</code>
+		<name>0CR Level 2 Certificate in Adult Literacy which is equivalent to GCSE</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000002</code>
+		<name>A case has been made to the Dean to waive the requirement of an English test</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000003</code>
+		<name>A-level</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000004</code>
+		<name>Academic qualification undertaken in English</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000005</code>
+		<name>AS-level English Language (A grade)</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000006</code>
+		<name>B1 / BSOL Entry Level</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000007</code>
+		<name>Bachelors &amp; Masters from UK</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000008</code>
+		<name>Bell English Language Test</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000009</code>
+		<name>Brunel English Language Test</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000010</code>
+		<name>Business Language Testing Service </name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000011</code>
+		<name>cambridge advanced englisg certificate, esol</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000012</code>
+		<name>Cambridge Certificate in Advanced English</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000013</code>
+		<name>Cambridge Certificate of Advanced English</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000014</code>
+		<name>Cambridge Certificate of Proficiency</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000015</code>
+		<name>Cambridge Certificate of Proficiency in English</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000016</code>
+		<name>Cambridge English 1119</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000017</code>
+		<name>Cambridge English: Preliminary (PET)</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000018</code>
+		<name>Cambridge First Certificate in English</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000019</code>
+		<name>Cambridge O-Level English</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000020</code>
+		<name>Cambridge Preliminary English Test</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000021</code>
+		<name>Cambridge University</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000022</code>
+		<name>CEFR</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000023</code>
+		<name>Certificate of Competency in English</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000024</code>
+		<name>Certificate of Proficiency in English by ESOL Examinations of the University of Cambridge</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000025</code>
+		<name>CLT KULeuven</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000026</code>
+		<name>Completed education in a country that UCL considers to be "majority English speaking".</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000027</code>
+		<name>DAAD English Certificate</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000028</code>
+		<name>Dublin City University English Exam</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000029</code>
+		<name>English for Higher Education</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000030</code>
+		<name>English Language Entrance Test for Other University</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000031</code>
+		<name>English Language Teaching Unit, University of Leicester</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000032</code>
+		<name>English Proficiency Certificate</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000033</code>
+		<name>Examen Final Escuela Oficial de Idiomas</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000034</code>
+		<name>First Certificate in English (Cambridge University)</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000035</code>
+		<name>First Certificate in English Cambridge ESOL</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000036</code>
+		<name>GCSE English: C,  2 Masters degrees (Oxford, London Met)</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000037</code>
+		<name>GMAT Exam</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000038</code>
+		<name>GRE Literature in English</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000039</code>
+		<name>GSCE / O-Level / School Level Graduation in English</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000040</code>
+		<name>Intensive Course / Summer School</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000041</code>
+		<name>International Baccalaureate</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000042</code>
+		<name>INTO Newcastle University</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000043</code>
+		<name>Malaysia University English Test</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000044</code>
+		<name>Michigan Certificate of Proficiency in English</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000045</code>
+		<name>Module Study in English</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000046</code>
+		<name>MSRT / MCHE Exam</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000047</code>
+		<name>O-Level / School Level Graduation in English</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000048</code>
+		<name>OCR level 2 adult literacy equivalent to GCSE</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000049</code>
+		<name>PALSO Standard Certificate English</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000050</code>
+		<name>Pearson Test of English</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000051</code>
+		<name>Personal Study / Night Classes</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000052</code>
+		<name>Postgraduate Diploma in University of Southampton</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000053</code>
+		<name>Pre-sessional English for Academic Purposes Course</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000054</code>
+		<name>Pre-sessional English Language Course in UCL CENTRE FOR LANGUAGES &amp; INTERNATIONAL EDUCATION</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000055</code>
+		<name>Private school examination</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000056</code>
+		<name>Proficiency of English: University of Cambridge, The University of Michigan</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000057</code>
+		<name>PTE - Academic Test</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000058</code>
+		<name>Sheffield International College</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000059</code>
+		<name>Studied in English</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000060</code>
+		<name>test in Syria for candidates before study PhD</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000061</code>
+		<name>Toefi IPT</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000062</code>
+		<name>Trinity College Certificate of Proficiency in English</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000063</code>
+		<name>Trinity Integrated Skills in English 2</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000064</code>
+		<name>UCL Certificate of Proficiency in English</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000065</code>
+		<name>UK Residency Exam</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>CUST000066</code>
+		<name>University of Leicester Certificate of Proficiency in English</name>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>IELTS_ACADEMIC</code>
+		<name>IELTS Academic</name>
+		<minimumOverallScore>4.00</minimumOverallScore>
+		<maximumOverallScore>9.00</maximumOverallScore>
+		<minimumReadingScore>4.00</minimumReadingScore>
+		<maximumReadingScore>9.00</maximumReadingScore>
+		<minimumWritingScore>4.00</minimumWritingScore>
+		<maximumWritingScore>9.00</maximumWritingScore>
+		<minimumSpeakingScore>4.00</minimumSpeakingScore>
+		<maximumSpeakingScore>9.00</maximumSpeakingScore>
+		<minimumListeningScore>4.00</minimumListeningScore>
+		<maximumListeningScore>9.00</maximumListeningScore>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>TOEFL_INTERNET</code>
+		<name>TOEFL iBT Internet</name>
+		<minimumOverallScore>0.00</minimumOverallScore>
+		<maximumOverallScore>120.00</maximumOverallScore>
+		<minimumReadingScore>0.00</minimumReadingScore>
+		<maximumReadingScore>30.00</maximumReadingScore>
+		<minimumWritingScore>0.00</minimumWritingScore>
+		<maximumWritingScore>30.00</maximumWritingScore>
+		<minimumSpeakingScore>0.00</minimumSpeakingScore>
+		<maximumSpeakingScore>30.00</maximumSpeakingScore>
+		<minimumListeningScore>0.00</minimumListeningScore>
+		<maximumListeningScore>30.00</maximumListeningScore>
+	</languageQualificationType>
+	<languageQualificationType>
+		<code>TOEFL_PAPER</code>
+		<name>TOEFL iBT Paper</name>
+		<minimumOverallScore>0.00</minimumOverallScore>
+		<maximumOverallScore>120.00</maximumOverallScore>
+		<minimumReadingScore>0.00</minimumReadingScore>
+		<maximumReadingScore>30.00</maximumReadingScore>
+		<minimumWritingScore>0.00</minimumWritingScore>
+		<maximumWritingScore>30.00</maximumWritingScore>
+		<minimumSpeakingScore>0.00</minimumSpeakingScore>
+		<maximumSpeakingScore>30.00</maximumSpeakingScore>
+		<minimumListeningScore>0.00</minimumListeningScore>
+		<maximumListeningScore>30.00</maximumListeningScore>
+	</languageQualificationType>
+</languageQualificationTypes>

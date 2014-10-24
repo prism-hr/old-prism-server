@@ -1,0 +1,1 @@
+ALTER TABLE APPLICATION_FORM ADD COLUMN approver_requested_restart_id INTEGER UNSIGNED, ADD CONSTRAINT approver_requested_fk FOREIGN KEY (approver_requested_restart_id) REFERENCES REGISTERED_USER(id);

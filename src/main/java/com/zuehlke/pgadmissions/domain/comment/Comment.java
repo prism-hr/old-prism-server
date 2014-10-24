@@ -38,7 +38,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
-import com.zuehlke.pgadmissions.domain.imported.ResidenceState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -111,28 +110,11 @@ public class Comment {
     private State transitionState;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "application_qualified")
-    private YesNoUnsureResponse qualified;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "application_competent_in_work_language")
-    private YesNoUnsureResponse competentInWorkLanguage;
-
-    @ManyToOne
-    @JoinColumn(name = "application_residence_state_id")
-    private ResidenceState residenceState;
-
-    @Column(name = "application_suitable_for_institution")
-    private Boolean suitableForInstitution;
-
-    @Column(name = "application_suitable_for_opportunity")
-    private Boolean suitableForOpportunity;
-
-    @Column(name = "application_desire_to_interview")
-    private Boolean desireToInterview;
-
-    @Column(name = "application_desire_to_recruit")
-    private Boolean desireToRecruit;
+    @Column(name = "application_eligible")
+    private YesNoUnsureResponse applicationEligible;
+    
+    @Column(name = "application_interested")
+    private Boolean applicationInterested;
 
     @Column(name = "application_interview_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
@@ -344,60 +326,20 @@ public class Comment {
         this.transitionState = transitionState;
     }
 
-    public YesNoUnsureResponse getQualified() {
-        return qualified;
+    public YesNoUnsureResponse getApplicationEligible() {
+        return applicationEligible;
     }
 
-    public void setQualified(YesNoUnsureResponse qualified) {
-        this.qualified = qualified;
+    public final Boolean getApplicationInterested() {
+        return applicationInterested;
     }
 
-    public YesNoUnsureResponse getCompetentInWorkLanguage() {
-        return competentInWorkLanguage;
+    public final void setApplicationInterested(Boolean applicationInterested) {
+        this.applicationInterested = applicationInterested;
     }
 
-    public void setCompetentInWorkLanguage(YesNoUnsureResponse competentInWorkLanguage) {
-        this.competentInWorkLanguage = competentInWorkLanguage;
-    }
-
-    public final ResidenceState getResidenceState() {
-        return residenceState;
-    }
-
-    public final void setResidenceState(ResidenceState residenceState) {
-        this.residenceState = residenceState;
-    }
-
-    public Boolean getSuitableForInstitution() {
-        return suitableForInstitution;
-    }
-
-    public void setSuitableForInstitution(Boolean suitableForInstitution) {
-        this.suitableForInstitution = suitableForInstitution;
-    }
-
-    public Boolean getSuitableForOpportunity() {
-        return suitableForOpportunity;
-    }
-
-    public void setSuitableForOpportunity(Boolean suitableForOpportunity) {
-        this.suitableForOpportunity = suitableForOpportunity;
-    }
-
-    public Boolean isDesireToInterview() {
-        return desireToInterview;
-    }
-
-    public void setDesireToInterview(Boolean desireToInterview) {
-        this.desireToInterview = desireToInterview;
-    }
-
-    public Boolean isDesireToRecruit() {
-        return desireToRecruit;
-    }
-
-    public void setDesireToRecruit(Boolean desireToRecruit) {
-        this.desireToRecruit = desireToRecruit;
+    public void setApplicationEligible(YesNoUnsureResponse applicationEligible) {
+        this.applicationEligible = applicationEligible;
     }
 
     public LocalDateTime getInterviewDateTime() {
@@ -710,6 +652,11 @@ public class Comment {
         this.positionTitle = positionTitle;
         return this;
     }
+    
+    public Comment withPositionDescription(String positionDescription) {
+        this.positionDescription = positionDescription;
+        return this;
+    }
 
     public Comment withApplicationRating(final Integer applicationRating) {
         this.applicationRating = applicationRating;
@@ -735,19 +682,14 @@ public class Comment {
         assignedUsers.add(new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(roleTransitionType).withComment(this));
         return this;
     }
-
-    public Comment withQualified(final YesNoUnsureResponse qualified) {
-        this.qualified = qualified;
+    
+    public Comment withApplicationEligible(final YesNoUnsureResponse eligible) {
+        this.applicationEligible = eligible;
         return this;
     }
-
-    public Comment withCompetentInWorkLanguage(final YesNoUnsureResponse competentInWorkLanguage) {
-        this.competentInWorkLanguage = competentInWorkLanguage;
-        return this;
-    }
-
-    public Comment withResidenceState(final ResidenceState residenceState) {
-        this.residenceState = residenceState;
+    
+    public Comment withApplicationInterested(Boolean applicationInterested) {
+        this.applicationInterested = applicationInterested;
         return this;
     }
 
@@ -781,31 +723,6 @@ public class Comment {
         return this;
     }
 
-    public Comment withDesireToRecruit(final Boolean desireToRecruit) {
-        this.desireToRecruit = desireToRecruit;
-        return this;
-    }
-
-    public Comment withDesireToInterview(final Boolean desireToInterview) {
-        this.desireToInterview = desireToInterview;
-        return this;
-    }
-
-    public Comment withSuitableForOpportunity(final Boolean suitableForOpportunity) {
-        this.suitableForOpportunity = suitableForOpportunity;
-        return this;
-    }
-
-    public Comment withSuitableForInstitution(final Boolean suitableForInstitution) {
-        this.suitableForInstitution = suitableForInstitution;
-        return this;
-    }
-
-    public Comment withPositionDescription(final String positionDescription) {
-        this.positionDescription = positionDescription;
-        return this;
-    }
-
     public Comment withAppointmentConditions(final String appointmentConditions) {
         this.appointmentConditions = appointmentConditions;
         return this;
@@ -816,8 +733,8 @@ public class Comment {
         return this;
     }
 
-    public boolean isApplicationCreatorEligibilityUncertain() {
-        return getQualified() == YesNoUnsureResponse.UNSURE || getCompetentInWorkLanguage() == YesNoUnsureResponse.UNSURE;
+    public boolean isApplicationCreatorEligibilityUnsure() {
+        return getApplicationEligible() == YesNoUnsureResponse.UNSURE;
     }
 
     public User getAuthor() {

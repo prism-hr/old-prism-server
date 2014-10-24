@@ -237,4 +237,8 @@ public enum PrismProgramType {
         return recommendations.get(programType);
     }
 
+    public static PrismProgramType getSystemProgramType() {
+        return STUDY_POSTGRADUATE_RESEARCH;
+    }
+
 }

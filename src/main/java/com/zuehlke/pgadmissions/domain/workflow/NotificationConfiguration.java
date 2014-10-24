@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.domain.workflow;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -10,16 +12,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 
 @Entity
-@Table(name = "NOTIFICATION_CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "notification_template_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "notification_template_id" }),
+@Table(name = "NOTIFICATION_CONFIGURATION", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "system_id", "program_type", "locale", "notification_template_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "program_type", "notification_template_id" }),
         @UniqueConstraint(columnNames = { "program_id", "notification_template_id" }) })
-public class NotificationConfiguration extends WorkflowResource {
+public class NotificationConfiguration extends WorkflowResourceConfiguration {
 
     @Id
     @GeneratedValue
@@ -28,6 +33,14 @@ public class NotificationConfiguration extends WorkflowResource {
     @ManyToOne
     @JoinColumn(name = "system_id")
     private System system;
+
+    @Column(name = "program_type")
+    @Enumerated(EnumType.STRING)
+    private PrismProgramType programType;
+
+    @Column(name = "locale")
+    @Enumerated(EnumType.STRING)
+    private PrismLocale locale;
 
     @ManyToOne
     @JoinColumn(name = "institution_id")
@@ -51,6 +64,9 @@ public class NotificationConfiguration extends WorkflowResource {
     @Column(name = "day_reminder_interval")
     private Integer reminderInterval;
 
+    @Column(name = "system_default", nullable = false)
+    private Boolean systemDefault;
+
     @Override
     public Integer getId() {
         return id;
@@ -69,6 +85,26 @@ public class NotificationConfiguration extends WorkflowResource {
     @Override
     public void setSystem(System system) {
         this.system = system;
+    }
+
+    @Override
+    public final PrismProgramType getProgramType() {
+        return programType;
+    }
+
+    @Override
+    public final void setProgramType(PrismProgramType programType) {
+        this.programType = programType;
+    }
+
+    @Override
+    public final PrismLocale getLocale() {
+        return locale;
+    }
+
+    @Override
+    public final void setLocale(PrismLocale locale) {
+        this.locale = locale;
     }
 
     @Override
@@ -123,8 +159,28 @@ public class NotificationConfiguration extends WorkflowResource {
         this.reminderInterval = reminderInterval;
     }
 
+    @Override
+    public final Boolean getSystemDefault() {
+        return systemDefault;
+    }
+
+    @Override
+    public final void setSystemDefault(Boolean systemDefault) {
+        this.systemDefault = systemDefault;
+    }
+
     public NotificationConfiguration withResource(Resource resource) {
         setResource(resource);
+        return this;
+    }
+
+    public NotificationConfiguration withProgramType(PrismProgramType programType) {
+        this.programType = programType;
+        return this;
+    }
+
+    public NotificationConfiguration withLocale(PrismLocale locale) {
+        this.locale = locale;
         return this;
     }
 
@@ -145,6 +201,11 @@ public class NotificationConfiguration extends WorkflowResource {
 
     public NotificationConfiguration withReminderInterval(Integer reminderInterval) {
         this.reminderInterval = reminderInterval;
+        return this;
+    }
+
+    public NotificationConfiguration withSystemDefault(Boolean systemDefault) {
+        this.systemDefault = systemDefault;
         return this;
     }
 

@@ -307,7 +307,7 @@ public class ResourceService {
         List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(scopeId);
         filter = resourceListFilterService.saveOrGetByUserAndScope(user, scopeId, filter);
 
-        Integer maxRecords = scopeId.getMaxRecords();
+        Integer maxRecords = scopeId.getMaxConsoleListRecords();
         Set<Integer> assignedResources = getAssignedResources(user, scopeId, parentScopeIds, filter, lastSequenceIdentifier, maxRecords);
         return resourceDAO.getResourceConsoleList(user, scopeId, parentScopeIds, assignedResources, filter, lastSequenceIdentifier, maxRecords);
     }

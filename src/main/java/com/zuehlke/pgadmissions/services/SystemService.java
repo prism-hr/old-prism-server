@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_COMMENT_INITIALIZED_SYSTEM;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.dao.SystemDAO;
@@ -101,7 +100,7 @@ public class SystemService {
 
     @Autowired
     private SystemDAO systemDAO;
-    
+
     @Autowired
     private EntityService entityService;
 
@@ -283,7 +282,7 @@ public class SystemService {
     }
 
     private System initializeSystemResource() throws DeduplicationException {
-        User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail);
+        User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail, getSystemLocale());
         State systemRunning = stateService.getById(PrismState.SYSTEM_RUNNING);
         DateTime startupTimestamp = new DateTime();
         System transientSystem = new System().withTitle(systemName).withLocale(PrismLocale.getSystemLocale()).withHomepage(systemHomepage)
@@ -295,15 +294,14 @@ public class SystemService {
     }
 
     private void initializeDisplayProperties(System system) throws DeduplicationException {
-        HashMap<PrismDisplayCategory, DisplayCategory> processedCategories = Maps.newHashMap();
         for (PrismDisplayCategory prismCategory : PrismDisplayCategory.values()) {
             Scope scope = scopeService.getById(prismCategory.getScope());
             DisplayCategory transientCategory = new DisplayCategory().withId(prismCategory).withScope(scope);
             DisplayCategory persistentCategory = entityService.createOrUpdate(transientCategory);
-            processedCategories.put(prismCategory, persistentCategory);
-        }
-        for (PrismDisplayProperty prismProperty : PrismDisplayProperty.values()) {
-            customizationService.createOrUpdateDisplayProperty(system, prismProperty, prismProperty.getDefaultValue());
+            for (PrismDisplayProperty prismProperty : PrismDisplayProperty.getByCategory(prismCategory)) {
+                customizationService.createOrUpdateDisplayProperty(system, persistentCategory, null, getSystemLocale(), prismProperty,
+                        prismProperty.getDefaultValue());
+            }
         }
     }
 
@@ -336,10 +334,10 @@ public class SystemService {
 
         PrismNotificationTemplate templateId = template.getId();
 
-        NotificationConfiguration transientConfiguration = new NotificationConfiguration().withResource(system).withNotificationTemplate(template)
-                .withSubject(getFileContent(defaultEmailSubjectDirectory + templateId.getInitialTemplateSubject()))
+        NotificationConfiguration transientConfiguration = new NotificationConfiguration().withResource(system).withLocale(getSystemLocale())
+                .withNotificationTemplate(template).withSubject(getFileContent(defaultEmailSubjectDirectory + templateId.getInitialTemplateSubject()))
                 .withContent(getFileContent(defaultEmailContentDirectory + templateId.getInitialTemplateContent()))
-                .withReminderInterval(template.getId().getReminderInterval());
+                .withReminderInterval(template.getId().getReminderInterval()).withSystemDefault(true);
         NotificationConfiguration persistentConfiguration = entityService.getDuplicateEntity(transientConfiguration);
 
         if (persistentConfiguration == null) {
@@ -354,7 +352,8 @@ public class SystemService {
         for (PrismState prismState : PrismState.values()) {
             if (prismState.getDuration() != null) {
                 State state = stateService.getById(prismState);
-                StateDuration transientStateDuration = new StateDuration().withSystem(system).withState(state).withDuration(prismState.getDuration());
+                StateDuration transientStateDuration = new StateDuration().withResource(system).withLocale(getSystemLocale()).withState(state)
+                        .withDuration(prismState.getDuration()).withSystemDefault(true);
                 entityService.createOrUpdate(transientStateDuration);
             }
         }

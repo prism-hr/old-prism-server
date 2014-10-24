@@ -41,7 +41,7 @@ public class CommentRepresentation {
 
     private LocalDate userSpecifiedDueDate;
 
-    private YesNoUnsureResponse qualified;
+    private YesNoUnsureResponse eligible;
 
     private YesNoUnsureResponse competentInWorkLanguage;
 
@@ -205,12 +205,12 @@ public class CommentRepresentation {
         this.userSpecifiedDueDate = userSpecifiedDueDate;
     }
 
-    public YesNoUnsureResponse getQualified() {
-        return qualified;
+    public final YesNoUnsureResponse getEligible() {
+        return eligible;
     }
 
-    public void setQualified(YesNoUnsureResponse qualified) {
-        this.qualified = qualified;
+    public final void setEligible(YesNoUnsureResponse eligible) {
+        this.eligible = eligible;
     }
 
     public YesNoUnsureResponse getCompetentInWorkLanguage() {

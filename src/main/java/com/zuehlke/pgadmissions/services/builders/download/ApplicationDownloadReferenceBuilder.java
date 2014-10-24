@@ -1,15 +1,11 @@
 package com.zuehlke.pgadmissions.services.builders.download;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_COMMENT_DECLINED_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_COMMENT_SUITABLE_FOR_INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_COMMENT_SUITABLE_FOR_OPPORTUNITY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_REFEREE_REFERENCE_APPENDIX;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_REFEREE_REFERENCE_COMMENT_EQUIVALENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_REFEREE_SUBHEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_COMMENT_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_NO;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_RATING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_YES;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -82,10 +78,6 @@ public class ApplicationDownloadReferenceBuilder {
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_REFEREE_SUBHEADER), referenceComment.getUserDisplay(), body);
             applicationDownloadBuilderHelper.addContentRowMedium(comment, referenceComment.getContent(), body);
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_RATING), referenceComment.getApplicationRatingDisplay(), body);
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_COMMENT_SUITABLE_FOR_INSTITUTION),
-                    propertyLoader.load(SYSTEM_YES, SYSTEM_NO, referenceComment.getSuitableForInstitution()), body);
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_COMMENT_SUITABLE_FOR_OPPORTUNITY),
-                    propertyLoader.load(SYSTEM_YES, SYSTEM_NO, referenceComment.getSuitableForInstitution()), body);
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
 
             PdfContentByte content = pdfWriter.getDirectContent();

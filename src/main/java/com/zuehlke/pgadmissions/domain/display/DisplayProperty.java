@@ -13,17 +13,18 @@ import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowResource;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceConfiguration;
 
 @Entity
-@Table(name = "DISPLAY_PROPERTY", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "locale", "display_category_id", "property_index" }),
-        @UniqueConstraint(columnNames = { "institution_id", "display_category_id", "property_index" }),
-        @UniqueConstraint(columnNames = { "program_id", "display_category_id", "property_index" }) })
-public class DisplayProperty extends WorkflowResource {
+@Table(name = "DISPLAY_PROPERTY", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "program_type", "locale", "property_index" }),
+        @UniqueConstraint(columnNames = { "institution_id", "program_type", "property_index" }),
+        @UniqueConstraint(columnNames = { "program_id", "property_index" }) })
+public class DisplayProperty extends WorkflowResourceConfiguration {
 
     @Id
     @GeneratedValue
@@ -33,7 +34,11 @@ public class DisplayProperty extends WorkflowResource {
     @JoinColumn(name = "system_id")
     private System system;
 
-    @Column(name = "locale", nullable = false)
+    @Column(name = "program_type")
+    @Enumerated(EnumType.STRING)
+    private PrismProgramType programType;
+
+    @Column(name = "locale")
     @Enumerated(EnumType.STRING)
     private PrismLocale locale;
 
@@ -55,9 +60,9 @@ public class DisplayProperty extends WorkflowResource {
 
     @Column(name = "property_value", nullable = false)
     private String propertyValue;
-    
-    @Column(name = "property_default", nullable = false)
-    private Boolean propertyDefault;
+
+    @Column(name = "system_default", nullable = false)
+    private Boolean systemDefault;
 
     public final Integer getId() {
         return id;
@@ -78,6 +83,26 @@ public class DisplayProperty extends WorkflowResource {
     }
 
     @Override
+    public final PrismProgramType getProgramType() {
+        return programType;
+    }
+
+    @Override
+    public final void setProgramType(PrismProgramType programType) {
+        this.programType = programType;
+    }
+
+    @Override
+    public final PrismLocale getLocale() {
+        return locale;
+    }
+
+    @Override
+    public final void setLocale(PrismLocale locale) {
+        this.locale = locale;
+    }
+
+    @Override
     public final Institution getInstitution() {
         return institution;
     }
@@ -95,14 +120,6 @@ public class DisplayProperty extends WorkflowResource {
     @Override
     public final void setProgram(Program program) {
         this.program = program;
-    }
-
-    public final PrismLocale getLocale() {
-        return locale;
-    }
-
-    public final void setLocale(PrismLocale locale) {
-        this.locale = locale;
     }
 
     public final DisplayCategory getDisplayCategory() {
@@ -129,16 +146,23 @@ public class DisplayProperty extends WorkflowResource {
         this.propertyValue = propertyValue;
     }
 
-    public final Boolean getPropertyDefault() {
-        return propertyDefault;
+    @Override
+    public final Boolean getSystemDefault() {
+        return systemDefault;
     }
 
-    public final void setPropertyDefault(Boolean propertyDefault) {
-        this.propertyDefault = propertyDefault;
+    @Override
+    public final void setSystemDefault(Boolean systemDefault) {
+        this.systemDefault = systemDefault;
     }
-
+    
     public DisplayProperty withResource(Resource resource) {
         setResource(resource);
+        return this;
+    }
+
+    public DisplayProperty withProgramType(PrismProgramType programType) {
+        this.programType = programType;
         return this;
     }
 
@@ -161,19 +185,15 @@ public class DisplayProperty extends WorkflowResource {
         this.propertyValue = propertyValue;
         return this;
     }
-    
-    public DisplayProperty withPropertyDefault(Boolean propertyDefault) {
-        this.propertyDefault = propertyDefault;
+
+    public DisplayProperty withSystemDefault(Boolean systemDefault) {
+        this.systemDefault = systemDefault;
         return this;
     }
 
     @Override
     public ResourceSignature getResourceSignature() {
-        ResourceSignature signature = super.getResourceSignature();
-        if (system != null) {
-            signature.addProperty("locale", locale);
-        }
-        return signature.addProperty("displayCategory", displayCategory).addProperty("propertyIndex", propertyIndex);
+        return super.getResourceSignature().addProperty("propertyIndex", propertyIndex);
     }
 
 }

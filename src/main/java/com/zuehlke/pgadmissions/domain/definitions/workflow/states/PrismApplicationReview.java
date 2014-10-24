@@ -57,7 +57,7 @@ public class PrismApplicationReview extends PrismWorkflowState {
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REVIEW_PENDING_FEEDBACK) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
+                        .withTransitionAction(PrismAction.APPLICATION_PROVIDE_REVIEW) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_REVIEWER) //

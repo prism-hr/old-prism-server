@@ -306,7 +306,7 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_INTERVIEW) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
+                        .withTransitionAction(PrismAction.APPLICATION_ASSIGN_INTERVIEWERS) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_INTERVIEW_SCHEDULED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
@@ -342,7 +342,7 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
                                 .withRestrictToOwner(false))), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
+                        .withTransitionAction(PrismAction.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_INTERVIEW_SCHEDULED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
@@ -443,7 +443,7 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
+                        .withTransitionAction(PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_INTERVIEW_RSVPED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
@@ -458,7 +458,7 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
                                 .withRestrictToOwner(true))), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_INTERVIEW_PENDING_SCHEDULING) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
+                        .withTransitionAction(PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_INTERVIEW_RSVPED_OUTCOME)
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //

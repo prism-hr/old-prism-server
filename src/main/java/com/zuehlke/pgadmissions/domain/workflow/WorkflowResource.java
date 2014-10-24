@@ -8,9 +8,9 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 
 public abstract class WorkflowResource implements IUniqueEntity {
-    
+
     public abstract Integer getId();
-    
+
     public abstract void setId(Integer id);
 
     public abstract System getSystem();
@@ -24,7 +24,7 @@ public abstract class WorkflowResource implements IUniqueEntity {
     public abstract void setInstitution(Institution institution);
 
     public abstract void setProgram(Program program);
-    
+
     public Resource getResource() {
         System system = getSystem();
         Institution institution = getInstitution();
@@ -55,7 +55,7 @@ public abstract class WorkflowResource implements IUniqueEntity {
             setProgram(resource.getProgram());
             break;
         default:
-            throw new Error("No setter for scope " + resourceScope.getLowerCaseName());
+            throw new Error();
         }
     }
 

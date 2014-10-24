@@ -44,8 +44,9 @@ public class State extends WorkflowDefinition {
         return id;
     }
     
-    public void setId(PrismState id) {
-        this.id = id;
+    @Override
+    public void setId(Enum<?> id) {
+        this.id = (PrismState) id;
     }
 
     public StateGroup getStateGroup() {
@@ -56,10 +57,12 @@ public class State extends WorkflowDefinition {
         this.stateGroup = stateGroup;
     }
 
+    @Override
     public Scope getScope() {
         return scope;
     }
 
+    @Override
     public void setScope(Scope scope) {
         this.scope = scope;
     }

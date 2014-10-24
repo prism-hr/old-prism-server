@@ -23,7 +23,7 @@ public class ConfirmSupervisionCommentCustomValidator implements Validator {
     public void validate(Object target, Errors errors) {
         CommentDTO comment = (CommentDTO) target;
         PrismAction action = comment.getAction();
-        Preconditions.checkArgument(action == PrismAction.APPLICATION_CONFIRM_SUPERVISION, "Unexpected action: " + action);
+        Preconditions.checkArgument(action == PrismAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION, "Unexpected action: " + action);
 
         if (comment.getRecruiterAcceptAppointment() == null) {
             errors.reject("recruiterAcceptAppointment", "notNull");

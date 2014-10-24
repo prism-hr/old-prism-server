@@ -5,7 +5,7 @@
 
 <p>
     We can confirm the arrangements for your interview of ${APPLICATION_CREATOR_FULL_NAME} in connection with
-    Application ${APPLICATION_CODE} for ${TEMPLATE_PROJECT_OR_PROGRAM_TITLE}.
+    Application ${APPLICATION_CODE} for ${APPLICATION_PROJECT_OR_PROGRAM_TITLE}.
 </p>
 <p>
     The interview will take place at ${APPLICATION_INTERVIEW_DATE_TIME} (${APPLICATION_INTERVIEW_TIME_ZONE}).

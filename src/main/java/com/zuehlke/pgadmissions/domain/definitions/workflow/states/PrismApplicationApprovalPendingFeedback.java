@@ -225,15 +225,13 @@ public class PrismApplicationApprovalPendingFeedback extends PrismWorkflowState 
                                 .withRestrictToOwner(false)))))); //
     
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.APPLICATION_CONFIRM_SUPERVISION) //
+            .withAction(PrismAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(false) //
             .withNotificationTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_PRIMARY_SUPERVISOR), // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_SECONDARY_SUPERVISOR))) //
+                        .withRole(PrismRole.APPLICATION_PRIMARY_SUPERVISOR))) //
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR) // 
@@ -263,7 +261,51 @@ public class PrismApplicationApprovalPendingFeedback extends PrismWorkflowState 
                                 .withRole(PrismRole.APPLICATION_PRIMARY_SUPERVISOR) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
-                                .withRestrictToOwner(true), // 
+                                .withRestrictToOwner(true))), // 
+                    new PrismStateTransition() // 
+                        .withTransitionState(PrismState.APPLICATION_APPROVAL_PENDING_FEEDBACK) // 
+                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_SUPERVISION_CONFIRMED_OUTCOME) // 
+                        .withRoleTransitions(Arrays.asList( // 
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.APPLICATION_PRIMARY_SUPERVISOR) //
+                                .withTransitionType(PrismRoleTransitionType.UPDATE) //
+                                .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
+                                .withRestrictToOwner(true)))))); //
+        
+        stateActions.add(new PrismStateAction() //
+            .withAction(PrismAction.APPLICATION_CONFIRM_SECONDARY_SUPERVISION) //
+            .withRaisesUrgentFlag(true) //
+            .withDefaultAction(false) //
+            .withNotificationTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_TASK_REQUEST) //
+                .withAssignments(Arrays.asList( // 
+                    new PrismStateActionAssignment() // 
+                        .withRole(PrismRole.APPLICATION_SECONDARY_SUPERVISOR))) //
+                .withNotifications(Arrays.asList( // 
+                    new PrismStateActionNotification() // 
+                        .withRole(PrismRole.APPLICATION_ADMINISTRATOR) // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
+                    new PrismStateActionNotification() // 
+                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
+                    new PrismStateActionNotification() // 
+                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR) // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
+                    new PrismStateActionNotification() // 
+                        .withRole(PrismRole.PROGRAM_APPROVER) // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
+                    new PrismStateActionNotification() // 
+                        .withRole(PrismRole.PROJECT_ADMINISTRATOR) // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
+                    new PrismStateActionNotification() // 
+                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) // 
+                        .withTemplate(PrismNotificationTemplate.SYSTEM_APPLICATION_UPDATE_NOTIFICATION))) //
+                .withTransitions(Arrays.asList( // 
+                    new PrismStateTransition() // 
+                        .withTransitionState(PrismState.APPLICATION_APPROVAL_PENDING_COMPLETION) // 
+                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_SUPERVISION_CONFIRMED_OUTCOME)
+                        .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_SECONDARY_SUPERVISOR) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
@@ -275,15 +317,10 @@ public class PrismApplicationApprovalPendingFeedback extends PrismWorkflowState 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_SUPERVISION_CONFIRMED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
-                                .withRole(PrismRole.APPLICATION_PRIMARY_SUPERVISOR) //
-                                .withTransitionType(PrismRoleTransitionType.UPDATE) //
-                                .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
-                                .withRestrictToOwner(true), // 
-                            new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_SECONDARY_SUPERVISOR) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
-                                .withRestrictToOwner(true)))))); //
+                                .withRestrictToOwner(true)))))); //        
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_EMAIL_CREATOR) //

@@ -30,7 +30,7 @@ public abstract class ImportedEntity implements IUniqueEntity {
     public PrismImportedEntity getType() {
         return null;
     }
-    
+
     @Override
     public String toString() {
         return getId().toString() + "-" + getCode() + "-" + getName();
@@ -56,12 +56,7 @@ public abstract class ImportedEntity implements IUniqueEntity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        ResourceSignature signature = new ResourceSignature().addProperty("institution", getInstitution());
-        PrismImportedEntity type = getType();
-        if (type != null) {
-            signature.addProperty("importedEntityType", type);
-        }
-        return signature.addProperty("code", getCode());
+        return new ResourceSignature().addProperty("institution", getInstitution()).addProperty("importedEntityType", getType()).addProperty("code", getCode());
     }
 
 }

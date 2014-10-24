@@ -257,7 +257,7 @@ public class PrismApplicationInterviewPendingFeedback extends PrismWorkflowState
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_INTERVIEW_PENDING_COMPLETION) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
+                        .withTransitionAction(PrismAction.APPLICATION_COMPLETE_INTERVIEW_STAGE) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_INTERVIEWED_OUTCOME)
                         .withRoleTransitions(Arrays.asList( //
                             new PrismRoleTransition() //
@@ -267,7 +267,7 @@ public class PrismApplicationInterviewPendingFeedback extends PrismWorkflowState
                                 .withRestrictToOwner(true))), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
+                        .withTransitionAction(PrismAction.APPLICATION_COMPLETE_INTERVIEW_STAGE) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_INTERVIEWED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //

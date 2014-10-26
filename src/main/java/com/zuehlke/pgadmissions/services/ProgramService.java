@@ -76,7 +76,7 @@ public class ProgramService {
     }
 
     public Program create(User user, ProgramDTO programDTO) {
-        Institution institution = entityService.getById(Institution.class, programDTO.getInstitution());
+        Institution institution = entityService.getById(Institution.class, programDTO.getInstitutionId());
         Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withInstitution(institution).withImported(false);
         copyProgramDetails(program, programDTO);
         copyStudyOptions(program, programDTO);
@@ -175,5 +175,5 @@ public class ProgramService {
             persistentProgram.setDueDate(baseline);
         }
     }
-    
+
 }

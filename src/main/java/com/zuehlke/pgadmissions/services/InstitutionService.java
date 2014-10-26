@@ -206,4 +206,7 @@ public class InstitutionService {
         return institutionDAO.list();
     }
 
+    public Institution getByGoogleId(String googleId) {
+        return entityService.getByProperty(Institution.class, "googleId", googleId);
+    }
 }

@@ -19,6 +19,7 @@
         <security:intercept-url pattern="/api/user/activate" access="permitAll"/>
         <security:intercept-url pattern="/api/user/resetPassword" access="permitAll"/>
         <security:intercept-url pattern="/api/files" access="permitAll"/>
+        <security:intercept-url pattern="/api/institutions/**" access="permitAll"/>
         <security:intercept-url pattern="/workflowConfiguration/*" access="permitAll"/>
         <security:intercept-url pattern="/**" access="isAuthenticated()"/>
     </security:http>

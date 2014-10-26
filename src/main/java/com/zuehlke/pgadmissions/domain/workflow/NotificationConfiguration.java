@@ -21,8 +21,8 @@ import com.zuehlke.pgadmissions.domain.system.System;
 
 @Entity
 @Table(name = "NOTIFICATION_CONFIGURATION", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "system_id", "program_type", "locale", "notification_template_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "program_type", "notification_template_id" }),
+        @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "notification_template_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "locale", "program_type", "notification_template_id" }),
         @UniqueConstraint(columnNames = { "program_id", "notification_template_id" }) })
 public class NotificationConfiguration extends WorkflowResourceConfiguration {
 
@@ -34,14 +34,6 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
     @JoinColumn(name = "system_id")
     private System system;
 
-    @Column(name = "program_type")
-    @Enumerated(EnumType.STRING)
-    private PrismProgramType programType;
-
-    @Column(name = "locale")
-    @Enumerated(EnumType.STRING)
-    private PrismLocale locale;
-
     @ManyToOne
     @JoinColumn(name = "institution_id")
     private Institution institution;
@@ -50,6 +42,14 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
     @JoinColumn(name = "program_id")
     private Program program;
 
+    @Column(name = "locale", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismLocale locale;
+    
+    @Column(name = "program_type")
+    @Enumerated(EnumType.STRING)
+    private PrismProgramType programType;
+    
     @ManyToOne
     @JoinColumn(name = "notification_template_id", nullable = false)
     private NotificationTemplate notificationTemplate;

@@ -6,15 +6,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.A
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_REFEREE_SUBHEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_COMMENT_HEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_RATING;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -31,16 +27,12 @@ import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Component
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+@Scope(SCOPE_PROTOTYPE)
 public class ApplicationDownloadReferenceBuilder {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(ApplicationDownloadReferenceBuilder.class);
+    private PropertyLoader propertyLoader;
 
-    @Autowired
     private ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper;
-
-    @Autowired
-    private ApplicationContext applicationContext;
 
     public byte[] build(final Application application, final Comment referenceComment) {
         try {
@@ -48,8 +40,7 @@ public class ApplicationDownloadReferenceBuilder {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             PdfWriter pdfWriter = applicationDownloadBuilderHelper.startDocumentWriter(outputStream, pdfDocument);
 
-            PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument,
-                    applicationContext.getBean(PropertyLoader.class).withResource(application).load(APPLICATION_REFEREE_REFERENCE_APPENDIX));
+            PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_REFEREE_REFERENCE_APPENDIX));
 
             addReferenceComment(pdfDocument, body, pdfWriter, application, referenceComment);
 
@@ -64,24 +55,23 @@ public class ApplicationDownloadReferenceBuilder {
 
     public void addReferenceComment(Document pdfDocument, PdfPTable body, PdfWriter pdfWriter, Application application, Comment referenceComment)
             throws DocumentException {
-        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).withResource(application);
-        String comment = propertyLoader.load(SYSTEM_COMMENT_HEADER);
+        String rowTitle = propertyLoader.load(SYSTEM_COMMENT_HEADER);
 
         if (referenceComment == null) {
-            applicationDownloadBuilderHelper.addContentRowMedium(comment,
+            applicationDownloadBuilderHelper.addContentRowMedium(rowTitle,
                     application.isApproved() ? propertyLoader.load(APPLICATION_REFEREE_REFERENCE_COMMENT_EQUIVALENT) : null, body);
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else if (referenceComment.isDeclinedResponse()) {
-            applicationDownloadBuilderHelper.addContentRowMedium(comment, propertyLoader.load(APPLICATION_COMMENT_DECLINED_REFEREE), body);
+            applicationDownloadBuilderHelper.addContentRowMedium(rowTitle, propertyLoader.load(APPLICATION_COMMENT_DECLINED_REFEREE), body);
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else {
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_REFEREE_SUBHEADER), referenceComment.getUserDisplay(), body);
-            applicationDownloadBuilderHelper.addContentRowMedium(comment, referenceComment.getContent(), body);
+            applicationDownloadBuilderHelper.addContentRowMedium(rowTitle, referenceComment.getContent(), body);
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_RATING), referenceComment.getApplicationRatingDisplay(), body);
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
 
             PdfContentByte content = pdfWriter.getDirectContent();
-            for (com.zuehlke.pgadmissions.domain.comment.Document input : referenceComment.getDocuments()) {
+            for (com.zuehlke.pgadmissions.domain.document.Document input : referenceComment.getDocuments()) {
                 try {
                     PdfReader reader = new PdfReader(input.getContent());
                     for (int i = 1; i <= reader.getNumberOfPages(); i++) {
@@ -90,9 +80,15 @@ public class ApplicationDownloadReferenceBuilder {
                         content.addTemplate(page, 0, 0);
                     }
                 } catch (IOException e) {
-                    LOGGER.error("Unable to append reference for application " + application.getCode() + " referee " + referenceComment.getUserDisplay(), e);
+                    throw new PdfDocumentBuilderException(e);
                 }
             }
         }
+    }
+
+    public ApplicationDownloadReferenceBuilder localize(PropertyLoader propertyLoader, ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper) {
+        this.propertyLoader = propertyLoader;
+        this.applicationDownloadBuilderHelper = applicationDownloadBuilderHelper;
+        return this;
     }
 }

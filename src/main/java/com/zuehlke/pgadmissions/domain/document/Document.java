@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.domain.comment;
+package com.zuehlke.pgadmissions.domain.document;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.user.User;
 
 @Entity

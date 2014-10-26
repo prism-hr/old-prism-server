@@ -10,8 +10,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.S
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_DATE_TIME_FORMAT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_DECLINE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_HELPDESK;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_HELPDESK_REPORT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_INSTITUTION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_NEW_PASSWORD;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_PROCEED;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_PROGRAM_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_PROJECT_LIST;
@@ -50,6 +52,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplateProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -58,6 +61,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -85,6 +89,12 @@ public class NotificationTemplatePropertyLoader {
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    public String load(PrismNotificationTemplateProperty property) {
+        String value = (String) ReflectionUtils.invokeMethod(this, property.getMethodName());
+        return value == null ? "[" + propertyLoader.load(SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR) + ". " + propertyLoader.load(SYSTEM_HELPDESK_REPORT)
+                + ": " + templateModelDTO.getResource().getSystem().getHelpdesk() + "]" : value;
+    }
 
     public String getTemplateUserFullName() {
         return templateModelDTO.getUser().getFullName();
@@ -311,15 +321,15 @@ public class NotificationTemplatePropertyLoader {
         return buildRedirectionControl(SYSTEM_ACTIVATE_ACCOUNT);
     }
 
-    public NotificationTemplatePropertyLoader withTemplateModelDTO(NotificationTemplateModelDTO notificationTemplateModelDTO) {
-        this.templateModelDTO = notificationTemplateModelDTO;
-        Comment comment = notificationTemplateModelDTO.getComment();
+    public NotificationTemplatePropertyLoader localize(NotificationTemplateModelDTO templateModelDTO) {
+        this.templateModelDTO = templateModelDTO;
+        Comment comment = this.templateModelDTO.getComment();
         if (comment == null) {
-            templateModelDTO.setInvoker(systemService.getSystem().getUser());
+            this.templateModelDTO.setInvoker(systemService.getSystem().getUser());
         } else {
-            templateModelDTO.setInvoker(comment.getUser());
+            this.templateModelDTO.setInvoker(comment.getUser());
         }
-        propertyLoader = applicationContext.getBean(PropertyLoader.class).withResource(notificationTemplateModelDTO.getResource());
+        propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(this.templateModelDTO.getResource(), this.templateModelDTO.getUser());
         return this;
     }
 

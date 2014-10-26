@@ -11,11 +11,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.display.DisplayCategory;
+import com.zuehlke.pgadmissions.domain.display.DisplayProperty;
+import com.zuehlke.pgadmissions.domain.system.System;
+import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
@@ -29,16 +32,22 @@ public class PropertyLoaderHelper {
     private SystemService systemService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private ApplicationContext applicationContext;
 
     public void verifyPropertyLoader() throws WorkflowConfigurationException, DeduplicationException {
-        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class);
+        System system = systemService.getSystem();
+        
+        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(system, system.getUser());
         assertEquals(propertyLoader.load(SYSTEM_YES), SYSTEM_YES.getDefaultValue());
 
-        DisplayCategory category = customizationService.getDisplayCategoryById(SYSTEM_GLOBAL);
-
-        customizationService.createOrUpdateDisplayProperty(systemService.getSystem(), category, null, DE_DE, SYSTEM_YES, "Ja");
-        PropertyLoader propertyLoaderDe = applicationContext.getBean(PropertyLoader.class).withLocale(DE_DE);
+        User herman = userService.getOrCreateUser("herman", "ze german", "hermanzegerman@germany.com", DE_DE);
+        DisplayProperty displayProperty = customizationService.getDisplayPropertyById(SYSTEM_YES);
+        customizationService.createOrUpdateDisplayProperty(systemService.getSystem(), DE_DE, null, SYSTEM_GLOBAL, displayProperty, "Ja");
+        PropertyLoader propertyLoaderDe = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem(), herman);
+        
         assertEquals(propertyLoaderDe.load(SYSTEM_YES), "Ja");
         assertEquals(propertyLoader.load(SYSTEM_YES), SYSTEM_YES.getDefaultValue());
         assertEquals(propertyLoaderDe.load(SYSTEM_NO), SYSTEM_NO.getDefaultValue());

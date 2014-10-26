@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionT
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -167,9 +168,11 @@ public class Comment {
     @Column(name = "application_use_custom_recruiter_questions")
     private Boolean useCustomRecruiterQuestions;
 
-    @Column(name = "comment_custom_question_version_id")
-    private Integer customQuestionVersionId;
+    @Lob
+    @Column(name = "comment_custom_question")
+    private String customQuestion;
 
+    @Lob
     @Column(name = "custom_question_response")
     private String customQuestionResponse;
 
@@ -469,13 +472,13 @@ public class Comment {
     public void setUseCustomRecruiterQuestions(Boolean useCustomRecruiterQuestions) {
         this.useCustomRecruiterQuestions = useCustomRecruiterQuestions;
     }
-
-    public Integer getCustomQuestionVersionId() {
-        return customQuestionVersionId;
+    
+    public final String getCustomQuestion() {
+        return customQuestion;
     }
 
-    public void setCustomQuestionVersionId(Integer customQuestionVersionId) {
-        this.customQuestionVersionId = customQuestionVersionId;
+    public final void setCustomQuestion(String customQuestion) {
+        this.customQuestion = customQuestion;
     }
 
     public String getCustomQuestionResponse() {

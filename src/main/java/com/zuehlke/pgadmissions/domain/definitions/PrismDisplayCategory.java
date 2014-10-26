@@ -1,46 +1,28 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-
 public enum PrismDisplayCategory {
 
-    SYSTEM_GLOBAL(SYSTEM), //
-    SYSTEM_COMMENT(SYSTEM), //
-    INSTITUTION_GLOBAL(INSTITUTION), //
-    INSTITUTION_COMMENT(INSTITUTION), //
-    PROGRAM_GLOBAL(PROGRAM), //
-    PROGRAM_COMMENT(PROGRAM), //
-    PROJECT_GLOBAL(PROJECT), //
-    PROJECT_COMMENT(PROJECT), //
-    APPLICATION_GLOBAL(APPLICATION), //
-    APPLICATION_PROGRAM_DETAIL(APPLICATION), //
-    APPLICATION_SUPERVISOR(APPLICATION), //
-    APPLICATION_PERSONAL_DETAIL(APPLICATION), //
-    APPLICATION_PASSPORT(APPLICATION), //
-    APPLICATION_LANGUAGE_QUALIFICATION(APPLICATION), //
-    APPLICATION_ADDRESS(APPLICATION), //
-    APPLICATION_QUALIFICATION(APPLICATION), //
-    APPLICATION_EMPLOYMENT_POSITION(APPLICATION), //
-    APPLICATION_FUNDING(APPLICATION), //
-    APPLICATION_REFEREE(APPLICATION), //
-    APPLICATION_DOCUMENT(APPLICATION), //
-    APPLICATION_ADDITIONAL_INFORMATION(APPLICATION), //
-    APPLICATION_COMMENT(APPLICATION);
-
-    private PrismScope scope;
-
-    private PrismDisplayCategory(PrismScope scope) {
-        this.scope = scope;
-    }
-
-    public final PrismScope getScope() {
-        return scope;
-    }
+    SYSTEM_GLOBAL, //
+    SYSTEM_COMMENT, //
+    INSTITUTION_GLOBAL, //
+    INSTITUTION_COMMENT, //
+    PROGRAM_GLOBAL, //
+    PROGRAM_COMMENT, //
+    PROJECT_GLOBAL, //
+    PROJECT_COMMENT, //
+    APPLICATION_GLOBAL, //
+    APPLICATION_PROGRAM_DETAIL, //
+    APPLICATION_SUPERVISOR, //
+    APPLICATION_PERSONAL_DETAIL, //
+    APPLICATION_PASSPORT, //
+    APPLICATION_LANGUAGE_QUALIFICATION, //
+    APPLICATION_ADDRESS, //
+    APPLICATION_QUALIFICATION, //
+    APPLICATION_EMPLOYMENT_POSITION, //
+    APPLICATION_FUNDING, //
+    APPLICATION_REFEREE, //
+    APPLICATION_DOCUMENT, //
+    APPLICATION_ADDITIONAL_INFORMATION, //
+    APPLICATION_COMMENT;
 
 }

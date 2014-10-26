@@ -88,7 +88,7 @@ public class RoleService {
             User invoker = userService.getCurrentUser();
             Action action = actionService.getViewEditAction(resource);
 
-            PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).withResource(resource);
+            PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource, invoker);
 
             Comment comment = new Comment().withAction(action).withUser(invoker)
                     .withContent(loader.load(PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE")))
@@ -123,7 +123,7 @@ public class RoleService {
     public List<PrismRole> getRoles(Resource resource, User user) {
         return roleDAO.getRoles(resource, user);
     }
-    
+
     public List<PrismRole> getUserRoles(Resource resource, User user) {
         return roleDAO.getUserRoles(resource, user);
     }

@@ -1,14 +1,14 @@
 package com.zuehlke.pgadmissions.services.builders.download;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_VALUE_NOT_PROVIDED;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.itextpdf.text.BadElementException;
@@ -23,7 +23,6 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderColor;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -32,20 +31,19 @@ import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 @Component
 public class ApplicationDownloadBuilderHelper {
 
+    private PropertyLoader propertyLoader;
+
     @Value("${xml.export.logo.file.location}")
     private String logoFileLocation;
 
     @Value("${xml.export.logo.file.width.percentage}")
     private Float logoFileWidthPercentage;
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
     public Document startDocument() {
         return new Document(PageSize.A4, 50, 50, 100, 50);
     }
 
-    public PdfWriter startDocumentWriter(final OutputStream outputStream, Document pdfDocument) throws DocumentException {
+    public PdfWriter startDocumentWriter(OutputStream outputStream, Document pdfDocument) throws DocumentException {
         PdfWriter pdfWriter = PdfWriter.getInstance(pdfDocument, outputStream);
         pdfWriter.setCloseStream(false);
         pdfDocument.open();
@@ -70,7 +68,7 @@ public class ApplicationDownloadBuilderHelper {
         String fontSizePostfix = WordUtils.capitalizeFully(fontSize.name());
         table.addCell((PdfPCell) ReflectionUtils.invokeMethod(this, "newTitleCell" + fontSizePostfix, title));
         table.addCell((PdfPCell) ReflectionUtils.invokeMethod(this, "newContentCell" + fontSizePostfix,
-                content == null ? applicationContext.getBean(PropertyLoader.class).load(PrismDisplayProperty.SYSTEM_VALUE_NOT_PROVIDED) : content));
+                content == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : content));
     }
 
     public void closeSection(Document pdfDocument, PdfPTable body) throws DocumentException {
@@ -102,54 +100,54 @@ public class ApplicationDownloadBuilderHelper {
         return table;
     }
 
-    public PdfPCell newTitleCellSmall(final String content) {
+    public PdfPCell newTitleCellSmall(String content) {
         return newTitleCell(content, ApplicationDownloadBuilderFontSize.SMALL);
     }
 
-    public PdfPCell newTitleCellMedium(final String content) {
+    public PdfPCell newTitleCellMedium(String content) {
         return newTitleCell(content, ApplicationDownloadBuilderFontSize.MEDIUM);
     }
 
-    public PdfPCell newTitleCellLarge(final String content) {
+    public PdfPCell newTitleCellLarge(String content) {
         return newTitleCell(content, ApplicationDownloadBuilderFontSize.LARGE);
     }
 
-    public PdfPCell newContentCellSmall(final String content) {
+    public PdfPCell newContentCellSmall(String content) {
         return newContentCell(content, ApplicationDownloadBuilderFontSize.SMALL);
     }
 
-    public PdfPCell newContentCellMedium(final String content) {
+    public PdfPCell newContentCellMedium(String content) {
         return newContentCell(content, ApplicationDownloadBuilderFontSize.MEDIUM);
     }
 
-    public PdfPCell newContentCellLarge(final String content) {
+    public PdfPCell newContentCellLarge(String content) {
         return newContentCell(content, ApplicationDownloadBuilderFontSize.LARGE);
     }
 
-    public PdfPCell newBookmarkCellSmall(final String content, int index) {
+    public PdfPCell newBookmarkCellSmall(String content, int index) {
         return newBookmarkCell(content, ApplicationDownloadBuilderFontSize.SMALL, index);
     }
 
-    public PdfPCell newBookmarkCellMedium(final String content, int index) {
+    public PdfPCell newBookmarkCellMedium(String content, int index) {
         return newBookmarkCell(content, ApplicationDownloadBuilderFontSize.MEDIUM, index);
     }
 
-    public PdfPCell newBookmarkCellLarge(final String content, int index) {
+    public PdfPCell newBookmarkCellLarge(String content, int index) {
         return newBookmarkCell(content, ApplicationDownloadBuilderFontSize.LARGE, index);
     }
 
-    public PdfPCell newContentCell(final String content, final ApplicationDownloadBuilderFontSize fontSize) {
+    public PdfPCell newContentCell(String content, ApplicationDownloadBuilderFontSize fontSize) {
         return newTableCell(content, fontSize, null);
     }
 
-    public PdfPCell newTitleCell(final String content, final ApplicationDownloadBuilderFontSize fontSize) {
+    public PdfPCell newTitleCell(String content, ApplicationDownloadBuilderFontSize fontSize) {
         if (content == null) {
             throw new Error("Title cell must have content");
         }
         return newTableCell(content, fontSize, null);
     }
 
-    public PdfPCell newBookmarkCell(final String content, final ApplicationDownloadBuilderFontSize fontSize, int bookmarkIndex) {
+    public PdfPCell newBookmarkCell(String content, ApplicationDownloadBuilderFontSize fontSize, int bookmarkIndex) {
         return newTableCell(content, fontSize, bookmarkIndex);
     }
 
@@ -161,6 +159,11 @@ public class ApplicationDownloadBuilderHelper {
         addContentRow(title, content, ApplicationDownloadBuilderFontSize.MEDIUM, table);
     }
 
+    public ApplicationDownloadBuilderHelper localize(PropertyLoader propertyLoader) {
+        this.propertyLoader = propertyLoader;
+        return this;
+    }
+
     private PdfPTable newSectionHeader(String title, ApplicationDownloadBuilderColor background) {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(ApplicationDownloadBuilderConfiguration.PAGE_WIDTH);
@@ -170,15 +173,14 @@ public class ApplicationDownloadBuilderHelper {
         return table;
     }
 
-    private PdfPCell newTableCell(final String content, final ApplicationDownloadBuilderFontSize fontSize, final Integer bookmarkIndex) {
+    private PdfPCell newTableCell(String content, ApplicationDownloadBuilderFontSize fontSize, Integer bookmarkIndex) {
         if (fontSize == null) {
             throw new Error("Cell must have font size");
         }
 
         Phrase phrase;
         if (StringUtils.isBlank(content)) {
-            phrase = new Phrase(applicationContext.getBean(PropertyLoader.class).load(PrismDisplayProperty.SYSTEM_VALUE_NOT_PROVIDED),
-                    ApplicationDownloadBuilderConfiguration.getEmptyFont(fontSize));
+            phrase = new Phrase(propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED), ApplicationDownloadBuilderConfiguration.getEmptyFont(fontSize));
         } else if (bookmarkIndex == null) {
             phrase = new Phrase(content, ApplicationDownloadBuilderConfiguration.getFont(fontSize));
         } else {

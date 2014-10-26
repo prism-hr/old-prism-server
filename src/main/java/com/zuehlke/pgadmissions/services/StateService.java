@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -54,6 +56,9 @@ public class StateService {
 
     @Autowired
     private CommentService commentService;
+    
+    @Autowired
+    private CustomizationService customizationService;
 
     @Autowired
     private EntityService entityService;
@@ -96,6 +101,13 @@ public class StateService {
 
     public List<StateTransitionEvaluation> getStateTransitionEvaluations() {
         return entityService.list(StateTransitionEvaluation.class);
+    }
+
+    public void createOrUpdateStateDuration(Resource resource, PrismLocale locale, PrismProgramType programType, State state, Integer duration)
+            throws DeduplicationException {
+        StateDuration transientStateDuration = new StateDuration().withResource(resource).withLocale(locale).withProgramType(programType).withState(state)
+                .withDuration(duration).withSystemDefault(customizationService.isSystemDefault(state, locale, programType));
+        entityService.createOrUpdate(transientStateDuration);
     }
 
     public StateDuration getStateDuration(Resource resource) {

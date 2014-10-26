@@ -172,10 +172,11 @@ public class InstitutionService {
 
     public void initializeInstitution(Integer institutionId) throws DeduplicationException {
         Institution institution = getById(institutionId);
+        User user = systemService.getSystem().getUser();
         Action action = actionService.getById(INSTITUTION_STARTUP);
         Comment comment = new Comment().withAction(action)
-                .withContent(applicationContext.getBean(PropertyLoader.class).load(SYSTEM_COMMENT_INITIALIZED_INSTITUTION)).withDeclinedResponse(false)
-                .withUser(systemService.getSystem().getUser()).withCreatedTimestamp(new DateTime());
+                .withContent(applicationContext.getBean(PropertyLoader.class).localize(institution, user).load(SYSTEM_COMMENT_INITIALIZED_INSTITUTION))
+                .withDeclinedResponse(false).withUser(user).withCreatedTimestamp(new DateTime());
         actionService.executeSystemAction(institution, action, comment);
     }
 

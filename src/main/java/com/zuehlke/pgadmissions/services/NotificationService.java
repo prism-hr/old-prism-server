@@ -88,32 +88,44 @@ public class NotificationService {
         return entityService.getByProperty(NotificationTemplate.class, "id", id);
     }
 
-    public NotificationConfiguration getConfiguration(Resource resource, NotificationTemplate template) {
-        return customizationService.getConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
+    public NotificationConfiguration getConfiguration(Resource resource, User user, NotificationTemplate template) {
+        return customizationService.getConfiguration(NotificationConfiguration.class, resource, user, "notificationTemplate", template);
     }
 
-    public void updateConfiguration(Resource resource, NotificationTemplate template, NotificationConfigurationDTO notificationConfigurationDTO)
-            throws DeduplicationException {
-        NotificationConfiguration configuration = new NotificationConfiguration().withResource(resource).withNotificationTemplate(template)
-                .withSubject(notificationConfigurationDTO.getSubject()).withContent(notificationConfigurationDTO.getContent())
-                .withReminderInterval(notificationConfigurationDTO.getReminderInterval());
+    public NotificationConfiguration getConfigurationStrict(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationTemplate template) {
+        return customizationService.getConfigurationStrict(NotificationConfiguration.class, resource, locale, programType, "notificationTemplate", template);
+    }
+
+    public NotificationConfiguration createConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationTemplate template,
+            String subject, String content, Integer reminderInterval) {
+        return new NotificationConfiguration().withResource(resource).withLocale(locale).withProgramType(programType).withNotificationTemplate(template)
+                .withSubject(subject).withContent(content).withReminderInterval(reminderInterval)
+                .withSystemDefault(customizationService.isSystemDefault(template, locale, programType));
+    }
+
+    public void updateConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationTemplate template,
+            NotificationConfigurationDTO notificationConfigurationDTO) throws DeduplicationException {
+        NotificationConfiguration configuration = new NotificationConfiguration().withResource(resource).withLocale(locale).withProgramType(programType)
+                .withNotificationTemplate(template).withSubject(notificationConfigurationDTO.getSubject())
+                .withContent(notificationConfigurationDTO.getContent()).withReminderInterval(notificationConfigurationDTO.getReminderInterval());
         entityService.createOrUpdate(configuration);
         resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_NOTIFICATION"));
     }
 
-    public void restoreDefaultConfiguration(Resource resource, PrismProgramType programType, PrismLocale locale, NotificationTemplate template) throws DeduplicationException {
-        customizationService.restoreDefaultConfiguration(NotificationConfiguration.class, resource, programType, locale, "notificationTemplate", template);
+    public void restoreDefaultConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationTemplate template)
+            throws DeduplicationException {
+        customizationService.restoreDefaultConfiguration(NotificationConfiguration.class, resource, locale, programType, "notificationTemplate", template);
         resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_NOTIFICATION_DEFAULT"));
     }
 
-    public void restoreGlobalConfiguration(Resource resource, PrismProgramType programType, PrismLocale locale, NotificationTemplate template)
+    public void restoreGlobalConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationTemplate template)
             throws DeduplicationException {
-        customizationService.restoreGlobalConfiguration(NotificationConfiguration.class, resource, programType, locale, "notificationTemplate", template);
+        customizationService.restoreGlobalConfiguration(NotificationConfiguration.class, resource, locale, programType, "notificationTemplate", template);
         resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_NOTIFICATION_GLOBAL"));
     }
 
-    public Integer getReminderInterval(Resource resource, NotificationTemplate template) {
-        NotificationConfiguration configuration = getConfiguration(resource, template);
+    public Integer getReminderInterval(Resource resource, User user, NotificationTemplate template) {
+        NotificationConfiguration configuration = getConfiguration(resource, user, template);
         return configuration == null ? 1 : configuration.getReminderInterval();
     }
 
@@ -154,7 +166,7 @@ public class NotificationService {
             UserRole userRole = roleService.getUserRole(resource, user, role);
 
             NotificationTemplate notificationTemplate = getById(reminder.getNotificationTemplateId());
-            Integer reminderInterval = getReminderInterval(resource, notificationTemplate);
+            Integer reminderInterval = getReminderInterval(resource, user, notificationTemplate);
 
             if (!sent.get(notificationTemplate).contains(user) && baseline.minusDays(reminderInterval) == userRole.getLastNotifiedDate()) {
                 sendNotification(notificationTemplate.getReminderTemplate(),
@@ -183,7 +195,7 @@ public class NotificationService {
                 NotificationTemplate notificationTemplate = getById(definition.getNotificationTemplateId());
                 LocalDate lastNotifiedDate = user.getLastNotifiedDate(resource.getClass());
 
-                Integer reminderInterval = getReminderInterval(resource, notificationTemplate);
+                Integer reminderInterval = getReminderInterval(resource, user, notificationTemplate);
                 boolean doSendReminder = baseline.minusDays(reminderInterval) == lastNotifiedDate;
 
                 if (!sent.get(notificationTemplate).contains(user) && (lastNotifiedDate == null || doSendReminder)) {
@@ -330,7 +342,7 @@ public class NotificationService {
     }
 
     private void sendNotification(NotificationTemplate template, NotificationTemplateModelDTO modelDTO) {
-        NotificationConfiguration configuration = getConfiguration(modelDTO.getResource(), template);
+        NotificationConfiguration configuration = getConfiguration(modelDTO.getResource(), modelDTO.getUser(), template);
         MailMessageDTO message = new MailMessageDTO();
 
         message.setConfiguration(configuration);

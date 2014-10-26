@@ -47,17 +47,19 @@ public class NotificationTemplateResource {
     private Mapper dozerBeanMapper;
 
     @RequestMapping(value = "/{resourceId}/notificationTemplates/{notificationTemplateId}", method = RequestMethod.GET)
-    public NotificationConfigurationRepresentation getNotificationTemplateVersion(@ModelAttribute ResourceDescriptor resourceDescriptor,
-            @PathVariable Integer resourceId, @PathVariable String notificationTemplateId) throws Exception {
+    public NotificationConfigurationRepresentation getNotificationConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor,
+            @PathVariable Integer resourceId, @PathVariable String notificationTemplateId, @RequestParam PrismLocale locale,
+            @RequestParam PrismProgramType programType) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         NotificationTemplate template = notificationService.getById(PrismNotificationTemplate.valueOf(notificationTemplateId));
-        return dozerBeanMapper.map(notificationService.getConfiguration(resource, template), NotificationConfigurationRepresentation.class);
+        return dozerBeanMapper.map(notificationService.getConfigurationStrict(resource, locale, programType, template),
+                NotificationConfigurationRepresentation.class);
     }
 
     @RequestMapping(value = "/{resourceId}/notificationTemplates/{notificationTemplateId}", method = RequestMethod.PUT)
     public void updateNotificationConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-            @PathVariable String notificationTemplateId, @Valid @RequestBody NotificationConfigurationDTO notificationConfigurationDTO,
-            BindingResult validationErrors) throws Exception {
+            @PathVariable String notificationTemplateId, @RequestParam PrismLocale locale, @RequestParam PrismProgramType programType,
+            @Valid @RequestBody NotificationConfigurationDTO notificationConfigurationDTO, BindingResult validationErrors) throws Exception {
         NotificationTemplate template = notificationService.getById(PrismNotificationTemplate.valueOf(notificationTemplateId));
 
         validate(template, notificationConfigurationDTO, validationErrors);
@@ -66,25 +68,23 @@ public class NotificationTemplateResource {
         }
 
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        notificationService.updateConfiguration(resource, template, notificationConfigurationDTO);
+        notificationService.updateConfiguration(resource, locale, programType, template, notificationConfigurationDTO);
     }
 
     @RequestMapping(value = "/{resourceId}/notificationTemplates/{notificationTemplateId}", method = RequestMethod.DELETE)
     public void restoreDefaultConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-            @PathVariable String notificationTemplateId, @RequestParam(required = false) PrismProgramType programType,
-            @RequestParam(required = false) PrismLocale locale) throws Exception {
+            @PathVariable String notificationTemplateId, @RequestParam PrismLocale locale, @RequestParam PrismProgramType programType) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         NotificationTemplate template = notificationService.getById(PrismNotificationTemplate.valueOf(notificationTemplateId));
-        notificationService.restoreDefaultConfiguration(resource, programType, locale, template);
+        notificationService.restoreDefaultConfiguration(resource, locale, programType, template);
     }
 
     @RequestMapping(value = "/{resourceId}/notificationTemplates/global/{notificationTemplateId}", method = RequestMethod.DELETE)
     public void restoreGlobalConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-            @PathVariable String notificationTemplateId, @RequestParam(required = false) PrismProgramType programType,
-            @RequestParam(required = false) PrismLocale locale) throws Exception {
+            @PathVariable String notificationTemplateId, @RequestParam PrismLocale locale, @RequestParam PrismProgramType programType) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         NotificationTemplate template = notificationService.getById(PrismNotificationTemplate.valueOf(notificationTemplateId));
-        notificationService.restoreGlobalConfiguration(resource, programType, locale, template);
+        notificationService.restoreGlobalConfiguration(resource, locale, programType, template);
     }
 
     private Map<String, String> validate(NotificationTemplate template, NotificationConfigurationDTO notificationConfigurationDTO, BindingResult errors) {

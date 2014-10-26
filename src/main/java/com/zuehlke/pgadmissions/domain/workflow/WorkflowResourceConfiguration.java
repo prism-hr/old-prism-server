@@ -26,7 +26,7 @@ public abstract class WorkflowResourceConfiguration extends WorkflowResource {
         ResourceSignature resourceSignature = super.getResourceSignature();
         PrismScope resourceScope = getResource().getResourceScope();
         if (resourceScope == SYSTEM) {
-            resourceSignature.addProperty("programType", getProgramType()).addProperty("locale", getLocale());
+            resourceSignature.addProperty("locale", getLocale()).addProperty("programType", getProgramType());
         } else if (resourceScope == INSTITUTION) {
             resourceSignature.addProperty("programType", getProgramType());
         }

@@ -23,7 +23,6 @@ import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -81,6 +80,8 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ApplicationExportBuilder {
 
+    private PropertyLoader propertyLoader;
+
     private final ObjectFactory objectFactory = new ObjectFactory();
 
     @Value("${xml.export.source}")
@@ -89,16 +90,15 @@ public class ApplicationExportBuilder {
     @Autowired
     private ApplicationExportBuilderHelper applicationExportBuilderHelper;
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    private PropertyLoader propertyLoader;
-
     public SubmitAdmissionsApplicationRequest build(ApplicationExportDTO applicationExportDTO) {
-        propertyLoader = applicationContext.getBean(PropertyLoader.class).withResource(applicationExportDTO.getApplication());
         SubmitAdmissionsApplicationRequest request = objectFactory.createSubmitAdmissionsApplicationRequest();
         request.setApplication(buildApplication(applicationExportDTO));
         return request;
+    }
+
+    public ApplicationExportBuilder localize(PropertyLoader propertyLoader) {
+        this.propertyLoader = propertyLoader;
+        return this;
     }
 
     private ApplicationTp buildApplication(ApplicationExportDTO applicationExportDTO) {

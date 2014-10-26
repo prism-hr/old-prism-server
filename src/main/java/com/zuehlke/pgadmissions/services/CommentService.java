@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.comment.Document;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
@@ -30,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -300,7 +300,7 @@ public class CommentService {
 
     public void processComment(Comment comment) {
         if (comment.isApplicationAutomatedRejectionComment()) {
-            PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).withResource(comment.getApplication());
+            PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(comment.getApplication(), comment.getUser());
             comment.setRejectionReasonSystem(propertyLoader.load(PrismDisplayProperty.APPLICATION_COMMENT_REJECTION_SYSTEM));
         }
 

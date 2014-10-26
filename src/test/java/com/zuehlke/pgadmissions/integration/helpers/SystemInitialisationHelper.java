@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.integration.helpers;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -18,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.io.Resources;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
@@ -31,8 +35,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
-import com.zuehlke.pgadmissions.domain.display.DisplayCategory;
 import com.zuehlke.pgadmissions.domain.display.DisplayProperty;
+import com.zuehlke.pgadmissions.domain.display.DisplayValue;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
@@ -219,39 +223,42 @@ public class SystemInitialisationHelper {
 
     public void verifyDisplayPropertyCreation() {
         System system = systemService.getSystem();
-        for (DisplayProperty property : localizationService.getAllLocalizedProperties()) {
-            assertEquals(property.getResource(), system);
-            assertEquals(property.getLocale(), system.getLocale());
+        for (DisplayValue value : localizationService.getAllLocalizedProperties()) {
+            assertEquals(value.getResource(), system);
+            assertEquals(value.getLocale(), system.getLocale());
 
-            DisplayCategory displayCategory = property.getDisplayCategory();
-            assertEquals(displayCategory.getScope().getId(), displayCategory.getId().getScope());
+            DisplayProperty displayProperty = value.getDisplayProperty();
+            PrismDisplayProperty prismDisplayProperty = (PrismDisplayProperty) displayProperty.getId();
 
-            assertNull(property.getProgramType());
-            assertEquals(property.getLocale(), PrismLocale.getSystemLocale());
-            assertEquals(property.getPropertyIndex().getCategory(), displayCategory.getId());
-            assertEquals(property.getPropertyIndex().getDefaultValue(), property.getPropertyValue());
-            assertTrue(property.getSystemDefault());
-            assertTrue(property.getSystemDefault());
+            assertEquals(value.getProgramType(), displayProperty.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null);
+            assertEquals(displayProperty.getDisplayCategory(), prismDisplayProperty.getDisplayCategory());
+            assertEquals(value.getValue(), prismDisplayProperty.getDefaultValue());
+            assertTrue(value.getSystemDefault());
         }
     }
 
     public void verifyNotificationTemplateCreation() {
         System system = systemService.getSystem();
         for (NotificationTemplate template : notificationService.getTemplates()) {
-            assertEquals(template.getId().getNotificationType(), template.getNotificationType());
-            assertEquals(template.getId().getNotificationPurpose(), template.getNotificationPurpose());
-            assertEquals(template.getId().getScope(), template.getScope().getId());
-            assertEquals(template.getId().getReminderTemplate(), (template.getReminderTemplate()) == null ? null : template.getReminderTemplate().getId());
+            PrismNotificationTemplate prismNotificationTemplate = template.getId();
 
-            NotificationConfiguration configuration = notificationService.getConfiguration(system, template);
-            assertNull(configuration.getProgramType());
+            assertEquals(prismNotificationTemplate.getNotificationType(), template.getNotificationType());
+            assertEquals(prismNotificationTemplate.getNotificationPurpose(), template.getNotificationPurpose());
+            assertEquals(prismNotificationTemplate.getScope(), template.getScope().getId());
+            assertEquals(prismNotificationTemplate.getReminderTemplate(), (template.getReminderTemplate()) == null ? null : template.getReminderTemplate()
+                    .getId());
+
+            PrismProgramType programType = template.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null;
+
+            NotificationConfiguration configuration = notificationService.getConfigurationStrict(system, system.getLocale(), programType, template);
             assertEquals(configuration.getLocale(), getSystemLocale());
+            assertEquals(configuration.getProgramType(), programType);
             assertEquals(configuration.getNotificationTemplate(), template);
-            assertEquals(template.getId().getReminderInterval(), configuration.getReminderInterval());
+            assertEquals(prismNotificationTemplate.getReminderInterval(), configuration.getReminderInterval());
             assertTrue(configuration.getSystemDefault());
 
-            assertEquals(getFileContent(defaultEmailSubjectDirectory + template.getId().getInitialTemplateSubject()), configuration.getSubject());
-            assertEquals(getFileContent(defaultEmailContentDirectory + template.getId().getInitialTemplateContent()), configuration.getContent());
+            assertEquals(getFileContent(defaultEmailSubjectDirectory + prismNotificationTemplate.getInitialTemplateSubject()), configuration.getSubject());
+            assertEquals(getFileContent(defaultEmailContentDirectory + prismNotificationTemplate.getInitialTemplateContent()), configuration.getContent());
         }
     }
 
@@ -259,9 +266,9 @@ public class SystemInitialisationHelper {
         System system = systemService.getSystem();
         for (State state : stateService.getConfigurableStates()) {
             StateDuration stateDuration = stateService.getStateDuration(system, state);
-            
-            assertNull(stateDuration.getProgramType());
+
             assertEquals(stateDuration.getLocale(), getSystemLocale());
+            assertEquals(stateDuration.getProgramType(), state.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null);
             assertEquals(state.getId().getDuration(), stateDuration.getDuration());
             assertTrue(stateDuration.getSystemDefault());
         }

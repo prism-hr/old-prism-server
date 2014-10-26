@@ -9,7 +9,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.zuehlke.pgadmissions.domain.comment.Document;
+import com.zuehlke.pgadmissions.domain.document.Document;
 
 @Entity
 @Table(name = "APPLICATION_DOCUMENT")

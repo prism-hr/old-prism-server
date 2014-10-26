@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.mail;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_EMAIL_LINK_MESSAGE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_HELPDESK_REPORT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -45,7 +43,6 @@ import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
 import com.zuehlke.pgadmissions.services.helpers.NotificationTemplatePropertyLoader;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -153,17 +150,11 @@ public class MailSender {
         Map<String, Object> model = Maps.newHashMap();
         LOGGER.info("Getting properties for " + notificationTemplate.getId().name() + " for " + modelDTO.getResource().getCode());
         List<PrismNotificationTemplatePropertyCategory> categories = notificationTemplate.getId().getPropertyCategories();
-        NotificationTemplatePropertyLoader loader = applicationContext.getBean(NotificationTemplatePropertyLoader.class).withTemplateModelDTO(modelDTO);
+        NotificationTemplatePropertyLoader loader = applicationContext.getBean(NotificationTemplatePropertyLoader.class).localize(modelDTO);
         for (PrismNotificationTemplatePropertyCategory propertyCategory : categories) {
             for (PrismNotificationTemplateProperty property : propertyCategory.getProperties()) {
-                String value = validationMode ? "placeholder" : (String) ReflectionUtils.invokeMethod(loader, property.getMethodName());
-                boolean valueNull = value == null;
-                if (valueNull) {
-                    PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).withResource(modelDTO.getResource());
-                    value = "[" + propertyLoader.load(SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR) + ". " + propertyLoader.load(SYSTEM_HELPDESK_REPORT) + ": "
-                            + modelDTO.getResource().getSystem().getHelpdesk() + "]";
-                }
-                model.put(property.name(), !property.isEscapeHtml() || valueNull ? value : StringEscapeUtils.escapeHtml(value));
+                String value = validationMode ? "placeholder" : loader.load(property);
+                model.put(property.name(), property.isEscapeHtml() ? StringEscapeUtils.escapeHtml(value) : value);
             }
         }
         return model;

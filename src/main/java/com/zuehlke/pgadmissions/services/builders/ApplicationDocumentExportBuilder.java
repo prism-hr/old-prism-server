@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services.builders;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -12,6 +14,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -21,17 +24,25 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.Document;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
+import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.services.ApplicationDownloadService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
+import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderHelper;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadEquivalentExperienceBuilder;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadReferenceBuilder;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Component
+@Scope(SCOPE_PROTOTYPE)
 public class ApplicationDocumentExportBuilder {
+
+    private PropertyLoader propertyLoader;
+
+    private ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper;
 
     @Autowired
     private ApplicationService applicationService;
@@ -41,7 +52,7 @@ public class ApplicationDocumentExportBuilder {
 
     @Autowired
     private CommentService commentService;
-    
+
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -61,6 +72,12 @@ public class ApplicationDocumentExportBuilder {
         } finally {
             IOUtils.closeQuietly(zos);
         }
+    }
+
+    public ApplicationDocumentExportBuilder localize(PropertyLoader propertyLoader) {
+        this.propertyLoader = propertyLoader;
+        this.applicationDownloadBuilderHelper = applicationContext.getBean(ApplicationDownloadBuilderHelper.class).localize(propertyLoader);
+        return this;
     }
 
     private void buildContentsFile(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
@@ -90,7 +107,8 @@ public class ApplicationDocumentExportBuilder {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
             Comment approvalComment = commentService.getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
-            zos.write(applicationContext.getBean(ApplicationDownloadEquivalentExperienceBuilder.class).build(application, approvalComment));
+            zos.write(applicationContext.getBean(ApplicationDownloadEquivalentExperienceBuilder.class)
+                    .localize(propertyLoader, applicationDownloadBuilderHelper).build(application, approvalComment));
             zos.closeEntry();
             contentsProperties.put("transcript.1.serverFilename", filename);
             contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
@@ -145,11 +163,12 @@ public class ApplicationDocumentExportBuilder {
         for (int i = 0; i < 2; i++) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
-            zos.write(applicationContext.getBean(ApplicationDownloadReferenceBuilder.class).build(application, referees.get(i).getComment()));
+            zos.write(applicationContext.getBean(ApplicationDownloadReferenceBuilder.class).localize(propertyLoader, applicationDownloadBuilderHelper)
+                    .build(application, referees.get(i).getComment()));
             zos.closeEntry();
             int referenceNumberId = i + 1;
             contentsProperties.put("reference." + referenceNumberId + ".serverFilename", filename);
-            contentsProperties.put("reference." + referenceNumberId + ".applicationFilename", "References."  + referenceNumberId + ".pdf");
+            contentsProperties.put("reference." + referenceNumberId + ".applicationFilename", "References." + referenceNumberId + ".pdf");
         }
     }
 
@@ -160,9 +179,9 @@ public class ApplicationDocumentExportBuilder {
         zos.putNextEntry(new ZipEntry(serverfilename));
         try {
             ApplicationDownloadDTO applicationDownloadDTO = new ApplicationDownloadDTO().withApplication(application).withIncludeEqualOpportuntiesData(true);
-            applicationDownloadService.build(applicationDownloadDTO, zos);
+            applicationDownloadService.build(applicationDownloadDTO, propertyLoader, applicationDownloadBuilderHelper, zos);
         } catch (Exception e) {
-            throw new Error("Unable to build application document for " + application.getCode(), e);
+            throw new PdfDocumentBuilderException(e);
         }
         zos.closeEntry();
         contentsProperties.put("applicationForm.1.serverFilename", serverfilename);
@@ -175,9 +194,9 @@ public class ApplicationDocumentExportBuilder {
         zos.putNextEntry(new ZipEntry(serverfilename));
         try {
             ApplicationDownloadDTO applicationDownloadDTO = new ApplicationDownloadDTO().withApplication(application).withIncludeReferences(true);
-            applicationDownloadService.build(applicationDownloadDTO, zos);
+            applicationDownloadService.build(applicationDownloadDTO, propertyLoader, applicationDownloadBuilderHelper, zos);
         } catch (Exception e) {
-            throw new Error("Unable to merged application document for " + application.getCode(), e);
+            throw new PdfDocumentBuilderException(e);
         }
         zos.closeEntry();
         contentsProperties.put("mergedApplication.1.serverFilename", serverfilename);

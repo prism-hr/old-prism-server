@@ -5,9 +5,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.A
 
 import java.io.ByteArrayOutputStream;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -23,19 +21,16 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ApplicationDownloadEquivalentExperienceBuilder {
 
-    @Autowired
+    private PropertyLoader propertyLoader;
+    
     private ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper;
-
-    @Autowired
-    private ApplicationContext applicationContext;
 
     public byte[] build(final Application application, final Comment approvalComment) {
         try {
+            
             Document pdfDocument = applicationDownloadBuilderHelper.startDocument();
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             applicationDownloadBuilderHelper.startDocumentWriter(outputStream, pdfDocument);
-
-            PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class);
 
             PdfPTable body = applicationDownloadBuilderHelper.newSectionHeader(propertyLoader.load(APPLICATION_QUALIFICATION_EQUIVALENT_HEADER));
             PdfPCell cell = applicationDownloadBuilderHelper.newContentCellMedium(approvalComment == null ? null : propertyLoader
@@ -50,6 +45,13 @@ public class ApplicationDownloadEquivalentExperienceBuilder {
         } catch (Exception e) {
             throw new PdfDocumentBuilderException(e);
         }
+    }
+
+    public ApplicationDownloadEquivalentExperienceBuilder localize(PropertyLoader propertyLoader,
+            ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper) {
+        this.propertyLoader = propertyLoader;
+        this.applicationDownloadBuilderHelper  = applicationDownloadBuilderHelper;
+        return this;
     }
 
 }

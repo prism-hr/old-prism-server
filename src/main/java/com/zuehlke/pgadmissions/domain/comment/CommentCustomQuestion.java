@@ -1,21 +1,16 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
-import java.util.Map;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -57,13 +52,12 @@ public class CommentCustomQuestion extends WorkflowResourceConfiguration {
     @JoinColumn(name = "action_id", nullable = false)
     private Action action;
 
+    @Lob
+    @Column(name = "content", nullable = false)
+    private String content;
+
     @Column(name = "system_default", nullable = false)
     private Boolean systemDefault;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "comment_custom_question_id", nullable = false)
-    @MapKeyColumn(name = "name", nullable = false)
-    private Map<String, CommentCustomQuestionVersion> commentCustomQuestionVersions = Maps.newHashMap();
 
     @Override
     public Integer getId() {
@@ -133,6 +127,14 @@ public class CommentCustomQuestion extends WorkflowResourceConfiguration {
         this.action = action;
     }
 
+    public final String getContent() {
+        return content;
+    }
+
+    public final void setContent(String content) {
+        this.content = content;
+    }
+
     @Override
     public final Boolean getSystemDefault() {
         return systemDefault;
@@ -178,8 +180,8 @@ public class CommentCustomQuestion extends WorkflowResourceConfiguration {
         return this;
     }
 
-    public CommentCustomQuestion addCommentCustomQuestionVersion(String name, String content) {
-        commentCustomQuestionVersions.put(name, new CommentCustomQuestionVersion().withCommentCustomQuestion(this).withName(name).withContent(content));
+    public CommentCustomQuestion withContent(String content) {
+        this.content = content;
         return this;
     }
 

@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.domain.workflow;
+package com.zuehlke.pgadmissions.domain.display;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,18 +11,23 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceConfiguration;
 
 @Entity
-@Table(name = "state_duration", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "state_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "locale", "program_type", "state_id" }),
-        @UniqueConstraint(columnNames = { "program_id", "state_id" }) })
-public class StateDuration extends WorkflowResourceConfiguration {
+@Table(name = "DISPLAY_VALUE", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "program_type", "locale", "display_property_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "program_type", "display_property_id" }),
+        @UniqueConstraint(columnNames = { "program_id", "display_property_id" }) })
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+public class DisplayValue extends WorkflowResourceConfiguration {
 
     @Id
     @GeneratedValue
@@ -39,60 +44,60 @@ public class StateDuration extends WorkflowResourceConfiguration {
     @ManyToOne
     @JoinColumn(name = "program_id")
     private Program program;
-
-    @Column(name = "locale", nullable = false)
+    
+    @Column(name = "locale")
     @Enumerated(EnumType.STRING)
     private PrismLocale locale;
-
+    
     @Column(name = "program_type")
     @Enumerated(EnumType.STRING)
     private PrismProgramType programType;
-
+    
     @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false)
-    private State state;
+    @JoinColumn(name = "display_property_id", nullable = false)
+    private DisplayProperty displayProperty;
 
-    @Column(name = "day_duration", nullable = false)
-    private Integer duration;
+    @Column(name = "value", nullable = false)
+    private String value;
 
     @Column(name = "system_default", nullable = false)
     private Boolean systemDefault;
 
-    public Integer getId() {
+    public final Integer getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public final void setId(Integer id) {
         this.id = id;
     }
 
     @Override
-    public System getSystem() {
+    public final System getSystem() {
         return system;
     }
 
     @Override
-    public void setSystem(System system) {
+    public final void setSystem(System system) {
         this.system = system;
     }
 
     @Override
-    public Institution getInstitution() {
+    public final Institution getInstitution() {
         return institution;
     }
 
     @Override
-    public void setInstitution(Institution institution) {
+    public final void setInstitution(Institution institution) {
         this.institution = institution;
     }
 
     @Override
-    public Program getProgram() {
+    public final Program getProgram() {
         return program;
     }
 
     @Override
-    public void setProgram(Program program) {
+    public final void setProgram(Program program) {
         this.program = program;
     }
 
@@ -105,7 +110,7 @@ public class StateDuration extends WorkflowResourceConfiguration {
     public final void setLocale(PrismLocale locale) {
         this.locale = locale;
     }
-
+    
     @Override
     public final PrismProgramType getProgramType() {
         return programType;
@@ -116,20 +121,20 @@ public class StateDuration extends WorkflowResourceConfiguration {
         this.programType = programType;
     }
 
-    public State getState() {
-        return state;
+    public final DisplayProperty getDisplayProperty() {
+        return displayProperty;
     }
 
-    public void setState(State state) {
-        this.state = state;
+    public final void setDisplayProperty(DisplayProperty displayProperty) {
+        this.displayProperty = displayProperty;
     }
 
-    public Integer getDuration() {
-        return duration;
+    public final String getValue() {
+        return value;
     }
 
-    public void setDuration(Integer duration) {
-        this.duration = duration;
+    public final void setValue(String value) {
+        this.value = value;
     }
 
     @Override
@@ -141,40 +146,40 @@ public class StateDuration extends WorkflowResourceConfiguration {
     public final void setSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
     }
-
-    public StateDuration withResource(Resource resource) {
+    
+    public DisplayValue withResource(Resource resource) {
         setResource(resource);
         return this;
     }
-
-    public StateDuration withProgramType(PrismProgramType programType) {
-        this.programType = programType;
-        return this;
-    }
-
-    public StateDuration withLocale(PrismLocale locale) {
+    
+    public DisplayValue withLocale(PrismLocale locale) {
         this.locale = locale;
         return this;
     }
-
-    public StateDuration withState(State state) {
-        this.state = state;
+    
+    public DisplayValue withProgramType(PrismProgramType programType) {
+        this.programType = programType;
         return this;
     }
-
-    public StateDuration withDuration(Integer duration) {
-        this.duration = duration;
+    
+    public DisplayValue withDisplayProperty(DisplayProperty displayProperty) {
+        this.displayProperty = displayProperty;
         return this;
     }
-
-    public StateDuration withSystemDefault(Boolean systemDefault) {
+    
+    public DisplayValue withValue(String value) {
+        this.value = value;
+        return this;
+    }
+    
+    public DisplayValue withSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
         return this;
     }
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("state", state);
+        return super.getResourceSignature().addProperty("displayProperty", displayProperty);
     }
 
 }

@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_COMMENT_INITIALIZED_SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,9 +28,9 @@ import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.dao.SystemDAO;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
@@ -43,7 +45,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNoti
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
-import com.zuehlke.pgadmissions.domain.display.DisplayCategory;
+import com.zuehlke.pgadmissions.domain.display.DisplayProperty;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -57,7 +59,6 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
-import com.zuehlke.pgadmissions.domain.workflow.StateDuration;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
@@ -294,14 +295,14 @@ public class SystemService {
     }
 
     private void initializeDisplayProperties(System system) throws DeduplicationException {
-        for (PrismDisplayCategory prismCategory : PrismDisplayCategory.values()) {
-            Scope scope = scopeService.getById(prismCategory.getScope());
-            DisplayCategory transientCategory = new DisplayCategory().withId(prismCategory).withScope(scope);
-            DisplayCategory persistentCategory = entityService.createOrUpdate(transientCategory);
-            for (PrismDisplayProperty prismProperty : PrismDisplayProperty.getByCategory(prismCategory)) {
-                customizationService.createOrUpdateDisplayProperty(system, persistentCategory, null, getSystemLocale(), prismProperty,
-                        prismProperty.getDefaultValue());
-            }
+        for (PrismDisplayProperty prismDisplayProperty : PrismDisplayProperty.values()) {
+            Scope scope = scopeService.getById(prismDisplayProperty.getScope());
+            DisplayProperty displayProperty = new DisplayProperty().withId(prismDisplayProperty).withDisplayCategory(prismDisplayProperty.getDisplayCategory())
+                    .withScope(scope);
+            entityService.createOrUpdate(displayProperty);
+            PrismProgramType programType = scope.getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null;
+            customizationService.createOrUpdateDisplayProperty(system, getSystemLocale(), programType, prismDisplayProperty.getDisplayCategory(),
+                    displayProperty, prismDisplayProperty.getDefaultValue());
         }
     }
 
@@ -332,12 +333,15 @@ public class SystemService {
         NotificationTemplate reminderTemplate = notificationService.getById(template.getId().getReminderTemplate());
         template.setReminderTemplate(reminderTemplate);
 
-        PrismNotificationTemplate templateId = template.getId();
+        PrismNotificationTemplate prismTemplate = template.getId();
 
-        NotificationConfiguration transientConfiguration = new NotificationConfiguration().withResource(system).withLocale(getSystemLocale())
-                .withNotificationTemplate(template).withSubject(getFileContent(defaultEmailSubjectDirectory + templateId.getInitialTemplateSubject()))
-                .withContent(getFileContent(defaultEmailContentDirectory + templateId.getInitialTemplateContent()))
-                .withReminderInterval(template.getId().getReminderInterval()).withSystemDefault(true);
+        String subject = getFileContent(defaultEmailSubjectDirectory + prismTemplate.getInitialTemplateSubject());
+        String content = getFileContent(defaultEmailContentDirectory + prismTemplate.getInitialTemplateContent());
+
+        PrismProgramType programType = prismTemplate.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null;
+
+        NotificationConfiguration transientConfiguration = notificationService.createConfiguration(system, getSystemLocale(), programType, template, subject,
+                content, prismTemplate.getReminderInterval());
         NotificationConfiguration persistentConfiguration = entityService.getDuplicateEntity(transientConfiguration);
 
         if (persistentConfiguration == null) {
@@ -352,9 +356,8 @@ public class SystemService {
         for (PrismState prismState : PrismState.values()) {
             if (prismState.getDuration() != null) {
                 State state = stateService.getById(prismState);
-                StateDuration transientStateDuration = new StateDuration().withResource(system).withLocale(getSystemLocale()).withState(state)
-                        .withDuration(prismState.getDuration()).withSystemDefault(true);
-                entityService.createOrUpdate(transientStateDuration);
+                PrismProgramType programType = prismState.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null;
+                stateService.createOrUpdateStateDuration(system, getSystemLocale(), programType, state, prismState.getDuration());
             }
         }
     }
@@ -441,8 +444,8 @@ public class SystemService {
         if (user.getUserAccount() == null) {
             Action action = actionService.getById(PrismAction.SYSTEM_STARTUP);
             Comment comment = new Comment().withAction(action)
-                    .withContent(applicationContext.getBean(PropertyLoader.class).load(SYSTEM_COMMENT_INITIALIZED_SYSTEM)).withDeclinedResponse(false)
-                    .withUser(user).withCreatedTimestamp(new DateTime())
+                    .withContent(applicationContext.getBean(PropertyLoader.class).localize(system, user).load(SYSTEM_COMMENT_INITIALIZED_SYSTEM))
+                    .withDeclinedResponse(false).withUser(user).withCreatedTimestamp(new DateTime())
                     .addAssignedUser(user, roleService.getCreatorRole(system), PrismRoleTransitionType.CREATE);
             ActionOutcomeDTO outcome = actionService.executeSystemAction(system, action, comment);
             notificationService.sendRegistrationNotification(user, outcome, comment);

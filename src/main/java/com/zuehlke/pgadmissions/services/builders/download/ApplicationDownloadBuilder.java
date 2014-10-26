@@ -163,13 +163,12 @@ public class ApplicationDownloadBuilder {
 
     private final List<Object> bookmarks = Lists.newLinkedList();
 
-    @Value("${xml.export.logo.file.width.percentage}")
-    private Float logoFileWidthPercentage;
+    private PropertyLoader propertyLoader;
 
-    @Autowired
     private ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper;
 
-    private PropertyLoader propertyLoader;
+    @Value("${xml.export.logo.file.width.percentage}")
+    private Float logoFileWidthPercentage;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -177,7 +176,6 @@ public class ApplicationDownloadBuilder {
     public void build(ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument, PdfWriter writer) throws PdfDocumentBuilderException {
         try {
             Application application = applicationDownloadDTO.getApplication();
-            propertyLoader = applicationContext.getBean(PropertyLoader.class).withResource(application);
             addCoverPage(application, pdfDocument, writer);
             writer.setPageEvent(new NewPageEvent().withApplication(application));
             addProgramSection(application, pdfDocument);
@@ -192,9 +190,14 @@ public class ApplicationDownloadBuilder {
             addAdditionalInformationSection(applicationDownloadDTO, pdfDocument);
             addSupportingDocuments(applicationDownloadDTO, pdfDocument, writer);
         } catch (Exception e) {
-            LOGGER.error("Error building download for application " + applicationDownloadDTO.getApplication().getCode(), e);
-            throw new PdfDocumentBuilderException(e.getMessage(), e);
+            throw new PdfDocumentBuilderException(e);
         }
+    }
+
+    public ApplicationDownloadBuilder localize(PropertyLoader propertyLoader, ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper) {
+        this.propertyLoader = propertyLoader;
+        this.applicationDownloadBuilderHelper = applicationDownloadBuilderHelper;
+        return this;
     }
 
     private void addCoverPage(Application application, Document pdfDocument, PdfWriter writer) throws MalformedURLException, IOException, DocumentException {
@@ -355,8 +358,7 @@ public class ApplicationDownloadBuilder {
             ApplicationLanguageQualification languageQualification) throws DocumentException {
         PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_HEADER));
 
-        applicationDownloadBuilderHelper
-                .addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_TYPE), languageQualification.getTypeDisplay(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_TYPE), languageQualification.getTypeDisplay(), body);
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_EXAM_DATE),
                 languageQualification.getExamDateDisplay(propertyLoader.load(SYSTEM_DATE_FORMAT)), body);
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_OVERALL_SCORE),
@@ -575,8 +577,8 @@ public class ApplicationDownloadBuilder {
 
                 Object object = bookmarks.get(i);
                 pdfDocument.add(new Chunk(propertyLoader.load(SYSTEM_APPENDIX) + "(" + (i + 1) + ")").setLocalDestination(new Integer(i).toString()));
-                if (object.getClass().equals(com.zuehlke.pgadmissions.domain.comment.Document.class)) {
-                    com.zuehlke.pgadmissions.domain.comment.Document document = (com.zuehlke.pgadmissions.domain.comment.Document) object;
+                if (object.getClass().equals(com.zuehlke.pgadmissions.domain.document.Document.class)) {
+                    com.zuehlke.pgadmissions.domain.document.Document document = (com.zuehlke.pgadmissions.domain.document.Document) object;
 
                     if (document != null) {
                         if (document.getApplicationLanguageQualification() != null) {
@@ -612,7 +614,7 @@ public class ApplicationDownloadBuilder {
         }
     }
 
-    private void addDocument(Document pdfDocument, com.zuehlke.pgadmissions.domain.comment.Document document, PdfWriter pdfWriter) throws IOException {
+    private void addDocument(Document pdfDocument, com.zuehlke.pgadmissions.domain.document.Document document, PdfWriter pdfWriter) throws IOException {
         PdfReader pdfReader = new PdfReader(document.getContent());
         PdfContentByte cb = pdfWriter.getDirectContent();
         for (int i = 1; i <= pdfReader.getNumberOfPages(); i++) {
@@ -648,7 +650,7 @@ public class ApplicationDownloadBuilder {
                 fontSize, table);
     }
 
-    private void addDocument(PdfPTable table, String rowTitle, com.zuehlke.pgadmissions.domain.comment.Document document, boolean includeAttachments) {
+    private void addDocument(PdfPTable table, String rowTitle, com.zuehlke.pgadmissions.domain.document.Document document, boolean includeAttachments) {
         applicationDownloadBuilderHelper.newTitleCellLarge(rowTitle);
         if (includeAttachments) {
             if (document == null) {

@@ -117,7 +117,7 @@ public class ResourceService {
             Resource resource = getById(resourceScope.getResourceClass(), resourceId);
             Action action = actionService.getById(actionId);
 
-            String commentContent = actionId.name().endsWith("VIEW_EDIT") ? applicationContext.getBean(PropertyLoader.class).withResource(resource)
+            String commentContent = actionId.name().endsWith("VIEW_EDIT") ? applicationContext.getBean(PropertyLoader.class).localize(resource, user)
                     .load(PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED")) : commentDTO.getContent();
 
             State transitionState = stateService.getById(commentDTO.getTransitionState());
@@ -261,11 +261,11 @@ public class ResourceService {
     }
 
     public void executeUpdate(Resource resource, PrismDisplayProperty messageIndex, CommentAssignedUser assignee) throws DeduplicationException {
-        User userCurrent = userService.getCurrentUser();
+        User user = userService.getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
 
-        Comment comment = new Comment().withUser(userCurrent).withAction(action)
-                .withContent(applicationContext.getBean(PropertyLoader.class).withResource(resource).load(messageIndex)).withDeclinedResponse(false)
+        Comment comment = new Comment().withUser(user).withAction(action)
+                .withContent(applicationContext.getBean(PropertyLoader.class).localize(resource, user).load(messageIndex)).withDeclinedResponse(false)
                 .withCreatedTimestamp(new DateTime());
 
         if (assignee != null) {

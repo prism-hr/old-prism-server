@@ -26,8 +26,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
-import com.zuehlke.pgadmissions.domain.comment.Document;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;

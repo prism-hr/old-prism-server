@@ -13,11 +13,11 @@ import com.zuehlke.pgadmissions.domain.system.System;
 
 public enum PrismScope {
 
-    SYSTEM(System.class, 1, "SM", null, true, true, null, null), //
-    INSTITUTION(Institution.class, 2, "IN", 50, true, false, new ColumnDefinition().add("institution", "title").getAll(), null), //
-    PROGRAM(Program.class, 3, "PM", 50, false, false, new ColumnDefinition().add("institution", "title").add("program", "title").getAll(), null), //
-    PROJECT(Project.class, 4, "PT", 50, false, false, new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null), //
-    APPLICATION(Application.class, 5, "AN", 50, false, false, new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null);
+    SYSTEM(System.class, 1, "SM", null, null, null), //
+    INSTITUTION(Institution.class, 2, "IN", 50, new ColumnDefinition().add("institution", "title").getAll(), null), //
+    PROGRAM(Program.class, 3, "PM", 50, new ColumnDefinition().add("institution", "title").add("program", "title").getAll(), null), //
+    PROJECT(Project.class, 4, "PT", 50, new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null), //
+    APPLICATION(Application.class, 5, "AN", 50, new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null);
 
     private Class<? extends Resource> resourceClass;
 
@@ -26,8 +26,6 @@ public enum PrismScope {
     private String shortCode;
 
     private Integer maxConsoleListRecords;
-
-    private boolean programTypeConfigurationOwner;
 
     private HashMultimap<String, String> consoleListCustomColumns;
 
@@ -44,13 +42,11 @@ public enum PrismScope {
     }
 
     private PrismScope(Class<? extends Resource> resourceClass, int precedence, String shortCode, Integer maxConsoleListRecords,
-            boolean programTypeConfigurationOwner, boolean localeConfigurationOwner, HashMultimap<String, String> consoleListColumns,
-            HashMultimap<String, String> reportListColumns) {
+            HashMultimap<String, String> consoleListColumns, HashMultimap<String, String> reportListColumns) {
         this.resourceClass = resourceClass;
         this.precedence = precedence;
         this.shortCode = shortCode;
         this.maxConsoleListRecords = maxConsoleListRecords;
-        this.programTypeConfigurationOwner = programTypeConfigurationOwner;
         this.consoleListCustomColumns = consoleListColumns;
         this.reportListCustomColumns = reportListColumns;
     }
@@ -69,10 +65,6 @@ public enum PrismScope {
 
     public final Integer getMaxConsoleListRecords() {
         return maxConsoleListRecords;
-    }
-
-    public final boolean isProgramTypeConfigurationOwner() {
-        return programTypeConfigurationOwner;
     }
 
     public final HashMultimap<String, String> getConsoleListCustomColumns() {

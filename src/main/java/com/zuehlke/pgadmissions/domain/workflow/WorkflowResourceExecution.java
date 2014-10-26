@@ -4,8 +4,7 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 
-
-public abstract class WorkflowExecution extends WorkflowResource {
+public abstract class WorkflowResourceExecution extends WorkflowResource {
 
     public abstract Project getProject();
     

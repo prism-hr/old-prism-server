@@ -13,36 +13,34 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.IUniqueEntity.ResourceSignature;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class EntityDAO {
 
     @Autowired
     private SessionFactory sessionFactory;
 
-    @SuppressWarnings("unchecked")
     public <T> T getById(Class<T> klass, Object id) {
         return (T) sessionFactory.getCurrentSession().createCriteria(klass) //
                 .add(Restrictions.eq("id", id)) //
                 .uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
     public <T> T getByProperty(Class<T> klass, String propertyName, Object propertyValue) {
         return (T) sessionFactory.getCurrentSession().createCriteria(klass) //
                 .add(Restrictions.eq(propertyName, propertyValue)) //
                 .uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
     public <T> T getByPropertyNotNull(Class<T> klass, String propertyName) {
         return (T) sessionFactory.getCurrentSession().createCriteria(klass) //
                 .add(Restrictions.isNotNull(propertyName)) //
                 .uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
     public <T> T getByProperties(Class<T> klass, Map<String, Object> properties) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(klass);
 
@@ -57,7 +55,6 @@ public class EntityDAO {
         return (T) criteria.uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
     public <T> List<T> list(Class<T> klass) {
         return (List<T>) sessionFactory.getCurrentSession().createCriteria(klass) //
                 .list();
@@ -71,37 +68,28 @@ public class EntityDAO {
         sessionFactory.getCurrentSession().update(entity);
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) throws DeduplicationException {
-        IUniqueEntity.ResourceSignature signature = uniqueResource.getResourceSignature();
-        
+        ResourceSignature resourceSignature = uniqueResource.getResourceSignature();
+
         Class<T> resourceClass = (Class<T>) uniqueResource.getClass();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceClass);
 
-        HashMap<String, Object> properties = signature.getProperties();
-        if (properties.size() > 0) {
-            for (Map.Entry<String, Object> property : properties.entrySet()) {
-                String key = property.getKey();
-                if (key == null) {
-                    throw new Error("Tried to deduplicate entity with null property key " + property.getKey());
-                }
-                Object value = property.getValue();
-                criteria.add(value == null ? Restrictions.isNull(key) : Restrictions.eq(key, value));
-            }
+        HashMap<String, Object> properties = resourceSignature.getProperties();
 
-            HashMultimap<String, Object> exclusions = signature.getExclusions();
-            for (String key : exclusions.keySet()) {
-                criteria.add(Restrictions.not(Restrictions.in(key, exclusions.get(key))));
-            }
-
-            try {
-                return (T) criteria.uniqueResult();
-            } catch (Exception e) {
-                throw new DeduplicationException("Tried to deduplicate entity " + signature.toString() + " with more than one potential duplicate", e);
-            }
+        for (Map.Entry<String, Object> property : properties.entrySet()) {
+            criteria.add(Restrictions.eq(property.getKey(), property.getValue()));
         }
 
-        throw new Error("Tried to deduplicate entity " + resourceClass.getSimpleName() + " with empty resource signature");
+        HashMultimap<String, Object> exclusions = resourceSignature.getExclusions();
+        for (String key : exclusions.keySet()) {
+            criteria.add(Restrictions.not(Restrictions.in(key, exclusions.get(key))));
+        }
+
+        try {
+            return (T) criteria.uniqueResult();
+        } catch (Exception e) {
+            throw (DeduplicationException) e;
+        }
     }
 
     public void delete(Object entity) {

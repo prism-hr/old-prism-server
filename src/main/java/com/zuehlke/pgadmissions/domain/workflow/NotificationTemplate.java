@@ -51,8 +51,9 @@ public class NotificationTemplate extends WorkflowDefinition {
         return id;
     }
 
-    public void setId(PrismNotificationTemplate id) {
-        this.id = id;
+    @Override
+    public void setId(Enum<?> id) {
+        this.id = (PrismNotificationTemplate) id;
     }
 
     public PrismNotificationType getNotificationType() {
@@ -71,10 +72,12 @@ public class NotificationTemplate extends WorkflowDefinition {
         this.notificationPurpose = notificationPurpose;
     }
 
+    @Override
     public Scope getScope() {
         return scope;
     }
 
+    @Override
     public void setScope(Scope scope) {
         this.scope = scope;
     }

@@ -256,7 +256,7 @@ public class StateService {
 
     public StateTransition getApplicationEligibilityAssessedOutcome(Resource resource, Comment comment) {
         PrismState transitionStateId = PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION;
-        if (comment.isApplicationCreatorEligibilityUncertain()) {
+        if (comment.isApplicationCreatorEligibilityUnsure()) {
             transitionStateId = PrismState.APPLICATION_VALIDATION_PENDING_FEEDBACK;
         }
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);

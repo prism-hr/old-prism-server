@@ -111,7 +111,7 @@ public class ApplicationSectionService {
     public void updateProgramDetail(Integer applicationId, ApplicationProgramDetailDTO programDetailDTO) throws DeduplicationException {
         Application application = applicationService.getById(applicationId);
         Institution institution = application.getInstitution();
-        
+
         ApplicationProgramDetail programDetail = application.getProgramDetail();
         if (programDetail == null) {
             programDetail = new ApplicationProgramDetail();
@@ -143,7 +143,7 @@ public class ApplicationSectionService {
         }
 
         UserDTO userDTO = supervisorDTO.getUser();
-        User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
+        User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), application.getLocale());
 
         supervisor.setUser(user);
         supervisor.setAcceptedSupervision(supervisorDTO.getAcceptedSupervision());
@@ -172,7 +172,7 @@ public class ApplicationSectionService {
     public void updatePersonalDetail(Integer applicationId, ApplicationPersonalDetailDTO personalDetailDTO) throws DeduplicationException {
         Application application = applicationService.getById(applicationId);
         Institution institution = application.getInstitution();
-        
+
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         if (personalDetail == null) {
             personalDetail = new ApplicationPersonalDetail();
@@ -213,7 +213,7 @@ public class ApplicationSectionService {
     public void updateAddress(Integer applicationId, ApplicationAddressDTO addressDTO) throws DeduplicationException {
         Application application = applicationService.getById(applicationId);
         Institution institution = application.getInstitution();
-        
+
         ApplicationAddress address = application.getAddress();
         if (address == null) {
             address = new ApplicationAddress();
@@ -366,7 +366,7 @@ public class ApplicationSectionService {
         }
 
         UserDTO userDTO = refereeDTO.getUser();
-        User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
+        User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), application.getLocale());
         referee.setUser(user);
 
         referee.setJobEmployer(refereeDTO.getJobEmployer());
@@ -401,7 +401,7 @@ public class ApplicationSectionService {
 
     public void updateAdditionalInformation(Integer applicationId, ApplicationAdditionalInformationDTO additionalInformationDTO) throws DeduplicationException {
         Application application = applicationService.getById(applicationId);
-        
+
         ApplicationAdditionalInformation additionalInformation = application.getAdditionalInformation();
         if (additionalInformation == null) {
             additionalInformation = new ApplicationAdditionalInformation();

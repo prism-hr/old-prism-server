@@ -36,8 +36,9 @@ public class StateTransitionEvaluation extends WorkflowDefinition {
         return id;
     }
 
-    public final void setId(PrismStateTransitionEvaluation id) {
-        this.id = id;
+    @Override
+    public final void setId(Enum<?> id) {
+        this.id = (PrismStateTransitionEvaluation) id;
     }
 
     public final Boolean isNextStateSelection() {
@@ -48,10 +49,12 @@ public class StateTransitionEvaluation extends WorkflowDefinition {
         this.nextStateSelection = nextStateSelection;
     }
 
+    @Override
     public final Scope getScope() {
         return scope;
     }
 
+    @Override
     public final void setScope(Scope scope) {
         this.scope = scope;
     }

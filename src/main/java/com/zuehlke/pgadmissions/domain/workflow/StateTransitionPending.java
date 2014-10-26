@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.system.System;
 @Table(name = "STATE_TRANSITION_PENDING", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "state_transition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "state_transition_id" }), @UniqueConstraint(columnNames = { "project_id", "state_transition_id" }),
         @UniqueConstraint(columnNames = { "application_id", "state_transition_id" }) })
-public class StateTransitionPending extends WorkflowExecution {
+public class StateTransitionPending extends WorkflowResourceExecution {
 
     @Id
     @GeneratedValue

@@ -7,6 +7,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -25,6 +27,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.comment.Document;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
@@ -62,6 +65,10 @@ public class User implements UserDetails, IUniqueEntity {
     @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
     @Column(name = "email", nullable = false, unique = true)
     private String email;
+
+    @Column(name = "locale", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismLocale locale;
 
     @OneToOne
     @JoinColumn(name = "portrait_document_id")
@@ -164,6 +171,14 @@ public class User implements UserDetails, IUniqueEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public final PrismLocale getLocale() {
+        return locale;
+    }
+
+    public final void setLocale(PrismLocale locale) {
+        this.locale = locale;
     }
 
     public final Document getPortraitDocument() {
@@ -297,6 +312,11 @@ public class User implements UserDetails, IUniqueEntity {
         return this;
     }
 
+    public User withLocale(PrismLocale locale) {
+        this.locale = locale;
+        return this;
+    }
+
     public User withActivationCode(String activationCode) {
         this.activationCode = activationCode;
         return this;
@@ -323,6 +343,10 @@ public class User implements UserDetails, IUniqueEntity {
     @Override
     public boolean isEnabled() {
         return userAccount != null && userAccount.getEnabled();
+    }
+
+    public String getIndexName() {
+        return lastName + " " + firstName;
     }
 
     @Override

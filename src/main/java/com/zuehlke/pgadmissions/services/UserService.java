@@ -23,6 +23,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -74,7 +75,6 @@ public class UserService {
         return entityService.getById(User.class, id);
     }
 
-    @Transactional
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof User) {
@@ -91,7 +91,7 @@ public class UserService {
 
     public User registerUser(UserRegistrationDTO registrationDTO, String referrer) throws DeduplicationException, InterruptedException, IOException,
             JAXBException {
-        User user = getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail());
+        User user = getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail(), registrationDTO.getLocale());
         if ((registrationDTO.getActivationCode() != null && !user.getActivationCode().equals(registrationDTO.getActivationCode()))
                 || user.getUserAccount() != null) {
             throw new ResourceNotFoundException();
@@ -105,9 +105,10 @@ public class UserService {
         return user;
     }
 
-    public User getOrCreateUser(String firstName, String lastName, String email) throws DeduplicationException {
+    public User getOrCreateUser(String firstName, String lastName, String email, PrismLocale locale) throws DeduplicationException {
         User user;
-        User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email);
+        User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email)
+                .withLocale(locale);
         User duplicateUser = entityService.getDuplicateEntity(transientUser);
         if (duplicateUser == null) {
             user = transientUser;
@@ -120,9 +121,9 @@ public class UserService {
         return user;
     }
 
-    public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource, Set<PrismRole> roles)
+    public User getOrCreateUserWithRoles(String firstName, String lastName, String email, PrismLocale locale, Resource resource, Set<PrismRole> roles)
             throws DeduplicationException {
-        User user = getOrCreateUser(firstName, lastName, email);
+        User user = getOrCreateUser(firstName, lastName, email, locale);
         roleService.updateUserRole(resource, user, PrismRoleTransitionType.CREATE, roles.toArray(new PrismRole[roles.size()]));
         return user;
     }
@@ -137,11 +138,11 @@ public class UserService {
     public void updateUser(User user, UserDTO userDTO) {
         String firstName = userDTO.getFirstName();
         String lastName = userDTO.getLastName();
-        
+
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setFullName(firstName + " " + lastName);
-        
+
         user.setFirstName2(Strings.emptyToNull(userDTO.getFirstName2()));
         user.setFirstName3(Strings.emptyToNull(userDTO.getFirstName3()));
 
@@ -195,9 +196,9 @@ public class UserService {
 
         List<Comment> assessments = commentService.getApplicationAssessmentComments(application);
         for (Comment comment : assessments) {
-            User recruiter = comment.getUser().getParentUser();
-            if (!recruiters.contains(recruiter) && (BooleanUtils.isTrue(comment.isDesireToInterview()) || BooleanUtils.isTrue(comment.isDesireToRecruit()))) {
-                orderedRecruiters.put(recruiter.getLastName() + recruiter.getFirstName(), recruiter);
+            User recruiter = comment.getUser();
+            if (!recruiters.contains(recruiter) && (BooleanUtils.isTrue(comment.getApplicationInterested()))) {
+                orderedRecruiters.put(recruiter.getIndexName(), recruiter);
             }
             recruiters.add(recruiter);
         }
@@ -205,11 +206,11 @@ public class UserService {
         List<User> suggestedSupervisors = userDAO.getSuggestedSupervisors(application);
         for (User suggestedSupervisor : suggestedSupervisors) {
             if (!recruiters.contains(suggestedSupervisor)) {
-                orderedRecruiters.put(suggestedSupervisor.getLastName() + suggestedSupervisor.getFirstName(), suggestedSupervisor);
+                orderedRecruiters.put(suggestedSupervisor.getIndexName(), suggestedSupervisor);
             }
         }
 
-        return Lists.newArrayList(orderedRecruiters.values());
+        return Lists.newLinkedList(orderedRecruiters.values());
     }
 
     public List<User> getUsersPotentiallyInterestedInApplication(Application application, List<User> usersToExclude) {

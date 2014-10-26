@@ -41,7 +41,7 @@ public class PrismInstitutionApprovedCompleted extends PrismWorkflowState {
                         .withActionEnhancement(PrismActionEnhancement.INSTITUTION_VIEW_EDIT_AS_USER))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
-                        .withTransitionState(PrismState.INSTITUTION_APPROVED) // 
+                        .withTransitionState(PrismState.INSTITUTION_APPROVED_COMPLETED) // 
                         .withTransitionAction(PrismAction.INSTITUTION_VIEW_EDIT)
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //

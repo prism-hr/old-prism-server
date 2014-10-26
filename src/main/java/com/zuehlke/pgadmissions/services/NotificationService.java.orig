@@ -88,8 +88,8 @@ public class NotificationService {
         return entityService.getByProperty(NotificationTemplate.class, "id", id);
     }
 
-    public NotificationConfiguration getConfiguration(Resource resource, NotificationTemplate template) {
-        return customizationService.getConfiguration(NotificationConfiguration.class, resource, "notificationTemplate", template);
+    public NotificationConfiguration getConfiguration(Resource resource, PrismProgramType programType, PrismLocale locale, NotificationTemplate template) {
+        return customizationService.getConfiguration(NotificationConfiguration.class, resource, programType, locale, "notificationTemplate", template);
     }
 
     public void updateConfiguration(Resource resource, NotificationTemplate template, NotificationConfigurationDTO notificationConfigurationDTO)
@@ -101,7 +101,8 @@ public class NotificationService {
         resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_NOTIFICATION"));
     }
 
-    public void restoreDefaultConfiguration(Resource resource, PrismProgramType programType, PrismLocale locale, NotificationTemplate template) throws DeduplicationException {
+    public void restoreDefaultConfiguration(Resource resource, PrismProgramType programType, PrismLocale locale, NotificationTemplate template)
+            throws DeduplicationException {
         customizationService.restoreDefaultConfiguration(NotificationConfiguration.class, resource, programType, locale, "notificationTemplate", template);
         resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_NOTIFICATION_DEFAULT"));
     }
@@ -110,11 +111,6 @@ public class NotificationService {
             throws DeduplicationException {
         customizationService.restoreGlobalConfiguration(NotificationConfiguration.class, resource, programType, locale, "notificationTemplate", template);
         resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_NOTIFICATION_GLOBAL"));
-    }
-
-    public Integer getReminderInterval(Resource resource, NotificationTemplate template) {
-        NotificationConfiguration configuration = getConfiguration(resource, template);
-        return configuration == null ? 1 : configuration.getReminderInterval();
     }
 
     public List<NotificationTemplate> getTemplates() {
@@ -154,7 +150,7 @@ public class NotificationService {
             UserRole userRole = roleService.getUserRole(resource, user, role);
 
             NotificationTemplate notificationTemplate = getById(reminder.getNotificationTemplateId());
-            Integer reminderInterval = getReminderInterval(resource, notificationTemplate);
+            Integer reminderInterval = getReminderInterval(resource, user, notificationTemplate);
 
             if (!sent.get(notificationTemplate).contains(user) && baseline.minusDays(reminderInterval) == userRole.getLastNotifiedDate()) {
                 sendNotification(notificationTemplate.getReminderTemplate(),
@@ -183,7 +179,7 @@ public class NotificationService {
                 NotificationTemplate notificationTemplate = getById(definition.getNotificationTemplateId());
                 LocalDate lastNotifiedDate = user.getLastNotifiedDate(resource.getClass());
 
-                Integer reminderInterval = getReminderInterval(resource, notificationTemplate);
+                Integer reminderInterval = getReminderInterval(resource, user, notificationTemplate);
                 boolean doSendReminder = baseline.minusDays(reminderInterval) == lastNotifiedDate;
 
                 if (!sent.get(notificationTemplate).contains(user) && (lastNotifiedDate == null || doSendReminder)) {
@@ -328,9 +324,25 @@ public class NotificationService {
             }
         }
     }
+    
+    private Integer getReminderInterval(Resource resource, User user, NotificationTemplate template) {
+        PrismProgramType programType = customizationService.getOperativeProgramType(resource);
+        PrismLocale locale = customizationService.getOperativeLocale(resource, user);
+        
+        NotificationConfiguration configuration = getConfiguration(resource, programType, locale, template);
+        if (configuration == null) {
+            throw new Error();
+        }
+        return configuration.getReminderInterval();
+    }
 
     private void sendNotification(NotificationTemplate template, NotificationTemplateModelDTO modelDTO) {
-        NotificationConfiguration configuration = getConfiguration(modelDTO.getResource(), template);
+        Resource resource = modelDTO.getResource();
+
+        PrismProgramType programType = customizationService.getOperativeProgramType(resource);
+        PrismLocale locale = customizationService.getOperativeLocale(resource, modelDTO.getUser());
+
+        NotificationConfiguration configuration = getConfiguration(resource, programType, locale, template);
         MailMessageDTO message = new MailMessageDTO();
 
         message.setConfiguration(configuration);
@@ -339,5 +351,5 @@ public class NotificationService {
 
         mailSender.sendEmail(message);
     }
-
+    
 }

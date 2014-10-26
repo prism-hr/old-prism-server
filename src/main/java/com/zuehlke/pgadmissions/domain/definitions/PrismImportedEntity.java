@@ -16,7 +16,6 @@ import com.zuehlke.pgadmissions.domain.imported.ProgramType;
 import com.zuehlke.pgadmissions.domain.imported.QualificationType;
 import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
 import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
-import com.zuehlke.pgadmissions.domain.imported.ResidenceState;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.imported.Title;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -33,7 +32,6 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.ProgramTypes;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Qualifications;
 import com.zuehlke.pgadmissions.referencedata.jaxb.RejectionReasons;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ResidenceStates;
 import com.zuehlke.pgadmissions.referencedata.jaxb.SourcesOfInterest;
 import com.zuehlke.pgadmissions.referencedata.jaxb.StudyOptions;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Titles;
@@ -56,10 +54,9 @@ public enum PrismImportedEntity {
     TITLE(Titles.class, "title", Title.class, "xml/defaultEntities/title.xml", "xsd/import/title.xsd"), //
     INSTITUTION(Institutions.class, "institution", ImportedInstitution.class, "xml/defaultEntities/institution.xml", "xsd/import/institution.xsd"), //
     GENDER(Genders.class, "gender", Gender.class, "xml/defaultEntities/gender.xml", "xsd/import/gender.xsd"), REJECTION_REASON(RejectionReasons.class,
-            "rejectionReason", RejectionReason.class, "xml/defaultEntities/rejectionReason.xml", "xsd/import/rejectionReason.xsd"), RESIDENCE_STATE(
-            ResidenceStates.class, "residenceState", ResidenceState.class, "xml/defaultEntities/residenceState.xml", "xsd/import/residenceState.xsd"), STUDY_OPTION(
-            StudyOptions.class, "studyOption", StudyOption.class, "xml/defaultEntities/studyOption.xml", "xsd/import/studyOption.xsd"), PROGRAM_TYPE(
-            ProgramTypes.class, "programType", ProgramType.class, "xml/defaultEntities/programType.xml", "xsd/import/programType.xsd");
+            "rejectionReason", RejectionReason.class, "xml/defaultEntities/rejectionReason.xml", "xsd/import/rejectionReason.xsd"), //
+    STUDY_OPTION(StudyOptions.class, "studyOption", StudyOption.class, "xml/defaultEntities/studyOption.xml", "xsd/import/studyOption.xsd"), //
+    PROGRAM_TYPE(ProgramTypes.class, "programType", ProgramType.class, "xml/defaultEntities/programType.xml", "xsd/import/programType.xsd");
 
     private Class<?> jaxbClass;
 
@@ -70,9 +67,9 @@ public enum PrismImportedEntity {
     private String defaultLocation;
 
     private String schemaLocation;
-    
+
     private static final List<PrismImportedEntity> defaultLocations = Lists.newArrayList();
-    
+
     static {
         for (PrismImportedEntity entity : values()) {
             if (entity.defaultLocation != null) {
@@ -108,9 +105,9 @@ public enum PrismImportedEntity {
     public final String getSchemaLocation() {
         return schemaLocation;
     }
-    
+
     public static final List<PrismImportedEntity> getDefaultLocations() {
         return defaultLocations;
     }
-    
+
 }

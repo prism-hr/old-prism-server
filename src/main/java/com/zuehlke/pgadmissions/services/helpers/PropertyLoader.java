@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services.helpers;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -32,11 +34,15 @@ public class PropertyLoader {
     @Autowired
     private SystemService systemService;
 
+    @Autowired
+    private UserService userService;
+
     public String load(PrismDisplayProperty index) {
         this.resource = this.resource == null ? systemService.getSystem() : this.resource;
         String value = properties.get(index);
         if (value == null) {
             PrismDisplayCategory category = index.getCategory();
+            locale = locale == null ? userService.getCurrentUser().getLocale() : locale;
             properties.putAll(customizationService.getLocalizedProperties(resource, locale, category));
             value = properties.get(index);
         }
@@ -49,7 +55,7 @@ public class PropertyLoader {
 
     public PropertyLoader withResource(Resource resource) {
         PrismScope resourceScope = resource.getResourceScope();
-        if (resourceScope == PrismScope.PROJECT || resourceScope == PrismScope.APPLICATION) {
+        if (Arrays.asList(PrismScope.PROJECT, PrismScope.APPLICATION).contains(resourceScope)) {
             this.resource = resource.getProgram();
         } else {
             this.resource = resource;

@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.domain.workflow;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -9,14 +11,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 
 @Entity
-@Table(name = "state_duration", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "state_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "state_id" }), @UniqueConstraint(columnNames = { "program_id", "state_id" }) })
-public class StateDuration extends WorkflowResource {
+@Table(name = "state_duration", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "program_type", "locale", "state_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "program_type", "state_id" }), @UniqueConstraint(columnNames = { "program_id", "state_id" }) })
+public class StateDuration extends WorkflowResourceConfiguration {
 
     @Id
     @GeneratedValue
@@ -25,6 +30,14 @@ public class StateDuration extends WorkflowResource {
     @ManyToOne
     @JoinColumn(name = "system_id")
     private System system;
+
+    @Column(name = "program_type")
+    @Enumerated(EnumType.STRING)
+    private PrismProgramType programType;
+
+    @Column(name = "locale")
+    @Enumerated(EnumType.STRING)
+    private PrismLocale locale;
 
     @ManyToOne
     @JoinColumn(name = "institution_id")
@@ -40,7 +53,10 @@ public class StateDuration extends WorkflowResource {
 
     @Column(name = "day_duration", nullable = false)
     private Integer duration;
-    
+
+    @Column(name = "system_default", nullable = false)
+    private Boolean systemDefault;
+
     public Integer getId() {
         return id;
     }
@@ -48,7 +64,7 @@ public class StateDuration extends WorkflowResource {
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     @Override
     public System getSystem() {
         return system;
@@ -57,6 +73,26 @@ public class StateDuration extends WorkflowResource {
     @Override
     public void setSystem(System system) {
         this.system = system;
+    }
+
+    @Override
+    public final PrismProgramType getProgramType() {
+        return programType;
+    }
+
+    @Override
+    public final void setProgramType(PrismProgramType programType) {
+        this.programType = programType;
+    }
+
+    @Override
+    public final PrismLocale getLocale() {
+        return locale;
+    }
+
+    @Override
+    public final void setLocale(PrismLocale locale) {
+        this.locale = locale;
     }
 
     @Override
@@ -95,21 +131,46 @@ public class StateDuration extends WorkflowResource {
         this.duration = duration;
     }
 
-    public StateDuration withSystem(System system) {
-        this.system = system;
+    @Override
+    public final Boolean getSystemDefault() {
+        return systemDefault;
+    }
+
+    @Override
+    public final void setSystemDefault(Boolean systemDefault) {
+        this.systemDefault = systemDefault;
+    }
+
+    public StateDuration withResource(Resource resource) {
+        setResource(resource);
         return this;
     }
-    
+
+    public StateDuration withProgramType(PrismProgramType programType) {
+        this.programType = programType;
+        return this;
+    }
+
+    public StateDuration withLocale(PrismLocale locale) {
+        this.locale = locale;
+        return this;
+    }
+
     public StateDuration withState(State state) {
         this.state = state;
         return this;
     }
-    
+
     public StateDuration withDuration(Integer duration) {
         this.duration = duration;
         return this;
     }
-    
+
+    public StateDuration withSystemDefault(Boolean systemDefault) {
+        this.systemDefault = systemDefault;
+        return this;
+    }
+
     @Override
     public ResourceSignature getResourceSignature() {
         return super.getResourceSignature().addProperty("state", state);

@@ -3,7 +3,10 @@ package com.zuehlke.pgadmissions.domain.comment;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -13,16 +16,19 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowResource;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceConfiguration;
 
 @Entity
-@Table(name = "COMMENT_CUSTOM_QUESTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "action_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "action_id" }), @UniqueConstraint(columnNames = { "program_id", "action_id" }) })
-public class CommentCustomQuestion extends WorkflowResource {
+@Table(name = "COMMENT_CUSTOM_QUESTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "program_type", "locale", "action_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "program_type", "action_id" }), @UniqueConstraint(columnNames = { "program_id", "action_id" }) })
+public class CommentCustomQuestion extends WorkflowResourceConfiguration {
 
     @Id
     private Integer id;
@@ -30,6 +36,14 @@ public class CommentCustomQuestion extends WorkflowResource {
     @ManyToOne
     @JoinColumn(name = "system_id")
     private System system;
+
+    @Column(name = "program_type")
+    @Enumerated(EnumType.STRING)
+    private PrismProgramType programType;
+
+    @Column(name = "locale")
+    @Enumerated(EnumType.STRING)
+    private PrismLocale locale;
 
     @ManyToOne
     @JoinColumn(name = "institution_id")
@@ -42,6 +56,9 @@ public class CommentCustomQuestion extends WorkflowResource {
     @ManyToOne
     @JoinColumn(name = "action_id", nullable = false)
     private Action action;
+
+    @Column(name = "system_default", nullable = false)
+    private Boolean systemDefault;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_custom_question_id", nullable = false)
@@ -66,6 +83,26 @@ public class CommentCustomQuestion extends WorkflowResource {
     @Override
     public final void setSystem(System system) {
         this.system = system;
+    }
+
+    @Override
+    public final PrismProgramType getProgramType() {
+        return programType;
+    }
+
+    @Override
+    public final void setProgramType(PrismProgramType programType) {
+        this.programType = programType;
+    }
+
+    @Override
+    public final PrismLocale getLocale() {
+        return locale;
+    }
+
+    @Override
+    public final void setLocale(PrismLocale locale) {
+        this.locale = locale;
     }
 
     @Override
@@ -96,8 +133,28 @@ public class CommentCustomQuestion extends WorkflowResource {
         this.action = action;
     }
 
-    public CommentCustomQuestion withSystem(System system) {
-        this.system = system;
+    @Override
+    public final Boolean getSystemDefault() {
+        return systemDefault;
+    }
+
+    @Override
+    public final void setSystemDefault(Boolean systemDefault) {
+        this.systemDefault = systemDefault;
+    }
+
+    public CommentCustomQuestion withResource(Resource resource) {
+        setResource(resource);
+        return this;
+    }
+
+    public CommentCustomQuestion withProgramType(PrismProgramType programType) {
+        this.programType = programType;
+        return this;
+    }
+
+    public CommentCustomQuestion withLocale(PrismLocale locale) {
+        this.locale = locale;
         return this;
     }
 
@@ -113,6 +170,11 @@ public class CommentCustomQuestion extends WorkflowResource {
 
     public CommentCustomQuestion withAction(Action action) {
         this.action = action;
+        return this;
+    }
+
+    public CommentCustomQuestion withSystemDefault(Boolean systemDefault) {
+        this.systemDefault = systemDefault;
         return this;
     }
 

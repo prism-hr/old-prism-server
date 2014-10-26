@@ -57,8 +57,9 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
         return id;
     }
 
-    public void setId(PrismRole id) {
-        this.id = id;
+    @Override
+    public void setId(Enum<?> id) {
+        this.id = (PrismRole) id;
     }
 
     public boolean isScopeCreator() {
@@ -69,10 +70,12 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
         this.scopeCreator = scopeCreator;
     }
 
+    @Override
     public Scope getScope() {
         return scope;
     }
 
+    @Override
     public void setScope(Scope scope) {
         this.scope = scope;
     }

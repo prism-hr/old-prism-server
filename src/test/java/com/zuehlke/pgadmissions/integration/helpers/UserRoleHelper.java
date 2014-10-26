@@ -30,7 +30,7 @@ public class UserRoleHelper {
 
     public void verifyResourceOwnerReassignment() throws Exception {
         Program program = programService.getProgramByImportedCode(null, "RRDSCSSING01");
-        User program2NewAdmin = userService.getOrCreateUserWithRoles("Alex", "Salmond", "alex@salmond.com", program,
+        User program2NewAdmin = userService.getOrCreateUserWithRoles("Alex", "Salmond", "alex@salmond.com", program.getLocale(), program,
                 Sets.newHashSet(PrismRole.PROGRAM_VIEWER, PrismRole.PROGRAM_ADMINISTRATOR));
         roleService.updateUserRole(program, program.getUser(), PrismRoleTransitionType.DELETE, PrismRole.PROGRAM_ADMINISTRATOR);
         assertEquals(program2NewAdmin, program.getUser());

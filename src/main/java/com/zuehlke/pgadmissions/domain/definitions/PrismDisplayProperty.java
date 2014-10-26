@@ -23,6 +23,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.P
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.SYSTEM_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.SYSTEM_GLOBAL;
 
+import java.util.Set;
+
+import com.google.common.collect.HashMultimap;
+
 public enum PrismDisplayProperty {
 
     SYSTEM_DATE_FORMAT(SYSTEM_GLOBAL, "dd MMM yyyy"), //
@@ -215,8 +219,6 @@ public enum PrismDisplayProperty {
     APPLICATION_DOCUMENT_CV_APPENDIX(APPLICATION_DOCUMENT, "CV/Resume"), //
     APPLICATION_ADDITIONAL_INFORMATION_HEADER(APPLICATION_ADDITIONAL_INFORMATION, "Additional Information"), //
     APPLICATION_ADDITIONAL_INFORMATION_CONVICTION(APPLICATION_ADDITIONAL_INFORMATION, "Unspent Criminal Convictions"), //
-    APPLICATION_COMMENT_SUITABLE_FOR_INSTITUTION(APPLICATION_COMMENT, "Suitable for Recruiting Institution?"), //
-    APPLICATION_COMMENT_SUITABLE_FOR_OPPORTUNITY(APPLICATION_COMMENT, "Suitable for Recruiting Position?"), //
     APPLICATION_COMMENT_DECLINED_REFEREE(APPLICATION_COMMENT, "Declined to provide a reference"), //
     APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION(APPLICATION_COMMENT, "Recommended offer conditions"), //
     APPLICATION_COMMENT_REJECTION_SYSTEM(APPLICATION_COMMENT, "The opportunity that you applied for has been discontinued"), //
@@ -237,6 +239,14 @@ public enum PrismDisplayProperty {
 
     private String defaultValue;
 
+    private static final HashMultimap<PrismDisplayCategory, PrismDisplayProperty> categoryProperties = HashMultimap.create();
+
+    static {
+        for (PrismDisplayProperty property : values()) {
+            categoryProperties.put(property.category, property);
+        }
+    }
+
     private PrismDisplayProperty(PrismDisplayCategory category, String defaultValue) {
         this.category = category;
         this.defaultValue = defaultValue;
@@ -248,6 +258,10 @@ public enum PrismDisplayProperty {
 
     public final String getDefaultValue() {
         return defaultValue;
+    }
+
+    public static final Set<PrismDisplayProperty> getByCategory(PrismDisplayCategory category) {
+        return categoryProperties.get(category);
     }
 
 }

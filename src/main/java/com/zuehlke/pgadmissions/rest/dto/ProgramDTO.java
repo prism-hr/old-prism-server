@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
 public class ProgramDTO {
 
-    private Integer institution;
+    private Integer institutionId;
 
     @NotNull
     private PrismProgramType programType;
@@ -40,12 +40,12 @@ public class ProgramDTO {
     @Min(1)
     private Integer studyDurationMaximum;
 
-    public Integer getInstitution() {
-        return institution;
+    public Integer getInstitutionId() {
+        return institutionId;
     }
 
-    public void setInstitution(Integer institution) {
-        this.institution = institution;
+    public void setInstitutionId(Integer institutionId) {
+        this.institutionId = institutionId;
     }
 
     public PrismProgramType getProgramType() {

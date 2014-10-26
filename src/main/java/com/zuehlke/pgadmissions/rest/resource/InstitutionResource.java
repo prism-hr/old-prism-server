@@ -16,10 +16,15 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCompetency;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionExtendedRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ImportedEntityRepresentation;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
+import org.dozer.Mapper;
 
 @RestController
 @RequestMapping("api/institutions")
@@ -30,6 +35,9 @@ public class InstitutionResource {
 
     @Autowired
     private InstitutionService institutionService;
+
+    @Autowired
+    private Mapper dozerBeanMapper;
 
     @RequestMapping(method = RequestMethod.GET, params = "type=simple")
     @ResponseBody
@@ -45,6 +53,13 @@ public class InstitutionResource {
         return institutionRepresentations;
     }
 
+    @RequestMapping(method = RequestMethod.GET, params = "googleId")
+    @ResponseBody
+    public InstitutionExtendedRepresentation getInstitution(String googleId) {
+        Institution institution = institutionService.getByGoogleId(googleId);
+        return institution == null ? null : dozerBeanMapper.map(institution, InstitutionExtendedRepresentation.class);
+    }
+
     @RequestMapping(value = "/{institutionId}/categoryTags", method = RequestMethod.GET, params = "locale")
     public Map<String, List<String>> getCategoryTags(@PathVariable Integer institutionId, @RequestParam PrismLocale locale) throws Exception {
         Map<String, List<String>> categoryTags = Maps.newLinkedHashMap();
@@ -56,6 +71,21 @@ public class InstitutionResource {
         categoryTags.put(category, advertService.getLocalizedTags(institution, locale, AdvertTheme.class));
 
         return categoryTags;
+    }
+
+    @RequestMapping(value = "/{institutionId}/programs", method = RequestMethod.GET)
+    public List<ProgramRepresentation> getCategoryTags(@PathVariable Integer institutionId) throws Exception {
+        Institution institution = institutionService.getById(institutionId);
+
+        List<ProgramRepresentation> programRepresentations = Lists.newLinkedList();
+        for (Program program : institution.getPrograms()) {
+            if (program.getState().getId() == PrismState.PROGRAM_APPROVED) {
+                ProgramRepresentation representation = dozerBeanMapper.map(program, ProgramRepresentation.class);
+                representation.setInstitution(null); // saving bandwidth
+                programRepresentations.add(representation);
+            }
+        }
+        return programRepresentations;
     }
 
 }

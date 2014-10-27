@@ -6,6 +6,7 @@ import java.util.Set;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -161,9 +162,9 @@ public class CommentService {
                 List<Boolean> inviteePreferences = Lists.newLinkedList();
 
                 Comment preferenceComment = getLatestAppointmentPreferenceComment(application, schedulingComment, invitee);
-                List<CommentAppointmentTimeslot> inviteeResponses = commentDAO.getAppointmentPreferences(schedulingComment, preferenceComment);
+                List<LocalDateTime> inviteeResponses = commentDAO.getAppointmentPreferences(preferenceComment);
                 for (CommentAppointmentTimeslot timeslot : commentDAO.getAppointmentTimeslots(schedulingComment)) {
-                    inviteePreferences.add(inviteeResponses.contains(timeslot));
+                    inviteePreferences.add(inviteeResponses.contains(timeslot.getDateTime()));
                 }
 
                 preferenceRepresentation.withPreferences(inviteePreferences);
@@ -261,6 +262,7 @@ public class CommentService {
         transientPreferences.clear();
 
         entityService.save(comment);
+        entityService.flush();
 
         addAssignedUsers(comment, persistentAssignees);
         comment.getAppointmentTimeslots().addAll(persistentTimeslots);

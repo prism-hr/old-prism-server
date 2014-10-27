@@ -181,6 +181,18 @@ public class Institution extends ResourceParent {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
+    
+    @Column(name = "last_reminded_request_individual")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastRemindedRequestIndividual;
+    
+    @Column(name = "last_reminded_request_syndicated")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastRemindedRequestSyndicated;
+    
+    @Column(name = "last_notified_update_syndicated")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastNotifiedUpdateSyndicated;
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
@@ -670,6 +682,36 @@ public class Institution extends ResourceParent {
     @Override
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
+    }
+    
+    @Override
+    public final LocalDate getLastRemindedRequestIndividual() {
+        return lastRemindedRequestIndividual;
+    }
+
+    @Override
+    public final void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual) {
+        this.lastRemindedRequestIndividual = lastRemindedRequestIndividual;
+    }
+
+    @Override
+    public final LocalDate getLastRemindedRequestSyndicated() {
+        return lastRemindedRequestSyndicated;
+    }
+
+    @Override
+    public final void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated) {
+        this.lastRemindedRequestSyndicated = lastRemindedRequestSyndicated;
+    }
+
+    @Override
+    public final LocalDate getLastNotifiedUpdateSyndicated() {
+        return lastNotifiedUpdateSyndicated;
+    }
+
+    @Override
+    public final void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
+        this.lastNotifiedUpdateSyndicated = lastNotifiedUpdateSyndicated;
     }
 
     @Override

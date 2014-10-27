@@ -169,23 +169,22 @@ public class NotificationService {
             Role role = roleService.getById(definition.getRoleId());
             UserRole userRole = roleService.getUserRole(resource, user, role);
 
-            NotificationTemplate notificationTemplate = getById(definition.getNotificationTemplateId());
+            NotificationTemplate template = getById(definition.getNotificationTemplateId());
             LocalDate lastNotifiedDate = userRole.getLastNotifiedDate();
 
-            Integer reminderInterval = getReminderInterval(resource, user, notificationTemplate);
+            Integer reminderInterval = getReminderInterval(resource, user, template);
             LocalDate lastExpectedReminder = baseline.minusDays(reminderInterval);
-            boolean doSendReminder = lastExpectedReminder.equals(lastNotifiedDate);
 
-            if (!sent.get(notificationTemplate).contains(user)
-                    && (lastNotifiedDate == null || lastExpectedReminder.isAfter(lastNotifiedDate) || doSendReminder)) {
-                NotificationTemplate sendTemplate = doSendReminder ? notificationTemplate.getReminderTemplate() : notificationTemplate;
-                sendNotification(sendTemplate, new NotificationTemplateModelDTO().withUser(user).withAuthor(author).withResource(resource)
+            if (!sent.get(template).contains(user) && (lastExpectedReminder.isAfter(lastNotifiedDate) || lastExpectedReminder.equals(lastNotifiedDate))) {
+                sendNotification(template.getReminderTemplate(), new NotificationTemplateModelDTO().withUser(user).withAuthor(author).withResource(resource)
                         .withTransitionAction(definition.getActionId()));
-                sent.put(notificationTemplate, user);
+                sent.put(template, user);
             }
 
             userRole.setLastNotifiedDate(baseline);
         }
+
+        resource.setLastRemindedRequestIndividual(baseline);
     }
 
     public <T extends Resource> void sendSyndicatedRequestNotifications(Class<T> resourceClass, Integer resourceId, LocalDate baseline) {
@@ -218,6 +217,8 @@ public class NotificationService {
                 }
             }
         }
+
+        resource.setLastRemindedRequestSyndicated(baseline);
     }
 
     public <T extends Resource> void sendSyndicatedUpdateNotifications(Class<T> resourceClass, Integer resourceId, Comment transitionComment, LocalDate baseline) {
@@ -245,6 +246,8 @@ public class NotificationService {
                 }
             }
         }
+
+        resource.setLastNotifiedUpdateSyndicated(baseline);
     }
 
     public List<User> getRecommendationNotifications(LocalDate baseline) {

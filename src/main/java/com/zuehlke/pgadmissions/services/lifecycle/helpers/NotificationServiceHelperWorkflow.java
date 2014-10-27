@@ -54,7 +54,7 @@ public class NotificationServiceHelperWorkflow extends AbstractServiceHelper {
     
     private void sendIndividualRequestReminders(PrismScope scopeId, LocalDate baseline) {
         Class<? extends Resource> resourceClass = scopeId.getResourceClass();
-        List<Integer> resourceIds = resourceService.getResourcesRequiringAttention(resourceClass);
+        List<Integer> resourceIds = resourceService.getResourcesRequiringIndividualReminders(resourceClass, baseline);
         for (Integer resourceId : resourceIds) {
             notificationService.sendIndividualRequestReminders(resourceClass, resourceId, baseline);
         }
@@ -62,7 +62,7 @@ public class NotificationServiceHelperWorkflow extends AbstractServiceHelper {
     
     private void sendSyndicatedRequestNotifications(PrismScope scopeId, LocalDate baseline) {
         Class<? extends Resource> resourceClass = scopeId.getResourceClass();
-        List<Integer> resourceIds = resourceService.getResourcesRequiringAttention(resourceClass);
+        List<Integer> resourceIds = resourceService.getResourcesRequiringSyndicatedReminders(resourceClass, baseline);
         for (Integer resourceId : resourceIds) {
             notificationService.sendSyndicatedRequestNotifications(resourceClass, resourceId, baseline);
         }
@@ -72,7 +72,7 @@ public class NotificationServiceHelperWorkflow extends AbstractServiceHelper {
         DateTime rangeStart = baseline.minusDays(1).toDateTimeAtStartOfDay();
         DateTime rangeClose = rangeStart.plusDays(1).minusSeconds(1);
         Class<? extends Resource> resourceClass = scopeId.getResourceClass(); 
-        List<Integer> resourceIds = resourceService.getRecentlyUpdatedResources(resourceClass, rangeStart, rangeClose);
+        List<Integer> resourceIds = resourceService.getResourcesRequiringSyndicatedUpdates(resourceClass, baseline, rangeStart, rangeClose);
         for (Integer resourceId : resourceIds) {
             List<Comment> transitionComments = commentService.getRecentComments(resourceClass, resourceId, rangeStart, rangeClose);
             for (Comment transitionComment : transitionComments) {

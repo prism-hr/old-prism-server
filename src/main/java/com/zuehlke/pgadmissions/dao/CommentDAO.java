@@ -150,7 +150,6 @@ public class CommentDAO {
 
     public <T extends Resource> List<Comment> getRecentComments(Class<T> resourceClass, Integer resourceId, DateTime rangeStart, DateTime rangeClose) {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(PrismScope.getResourceScope(resourceClass).getLowerCaseName() + ".id", resourceId)) //
                 .add(Restrictions.between("createdTimestamp", rangeStart, rangeClose)) //
                 .list();

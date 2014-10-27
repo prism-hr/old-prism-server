@@ -45,6 +45,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -225,16 +226,16 @@ public class NotificationTemplatePropertyLoader {
     public String getApplicationConfirmedStartDate() {
         return templateModelDTO.getComment().getPositionProvisionalStartDateDisplay(propertyLoader.load(SYSTEM_DATE_FORMAT));
     }
-
-    public String getConfirmedPrimarySupervisor() {
-        return getConfirmedAssignedUser(APPLICATION_PRIMARY_SUPERVISOR);
+    
+    public String getApplicationConfirmedPrimarySupervisor() {
+        return getCommentAssigneesAsString(APPLICATION_PRIMARY_SUPERVISOR);
+    }
+    
+    public String getApplicationConfirmedSecondarySupervisor() {
+        return getCommentAssigneesAsString(APPLICATION_SECONDARY_SUPERVISOR);
     }
 
-    public String getConfirmedSecondarySupervisor() {
-        return getConfirmedAssignedUser(APPLICATION_SECONDARY_SUPERVISOR);
-    }
-
-    public String getConfirmedOfferConditions() {
+    public String getApplicationConfirmedOfferConditions() {
         return templateModelDTO.getComment().getAppointmentConditions();
     }
 
@@ -370,14 +371,15 @@ public class NotificationTemplatePropertyLoader {
         return uri;
     }
 
-    private String getConfirmedAssignedUser(PrismRole roleId) {
-        Set<CommentAssignedUser> assignees = templateModelDTO.getComment().getAssignedUsers();
-        for (CommentAssignedUser assignee : assignees) {
-            if (assignee.getRole().getId() == roleId && assignee.getRoleTransitionType() == CREATE) {
-                return assignee.getUser().getFullName();
+    private String getCommentAssigneesAsString(PrismRole roleId) {
+        Set<CommentAssignedUser> assigneeObjects = templateModelDTO.getComment().getAssignedUsers();
+        Set<String> assigneeStrings = Sets.newTreeSet();
+        for (CommentAssignedUser assigneeObject : assigneeObjects) {
+            if (assigneeObject.getRole().getId() == roleId && assigneeObject.getRoleTransitionType() == CREATE) {
+                assigneeStrings.add(assigneeObject.getUser().getFullName());
             }
         }
-        return null;
+        return Joiner.on(", ").join(assigneeStrings);
     }
 
 }

@@ -37,7 +37,7 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
 
     @Column(name = "is_scope_creator", nullable = false)
     private Boolean scopeCreator;
-    
+
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
@@ -48,7 +48,7 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
 
     @OneToMany(mappedBy = "role")
     private Set<UserRole> userRoles = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "role")
     private Set<StateActionAssignment> stateActionAssignments = Sets.newHashSet();
 
@@ -57,9 +57,8 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
         return id;
     }
 
-    @Override
-    public void setId(Enum<?> id) {
-        this.id = (PrismRole) id;
+    public void setId(PrismRole id) {
+        this.id = id;
     }
 
     public boolean isScopeCreator() {
@@ -92,22 +91,21 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
         return stateActionAssignments;
     }
 
-
     public Role withId(PrismRole id) {
         this.id = id;
         return this;
     }
-    
+
     public Role withScopeCreator(boolean scopeCreator) {
         this.scopeCreator = scopeCreator;
         return this;
     }
-    
+
     public Role withScope(Scope scope) {
         this.scope = scope;
         return this;
     }
-    
+
     @Override
     public String getAuthority() {
         return id.toString();

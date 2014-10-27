@@ -51,9 +51,8 @@ public class NotificationTemplate extends WorkflowDefinition {
         return id;
     }
 
-    @Override
-    public void setId(Enum<?> id) {
-        this.id = (PrismNotificationTemplate) id;
+    public void setId(PrismNotificationTemplate id) {
+        this.id = id;
     }
 
     public PrismNotificationType getNotificationType() {

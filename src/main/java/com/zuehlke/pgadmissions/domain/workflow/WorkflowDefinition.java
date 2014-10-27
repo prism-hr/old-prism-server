@@ -7,8 +7,6 @@ public abstract class WorkflowDefinition implements IUniqueEntity {
 
     public abstract Enum<?> getId();
 
-    public abstract void setId(Enum<?> id);
-
     public abstract Scope getScope();
 
     public abstract void setScope(Scope scope);

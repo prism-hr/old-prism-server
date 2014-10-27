@@ -1,13 +1,16 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -35,7 +38,7 @@ public class CustomizationDAO {
     public <T extends WorkflowResource> T getConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale, PrismProgramType programType,
             String keyIndex, WorkflowDefinition keyValue) {
         return (T) sessionFactory.getCurrentSession().createCriteria(entityClass) //
-                .add(getFilterCondition(resource, locale, programType)) //
+                .add(getFilterCondition(resource, locale, programType, keyValue.getScope().getId())) //
                 .add(Restrictions.eq(keyIndex, keyValue)) //
                 .addOrder(Order.desc("program")) //
                 .addOrder(Order.desc("institution")) //
@@ -45,11 +48,12 @@ public class CustomizationDAO {
                 .uniqueResult();
     }
 
-    public List<DisplayValue> getDisplayProperties(Resource resource, PrismLocale locale, PrismProgramType programType, PrismDisplayCategory displayCategory) {
+    public List<DisplayValue> getDisplayProperties(Resource resource, PrismLocale locale, PrismProgramType programType, PrismDisplayCategory category,
+            PrismScope propertyScope) {
         return (List<DisplayValue>) sessionFactory.getCurrentSession().createCriteria(DisplayValue.class) //
                 .createAlias("displayProperty", "displayProperty", JoinType.INNER_JOIN) //
-                .add(getFilterCondition(resource, locale, programType)) //
-                .add(Restrictions.eq("displayProperty.displayCategory", displayCategory)) //
+                .add(getFilterCondition(resource, locale, programType, propertyScope)) //
+                .add(Restrictions.eq("displayProperty.displayCategory", category)) //
                 .addOrder(Order.desc("program")) //
                 .addOrder(Order.desc("institution")) //
                 .addOrder(Order.desc("system")) //
@@ -116,15 +120,22 @@ public class CustomizationDAO {
         query.executeUpdate();
     }
 
-    private Junction getFilterCondition(Resource resource, PrismLocale locale, PrismProgramType programType) {
+    private Junction getFilterCondition(Resource resource, PrismLocale locale, PrismProgramType programType, PrismScope definitionScope) {
+        Criterion programTypeRestriction;
+        if (programType == null || definitionScope.getPrecedence() < PROGRAM.getPrecedence()) {
+            programTypeRestriction = Restrictions.isNull("programType");
+        } else {
+            programTypeRestriction = Restrictions.in("programType", Lists.newArrayList(programType, getSystemProgramType()));
+        }
+
         return Restrictions.disjunction() //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.eq("system", resource.getSystem())) //
                         .add(Restrictions.in("locale", Lists.newArrayList(locale, getSystemLocale()))) //
-                        .add(Restrictions.eqOrIsNull("programType", programType))) //
+                        .add(programTypeRestriction)) //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.eq("institution", resource.getInstitution())) //
-                        .add(Restrictions.eqOrIsNull("programType", programType))) //
+                        .add(programTypeRestriction)) //
                 .add(Restrictions.eq("program", resource.getProgram()));
     }
 

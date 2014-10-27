@@ -321,7 +321,7 @@ public class NotificationTemplatePropertyLoader {
         return buildRedirectionControl(SYSTEM_ACTIVATE_ACCOUNT);
     }
 
-    public NotificationTemplatePropertyLoader localize(NotificationTemplateModelDTO templateModelDTO) {
+    public NotificationTemplatePropertyLoader localize(NotificationTemplateModelDTO templateModelDTO, PropertyLoader propertyLoader) {
         this.templateModelDTO = templateModelDTO;
         Comment comment = this.templateModelDTO.getComment();
         if (comment == null) {
@@ -329,7 +329,7 @@ public class NotificationTemplatePropertyLoader {
         } else {
             this.templateModelDTO.setInvoker(comment.getUser());
         }
-        propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(this.templateModelDTO.getResource(), this.templateModelDTO.getUser());
+        this.propertyLoader = propertyLoader;
         return this;
     }
 

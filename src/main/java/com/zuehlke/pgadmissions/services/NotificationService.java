@@ -14,6 +14,7 @@ import java.util.List;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,10 +43,12 @@ import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
 import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
+import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.mail.MailSender;
 import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
@@ -76,13 +79,13 @@ public class NotificationService {
     private SystemService systemService;
 
     @Autowired
-    private MailSender mailSender;
-
-    @Autowired
     private EntityService entityService;
 
     @Autowired
     private CustomizationService customizationService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     public NotificationTemplate getById(PrismNotificationTemplate id) {
         return entityService.getByProperty(NotificationTemplate.class, "id", id);
@@ -97,7 +100,8 @@ public class NotificationService {
     }
 
     public NotificationConfiguration createConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationTemplate template,
-            String subject, String content, Integer reminderInterval) {
+            String subject, String content, Integer reminderInterval) throws CustomizationException {
+        customizationService.validateConfiguration(template, locale, programType);
         return new NotificationConfiguration().withResource(resource).withLocale(locale).withProgramType(programType).withNotificationTemplate(template)
                 .withSubject(subject).withContent(content).withReminderInterval(reminderInterval)
                 .withSystemDefault(customizationService.isSystemDefault(template, locale, programType));
@@ -349,7 +353,8 @@ public class NotificationService {
         message.setModelDTO(modelDTO);
         message.setAttachments(Lists.<AttachmentInputSource> newArrayList());
 
-        mailSender.sendEmail(message);
+        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(modelDTO.getResource(), modelDTO.getUser());
+        applicationContext.getBean(MailSender.class).localize(propertyLoader).sendEmail(message);
     }
 
 }

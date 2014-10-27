@@ -43,12 +43,12 @@ public class PropertyLoader {
     @Autowired
     private SystemService systemService;
 
-    public String load(PrismDisplayProperty index) {
-        String value = properties.get(index);
+    public String load(PrismDisplayProperty property) {
+        String value = properties.get(property);
         if (value == null) {
-            PrismDisplayCategory category = index.getDisplayCategory();
-            properties.putAll(customizationService.getDisplayProperties(resource, locale, programType, category));
-            value = properties.get(index);
+            PrismDisplayCategory category = property.getDisplayCategory();
+            properties.putAll(customizationService.getDisplayProperties(resource, locale, programType, category, property.getScope()));
+            value = properties.get(property);
         }
         return value;
     }

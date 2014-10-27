@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,8 @@ import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.representation.NotificationConfigurationRepresentation;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.NotificationService;
+import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @RestController
 @RequestMapping("api/{resourceScope:programs|institutions|systems}")
@@ -41,10 +44,13 @@ public class NotificationTemplateResource {
     private NotificationService notificationService;
 
     @Autowired
-    private MailSender mailSender;
-
+    private UserService userService;
+    
     @Autowired
     private Mapper dozerBeanMapper;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @RequestMapping(value = "/{resourceId}/notificationTemplates/{notificationTemplateId}", method = RequestMethod.GET)
     public NotificationConfigurationRepresentation getNotificationConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor,
@@ -61,13 +67,13 @@ public class NotificationTemplateResource {
             @PathVariable String notificationTemplateId, @RequestParam PrismLocale locale, @RequestParam PrismProgramType programType,
             @Valid @RequestBody NotificationConfigurationDTO notificationConfigurationDTO, BindingResult validationErrors) throws Exception {
         NotificationTemplate template = notificationService.getById(PrismNotificationTemplate.valueOf(notificationTemplateId));
+        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
 
-        validate(template, notificationConfigurationDTO, validationErrors);
+        validateTemplate(resource, template, notificationConfigurationDTO, validationErrors);
         if (validationErrors.hasErrors()) {
             throw new PrismValidationException("Invalid notification configuration", validationErrors);
         }
 
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         notificationService.updateConfiguration(resource, locale, programType, template, notificationConfigurationDTO);
     }
 
@@ -87,24 +93,28 @@ public class NotificationTemplateResource {
         notificationService.restoreGlobalConfiguration(resource, locale, programType, template);
     }
 
-    private Map<String, String> validate(NotificationTemplate template, NotificationConfigurationDTO notificationConfigurationDTO, BindingResult errors) {
-        if (template.getId().getReminderTemplate() == null && notificationConfigurationDTO.getReminderInterval() != null) {
+    private Map<String, String> validateTemplate(Resource resource, NotificationTemplate notificationTemplate,
+            NotificationConfigurationDTO notificationConfigurationDTO, BindingResult errors) {
+        if (notificationTemplate.getId().getReminderTemplate() == null && notificationConfigurationDTO.getReminderInterval() != null) {
             errors.rejectValue("reminderInterval", "forbidden");
-        } else if (template.getId().getReminderTemplate() != null && notificationConfigurationDTO.getReminderInterval() == null) {
+        } else if (notificationTemplate.getId().getReminderTemplate() != null && notificationConfigurationDTO.getReminderInterval() == null) {
             errors.rejectValue("reminderInterval", "notNull");
         }
 
-        Map<String, Object> model = mailSender.createNotificationModelForValidation(template);
+        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(resource, userService.getCurrentUser());
+        MailSender mailSender = applicationContext.getBean(MailSender.class).localize(propertyLoader);
+        
+        Map<String, Object> model = mailSender.createNotificationModelForValidation(notificationTemplate);
 
         String subject = null, content = null;
         try {
-            subject = mailSender.processHeader(template.getId(), notificationConfigurationDTO.getSubject(), model);
+            subject = mailSender.processHeader(notificationTemplate.getId(), notificationConfigurationDTO.getSubject(), model);
         } catch (Exception e) {
             errors.rejectValue("subject", "invalid");
         }
 
         try {
-            content = mailSender.processContent(template.getId(), notificationConfigurationDTO.getContent(), model, subject);
+            content = mailSender.processContent(notificationTemplate.getId(), notificationConfigurationDTO.getContent(), model, subject);
         } catch (Exception e) {
             errors.rejectValue("content", "invalid");
         }

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.domain.display.DisplayProperty;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
 import com.zuehlke.pgadmissions.services.CustomizationService;
@@ -37,7 +38,7 @@ public class PropertyLoaderHelper {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public void verifyPropertyLoader() throws WorkflowConfigurationException, DeduplicationException {
+    public void verifyPropertyLoader() throws WorkflowConfigurationException, DeduplicationException, CustomizationException {
         System system = systemService.getSystem();
         
         PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(system, system.getUser());

@@ -38,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
+import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
@@ -56,7 +57,7 @@ public class StateService {
 
     @Autowired
     private CommentService commentService;
-    
+
     @Autowired
     private CustomizationService customizationService;
 
@@ -104,7 +105,8 @@ public class StateService {
     }
 
     public void createOrUpdateStateDuration(Resource resource, PrismLocale locale, PrismProgramType programType, State state, Integer duration)
-            throws DeduplicationException {
+            throws DeduplicationException, CustomizationException {
+        customizationService.validateConfiguration(state, locale, programType);
         StateDuration transientStateDuration = new StateDuration().withResource(resource).withLocale(locale).withProgramType(programType).withState(state)
                 .withDuration(duration).withSystemDefault(customizationService.isSystemDefault(state, locale, programType));
         entityService.createOrUpdate(transientStateDuration);

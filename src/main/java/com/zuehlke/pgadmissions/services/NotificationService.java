@@ -160,22 +160,27 @@ public class NotificationService {
         User author = systemService.getSystem().getUser();
         Resource resource = resourceService.getById(resourceClass, resourceId);
 
-        List<UserNotificationDefinitionDTO> reminders = notificationDAO.getIndividualRequestReminders(resource, baseline);
+        List<UserNotificationDefinitionDTO> definitions = notificationDAO.getIndividualRequestReminders(resource, baseline);
         HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
 
-        for (UserNotificationDefinitionDTO reminder : reminders) {
-            User user = userService.getById(reminder.getUserId());
+        for (UserNotificationDefinitionDTO definition : definitions) {
+            User user = userService.getById(definition.getUserId());
 
-            Role role = roleService.getById(reminder.getRoleId());
+            Role role = roleService.getById(definition.getRoleId());
             UserRole userRole = roleService.getUserRole(resource, user, role);
 
-            NotificationTemplate notificationTemplate = getById(reminder.getNotificationTemplateId());
-            Integer reminderInterval = getReminderInterval(resource, user, notificationTemplate);
+            NotificationTemplate notificationTemplate = getById(definition.getNotificationTemplateId());
+            LocalDate lastNotifiedDate = userRole.getLastNotifiedDate();
 
-            if (!sent.get(notificationTemplate).contains(user) && baseline.minusDays(reminderInterval) == userRole.getLastNotifiedDate()) {
-                sendNotification(notificationTemplate.getReminderTemplate(),
-                        new NotificationTemplateModelDTO().withUser(user).withAuthor(author).withResource(resource)
-                                .withTransitionAction(reminder.getActionId()));
+            Integer reminderInterval = getReminderInterval(resource, user, notificationTemplate);
+            LocalDate lastExpectedReminder = baseline.minusDays(reminderInterval);
+            boolean doSendReminder = lastExpectedReminder.equals(lastNotifiedDate);
+
+            if (!sent.get(notificationTemplate).contains(user)
+                    && (lastNotifiedDate == null || lastExpectedReminder.isAfter(lastNotifiedDate) || doSendReminder)) {
+                NotificationTemplate sendTemplate = doSendReminder ? notificationTemplate.getReminderTemplate() : notificationTemplate;
+                sendNotification(sendTemplate, new NotificationTemplateModelDTO().withUser(user).withAuthor(author).withResource(resource)
+                        .withTransitionAction(definition.getActionId()));
                 sent.put(notificationTemplate, user);
             }
 
@@ -200,9 +205,11 @@ public class NotificationService {
                 LocalDate lastNotifiedDate = user.getLastNotifiedDate(resource.getClass());
 
                 Integer reminderInterval = getReminderInterval(resource, user, notificationTemplate);
-                boolean doSendReminder = baseline.minusDays(reminderInterval) == lastNotifiedDate;
+                LocalDate lastExpectedReminder = baseline.minusDays(reminderInterval);
+                boolean doSendReminder = lastExpectedReminder.equals(lastNotifiedDate);
 
-                if (!sent.get(notificationTemplate).contains(user) && (lastNotifiedDate == null || doSendReminder)) {
+                if (!sent.get(notificationTemplate).contains(user)
+                        && (lastNotifiedDate == null || lastExpectedReminder.isAfter(lastNotifiedDate) || doSendReminder)) {
                     NotificationTemplate sendTemplate = doSendReminder ? notificationTemplate.getReminderTemplate() : notificationTemplate;
                     sendNotification(sendTemplate, new NotificationTemplateModelDTO().withUser(user).withAuthor(author).withResource(resource)
                             .withTransitionAction(transitionActionId));

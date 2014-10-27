@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceConfiguration;
 
 @Entity
-@Table(name = "DISPLAY_VALUE", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "program_type", "locale", "display_property_id" }),
+@Table(name = "DISPLAY_VALUE", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "display_property_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "program_type", "display_property_id" }),
         @UniqueConstraint(columnNames = { "program_id", "display_property_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

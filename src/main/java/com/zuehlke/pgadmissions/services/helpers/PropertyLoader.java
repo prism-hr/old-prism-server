@@ -9,8 +9,6 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 import java.util.Arrays;
 import java.util.HashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -25,13 +23,10 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.services.CustomizationService;
-import com.zuehlke.pgadmissions.services.SystemService;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
 public class PropertyLoader {
-
-    private static final Logger log = LoggerFactory.getLogger(PropertyLoader.class);
 
     private Resource resource;
 
@@ -50,10 +45,6 @@ public class PropertyLoader {
             PrismDisplayCategory category = property.getDisplayCategory();
             properties.putAll(customizationService.getDisplayProperties(resource, locale, programType, category, property.getScope()));
             value = properties.get(property);
-        }
-        if(value == null){
-            log.error("Could not load property " + index);
-            value = "[missing value]";
         }
         return value;
     }

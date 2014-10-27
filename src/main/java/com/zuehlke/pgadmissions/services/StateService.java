@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.StateDAO;
+import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
@@ -325,7 +326,7 @@ public class StateService {
     }
 
     public StateTransition getApplicationRecruitedOutcome(Resource resource, Comment comment) {
-        Comment recruitedComment = commentService.getEarliestComment((ResourceParent) resource, Resource.class,
+        Comment recruitedComment = commentService.getEarliestComment((ResourceParent) resource, Application.class,
                 PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), recruitedComment.getParentResourceTransitionState().getId());
     }

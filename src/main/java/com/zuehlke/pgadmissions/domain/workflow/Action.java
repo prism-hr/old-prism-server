@@ -76,9 +76,8 @@ public class Action extends WorkflowDefinition {
         return id;
     }
 
-    @Override
-    public void setId(Enum<?> id) {
-        this.id = (PrismAction) id;
+    public void setId(PrismAction id) {
+        this.id = id;
     }
 
     public PrismActionType getActionType() {

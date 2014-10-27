@@ -31,22 +31,21 @@ public class State extends WorkflowDefinition {
     @ManyToOne
     @JoinColumn(name = "state_group_id", nullable = false)
     private StateGroup stateGroup;
-    
+
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
-    
+
     @OneToMany(mappedBy = "state")
     private Set<StateAction> stateActions = Sets.newHashSet();
-    
+
     @Override
     public PrismState getId() {
         return id;
     }
-    
-    @Override
-    public void setId(Enum<?> id) {
-        this.id = (PrismState) id;
+
+    public void setId(PrismState id) {
+        this.id = id;
     }
 
     public StateGroup getStateGroup() {
@@ -75,12 +74,12 @@ public class State extends WorkflowDefinition {
         this.id = id;
         return this;
     }
-    
+
     public State withStateGroup(StateGroup stateGroup) {
         this.stateGroup = stateGroup;
         return this;
     }
-    
+
     public State withScope(Scope scope) {
         this.scope = scope;
         return this;

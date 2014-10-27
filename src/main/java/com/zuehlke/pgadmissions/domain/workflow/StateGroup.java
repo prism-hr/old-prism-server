@@ -19,18 +19,18 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 @Table(name = "STATE_GROUP", uniqueConstraints = { @UniqueConstraint(columnNames = { "scope_id", "sequence_order" }) })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class StateGroup extends WorkflowDefinition {
-    
+
     @Id
     @Column(name = "id")
     @Enumerated(EnumType.STRING)
     private PrismStateGroup id;
-    
+
     @Column(name = "sequence_order", nullable = false)
     private Integer sequenceOrder;
-    
+
     @Column(name = "repeatable", nullable = false)
     private Boolean repeatable;
-    
+
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
@@ -40,9 +40,8 @@ public class StateGroup extends WorkflowDefinition {
         return id;
     }
 
-    @Override
-    public void setId(Enum<?> id) {
-        this.id = (PrismStateGroup) id;
+    public void setId(PrismStateGroup id) {
+        this.id = id;
     }
 
     public int getSequenceOrder() {
@@ -70,25 +69,25 @@ public class StateGroup extends WorkflowDefinition {
     public void setScope(Scope scope) {
         this.scope = scope;
     }
-    
+
     public StateGroup withId(PrismStateGroup id) {
         this.id = id;
         return this;
     }
-    
+
     public StateGroup withSequenceOrder(int sequenceOrder) {
         this.sequenceOrder = sequenceOrder;
         return this;
     }
-    
+
     public StateGroup withRepeatable(Boolean repeatable) {
         this.repeatable = repeatable;
         return this;
     }
-    
+
     public StateGroup withScope(Scope scope) {
         this.scope = scope;
         return this;
     }
-    
+
 }

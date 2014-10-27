@@ -16,7 +16,6 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFilterCategory;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -111,7 +110,7 @@ public class AdvertDAO {
                                 .add(Restrictions.neProperty("pay.currencySpecified", "pay.currencyAtLocale")))).list();
     }
 
-    public List<String> getLocalizedTags(Institution institution, PrismLocale locale, Class<? extends AdvertFilterCategory> clazz) {
+    public List<String> getLocalizedTags(Institution institution, Class<? extends AdvertFilterCategory> clazz) {
         String propertyName = clazz.getSimpleName().replace("Advert", "").toLowerCase();
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(clazz) //
                 .setProjection(Projections.groupProperty(propertyName)) //
@@ -122,12 +121,10 @@ public class AdvertDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNull("project.institution")) //
-                                .add(Restrictions.eq("program.institution", institution))//
-                                .add(Restrictions.eq("program.locale", locale))) //
+                                .add(Restrictions.eq("program.institution", institution))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNull("program.institution")) //
-                                .add(Restrictions.eq("projectProgram.institution", institution)) //
-                                .add(Restrictions.eq("projectProgram.locale", locale)))) //
+                                .add(Restrictions.eq("projectProgram.institution", institution)))) //
                 .list();
     }
 

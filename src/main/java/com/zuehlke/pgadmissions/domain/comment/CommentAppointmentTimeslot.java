@@ -1,14 +1,11 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -34,9 +31,6 @@ public class CommentAppointmentTimeslot {
     @Column(name = "timeslot_datetime", nullable = false)
     private LocalDateTime dateTime;
 
-    @OneToMany(mappedBy = "appointmentTimeslot")
-    private Set<CommentAppointmentPreference> appointmentPreferences;
-
     public Integer getId() {
         return id;
     }
@@ -60,11 +54,7 @@ public class CommentAppointmentTimeslot {
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
     }
-
-    public final Set<CommentAppointmentPreference> getAppointmentPreferences() {
-        return appointmentPreferences;
-    }
-
+    
     public String getDateTimeDisplay(String dateTimeFormat) {
         return dateTime.toString(dateTimeFormat, LocaleUtils.toLocale(comment.getResource().getLocale().toString()));
     }

@@ -40,9 +40,8 @@ public class DisplayProperty extends WorkflowDefinition {
         return id;
     }
 
-    @Override
-    public void setId(Enum<?> id) {
-        this.id = (PrismDisplayProperty) id;
+    public void setId(PrismDisplayProperty id) {
+        this.id = id;
     }
 
     public final PrismDisplayCategory getDisplayCategory() {

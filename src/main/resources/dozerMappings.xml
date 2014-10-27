@@ -165,13 +165,4 @@
         </field>
     </mapping>
 
-    <mapping>
-        <class-a>com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference</class-a>
-        <class-b>com.zuehlke.pgadmissions.rest.representation.comment.AppointmentPreferenceRepresentation</class-b>
-        <field>
-            <a>appointmentTimeslot.dateTime</a>
-            <b>dateTime</b>
-        </field>
-    </mapping>
-
 </mappings>

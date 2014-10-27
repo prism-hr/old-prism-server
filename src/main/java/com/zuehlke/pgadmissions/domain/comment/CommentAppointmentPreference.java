@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -8,10 +9,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDateTime;
+
 import com.google.common.base.Objects;
 
 @Entity
-@Table(name = "COMMENT_APPOINTMENT_PREFERENCE", uniqueConstraints = {@UniqueConstraint(columnNames = {"comment_id", "comment_appointment_timeslot_id"})})
+@Table(name = "COMMENT_APPOINTMENT_PREFERENCE", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "preference_datetime" }) })
 public class CommentAppointmentPreference {
 
     @Id
@@ -22,9 +26,9 @@ public class CommentAppointmentPreference {
     @JoinColumn(name = "comment_id", nullable = false, insertable = false, updatable = false)
     private Comment comment;
 
-    @ManyToOne
-    @JoinColumn(name = "comment_appointment_timeslot_id", nullable = false)
-    private CommentAppointmentTimeslot appointmentTimeslot;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+    @Column(name = "preference_datetime", nullable = false)
+    private LocalDateTime dateTime;
 
     public Integer getId() {
         return id;
@@ -42,22 +46,22 @@ public class CommentAppointmentPreference {
         this.comment = comment;
     }
 
-    public CommentAppointmentTimeslot getAppointmentTimeslot() {
-        return appointmentTimeslot;
+    public final LocalDateTime getDateTime() {
+        return dateTime;
     }
 
-    public void setAppointmentTimeslot(CommentAppointmentTimeslot appointmentTimeslot) {
-        this.appointmentTimeslot = appointmentTimeslot;
+    public final void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 
-    public CommentAppointmentPreference withAppointmentTimeslot(final CommentAppointmentTimeslot appointmentTimeslot) {
-        this.appointmentTimeslot = appointmentTimeslot;
+    public CommentAppointmentPreference withDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
         return this;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(comment, appointmentTimeslot);
+        return Objects.hashCode(comment, dateTime);
     }
 
     @Override
@@ -69,7 +73,7 @@ public class CommentAppointmentPreference {
             return false;
         }
         CommentAppointmentPreference other = (CommentAppointmentPreference) obj;
-        return Objects.equal(comment, other.getComment()) && Objects.equal(appointmentTimeslot, other.getAppointmentTimeslot());
+        return Objects.equal(comment, other.getComment()) && Objects.equal(dateTime, other.getDateTime());
     }
 
 }

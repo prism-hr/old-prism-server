@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
 @Repository
 @SuppressWarnings("unchecked")
 public class ResourceDAO {
-    
+
     @Autowired
     private SessionFactory sessionFactory;
 
@@ -48,18 +48,16 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Integer> getResourcesToPropagate(PrismScope propagatingResourceScope, Integer propagatingResourceId, PrismScope propagatedResourceScope,
-            PrismAction actionId) {
-        String propagatedAlias = propagatedResourceScope.getLowerCaseName();
-        String propagatedReference = propagatingResourceScope.getPrecedence() > propagatedResourceScope.getPrecedence() ? propagatedAlias : propagatedAlias
-                + "s";
+    public List<Integer> getResourcesToPropagate(PrismScope propagatingScope, Integer propagatingId, PrismScope propagatedScope, PrismAction actionId) {
+        String propagatedAlias = propagatedScope.getLowerCaseName();
+        String propagatedReference = propagatingScope.getPrecedence() > propagatedScope.getPrecedence() ? propagatedAlias : propagatedAlias + "s";
 
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(propagatingResourceScope.getResourceClass()) //
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(propagatingScope.getResourceClass()) //
                 .setProjection(Projections.property(propagatedAlias + ".id")) //
                 .createAlias(propagatedReference, propagatedAlias, JoinType.INNER_JOIN) //
                 .createAlias(propagatedAlias + ".state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("id", propagatingResourceId)) //
+                .add(Restrictions.eq("id", propagatingId)) //
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
                 .list();
     }
@@ -71,18 +69,37 @@ public class ResourceDAO {
                 .uniqueResult();
     }
 
-    public <T extends Resource> List<Integer> getResourcesRequiringAttention(Class<T> resourceClass) {
+    public <T extends Resource> List<Integer> getResourcesRequiringIndividualReminders(Class<T> resourceClass, LocalDate baseline) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("lastRemindedRequestIndividual")) //
+                        .add(Restrictions.lt("lastRemindedRequestIndividual", baseline))) //
                 .add(Restrictions.eq("stateAction.raisesUrgentFlag", true)) //
                 .list();
     }
 
-    public <T extends Resource> List<Integer> getRecentlyUpdatedResources(Class<T> resourceClass, DateTime rangeStart, DateTime rangeClose) {
+    public <T extends Resource> List<Integer> getResourcesRequiringSyndicatedReminders(Class<T> resourceClass, LocalDate baseline) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("lastRemindedRequestSyndicated")) //
+                        .add(Restrictions.lt("lastRemindedRequestSyndicated", baseline))) //
+                .add(Restrictions.eq("stateAction.raisesUrgentFlag", true)) //
+                .list();
+    }
+
+    public <T extends Resource> List<Integer> getResourceRequiringSyndicatedUpdates(Class<T> resourceClass, LocalDate baseline, DateTime rangeStart,
+            DateTime rangeClose) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
                 .setProjection(Projections.property("id")) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("lastNotifiedUpdateSyndicated")) //
+                        .add(Restrictions.lt("lastNotifiedUpdateSyndicated", baseline))) //
                 .add(Restrictions.between("updatedTimestamp", rangeStart, rangeClose)) //
                 .list();
     }
@@ -124,11 +141,11 @@ public class ResourceDAO {
         criteria.setProjection(projectionList) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN);
-        
+
         addResourceListCustomJoins(scopeId, resourceReference, criteria);
-        
+
         criteria.add(Restrictions.in("id", assignedResources));
-        
+
         return ResourceListConstraintBuilder.appendLimitCriterion(criteria, filter, lastSequenceIdentifier, maxRecords)
                 .setResultTransformer(Transformers.aliasToBean(ResourceConsoleListRowDTO.class)) //
                 .list();
@@ -147,7 +164,7 @@ public class ResourceDAO {
 
         ResourceListConstraintBuilder.appendFilterCriterion(criteria, conditions, filter);
         ResourceListConstraintBuilder.appendLimitCriterion(criteria, filter, lastIdentifier, recordsToRetrieve);
-        
+
         return (List<Integer>) criteria.list();
     }
 
@@ -168,7 +185,7 @@ public class ResourceDAO {
 
         ResourceListConstraintBuilder.appendFilterCriterion(criteria, conditions, filter);
         ResourceListConstraintBuilder.appendLimitCriterion(criteria, filter, lastIdentifier, recordsToRetrieve);
-        
+
         return (List<Integer>) criteria.list();
     }
 

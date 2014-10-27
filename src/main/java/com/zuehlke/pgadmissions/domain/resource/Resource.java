@@ -73,6 +73,18 @@ public abstract class Resource implements IUniqueEntity {
 
     public abstract void setUpdatedTimestamp(DateTime updatedTimestamp);
 
+    public abstract LocalDate getLastRemindedRequestIndividual();
+
+    public abstract void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual);
+
+    public abstract LocalDate getLastRemindedRequestSyndicated();
+
+    public abstract void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated);
+
+    public abstract LocalDate getLastNotifiedUpdateSyndicated();
+
+    public abstract void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated);
+
     public abstract String getSequenceIdentifier();
 
     public abstract void setSequenceIdentifier(String sequenceIdentifier);

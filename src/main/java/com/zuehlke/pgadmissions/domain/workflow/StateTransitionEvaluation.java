@@ -23,10 +23,10 @@ public class StateTransitionEvaluation extends WorkflowDefinition {
     @Column(name = "id")
     @Enumerated(EnumType.STRING)
     private PrismStateTransitionEvaluation id;
-    
+
     @Column(name = "next_state_selection", nullable = false)
-    private Boolean nextStateSelection; 
-    
+    private Boolean nextStateSelection;
+
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
@@ -36,9 +36,8 @@ public class StateTransitionEvaluation extends WorkflowDefinition {
         return id;
     }
 
-    @Override
-    public final void setId(Enum<?> id) {
-        this.id = (PrismStateTransitionEvaluation) id;
+    public final void setId(PrismStateTransitionEvaluation id) {
+        this.id = id;
     }
 
     public final Boolean isNextStateSelection() {
@@ -58,20 +57,20 @@ public class StateTransitionEvaluation extends WorkflowDefinition {
     public final void setScope(Scope scope) {
         this.scope = scope;
     }
-    
+
     public StateTransitionEvaluation withId(PrismStateTransitionEvaluation id) {
         this.id = id;
         return this;
     }
-    
+
     public StateTransitionEvaluation withNextStateSelection(Boolean nextStateSelection) {
         this.nextStateSelection = nextStateSelection;
         return this;
     }
-    
+
     public StateTransitionEvaluation withScope(Scope scope) {
         this.scope = scope;
         return this;
     }
-    
+
 }

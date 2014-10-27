@@ -11,12 +11,14 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -109,11 +111,10 @@ public class CommentDAO {
                 .list();
     }
 
-    public List<CommentAppointmentTimeslot> getAppointmentPreferences(Comment schedulingComment, Comment preferenceComment) {
-        return (List<CommentAppointmentTimeslot>) sessionFactory.getCurrentSession().createCriteria(CommentAppointmentTimeslot.class) //
-                .createAlias("appointmentPreferences", "appointmentPreference", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("comment", schedulingComment)) //
-                .add(Restrictions.eq("appointmentPreference.comment", preferenceComment)) //
+    public List<LocalDateTime> getAppointmentPreferences(Comment preferenceComment) {
+        return (List<LocalDateTime>) sessionFactory.getCurrentSession().createCriteria(CommentAppointmentPreference.class) //
+                .setProjection(Projections.property("dateTime")) //
+                .add(Restrictions.eq("comment", preferenceComment)) //
                 .addOrder(Order.asc("dateTime")) //
                 .list();
     }
@@ -150,7 +151,6 @@ public class CommentDAO {
 
     public <T extends Resource> List<Comment> getRecentComments(Class<T> resourceClass, Integer resourceId, DateTime rangeStart, DateTime rangeClose) {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(PrismScope.getResourceScope(resourceClass).getLowerCaseName() + ".id", resourceId)) //
                 .add(Restrictions.between("createdTimestamp", rangeStart, rangeClose)) //
                 .list();

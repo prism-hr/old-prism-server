@@ -1,6 +1,23 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.base.Preconditions;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.INSTITUTION_IMPORT_ERROR_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.SYSTEM_INVITATION_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+
+import java.util.List;
+
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.NotificationDAO;
@@ -17,27 +34,21 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
-import com.zuehlke.pgadmissions.domain.workflow.*;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.workflow.Role;
+import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
 import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
+import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.mail.MailSender;
 import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.*;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
@@ -68,13 +79,13 @@ public class NotificationService {
     private SystemService systemService;
 
     @Autowired
-    private MailSender mailSender;
-
-    @Autowired
     private EntityService entityService;
 
     @Autowired
     private CustomizationService customizationService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     public NotificationTemplate getById(PrismNotificationTemplate id) {
         return entityService.getByProperty(NotificationTemplate.class, "id", id);
@@ -89,14 +100,15 @@ public class NotificationService {
     }
 
     public NotificationConfiguration createConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationTemplate template,
-                                                         String subject, String content, Integer reminderInterval) {
+            String subject, String content, Integer reminderInterval) throws CustomizationException {
+        customizationService.validateConfiguration(template, locale, programType);
         return new NotificationConfiguration().withResource(resource).withLocale(locale).withProgramType(programType).withNotificationTemplate(template)
                 .withSubject(subject).withContent(content).withReminderInterval(reminderInterval)
                 .withSystemDefault(customizationService.isSystemDefault(template, locale, programType));
     }
 
     public void updateConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationTemplate template,
-                                    NotificationConfigurationDTO notificationConfigurationDTO) throws DeduplicationException {
+            NotificationConfigurationDTO notificationConfigurationDTO) throws DeduplicationException {
         NotificationConfiguration configuration = new NotificationConfiguration().withResource(resource).withLocale(locale).withProgramType(programType)
                 .withNotificationTemplate(template).withSubject(notificationConfigurationDTO.getSubject())
                 .withContent(notificationConfigurationDTO.getContent()).withReminderInterval(notificationConfigurationDTO.getReminderInterval());
@@ -148,27 +160,31 @@ public class NotificationService {
         User author = systemService.getSystem().getUser();
         Resource resource = resourceService.getById(resourceClass, resourceId);
 
-        List<UserNotificationDefinitionDTO> reminders = notificationDAO.getIndividualRequestReminders(resource, baseline);
+        List<UserNotificationDefinitionDTO> definitions = notificationDAO.getIndividualRequestReminders(resource, baseline);
         HashMultimap<NotificationTemplate, User> sent = HashMultimap.create();
 
-        for (UserNotificationDefinitionDTO reminder : reminders) {
-            User user = userService.getById(reminder.getUserId());
+        for (UserNotificationDefinitionDTO definition : definitions) {
+            User user = userService.getById(definition.getUserId());
 
-            Role role = roleService.getById(reminder.getRoleId());
+            Role role = roleService.getById(definition.getRoleId());
             UserRole userRole = roleService.getUserRole(resource, user, role);
 
-            NotificationTemplate notificationTemplate = getById(reminder.getNotificationTemplateId());
-            Integer reminderInterval = getReminderInterval(resource, user, notificationTemplate);
+            NotificationTemplate template = getById(definition.getNotificationTemplateId());
+            LocalDate lastNotifiedDate = userRole.getLastNotifiedDate();
 
-            if (!sent.get(notificationTemplate).contains(user) && baseline.minusDays(reminderInterval) == userRole.getLastNotifiedDate()) {
-                sendNotification(notificationTemplate.getReminderTemplate(),
-                        new NotificationTemplateModelDTO().withUser(user).withAuthor(author).withResource(resource)
-                                .withTransitionAction(reminder.getActionId()));
-                sent.put(notificationTemplate, user);
+            Integer reminderInterval = getReminderInterval(resource, user, template);
+            LocalDate lastExpectedReminder = baseline.minusDays(reminderInterval);
+
+            if (!sent.get(template).contains(user) && (lastExpectedReminder.isAfter(lastNotifiedDate) || lastExpectedReminder.equals(lastNotifiedDate))) {
+                sendNotification(template.getReminderTemplate(), new NotificationTemplateModelDTO().withUser(user).withAuthor(author).withResource(resource)
+                        .withTransitionAction(definition.getActionId()));
+                sent.put(template, user);
             }
 
             userRole.setLastNotifiedDate(baseline);
         }
+
+        resource.setLastRemindedRequestIndividual(baseline);
     }
 
     public <T extends Resource> void sendSyndicatedRequestNotifications(Class<T> resourceClass, Integer resourceId, LocalDate baseline) {
@@ -188,9 +204,11 @@ public class NotificationService {
                 LocalDate lastNotifiedDate = user.getLastNotifiedDate(resource.getClass());
 
                 Integer reminderInterval = getReminderInterval(resource, user, notificationTemplate);
-                boolean doSendReminder = baseline.minusDays(reminderInterval) == lastNotifiedDate;
+                LocalDate lastExpectedReminder = baseline.minusDays(reminderInterval);
+                boolean doSendReminder = lastExpectedReminder.equals(lastNotifiedDate);
 
-                if (!sent.get(notificationTemplate).contains(user) && (lastNotifiedDate == null || doSendReminder)) {
+                if (!sent.get(notificationTemplate).contains(user)
+                        && (lastNotifiedDate == null || lastExpectedReminder.isAfter(lastNotifiedDate) || doSendReminder)) {
                     NotificationTemplate sendTemplate = doSendReminder ? notificationTemplate.getReminderTemplate() : notificationTemplate;
                     sendNotification(sendTemplate, new NotificationTemplateModelDTO().withUser(user).withAuthor(author).withResource(resource)
                             .withTransitionAction(transitionActionId));
@@ -199,6 +217,8 @@ public class NotificationService {
                 }
             }
         }
+
+        resource.setLastRemindedRequestSyndicated(baseline);
     }
 
     public <T extends Resource> void sendSyndicatedUpdateNotifications(Class<T> resourceClass, Integer resourceId, Comment transitionComment, LocalDate baseline) {
@@ -226,6 +246,8 @@ public class NotificationService {
                 }
             }
         }
+
+        resource.setLastNotifiedUpdateSyndicated(baseline);
     }
 
     public List<User> getRecommendationNotifications(LocalDate baseline) {
@@ -334,18 +356,15 @@ public class NotificationService {
     }
 
     private void sendNotification(NotificationTemplate template, NotificationTemplateModelDTO modelDTO) {
-        Preconditions.checkNotNull(template);
-        Preconditions.checkNotNull(modelDTO);
-
         NotificationConfiguration configuration = getConfiguration(modelDTO.getResource(), modelDTO.getUser(), template);
-        Preconditions.checkNotNull(configuration, "Could not find configuration for template " + template.getId() + ", resource " + modelDTO.getResource() + ", user " + modelDTO.getUser().getEmail());
         MailMessageDTO message = new MailMessageDTO();
 
         message.setConfiguration(configuration);
         message.setModelDTO(modelDTO);
-        message.setAttachments(Lists.<AttachmentInputSource>newArrayList());
+        message.setAttachments(Lists.<AttachmentInputSource> newArrayList());
 
-        mailSender.sendEmail(message);
+        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(modelDTO.getResource(), modelDTO.getUser());
+        applicationContext.getBean(MailSender.class).localize(propertyLoader).sendEmail(message);
     }
 
 }

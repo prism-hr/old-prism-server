@@ -1,5 +1,8 @@
 ALTER TABLE DISPLAY_PROPERTY
-	DROP INDEX scope_id_2,
+	DROP INDEX scope_id_2
+;
+
+ALTER TABLE DISPLAY_PROPERTY
 	ADD INDEX (scope_id, display_category)
 ;
 

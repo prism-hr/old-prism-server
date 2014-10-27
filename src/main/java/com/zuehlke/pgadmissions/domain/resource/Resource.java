@@ -29,7 +29,7 @@ public abstract class Resource implements IUniqueEntity {
     public abstract String getCode();
 
     public abstract void setCode(String code);
-    
+
     public abstract PrismLocale getLocale();
 
     public abstract System getSystem();
@@ -74,12 +74,24 @@ public abstract class Resource implements IUniqueEntity {
 
     public abstract void setUpdatedTimestamp(DateTime updatedTimestamp);
 
+    public abstract LocalDate getLastRemindedRequestIndividual();
+
+    public abstract void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual);
+
+    public abstract LocalDate getLastRemindedRequestSyndicated();
+
+    public abstract void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated);
+
+    public abstract LocalDate getLastNotifiedUpdateSyndicated();
+
+    public abstract void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated);
+
     public abstract String getSequenceIdentifier();
 
     public abstract void setSequenceIdentifier(String sequenceIdentifier);
 
     public abstract void addComment(Comment comment);
-    
+
     public String getHelpdeskDisplay() {
         if (getResourceScope() == PrismScope.SYSTEM) {
             return getSystem().getHelpdesk();

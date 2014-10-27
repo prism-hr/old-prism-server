@@ -308,7 +308,7 @@ public class ApplicationService {
         if (commentDTO.getAppointmentPreferences() != null) {
             for (Integer timeslotId : commentDTO.getAppointmentPreferences()) {
                 CommentAppointmentTimeslot timeslot = entityService.getById(CommentAppointmentTimeslot.class, timeslotId);
-                comment.getAppointmentPreferences().add(new CommentAppointmentPreference().withAppointmentTimeslot(timeslot));
+                comment.getAppointmentPreferences().add(new CommentAppointmentPreference().withDateTime(timeslot.getDateTime()));
             }
         }
 

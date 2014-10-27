@@ -289,12 +289,17 @@ public class ResourceService {
         return resourceDAO.getResourcesToPropagate(propagatingResourceScope, propagatingResourceId, propagatedResourceScope, actionId);
     }
 
-    public <T extends Resource> List<Integer> getResourcesRequiringAttention(Class<T> resourceClass) {
-        return resourceDAO.getResourcesRequiringAttention(resourceClass);
+    public <T extends Resource> List<Integer> getResourcesRequiringIndividualReminders(Class<T> resourceClass, LocalDate baseline) {
+        return resourceDAO.getResourcesRequiringIndividualReminders(resourceClass, baseline);
     }
 
-    public <T extends Resource> List<Integer> getRecentlyUpdatedResources(Class<T> resourceClass, DateTime rangeStart, DateTime rangeClose) {
-        return resourceDAO.getRecentlyUpdatedResources(resourceClass, rangeStart, rangeClose);
+    public <T extends Resource> List<Integer> getResourcesRequiringSyndicatedReminders(Class<T> resourceClass, LocalDate baseline) {
+        return resourceDAO.getResourcesRequiringSyndicatedReminders(resourceClass, baseline);
+    }
+
+    public <T extends Resource> List<Integer> getResourcesRequiringSyndicatedUpdates(Class<T> resourceClass, LocalDate baseline, DateTime rangeStart,
+            DateTime rangeClose) {
+        return resourceDAO.getResourceRequiringSyndicatedUpdates(resourceClass, baseline, rangeStart, rangeClose);
     }
 
     public <T extends Resource> List<ResourceConsoleListRowDTO> getResourceConsoleList(PrismScope scopeId, ResourceListFilterDTO filter,

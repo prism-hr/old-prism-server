@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -15,6 +12,8 @@ import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 public abstract class Resource implements IUniqueEntity {
 
@@ -29,7 +28,7 @@ public abstract class Resource implements IUniqueEntity {
     public abstract String getCode();
 
     public abstract void setCode(String code);
-    
+
     public abstract PrismLocale getLocale();
 
     public abstract System getSystem();
@@ -79,7 +78,7 @@ public abstract class Resource implements IUniqueEntity {
     public abstract void setSequenceIdentifier(String sequenceIdentifier);
 
     public abstract void addComment(Comment comment);
-    
+
     public String getHelpdeskDisplay() {
         if (getResourceScope() == PrismScope.SYSTEM) {
             return getSystem().getHelpdesk();
@@ -91,17 +90,17 @@ public abstract class Resource implements IUniqueEntity {
     public Resource getParentResource() {
         PrismScope resourceScope = PrismScope.getResourceScope(this.getClass());
         switch (resourceScope) {
-        case SYSTEM:
-            return this;
-        case INSTITUTION:
-            return getSystem();
-        case PROGRAM:
-            return getInstitution();
-        case PROJECT:
-            return getProgram();
-        case APPLICATION:
-            Resource project = getProject();
-            return project == null ? getProgram() : project;
+            case SYSTEM:
+                return this;
+            case INSTITUTION:
+                return getSystem();
+            case PROGRAM:
+                return getInstitution();
+            case PROJECT:
+                return getProgram();
+            case APPLICATION:
+                Resource project = getProject();
+                return project == null ? getProgram() : project;
         }
         throw new Error();
     }
@@ -127,4 +126,8 @@ public abstract class Resource implements IUniqueEntity {
         }
     }
 
+    @Override
+    public String toString() {
+        return getResourceScope().name() + "#" + getId();
+    }
 }

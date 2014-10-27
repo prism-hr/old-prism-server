@@ -19,7 +19,7 @@
             </converter>
             <converter type="com.zuehlke.pgadmissions.rest.converter.FinancialDetailsRepresentationConverter">
                 <class-a>com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail</class-a>
-                <class-b>com.zuehlke.pgadmissions.rest.representation.FinancialDetailsRepresentation</class-b>
+                <class-b>com.zuehlke.pgadmissions.rest.representation.resource.advert.FinancialDetailsRepresentation</class-b>
             </converter>
 
             <!-- Advert category converter definitions -->
@@ -59,15 +59,6 @@
             <copy-by-reference>org.joda.time.DateTime</copy-by-reference>
         </copy-by-references>
     </configuration>
-
-    <mapping>
-        <class-a>com.zuehlke.pgadmissions.domain.advert.Advert</class-a>
-        <class-b>com.zuehlke.pgadmissions.rest.representation.AdvertRepresentation</class-b>
-        <field>
-            <a>closingDate.closingDate</a>
-            <b>closingDate</b>
-        </field>
-    </mapping>
 
     <mapping>
         <class-a>com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO</class-a>

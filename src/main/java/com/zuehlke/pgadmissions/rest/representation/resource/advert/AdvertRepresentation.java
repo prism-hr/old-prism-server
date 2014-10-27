@@ -1,8 +1,9 @@
-package com.zuehlke.pgadmissions.rest.representation;
+package com.zuehlke.pgadmissions.rest.representation.resource.advert;
 
 import java.util.List;
 import java.util.Set;
 
+import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
@@ -25,7 +26,7 @@ public class AdvertRepresentation {
     private String description;
 
     private String homepage;
-    
+
     private String applyHomepage;
 
     private InstitutionAddressRepresentation address;
@@ -38,7 +39,9 @@ public class AdvertRepresentation {
 
     private FinancialDetailsRepresentation pay;
 
-    private LocalDate closingDate;
+    private AdvertClosingDateRepresentation closingDate;
+
+    private List<AdvertClosingDateRepresentation> closingDates;
 
     private UserRepresentation user;
 
@@ -53,7 +56,7 @@ public class AdvertRepresentation {
     private List<String> competencies;
 
     private List<String> themes;
-    
+
     private List<Integer> institutions;
 
     private List<PrismProgramType> programTypes;
@@ -152,12 +155,20 @@ public class AdvertRepresentation {
         this.pay = pay;
     }
 
-    public LocalDate getClosingDate() {
+    public AdvertClosingDateRepresentation getClosingDate() {
         return closingDate;
     }
 
-    public void setClosingDate(LocalDate closingDate) {
+    public void setClosingDate(AdvertClosingDateRepresentation closingDate) {
         this.closingDate = closingDate;
+    }
+
+    public List<AdvertClosingDateRepresentation> getClosingDates() {
+        return closingDates;
+    }
+
+    public void setClosingDates(List<AdvertClosingDateRepresentation> closingDates) {
+        this.closingDates = closingDates;
     }
 
     public UserRepresentation getUser() {

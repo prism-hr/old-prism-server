@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.AdvertRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 
 public class ProjectExtendedRepresentation extends AbstractResourceRepresentation {
 

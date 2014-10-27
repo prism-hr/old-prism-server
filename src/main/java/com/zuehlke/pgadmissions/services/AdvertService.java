@@ -1,35 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_COMMENT_UPDATED_ADVERT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_COMMENT_UPDATED_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_COMMENT_UPDATED_CLOSING_DATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_COMMENT_UPDATED_FEE_AND_PAYMENT;
-import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
-
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.net.URI;
-import java.net.URLEncoder;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.xml.bind.JAXBException;
-
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang3.text.WordUtils;
-import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
-
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
@@ -49,13 +20,33 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.rest.dto.AdvertCategoriesDTO;
-import com.zuehlke.pgadmissions.rest.dto.AdvertClosingDateDTO;
-import com.zuehlke.pgadmissions.rest.dto.AdvertDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.AdvertFeesAndPaymentsDTO;
-import com.zuehlke.pgadmissions.rest.dto.FinancialDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.*;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.text.WordUtils;
+import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+
+import javax.xml.bind.JAXBException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.*;
+import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 @Service
 @Transactional
@@ -145,6 +136,49 @@ public class AdvertService {
         resourceService.executeUpdate(resource, messageIndex);
     }
 
+    public AdvertClosingDate addClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, AdvertClosingDateDTO advertClosingDateDTO) {
+        Resource resource = resourceService.getById(resourceClass, resourceId);
+        Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
+
+        Preconditions.checkNotNull(advert);
+
+        AdvertClosingDate advertClosingDate = new AdvertClosingDate().withAdvert(advert).withClosingDate(advertClosingDateDTO.getClosingDate())
+                .withStudyPlaces(advertClosingDateDTO.getStudyPlaces());
+        advert.getClosingDates().add(advertClosingDate);
+
+        advert.setClosingDate(advertDAO.getNextAdvertClosingDate(advert, new LocalDate()));
+        return advertClosingDate;
+    }
+
+    public void updateClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, Integer closingDateId, AdvertClosingDateDTO advertClosingDateDTO) {
+        Resource resource = resourceService.getById(resourceClass, resourceId);
+        Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
+        AdvertClosingDate advertClosingDate = getClosingDateById(closingDateId);
+
+        Preconditions.checkNotNull(advert);
+        Preconditions.checkNotNull(advertClosingDate);
+        Preconditions.checkState(advertClosingDate.getAdvert().getId().equals(advert.getId()));
+
+        advertClosingDate.setClosingDate(advertClosingDateDTO.getClosingDate());
+        advertClosingDate.setStudyPlaces(advertClosingDateDTO.getStudyPlaces());
+
+        advert.setClosingDate(advertDAO.getNextAdvertClosingDate(advert, new LocalDate()));
+    }
+
+    public void deleteClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, Integer closingDateId) throws Exception {
+        Resource resource = resourceService.getById(resourceClass, resourceId);
+        Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
+        AdvertClosingDate advertClosingDate = getClosingDateById(closingDateId);
+
+        Preconditions.checkNotNull(advert);
+        Preconditions.checkNotNull(advertClosingDate);
+        Preconditions.checkState(advertClosingDate.getAdvert().getId().equals(advert.getId()));
+
+        advert.getClosingDates().remove(advertClosingDate);
+        advert.setClosingDate(advertDAO.getNextAdvertClosingDate(advert, new LocalDate()));
+        resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CLOSING_DATE);
+    }
+
     private void updateDetail(Resource resource, Advert advert, AdvertDetailsDTO advertDetailsDTO) throws Exception {
         InstitutionAddressDTO addressDTO = advertDetailsDTO.getAddress();
         InstitutionDomicile country = entityService.getById(InstitutionDomicile.class, addressDTO.getDomicile());
@@ -186,7 +220,7 @@ public class AdvertService {
 
     @SuppressWarnings("unchecked")
     private void updateCategories(Resource resource, Advert advert, AdvertCategoriesDTO categoriesDTO) throws DeduplicationException {
-        for (String propertyName : new String[] { "domain", "industry", "function", "competency", "theme", "institution", "programType" }) {
+        for (String propertyName : new String[]{"domain", "industry", "function", "competency", "theme", "institution", "programType"}) {
             String propertySetterName = "add" + WordUtils.capitalize(propertyName);
             List<Object> values = (List<Object>) ReflectionUtils.getProperty(categoriesDTO, pluralize(propertyName));
 
@@ -215,19 +249,6 @@ public class AdvertService {
             persistentClosingDate.setStudyPlaces(transientClosingDate.getStudyPlaces());
             entityService.evict(transientClosingDate);
         }
-    }
-
-    public void deleteClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, Integer closingDateId) throws DeduplicationException {
-        Resource resource = resourceService.getById(resourceClass, resourceId);
-        Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
-        AdvertClosingDate closingDate = getClosingDateById(closingDateId);
-        if (closingDate != null && closingDate.getAdvert().equals(advert)) {
-            advert.getClosingDates().remove(closingDate);
-            if (closingDate.equals(advert.getClosingDate())) {
-                advert.setClosingDate(advertDAO.getNextAdvertClosingDate(advert, new LocalDate()));
-            }
-        }
-        resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CLOSING_DATE);
     }
 
     public void updateClosingDate(Advert transientAdvert, LocalDate baseline) {
@@ -281,7 +302,7 @@ public class AdvertService {
     }
 
     private void setMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context)
+                                   BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Minimum" + context, minimumSpecified);
         PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Maximum" + context, maximumSpecified);
@@ -290,7 +311,7 @@ public class AdvertService {
     }
 
     private void setConvertedMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
+                                            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (rate.compareTo(new BigDecimal(0)) == 1) {
             minimumSpecified = minimumSpecified.multiply(rate).setScale(2, RoundingMode.HALF_UP);
@@ -397,7 +418,7 @@ public class AdvertService {
     }
 
     private void updateFinancialDetails(AdvertFinancialDetail financialDetails, FinancialDetailsDTO financialDetailsDTO, String currencyAtLocale,
-            LocalDate baseline) throws Exception {
+                                        LocalDate baseline) throws Exception {
         DurationUnit interval = financialDetailsDTO.getInterval();
         String currencySpecified = financialDetailsDTO.getCurrency();
 

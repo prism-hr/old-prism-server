@@ -63,6 +63,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -138,7 +139,7 @@ public class SystemService {
     }
 
     @Transactional(timeout = 600)
-    public void initializeSystem() throws WorkflowConfigurationException, DeduplicationException {
+    public void initializeSystem() throws WorkflowConfigurationException, DeduplicationException, CustomizationException {
         LOGGER.info("Initialising scope definitions");
         verifyBackwardCompatibility(Scope.class);
         initializeScopes();
@@ -294,7 +295,7 @@ public class SystemService {
         return system;
     }
 
-    private void initializeDisplayProperties(System system) throws DeduplicationException {
+    private void initializeDisplayProperties(System system) throws DeduplicationException, CustomizationException {
         for (PrismDisplayProperty prismDisplayProperty : PrismDisplayProperty.values()) {
             Scope scope = scopeService.getById(prismDisplayProperty.getScope());
             DisplayProperty displayProperty = new DisplayProperty().withId(prismDisplayProperty).withDisplayCategory(prismDisplayProperty.getDisplayCategory())
@@ -306,7 +307,7 @@ public class SystemService {
         }
     }
 
-    private void initializeNotificationTemplates(System system) throws DeduplicationException {
+    private void initializeNotificationTemplates(System system) throws DeduplicationException, CustomizationException {
         List<NotificationTemplate> processedTemplates = Lists.newArrayList();
 
         for (PrismNotificationTemplate prismTemplate : PrismNotificationTemplate.values()) {
@@ -329,7 +330,7 @@ public class SystemService {
         }
     }
 
-    private void initializeNotificationConfiguration(System system, NotificationTemplate template) throws DeduplicationException {
+    private void initializeNotificationConfiguration(System system, NotificationTemplate template) throws DeduplicationException, CustomizationException {
         NotificationTemplate reminderTemplate = notificationService.getById(template.getId().getReminderTemplate());
         template.setReminderTemplate(reminderTemplate);
 
@@ -352,7 +353,7 @@ public class SystemService {
         }
     }
 
-    private void initializeStateDurations(System system) throws DeduplicationException {
+    private void initializeStateDurations(System system) throws DeduplicationException, CustomizationException {
         for (PrismState prismState : PrismState.values()) {
             if (prismState.getDuration() != null) {
                 State state = stateService.getById(prismState);

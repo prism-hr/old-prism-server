@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.mail;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_EMAIL_LINK_MESSAGE;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
@@ -33,7 +35,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTem
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplateProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
-import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplate;
@@ -48,9 +49,12 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 @Component
+@Scope(SCOPE_PROTOTYPE)
 public class MailSender {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MailSender.class);
+
+    private PropertyLoader propertyLoader;
 
     @Value("${context.environment}")
     private String contextEnvironment;
@@ -86,8 +90,7 @@ public class MailSender {
             final String subject = processHeader(configuration.getNotificationTemplate().getId(), configuration.getSubject(), model);
 
             final String htmlContent = processContent(configuration.getNotificationTemplate().getId(), configuration.getContent(), model, subject);
-            final String plainTextContent = mailToPlainTextConverter.getPlainText(htmlContent) + "\n\n"
-                    + applicationContext.getBean(PropertyLoader.class).load(SYSTEM_EMAIL_LINK_MESSAGE);
+            final String plainTextContent = mailToPlainTextConverter.getPlainText(htmlContent) + "\n\n" + propertyLoader.load(SYSTEM_EMAIL_LINK_MESSAGE);
 
             if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat")) {
                 LOGGER.info("Sending Production Email: " + message.toString());
@@ -118,6 +121,11 @@ public class MailSender {
         }
 
     }
+    
+    public MailSender localize(PropertyLoader propertyLoader) {
+        this.propertyLoader = propertyLoader;
+        return this;
+    }
 
     public String processHeader(PrismNotificationTemplate templateId, String templateValue, Map<String, Object> model) throws IOException, TemplateException {
         Template template = new Template(templateId.name(), new StringReader(templateValue), freemarkerConfig.getConfiguration());
@@ -137,20 +145,18 @@ public class MailSender {
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
     }
 
+    public Map<String, Object> createNotificationModelForValidation(NotificationTemplate notificationTemplate) {
+        return createNotificationModel(notificationTemplate, new NotificationTemplateModelDTO(), true);
+    }
+    
     public Map<String, Object> createNotificationModel(NotificationTemplate notificationTemplate, NotificationTemplateModelDTO modelDTO) {
         return createNotificationModel(notificationTemplate, modelDTO, false);
     }
 
-    public Map<String, Object> createNotificationModelForValidation(NotificationTemplate notificationTemplate) {
-        System system = systemService.getSystem();
-        return createNotificationModel(notificationTemplate, new NotificationTemplateModelDTO().withResource(system), true);
-    }
-
     private Map<String, Object> createNotificationModel(NotificationTemplate notificationTemplate, NotificationTemplateModelDTO modelDTO, boolean validationMode) {
         Map<String, Object> model = Maps.newHashMap();
-        LOGGER.info("Getting properties for " + notificationTemplate.getId().name() + " for " + modelDTO.getResource().getCode());
         List<PrismNotificationTemplatePropertyCategory> categories = notificationTemplate.getId().getPropertyCategories();
-        NotificationTemplatePropertyLoader loader = applicationContext.getBean(NotificationTemplatePropertyLoader.class).localize(modelDTO);
+        NotificationTemplatePropertyLoader loader = applicationContext.getBean(NotificationTemplatePropertyLoader.class).localize(modelDTO, propertyLoader);
         for (PrismNotificationTemplatePropertyCategory propertyCategory : categories) {
             for (PrismNotificationTemplateProperty property : propertyCategory.getProperties()) {
                 String value = validationMode ? "placeholder" : loader.load(property);

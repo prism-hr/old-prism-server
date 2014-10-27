@@ -607,8 +607,8 @@ public class ApplicationDownloadBuilder {
 
                     PdfPTable subBody = applicationDownloadBuilderHelper
                             .startSubection(pdfDocument, propertyLoader.load(APPLICATION_REFEREE_REFERENCE_COMMENT));
-                    applicationContext.getBean(ApplicationDownloadReferenceBuilder.class).addReferenceComment(pdfDocument, subBody, pdfWriter,
-                            applicationDownloadDTO.getApplication(), referenceComment);
+                    applicationContext.getBean(ApplicationDownloadReferenceBuilder.class).localize(propertyLoader, applicationDownloadBuilderHelper)
+                            .addReferenceComment(pdfDocument, subBody, pdfWriter, applicationDownloadDTO.getApplication(), referenceComment);
                 }
             }
         }

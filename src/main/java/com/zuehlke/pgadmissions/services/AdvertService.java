@@ -10,7 +10,6 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
@@ -287,8 +286,8 @@ public class AdvertService {
         return newAddress;
     }
 
-    public List<String> getLocalizedTags(Institution institution, PrismLocale locale, Class<? extends AdvertFilterCategory> clazz) {
-        return advertDAO.getLocalizedTags(institution, locale, clazz);
+    public List<String> getLocalizedTags(Institution institution, Class<? extends AdvertFilterCategory> clazz) {
+        return advertDAO.getLocalizedTags(institution, clazz);
     }
 
     public List<String> getLocalizedThemes(Application application) {

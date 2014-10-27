@@ -36,7 +36,7 @@ public class DisplayProperty extends WorkflowDefinition {
     private Scope scope;
 
     @Override
-    public Enum<?> getId() {
+    public PrismDisplayProperty getId() {
         return id;
     }
 
@@ -66,12 +66,12 @@ public class DisplayProperty extends WorkflowDefinition {
         this.id = id;
         return this;
     }
-    
+
     public DisplayProperty withDisplayCategory(PrismDisplayCategory displayCategory) {
         this.displayCategory = displayCategory;
         return this;
     }
-    
+
     public DisplayProperty withScope(Scope scope) {
         this.scope = scope;
         return this;

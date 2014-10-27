@@ -10,7 +10,7 @@ public abstract class WorkflowDefinition implements IUniqueEntity {
     public abstract Scope getScope();
 
     public abstract void setScope(Scope scope);
-    
+
     @Override
     public int hashCode() {
         return Objects.hashCode(getId());

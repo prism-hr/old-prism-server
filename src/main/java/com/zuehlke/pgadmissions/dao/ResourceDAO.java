@@ -62,13 +62,6 @@ public class ResourceDAO {
                 .list();
     }
 
-    public String getLastSequenceIdentifier(Resource resource, DateTime rangeStart, DateTime rangeClose) {
-        return (String) sessionFactory.getCurrentSession().createCriteria(resource.getClass()) //
-                .setProjection(Projections.max("sequenceIdentifier")) //
-                .add(Restrictions.between("updatedTimestamp", rangeStart, rangeClose)) //
-                .uniqueResult();
-    }
-
     public <T extends Resource> List<Integer> getResourcesRequiringIndividualReminders(Class<T> resourceClass, LocalDate baseline) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
                 .setProjection(Projections.groupProperty("id")) //

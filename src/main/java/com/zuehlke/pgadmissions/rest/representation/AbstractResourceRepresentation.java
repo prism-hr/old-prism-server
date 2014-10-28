@@ -1,10 +1,12 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
 import java.util.List;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -29,7 +31,7 @@ public class AbstractResourceRepresentation {
 
     private DateTime updatedTimestamp;
 
-    private List<ActionRepresentation> actions;
+    private Set<ActionRepresentation> actions = Sets.newLinkedHashSet();
 
     private List<PrismActionEnhancement> actionEnhancements;
 
@@ -102,12 +104,12 @@ public class AbstractResourceRepresentation {
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
     }
-
-    public final List<ActionRepresentation> getActions() {
+    
+    public final Set<ActionRepresentation> getActions() {
         return actions;
     }
 
-    public final void setActions(List<ActionRepresentation> actions) {
+    public final void setActions(Set<ActionRepresentation> actions) {
         this.actions = actions;
     }
 

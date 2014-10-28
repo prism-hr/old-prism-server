@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -34,7 +34,7 @@ public class ResourceListRowRepresentation {
 
     private DateTime updatedTimestamp;
 
-    private List<ActionRepresentation> actions;
+    private Set<ActionRepresentation> actions;
 
     private BigDecimal applicationRatingAverage;
 
@@ -128,11 +128,11 @@ public class ResourceListRowRepresentation {
         this.updatedTimestamp = updatedTimestamp;
     }
 
-    public List<ActionRepresentation> getActions() {
+    public Set<ActionRepresentation> getActions() {
         return actions;
     }
 
-    public void setActions(List<ActionRepresentation> actions) {
+    public void setActions(Set<ActionRepresentation> actions) {
         this.actions = actions;
     }
 

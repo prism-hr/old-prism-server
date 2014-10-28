@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
+import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -31,6 +32,8 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.StateTransitionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.StateTransitionRepresentation.RoleTransitionRepresentation;
 
 @Service
 @Transactional
@@ -96,15 +99,49 @@ public class ActionService {
         throwWorkflowPermissionException(resource, action);
     }
 
-    public List<ActionRepresentation> getPermittedActions(Integer systemId, Integer institutionId, Integer programId, Integer projectId, Integer applicationId,
-            PrismState stateId, User user) {
-        return actionDAO.getPermittedActions(systemId, institutionId, programId, projectId, applicationId, stateId, user);
+    public Set<ActionRepresentation> getPermittedActions(Resource resource, User user) {
+        PrismAction lastActionId = null;
+        ActionRepresentation thisActionRepresentation = null;
+
+        PrismState lastTransitionStateId = null;
+        StateTransitionRepresentation thisStateTransitionRepresentation = null;
+
+        Set<ActionRepresentation> representations = Sets.newLinkedHashSet();
+        List<ActionDTO> actions = actionDAO.getPermittedActions(resource, user);
+        for (ActionDTO action : actions) {
+            PrismAction thisActionId = action.getActionId();
+            boolean newAction = thisActionId != lastActionId;
+
+            if (newAction) {
+                thisActionRepresentation = new ActionRepresentation().withName(thisActionId).withRaisesUrgentFlag(action.getRaisesUrgentFlag());
+                representations.add(thisActionRepresentation);
+            }
+
+            PrismState thisTransitionStateId = action.getTransitionStateId();
+
+            if (newAction || (thisTransitionStateId != null && thisTransitionStateId != lastTransitionStateId)) {
+                thisStateTransitionRepresentation = new StateTransitionRepresentation().withTransitionStateId(thisTransitionStateId);
+                thisActionRepresentation.addStateTransition(thisStateTransitionRepresentation);
+            }
+
+            PrismRole thisTransitionRoleId = action.getTransitionRoleId();
+
+            if (thisTransitionRoleId != null) {
+                thisStateTransitionRepresentation.addRoleTransition(new RoleTransitionRepresentation().withRoleId(thisTransitionRoleId)
+                        .withRoleTransitionType(action.getRoleTransitionType()).withMinimumPermitted(action.getMinimumPermitted())
+                        .withMaximumPermitted(action.getMaximumPermitted()));
+            }
+
+            lastActionId = thisActionId;
+            lastTransitionStateId = thisTransitionStateId;
+        }
+        
+        return representations;
     }
 
-    public List<ActionRepresentation> getPermittedActions(Resource resource, User user) {
-        return actionDAO.getPermittedActions(resourceService.getResourceId(resource.getSystem()), resourceService.getResourceId(resource.getInstitution()),
-                resourceService.getResourceId(resource.getProgram()), resourceService.getResourceId(resource.getProject()),
-                resourceService.getResourceId(resource.getApplication()), resource.getState().getId(), user);
+    public Set<ActionRepresentation> getPermittedActions(Integer systemId, Integer institutionId, Integer programId, Integer projectId, Integer applicationId,
+            PrismState stateId, User user) {
+        return Sets.newLinkedHashSet(actionDAO.getPermittedActions(systemId, institutionId, programId, projectId, applicationId, stateId, user));
     }
 
     public List<PrismActionEnhancement> getPermittedActionEnhancements(Resource resource, User user) {

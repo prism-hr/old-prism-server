@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
@@ -402,7 +403,7 @@ public class StateService {
         return stateDAO.getActiveProjectStates();
     }
 
-    public List<PrismState> getAvailableNextStates(Resource resource, List<ActionRepresentation> permittedActions) {
+    public List<PrismState> getAvailableNextStates(Resource resource, Set<ActionRepresentation> permittedActions) {
         return stateDAO.getAvailableNextStates(resource, permittedActions);
     }
 

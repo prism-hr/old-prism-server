@@ -104,7 +104,7 @@ public class ResourceResource {
 
         representation.setTimeline(commentService.getComments(resource, currentUser));
 
-        List<ActionRepresentation> permittedActions = actionService.getPermittedActions(resource, currentUser);
+        Set<ActionRepresentation> permittedActions = actionService.getPermittedActions(resource, currentUser);
         if (permittedActions.isEmpty()) {
             Action viewEditAction = actionService.getViewEditAction(resource);
             actionService.throwWorkflowPermissionException(resource, viewEditAction);

@@ -39,9 +39,9 @@ public class RoleDAO {
                         .add(Restrictions.eq("program", resource.getProgram())) //
                         .add(Restrictions.eq("project", resource.getProject())) //
                         .add(Restrictions.eq("application", resource.getApplication()))) //
-                        .list();
+                .list();
     }
-    
+
     public UserRole getUserRole(Resource resource, User user, Role role) {
         return (UserRole) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
@@ -49,7 +49,7 @@ public class RoleDAO {
                 .add(Restrictions.eq("role", role)) //
                 .uniqueResult();
     }
-    
+
     public List<UserRole> getUserRoles(Resource resource, User user, PrismRole... authorities) {
         return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
@@ -57,7 +57,7 @@ public class RoleDAO {
                 .add(Restrictions.in("role.id", authorities)) //
                 .list();
     }
-    
+
     public List<User> getRoleUsers(Resource resource, Role role) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.property("user")) //
@@ -137,17 +137,15 @@ public class RoleDAO {
     }
 
     public List<PrismRole> getUserRoles(Resource resource, User user) {
-        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("role.id"))
-                .add(Restrictions.eq("user", user))
-                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource))
-                .list();
+        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class)
+                //
+                .setProjection(Projections.groupProperty("role.id")).add(Restrictions.eq("user", user))
+                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)).list();
     }
 
     public List<Role> getActiveRoles() {
         return sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
-                .setProjection(Projections.groupProperty("role"))
-                .list();
+                .setProjection(Projections.groupProperty("role")).list();
     }
 
     public void deleteObseleteUserRoles(List<Role> activeRoles) {
@@ -157,15 +155,14 @@ public class RoleDAO {
                 .setParameterList("activeRoles", activeRoles) //
                 .executeUpdate();
     }
-    
+
     public void deleteUserRoles(Resource resource, User user) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete UserRole " //
                         + "where :resourceReference = :resource " //
                         + "and user = :user") //
                 .setParameter("resourceReference", resource.getResourceScope().getLowerCaseName()) //
-                .setParameter("resource", resource)
-                .setParameter("user", user) //
+                .setParameter("resource", resource).setParameter("user", user) //
                 .executeUpdate();
     }
 

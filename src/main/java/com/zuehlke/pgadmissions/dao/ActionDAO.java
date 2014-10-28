@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PURGE_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
+import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 
@@ -106,6 +109,46 @@ public class ActionDAO {
                                 .add(Restrictions.eq("userRole.user", user)) //
                                 .add(Restrictions.eq("userAccount.enabled", true)))) //
                 .uniqueResult();
+    }
+    
+    public List<ActionDTO> getPermittedActions(Resource resource, User user) {
+        return (List<ActionDTO>) sessionFactory.getCurrentSession().createCriteria(StateAction.class, "stateAction") //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("action.id"), "actionId") //
+                        .add(Projections.property("raisesUrgentFlag"), "raisesUrgentFlag") //
+                        .add(Projections.groupProperty("stateTransition.transitionState.id"), "transitionStateId") //
+                        .add(Projections.groupProperty("roleTransition.transitionRole.id"), "transitionRoleId") //
+                        .add(Projections.groupProperty("roleTransition.roleTransitionType"), "roleTransitionType") //
+                        .add(Projections.property("roleTransition.minimumPermitted"), "minimumPermitted") //
+                        .add(Projections.property("roleTransition.maximumPermitted"), "maximumPermitted")) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .createAlias("stateTransitions", "stateTransition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("stateTransition.roleTransitions", "roleTransition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("state", resource.getState())) //
+                .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("userRole.system", resource.getSystem())) //
+                        .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
+                        .add(Restrictions.eq("userRole.program", resource.getProgram())) //
+                        .add(Restrictions.eq("userRole.project", resource.getProject())) //
+                        .add(Restrictions.eq("userRole.application", resource.getApplication()))) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("roleTransition.id")) //
+                        .add(Restrictions.in("roleTransition.roleTransitionType", Arrays.asList(CREATE, DELETE)))) //
+                .add(Restrictions.eq("userRole.user", user)) //
+                .add(Restrictions.eq("userAccount.enabled", true)) //
+                .addOrder(Order.desc("raisesUrgentFlag")) //
+                .addOrder(Order.asc("action.id")) //
+                .addOrder(Order.asc("stateTransition.transitionState.id")) //
+                .addOrder(Order.asc("roleTransition.transitionRole.id")) //
+                .addOrder(Order.asc("roleTransition.roleTransitionType")) //
+                .setResultTransformer(Transformers.aliasToBean(ActionDTO.class)) //
+                .list();
     }
 
     public List<ActionRepresentation> getPermittedActions(Integer systemId, Integer institutionId, Integer programId, Integer projectId, Integer applicationId,

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -117,7 +118,7 @@ public class StateDAO {
                 .list();
     }
 
-    public List<PrismState> getAvailableNextStates(Resource resource, List<ActionRepresentation> permittedActions) {
+    public List<PrismState> getAvailableNextStates(Resource resource, Set<ActionRepresentation> permittedActions) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .setProjection(Projections.property("transitionState.id")) //
                 .createAlias("stateAction", "stateAction") //

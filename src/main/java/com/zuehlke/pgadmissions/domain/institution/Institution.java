@@ -194,7 +194,7 @@ public class Institution extends ResourceParent {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedUpdateSyndicated;
 
-    @Column(name = "sequence_identifier", unique = true)
+    @Column(name = "sequence_identifier")
     private String sequenceIdentifier;
     
     @Transient

@@ -49,7 +49,7 @@ public class CustomizationService {
 
     public void createOrUpdateDisplayProperty(Resource resource, PrismLocale locale, PrismProgramType programType, PrismDisplayCategory displayCategory,
             DisplayProperty displayProperty, String value) throws DeduplicationException, CustomizationException {
-        validateConfiguration(displayProperty, locale, programType);
+        validateConfiguration(resource, displayProperty, locale, programType);
         DisplayValue transientValue = new DisplayValue().withResource(resource).withProgramType(programType).withLocale(locale)
                 .withDisplayProperty(displayProperty).withValue(value).withSystemDefault(isSystemDefault(displayProperty, locale, programType));
         entityService.createOrUpdate(transientValue);
@@ -119,13 +119,21 @@ public class CustomizationService {
         return false;
     }
 
-    public void validateConfiguration(WorkflowDefinition definition, PrismLocale locale, PrismProgramType programType) throws CustomizationException {
-        if (locale == null) {
+    public void validateConfiguration(Resource resource, WorkflowDefinition definition, PrismLocale locale, PrismProgramType programType) throws CustomizationException {
+        Integer resourcePrecedence = resource.getResourceScope().getPrecedence();
+        Integer definitionPrecedence = definition.getScope().getPrecedence();
+        if (resourcePrecedence == SYSTEM.getPrecedence() && locale == null) {
             throw new CustomizationException("Tried to configure " + definition.getClass().getSimpleName() + ": " + definition.getId().toString()
-                    + " with no locale");
-        } else if (definition.getScope().getPrecedence() > INSTITUTION.getPrecedence() && programType == null) {
+                    + " with no locale. System scope configurations must specify locale.");
+        } else if (resourcePrecedence > SYSTEM.getPrecedence() && locale != null) { 
             throw new CustomizationException("Tried to configure " + definition.getClass().getSimpleName() + ": " + definition.getId().toString()
-                    + " with no program type");
+                    + " with locale. On system scope configurations may specify locale.");            
+        } else if (definitionPrecedence > INSTITUTION.getPrecedence() && programType == null) {
+            throw new CustomizationException("Tried to configure " + definition.getClass().getSimpleName() + ": " + definition.getId().toString()
+                    + " with no program type. Scopes within program must specify program type.");
+        } else if (definitionPrecedence < PROGRAM.getPrecedence() && programType != null) {
+            throw new CustomizationException("Tried to configure " + definition.getClass().getSimpleName() + ": " + definition.getId().toString()
+                    + " with program type. Only scopes within program may specify program type.");
         }
     }
 

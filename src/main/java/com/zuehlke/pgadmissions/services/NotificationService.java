@@ -101,7 +101,7 @@ public class NotificationService {
 
     public NotificationConfiguration createConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationTemplate template,
             String subject, String content, Integer reminderInterval) throws CustomizationException {
-        customizationService.validateConfiguration(template, locale, programType);
+        customizationService.validateConfiguration(resource, template, locale, programType);
         return new NotificationConfiguration().withResource(resource).withLocale(locale).withProgramType(programType).withNotificationTemplate(template)
                 .withSubject(subject).withContent(content).withReminderInterval(reminderInterval)
                 .withSystemDefault(customizationService.isSystemDefault(template, locale, programType));

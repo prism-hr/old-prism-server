@@ -42,7 +42,7 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
     @JoinColumn(name = "program_id")
     private Program program;
 
-    @Column(name = "locale", nullable = false)
+    @Column(name = "locale")
     @Enumerated(EnumType.STRING)
     private PrismLocale locale;
     

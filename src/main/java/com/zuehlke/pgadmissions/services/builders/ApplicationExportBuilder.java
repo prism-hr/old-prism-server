@@ -502,9 +502,9 @@ public class ApplicationExportBuilder {
             EnglishLanguageTp englishLanguageTp = objectFactory.createEnglishLanguageTp();
             englishLanguageTp.setDateTaken(applicationExportBuilderHelper.buildXmlDate(languageQualification.getExamDate()));
 
-            if (languageQualification.getType().getCode().startsWith("CUST")) {
+            if (languageQualification.getType().getCode().startsWith("OTHER")) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.OTHER);
-                englishLanguageTp.setOtherLanguageExam(languageQualification.getType().getName());
+                englishLanguageTp.setOtherLanguageExam(propertyLoader.load(SYSTEM_REFER_TO_DOCUMENT));
             } else if (languageQualification.getType().getCode().startsWith("TOEFL")) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.TOEFL);
                 englishLanguageTp.setMethod(languageQualification.getType().getCode());

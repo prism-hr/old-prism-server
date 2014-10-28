@@ -107,7 +107,7 @@ public class StateService {
 
     public void createOrUpdateStateDuration(Resource resource, PrismLocale locale, PrismProgramType programType, State state, Integer duration)
             throws DeduplicationException, CustomizationException {
-        customizationService.validateConfiguration(state, locale, programType);
+        customizationService.validateConfiguration(resource, state, locale, programType);
         StateDuration transientStateDuration = new StateDuration().withResource(resource).withLocale(locale).withProgramType(programType).withState(state)
                 .withDuration(duration).withSystemDefault(customizationService.isSystemDefault(state, locale, programType));
         entityService.createOrUpdate(transientStateDuration);

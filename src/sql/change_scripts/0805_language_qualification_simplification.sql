@@ -1,5 +1,7 @@
 ALTER TABLE APPLICATION_LANGUAGE_QUALIFICATION
-	CHANGE COLUMN imported_language_qualification_type_id language_qualification_type_id INT(10) UNSIGNED
+	DROP FOREIGN KEY application_language_qualification_ibfk_2,
+	CHANGE COLUMN imported_language_qualification_type_id language_qualification_type_id INT(10) UNSIGNED,
+	ADD FOREIGN KEY (language_qualification_type_id) REFERENCES IMPORTED_LANGUAGE_QUALIFICATION_TYPE (id)
 ;
 
 INSERT INTO IMPORTED_LANGUAGE_QUALIFICATION_TYPE (institution_id, code, name, enabled)

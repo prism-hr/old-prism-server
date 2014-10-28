@@ -123,7 +123,7 @@ public class Advert {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastCurrencyConversionDate;
 
-    @Column(name = "sequence_identifier")
+    @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

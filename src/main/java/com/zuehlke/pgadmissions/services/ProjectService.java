@@ -1,13 +1,10 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -19,9 +16,6 @@ import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
 @Service
 @Transactional
 public class ProjectService {
-
-    @Autowired
-    private ProjectDAO projectDAO;
 
     @Autowired
     private ActionService actionService;
@@ -91,15 +85,8 @@ public class ProjectService {
 
     public void postProcessProject(Project project, Comment comment) {
         if (comment.isProjectCreateOrUpdateComment()) {
-            project.getAdvert().setSequenceIdentifier(project.getSequenceIdentifier() + "-" + project.getResourceScope().getShortCode());
-        }
-    }
-
-    public void updateProjectsLinkedToProgramDueDate(Program program) {
-        List<Project> linkedProjects = projectDAO.getProjectsLinkedToProgramDueDate(program);
-
-        for (Project linkedProject : linkedProjects) {
-            linkedProject.setDueDate(program.getDueDate());
+            Advert advert = project.getAdvert();
+            advert.setSequenceIdentifier(project.getSequenceIdentifier().substring(0, 10) + String.format("%010d", advert.getId()));
         }
     }
 

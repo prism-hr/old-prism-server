@@ -135,8 +135,8 @@ public class ProgramService {
 
     public void postProcessProgram(Program program, Comment comment) {
         if (comment.isProgramCreateOrUpdateComment()) {
-            program.getAdvert().setSequenceIdentifier(program.getSequenceIdentifier() + "-" + program.getResourceScope().getShortCode());
-            projectService.updateProjectsLinkedToProgramDueDate(program);
+            Advert advert = program.getAdvert();
+            advert.setSequenceIdentifier(program.getSequenceIdentifier().substring(0, 10) + String.format("%010d", advert.getId()));
         }
     }
 

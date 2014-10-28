@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -225,21 +226,8 @@ public class ResourceService {
 
     public void postProcessResource(Resource resource, Comment comment) throws DeduplicationException {
         DateTime baselineTime = new DateTime();
-        LocalDate baselineDate = baselineTime.toLocalDate();
-
-        DateTime rangeStart = baselineDate.toDateTimeAtStartOfDay();
-        DateTime rangeClose = rangeStart.plusDays(1).minusSeconds(1);
-
-        String lastSequenceIdentifier = resourceDAO.getLastSequenceIdentifier(resource, rangeStart, rangeClose);
-
-        lastSequenceIdentifier = lastSequenceIdentifier == null ? baselineDate.toString("yyyyMMdd") + "-0000000001" : lastSequenceIdentifier;
-        String[] lastSequenceIdentifierParts = lastSequenceIdentifier.split("-");
-        Integer lastSequenceIdentifierIndex = Integer.parseInt(lastSequenceIdentifierParts[1].replaceAll("^0+(?!$)", ""));
-
-        Integer nextSequenceIdentifierIndex = lastSequenceIdentifierIndex + 1;
-        resource.setSequenceIdentifier(lastSequenceIdentifierParts[0] + "-" + String.format("%010d", nextSequenceIdentifierIndex));
-
         resource.setUpdatedTimestamp(baselineTime);
+        resource.setSequenceIdentifier(Objects.toString(baselineTime.getMillis() / 1000) + String.format("%010d", resource.getId()));
 
         switch (resource.getResourceScope()) {
         case PROGRAM:

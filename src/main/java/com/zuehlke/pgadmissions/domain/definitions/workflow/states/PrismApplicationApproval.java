@@ -55,7 +55,7 @@ public class PrismApplicationApproval extends PrismWorkflowState {
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_APPROVAL) //
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) //
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_ASSIGNED_RECRUIER_OUTCOME) //
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_ASSIGNED_RECRUITER_OUTCOME) //
                         .withRoleTransitions(Arrays.asList( //
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
@@ -66,7 +66,7 @@ public class PrismApplicationApproval extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_APPROVAL_PENDING_FEEDBACK) // 
                         .withTransitionAction(PrismAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION) //
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_ASSIGNED_RECRUIER_OUTCOME) //
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_ASSIGNED_RECRUITER_OUTCOME) //
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_PRIMARY_SUPERVISOR) //

@@ -113,7 +113,7 @@ public class Comment {
     @Enumerated(EnumType.STRING)
     @Column(name = "application_eligible")
     private YesNoUnsureResponse applicationEligible;
-    
+
     @Column(name = "application_interested")
     private Boolean applicationInterested;
 
@@ -472,7 +472,7 @@ public class Comment {
     public void setUseCustomRecruiterQuestions(Boolean useCustomRecruiterQuestions) {
         this.useCustomRecruiterQuestions = useCustomRecruiterQuestions;
     }
-    
+
     public final String getCustomQuestion() {
         return customQuestion;
     }
@@ -655,7 +655,7 @@ public class Comment {
         this.positionTitle = positionTitle;
         return this;
     }
-    
+
     public Comment withPositionDescription(String positionDescription) {
         this.positionDescription = positionDescription;
         return this;
@@ -685,12 +685,12 @@ public class Comment {
         assignedUsers.add(new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(roleTransitionType).withComment(this));
         return this;
     }
-    
+
     public Comment withApplicationEligible(final YesNoUnsureResponse eligible) {
         this.applicationEligible = eligible;
         return this;
     }
-    
+
     public Comment withApplicationInterested(Boolean applicationInterested) {
         this.applicationInterested = applicationInterested;
         return this;
@@ -822,6 +822,12 @@ public class Comment {
                 && rejectionReason == null;
     }
 
+    public boolean isInterviewScheduledExpeditedComment() {
+        return action.getId() == PrismAction.APPLICATION_ASSIGN_INTERVIEWERS
+                && Arrays.asList(PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW, PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK).contains(
+                        transitionState.getId());
+    }
+
     public boolean isTransitionComment() {
         StateGroup stateGroup = state == null ? null : state.getStateGroup();
         StateGroup transitionStateGroup = transitionState == null ? null : transitionState.getStateGroup();
@@ -871,5 +877,5 @@ public class Comment {
     public String getInterviewTimeZoneDisplay() {
         return interviewTimeZone == null ? null : interviewTimeZone.getDisplayName(LocaleUtils.toLocale(getResource().getLocale().toString()));
     }
-    
+
 }

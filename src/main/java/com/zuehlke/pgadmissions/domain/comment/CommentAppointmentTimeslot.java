@@ -55,6 +55,11 @@ public class CommentAppointmentTimeslot {
         this.dateTime = dateTime;
     }
     
+    public CommentAppointmentTimeslot withDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+        return this;
+    }
+    
     public String getDateTimeDisplay(String dateTimeFormat) {
         return dateTime.toString(dateTimeFormat, LocaleUtils.toLocale(comment.getResource().getLocale().toString()));
     }

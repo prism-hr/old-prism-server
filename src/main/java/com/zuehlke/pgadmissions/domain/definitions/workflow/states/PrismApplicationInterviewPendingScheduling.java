@@ -558,7 +558,11 @@ public class PrismApplicationInterviewPendingScheduling extends PrismWorkflowSta
                         .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) // 
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION)))); //
+                        .withTemplate(PrismNotificationTemplate.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION))) //
+                .withTransitions(Arrays.asList( //
+                    new PrismStateTransition() //
+                        .withTransitionState(PrismState.APPLICATION_INTERVIEW_PENDING_SCHEDULING) //
+                        .withTransitionAction(PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_VIEW_EDIT) //

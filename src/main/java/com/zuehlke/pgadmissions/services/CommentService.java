@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -262,7 +263,6 @@ public class CommentService {
         transientPreferences.clear();
 
         entityService.save(comment);
-        entityService.flush();
 
         addAssignedUsers(comment, persistentAssignees);
         comment.getAppointmentTimeslots().addAll(persistentTimeslots);
@@ -306,6 +306,28 @@ public class CommentService {
             comment.setRejectionReasonSystem(propertyLoader.load(PrismDisplayProperty.APPLICATION_COMMENT_REJECTION_SYSTEM));
         }
 
+    }
+
+    public void postProcessComment(Comment comment) {
+        if (comment.isInterviewScheduledExpeditedComment()) {
+            LocalDateTime interviewDateTime = comment.getInterviewDateTime();
+            comment.getAppointmentTimeslots().add(new CommentAppointmentTimeslot().withDateTime(interviewDateTime));
+
+            Resource resource = comment.getResource();
+            Action action = actionService.getById(PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY);
+
+            DateTime baseline = new DateTime();
+            for (CommentAssignedUser assignee : comment.getAssignedUsers()) {
+                PrismRole roleId = assignee.getRole().getId();
+                if (Arrays.asList(PrismRole.APPLICATION_INTERVIEWEE, PrismRole.APPLICATION_INTERVIEWER).contains(roleId)) {
+                    Comment preference = new Comment().withResource(resource).withAction(action).withUser(assignee.getUser()).withRole(roleId.name())
+                            .withDeclinedResponse(false).withState(resource.getState()).withTransitionState(resource.getState()).withCreatedTimestamp(baseline);
+                    preference.getAppointmentPreferences().add(new CommentAppointmentPreference().withDateTime(interviewDateTime));
+                    create(preference);
+                    resource.addComment(preference);
+                }
+            }
+        }
     }
 
     private Comment getLatestAppointmentPreferenceComment(Application application, Comment schedulingComment, User user) {

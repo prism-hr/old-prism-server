@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -17,6 +18,9 @@ import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
 @Transactional
 public class ProjectService {
 
+    @Autowired
+    private ProjectDAO projectDAO;
+    
     @Autowired
     private ActionService actionService;
 
@@ -86,8 +90,12 @@ public class ProjectService {
     public void postProcessProject(Project project, Comment comment) {
         if (comment.isProjectCreateOrUpdateComment()) {
             Advert advert = project.getAdvert();
-            advert.setSequenceIdentifier(project.getSequenceIdentifier().substring(0, 10) + String.format("%010d", advert.getId()));
+            advert.setSequenceIdentifier(project.getSequenceIdentifier().substring(0, 13) + String.format("%010d", advert.getId()));
         }
+    }
+    
+    public void sychronizeProjectDueDates(LocalDate baseline) {
+        projectDAO.synchronizeProjectDueDates(baseline);
     }
 
 }

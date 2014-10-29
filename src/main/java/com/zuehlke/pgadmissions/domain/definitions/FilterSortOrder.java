@@ -9,11 +9,11 @@ public enum FilterSortOrder {
     ASCENDING, //
     DESCENDING;
 
-    public static Criterion getPagingRestriction(String filterSortColumn, FilterSortOrder filterSortOrder, String filterSortColumValue) {
+    public static Criterion getPagingRestriction(String filterSortColumn, FilterSortOrder filterSortOrder, String filterSortColumnValue) {
         if (filterSortOrder == ASCENDING) {
-            return Restrictions.gt(filterSortColumn, filterSortColumValue);
+            return Restrictions.gt(filterSortColumn, filterSortColumnValue);
         } else {
-            return Restrictions.lt(filterSortColumn, filterSortColumValue);
+            return Restrictions.lt(filterSortColumn, filterSortColumnValue);
         }
     }
 

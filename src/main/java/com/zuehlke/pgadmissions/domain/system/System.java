@@ -7,7 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -38,7 +37,6 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 public class System extends Resource {
 
     @Id
-    @GeneratedValue
     private Integer id;
 
     @Column(name = "code",unique = true)
@@ -193,6 +191,11 @@ public class System extends Resource {
 
     public System withTitle(String title) {
         this.title = title;
+        return this;
+    }
+    
+    public System withId(Integer id) {
+        this.id = id;
         return this;
     }
     

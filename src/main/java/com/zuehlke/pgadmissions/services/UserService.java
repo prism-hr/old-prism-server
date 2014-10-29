@@ -66,6 +66,9 @@ public class UserService {
     private CommentService commentService;
 
     @Autowired
+    private ResourceService resourceService;
+
+    @Autowired
     private SystemService systemService;
 
     @Autowired
@@ -91,7 +94,8 @@ public class UserService {
 
     public User registerUser(UserRegistrationDTO registrationDTO, String referrer) throws DeduplicationException, InterruptedException, IOException,
             JAXBException {
-        User user = getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail(), registrationDTO.getLocale());
+        Resource resource = resourceService.getById(registrationDTO.getAction().getActionId().getScope().getResourceClass(), registrationDTO.getResourceId());
+        User user = getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail(), resource.getLocale());
         if ((registrationDTO.getActivationCode() != null && !user.getActivationCode().equals(registrationDTO.getActivationCode()))
                 || user.getUserAccount() != null) {
             throw new ResourceNotFoundException();

@@ -28,7 +28,7 @@ public class ResourceConsoleListRowDTO {
     private String creatorLastName;
 
     private String creatorEmail;
-    
+
     private String code;
 
     private String institutionTitle;
@@ -44,6 +44,8 @@ public class ResourceConsoleListRowDTO {
     private PrismStateGroup stateGroupId;
 
     private DateTime updatedTimestamp;
+
+    private String sequenceIdentifier;
 
     public final Integer getSystemId() {
         return systemId;
@@ -189,4 +191,11 @@ public class ResourceConsoleListRowDTO {
         this.updatedTimestamp = updatedTimestamp;
     }
 
+    public String getSequenceIdentifier() {
+        return sequenceIdentifier;
+    }
+
+    public void setSequenceIdentifier(String sequenceIdentifier) {
+        this.sequenceIdentifier = sequenceIdentifier;
+    }
 }

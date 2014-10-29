@@ -132,9 +132,5 @@ public class GeocodableLocationService {
         GeographicLocation countryLocation = region.getDomicile().getLocation();
         region.setLocation(countryLocation);
     }
-    
-    public void getSimilarInstitution(String searchTerm) {
-        
-    }
 
 }

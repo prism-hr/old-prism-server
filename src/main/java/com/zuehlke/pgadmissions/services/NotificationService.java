@@ -115,7 +115,8 @@ public class NotificationService {
             NotificationConfigurationDTO notificationConfigurationDTO) throws DeduplicationException {
         NotificationConfiguration configuration = new NotificationConfiguration().withResource(resource).withLocale(locale).withProgramType(programType)
                 .withNotificationTemplate(template).withSubject(notificationConfigurationDTO.getSubject())
-                .withContent(notificationConfigurationDTO.getContent()).withReminderInterval(notificationConfigurationDTO.getReminderInterval());
+                .withContent(notificationConfigurationDTO.getContent()).withReminderInterval(notificationConfigurationDTO.getReminderInterval())
+                .withSystemDefault(customizationService.isSystemDefault(template, locale, programType));
         entityService.createOrUpdate(configuration);
         resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_NOTIFICATION"));
     }

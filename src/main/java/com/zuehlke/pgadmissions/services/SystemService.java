@@ -76,6 +76,9 @@ public class SystemService {
     @Value("${application.host}")
     private String systemHomepage;
 
+    @Value("${system.id}")
+    private Integer systemId;
+
     @Value("${system.name}")
     private String systemName;
 
@@ -287,7 +290,7 @@ public class SystemService {
         User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail, getSystemLocale());
         State systemRunning = stateService.getById(PrismState.SYSTEM_RUNNING);
         DateTime startupTimestamp = new DateTime();
-        System transientSystem = new System().withTitle(systemName).withLocale(PrismLocale.getSystemLocale()).withHomepage(systemHomepage)
+        System transientSystem = new System().withId(systemId).withTitle(systemName).withLocale(PrismLocale.getSystemLocale()).withHomepage(systemHomepage)
                 .withHelpdesk(systemHelpdesk).withUser(systemUser).withState(systemRunning).withCreatedTimestamp(startupTimestamp)
                 .withUpdatedTimestamp(startupTimestamp);
         System system = entityService.createOrUpdate(transientSystem);

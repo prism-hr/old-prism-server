@@ -180,10 +180,4 @@ public class InstitutionDomicileRegion extends GeocodableLocation {
         return buildLocationString(name, parentRegion == null ? null : parentRegion.getName(), domicile.getName());
     }
 
-    @Override
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("domicile", domicile).addProperty("parentRegion", parentRegion).addProperty("regionType", regionType)
-                .addProperty("name", name);
-    }
-
 }

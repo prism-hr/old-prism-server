@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PURGE_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 
 import java.util.Arrays;
 import java.util.List;
@@ -137,9 +135,6 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.application", resource.getApplication()))) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("roleTransition.id")) //
-                        .add(Restrictions.in("roleTransition.roleTransitionType", Arrays.asList(CREATE, DELETE)))) //
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .addOrder(Order.desc("raisesUrgentFlag")) //

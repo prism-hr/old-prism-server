@@ -227,7 +227,7 @@ public class ResourceService {
     public void postProcessResource(Resource resource, Comment comment) throws DeduplicationException {
         DateTime baselineTime = new DateTime();
         resource.setUpdatedTimestamp(baselineTime);
-        resource.setSequenceIdentifier(Objects.toString(baselineTime.getMillis() / 1000) + String.format("%010d", resource.getId()));
+        resource.setSequenceIdentifier(Objects.toString(baselineTime.getMillis()) + String.format("%010d", resource.getId()));
 
         switch (resource.getResourceScope()) {
         case PROGRAM:

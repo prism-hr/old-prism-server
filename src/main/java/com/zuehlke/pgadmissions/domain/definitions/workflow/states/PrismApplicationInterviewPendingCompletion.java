@@ -105,12 +105,6 @@ public class PrismApplicationInterviewPendingCompletion extends PrismWorkflowSta
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
-                                .withTransitionType(PrismRoleTransitionType.CREATE) //
-                                .withTransitionRole(PrismRole.APPLICATION_ADMINISTRATOR) //
-                                .withRestrictToOwner(false) //
-                                .withMaximumPermitted(1), // 
-                            new PrismRoleTransition() //
-                                .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
                                 .withRestrictToOwner(false), // 
@@ -141,12 +135,6 @@ public class PrismApplicationInterviewPendingCompletion extends PrismWorkflowSta
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
-                                .withTransitionType(PrismRoleTransitionType.CREATE) //
-                                .withTransitionRole(PrismRole.APPLICATION_ADMINISTRATOR) //
-                                .withRestrictToOwner(false) //
-                                .withMaximumPermitted(1), // 
-                            new PrismRoleTransition() //
-                                .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
                                 .withRestrictToOwner(false), // 
@@ -175,12 +163,6 @@ public class PrismApplicationInterviewPendingCompletion extends PrismWorkflowSta
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_REVIEWERS) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_STATE_COMPLETED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
-                            new PrismRoleTransition() //
-                                .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
-                                .withTransitionType(PrismRoleTransitionType.CREATE) //
-                                .withTransitionRole(PrismRole.APPLICATION_ADMINISTRATOR) //
-                                .withRestrictToOwner(false) //
-                                .withMaximumPermitted(1), // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //

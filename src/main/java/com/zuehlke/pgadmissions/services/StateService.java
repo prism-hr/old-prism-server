@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -16,11 +17,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
@@ -234,21 +237,31 @@ public class StateService {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
 
-    public StateTransition getApplicationInterviewScheduledOutcome(Resource resource, Comment comment) {
+    public StateTransition getApplicationAssignedRecruiterOutcome(Resource resource, Comment comment) {
         PrismState transitionStateId;
-        LocalDateTime interviewDateTime = comment.getInterviewDateTime();
-        if (interviewDateTime != null) {
-            DateTime interviewZonedDateTime = interviewDateTime.toDateTime(DateTimeZone.forTimeZone(comment.getInterviewTimeZone()));
-            if (new DateTime().isAfter(interviewZonedDateTime)) {
-                transitionStateId = PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
-            } else {
-                transitionStateId = PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
-            }
+        PrismState stateId = resource.getState().getId();
+        CommentAssignedUser firstAssignee = comment.getAssignedUsers().iterator().next();
+        if (Arrays.asList(PrismState.APPLICATION_REVIEW, PrismState.APPLICATION_INTERVIEW, PrismState.APPLICATION_APPROVAL).contains(stateId)
+                && firstAssignee.getRole().getId() == PrismRole.APPLICATION_ADMINISTRATOR
+                && firstAssignee.getRoleTransitionType() == PrismRoleTransitionType.CREATE) {
+            transitionStateId = stateId;
+        } else if (Arrays.asList(PrismState.APPLICATION_REVIEW, PrismState.APPLICATION_APPROVAL).contains(stateId)) {
+            transitionStateId = PrismState.valueOf(stateId.name() + "_PENDING_FEEDBACK");
         } else {
-            if (resource.getState().getId() == PrismState.APPLICATION_INTERVIEW) {
-                transitionStateId = PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY;
+            LocalDateTime interviewDateTime = comment.getInterviewDateTime();
+            if (interviewDateTime != null) {
+                DateTime interviewZonedDateTime = interviewDateTime.toDateTime(DateTimeZone.forTimeZone(comment.getInterviewTimeZone()));
+                if (new DateTime().isAfter(interviewZonedDateTime)) {
+                    transitionStateId = PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
+                } else {
+                    transitionStateId = PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
+                }
             } else {
-                transitionStateId = PrismState.APPLICATION_INTERVIEW;
+                if (resource.getState().getId() == PrismState.APPLICATION_INTERVIEW) {
+                    transitionStateId = PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY;
+                } else {
+                    transitionStateId = PrismState.APPLICATION_INTERVIEW;
+                }
             }
         }
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);

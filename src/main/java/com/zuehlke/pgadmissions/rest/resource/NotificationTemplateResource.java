@@ -87,7 +87,7 @@ public class NotificationTemplateResource {
         notificationService.restoreDefaultConfiguration(resource, locale, programType, template);
     }
 
-    @RequestMapping(value = "/{resourceId}/notificationTemplates/global/{notificationTemplateId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{resourceId}/notificationTemplates/{notificationTemplateId}/descendants", method = RequestMethod.DELETE)
     public void restoreGlobalConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @PathVariable String notificationTemplateId, @RequestParam(required = false) PrismLocale locale,
             @RequestParam(required = false) PrismProgramType programType) throws Exception {

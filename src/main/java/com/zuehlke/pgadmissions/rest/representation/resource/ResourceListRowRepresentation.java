@@ -40,6 +40,8 @@ public class ResourceListRowRepresentation {
 
     private PrismScope resourceScope;
 
+    private String sequenceIdentifier;
+
     public Integer getId() {
         return id;
     }
@@ -152,4 +154,11 @@ public class ResourceListRowRepresentation {
         this.resourceScope = resourceScope;
     }
 
+    public String getSequenceIdentifier() {
+        return sequenceIdentifier;
+    }
+
+    public void setSequenceIdentifier(String sequenceIdentifier) {
+        this.sequenceIdentifier = sequenceIdentifier;
+    }
 }

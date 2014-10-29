@@ -58,8 +58,8 @@ public class NotificationTemplateResource {
             @RequestParam(required = false) PrismProgramType programType) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         NotificationTemplate template = notificationService.getById(PrismNotificationTemplate.valueOf(notificationTemplateId));
-        return dozerBeanMapper.map(notificationService.getConfigurationStrict(resource, locale, programType, template),
-                NotificationConfigurationRepresentation.class);
+        return dozerBeanMapper
+                .map(notificationService.getConfiguration(resource, locale, programType, template), NotificationConfigurationRepresentation.class);
     }
 
     @RequestMapping(value = "/{resourceId}/notificationTemplates/{notificationTemplateId}", method = RequestMethod.PUT)

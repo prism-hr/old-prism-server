@@ -3,11 +3,11 @@
 </h1>
 
 <p>
-    The interview participant ${TEMPLATE_INVOKER_FULL_NAME} has provided their preferences for the interview of ${APPLICATION_CREATOR_FULL_NAME} in connection
+    The interview participant ${TEMPLATE_INVOKER_FULL_NAME} has updated their preferences for the interview of ${APPLICATION_CREATOR_FULL_NAME} in connection
     with Application ${APPLICATION_CODE} for ${APPLICATION_PROJECT_OR_PROGRAM_TITLE}.
 </p>
 <p>
-    You may wish to log in and confirm the interview arrangements.
+    You may wish to log in and revise the interview arrangements.
 </p>
 
 ${ACTION_COMPLETE}

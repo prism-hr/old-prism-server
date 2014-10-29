@@ -260,7 +260,6 @@ public class ApplicationService {
         if (comment.isApplicationPurgeComment()) {
             purgeApplication(application, comment);
         }
-
     }
 
     // TODO: set values for "doRetain" (application) and "sendRecommendationEmail" (user account)
@@ -293,18 +292,20 @@ public class ApplicationService {
                 comment.getDocuments().add(document);
             }
         }
+
         if (commentDTO.getRejectionReason() != null) {
             RejectionReason rejectionReason = entityService.getById(RejectionReason.class, commentDTO.getRejectionReason());
             comment.setRejectionReason(rejectionReason);
             comment.setContent(rejectionReason.getName());
         }
+
         if (commentDTO.getAppointmentTimeslots() != null) {
             for (LocalDateTime dateTime : commentDTO.getAppointmentTimeslots()) {
-                CommentAppointmentTimeslot timeslot = new CommentAppointmentTimeslot();
-                timeslot.setDateTime(dateTime);
+                CommentAppointmentTimeslot timeslot = new CommentAppointmentTimeslot().withDateTime(dateTime);
                 comment.getAppointmentTimeslots().add(timeslot);
             }
         }
+
         if (commentDTO.getAppointmentPreferences() != null) {
             for (Integer timeslotId : commentDTO.getAppointmentPreferences()) {
                 CommentAppointmentTimeslot timeslot = entityService.getById(CommentAppointmentTimeslot.class, timeslotId);

@@ -55,18 +55,18 @@ public class PrismApplicationReview extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REVIEW) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_ASSIGNED_RECRUIER_OUTCOME) // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_ASSIGNED_RECRUITER_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
-                                .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
+                                .withTransitionRole(PrismRole.APPLICATION_ADMINISTRATOR) //
                                 .withRestrictToOwner(false) //
                                 .withMaximumPermitted(1))), //
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REVIEW_PENDING_FEEDBACK) // 
                         .withTransitionAction(PrismAction.APPLICATION_PROVIDE_REVIEW) //
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_ASSIGNED_RECRUIER_OUTCOME) // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_ASSIGNED_RECRUITER_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_REVIEWER) //

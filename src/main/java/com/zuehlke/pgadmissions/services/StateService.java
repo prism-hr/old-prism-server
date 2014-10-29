@@ -189,6 +189,8 @@ public class StateService {
         }
 
         resourceService.postProcessResource(resource, comment);
+        commentService.postProcessComment(comment);
+        
         return stateTransition;
     }
 

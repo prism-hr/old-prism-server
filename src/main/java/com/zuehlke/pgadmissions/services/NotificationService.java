@@ -95,6 +95,10 @@ public class NotificationService {
         return customizationService.getConfiguration(NotificationConfiguration.class, resource, user, "notificationTemplate", template);
     }
 
+    public NotificationConfiguration getConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationTemplate template) {
+        return customizationService.getConfiguration(NotificationConfiguration.class, resource, locale, programType, "notificationTemplate", template);
+    }
+
     public NotificationConfiguration getConfigurationStrict(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationTemplate template) {
         return customizationService.getConfigurationStrict(NotificationConfiguration.class, resource, locale, programType, "notificationTemplate", template);
     }

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -23,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -93,11 +95,12 @@ public class CommentDAO {
 
     public List<User> getAppointmentInvitees(Comment comment) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
-                .setProjection(Projections.property("user")) //
+                .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("comment", comment)) //
                 .add(Restrictions.in("role.id", Lists.newArrayList(PrismRole.APPLICATION_POTENTIAL_INTERVIEWEE, //
-                        PrismRole.APPLICATION_POTENTIAL_INTERVIEWER))) //
+                        PrismRole.APPLICATION_POTENTIAL_INTERVIEWER, PrismRole.APPLICATION_INTERVIEWEE, PrismRole.APPLICATION_INTERVIEWER))) //
+                .add(Restrictions.in("roleTransitionType", Arrays.asList(PrismRoleTransitionType.CREATE, PrismRoleTransitionType.BRANCH))) //
                 .addOrder(Order.asc("role.id")) //
                 .addOrder(Order.asc("user.lastName")) //
                 .addOrder(Order.asc("user.firstName")) //

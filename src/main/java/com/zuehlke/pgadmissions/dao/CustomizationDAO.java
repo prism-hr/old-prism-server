@@ -74,39 +74,39 @@ public class CustomizationDAO {
     public <T extends WorkflowResource> void restoreGlobalConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale,
             PrismProgramType programType, String keyIndex, WorkflowDefinition keyValue) {
         PrismScope resourceScope = resource.getResourceScope();
+        
         String programTypeConstraint = programType == null ? "and programType is null " : "and programType = :programType ";
+        String localeConstraint = locale == null ? "and locale is null " : " and locale = :locale ";
         
         Query query;
         if (resourceScope == SYSTEM) {
             query = sessionFactory.getCurrentSession().createQuery( //
-                    "delete :workflowResourceClass " //
-                        + "where :keyIndex = :keyValue " //
+                    "delete " + entityClass.getSimpleName() + " " //
+                        + "where " + keyIndex + " = :keyValue " //
                         + "and (institution in (" //
                             + "from Institution " //
-                            + "where system = :system " //
+                            + "where system = :system ) " //
                                 + programTypeConstraint //
-                                + "and locale = :locale " //
+                                + localeConstraint + " "//
                         + "or program in (" //
                             + "from Program " //
-                            + "where system = :system " //
+                            + "where system = :system) " //
                                 + programTypeConstraint //
-                                + "and locale = :locale)");
+                                + localeConstraint + ")");
         } else if (resourceScope == INSTITUTION) {
             query = sessionFactory.getCurrentSession().createQuery( //
-                    "delete :workflowResourceClass " //
-                        + "where :keyIndex = :keyValue " //
+                    "delete " + entityClass.getSimpleName() + " " //
+                        + "where " + keyIndex + " = :keyValue " //
                         + "and (program in (" //
                             + "from Program " //
-                            + "where institution = :institution " //
+                            + "where institution = :institution) " //
                                 + programTypeConstraint //
-                                + "and locale = :locale)");
+                                + localeConstraint + ")");
         } else {
             throw new Error();
         }
         
-        query.setParameter("workflowResourceClass", entityClass.getSimpleName()) //
-                .setParameter(resourceScope.getLowerCaseName(), resource) //
-                .setParameter("keyIndex", keyValue) //
+        query.setParameter(resourceScope.getLowerCaseName(), resource) //
                 .setParameter("keyValue", keyValue);
         
         if (programType != null) {

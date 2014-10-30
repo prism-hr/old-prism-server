@@ -262,7 +262,6 @@ public class ApplicationService {
         }
     }
 
-    // TODO: set values for "doRetain" (application) and "sendRecommendationEmail" (user account)
     public ActionOutcomeDTO executeAction(@PathVariable Integer applicationId, @Valid @RequestBody CommentDTO commentDTO) throws DeduplicationException {
         Application application = entityService.getById(Application.class, applicationId);
         PrismAction actionId = commentDTO.getAction();

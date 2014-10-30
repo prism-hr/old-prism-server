@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,6 +24,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentati
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ImportedEntityRepresentation;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 
 @RestController
 @RequestMapping("api/institutions")
@@ -30,6 +32,9 @@ public class InstitutionResource {
 
     @Autowired
     private AdvertService advertService;
+
+    @Autowired
+    private ProgramService programService;
 
     @Autowired
     private InstitutionService institutionService;
@@ -84,6 +89,11 @@ public class InstitutionResource {
             }
         }
         return programRepresentations;
+    }
+
+    @RequestMapping(value = "/{institutionId}/similarPrograms", method = RequestMethod.GET)
+    public List<ProgramRepresentation> getSimilarPrograms(@PathVariable Integer institutionId, @RequestParam String searchTerm) {
+        return programService.getSimilarPrograms(institutionId, searchTerm);
     }
 
 }

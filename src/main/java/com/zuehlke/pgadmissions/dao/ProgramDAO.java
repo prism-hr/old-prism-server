@@ -1,9 +1,15 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_COMPLETED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_REJECTED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_WITHDRAWN;
+
+import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.FetchMode;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -17,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
+import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -36,7 +43,7 @@ public class ProgramDAO {
         return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class) //
                 .setFetchMode("studyOptions", FetchMode.JOIN) //
                 .add(Restrictions.eq("institution", institution)) //
-                .add(Restrictions.eq("importedCode", importedCode))
+                .add(Restrictions.eq("importedCode", importedCode)) //
                 .uniqueResult();
     }
 
@@ -109,20 +116,34 @@ public class ProgramDAO {
     }
 
     public void deleteProgramStudyOptionInstances(Program program) {
-        sessionFactory.getCurrentSession().createQuery(
-                "delete ProgramStudyOptionInstance " +
-                        "where studyOption in ( " +
-                        "from ProgramStudyOption " +
-                        "where program = :program)")
-                .setEntity("program", program)
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete ProgramStudyOptionInstance " + //
+                        "where studyOption in ( " + //
+                        "from ProgramStudyOption " + //
+                        "where program = :program)") //
+                .setEntity("program", program) //
                 .executeUpdate();
     }
 
     public void deleteProgramStudyOptions(Program program) {
-        sessionFactory.getCurrentSession().createQuery(
-                "delete ProgramStudyOption " +
-                        "where program = :program")
-                .setEntity("program", program)
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete ProgramStudyOption " + //
+                        "where program = :program") //
+                .setEntity("program", program) //
                 .executeUpdate();
     }
+
+    public List<ProgramRepresentation> getSimilarPrograms(Integer institutionId, String searchTerm) {
+        return (List<ProgramRepresentation>) sessionFactory.getCurrentSession().createCriteria(Program.class, "program") //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("id"), "id") //
+                        .add(Projections.property("title"), "title")) //
+                .add(Restrictions.eq("institution.id", institutionId)) //
+                .add(Restrictions.not( //
+                        Restrictions.in("state.id", Arrays.asList(PROGRAM_REJECTED, PROGRAM_WITHDRAWN, PROGRAM_DISABLED_COMPLETED)))) //
+                .add(Restrictions.ilike("title", searchTerm, MatchMode.ANYWHERE)) //
+                .addOrder(Order.desc("title")) //
+                .list();
+    }
+
 }

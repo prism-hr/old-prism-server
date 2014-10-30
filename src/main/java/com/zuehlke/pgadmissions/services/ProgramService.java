@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
 
 @Service
 @Transactional
@@ -67,7 +68,7 @@ public class ProgramService {
         institution = institution == null ? institutionService.getUclInstitution() : institution;
         return programDAO.getProgramByImportedCode(institution, importedCode);
     }
-    
+
     public Integer getProgramIdByAdvertId(Integer advertId) {
         return entityService.getByProperties(Program.class, ImmutableMap.of("advert.id", (Object) advertId)).getId();
     }
@@ -102,39 +103,6 @@ public class ProgramService {
             for (ProgramStudyOption studyOption : program.getStudyOptions()) {
                 entityService.save(studyOption);
             }
-        }
-    }
-
-    private void copyProgramDetails(Program program, ProgramDTO programDTO) {
-        if (program.getAdvert() == null) {
-            program.setAdvert(new Advert());
-        }
-        Advert advert = program.getAdvert();
-
-        if (!program.getImported()) {
-            ProgramType programType = importedEntityService.getImportedEntityByCode(ProgramType.class, program.getInstitution(), programDTO.getProgramType()
-                    .name());
-            String title = programDTO.getTitle();
-
-            program.setProgramType(programType);
-            program.setTitle(title);
-            advert.setTitle(title);
-        }
-
-        program.setDueDate(programDTO.getDueDate());
-        program.setRequireProjectDefinition(programDTO.getRequireProjectDefinition());
-        advert.setSummary(programDTO.getSummary());
-        advert.setStudyDurationMinimum(programDTO.getStudyDurationMinimum());
-        advert.setStudyDurationMaximum(programDTO.getStudyDurationMaximum());
-        advert.setAddress(advertService.createAddressCopy(program.getInstitution().getAddress()));
-    }
-
-    private void copyStudyOptions(Program program, ProgramDTO programDTO) {
-        for (PrismStudyOption prismStudyOption : programDTO.getStudyOptions()) {
-            StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, program.getInstitution(), prismStudyOption.name());
-            ProgramStudyOption programStudyOption = new ProgramStudyOption().withStudyOption(studyOption).withApplicationStartDate(new LocalDate())
-                    .withApplicationCloseDate(program.getDueDate()).withEnabled(true).withProgram(program);
-            program.getStudyOptions().add(programStudyOption);
         }
     }
 
@@ -179,6 +147,43 @@ public class ProgramService {
 
         if (persistentProgram.getStudyOptions().size() == elapsedOptions.size()) {
             persistentProgram.setDueDate(baseline);
+        }
+    }
+
+    public List<ProgramRepresentation> getSimilarPrograms(Integer institutionId, String searchTerm) {
+        return programDAO.getSimilarPrograms(institutionId, searchTerm);
+    }
+
+    private void copyProgramDetails(Program program, ProgramDTO programDTO) {
+        if (program.getAdvert() == null) {
+            program.setAdvert(new Advert());
+        }
+        Advert advert = program.getAdvert();
+
+        if (!program.getImported()) {
+            ProgramType programType = importedEntityService.getImportedEntityByCode(ProgramType.class, program.getInstitution(), programDTO.getProgramType()
+                    .name());
+            String title = programDTO.getTitle();
+
+            program.setProgramType(programType);
+            program.setTitle(title);
+            advert.setTitle(title);
+        }
+
+        program.setDueDate(programDTO.getDueDate());
+        program.setRequireProjectDefinition(programDTO.getRequireProjectDefinition());
+        advert.setSummary(programDTO.getSummary());
+        advert.setStudyDurationMinimum(programDTO.getStudyDurationMinimum());
+        advert.setStudyDurationMaximum(programDTO.getStudyDurationMaximum());
+        advert.setAddress(advertService.createAddressCopy(program.getInstitution().getAddress()));
+    }
+
+    private void copyStudyOptions(Program program, ProgramDTO programDTO) {
+        for (PrismStudyOption prismStudyOption : programDTO.getStudyOptions()) {
+            StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, program.getInstitution(), prismStudyOption.name());
+            ProgramStudyOption programStudyOption = new ProgramStudyOption().withStudyOption(studyOption).withApplicationStartDate(new LocalDate())
+                    .withApplicationCloseDate(program.getDueDate()).withEnabled(true).withProgram(program);
+            program.getStudyOptions().add(programStudyOption);
         }
     }
 

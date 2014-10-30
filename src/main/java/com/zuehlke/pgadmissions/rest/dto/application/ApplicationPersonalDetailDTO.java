@@ -7,13 +7,13 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.rest.dto.UserDTO;
 import com.zuehlke.pgadmissions.rest.validation.annotation.DatePast;
 
 public class ApplicationPersonalDetailDTO {
 
     @NotNull
-    private UserDTO user;
+    @Valid
+    private ApplicationPersonalDetailUserDTO user;
 
     @Size(min = 6, max = 32)
     private String skype;
@@ -60,11 +60,11 @@ public class ApplicationPersonalDetailDTO {
     @NotNull
     private Integer domicile;
 
-    public UserDTO getUser() {
+    public ApplicationPersonalDetailUserDTO getUser() {
         return user;
     }
 
-    public void setUser(UserDTO user) {
+    public void setUser(ApplicationPersonalDetailUserDTO user) {
         this.user = user;
     }
 

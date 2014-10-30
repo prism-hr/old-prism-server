@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.user.Address;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.rest.dto.UserDTO;
+import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.*;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +97,7 @@ public class ApplicationSectionService {
             supervisor = entityService.getByProperties(ApplicationSupervisor.class, ImmutableMap.of("application", application, "id", supervisorId));
         }
 
-        UserDTO userDTO = supervisorDTO.getUser();
+        AssignedUserDTO userDTO = supervisorDTO.getUser();
         User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), application.getLocale());
 
         supervisor.setUser(user);
@@ -331,7 +331,7 @@ public class ApplicationSectionService {
             referee = entityService.getByProperties(ApplicationReferee.class, ImmutableMap.of("application", application, "id", refereeId));
         }
 
-        UserDTO userDTO = refereeDTO.getUser();
+        AssignedUserDTO userDTO = refereeDTO.getUser();
         User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), application.getLocale());
         referee.setUser(user);
 
@@ -381,8 +381,13 @@ public class ApplicationSectionService {
     private void updateUserDetail(ApplicationPersonalDetailDTO personalDetailDTO, User userCurrent, Application application) {
         User userCreator = application.getUser();
         if (userCurrent.getId().equals(userCreator.getId())) {
-            UserDTO userDTO = personalDetailDTO.getUser();
-            userService.updateUser(userCreator, userDTO);
+            ApplicationPersonalDetailUserDTO userDTO = personalDetailDTO.getUser();
+
+            userCurrent.setFirstName(userDTO.getFirstName());
+            userCurrent.setLastName(userDTO.getLastName());
+            userCurrent.setFullName(userCurrent.getFirstName() + " " + userCurrent.getLastName());
+            userCurrent.setFirstName2(Strings.emptyToNull(userDTO.getFirstName2()));
+            userCurrent.setFirstName3(Strings.emptyToNull(userDTO.getFirstName3()));
         }
     }
 

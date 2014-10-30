@@ -1,19 +1,20 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
 import org.hibernate.validator.constraints.NotEmpty;
-
-import com.zuehlke.pgadmissions.rest.dto.UserDTO;
 
 public class ApplicationRefereeDTO {
 
     private Integer id;
 
     @NotNull
-    private UserDTO user;
+    @Valid
+    private AssignedUserDTO user;
 
     @NotEmpty
     @Size(max = 50)
@@ -41,11 +42,11 @@ public class ApplicationRefereeDTO {
         this.id = id;
     }
 
-    public UserDTO getUser() {
+    public AssignedUserDTO getUser() {
         return user;
     }
 
-    public void setUser(UserDTO user) {
+    public void setUser(AssignedUserDTO user) {
         this.user = user;
     }
 

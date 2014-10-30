@@ -29,7 +29,7 @@ public class PrismExceptionResolver extends AbstractHandlerExceptionResolver {
         ModelAndView modelAndView = new ModelAndView(view);
         if (ex instanceof AuthenticationException) {
             // should be handled by Spring Security filters
-            return modelAndView;
+            return null;
         }
 
         User currentUser = null;

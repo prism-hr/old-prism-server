@@ -25,10 +25,6 @@
           class="org.springframework.web.multipart.support.StandardServletMultipartResolver">
     </bean>
 
-    <!-- custom exception resolver -->
-    <bean class="com.zuehlke.pgadmissions.interceptors.PrismExceptionResolver">
-    </bean>
-
     <bean id="jacksonObjectMapper" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
         <property name="modules">
             <array>

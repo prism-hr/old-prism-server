@@ -1,13 +1,23 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.inject.Named;
-import javax.validation.Valid;
-import javax.ws.rs.WebApplicationException;
-
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.workflow.Scope;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.UserActivateDTO;
+import com.zuehlke.pgadmissions.rest.dto.UserDTO;
+import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
+import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.validation.validator.UserRegistrationValidator;
+import com.zuehlke.pgadmissions.security.AuthenticationTokenUtils;
+import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.services.ResourceListFilterService;
+import com.zuehlke.pgadmissions.services.UserService;
 import org.dozer.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,32 +29,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.Scope;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.rest.dto.UserActivateDTO;
-import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
-import com.zuehlke.pgadmissions.rest.representation.CurrentUserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.validation.validator.UserRegistrationValidator;
-import com.zuehlke.pgadmissions.security.AuthenticationTokenUtils;
-import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.ResourceListFilterService;
-import com.zuehlke.pgadmissions.services.UserService;
+import javax.annotation.Resource;
+import javax.inject.Named;
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
@@ -75,28 +66,27 @@ public class UserResource {
     private Mapper dozerBeanMapper;
 
     @RequestMapping(method = RequestMethod.GET)
-    public UserRepresentation getUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof String && principal.equals("anonymousUser")) {
-            throw new WebApplicationException(401);
-        }
-        User user = (User) principal;
-        user = userService.getById(user.getId()); // reload user
+    public UserExtendedRepresentation getUser() {
+        User user = userService.getCurrentUser();
 
-        CurrentUserRepresentation userRepresentation = dozerBeanMapper.map(user, CurrentUserRepresentation.class);
+        UserExtendedRepresentation userRepresentation = dozerBeanMapper.map(user, UserExtendedRepresentation.class);
         Map<PrismScope, Boolean> scopeVisibility = Maps.newHashMap();
         for (PrismScope prismScope : PrismScope.values()) {
             // TODO retrieve scope visibility from DB
             scopeVisibility.put(prismScope, true);
         }
-        userRepresentation.setResourceScopeVisibility(scopeVisibility);
+        userRepresentation.setSendApplicationRecommendationNotification(user.getUserAccount().getSendApplicationRecommendationNotification());
         return userRepresentation;
+    }
+
+    @RequestMapping(method = RequestMethod.PUT)
+    public void updateUser(@RequestBody UserDTO userDTO) {
+        userService.updateUser(userDTO);
     }
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public Map<String, String> authenticate(@RequestParam(required = false, value = "username") String username,
-            @RequestParam(required = false, value = "password") String password) {
+                                            @RequestParam(required = false, value = "password") String password) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
         Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -106,7 +96,7 @@ public class UserResource {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public void submitRegistration(@RequestHeader(value = "referer", required = false) String referrer,
-            @Valid @RequestBody UserRegistrationDTO userRegistrationDTO) throws Exception {
+                                   @Valid @RequestBody UserRegistrationDTO userRegistrationDTO) throws Exception {
         userService.registerUser(userRegistrationDTO, referrer);
     }
 

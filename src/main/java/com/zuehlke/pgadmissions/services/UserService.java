@@ -1,21 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
-
-import javax.xml.bind.JAXBException;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -29,6 +13,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -43,6 +28,20 @@ import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.SocialPresenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.xml.bind.JAXBException;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
 
 @Service
 @Transactional
@@ -89,7 +88,7 @@ public class UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof User) {
             User user = (User) authentication.getPrincipal();
-            return entityService.getById(User.class, user.getId());
+            return entityService.getById(User.class, user.getId()); // reload user
         }
         return null;
     }
@@ -106,15 +105,15 @@ public class UserService {
         PrismScope resourceScope = registrationDTO.getAction().getActionId().getScope();
 
         switch (resourceScope) {
-        case PROGRAM:
-            resourceId = programService.getProgramIdByAdvertId(resourceIdInterim);
-            break;
-        case PROJECT:
-            resourceId = projectService.getProjectIdByAdvertId(resourceIdInterim);
-            break;
-        default:
-            resourceId = resourceIdInterim;
-            break;
+            case PROGRAM:
+                resourceId = programService.getProgramIdByAdvertId(resourceIdInterim);
+                break;
+            case PROJECT:
+                resourceId = projectService.getProjectIdByAdvertId(resourceIdInterim);
+                break;
+            default:
+                resourceId = resourceIdInterim;
+                break;
         }
 
         Resource resource = resourceService.getById(resourceScope.getResourceClass(), resourceId);
@@ -162,23 +161,31 @@ public class UserService {
         return !wasEnabled;
     }
 
-    public void updateUser(User user, UserDTO userDTO) {
-        String firstName = userDTO.getFirstName();
-        String lastName = userDTO.getLastName();
-
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setFullName(firstName + " " + lastName);
-
+    public void updateUser(UserDTO userDTO) {
+        User user = getCurrentUser();
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setFullName(user.getFirstName() + " " + user.getLastName());
         user.setFirstName2(Strings.emptyToNull(userDTO.getFirstName2()));
         user.setFirstName3(Strings.emptyToNull(userDTO.getFirstName3()));
+        user.setEmail(userDTO.getEmail());
+        user.setLocale(userDTO.getLocale());
 
-        String email = userDTO.getEmail();
-        user.setEmail(email == null ? user.getEmail() : email);
+        Document portraitDocument = null;
+        if (userDTO.getPortraitDocument() != null) {
+            portraitDocument = entityService.getById(Document.class, userDTO.getPortraitDocument());
+        }
+        user.setPortraitDocument(portraitDocument);
+        user.setLinkedinUri(userDTO.getLinkedinUri());
+        user.setTwitterUri(userDTO.getTwitterUri());
 
-        String password = userDTO.getPassword();
         UserAccount account = user.getUserAccount();
-        account.setPassword(password == null ? account.getPassword() : EncryptionUtils.getMD5(password));
+
+        account.setSendApplicationRecommendationNotification(userDTO.getSendApplicationRecommendationNotification());
+        String password = userDTO.getPassword();
+        if (password != null) {
+            account.setPassword(EncryptionUtils.getMD5(password));
+        }
     }
 
     public User getUserByEmail(String email) {

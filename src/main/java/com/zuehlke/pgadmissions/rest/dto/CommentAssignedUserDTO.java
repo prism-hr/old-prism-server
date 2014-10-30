@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -7,16 +8,17 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 public class CommentAssignedUserDTO {
 
     @NotNull
-    private UserDTO user;
+    @Valid
+    private AssignedUserDTO user;
 
     @NotNull
     private PrismRole role;
 
-    public UserDTO getUser() {
+    public AssignedUserDTO getUser() {
         return user;
     }
 
-    public void setUser(UserDTO user) {
+    public void setUser(AssignedUserDTO user) {
         this.user = user;
     }
 

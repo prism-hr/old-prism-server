@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -66,6 +67,12 @@ public class UserService {
     private CommentService commentService;
 
     @Autowired
+    private ProgramService programService;
+
+    @Autowired
+    private ProjectService projectService;
+
+    @Autowired
     private ResourceService resourceService;
 
     @Autowired
@@ -94,7 +101,23 @@ public class UserService {
 
     public User registerUser(UserRegistrationDTO registrationDTO, String referrer) throws DeduplicationException, InterruptedException, IOException,
             JAXBException {
-        Resource resource = resourceService.getById(registrationDTO.getAction().getActionId().getScope().getResourceClass(), registrationDTO.getResourceId());
+        Integer resourceId;
+        Integer resourceIdInterim = registrationDTO.getResourceId();
+        PrismScope resourceScope = registrationDTO.getAction().getActionId().getScope();
+
+        switch (resourceScope) {
+        case PROGRAM:
+            resourceId = programService.getProgramIdByAdvertId(resourceIdInterim);
+            break;
+        case PROJECT:
+            resourceId = projectService.getProjectIdByAdvertId(resourceIdInterim);
+            break;
+        default:
+            resourceId = resourceIdInterim;
+            break;
+        }
+
+        Resource resource = resourceService.getById(resourceScope.getResourceClass(), resourceId);
         User user = getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail(), resource.getLocale());
         if ((registrationDTO.getActivationCode() != null && !user.getActivationCode().equals(registrationDTO.getActivationCode()))
                 || user.getUserAccount() != null) {

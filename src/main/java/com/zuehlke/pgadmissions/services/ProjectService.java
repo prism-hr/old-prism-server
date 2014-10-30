@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
@@ -20,7 +21,7 @@ public class ProjectService {
 
     @Autowired
     private ProjectDAO projectDAO;
-    
+
     @Autowired
     private ActionService actionService;
 
@@ -41,6 +42,10 @@ public class ProjectService {
 
     public Project getById(Integer id) {
         return entityService.getById(Project.class, id);
+    }
+
+    public Integer getProjectIdByAdvertId(Integer advertId) {
+        return entityService.getByProperties(Project.class, ImmutableMap.of("advert.id", (Object) advertId)).getId();
     }
 
     public void save(Project project) {
@@ -93,7 +98,7 @@ public class ProjectService {
             advert.setSequenceIdentifier(project.getSequenceIdentifier().substring(0, 13) + String.format("%010d", advert.getId()));
         }
     }
-    
+
     public void sychronizeProjectDueDates(LocalDate baseline) {
         projectDAO.synchronizeProjectDueDates(baseline);
     }

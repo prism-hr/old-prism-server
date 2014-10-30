@@ -69,7 +69,6 @@ public class InstitutionDAO {
                 .add(Restrictions.eq("enabled", true)) //
                 .addOrder(Order.asc("currency")) //
                 .list();
-
     }
 
     public List<InstitutionSuggestionDTO> getSimilarImportedInsitutions(Integer domicileId, String searchTerm) {

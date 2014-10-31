@@ -32,7 +32,6 @@
 
     <bean id="authenticationTokenProcessingFilter"
           class="com.zuehlke.pgadmissions.security.AuthenticationTokenProcessingFilter">
-        <constructor-arg ref="userDetailsService"/>
     </bean>
 
     <bean id="authenticationProvider" class="com.zuehlke.pgadmissions.security.PrismAuthenticationProvider"

@@ -1,23 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.INSTITUTION_IMPORT_ERROR_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.SYSTEM_INVITATION_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.SYSTEM_PASSWORD_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-
-import java.util.List;
-
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.NotificationDAO;
@@ -34,11 +16,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplate;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
-import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.domain.workflow.*;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
@@ -49,6 +27,19 @@ import com.zuehlke.pgadmissions.mail.MailSender;
 import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
 @Service
 @Transactional
@@ -104,7 +95,7 @@ public class NotificationService {
     }
 
     public NotificationConfiguration createConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationTemplate template,
-            String subject, String content, Integer reminderInterval) throws CustomizationException {
+                                                         String subject, String content, Integer reminderInterval) throws CustomizationException {
         customizationService.validateConfiguration(resource, template, locale, programType);
         return new NotificationConfiguration().withResource(resource).withLocale(locale).withProgramType(programType).withNotificationTemplate(template)
                 .withSubject(subject).withContent(content).withReminderInterval(reminderInterval)
@@ -112,7 +103,7 @@ public class NotificationService {
     }
 
     public void updateConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationTemplate template,
-            NotificationConfigurationDTO notificationConfigurationDTO) throws DeduplicationException {
+                                    NotificationConfigurationDTO notificationConfigurationDTO) throws DeduplicationException {
         NotificationConfiguration configuration = new NotificationConfiguration().withResource(resource).withLocale(locale).withProgramType(programType)
                 .withNotificationTemplate(template).withSubject(notificationConfigurationDTO.getSubject())
                 .withContent(notificationConfigurationDTO.getContent()).withReminderInterval(notificationConfigurationDTO.getReminderInterval())
@@ -309,7 +300,7 @@ public class NotificationService {
     public void sendResetPasswordNotification(User user, String newPassword) {
         System system = systemService.getSystem();
         sendNotification(SYSTEM_PASSWORD_NOTIFICATION, new NotificationTemplateModelDTO().withUser(user).withAuthor(system.getUser()).withResource(system)
-                .withNewPassword(newPassword));
+                .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST).withNewPassword(newPassword));
     }
 
     public List<PrismNotificationTemplate> getEditableTemplates(PrismScope scope) {
@@ -366,7 +357,7 @@ public class NotificationService {
 
         message.setConfiguration(configuration);
         message.setModelDTO(modelDTO);
-        message.setAttachments(Lists.<AttachmentInputSource> newArrayList());
+        message.setAttachments(Lists.<AttachmentInputSource>newArrayList());
 
         PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(modelDTO.getResource(), modelDTO.getUser());
         applicationContext.getBean(MailSender.class).localize(propertyLoader).sendEmail(message);

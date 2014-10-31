@@ -226,11 +226,11 @@ public class NotificationTemplatePropertyLoader {
     public String getApplicationConfirmedStartDate() {
         return templateModelDTO.getComment().getPositionProvisionalStartDateDisplay(propertyLoader.load(SYSTEM_DATE_FORMAT));
     }
-    
+
     public String getApplicationConfirmedPrimarySupervisor() {
         return getCommentAssigneesAsString(APPLICATION_PRIMARY_SUPERVISOR);
     }
-    
+
     public String getApplicationConfirmedSecondarySupervisor() {
         return getCommentAssigneesAsString(APPLICATION_SECONDARY_SUPERVISOR);
     }

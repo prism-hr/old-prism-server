@@ -12,7 +12,7 @@
     We recommend that you log in and change your password now.
 </p>
 
-${SYSTEM_USER_ACCOUNT}
+${SYSTEM_USER_ACCOUNT_MANAGEMENT}
 
 <p>
     Yours sincerely,

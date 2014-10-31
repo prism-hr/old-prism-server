@@ -174,7 +174,7 @@ public class ActionService {
         }
 
         StateTransition stateTransition = stateService.executeStateTransition(resource, action, comment);
-        Action transitionAction = stateTransition == null ? action : stateTransition.getTransitionAction();
+        Action transitionAction = stateTransition == null ? action.getFallbackAction() : stateTransition.getTransitionAction();
         Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
         return new ActionOutcomeDTO().withUser(actionOwner).withResource(resource).withTransitionResource(transitionResource)

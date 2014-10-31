@@ -10,15 +10,17 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class UserRegistrationDTO {
 
     @NotEmpty
+    @Size(max = 30)
     private String firstName;
 
     @NotEmpty
+    @Size(max = 40)
     private String lastName;
 
     @NotEmpty
     @Email
     private String email;
-    
+
     private String activationCode;
 
     @NotEmpty

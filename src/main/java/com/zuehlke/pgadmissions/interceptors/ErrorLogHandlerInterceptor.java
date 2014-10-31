@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -22,6 +23,11 @@ public class ErrorLogHandlerInterceptor extends HandlerInterceptorAdapter {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         if (ex != null) {
+            if (ex instanceof AuthenticationException) {
+                // should be handled by Spring Security filters
+                return;
+            }
+
             User currentUser = userService.getCurrentUser();
 
             log.error(DiagnosticInfoPrintUtils.getRequestErrorLogMessage(request, currentUser), ex);

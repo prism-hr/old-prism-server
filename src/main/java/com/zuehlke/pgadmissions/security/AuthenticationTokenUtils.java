@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.security;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import com.zuehlke.pgadmissions.domain.user.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.codec.Hex;
 
@@ -18,14 +19,11 @@ public class AuthenticationTokenUtils {
     }
 
     public static String computeSignature(UserDetails userDetails, long expires) {
+        User user = (User) userDetails;
         StringBuilder signatureBuilder = new StringBuilder();
-        signatureBuilder.append(userDetails.getUsername());
-        signatureBuilder.append(":");
         signatureBuilder.append(expires);
         signatureBuilder.append(":");
-        signatureBuilder.append(userDetails.getPassword());
-        signatureBuilder.append(":");
-        signatureBuilder.append(AuthenticationTokenUtils.MAGIC_KEY);
+        signatureBuilder.append(user.getActivationCode());
 
         MessageDigest digest;
         try {

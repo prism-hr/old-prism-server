@@ -1,12 +1,17 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import com.zuehlke.pgadmissions.rest.dto.UserDTO;
+import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 public class ApplicationSupervisorDTO {
 
     private Integer id;
-    
-    private UserDTO user;
+
+    @NotNull
+    @Valid
+    private AssignedUserDTO user;
 
     private Boolean acceptedSupervision;
 
@@ -18,11 +23,11 @@ public class ApplicationSupervisorDTO {
         this.id = id;
     }
 
-    public UserDTO getUser() {
+    public AssignedUserDTO getUser() {
         return user;
     }
 
-    public void setUser(UserDTO user) {
+    public void setUser(AssignedUserDTO user) {
         this.user = user;
     }
 
@@ -33,5 +38,5 @@ public class ApplicationSupervisorDTO {
     public void setAcceptedSupervision(Boolean acceptedSupervision) {
         this.acceptedSupervision = acceptedSupervision;
     }
-    
+
 }

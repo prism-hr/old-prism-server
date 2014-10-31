@@ -1,0 +1,9 @@
+CREATE TABLE REVIEW_ROUND (
+  id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+  due_date DATE,
+  application_form_id INTEGER UNSIGNED,
+  created_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT app_review_round_fk FOREIGN KEY (application_form_id) REFERENCES APPLICATION_FORM(id),
+  PRIMARY KEY (id)
+)
+ENGINE = InnoDB;

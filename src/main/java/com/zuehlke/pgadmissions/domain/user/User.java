@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
@@ -107,6 +108,10 @@ public class User implements UserDetails, IUniqueEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedDateApplication;
 
+    @ManyToOne
+    @JoinColumn(name = "latest_creation_scope_id")
+    private Scope latestCreationScope;
+    
     @ManyToOne
     @JoinColumn(name = "parent_user_id")
     private User parentUser;
@@ -263,6 +268,14 @@ public class User implements UserDetails, IUniqueEntity {
 
     public final void setLastNotifiedDateApplication(LocalDate lastNotifiedDateApplication) {
         this.lastNotifiedDateApplication = lastNotifiedDateApplication;
+    }
+
+    public final Scope getLatestCreationScope() {
+        return latestCreationScope;
+    }
+
+    public final void setLatestCreationScope(Scope latestCreationScope) {
+        this.latestCreationScope = latestCreationScope;
     }
 
     public final User getParentUser() {

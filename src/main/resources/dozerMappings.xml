@@ -120,6 +120,15 @@
             <b>domicile</b>
         </field>
     </mapping>
+    
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.user.User</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation</class-b>
+        <field>
+            <a>latestCreationScope.id</a>
+            <b>latestCreationScope</b>
+        </field>
+    </mapping>
 
     <mapping>
         <class-a>com.zuehlke.pgadmissions.domain.institution.InstitutionAddress</class-a>

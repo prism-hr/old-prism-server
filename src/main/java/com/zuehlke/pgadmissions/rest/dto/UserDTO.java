@@ -1,39 +1,47 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import javax.validation.constraints.Size;
-
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.document.Document;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.persistence.Column;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 public class UserDTO {
 
-    private Integer id;
-
     @NotEmpty
+    @Size(max = 30)
     private String firstName;
 
+    @Size(max = 30)
     private String firstName2;
 
+    @Size(max = 30)
     private String firstName3;
 
     @NotEmpty
+    @Size(max = 40)
     private String lastName;
 
     @NotEmpty
     @Email
     private String email;
-    
-    @NotEmpty
+
+    @NotNull
+    private PrismLocale locale;
+
+    private Integer portraitDocument;
+
+    private String linkedinUri;
+
+    private String twitterUri;
+
+    private Boolean sendApplicationRecommendationNotification;
+
     @Size(min = 8, max = 15)
     private String password;
-    
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -75,12 +83,51 @@ public class UserDTO {
         this.email = email;
     }
 
-    public final String getPassword() {
+    public PrismLocale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(PrismLocale locale) {
+        this.locale = locale;
+    }
+
+    public Integer getPortraitDocument() {
+        return portraitDocument;
+    }
+
+    public void setPortraitDocument(Integer portraitDocument) {
+        this.portraitDocument = portraitDocument;
+    }
+
+    public String getLinkedinUri() {
+        return linkedinUri;
+    }
+
+    public void setLinkedinUri(String linkedinUri) {
+        this.linkedinUri = linkedinUri;
+    }
+
+    public String getTwitterUri() {
+        return twitterUri;
+    }
+
+    public void setTwitterUri(String twitterUri) {
+        this.twitterUri = twitterUri;
+    }
+
+    public Boolean getSendApplicationRecommendationNotification() {
+        return sendApplicationRecommendationNotification;
+    }
+
+    public void setSendApplicationRecommendationNotification(Boolean sendApplicationRecommendationNotification) {
+        this.sendApplicationRecommendationNotification = sendApplicationRecommendationNotification;
+    }
+
+    public String getPassword() {
         return password;
     }
 
-    public final void setPassword(String password) {
+    public void setPassword(String password) {
         this.password = password;
     }
-    
 }

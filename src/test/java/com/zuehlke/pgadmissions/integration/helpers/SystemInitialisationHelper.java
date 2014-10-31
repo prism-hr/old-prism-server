@@ -207,6 +207,7 @@ public class SystemInitialisationHelper {
         assertEquals(system.getHelpdesk(), systemHelpdesk);
         assertEquals(system.getCode(), resourceService.generateResourceCode(system));
         assertEquals(system.getState().getId(), PrismState.SYSTEM_RUNNING);
+        assertNotNull(system.getCipherSalt());
     }
 
     public void verifySystemUserCreation() {

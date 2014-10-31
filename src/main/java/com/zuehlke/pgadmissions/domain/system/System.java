@@ -39,7 +39,7 @@ public class System extends Resource {
     @Id
     private Integer id;
 
-    @Column(name = "code",unique = true)
+    @Column(name = "code", unique = true)
     private String code;
 
     @ManyToOne
@@ -48,14 +48,14 @@ public class System extends Resource {
 
     @Column(name = "title", nullable = false, unique = true)
     private String title;
-    
+
     @Column(name = "locale", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismLocale locale;
-    
+
     @Column(name = "homepage", nullable = false)
     private String homepage;
-    
+
     @Column(name = "helpdesk", nullable = false)
     private String helpdesk;
 
@@ -82,18 +82,21 @@ public class System extends Resource {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
-    
+
     @Column(name = "last_reminded_request_individual")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastRemindedRequestIndividual;
-    
+
     @Column(name = "last_reminded_request_syndicated")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastRemindedRequestSyndicated;
-    
+
     @Column(name = "last_notified_update_syndicated")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedUpdateSyndicated;
+
+    @Column(name = "cipher_salt", nullable = false)
+    private String cipherSalt;
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
@@ -177,63 +180,6 @@ public class System extends Resource {
         this.lastDataImportDate = lastDataImportDate;
     }
 
-    public Set<UserRole> getUserRoles() {
-        return userRoles;
-    }
-
-    public Set<Comment> getComments() {
-        return comments;
-    }
-
-    public Set<Project> getProjects() {
-        return projects;
-    }
-
-    public System withTitle(String title) {
-        this.title = title;
-        return this;
-    }
-    
-    public System withId(Integer id) {
-        this.id = id;
-        return this;
-    }
-    
-    public System withLocale(PrismLocale locale) {
-        this.locale = locale;
-        return this;
-    }
-    
-    public System withHomepage(String homepage) {
-        this.homepage = homepage;
-        return this;
-    }
-    
-    public System withHelpdesk(String helpdesk) {
-        this.helpdesk = helpdesk;
-        return this;
-    }
-
-    public System withUser(User user) {
-        this.user = user;
-        return this;
-    }
-
-    public System withState(State state) {
-        this.state = state;
-        return this;
-    }
-
-    public System withCreatedTimestamp(DateTime createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
-        return this;
-    }
-
-    public System withUpdatedTimestamp(DateTime updatedTimestamp) {
-        this.updatedTimestamp = updatedTimestamp;
-        return this;
-    }
-
     @Override
     public State getState() {
         return state;
@@ -291,9 +237,8 @@ public class System extends Resource {
     }
 
     @Override
-    public void setReferrer (String referrer) {
+    public void setReferrer(String referrer) {
     }
-
 
     @Override
     public User getUser() {
@@ -344,7 +289,7 @@ public class System extends Resource {
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
     }
-    
+
     @Override
     public final LocalDate getLastRemindedRequestIndividual() {
         return lastRemindedRequestIndividual;
@@ -374,7 +319,15 @@ public class System extends Resource {
     public final void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
         this.lastNotifiedUpdateSyndicated = lastNotifiedUpdateSyndicated;
     }
-    
+
+    public final String getCipherSalt() {
+        return cipherSalt;
+    }
+
+    public final void setCipherSalt(String cipherSalt) {
+        this.cipherSalt = cipherSalt;
+    }
+
     @Override
     public String getSequenceIdentifier() {
         return sequenceIdentifier;
@@ -395,6 +348,68 @@ public class System extends Resource {
 
     public final Set<Application> getApplications() {
         return applications;
+    }
+    
+    public Set<UserRole> getUserRoles() {
+        return userRoles;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public Set<Project> getProjects() {
+        return projects;
+    }
+    
+    public System withTitle(String title) {
+        this.title = title;
+        return this;
+    }
+
+    public System withId(Integer id) {
+        this.id = id;
+        return this;
+    }
+
+    public System withLocale(PrismLocale locale) {
+        this.locale = locale;
+        return this;
+    }
+
+    public System withHomepage(String homepage) {
+        this.homepage = homepage;
+        return this;
+    }
+
+    public System withHelpdesk(String helpdesk) {
+        this.helpdesk = helpdesk;
+        return this;
+    }
+
+    public System withUser(User user) {
+        this.user = user;
+        return this;
+    }
+
+    public System withState(State state) {
+        this.state = state;
+        return this;
+    }
+
+    public System withCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+        return this;
+    }
+
+    public System withUpdatedTimestamp(DateTime updatedTimestamp) {
+        this.updatedTimestamp = updatedTimestamp;
+        return this;
+    }
+    
+    public System withCipherSalt(String cipherSalt) {
+        this.cipherSalt = cipherSalt;
+        return this;
     }
 
     @Override

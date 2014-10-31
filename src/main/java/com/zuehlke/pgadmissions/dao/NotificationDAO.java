@@ -172,6 +172,7 @@ public class NotificationDAO {
                         .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
                 .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.isNull(lastNotifiedDateReference)) //
                         .add(Restrictions.lt(lastNotifiedDateReference, baseline))) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
@@ -208,6 +209,7 @@ public class NotificationDAO {
                         .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
                 .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.isNull(lastNotifiedDateReference)) //
                         .add(Restrictions.lt(lastNotifiedDateReference, baseline))) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //

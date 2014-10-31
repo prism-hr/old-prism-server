@@ -67,6 +67,7 @@ import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
 public class SystemService {
@@ -291,8 +292,8 @@ public class SystemService {
         State systemRunning = stateService.getById(PrismState.SYSTEM_RUNNING);
         DateTime startupTimestamp = new DateTime();
         System transientSystem = new System().withId(systemId).withTitle(systemName).withLocale(PrismLocale.getSystemLocale()).withHomepage(systemHomepage)
-                .withHelpdesk(systemHelpdesk).withUser(systemUser).withState(systemRunning).withCreatedTimestamp(startupTimestamp)
-                .withUpdatedTimestamp(startupTimestamp);
+                .withHelpdesk(systemHelpdesk).withUser(systemUser).withState(systemRunning).withCipherSalt(EncryptionUtils.getUUID())
+                .withCreatedTimestamp(startupTimestamp).withUpdatedTimestamp(startupTimestamp);
         System system = entityService.createOrUpdate(transientSystem);
         system.setCode(resourceService.generateResourceCode(system));
         return system;

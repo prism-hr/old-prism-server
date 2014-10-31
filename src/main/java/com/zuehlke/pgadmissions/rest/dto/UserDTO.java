@@ -1,13 +1,12 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.document.Document;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.Column;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 
 public class UserDTO {
 

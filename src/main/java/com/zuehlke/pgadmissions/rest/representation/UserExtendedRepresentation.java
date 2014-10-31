@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-import java.util.Map;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
@@ -17,6 +15,8 @@ public class UserExtendedRepresentation extends UserRepresentation {
     private String twitterUri;
 
     private Boolean sendApplicationRecommendationNotification;
+    
+    private PrismScope latestCreationScope;
 
     public PrismLocale getLocale() {
         return locale;
@@ -56,6 +56,14 @@ public class UserExtendedRepresentation extends UserRepresentation {
 
     public void setSendApplicationRecommendationNotification(Boolean sendApplicationRecommendationNotification) {
         this.sendApplicationRecommendationNotification = sendApplicationRecommendationNotification;
+    }
+    
+    public final PrismScope getLatestCreationScope() {
+        return latestCreationScope;
+    }
+
+    public final void setLatestCreationScope(PrismScope latestCreationScope) {
+        this.latestCreationScope = latestCreationScope;
     }
 
 }

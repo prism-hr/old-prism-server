@@ -136,8 +136,9 @@ public class ResourceService {
 
     public ActionOutcomeDTO createResource(User user, Action action, Object newResourceDTO, String referrer) throws DeduplicationException {
         Resource resource = null;
+        PrismScope resourceScope = action.getCreationScope().getId();
 
-        switch (action.getCreationScope().getId()) {
+        switch (resourceScope) {
         case INSTITUTION:
             resource = institutionService.create(user, (InstitutionDTO) newResourceDTO);
             break;
@@ -159,6 +160,7 @@ public class ResourceService {
         }
 
         resource.setReferrer(referrer);
+        user.setLatestCreationScope(scopeService.getById(resourceScope));
         Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                 .addAssignedUser(user, roleService.getCreatorRole(resource), PrismRoleTransitionType.CREATE);
 

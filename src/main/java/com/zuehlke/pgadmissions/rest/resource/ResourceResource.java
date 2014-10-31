@@ -90,6 +90,21 @@ public class ResourceResource {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @RequestMapping(method = RequestMethod.POST)
+    public ActionOutcomeRepresentation createResource(@RequestBody ActionDTO actionDTO, @RequestHeader(value = "referer", required = false) String referrer)
+            throws Exception {
+        if (!actionDTO.getActionId().getActionCategory().equals(PrismActionCategory.CREATE_RESOURCE)) {
+            throw new Error();
+        }
+
+        User user = userService.getCurrentUser();
+        Object newResourceDTO = actionDTO.getOperativeResourceDTO();
+        Action action = actionService.getById(actionDTO.getActionId());
+
+        ActionOutcomeDTO actionOutcome = resourceService.createResource(user, action, newResourceDTO, referrer);
+        return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @Transactional
     public AbstractResourceRepresentation getResource(@PathVariable Integer id, @ModelAttribute ResourceDescriptor resourceDescriptor)
@@ -158,21 +173,6 @@ public class ResourceResource {
             representations.add(representation);
         }
         return representations;
-    }
-
-    @RequestMapping(method = RequestMethod.POST)
-    public ActionOutcomeRepresentation createResource(@RequestBody ActionDTO actionDTO, @RequestHeader(value = "referer", required = false) String referrer)
-            throws Exception {
-        if (actionDTO.getActionId().getActionCategory() != PrismActionCategory.CREATE_RESOURCE) {
-            throw new Error(actionDTO.getActionId().name() + " is not a creation action.");
-        }
-
-        User user = userService.getCurrentUser();
-        Object newResourceDTO = actionDTO.getOperativeResourceDTO();
-        Action action = actionService.getById(actionDTO.getActionId());
-
-        ActionOutcomeDTO actionOutcome = resourceService.createResource(user, action, newResourceDTO, referrer);
-        return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)

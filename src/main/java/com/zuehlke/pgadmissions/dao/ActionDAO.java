@@ -108,7 +108,7 @@ public class ActionDAO {
                                 .add(Restrictions.eq("userAccount.enabled", true)))) //
                 .uniqueResult();
     }
-    
+
     public List<ActionDTO> getPermittedActions(Resource resource, User user) {
         return (List<ActionDTO>) sessionFactory.getCurrentSession().createCriteria(StateAction.class, "stateAction") //
                 .setProjection(Projections.projectionList() //
@@ -120,13 +120,13 @@ public class ActionDAO {
                         .add(Projections.property("roleTransition.minimumPermitted"), "minimumPermitted") //
                         .add(Projections.property("roleTransition.maximumPermitted"), "maximumPermitted")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("stateTransitions", "stateTransition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("stateTransition.roleTransitions", "roleTransition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("stateActionAssignment.role", "role", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("role.userRoles", "userRole", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
                 .add(Restrictions.disjunction() //
@@ -134,9 +134,13 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
-                        .add(Restrictions.eq("userRole.application", resource.getApplication()))) //
-                .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.eq("userAccount.enabled", true)) //
+                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
+                        .add(Restrictions.eq("action.actionCategory", PrismActionCategory.CREATE_RESOURCE))) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("stateActionAssignment.id")) //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.eq("userRole.user", user)) //
+                                .add(Restrictions.eq("userAccount.enabled", true)))) //
                 .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.asc("action.id")) //
                 .addOrder(Order.asc("stateTransition.transitionState.id")) //
@@ -153,11 +157,11 @@ public class ActionDAO {
                         .add(Projections.groupProperty("action.id"), "name") //
                         .add(Projections.max("raisesUrgentFlag"), "raisesUrgentFlag")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("stateActionAssignment.role", "role", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("role.userRoles", "userRole", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("state.id", stateId)) //
                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
                 .add(Restrictions.disjunction() //
@@ -165,9 +169,13 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.institution.id", institutionId)) //
                         .add(Restrictions.eq("userRole.program.id", programId)) //
                         .add(Restrictions.eq("userRole.project.id", projectId)) //
-                        .add(Restrictions.eq("userRole.application.id", applicationId))) //
-                .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.eq("userAccount.enabled", true)) //
+                        .add(Restrictions.eq("userRole.application.id", applicationId)) //
+                        .add(Restrictions.eq("action.actionCategory", PrismActionCategory.CREATE_RESOURCE))) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("stateActionAssignment.id")) //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.eq("userRole.user", user)) //
+                                .add(Restrictions.eq("userAccount.enabled", true)))) //
                 .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.asc("action.id")) //
                 .setResultTransformer(Transformers.aliasToBean(ActionRepresentation.class)) //

@@ -1,20 +1,19 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.IUniqueEntity.ResourceSignature;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
-import com.zuehlke.pgadmissions.domain.IUniqueEntity.ResourceSignature;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -85,11 +84,7 @@ public class EntityDAO {
             criteria.add(Restrictions.not(Restrictions.in(key, exclusions.get(key))));
         }
 
-        try {
-            return (T) criteria.uniqueResult();
-        } catch (Exception e) {
-            throw (DeduplicationException) e;
-        }
+        return (T) criteria.uniqueResult();
     }
 
     public void delete(Object entity) {

@@ -4,9 +4,19 @@ import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 
 public class ApplicationSuggestedSupervisorRepresentation {
 
+    private Integer id;
+
     private UserRepresentation user;
 
     private Boolean acceptedSupervision;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public UserRepresentation getUser() {
         return user;

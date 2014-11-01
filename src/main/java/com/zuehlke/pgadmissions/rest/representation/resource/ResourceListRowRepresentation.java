@@ -20,11 +20,11 @@ public class ResourceListRowRepresentation {
 
     private UserRepresentation user;
 
-    private String institutionTitle;
+    private SimpleResourceRepresentation institution;
 
-    private String programTitle;
+    private SimpleResourceRepresentation program;
 
-    private String projectTitle;
+    private SimpleResourceRepresentation project;
 
     private LocalDate closingDate;
 
@@ -74,28 +74,28 @@ public class ResourceListRowRepresentation {
         this.user = user;
     }
 
-    public String getInstitutionTitle() {
-        return institutionTitle;
+    public SimpleResourceRepresentation getInstitution() {
+        return institution;
     }
 
-    public void setInstitutionTitle(String institutionTitle) {
-        this.institutionTitle = institutionTitle;
+    public void setInstitution(SimpleResourceRepresentation institution) {
+        this.institution = institution;
     }
 
-    public String getProgramTitle() {
-        return programTitle;
+    public SimpleResourceRepresentation getProgram() {
+        return program;
     }
 
-    public void setProgramTitle(String programTitle) {
-        this.programTitle = programTitle;
+    public void setProgram(SimpleResourceRepresentation program) {
+        this.program = program;
     }
 
-    public String getProjectTitle() {
-        return projectTitle;
+    public SimpleResourceRepresentation getProject() {
+        return project;
     }
 
-    public void setProjectTitle(String projectTitle) {
-        this.projectTitle = projectTitle;
+    public void setProject(SimpleResourceRepresentation project) {
+        this.project = project;
     }
 
     public LocalDate getClosingDate() {

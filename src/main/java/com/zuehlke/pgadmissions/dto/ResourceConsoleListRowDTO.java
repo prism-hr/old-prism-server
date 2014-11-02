@@ -18,6 +18,8 @@ public class ResourceConsoleListRowDTO {
     private Integer projectId;
 
     private Integer applicationId;
+    
+    private Integer creatorId;
 
     private String creatorFirstName;
 
@@ -85,6 +87,14 @@ public class ResourceConsoleListRowDTO {
 
     public final void setApplicationId(Integer applicationId) {
         this.applicationId = applicationId;
+    }
+
+    public final Integer getCreatorId() {
+        return creatorId;
+    }
+
+    public final void setCreatorId(Integer creatorId) {
+        this.creatorId = creatorId;
     }
 
     public final String getCreatorFirstName() {

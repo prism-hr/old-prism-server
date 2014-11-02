@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -177,7 +178,7 @@ public class ActionDAO {
     }
 
     public List<ActionRedactionDTO> getRedactions(Resource resource, List<PrismRole> roleIds) {
-        return (List<ActionRedactionDTO>) sessionFactory.getCurrentSession().createCriteria(CommentDAO.class, "comment")
+        return (List<ActionRedactionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class, "comment")
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("action.id"), "actionId") //
                         .add(Projections.groupProperty("redaction.redactionType"), "redactionType")) //

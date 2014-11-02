@@ -108,29 +108,17 @@ public class ResourceService {
     }
 
     public ActionOutcomeDTO executeAction(Integer resourceId, CommentDTO commentDTO) throws DeduplicationException {
-        PrismAction actionId = commentDTO.getAction();
-        PrismScope resourceScope = actionId.getScope();
-        switch (resourceScope) {
+        switch (commentDTO.getAction().getScope()) {
         case APPLICATION:
             return applicationService.executeAction(resourceId, commentDTO);
+        case PROJECT:
+            return projectService.executeAction(resourceId, commentDTO);
+        case PROGRAM:
+            return programService.executeAction(resourceId, commentDTO);
+        case INSTITUTION:
+            return institutionService.executeAction(resourceId, commentDTO);
         default:
-            User user = userService.getById(commentDTO.getUser());
-            Resource resource = getById(resourceScope.getResourceClass(), resourceId);
-            Action action = actionService.getById(actionId);
-
-            String commentContent = actionId.name().endsWith("VIEW_EDIT") ? applicationContext.getBean(PropertyLoader.class).localize(resource, user)
-                    .load(PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED")) : commentDTO.getContent();
-
-            State transitionState = stateService.getById(commentDTO.getTransitionState());
-            Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
-                    .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
-
-            Object resourceDTO = commentDTO.fetchResouceDTO();
-            if (resourceDTO != null) {
-                updateResource(resourceScope, resourceId, resourceDTO);
-            }
-
-            return actionService.executeUserAction(resource, action, comment);
+            throw new Error();
         }
     }
 
@@ -220,7 +208,7 @@ public class ResourceService {
             break;
         }
 
-        baselineCustom = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
+        baseline = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
 
         StateDuration stateDuration = stateService.getStateDuration(resource);
         resource.setDueDate(baseline.plusDays(stateDuration == null ? 0 : stateDuration.getDuration()));
@@ -422,22 +410,6 @@ public class ResourceService {
         }
         if (doAddCondition) {
             conditions.add(condition);
-        }
-    }
-
-    public void updateResource(PrismScope resourceScope, Integer resourceId, Object resourceDTO) {
-        switch (resourceScope) {
-        case INSTITUTION:
-            institutionService.update(resourceId, (InstitutionDTO) resourceDTO);
-            break;
-        case PROGRAM:
-            programService.update(resourceId, (ProgramDTO) resourceDTO);
-            break;
-        case PROJECT:
-            projectService.update(resourceId, (ProjectDTO) resourceDTO);
-            break;
-        default:
-            throw new Error();
         }
     }
 

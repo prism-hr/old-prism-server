@@ -1,9 +1,14 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_COMMENT_UPDATED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_VIEW_EDIT;
+
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +17,7 @@ import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.imported.ProgramType;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -19,8 +25,14 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
@@ -52,6 +64,12 @@ public class ProgramService {
 
     @Autowired
     private AdvertService advertService;
+
+    @Autowired
+    private StateService stateService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     public Program getById(Integer id) {
         return entityService.getById(Program.class, id);
@@ -86,24 +104,7 @@ public class ProgramService {
         Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withInstitution(institution).withImported(false);
         copyProgramDetails(program, programDTO);
         copyStudyOptions(program, programDTO);
-
-        // TODO: add global defaults
         return program;
-    }
-
-    public void update(Integer programId, ProgramDTO programDTO) {
-        Program program = entityService.getById(Program.class, programId);
-        copyProgramDetails(program, programDTO);
-
-        if (!program.getImported()) {
-            programDAO.deleteProgramStudyOptionInstances(program);
-            programDAO.deleteProgramStudyOptions(program);
-            program.getStudyOptions().clear();
-            copyStudyOptions(program, programDTO);
-            for (ProgramStudyOption studyOption : program.getStudyOptions()) {
-                entityService.save(studyOption);
-            }
-        }
     }
 
     public void postProcessProgram(Program program, Comment comment) {
@@ -154,10 +155,52 @@ public class ProgramService {
         return programDAO.getSimilarPrograms(institutionId, searchTerm);
     }
 
+    public ActionOutcomeDTO executeAction(Integer programId, CommentDTO commentDTO) throws DeduplicationException {
+        User user = userService.getById(commentDTO.getUser());
+        Program program = getById(programId);
+
+        PrismAction actionId = commentDTO.getAction();
+        Action action = actionService.getById(actionId);
+
+        boolean viewEditAction = actionId == PROGRAM_VIEW_EDIT;
+
+        String commentContent = viewEditAction ? applicationContext.getBean(PropertyLoader.class).localize(program, user).load(PROGRAM_COMMENT_UPDATED)
+                : commentDTO.getContent();
+
+        ProgramDTO programDTO = (ProgramDTO) commentDTO.fetchResouceDTO();
+        LocalDate dueDate = programDTO.getDueDate();
+
+        State transitionState = viewEditAction && !dueDate.isBefore(new LocalDate()) ? stateService.getPreviousState(program) : stateService.getById(commentDTO
+                .getTransitionState());
+        Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
+                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
+
+        if (programDTO != null) {
+            update(programId, programDTO);
+        }
+
+        return actionService.executeUserAction(program, action, comment);
+    }
+
+    private void update(Integer programId, ProgramDTO programDTO) {
+        Program program = entityService.getById(Program.class, programId);
+        copyProgramDetails(program, programDTO);
+
+        if (!program.getImported()) {
+            programDAO.deleteProgramStudyOptions(program);
+            program.getStudyOptions().clear();
+            copyStudyOptions(program, programDTO);
+            for (ProgramStudyOption studyOption : program.getStudyOptions()) {
+                entityService.save(studyOption);
+            }
+        }
+    }
+
     private void copyProgramDetails(Program program, ProgramDTO programDTO) {
         if (program.getAdvert() == null) {
             program.setAdvert(new Advert());
         }
+
         Advert advert = program.getAdvert();
 
         if (!program.getImported()) {
@@ -168,9 +211,11 @@ public class ProgramService {
             program.setProgramType(programType);
             program.setTitle(title);
             advert.setTitle(title);
+
+            LocalDate baseline = programDTO.getDueDate();
+            program.setDueDate(baseline);
         }
 
-        program.setDueDate(programDTO.getDueDate());
         program.setRequireProjectDefinition(programDTO.getRequireProjectDefinition());
         advert.setSummary(programDTO.getSummary());
         advert.setStudyDurationMinimum(programDTO.getStudyDurationMinimum());

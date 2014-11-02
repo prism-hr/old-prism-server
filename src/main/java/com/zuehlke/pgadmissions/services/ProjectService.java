@@ -1,7 +1,12 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROJECT_COMMENT_UPDATED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_VIEW_EDIT;
+
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,10 +15,17 @@ import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
@@ -35,10 +47,16 @@ public class ProjectService {
     private UserService userService;
 
     @Autowired
+    private StateService stateService;
+
+    @Autowired
     private SystemService systemService;
 
     @Autowired
     private AdvertService advertService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     public Project getById(Integer id) {
         return entityService.getById(Project.class, id);
@@ -59,7 +77,34 @@ public class ProjectService {
         return project;
     }
 
-    public void update(Integer projectId, ProjectDTO projectDTO) {
+    public ActionOutcomeDTO executeAction(Integer programId, CommentDTO commentDTO) throws DeduplicationException {
+        User user = userService.getById(commentDTO.getUser());
+        Project project = getById(programId);
+
+        PrismAction actionId = commentDTO.getAction();
+        Action action = actionService.getById(actionId);
+
+        boolean viewEditAction = actionId == PROJECT_VIEW_EDIT;
+
+        String commentContent = viewEditAction ? applicationContext.getBean(PropertyLoader.class).localize(project, user).load(PROJECT_COMMENT_UPDATED)
+                : commentDTO.getContent();
+
+        ProjectDTO projectDTO = (ProjectDTO) commentDTO.fetchResouceDTO();
+        LocalDate dueDate = projectDTO.getDueDate();
+
+        State transitionState = viewEditAction && !dueDate.isBefore(new LocalDate()) ? stateService.getPreviousState(project) : stateService.getById(commentDTO
+                .getTransitionState());
+        Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
+                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
+
+        if (projectDTO != null) {
+            update(programId, projectDTO);
+        }
+
+        return actionService.executeUserAction(project, action, comment);
+    }
+
+    private void update(Integer projectId, ProjectDTO projectDTO) {
         Project project = entityService.getById(Project.class, projectId);
         copyProjectDetails(project, projectDTO);
     }

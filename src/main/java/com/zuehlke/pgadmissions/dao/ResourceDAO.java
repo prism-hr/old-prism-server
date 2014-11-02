@@ -116,6 +116,7 @@ public class ResourceDAO {
         }
 
         projectionList.add(Projections.property("id"), scopeId.getLowerCaseName() + "Id") //
+                .add(Projections.property("user.id"), "creatorId") //
                 .add(Projections.property("user.firstName"), "creatorFirstName") //
                 .add(Projections.property("user.firstName2"), "creatorFirstName2") //
                 .add(Projections.property("user.firstName3"), "creatorFirstName3") //

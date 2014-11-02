@@ -64,6 +64,10 @@
         <class-a>com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO</class-a>
         <class-b>com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation</class-b>
         <field>
+        	<a>creatorId</a>
+        	<b>user.Id</b>
+        </field>
+        <field>
             <a>creatorFirstName</a>
             <b>user.firstName</b>
         </field>

@@ -15,6 +15,7 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
@@ -183,7 +184,7 @@ public class ActionDAO {
     }
 
     public List<ActionRedactionDTO> getRedactions(Resource resource, List<PrismRole> roleIds) {
-        return (List<ActionRedactionDTO>) sessionFactory.getCurrentSession().createCriteria(CommentDAO.class, "comment")
+        return (List<ActionRedactionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class, "comment")
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("action.id"), "actionId") //
                         .add(Projections.groupProperty("redaction.redactionType"), "redactionType")) //

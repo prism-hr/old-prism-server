@@ -115,16 +115,6 @@ public class ProgramDAO {
                 .list();
     }
 
-    public void deleteProgramStudyOptionInstances(Program program) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "delete ProgramStudyOptionInstance " + //
-                        "where studyOption in ( " + //
-                        "from ProgramStudyOption " + //
-                        "where program = :program)") //
-                .setEntity("program", program) //
-                .executeUpdate();
-    }
-
     public void deleteProgramStudyOptions(Program program) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete ProgramStudyOption " + //

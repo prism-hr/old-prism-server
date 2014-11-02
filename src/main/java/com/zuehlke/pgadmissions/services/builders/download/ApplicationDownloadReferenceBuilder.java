@@ -61,7 +61,7 @@ public class ApplicationDownloadReferenceBuilder {
             applicationDownloadBuilderHelper.addContentRowMedium(rowTitle,
                     application.isApproved() ? propertyLoader.load(APPLICATION_REFEREE_REFERENCE_COMMENT_EQUIVALENT) : null, body);
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
-        } else if (referenceComment.isDeclinedResponse()) {
+        } else if (referenceComment.getDeclinedResponse()) {
             applicationDownloadBuilderHelper.addContentRowMedium(rowTitle, propertyLoader.load(APPLICATION_COMMENT_DECLINED_REFEREE), body);
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else {

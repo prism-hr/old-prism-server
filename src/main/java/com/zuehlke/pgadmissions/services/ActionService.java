@@ -135,7 +135,7 @@ public class ActionService {
             lastActionId = thisActionId;
             lastTransitionStateId = thisTransitionStateId;
         }
-        
+
         return representations;
     }
 
@@ -181,7 +181,7 @@ public class ActionService {
                 .withTransitionAction(transitionAction);
     }
 
-    public ActionOutcomeDTO getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO, String referrer) throws DeduplicationException {
+    public ActionOutcomeDTO getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO, String referrer) throws Exception {
         Action action = getById(registrationDTO.getAction().getActionId());
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             Object operativeResourceDTO = registrationDTO.getAction().getOperativeResourceDTO();

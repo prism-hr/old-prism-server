@@ -98,8 +98,7 @@ public class UserService {
                 .withLastName(user.getLastName()).withEmail(user.getEmail());
     }
 
-    public User registerUser(UserRegistrationDTO registrationDTO, String referrer) throws DeduplicationException, InterruptedException, IOException,
-            JAXBException {
+    public User registerUser(UserRegistrationDTO registrationDTO, String referrer) throws Exception {
         Integer resourceId;
         Integer resourceIdInterim = registrationDTO.getResourceId();
         PrismScope resourceScope = registrationDTO.getAction().getActionId().getScope();

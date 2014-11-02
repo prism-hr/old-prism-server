@@ -45,6 +45,8 @@ public class AdvertRepresentation {
 
     private PrismScope resourceScope;
 
+    private Integer resourceId;
+
     private Set<PrismAdvertDomain> domains;
 
     private Set<PrismAdvertIndustry> industries;
@@ -183,6 +185,14 @@ public class AdvertRepresentation {
 
     public void setResourceScope(PrismScope resourceScope) {
         this.resourceScope = resourceScope;
+    }
+
+    public Integer getResourceId() {
+        return resourceId;
+    }
+
+    public void setResourceId(Integer resourceId) {
+        this.resourceId = resourceId;
     }
 
     public Set<PrismAdvertDomain> getDomains() {

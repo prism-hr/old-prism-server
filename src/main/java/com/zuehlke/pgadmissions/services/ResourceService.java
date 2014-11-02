@@ -134,7 +134,7 @@ public class ResourceService {
         }
     }
 
-    public ActionOutcomeDTO createResource(User user, Action action, Object newResourceDTO, String referrer) throws DeduplicationException {
+    public ActionOutcomeDTO createResource(User user, Action action, Object newResourceDTO, String referrer) throws Exception {
         Resource resource = null;
         PrismScope resourceScope = action.getCreationScope().getId();
 

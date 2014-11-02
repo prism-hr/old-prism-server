@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.INSTITUTION_COMMENT_UPDATED;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_COMMENT_INITIALIZED_INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_STARTUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_VIEW_EDIT;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,7 +27,10 @@ import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicileRegion;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.representation.SocialPresenceRepresentation;
@@ -54,6 +59,9 @@ public class InstitutionService {
 
     @Autowired
     private ActionService actionService;
+
+    @Autowired
+    private StateService stateService;
 
     @Autowired
     private UserService userService;
@@ -210,4 +218,27 @@ public class InstitutionService {
     public Institution getByGoogleId(String googleId) {
         return entityService.getByProperty(Institution.class, "googleId", googleId);
     }
+
+    public ActionOutcomeDTO executeAction(Integer institutionId, CommentDTO commentDTO) throws DeduplicationException {
+        User user = userService.getById(commentDTO.getUser());
+        Institution institution = getById(institutionId);
+
+        PrismAction actionId = commentDTO.getAction();
+        Action action = actionService.getById(actionId);
+
+        String commentContent = actionId == INSTITUTION_VIEW_EDIT ? applicationContext.getBean(PropertyLoader.class).localize(institution, user)
+                .load(INSTITUTION_COMMENT_UPDATED) : commentDTO.getContent();
+
+        State transitionState = stateService.getById(commentDTO.getTransitionState());
+        Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
+                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
+
+        InstitutionDTO institutionDTO = (InstitutionDTO) commentDTO.fetchResouceDTO();
+        if (institutionDTO != null) {
+            update(institutionId, institutionDTO);
+        }
+
+        return actionService.executeUserAction(institution, action, comment);
+    }
+
 }

@@ -135,6 +135,7 @@ public class ResourceResource {
     @RequestMapping(method = RequestMethod.GET)
     public List<ResourceListRowRepresentation> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor,
                                                             @RequestParam(required = false) String filter, @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
+        User currentUser = userService.getCurrentUser();
         ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
         DateTime baseline = new DateTime().minusDays(1);
@@ -142,7 +143,6 @@ public class ResourceResource {
         List<ResourceConsoleListRowDTO> rowDTOs = resourceService.getResourceConsoleList(resourceScope, filterDTO, lastSequenceIdentifier);
         for (ResourceConsoleListRowDTO rowDTO : rowDTOs) {
             ResourceListRowRepresentation representation = dozerBeanMapper.map(rowDTO, ResourceListRowRepresentation.class);
-            User currentUser = userService.getCurrentUser();
 
             representation.setResourceScope(resourceDescriptor.getResourceScope());
             representation.setActions(actionService.getPermittedActions(rowDTO.getSystemId(), rowDTO.getInstitutionId(), rowDTO.getProgramId(),

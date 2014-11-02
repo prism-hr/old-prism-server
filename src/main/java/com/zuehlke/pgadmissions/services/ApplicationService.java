@@ -334,7 +334,7 @@ public class ApplicationService {
     }
 
     public void filterResourceListData(ResourceListRowRepresentation representation, User currentUser) {
-        if (currentUser.getId() == representation.getUser().getId()) {
+        if (currentUser.getId().equals(representation.getUser().getId())) {
             representation.setApplicationRatingAverage(null);
         }
     }

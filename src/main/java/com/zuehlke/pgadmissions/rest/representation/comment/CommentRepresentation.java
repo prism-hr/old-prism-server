@@ -7,11 +7,10 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
 
@@ -19,15 +18,9 @@ public class CommentRepresentation {
 
     private Integer id;
 
-    private PrismStateGroup stateGroup;
-
     private UserRepresentation user;
 
-    private String role;
-
     private UserRepresentation delegateUser;
-
-    private String delegateRole;
 
     private PrismAction action;
 
@@ -99,15 +92,13 @@ public class CommentRepresentation {
 
     private DateTime createdTimestamp;
 
-    private Set<CommentAssignedUserRepresentation> assignedUsers;
+    private Set<CommentAssignedUserRepresentation> assignedUsers = Sets.newLinkedHashSet();
 
-    private Set<FileRepresentation> documents;
+    private Set<FileRepresentation> documents = Sets.newLinkedHashSet();
 
-    private Set<AppointmentTimeslotRepresentation> appointmentTimeslots;
+    private Set<AppointmentTimeslotRepresentation> appointmentTimeslots = Sets.newLinkedHashSet();
 
-    private Set<AppointmentPreferenceRepresentation> appointmentPreferences;
-
-    private Set<PrismActionRedactionType> redactions;
+    private Set<AppointmentPreferenceRepresentation> appointmentPreferences = Sets.newLinkedHashSet();
 
     public Integer getId() {
         return id;
@@ -115,14 +106,6 @@ public class CommentRepresentation {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public final PrismStateGroup getStateGroup() {
-        return stateGroup;
-    }
-
-    public final void setStateGroup(PrismStateGroup stateGroup) {
-        this.stateGroup = stateGroup;
     }
 
     public UserRepresentation getUser() {
@@ -133,28 +116,12 @@ public class CommentRepresentation {
         this.user = user;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
     public UserRepresentation getDelegateUser() {
         return delegateUser;
     }
 
     public void setDelegateUser(UserRepresentation delegateUser) {
         this.delegateUser = delegateUser;
-    }
-
-    public String getDelegateRole() {
-        return delegateRole;
-    }
-
-    public void setDelegateRole(String delegateRole) {
-        this.delegateRole = delegateRole;
     }
 
     public PrismAction getAction() {
@@ -469,12 +436,63 @@ public class CommentRepresentation {
         this.appointmentPreferences = appointmentPreferences;
     }
 
-    public final Set<PrismActionRedactionType> getRedactions() {
-        return redactions;
+    public CommentRepresentation withId(Integer id) {
+        this.id = id;
+        return this;
     }
 
-    public final void setRedactions(Set<PrismActionRedactionType> redactions) {
-        this.redactions = redactions;
+    public CommentRepresentation withUser(UserRepresentation user) {
+        this.user = user;
+        return this;
+    }
+
+    public CommentRepresentation withDelegateUser(UserRepresentation delegateUser) {
+        this.delegateUser = delegateUser;
+        return this;
+    }
+
+    public CommentRepresentation withAction(PrismAction action) {
+        this.action = action;
+        return this;
+    }
+
+    public CommentRepresentation withDeclinedResponse(Boolean declinedResponse) {
+        this.declinedResponse = declinedResponse;
+        return this;
+    }
+
+    public CommentRepresentation withCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+        return this;
+    }
+
+    public CommentRepresentation addInterviewTimeZone(TimeZone interviewTimeZone) {
+        this.interviewTimeZone = interviewTimeZone;
+        return this;
+    }
+
+    public CommentRepresentation addInterviewDateTime(LocalDateTime interviewDateTime) {
+        this.interviewDateTime = interviewDateTime;
+        return this;
+    }
+
+    public CommentRepresentation addInterviewDuration(Integer interviewDuration) {
+        this.interviewDuration = interviewDuration;
+        return this;
+    }
+    
+    public CommentRepresentation addIntervieweeInstructions(String intervieweeInstructions) {
+        this.intervieweeInstructions = intervieweeInstructions;
+        return this;
+    }
+    
+    public CommentRepresentation addInterviewLocation(String interviewLocation) {
+        this.interviewLocation = interviewLocation;
+        return this;
+    }
+    
+    public void addAppointmentTimeslot(AppointmentTimeslotRepresentation appointmentTimeslot) {
+        appointmentTimeslots.add(appointmentTimeslot);
     }
 
 }

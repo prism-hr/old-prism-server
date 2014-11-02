@@ -69,8 +69,8 @@ public enum PrismAction {
                     .withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder().addResolution(CONTENT, NOT_EMPTY)
             .addResolution(QUALIFIED, NOT_NULL).addResolution(COMPETENT_IN_WORK_LANGUAGE, NOT_NULL).addResolution(RESIDENCE_STATE, NOT_NULL).build()), //
     APPLICATION_ASSIGN_INTERVIEWERS(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, APPLICATION, null, Arrays.asList(
-            new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT), new PrismActionRedaction().withRole(APPLICATION_REFEREE)
-                    .withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
+            new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_ASSESSMENT_CONTENT),
+            new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
             .addResolution(ASSIGNED_USERS, new PrismActionValidationFieldResolution(SIZE, "min", 0)).addResolution(INTERVIEW_TIME_ZONE, NOT_NULL)
             .addResolution(INTERVIEW_DURATION, NOT_NULL).addResolution(INTERVIEW_DATE_TIME).addResolution(APPOINTMENT_TIMESLOTS)
             .addResolution(INTERVIEWER_INSTRUCTIONS).addResolution(INTERVIEWEE_INSTRUCTIONS).addResolution(INTERVIEW_LOCATION)

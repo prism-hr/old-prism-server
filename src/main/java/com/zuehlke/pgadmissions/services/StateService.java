@@ -190,7 +190,7 @@ public class StateService {
 
         resourceService.postProcessResource(resource, comment);
         commentService.postProcessComment(comment);
-        
+
         return stateTransition;
     }
 
@@ -420,6 +420,10 @@ public class StateService {
 
     public List<PrismState> getAvailableNextStates(Resource resource, Set<ActionRepresentation> permittedActions) {
         return stateDAO.getAvailableNextStates(resource, permittedActions);
+    }
+
+    public State getPreviousState(Resource resource) {
+        return stateDAO.getPreviousState(resource);
     }
 
 }

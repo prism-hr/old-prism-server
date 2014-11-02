@@ -297,11 +297,11 @@ public class Comment {
         this.action = action;
     }
 
-    public boolean isDeclinedResponse() {
+    public Boolean getDeclinedResponse() {
         return declinedResponse;
     }
 
-    public void setDeclinedResponse(boolean declinedResponse) {
+    public void setDeclinedResponse(Boolean declinedResponse) {
         this.declinedResponse = declinedResponse;
     }
 

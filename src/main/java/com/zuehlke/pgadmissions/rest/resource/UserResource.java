@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.validation.Valid;
 
+import com.zuehlke.pgadmissions.security.AuthenticationTokenHelper;
 import org.dozer.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,6 @@ import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.UserRegistrationValidator;
-import com.zuehlke.pgadmissions.security.AuthenticationTokenUtils;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ResourceListFilterService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -71,6 +71,9 @@ public class UserResource {
     private ResourceListFilterService resourceListFilterService;
 
     @Autowired
+    private AuthenticationTokenHelper authenticationTokenHelper;
+
+    @Autowired
     private Mapper dozerBeanMapper;
 
     @RequestMapping(method = RequestMethod.GET)
@@ -93,7 +96,7 @@ public class UserResource {
         Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-        return ImmutableMap.of("token", AuthenticationTokenUtils.createToken(userDetails));
+        return ImmutableMap.of("token", authenticationTokenHelper.createToken(userDetails));
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)

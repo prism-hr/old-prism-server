@@ -1,31 +1,36 @@
 package com.zuehlke.pgadmissions.security;
 
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.services.SystemService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.codec.Hex;
+import org.springframework.stereotype.Service;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class AuthenticationTokenUtils {
+@Service
+public class AuthenticationTokenHelper {
 
-    public static final String MAGIC_KEY = "obfuscate";
+    @Autowired
+    private SystemService systemService;
 
-    public static String createToken(UserDetails userDetails) {
+    public String createToken(UserDetails userDetails) {
         /* Expires in one hour */
         long expires = System.currentTimeMillis() + 1000L * 60 * 60 * 5;
 
         User user = (User) userDetails;
-        return user.getId() + ":" + expires + ":" + AuthenticationTokenUtils.computeSignature(user, expires);
+        return user.getId() + ":" + expires + ":" + computeSignature(user, expires);
     }
 
-    public static String computeSignature(User user, long expires) {
+    public String computeSignature(User user, long expires) {
         StringBuilder signatureBuilder = new StringBuilder();
         signatureBuilder.append(expires);
         signatureBuilder.append(":");
         signatureBuilder.append(user.getId());
         signatureBuilder.append(":");
-        signatureBuilder.append(MAGIC_KEY); // TODO use database based magic key
+        signatureBuilder.append(systemService.getSystem().getCipherSalt());
 
         MessageDigest digest;
         try {
@@ -37,7 +42,7 @@ public class AuthenticationTokenUtils {
         return new String(Hex.encode(digest.digest(signatureBuilder.toString().getBytes())));
     }
 
-    public static Integer getIdFromToken(String authToken) {
+    public Integer getIdFromToken(String authToken) {
         if (null == authToken) {
             return null;
         }
@@ -46,7 +51,7 @@ public class AuthenticationTokenUtils {
         return Integer.parseInt(parts[0]);
     }
 
-    public static boolean validateToken(String authToken, UserDetails userDetails) {
+    public boolean validateToken(String authToken, UserDetails userDetails) {
         String[] parts = authToken.split(":");
         long expires = Long.parseLong(parts[1]);
         String signature = parts[2];
@@ -56,6 +61,6 @@ public class AuthenticationTokenUtils {
         }
 
         User user = (User) userDetails;
-        return signature.equals(AuthenticationTokenUtils.computeSignature(user, expires));
+        return signature.equals(computeSignature(user, expires));
     }
 }

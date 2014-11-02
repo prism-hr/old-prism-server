@@ -19,6 +19,9 @@ import java.io.IOException;
 public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
 
     @Autowired
+    private AuthenticationTokenHelper authenticationTokenHelper;
+
+    @Autowired
     private UserService userService;
 
     @Override
@@ -26,12 +29,12 @@ public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
         HttpServletRequest httpRequest = this.getAsHttpRequest(request);
 
         String authToken = this.extractAuthTokenFromRequest(httpRequest);
-        Integer userId = AuthenticationTokenUtils.getIdFromToken(authToken);
+        Integer userId = authenticationTokenHelper.getIdFromToken(authToken);
 
         if (userId != null) {
 
             UserDetails userDetails = this.userService.getById(userId);
-            if (AuthenticationTokenUtils.validateToken(authToken, userDetails)) {
+            if (authenticationTokenHelper.validateToken(authToken, userDetails)) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpRequest));
                 SecurityContextHolder.getContext().setAuthentication(authentication);

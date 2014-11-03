@@ -63,7 +63,6 @@ public class NotificationDAO {
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("stateAction.notificationTemplate", "notificationTemplate", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state", resource.getState())) //
                 .add(Restrictions.eq("notificationTemplate.notificationType", PrismNotificationType.INDIVIDUAL)) //
@@ -74,9 +73,6 @@ public class NotificationDAO {
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.application", resource.getApplication()))) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("userAccount.password")) //
-                        .add(Restrictions.eq("userAccount.enabled", true))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userRole.lastNotifiedDate")) //
                         .add(Restrictions.lt("userRole.lastNotifiedDate", baseline))) //
@@ -96,7 +92,6 @@ public class NotificationDAO {
                 .createAlias("stateActionNotification.notificationTemplate", "notificationTemplate", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("stateAction.state", state)) //
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.eq("notificationTemplate.notificationType", PrismNotificationType.INDIVIDUAL)) //
@@ -109,9 +104,6 @@ public class NotificationDAO {
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.application", resource.getApplication()))) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("userAccount.password")) //
-                        .add(Restrictions.eq("userAccount.enabled", true))) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
@@ -128,7 +120,6 @@ public class NotificationDAO {
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("stateAction.notificationTemplate", "notificationTemplate", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state", resource.getState())) //
                 .add(Restrictions.eq("notificationTemplate.notificationType", PrismNotificationType.INDIVIDUAL)) //
@@ -138,9 +129,6 @@ public class NotificationDAO {
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.application", resource.getApplication()))) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("userAccount.password")) //
-                        .add(Restrictions.eq("userAccount.enabled", true))) //
                 .add(Restrictions.lt("userRole.lastNotifiedDate", baseline)) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
@@ -158,7 +146,6 @@ public class NotificationDAO {
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("stateAction.notificationTemplate", "notificationTemplate", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state", resource.getState())) //
                 .add(Restrictions.eq("notificationTemplate.notificationType", PrismNotificationType.SYNDICATED)) //
@@ -169,10 +156,6 @@ public class NotificationDAO {
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.application", resource.getApplication()))) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("userAccount.password")) //
-                        .add(Restrictions.eq("userAccount.enabled", true))) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.isNull(lastNotifiedDateReference)) //
                         .add(Restrictions.lt(lastNotifiedDateReference, baseline))) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
@@ -192,7 +175,6 @@ public class NotificationDAO {
                 .createAlias("stateActionNotification.notificationTemplate", "notificationTemplate", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("stateAction.state", state)) //
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.eq("notificationTemplate.notificationType", PrismNotificationType.SYNDICATED)) //
@@ -206,10 +188,6 @@ public class NotificationDAO {
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.application", resource.getApplication()))) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("userAccount.password")) //
-                        .add(Restrictions.eq("userAccount.enabled", true))) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("userAccount.password")) //
                         .add(Restrictions.isNull(lastNotifiedDateReference)) //
                         .add(Restrictions.lt(lastNotifiedDateReference, baseline))) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //

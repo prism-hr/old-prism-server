@@ -108,11 +108,11 @@ public class ProgramService {
     }
 
     public void postProcessProgram(Program program, Comment comment) {
-        if (comment.isProgramCreateOrUpdateComment()) {
-            Advert advert = program.getAdvert();
-            advert.setSequenceIdentifier(program.getSequenceIdentifier().substring(0, 13) + String.format("%010d", advert.getId()));
-            projectService.sychronizeProjectDueDates(program.getDueDate());
+        if (comment.isProgramApproveOrDeactivateComment()) {
+            projectService.sychronizeProject(program);
         }
+        Advert advert = program.getAdvert();
+        advert.setSequenceIdentifier(program.getSequenceIdentifier().substring(0, 13) + String.format("%010d", advert.getId()));
     }
 
     public List<ProgramStudyOption> getEnabledProgramStudyOptions(Program program) {
@@ -128,8 +128,8 @@ public class ProgramService {
     }
 
     public LocalDate resolveDueDateBaseline(Program program, Comment comment) {
-        if (comment.isProgramCreateOrUpdateComment()) {
-            return getProgramClosureDate(program);
+        if (comment.isProgramApproveOrDeactivateComment()) {
+            return program.getEndDate();
         }
         return null;
     }
@@ -168,7 +168,7 @@ public class ProgramService {
                 : commentDTO.getContent();
 
         ProgramDTO programDTO = (ProgramDTO) commentDTO.fetchResouceDTO();
-        LocalDate dueDate = programDTO.getDueDate();
+        LocalDate dueDate = programDTO.getEndDate();
 
         State transitionState = viewEditAction && !dueDate.isBefore(new LocalDate()) ? stateService.getPreviousState(program) : stateService.getById(commentDTO
                 .getTransitionState());
@@ -187,6 +187,7 @@ public class ProgramService {
         copyProgramDetails(program, programDTO);
 
         if (!program.getImported()) {
+            programDAO.deleteProgramStudyOptionInstances(program);
             programDAO.deleteProgramStudyOptions(program);
             program.getStudyOptions().clear();
             copyStudyOptions(program, programDTO);
@@ -211,9 +212,8 @@ public class ProgramService {
             program.setProgramType(programType);
             program.setTitle(title);
             advert.setTitle(title);
-
-            LocalDate baseline = programDTO.getDueDate();
-            program.setDueDate(baseline);
+            
+            program.setEndDate(programDTO.getEndDate());
         }
 
         program.setRequireProjectDefinition(programDTO.getRequireProjectDefinition());
@@ -227,7 +227,7 @@ public class ProgramService {
         for (PrismStudyOption prismStudyOption : programDTO.getStudyOptions()) {
             StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, program.getInstitution(), prismStudyOption.name());
             ProgramStudyOption programStudyOption = new ProgramStudyOption().withStudyOption(studyOption).withApplicationStartDate(new LocalDate())
-                    .withApplicationCloseDate(program.getDueDate()).withEnabled(true).withProgram(program);
+                    .withApplicationCloseDate(program.getEndDate()).withEnabled(true).withProgram(program);
             program.getStudyOptions().add(programStudyOption);
         }
     }

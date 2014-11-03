@@ -112,6 +112,10 @@ public class Project extends ResourceParent {
     @JoinColumn(name = "previous_state_id")
     private State previousState;
 
+    @Column(name = "end_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate endDate;
+    
     @Column(name = "due_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate dueDate;
@@ -361,6 +365,14 @@ public class Project extends ResourceParent {
     @Override
     public void setPreviousState(State previousState) {
         this.previousState = previousState;
+    }
+
+    public final LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public final void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 
     @Override

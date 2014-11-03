@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -90,7 +89,7 @@ public class ProjectService {
                 : commentDTO.getContent();
 
         ProjectDTO projectDTO = (ProjectDTO) commentDTO.fetchResouceDTO();
-        LocalDate dueDate = projectDTO.getDueDate();
+        LocalDate dueDate = projectDTO.getEndDate();
 
         State transitionState = viewEditAction && !dueDate.isBefore(new LocalDate()) ? stateService.getPreviousState(project) : stateService.getById(commentDTO
                 .getTransitionState());
@@ -116,7 +115,7 @@ public class ProjectService {
         Advert advert = project.getAdvert();
 
         String title = projectDTO.getTitle();
-        project.setDueDate(projectDTO.getDueDate());
+        project.setEndDate(projectDTO.getEndDate());
         project.setTitle(title);
         advert.setTitle(title);
         advert.setSummary(projectDTO.getSummary());
@@ -126,26 +125,20 @@ public class ProjectService {
     }
 
     public LocalDate resolveDueDateBaseline(Project project, Comment comment) {
-        if (comment.isProjectCreateOrUpdateComment()) {
-            AdvertClosingDate closingDate = project.getAdvert().getClosingDate();
-            if (closingDate == null) {
-                return programService.getProgramClosureDate(project.getProgram());
-            } else {
-                return closingDate.getClosingDate();
-            }
+        if (comment.isProjectApproveOrDeactivateComment()) {
+            return project.getEndDate();
         }
         return null;
     }
 
     public void postProcessProject(Project project, Comment comment) {
-        if (comment.isProjectCreateOrUpdateComment()) {
-            Advert advert = project.getAdvert();
-            advert.setSequenceIdentifier(project.getSequenceIdentifier().substring(0, 13) + String.format("%010d", advert.getId()));
-        }
+        Advert advert = project.getAdvert();
+        advert.setSequenceIdentifier(project.getSequenceIdentifier().substring(0, 13) + String.format("%010d", advert.getId()));
     }
 
-    public void sychronizeProjectDueDates(LocalDate baseline) {
-        projectDAO.synchronizeProjectDueDates(baseline);
+    public void sychronizeProject(Program program) {
+        projectDAO.synchronizeProjectDueDates(program);
+        projectDAO.synchronizeProjectEndDates(program);
     }
 
 }

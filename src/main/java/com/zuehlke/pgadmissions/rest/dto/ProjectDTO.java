@@ -17,7 +17,7 @@ public class ProjectDTO {
     private String title;
 
     @NotNull
-    private LocalDate dueDate;
+    private LocalDate endDate;
 
     @NotEmpty
     @Size(max = 1000)
@@ -45,12 +45,12 @@ public class ProjectDTO {
         this.title = title;
     }
 
-    public LocalDate getDueDate() {
-        return dueDate;
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 
     public String getSummary() {

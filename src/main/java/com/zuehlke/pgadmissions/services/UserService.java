@@ -281,7 +281,7 @@ public class UserService {
     }
 
     public List<User> getResourceUsers(Resource resource) {
-        return userDAO.getEnabledResourceUsers(resource);
+        return userDAO.getResourceUsers(resource);
     }
 
     public List<Integer> getMatchingUsers(String searchTerm) {

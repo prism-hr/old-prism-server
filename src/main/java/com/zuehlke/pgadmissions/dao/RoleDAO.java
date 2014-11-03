@@ -96,7 +96,6 @@ public class RoleDAO {
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.eq("action", action)) //
                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
@@ -107,7 +106,6 @@ public class RoleDAO {
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                         .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
                 .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.eq("userAccount.enabled", true)) //
                 .list();
     }
 
@@ -123,8 +121,6 @@ public class RoleDAO {
                 .setProjection(Projections.property("userRole.user")) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("id", roleTransition.getId())) //
                 .add(Restrictions.eq("userRole." + resource.getResourceScope().getLowerCaseName(), resource)) //
                 .add(Restrictions.disjunction() //
@@ -132,7 +128,6 @@ public class RoleDAO {
                                 .add(Restrictions.eq("restrictToActionOwner", true)) //
                                 .add(Restrictions.eq("userRole.user", actionOwner))) //
                         .add(Restrictions.eq("restrictToActionOwner", false))) //
-                .add(Restrictions.eq("userAccount.enabled", true)) //
                 .list();
     }
 

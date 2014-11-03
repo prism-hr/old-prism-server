@@ -213,7 +213,7 @@ public class ApplicationService {
             applicationSummaryService.incrementApplicationCreatedCount(application);
         }
 
-        if (comment.isProjectCreateComment()) {
+        if (comment.isProjectCreateApplicationComment()) {
             synchroniseProjectSupervisors(application);
         }
 

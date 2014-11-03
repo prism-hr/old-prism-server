@@ -118,6 +118,10 @@ public class Program extends ResourceParent {
     @ManyToOne
     @JoinColumn(name = "previous_state_id")
     private State previousState;
+    
+    @Column(name = "end_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate endDate;
 
     @Column(name = "due_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -386,6 +390,14 @@ public class Program extends ResourceParent {
         this.previousState = previousState;
     }
 
+    public final LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public final void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
     @Override
     public LocalDate getDueDate() {
         return dueDate;
@@ -502,11 +514,6 @@ public class Program extends ResourceParent {
 
     public Program withTitle(String title) {
         setTitle(title);
-        return this;
-    }
-
-    public Program withDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
         return this;
     }
 

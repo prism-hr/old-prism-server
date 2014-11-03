@@ -25,7 +25,7 @@ public class AbstractResourceRepresentation {
 
     private UserRepresentation user;
 
-    private LocalDate dueDate;
+    private LocalDate endDate;
 
     private DateTime createdTimestamp;
 
@@ -81,12 +81,12 @@ public class AbstractResourceRepresentation {
         this.user = user;
     }
 
-    public LocalDate getDueDate() {
-        return dueDate;
+    public final LocalDate getEndDate() {
+        return endDate;
     }
 
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
+    public final void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 
     public DateTime getCreatedTimestamp() {

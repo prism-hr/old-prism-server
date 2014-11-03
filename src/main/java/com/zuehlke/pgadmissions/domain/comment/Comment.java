@@ -33,7 +33,6 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -746,28 +745,18 @@ public class Comment {
         return delegateUser == null ? user : delegateUser;
     }
 
-    public boolean isProgramCreateComment() {
-        return action.getCreationScope() != null && action.getCreationScope().getId() == PrismScope.PROGRAM;
+    public boolean isProgramApproveOrDeactivateComment() {
+        return action.getScope().getId() == PrismScope.PROGRAM
+                && Arrays.asList(PrismState.PROGRAM_APPROVED, PrismState.PROGRAM_DEACTIVATED).contains(transitionState.getId());
     }
 
-    public boolean isProgramUpdateComment() {
-        return action.getScope().getId() == PrismScope.PROGRAM && action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE;
+    public boolean isProjectApproveOrDeactivateComment() {
+        return action.getScope().getId() == PrismScope.PROJECT
+                && Arrays.asList(PrismState.PROJECT_APPROVED, PrismState.PROJECT_DEACTIVATED).contains(transitionState.getId());
     }
-
-    public boolean isProgramCreateOrUpdateComment() {
-        return isProgramCreateComment() || isProgramUpdateComment();
-    }
-
-    public boolean isProjectCreateComment() {
-        return action.getCreationScope() != null && action.getCreationScope().getId() == PrismScope.PROJECT;
-    }
-
-    public boolean isProjectUpdateComment() {
-        return action.getScope().getId() == PrismScope.PROJECT && action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE;
-    }
-
-    public boolean isProjectCreateOrUpdateComment() {
-        return isProjectCreateComment() || isProjectUpdateComment();
+    
+    public boolean isProjectCreateApplicationComment() {
+        return action.getId() == PrismAction.PROGRAM_CREATE_APPLICATION;
     }
 
     public boolean isApplicationAssignReviewersComment() {

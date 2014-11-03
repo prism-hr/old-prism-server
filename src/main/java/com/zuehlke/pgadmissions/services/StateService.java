@@ -354,6 +354,10 @@ public class StateService {
     public StateTransition getProgramApprovedOutcome(Resource resource, Comment comment) {
         return getUserDefinedNextState(resource, comment);
     }
+    
+    public StateTransition getProjectApprovedOutcome(Resource resource, Comment comment) {
+        return getUserDefinedNextState(resource, comment);
+    }
 
     public StateTransition getProgramExpiredOutcome(Resource resource, Comment comment) {
         PrismState transitionStateId = BooleanUtils.isTrue(resource.getProgram().getImported()) ? PrismState.PROGRAM_DISABLED_PENDING_IMPORT_REACTIVATION

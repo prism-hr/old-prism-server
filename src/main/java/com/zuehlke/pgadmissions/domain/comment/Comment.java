@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
@@ -843,6 +845,15 @@ public class Comment {
             } else if (!stateGroup.getId().equals(transitionStateGroup.getId())) {
                 return true;
             } else if (action.getCreationScope() != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isUserCreationComment() {
+        for (CommentAssignedUser assignee : assignedUsers) {
+            if (assignee.getRoleTransitionType() == CREATE && assignee.getUser().getPassword() == null) {
                 return true;
             }
         }

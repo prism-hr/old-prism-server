@@ -232,6 +232,12 @@ public class ResourceService {
         default:
             break;
         }
+        
+        if (comment.isUserCreationComment()) {
+            resource.setLastRemindedRequestIndividual(null);
+            resource.setLastRemindedRequestSyndicated(null);
+            resource.setLastNotifiedUpdateSyndicated(null);
+        }
     }
 
     public void executeUpdate(Resource resource, PrismDisplayProperty messageIndex) throws DeduplicationException {

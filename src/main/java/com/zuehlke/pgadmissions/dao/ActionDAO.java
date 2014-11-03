@@ -146,7 +146,7 @@ public class ActionDAO {
     }
 
     public List<ActionRepresentation> getPermittedActions(Integer systemId, Integer institutionId, Integer programId, Integer projectId, Integer applicationId,
-                                                          PrismState stateId, User user) {
+            PrismState stateId, User user) {
         return (List<ActionRepresentation>) sessionFactory.getCurrentSession().createCriteria(StateAction.class, "stateAction") //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("action.id"), "name") //

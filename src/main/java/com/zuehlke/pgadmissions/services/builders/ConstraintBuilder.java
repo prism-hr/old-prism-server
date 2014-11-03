@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
@@ -40,7 +39,7 @@ public class ConstraintBuilder {
 
     public static void appendPropertyInFilterCriterion(Junction conditions, String property, List<?> valueIds, boolean negated) {
         if (!valueIds.isEmpty()) {
-            Disjunction inConditions = Restrictions.disjunction();
+            Junction inConditions = negated ? Restrictions.conjunction() : Restrictions.disjunction();
             for (Object value : valueIds) {
                 applyOrNegateFilterCriterion(inConditions, Restrictions.eq(property, value), negated);
             }

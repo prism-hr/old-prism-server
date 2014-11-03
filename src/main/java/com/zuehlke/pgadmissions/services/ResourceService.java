@@ -6,7 +6,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
@@ -404,18 +403,18 @@ public class ResourceService {
     private void appendUserRoleFilterCriteria(PrismScope scopeId, Junction conditions, ResourceListFilterConstraintDTO constraint, String propertyName,
             List<PrismRole> valueRoles, Boolean negated) {
         boolean doAddCondition = false;
-        Disjunction condition = Restrictions.disjunction();
+        Junction inCondition = negated ? Restrictions.conjunction() : Restrictions.disjunction();
         for (PrismRole valueRole : valueRoles) {
             PrismScope roleScope = valueRole.getScope();
             String actualPropertyName = scopeId == roleScope ? propertyName : roleScope.getLowerCaseName();
             List<Integer> resourceIds = resourceDAO.getByMatchingUsersInRole(scopeId, constraint.getValueString(), valueRole);
             if (!resourceIds.isEmpty()) {
-                ResourceListConstraintBuilder.appendPropertyInFilterCriterion(condition, actualPropertyName, resourceIds, negated);
+                ResourceListConstraintBuilder.appendPropertyInFilterCriterion(inCondition, actualPropertyName, resourceIds, negated);
                 doAddCondition = true;
             }
         }
         if (doAddCondition) {
-            conditions.add(condition);
+            conditions.add(inCondition);
         }
     }
 

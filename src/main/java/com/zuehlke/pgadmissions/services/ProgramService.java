@@ -170,7 +170,7 @@ public class ProgramService {
         ProgramDTO programDTO = (ProgramDTO) commentDTO.fetchResouceDTO();
         LocalDate dueDate = programDTO.getEndDate();
 
-        State transitionState = viewEditAction && !dueDate.isBefore(new LocalDate()) ? stateService.getPreviousState(program) : stateService.getById(commentDTO
+        State transitionState = viewEditAction && !dueDate.isBefore(new LocalDate()) ? programDAO.getPreviousState(program) : stateService.getById(commentDTO
                 .getTransitionState());
         Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
                 .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
@@ -212,7 +212,7 @@ public class ProgramService {
             program.setProgramType(programType);
             program.setTitle(title);
             advert.setTitle(title);
-            
+
             program.setEndDate(programDTO.getEndDate());
         }
 

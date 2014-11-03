@@ -426,8 +426,4 @@ public class StateService {
         return stateDAO.getAvailableNextStates(resource, permittedActions);
     }
 
-    public State getPreviousState(Resource resource) {
-        return stateDAO.getPreviousState(resource);
-    }
-
 }

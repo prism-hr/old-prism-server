@@ -1,8 +1,10 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_COMPLETED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_WITHDRAWN;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DEACTIVATED;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,11 +20,13 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
+import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
 
 @Repository
@@ -144,6 +148,19 @@ public class ProgramDAO {
                 .add(Restrictions.ilike("title", searchTerm, MatchMode.ANYWHERE)) //
                 .addOrder(Order.desc("title")) //
                 .list();
+    }
+    
+    public State getPreviousState(Program program) {
+        return (State) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .setProjection(Projections.property("state")) //
+                .add(Restrictions.eq("program", program)) // /
+                .add(Restrictions.isNotNull("state")) //
+                .add(Restrictions.ne("state", program.getState())) //
+                .add(Restrictions.in("state.id", Arrays.asList(PROGRAM_APPROVED, PROJECT_DEACTIVATED))) //
+                .addOrder(Order.desc("createdTimestamp")) //
+                .addOrder(Order.desc("id")) //
+                .setMaxResults(1) //
+                .uniqueResult();
     }
 
 }

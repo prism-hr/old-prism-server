@@ -130,7 +130,9 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
-                        .add(Restrictions.eq("action.actionCategory", PrismActionCategory.CREATE_RESOURCE))) //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.eq("action.actionCategory", PrismActionCategory.CREATE_RESOURCE)) //
+                                .add(Restrictions.ne("action.creationScope.id", PrismScope.APPLICATION)))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("stateActionAssignment.id")) //
                         .add(Restrictions.conjunction() //
@@ -165,7 +167,9 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.program.id", programId)) //
                         .add(Restrictions.eq("userRole.project.id", projectId)) //
                         .add(Restrictions.eq("userRole.application.id", applicationId)) //
-                        .add(Restrictions.eq("action.actionCategory", PrismActionCategory.CREATE_RESOURCE))) //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.eq("action.actionCategory", PrismActionCategory.CREATE_RESOURCE)) //
+                                .add(Restrictions.ne("action.creationScope.id", PrismScope.APPLICATION)))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("stateActionAssignment.id")) //
                         .add(Restrictions.conjunction() //

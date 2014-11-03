@@ -38,6 +38,15 @@ public class UserDAO {
                 .add(Restrictions.eq("activationCode", activationCode)) //
                 .uniqueResult();
     }
+    
+    public User getAuthenticatedUser(String email, String password) {
+        return (User) sessionFactory.getCurrentSession().createCriteria(User.class) //
+                .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("email", email)) //
+                .add(Restrictions.eq("userAccount.password", EncryptionUtils.getMD5(password))) //
+                .add(Restrictions.eq("enabled", true)) //
+                .uniqueResult();
+    }
 
     public List<User> getUsersForResourceAndRole(Resource resource, PrismRole authority) {
         return sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
@@ -135,15 +144,6 @@ public class UserDAO {
         return criteria.addOrder(Order.asc("user.lastName")) //
                 .addOrder(Order.asc("user.firstName")) //
                 .list();
-    }
-
-    public User getAuthenticatedUser(String email, String password) {
-        return (User) sessionFactory.getCurrentSession().createCriteria(User.class) //
-                .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("email", email)) //
-                .add(Restrictions.eq("userAccount.password", EncryptionUtils.getMD5(password))) //
-                .add(Restrictions.eq("enabled", true)) //
-                .uniqueResult();
     }
 
     public void refreshParentUser(User user) {

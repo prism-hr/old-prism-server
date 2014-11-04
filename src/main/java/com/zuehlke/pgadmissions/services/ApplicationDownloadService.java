@@ -1,19 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
-
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import com.google.common.collect.Maps;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -26,6 +12,18 @@ import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilder;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderHelper;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
+
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
@@ -49,7 +47,7 @@ public class ApplicationDownloadService {
     private ApplicationContext applicationContext;
 
     public void build(ApplicationDownloadDTO applicationDownloadDTO, PropertyLoader propertyLoader,
-            ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper, final OutputStream outputStream) {
+                      ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper, final OutputStream outputStream) {
         try {
             Document pdfDocument = applicationDownloadBuilderHelper.startDocument();
             PdfWriter pdfWriter = applicationDownloadBuilderHelper.startDocumentWriter(outputStream, pdfDocument);
@@ -62,16 +60,15 @@ public class ApplicationDownloadService {
         }
     }
 
-    public byte[] build(Integer... applicationIds) {
+    public void build(OutputStream oStream, Integer... applicationIds) {
         User user = userService.getCurrentUser();
 
         PropertyLoader generalPropertyLoader = new PropertyLoader().localize(systemService.getSystem(), user);
-        ApplicationDownloadBuilderHelper generalApplicationDownloadBuilderHelper = new ApplicationDownloadBuilderHelper().localize(generalPropertyLoader);
+        ApplicationDownloadBuilderHelper generalApplicationDownloadBuilderHelper = applicationContext.getBean(ApplicationDownloadBuilderHelper.class).localize(generalPropertyLoader);
 
         try {
             Document pdfDocument = generalApplicationDownloadBuilderHelper.startDocument();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PdfWriter pdfWriter = PdfWriter.getInstance(pdfDocument, baos);
+            PdfWriter pdfWriter = PdfWriter.getInstance(pdfDocument, oStream);
             pdfDocument.open();
 
             HashMap<Program, PropertyLoader> specificPropertyLoaders = Maps.newHashMap();
@@ -81,15 +78,17 @@ public class ApplicationDownloadService {
                 Application application = applicationService.getById(applicationId);
                 Program program = application.getProgram();
 
-                PropertyLoader specificPropertyLoader = specificPropertyLoaders.get(program);
-                ApplicationDownloadBuilderHelper specificApplicationDownloadBuilderHelper = specificApplicationDownloadBuilderHelpers.get(program);
+                PropertyLoader propertyLoader = specificPropertyLoaders.get(program);
+                if(propertyLoader == null){
+                    propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(application, user);
+                }
+                specificPropertyLoaders.put(program, propertyLoader);
 
-                specificPropertyLoaders
-                        .put(program, specificPropertyLoader == null ? new PropertyLoader().localize(application, user) : specificPropertyLoader);
-                specificApplicationDownloadBuilderHelpers
-                        .put(program,
-                                specificApplicationDownloadBuilderHelper == null ? new ApplicationDownloadBuilderHelper().localize(specificPropertyLoaders
-                                        .get(program)) : specificApplicationDownloadBuilderHelper);
+                ApplicationDownloadBuilderHelper downloadBuilderHelper = specificApplicationDownloadBuilderHelpers.get(program);
+                if (downloadBuilderHelper == null) {
+                    downloadBuilderHelper = applicationContext.getBean(ApplicationDownloadBuilderHelper.class).localize(specificPropertyLoaders.get(program));
+                }
+                specificApplicationDownloadBuilderHelpers.put(program, downloadBuilderHelper);
 
                 try {
                     List<PrismActionEnhancement> actionEnhancements = actionService.getPermittedActionEnhancements(application, user);
@@ -119,12 +118,9 @@ public class ApplicationDownloadService {
 
             pdfDocument.close();
 
-            return baos.toByteArray();
         } catch (Exception e) {
             LOGGER.error("Error downloading applications for " + user.getFullName(), e);
         }
-
-        return null;
     }
 
 }

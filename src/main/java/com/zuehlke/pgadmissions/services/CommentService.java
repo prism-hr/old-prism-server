@@ -117,40 +117,7 @@ public class CommentService {
                 TimelineCommentGroupRepresentation commentGroup = new TimelineCommentGroupRepresentation().withStateGroup(stateGroupId);
 
                 for (Comment comment : stateComments) {
-                    CommentRepresentation representation;
-                    PrismAction actionId = comment.getAction().getId();
-
-                    Integer userId = user.getId();
-                    User author = comment.getUser();
-                    User authorDelegate = comment.getDelegateUser();
-
-                    if (redactions.get(actionId).isEmpty() || userId.equals(author.getId())
-                            || (authorDelegate != null && userId.equals(authorDelegate.getId()))) {
-                        representation = dozerBeanMapper.map(comment, CommentRepresentation.class);
-                    } else {
-
-                        UserRepresentation authorRepresentation = new UserRepresentation().withFirstName(author.getFirstName())
-                                .withLastName(author.getLastName()).withEmail(author.getEmail());
-                        UserRepresentation authorDelegateRepresenation = authorDelegate == null ? null : new UserRepresentation()
-                                .withFirstName(authorDelegate.getFirstName()).withLastName(authorDelegate.getLastName()).withEmail(authorDelegate.getEmail());
-
-                        representation = new CommentRepresentation().withId(comment.getId()).withUser(authorRepresentation)
-                                .withDelegateUser(authorDelegateRepresenation).withAction(actionId).withDeclinedResponse(comment.getDeclinedResponse())
-                                .withCreatedTimestamp(comment.getCreatedTimestamp());
-
-                        if (redactions.containsEntry(actionId, ALL_ASSESSMENT_CONTENT)) {
-                            representation.addInterviewTimeZone(comment.getInterviewTimeZone()).addInterviewDateTime(comment.getInterviewDateTime())
-                                    .addInterviewDuration(comment.getInterviewDuration()).addIntervieweeInstructions(comment.getIntervieweeInstructions())
-                                    .addInterviewLocation(comment.getInterviewLocation());
-
-                            for (CommentAppointmentTimeslot timeslot : comment.getAppointmentTimeslots()) {
-                                representation.addAppointmentTimeslot(new AppointmentTimeslotRepresentation().withId(timeslot.getId()).withDateTime(
-                                        timeslot.getDateTime()));
-                            }
-                        }
-                    }
-
-                    representation.setEmphasizedAction(actionId.isEmphasizedAction());
+                    CommentRepresentation representation = getCommentRepresentation(user, comment, redactions.get(comment.getAction().getId()));
                     commentGroup.addComment(representation);
                 }
 
@@ -413,5 +380,43 @@ public class CommentService {
             comment.addAssignedUser(assignee.getUser(), assignee.getRole(), transitionType == null ? PrismRoleTransitionType.CREATE : transitionType);
         }
     }
+
+    private CommentRepresentation getCommentRepresentation(User user, Comment comment, Set<PrismActionRedactionType> redactions) {
+        Action action = comment.getAction();
+        Integer userId = user.getId();
+        
+        User author = comment.getUser();
+        User authorDelegate = comment.getDelegateUser();
+
+        CommentRepresentation representation;
+        if (redactions.isEmpty() || userId.equals(author.getId()) || (authorDelegate != null && userId.equals(authorDelegate.getId()))) {
+            representation = dozerBeanMapper.map(comment, CommentRepresentation.class);
+        } else {
+
+            UserRepresentation authorRepresentation = new UserRepresentation().withFirstName(author.getFirstName()).withLastName(author.getLastName())
+                    .withEmail(author.getEmail());
+            UserRepresentation authorDelegateRepresenation = authorDelegate == null ? null : new UserRepresentation()
+                    .withFirstName(authorDelegate.getFirstName()).withLastName(authorDelegate.getLastName()).withEmail(authorDelegate.getEmail());
+
+            representation = new CommentRepresentation().withId(comment.getId()).withUser(authorRepresentation).withDelegateUser(authorDelegateRepresenation)
+                    .withAction(comment.getAction().getId()).withDeclinedResponse(comment.getDeclinedResponse())
+                    .withCreatedTimestamp(comment.getCreatedTimestamp());
+
+            if (redactions.contains(ALL_ASSESSMENT_CONTENT)) {
+                representation.addInterviewTimeZone(comment.getInterviewTimeZone()).addInterviewDateTime(comment.getInterviewDateTime())
+                        .addInterviewDuration(comment.getInterviewDuration()).addIntervieweeInstructions(comment.getIntervieweeInstructions())
+                        .addInterviewLocation(comment.getInterviewLocation());
+
+                for (CommentAppointmentTimeslot timeslot : comment.getAppointmentTimeslots()) {
+                    representation
+                            .addAppointmentTimeslot(new AppointmentTimeslotRepresentation().withId(timeslot.getId()).withDateTime(timeslot.getDateTime()));
+                }
+            }
+        }
+        
+        representation.setEmphasizedAction(action.getEmphasizedAction());
+        return representation;
+    }
+
 
 }

@@ -12,7 +12,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -85,10 +84,6 @@ public class ProgramService {
     public Program getProgramByImportedCode(Institution institution, String importedCode) {
         institution = institution == null ? institutionService.getUclInstitution() : institution;
         return programDAO.getProgramByImportedCode(institution, importedCode);
-    }
-
-    public Integer getProgramIdByAdvertId(Integer advertId) {
-        return entityService.getByProperties(Program.class, ImmutableMap.of("advert.id", (Object) advertId)).getId();
     }
 
     public List<Program> getPrograms() {

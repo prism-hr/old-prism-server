@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 
+import com.google.common.io.Resources;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -77,7 +78,7 @@ public class ApplicationDownloadBuilderHelper {
     }
 
     public Image newLogoImage() throws BadElementException, MalformedURLException, IOException {
-        Image image = Image.getInstance(this.getClass().getResource(logoFileLocation));
+        Image image = Image.getInstance(Resources.getResource(logoFileLocation));
         image.setWidthPercentage(logoFileWidthPercentage);
         return image;
     }

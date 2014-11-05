@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
@@ -43,6 +45,7 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.RefereeRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.comment.CommentDTOValidator;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationSectionService;
@@ -209,7 +212,17 @@ public class ApplicationResource {
         binder.setValidator(commentDTOValidator);
     }
 
-    public void enrichApplicationRepresentation(Application application, ApplicationExtendedRepresentation applicationRepresentation) {
+    public void enrichApplicationRepresentation(Application application, ApplicationExtendedRepresentation representation) {
+        HashMap<Integer, RefereeRepresentation> refereeRepresentations = Maps.newHashMap();
+        for (RefereeRepresentation refereeRepresentation : representation.getReferees()) {
+            refereeRepresentations.put(representation.getId(), refereeRepresentation);
+        }
+
+        for (ApplicationReferee referee : application.getReferees()) {
+            Comment reference = referee.getComment();
+            refereeRepresentations.get(referee.getId()).setCommentId(reference == null ? null : reference.getId());
+        }
+
         List<User> interested = userService.getUsersInterestedInApplication(application);
         List<User> potentiallyInterested = userService.getUsersPotentiallyInterestedInApplication(application, interested);
         List<UserRepresentation> interestedRepresentations = Lists.newArrayListWithCapacity(interested.size());
@@ -223,22 +236,22 @@ public class ApplicationResource {
             potentiallyInterestedRepresentations.add(dozerBeanMapper.map(user, UserRepresentation.class));
         }
 
-        applicationRepresentation.setUsersInterestedInApplication(interestedRepresentations);
-        applicationRepresentation.setUsersPotentiallyInterestedInApplication(potentiallyInterestedRepresentations);
+        representation.setUsersInterestedInApplication(interestedRepresentations);
+        representation.setUsersPotentiallyInterestedInApplication(potentiallyInterestedRepresentations);
 
-        applicationRepresentation.setAppointmentTimeslots(commentService.getAppointmentTimeslots(application));
-        applicationRepresentation.setAppointmentPreferences(commentService.getAppointmentPreferences(application));
+        representation.setAppointmentTimeslots(commentService.getAppointmentTimeslots(application));
+        representation.setAppointmentPreferences(commentService.getAppointmentPreferences(application));
 
-        applicationRepresentation.setOfferRecommendation(commentService.getOfferRecommendation(application));
-        applicationRepresentation.setAssignedSupervisors(commentService.getApplicationSupervisors(application));
-        applicationRepresentation.setPossibleThemes(advertService.getLocalizedThemes(application));
+        representation.setOfferRecommendation(commentService.getOfferRecommendation(application));
+        representation.setAssignedSupervisors(commentService.getApplicationSupervisors(application));
+        representation.setPossibleThemes(advertService.getLocalizedThemes(application));
 
         List<ProgramStudyOption> enabledProgramStudyOptions = programService.getEnabledProgramStudyOptions(application.getProgram());
         List<PrismStudyOption> availableStudyOptions = Lists.newArrayListWithCapacity(enabledProgramStudyOptions.size());
         for (ProgramStudyOption studyOption : enabledProgramStudyOptions) {
             availableStudyOptions.add(studyOption.getStudyOption().getPrismStudyOption());
         }
-        applicationRepresentation.setAvailableStudyOptions(availableStudyOptions);
+        representation.setAvailableStudyOptions(availableStudyOptions);
     }
 
 }

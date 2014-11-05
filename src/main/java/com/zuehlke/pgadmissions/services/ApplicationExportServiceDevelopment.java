@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 
@@ -19,7 +20,7 @@ public class ApplicationExportServiceDevelopment extends ApplicationExportServic
     protected final HashMap<Application, ApplicationExportRequest> exportRequests = Maps.newHashMap();
 
     @Override
-    public void submitExportRequest(Integer applicationId) {
+    public void submitExportRequest(Integer applicationId) throws Exception {
         Application application = applicationService.getById(applicationId);
         OutputStream outputStream = null;
         try {
@@ -28,15 +29,13 @@ public class ApplicationExportServiceDevelopment extends ApplicationExportServic
 
             LOGGER.info("Building document export request for application: " + application.getCode());
             outputStream = buildDocumentExportRequest(application, application.getCode(), new ByteArrayOutputStream());
-            ByteArrayOutputStream byteOutputStream = (ByteArrayOutputStream) outputStream; 
+            ByteArrayOutputStream byteOutputStream = (ByteArrayOutputStream) outputStream;
 
             ApplicationExportRequest exportRequest = new ApplicationExportRequest().withDataExportRequest(dataExportRequest). //
                     withDocumentExportRequest(byteOutputStream.toByteArray());
             exportRequests.put(application, exportRequest);
-            
+
             executeExportAction(application, "TEST EXPORT", "TEST EXPORT USER ID", null);
-        } catch (Exception e) {
-            throw new Error(e);
         } finally {
             IOUtils.closeQuietly(outputStream);
         }
@@ -67,5 +66,5 @@ public class ApplicationExportServiceDevelopment extends ApplicationExportServic
         }
 
     }
-    
+
 }

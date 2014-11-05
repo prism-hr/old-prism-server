@@ -27,10 +27,9 @@ public class ApplicationDAO {
     private SessionFactory sessionFactory;
 
     public Application getPreviousSubmittedApplication(Application application) {
-        return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class).add(Restrictions.eq("user", application.getUser())) //
-                .createAlias("program", "program", JoinType.INNER_JOIN) //
-                .createAlias("program.institution", "institution", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("institution.locale", application.getLocale())) //
+        return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .add(Restrictions.eq("user", application.getUser())) //
+                .add(Restrictions.eq("institution", application.getInstitution())) //
                 .add(Restrictions.isNotNull("submittedTimestamp")) //
                 .addOrder(Order.desc("submittedTimestamp")) //
                 .addOrder(Order.desc("id")) //
@@ -39,10 +38,9 @@ public class ApplicationDAO {
     }
 
     public Application getPreviousUnsubmittedApplication(Application application) {
-        return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class).add(Restrictions.eq("user", application.getUser())) //
-                .createAlias("program", "program", JoinType.INNER_JOIN) //
-                .createAlias("program.institution", "institution", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("institution.locale", application.getLocale())) //
+        return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .add(Restrictions.eq("user", application.getUser())) //
+                .add(Restrictions.eq("institution", application.getInstitution())) //
                 .add(Restrictions.isNull("submittedTimestamp")) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //

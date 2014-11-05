@@ -62,8 +62,8 @@ public class ActionService {
     }
 
     public void validateInvokeAction(Resource resource, Action action, Comment comment) {
-        User owner = comment.getUser();
-        User delegateOwner = comment.getDelegateUser();
+        User owner = comment.getAuthor();
+        User delegateOwner = comment.getUser();
 
         User currentUser = userService.getCurrentUser();
         authenticateActionInvocation(currentUser, action, owner, delegateOwner);

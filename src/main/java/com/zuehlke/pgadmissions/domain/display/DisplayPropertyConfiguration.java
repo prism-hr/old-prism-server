@@ -23,11 +23,11 @@ import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceConfiguration;
 
 @Entity
-@Table(name = "DISPLAY_VALUE", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "display_property_id" }),
+@Table(name = "DISPLAY_PROJECT_CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "display_property_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "program_type", "display_property_id" }),
         @UniqueConstraint(columnNames = { "program_id", "display_property_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class DisplayValue extends WorkflowResourceConfiguration {
+public class DisplayPropertyConfiguration extends WorkflowResourceConfiguration {
 
     @Id
     @GeneratedValue
@@ -54,8 +54,8 @@ public class DisplayValue extends WorkflowResourceConfiguration {
     private PrismProgramType programType;
     
     @ManyToOne
-    @JoinColumn(name = "display_property_id", nullable = false)
-    private DisplayProperty displayProperty;
+    @JoinColumn(name = "display_property_definition_id", nullable = false)
+    private DisplayPropertyDefinition displayPropertyDefinition;
 
     @Column(name = "value", nullable = false)
     private String value;
@@ -121,12 +121,12 @@ public class DisplayValue extends WorkflowResourceConfiguration {
         this.programType = programType;
     }
 
-    public final DisplayProperty getDisplayProperty() {
-        return displayProperty;
+    public final DisplayPropertyDefinition getDisplayPropertyDefinition() {
+        return displayPropertyDefinition;
     }
 
-    public final void setDisplayProperty(DisplayProperty displayProperty) {
-        this.displayProperty = displayProperty;
+    public final void setDisplayPropertyDefinition(DisplayPropertyDefinition displayPropertyDefinition) {
+        this.displayPropertyDefinition = displayPropertyDefinition;
     }
 
     public final String getValue() {
@@ -147,39 +147,39 @@ public class DisplayValue extends WorkflowResourceConfiguration {
         this.systemDefault = systemDefault;
     }
     
-    public DisplayValue withResource(Resource resource) {
+    public DisplayPropertyConfiguration withResource(Resource resource) {
         setResource(resource);
         return this;
     }
     
-    public DisplayValue withLocale(PrismLocale locale) {
+    public DisplayPropertyConfiguration withLocale(PrismLocale locale) {
         this.locale = locale;
         return this;
     }
     
-    public DisplayValue withProgramType(PrismProgramType programType) {
+    public DisplayPropertyConfiguration withProgramType(PrismProgramType programType) {
         this.programType = programType;
         return this;
     }
     
-    public DisplayValue withDisplayProperty(DisplayProperty displayProperty) {
-        this.displayProperty = displayProperty;
+    public DisplayPropertyConfiguration withDisplayPropertyDefinition(DisplayPropertyDefinition displayPropertyDefinition) {
+        this.displayPropertyDefinition = displayPropertyDefinition;
         return this;
     }
     
-    public DisplayValue withValue(String value) {
+    public DisplayPropertyConfiguration withValue(String value) {
         this.value = value;
         return this;
     }
     
-    public DisplayValue withSystemDefault(Boolean systemDefault) {
+    public DisplayPropertyConfiguration withSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
         return this;
     }
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("displayProperty", displayProperty);
+        return super.getResourceSignature().addProperty("displayProperty", displayPropertyDefinition);
     }
 
 }

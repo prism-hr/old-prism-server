@@ -1,17 +1,15 @@
 package com.zuehlke.pgadmissions.utils;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.exception.ExceptionUtils;
-
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.user.User;
+import org.apache.commons.lang.exception.ExceptionUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Map;
 
 public final class DiagnosticInfoPrintUtils {
 
@@ -34,8 +32,9 @@ public final class DiagnosticInfoPrintUtils {
         });
         String params = Joiner.on("\n").withKeyValueSeparator(" -> ").join(parameterMap);
 
-        return "Request handling error for: " + request.getMethod() + " " + request.getRequestURI() + ", user: " + currentUser == null ? "<none>" : currentUser
-                + ", params:\n" + params;
+        String userString = currentUser == null ? "<none>" : currentUser.toString();
+        return "Request handling error for: " + request.getMethod() + " " + request.getRequestURI() + ", user: " +
+                userString + ", params:\n" + params;
     }
 
 }

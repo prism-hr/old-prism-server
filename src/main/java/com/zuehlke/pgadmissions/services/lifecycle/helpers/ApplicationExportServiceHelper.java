@@ -14,12 +14,12 @@ public class ApplicationExportServiceHelper extends AbstractServiceHelper {
 
     @Autowired
     private ApplicationService applicationService;
-    
+
     @Autowired
     private ApplicationExportService applicationExportService;
-    
+
     @Override
-    public void execute() throws DeduplicationException {
+    public void execute() throws Exception {
         List<Integer> applicationIds = applicationService.getApplicationsForExport();
         for (Integer applicationId : applicationIds) {
             applicationExportService.submitExportRequest(applicationId);

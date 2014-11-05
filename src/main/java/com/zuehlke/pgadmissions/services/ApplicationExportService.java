@@ -107,7 +107,7 @@ public class ApplicationExportService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public void submitExportRequest(Integer applicationId) throws DeduplicationException {
+    public void submitExportRequest(Integer applicationId) throws DeduplicationException, IOException, Exception {
         Application application = applicationService.getById(applicationId);
         String applicationCode = application.getCode();
 
@@ -147,7 +147,7 @@ public class ApplicationExportService {
 
     protected SubmitAdmissionsApplicationRequest buildDataExportRequest(Application application) throws ApplicationExportException {
         propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(application, application.getSystem().getUser());
-        
+
         String creatorExportId = userService.getUserInstitutionId(application.getUser(), application.getInstitution(), PrismUserIdentity.STUDY_APPLICANT);
         String creatorIpAddress = applicationService.getApplicationCreatorIpAddress(application);
         Comment offerRecommendationComment = commentService.getLatestComment(application, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);

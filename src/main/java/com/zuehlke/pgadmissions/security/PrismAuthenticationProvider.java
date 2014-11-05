@@ -65,7 +65,7 @@ public class PrismAuthenticationProvider implements AuthenticationProvider {
 
     private boolean checkTemporaryPassword(User user, String providedPassword) {
         DateTime temporaryPasswordExpiryTimestamp = user.getUserAccount().getTemporaryPasswordExpiryTimestamp();
-        return temporaryPasswordExpiryTimestamp != null && new DateTime().isAfter(temporaryPasswordExpiryTimestamp)
+        return temporaryPasswordExpiryTimestamp != null && new DateTime().isBefore(temporaryPasswordExpiryTimestamp)
                 && StringUtils.equals(user.getUserAccount().getTemporaryPassword(), EncryptionUtils.getMD5(providedPassword));
     }
 

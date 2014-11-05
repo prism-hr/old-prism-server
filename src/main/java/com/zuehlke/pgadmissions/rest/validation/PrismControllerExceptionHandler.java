@@ -1,8 +1,10 @@
 package com.zuehlke.pgadmissions.rest.validation;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -40,6 +42,17 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
             body.put("message", ex.getMessage());
         }
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+    }
+
+    @ExceptionHandler(value = PrismBadRequestException.class)
+    public final ResponseEntity<Object> handlePrismValidationException(PrismBadRequestException ex, WebRequest request) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        Map<String, String> body = null;
+        if(ex.getReason() != null){
+            body = Collections.singletonMap("reason", ex.getReason());
+        }
+        return handleExceptionInternal(ex, body, headers, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(value = PrismValidationException.class)

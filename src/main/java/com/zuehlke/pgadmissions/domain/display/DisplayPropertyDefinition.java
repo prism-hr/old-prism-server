@@ -18,9 +18,9 @@ import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 
 @Entity
-@Table(name = "DISPLAY_PROPERTY")
+@Table(name = "DISPLAY_PROPERTY_DEFINITION")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class DisplayProperty extends WorkflowDefinition {
+public class DisplayPropertyDefinition extends WorkflowDefinition {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -62,17 +62,17 @@ public class DisplayProperty extends WorkflowDefinition {
         this.scope = scope;
     }
 
-    public DisplayProperty withId(PrismDisplayProperty id) {
+    public DisplayPropertyDefinition withId(PrismDisplayProperty id) {
         this.id = id;
         return this;
     }
 
-    public DisplayProperty withDisplayCategory(PrismDisplayCategory displayCategory) {
+    public DisplayPropertyDefinition withDisplayCategory(PrismDisplayCategory displayCategory) {
         this.displayCategory = displayCategory;
         return this;
     }
 
-    public DisplayProperty withScope(Scope scope) {
+    public DisplayPropertyDefinition withScope(Scope scope) {
         this.scope = scope;
         return this;
     }

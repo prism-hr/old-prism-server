@@ -63,9 +63,6 @@ public class ResourceService {
     private ActionService actionService;
 
     @Autowired
-    private AdvertService advertService;
-
-    @Autowired
     private ApplicationService applicationService;
 
     @Autowired

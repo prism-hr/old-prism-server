@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.URL;
 import org.joda.time.LocalDate;
 
 public class ProjectDTO {
@@ -22,6 +23,10 @@ public class ProjectDTO {
     @NotEmpty
     @Size(max = 1000)
     private String summary;
+
+    @URL
+    @Size(max = 2048)
+    private String applyHomepage;
 
     @Min(1)
     private Integer studyDurationMinimum;
@@ -59,6 +64,14 @@ public class ProjectDTO {
 
     public void setSummary(String summary) {
         this.summary = summary;
+    }
+
+    public String getApplyHomepage() {
+        return applyHomepage;
+    }
+
+    public void setApplyHomepage(String applyHomepage) {
+        this.applyHomepage = applyHomepage;
     }
 
     public Integer getStudyDurationMinimum() {

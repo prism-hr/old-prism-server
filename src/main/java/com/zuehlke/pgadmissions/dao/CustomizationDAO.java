@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.display.DisplayValue;
+import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResource;
@@ -48,9 +48,9 @@ public class CustomizationDAO {
                 .uniqueResult();
     }
 
-    public List<DisplayValue> getDisplayProperties(Resource resource, PrismLocale locale, PrismProgramType programType, PrismDisplayCategory category,
+    public List<DisplayPropertyConfiguration> getDisplayProperties(Resource resource, PrismLocale locale, PrismProgramType programType, PrismDisplayCategory category,
             PrismScope propertyScope) {
-        return (List<DisplayValue>) sessionFactory.getCurrentSession().createCriteria(DisplayValue.class) //
+        return (List<DisplayPropertyConfiguration>) sessionFactory.getCurrentSession().createCriteria(DisplayPropertyConfiguration.class) //
                 .createAlias("displayProperty", "displayProperty", JoinType.INNER_JOIN) //
                 .add(getFilterCondition(resource, locale, programType, propertyScope)) //
                 .add(Restrictions.eq("displayProperty.displayCategory", category)) //

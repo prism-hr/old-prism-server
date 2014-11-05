@@ -21,8 +21,8 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.display.DisplayProperty;
-import com.zuehlke.pgadmissions.domain.display.DisplayValue;
+import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
+import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
@@ -43,15 +43,15 @@ public class CustomizationService {
     @Autowired
     private SystemService systemService;
 
-    public DisplayProperty getDisplayPropertyById(PrismDisplayProperty id) {
-        return entityService.getById(DisplayProperty.class, id);
+    public DisplayPropertyDefinition getDisplayPropertyDefinitionById(PrismDisplayProperty id) {
+        return entityService.getById(DisplayPropertyDefinition.class, id);
     }
 
     public void createOrUpdateDisplayProperty(Resource resource, PrismLocale locale, PrismProgramType programType, PrismDisplayCategory displayCategory,
-            DisplayProperty displayProperty, String value) throws DeduplicationException, CustomizationException {
+            DisplayPropertyDefinition displayProperty, String value) throws DeduplicationException, CustomizationException {
         validateConfiguration(resource, displayProperty, locale, programType);
-        DisplayValue transientValue = new DisplayValue().withResource(resource).withProgramType(programType).withLocale(locale)
-                .withDisplayProperty(displayProperty).withValue(value).withSystemDefault(isSystemDefault(displayProperty, locale, programType));
+        DisplayPropertyConfiguration transientValue = new DisplayPropertyConfiguration().withResource(resource).withProgramType(programType).withLocale(locale)
+                .withDisplayPropertyDefinition(displayProperty).withValue(value).withSystemDefault(isSystemDefault(displayProperty, locale, programType));
         entityService.createOrUpdate(transientValue);
     }
 
@@ -97,10 +97,10 @@ public class CustomizationService {
 
     public HashMap<PrismDisplayProperty, String> getDisplayProperties(Resource resource, PrismLocale locale, PrismProgramType programType,
             PrismDisplayCategory category, PrismScope propertyScope) {
-        List<DisplayValue> displayValues = customizationDAO.getDisplayProperties(resource, locale, programType, category, propertyScope);
+        List<DisplayPropertyConfiguration> displayValues = customizationDAO.getDisplayProperties(resource, locale, programType, category, propertyScope);
         HashMap<PrismDisplayProperty, String> displayProperties = Maps.newHashMap();
-        for (DisplayValue displayValue : displayValues) {
-            PrismDisplayProperty displayPropertyId = (PrismDisplayProperty) displayValue.getDisplayProperty().getId();
+        for (DisplayPropertyConfiguration displayValue : displayValues) {
+            PrismDisplayProperty displayPropertyId = (PrismDisplayProperty) displayValue.getDisplayPropertyDefinition().getId();
             if (!displayProperties.containsKey(displayPropertyId)) {
                 displayProperties.put(displayPropertyId, displayValue.getValue());
             }
@@ -139,8 +139,8 @@ public class CustomizationService {
         }
     }
 
-    public List<DisplayValue> getAllLocalizedProperties() {
-        return entityService.list(DisplayValue.class);
+    public List<DisplayPropertyConfiguration> getAllLocalizedProperties() {
+        return entityService.list(DisplayPropertyConfiguration.class);
     }
 
 }

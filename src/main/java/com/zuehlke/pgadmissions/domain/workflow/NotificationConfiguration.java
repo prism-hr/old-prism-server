@@ -52,7 +52,7 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
     
     @ManyToOne
     @JoinColumn(name = "notification_template_id", nullable = false)
-    private NotificationTemplate notificationTemplate;
+    private NotificationTemplateDefinition notificationTemplate;
 
     @Column(name = "subject", nullable = false)
     private String subject;
@@ -127,11 +127,11 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
         this.program = program;
     }
 
-    public NotificationTemplate getNotificationTemplate() {
+    public NotificationTemplateDefinition getNotificationTemplate() {
         return notificationTemplate;
     }
 
-    public void setNotificationTemplate(NotificationTemplate notificationTemplate) {
+    public void setNotificationTemplate(NotificationTemplateDefinition notificationTemplate) {
         this.notificationTemplate = notificationTemplate;
     }
 
@@ -184,7 +184,7 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
         return this;
     }
 
-    public NotificationConfiguration withNotificationTemplate(NotificationTemplate notificationTemplate) {
+    public NotificationConfiguration withNotificationTemplate(NotificationTemplateDefinition notificationTemplate) {
         this.notificationTemplate = notificationTemplate;
         return this;
     }

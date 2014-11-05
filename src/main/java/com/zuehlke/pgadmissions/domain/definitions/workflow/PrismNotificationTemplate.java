@@ -148,14 +148,18 @@ public enum PrismNotificationTemplate {
         return name().toLowerCase() + "_content.ftl";
     }
 
-    public PrismNotificationTemplate getReminderTemplate() {
-        PrismReminderDefinition definition = reminderDefinitions.get(this);
-        return definition != null ? definition.getTemplate() : null;
+    public static final HashMap<PrismNotificationTemplate, PrismReminderDefinition> getReminderdefinitions() {
+        return reminderDefinitions;
     }
 
-    public Integer getReminderInterval() {
-        PrismReminderDefinition definition = reminderDefinitions.get(this);
-        return definition != null ? reminderDefinitions.get(this).getInterval() : null;
+    public final PrismNotificationTemplate getReminderTemplate() {
+        PrismReminderDefinition reminder = reminderDefinitions.get(this);
+        return reminder == null ? null : reminder.getTemplate();
+    }
+    
+    public final Integer getReminderInterval() {
+        PrismReminderDefinition reminder = reminderDefinitions.get(this);
+        return reminder == null ? null : reminder.getInterval();
     }
 
     private static void buildReminderDefinition(PrismNotificationTemplate template, PrismNotificationTemplate reminder, int interval) {

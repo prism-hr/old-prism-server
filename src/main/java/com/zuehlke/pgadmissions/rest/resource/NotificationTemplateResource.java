@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplateDefinition;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.mail.MailSender;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
@@ -57,7 +57,7 @@ public class NotificationTemplateResource {
             @PathVariable Integer resourceId, @PathVariable String notificationTemplateId, @RequestParam(required = false) PrismLocale locale,
             @RequestParam(required = false) PrismProgramType programType) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        NotificationTemplate template = notificationService.getById(PrismNotificationTemplate.valueOf(notificationTemplateId));
+        NotificationTemplateDefinition template = notificationService.getById(PrismNotificationTemplate.valueOf(notificationTemplateId));
         return dozerBeanMapper
                 .map(notificationService.getConfiguration(resource, locale, programType, template), NotificationConfigurationRepresentation.class);
     }
@@ -67,7 +67,7 @@ public class NotificationTemplateResource {
             @PathVariable String notificationTemplateId, @RequestParam(required = false) PrismLocale locale,
             @RequestParam(required = false) PrismProgramType programType, @Valid @RequestBody NotificationConfigurationDTO notificationConfigurationDTO,
             BindingResult validationErrors) throws Exception {
-        NotificationTemplate template = notificationService.getById(PrismNotificationTemplate.valueOf(notificationTemplateId));
+        NotificationTemplateDefinition template = notificationService.getById(PrismNotificationTemplate.valueOf(notificationTemplateId));
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
 
         validateTemplate(resource, template, notificationConfigurationDTO, validationErrors);
@@ -83,20 +83,20 @@ public class NotificationTemplateResource {
             @PathVariable String notificationTemplateId, @RequestParam(required = false) PrismLocale locale,
             @RequestParam(required = false) PrismProgramType programType) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        NotificationTemplate template = notificationService.getById(PrismNotificationTemplate.valueOf(notificationTemplateId));
+        NotificationTemplateDefinition template = notificationService.getById(PrismNotificationTemplate.valueOf(notificationTemplateId));
         notificationService.restoreDefaultConfiguration(resource, locale, programType, template);
     }
 
     @RequestMapping(value = "/{resourceId}/notificationTemplates/{notificationTemplateId}/descendants", method = RequestMethod.DELETE)
     public void restoreGlobalConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-            @PathVariable String notificationTemplateId,@RequestParam(required = false) PrismLocale locale,
+            @PathVariable String notificationTemplateId, @RequestParam(required = false) PrismLocale locale,
             @RequestParam(required = false) PrismProgramType programType) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        NotificationTemplate template = notificationService.getById(PrismNotificationTemplate.valueOf(notificationTemplateId));
+        NotificationTemplateDefinition template = notificationService.getById(PrismNotificationTemplate.valueOf(notificationTemplateId));
         notificationService.restoreGlobalConfiguration(resource, locale, programType, template);
     }
 
-    private Map<String, String> validateTemplate(Resource resource, NotificationTemplate notificationTemplate,
+    private Map<String, String> validateTemplate(Resource resource, NotificationTemplateDefinition notificationTemplate,
             NotificationConfigurationDTO notificationConfigurationDTO, BindingResult errors) {
         if (notificationTemplate.getId().getReminderTemplate() == null && notificationConfigurationDTO.getReminderInterval() != null) {
             errors.rejectValue("reminderInterval", "forbidden");

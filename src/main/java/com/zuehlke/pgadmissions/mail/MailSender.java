@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTem
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplateDefinition;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
 import com.zuehlke.pgadmissions.services.SystemService;
@@ -145,15 +145,15 @@ public class MailSender {
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
     }
 
-    public Map<String, Object> createNotificationModelForValidation(NotificationTemplate notificationTemplate) {
+    public Map<String, Object> createNotificationModelForValidation(NotificationTemplateDefinition notificationTemplate) {
         return createNotificationModel(notificationTemplate, new NotificationTemplateModelDTO(), true);
     }
     
-    public Map<String, Object> createNotificationModel(NotificationTemplate notificationTemplate, NotificationTemplateModelDTO modelDTO) {
+    public Map<String, Object> createNotificationModel(NotificationTemplateDefinition notificationTemplate, NotificationTemplateModelDTO modelDTO) {
         return createNotificationModel(notificationTemplate, modelDTO, false);
     }
 
-    private Map<String, Object> createNotificationModel(NotificationTemplate notificationTemplate, NotificationTemplateModelDTO modelDTO, boolean validationMode) {
+    private Map<String, Object> createNotificationModel(NotificationTemplateDefinition notificationTemplate, NotificationTemplateModelDTO modelDTO, boolean validationMode) {
         Map<String, Object> model = Maps.newHashMap();
         List<PrismNotificationTemplatePropertyCategory> categories = notificationTemplate.getId().getPropertyCategories();
         NotificationTemplatePropertyLoader loader = applicationContext.getBean(NotificationTemplatePropertyLoader.class).localize(modelDTO, propertyLoader);

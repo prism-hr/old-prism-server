@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
-import com.zuehlke.pgadmissions.domain.workflow.StateDuration;
+import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
@@ -36,7 +36,7 @@ public class StateDAO {
     private SessionFactory sessionFactory;
 
     public List<State> getConfigurableStates() {
-        return (List<State>) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
+        return (List<State>) sessionFactory.getCurrentSession().createCriteria(StateDurationConfiguration.class) //
                 .setProjection(Projections.property("state")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
@@ -61,8 +61,8 @@ public class StateDAO {
                 .uniqueResult();
     }
 
-    public StateDuration getStateDuration(Resource resource, State state) {
-        return (StateDuration) sessionFactory.getCurrentSession().createCriteria(StateDuration.class) //
+    public StateDurationConfiguration getStateDuration(Resource resource, State state) {
+        return (StateDurationConfiguration) sessionFactory.getCurrentSession().createCriteria(StateDurationConfiguration.class) //
                 .add(Restrictions.eq("state", state)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("system", resource.getSystem())) //

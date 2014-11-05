@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplateDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
@@ -31,19 +31,19 @@ public class NotificationDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public List<NotificationTemplate> getWorkflowRequestTemplates() {
-        return (List<NotificationTemplate>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+    public List<NotificationTemplateDefinition> getWorkflowRequestTemplates() {
+        return (List<NotificationTemplateDefinition>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("notificationTemplate")) //
                 .list();
     }
 
-    public List<NotificationTemplate> getWorkflowUpdateTemplates() {
-        return (List<NotificationTemplate>) sessionFactory.getCurrentSession().createCriteria(StateActionNotification.class) //
+    public List<NotificationTemplateDefinition> getWorkflowUpdateTemplates() {
+        return (List<NotificationTemplateDefinition>) sessionFactory.getCurrentSession().createCriteria(StateActionNotification.class) //
                 .setProjection(Projections.groupProperty("notificationTemplate")) //
                 .list();
     }
 
-    public void deleteObsoleteNotificationConfigurations(List<NotificationTemplate> activeTemplates) {
+    public void deleteObsoleteNotificationConfigurations(List<NotificationTemplateDefinition> activeTemplates) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete NotificationConfiguration " //
                         + "where notificationTemplate not in (:configurableTemplates)") //
@@ -207,7 +207,7 @@ public class NotificationDAO {
     }
 
     public List<PrismNotificationTemplate> geEditableTemplates(PrismScope scope) {
-        return (List<PrismNotificationTemplate>) sessionFactory.getCurrentSession().createCriteria(NotificationTemplate.class) //
+        return (List<PrismNotificationTemplate>) sessionFactory.getCurrentSession().createCriteria(NotificationTemplateDefinition.class) //
                 .setProjection(Projections.property("id")) //
                 .createAlias("scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.ge("scope.precedence", scope.getPrecedence())) //

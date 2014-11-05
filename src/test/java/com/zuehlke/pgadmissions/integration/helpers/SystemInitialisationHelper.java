@@ -35,15 +35,15 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
-import com.zuehlke.pgadmissions.domain.display.DisplayProperty;
-import com.zuehlke.pgadmissions.domain.display.DisplayValue;
+import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplateDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
@@ -51,7 +51,7 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
-import com.zuehlke.pgadmissions.domain.workflow.StateDuration;
+import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
@@ -224,11 +224,11 @@ public class SystemInitialisationHelper {
 
     public void verifyDisplayPropertyCreation() {
         System system = systemService.getSystem();
-        for (DisplayValue value : localizationService.getAllLocalizedProperties()) {
+        for (DisplayPropertyConfiguration value : localizationService.getAllLocalizedProperties()) {
             assertEquals(value.getResource(), system);
             assertEquals(value.getLocale(), system.getLocale());
 
-            DisplayProperty displayProperty = value.getDisplayProperty();
+            DisplayPropertyDefinition displayProperty = value.getDisplayPropertyDefinition();
             PrismDisplayProperty prismDisplayProperty = (PrismDisplayProperty) displayProperty.getId();
 
             assertEquals(value.getProgramType(), displayProperty.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null);
@@ -240,7 +240,7 @@ public class SystemInitialisationHelper {
 
     public void verifyNotificationTemplateCreation() {
         System system = systemService.getSystem();
-        for (NotificationTemplate template : notificationService.getTemplates()) {
+        for (NotificationTemplateDefinition template : notificationService.getTemplates()) {
             PrismNotificationTemplate prismNotificationTemplate = template.getId();
 
             assertEquals(prismNotificationTemplate.getNotificationType(), template.getNotificationType());
@@ -266,7 +266,7 @@ public class SystemInitialisationHelper {
     public void verifyStateDurationCreation() {
         System system = systemService.getSystem();
         for (State state : stateService.getConfigurableStates()) {
-            StateDuration stateDuration = stateService.getStateDuration(system, state);
+            StateDurationConfiguration stateDuration = stateService.getStateDuration(system, state);
 
             assertEquals(stateDuration.getLocale(), getSystemLocale());
             assertEquals(stateDuration.getProgramType(), state.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null);
@@ -291,7 +291,7 @@ public class SystemInitialisationHelper {
             assertEquals(prismStateAction.isDefaultAction(), stateAction.isDefaultAction());
             assertEquals(prismStateAction.getActionEnhancement(), stateAction.getActionEnhancement());
 
-            NotificationTemplate template = stateAction.getNotificationTemplate();
+            NotificationTemplateDefinition template = stateAction.getNotificationTemplate();
             PrismNotificationTemplate prismTemplate = prismStateAction.getNotificationTemplate();
             if (prismTemplate == null) {
                 assertNull(template);

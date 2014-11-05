@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -37,7 +38,8 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
-import com.zuehlke.pgadmissions.domain.workflow.StateDuration;
+import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
@@ -89,6 +91,10 @@ public class StateService {
         return entityService.getById(StateGroup.class, stateGroupId);
     }
 
+    public StateDurationDefinition getStateDurationDefinitionById(PrismStateDuration stateDurationDefinitionId) {
+        return entityService.getById(StateDurationDefinition.class, stateDurationDefinitionId);
+    }
+
     public StateTransitionEvaluation getStateTransitionEvaluationById(PrismStateTransitionEvaluation stateTransitionEvaluationId) {
         return entityService.getById(StateTransitionEvaluation.class, stateTransitionEvaluationId);
     }
@@ -109,19 +115,20 @@ public class StateService {
         return entityService.list(StateTransitionEvaluation.class);
     }
 
-    public void createOrUpdateStateDuration(Resource resource, PrismLocale locale, PrismProgramType programType, State state, Integer duration)
-            throws DeduplicationException, CustomizationException {
-        customizationService.validateConfiguration(resource, state, locale, programType);
-        StateDuration transientStateDuration = new StateDuration().withResource(resource).withLocale(locale).withProgramType(programType).withState(state)
-                .withDuration(duration).withSystemDefault(customizationService.isSystemDefault(state, locale, programType));
+    public void createOrUpdateStateDurationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
+            StateDurationDefinition stateDurationDefinition, Integer duration) throws DeduplicationException, CustomizationException {
+        customizationService.validateConfiguration(resource, stateDurationDefinition, locale, programType);
+        StateDurationConfiguration transientStateDuration = new StateDurationConfiguration().withResource(resource).withLocale(locale)
+                .withProgramType(programType).withStateDurationDefinition(stateDurationDefinition).withDuration(duration)
+                .withSystemDefault(customizationService.isSystemDefault(stateDurationDefinition, locale, programType));
         entityService.createOrUpdate(transientStateDuration);
     }
 
-    public StateDuration getStateDuration(Resource resource) {
+    public StateDurationConfiguration getStateDuration(Resource resource) {
         return stateDAO.getStateDuration(resource, resource.getState());
     }
 
-    public StateDuration getStateDuration(Resource resource, State state) {
+    public StateDurationConfiguration getStateDuration(Resource resource, State state) {
         return stateDAO.getStateDuration(resource, state);
     }
 
@@ -354,7 +361,7 @@ public class StateService {
     public StateTransition getProgramApprovedOutcome(Resource resource, Comment comment) {
         return getUserDefinedNextState(resource, comment);
     }
-    
+
     public StateTransition getProjectApprovedOutcome(Resource resource, Comment comment) {
         return getUserDefinedNextState(resource, comment);
     }

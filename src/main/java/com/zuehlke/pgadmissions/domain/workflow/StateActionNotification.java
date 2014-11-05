@@ -32,7 +32,7 @@ public class StateActionNotification implements IUniqueEntity {
 
     @ManyToOne
     @JoinColumn(name = "notification_template_id", nullable = false)
-    private NotificationTemplate notificationTemplate;
+    private NotificationTemplateDefinition notificationTemplate;
 
     public Integer getId() {
         return id;
@@ -58,11 +58,11 @@ public class StateActionNotification implements IUniqueEntity {
         this.role = role;
     }
 
-    public NotificationTemplate getNotificationTemplate() {
+    public NotificationTemplateDefinition getNotificationTemplate() {
         return notificationTemplate;
     }
 
-    public void setNotificationTemplate(NotificationTemplate notificationTemplate) {
+    public void setNotificationTemplate(NotificationTemplateDefinition notificationTemplate) {
         this.notificationTemplate = notificationTemplate;
     }
 
@@ -76,7 +76,7 @@ public class StateActionNotification implements IUniqueEntity {
         return this;
     }
 
-    public StateActionNotification withNotificationTemplate(NotificationTemplate notificationTemplate) {
+    public StateActionNotification withNotificationTemplate(NotificationTemplateDefinition notificationTemplate) {
         this.notificationTemplate = notificationTemplate;
         return this;
     }

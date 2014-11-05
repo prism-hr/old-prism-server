@@ -754,7 +754,7 @@ public class Comment {
         return action.getScope().getId() == PrismScope.PROJECT
                 && Arrays.asList(PrismState.PROJECT_APPROVED, PrismState.PROJECT_DEACTIVATED).contains(transitionState.getId());
     }
-    
+
     public boolean isProjectCreateApplicationComment() {
         return action.getId() == PrismAction.PROGRAM_CREATE_APPLICATION;
     }
@@ -811,6 +811,10 @@ public class Comment {
     public boolean isApplicationAutomatedRejectionComment() {
         return action.getId() == PrismAction.APPLICATION_TERMINATE && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED
                 && rejectionReason == null;
+    }
+
+    public boolean isApplicationInterviewPendingInterviewComment() {
+        return transitionState.getId() == PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
     }
 
     public boolean isInterviewScheduledExpeditedComment() {

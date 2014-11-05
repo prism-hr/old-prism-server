@@ -50,7 +50,7 @@ public class StateAction implements IUniqueEntity {
 
     @ManyToOne
     @JoinColumn(name = "notification_template_id")
-    private NotificationTemplate notificationTemplate;
+    private NotificationTemplateDefinition notificationTemplate;
 
     @OneToMany(mappedBy = "stateAction")
     private Set<StateActionAssignment> stateActionAssignments = Sets.newHashSet();
@@ -101,11 +101,11 @@ public class StateAction implements IUniqueEntity {
         this.defaultAction = defaultAction;
     }
 
-    public NotificationTemplate getNotificationTemplate() {
+    public NotificationTemplateDefinition getNotificationTemplate() {
         return notificationTemplate;
     }
 
-    public void setNotificationTemplate(NotificationTemplate notificationTemplate) {
+    public void setNotificationTemplate(NotificationTemplateDefinition notificationTemplate) {
         this.notificationTemplate = notificationTemplate;
     }
 
@@ -154,7 +154,7 @@ public class StateAction implements IUniqueEntity {
         return this;
     }
 
-    public StateAction withNotificationTemplate(NotificationTemplate notificationTemplate) {
+    public StateAction withNotificationTemplate(NotificationTemplateDefinition notificationTemplate) {
         this.notificationTemplate = notificationTemplate;
         return this;
     }

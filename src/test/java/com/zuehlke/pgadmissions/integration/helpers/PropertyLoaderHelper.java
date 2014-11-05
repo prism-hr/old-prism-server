@@ -11,7 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.display.DisplayProperty;
+import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
@@ -45,7 +45,7 @@ public class PropertyLoaderHelper {
         assertEquals(propertyLoader.load(SYSTEM_YES), SYSTEM_YES.getDefaultValue());
 
         User herman = userService.getOrCreateUser("herman", "ze german", "hermanzegerman@germany.com", DE_DE);
-        DisplayProperty displayProperty = customizationService.getDisplayPropertyById(SYSTEM_YES);
+        DisplayPropertyDefinition displayProperty = customizationService.getDisplayPropertyDefinitionById(SYSTEM_YES);
         customizationService.createOrUpdateDisplayProperty(systemService.getSystem(), DE_DE, null, SYSTEM_GLOBAL, displayProperty, "Ja");
         PropertyLoader propertyLoaderDe = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem(), herman);
         

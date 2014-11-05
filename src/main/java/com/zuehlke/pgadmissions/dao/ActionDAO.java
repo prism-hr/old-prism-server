@@ -36,7 +36,8 @@ public class ActionDAO {
     public Action getDelegateAction(Resource resource, Action action) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(StateActionAssignment.class) //
                 .setProjection(Projections.property("stateAction.action")) //
-                .createAlias("delegatedAction", "action", JoinType.INNER_JOIN).createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("delegatedAction", "action", JoinType.INNER_JOIN) //
+                .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "delegateAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state", resource.getState())) //
                 .add(Restrictions.eq("delegatedAction", action)) //

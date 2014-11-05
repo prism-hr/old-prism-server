@@ -22,11 +22,12 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 
 @Entity
-@Table(name = "WORKFLOW_PROPERTY_CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "workflow_property_definition_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "program_type", "workflow_property_definition_id" }),
-        @UniqueConstraint(columnNames = { "program_id", "workflow_property_definition_id" }) })
+@Table(name = "ACTION_TRIGGER_STATE", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "action_id", "state_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "program_type", "action_id", "state_id" }),
+        @UniqueConstraint(columnNames = { "program_id", "action_id", "state_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class WorkflowPropertyConfiguration extends WorkflowResourceConfiguration {
+public class ActionTriggerState extends WorkflowResourceConfiguration {
 
     @Id
     @GeneratedValue
@@ -43,27 +44,22 @@ public class WorkflowPropertyConfiguration extends WorkflowResourceConfiguration
     @ManyToOne
     @JoinColumn(name = "program_id")
     private Program program;
-    
+
     @Column(name = "locale")
     @Enumerated(EnumType.STRING)
     private PrismLocale locale;
-    
+
     @Column(name = "program_type")
     @Enumerated(EnumType.STRING)
     private PrismProgramType programType;
-    
-    @ManyToOne
-    @JoinColumn(name = "workflow_property_definition_id", nullable = false)
-    private WorkflowPropertyDefinition workflowPropertyDefinition;
 
-    @Column(name = "enabled", nullable = false)
-    private Boolean enabled;
-    
-    @Column(name = "minimum")
-    private Integer minimum;
-    
-    @Column(name = "maximum")
-    private Integer maximum;
+    @ManyToOne
+    @JoinColumn(name = "action_id", nullable = false)
+    private Action action;
+
+    @ManyToOne
+    @JoinColumn(name = "state_id", nullable = false)
+    private State state;
 
     @Column(name = "system_default", nullable = false)
     private Boolean systemDefault;
@@ -76,141 +72,105 @@ public class WorkflowPropertyConfiguration extends WorkflowResourceConfiguration
         this.id = id;
     }
 
-    @Override
     public final System getSystem() {
         return system;
     }
 
-    @Override
     public final void setSystem(System system) {
         this.system = system;
     }
 
-    @Override
     public final Institution getInstitution() {
         return institution;
     }
 
-    @Override
     public final void setInstitution(Institution institution) {
         this.institution = institution;
     }
 
-    @Override
     public final Program getProgram() {
         return program;
     }
 
-    @Override
     public final void setProgram(Program program) {
         this.program = program;
     }
 
-    @Override
     public final PrismLocale getLocale() {
         return locale;
     }
 
-    @Override
     public final void setLocale(PrismLocale locale) {
         this.locale = locale;
     }
-    
-    @Override
+
     public final PrismProgramType getProgramType() {
         return programType;
     }
 
-    @Override
     public final void setProgramType(PrismProgramType programType) {
         this.programType = programType;
     }
 
-    public final WorkflowPropertyDefinition getWorkflowPropertyDefinition() {
-        return workflowPropertyDefinition;
+    public final Action getAction() {
+        return action;
     }
 
-    public final void setWorkflowPropertyDefinition(WorkflowPropertyDefinition workflowPropertyDefinition) {
-        this.workflowPropertyDefinition = workflowPropertyDefinition;
+    public final void setAction(Action action) {
+        this.action = action;
     }
 
-    public final Boolean getEnabled() {
-        return enabled;
+    public final State getState() {
+        return state;
     }
 
-    public final void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public final void setState(State state) {
+        this.state = state;
     }
 
-    public final Integer getMinimum() {
-        return minimum;
-    }
-
-    public final void setMinimum(Integer minimum) {
-        this.minimum = minimum;
-    }
-
-    public final Integer getMaximum() {
-        return maximum;
-    }
-
-    public final void setMaximum(Integer maximum) {
-        this.maximum = maximum;
-    }
-    
     @Override
-    public final Boolean getSystemDefault() {
+    public Boolean getSystemDefault() {
         return systemDefault;
     }
 
     @Override
-    public final void setSystemDefault(Boolean systemDefault) {
+    public void setSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
     }
-    
-    public WorkflowPropertyConfiguration withResource(Resource resource) {
+
+    public ActionTriggerState withResource(Resource resource) {
         setResource(resource);
         return this;
     }
-    
-    public WorkflowPropertyConfiguration withLocale(PrismLocale locale) {
+
+    public ActionTriggerState withLocale(PrismLocale locale) {
         this.locale = locale;
         return this;
     }
-    
-    public WorkflowPropertyConfiguration withProgramType(PrismProgramType programType) {
+
+    public ActionTriggerState withProgramType(PrismProgramType programType) {
         this.programType = programType;
         return this;
     }
-    
-    public WorkflowPropertyConfiguration withWorkflowPropertyDefinition(WorkflowPropertyDefinition workflowPropertyDefinition) {
-        this.workflowPropertyDefinition = workflowPropertyDefinition;
+
+    public ActionTriggerState withAction(Action action) {
+        this.action = action;
         return this;
     }
-    
-    public WorkflowPropertyConfiguration withEnabled(Boolean enabled) {
-        this.enabled = enabled;
+
+    public ActionTriggerState withState(State state) {
+        this.state = state;
         return this;
     }
-    
-    public WorkflowPropertyConfiguration withMinimum(Integer minimum) {
-        this.minimum = minimum;
-        return this;
-    }
-    
-    public WorkflowPropertyConfiguration withMaximum(Integer maximum) {
-        this.maximum = maximum;
-        return this;
-    }
-    
-    public WorkflowPropertyConfiguration withSystemDefault(Boolean systemDefault) {
+
+    public ActionTriggerState withSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
         return this;
     }
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("workflowPropertyDefinition", workflowPropertyDefinition);
+        return super.getResourceSignature().addProperty("action", action).addProperty("state", state);
     }
 
 }

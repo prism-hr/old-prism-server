@@ -12,10 +12,6 @@ public class AdvertDetailsDTO {
     @URL
     @Size(max = 2048)
     private String homepage;
-    
-    @URL
-    @Size(max = 2048)
-    private String applyHomepage;
 
     private InstitutionAddressDTO address;
 
@@ -26,21 +22,13 @@ public class AdvertDetailsDTO {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     public final String getHomepage() {
         return homepage;
     }
 
     public final void setHomepage(String homepage) {
         this.homepage = homepage;
-    }
-
-    public String getApplyHomepage() {
-        return applyHomepage;
-    }
-
-    public void setApplyHomepage(String applyLink) {
-        this.applyHomepage = applyLink;
     }
 
     public InstitutionAddressDTO getAddress() {

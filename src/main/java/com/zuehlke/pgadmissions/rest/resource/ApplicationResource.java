@@ -215,7 +215,7 @@ public class ApplicationResource {
     public void enrichApplicationRepresentation(Application application, ApplicationExtendedRepresentation representation) {
         HashMap<Integer, RefereeRepresentation> refereeRepresentations = Maps.newHashMap();
         for (RefereeRepresentation refereeRepresentation : representation.getReferees()) {
-            refereeRepresentations.put(representation.getId(), refereeRepresentation);
+            refereeRepresentations.put(refereeRepresentation.getId(), refereeRepresentation);
         }
 
         for (ApplicationReferee referee : application.getReferees()) {

@@ -114,6 +114,7 @@ public class ProjectService {
         project.setTitle(title);
         advert.setTitle(title);
         advert.setSummary(projectDTO.getSummary());
+        advert.setApplyHomepage(projectDTO.getApplyHomepage());
         advert.setStudyDurationMinimum(projectDTO.getStudyDurationMinimum());
         advert.setStudyDurationMaximum(projectDTO.getStudyDurationMaximum());
         advert.setAddress(advertService.createAddressCopy(project.getInstitution().getAddress()));

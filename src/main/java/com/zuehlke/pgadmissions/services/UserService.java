@@ -183,6 +183,7 @@ public class UserService {
         if (user != null) {
             String newPassword = EncryptionUtils.getTemporaryPassword();
             notificationService.sendResetPasswordNotification(user, newPassword);
+            // TODO cover situation when account is not created yet
             user.getUserAccount().setTemporaryPassword(EncryptionUtils.getMD5(newPassword));
             user.getUserAccount().setTemporaryPasswordExpiryTimestamp(new DateTime().plusHours(1));
         }

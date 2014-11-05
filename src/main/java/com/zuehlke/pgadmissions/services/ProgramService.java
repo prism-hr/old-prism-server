@@ -96,7 +96,8 @@ public class ProgramService {
 
     public Program create(User user, ProgramDTO programDTO) {
         Institution institution = entityService.getById(Institution.class, programDTO.getInstitutionId());
-        Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withInstitution(institution).withImported(false);
+        Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withInstitution(institution)
+                .withImported(false).withRequireProjectDefinition(false);
         copyProgramDetails(program, programDTO);
         copyStudyOptions(program, programDTO);
         return program;
@@ -211,8 +212,8 @@ public class ProgramService {
             program.setEndDate(programDTO.getEndDate());
         }
 
-        program.setRequireProjectDefinition(programDTO.getRequireProjectDefinition());
         advert.setSummary(programDTO.getSummary());
+        advert.setApplyHomepage(programDTO.getApplyHomepage());
         advert.setStudyDurationMinimum(programDTO.getStudyDurationMinimum());
         advert.setStudyDurationMaximum(programDTO.getStudyDurationMaximum());
         advert.setAddress(advertService.createAddressCopy(program.getInstitution().getAddress()));

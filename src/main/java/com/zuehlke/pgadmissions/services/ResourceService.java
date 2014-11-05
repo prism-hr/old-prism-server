@@ -143,6 +143,7 @@ public class ResourceService {
         }
 
         if (entityService.getDuplicateEntity(resource) != null && !user.isEnabled()) {
+            // TODO throw DuplicationException
             actionService.throwWorkflowPermissionException(resource, action);
         }
 
@@ -231,7 +232,7 @@ public class ResourceService {
         default:
             break;
         }
-        
+
         if (comment.isUserCreationComment()) {
             resource.setLastRemindedRequestIndividual(null);
             resource.setLastRemindedRequestSyndicated(null);

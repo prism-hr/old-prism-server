@@ -17,6 +17,8 @@ public class RefereeRepresentation {
     private String jobTitle;
 
     private AddressRepresentation address;
+    
+    private Integer commentId;
 
     public Integer getId() {
         return id;
@@ -72,6 +74,14 @@ public class RefereeRepresentation {
 
     public void setAddress(AddressRepresentation address) {
         this.address = address;
+    }
+
+    public final Integer getCommentId() {
+        return commentId;
+    }
+
+    public final void setCommentId(Integer commentId) {
+        this.commentId = commentId;
     }
 
 }

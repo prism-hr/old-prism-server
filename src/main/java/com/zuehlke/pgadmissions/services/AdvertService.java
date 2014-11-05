@@ -128,7 +128,6 @@ public class AdvertService {
 
         advert.setDescription(advertDetailsDTO.getDescription());
         advert.setHomepage(advertDetailsDTO.getHomepage());
-        advert.setApplyHomepage(advertDetailsDTO.getApplyHomepage());
 
         InstitutionAddress address = advert.getAddress();
         address.setDomicile(country);
@@ -171,7 +170,7 @@ public class AdvertService {
     public void updateCategories(Class<? extends Resource> resourceClass, Integer resourceId, AdvertCategoriesDTO categoriesDTO) throws DeduplicationException {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
-        
+
         for (String propertyName : new String[] { "domain", "industry", "function", "competency", "theme", "institution", "programType" }) {
             String propertySetterName = "add" + WordUtils.capitalize(propertyName);
             List<Object> values = (List<Object>) ReflectionUtils.getProperty(categoriesDTO, pluralize(propertyName));
@@ -188,7 +187,7 @@ public class AdvertService {
                 }
             }
         }
-        
+
         resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CATEGORY);
     }
 
@@ -200,7 +199,7 @@ public class AdvertService {
         if (advert == null) {
             return null;
         }
-        
+
         AdvertClosingDate advertClosingDate = new AdvertClosingDate().withAdvert(advert).withClosingDate(advertClosingDateDTO.getClosingDate())
                 .withStudyPlaces(advertClosingDateDTO.getStudyPlaces());
         advert.getClosingDates().add(advertClosingDate);
@@ -229,10 +228,10 @@ public class AdvertService {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
         AdvertClosingDate advertClosingDate = getClosingDateById(closingDateId);
-        
+
         if (advert.getId().equals(advertClosingDate.getAdvert().getId())) {
             advert.getClosingDates().remove(advertClosingDate);
-            advert.setClosingDate(advertDAO.getNextAdvertClosingDate(advert, new LocalDate()));   
+            advert.setClosingDate(advertDAO.getNextAdvertClosingDate(advert, new LocalDate()));
             resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CLOSING_DATE);
         } else {
             throw new Error();

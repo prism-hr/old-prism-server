@@ -21,9 +21,9 @@ import com.zuehlke.pgadmissions.domain.system.System;
 
 @Entity
 @Table(name = "NOTIFICATION_CONFIGURATION", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "notification_template_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "locale", "program_type", "notification_template_id" }),
-        @UniqueConstraint(columnNames = { "program_id", "notification_template_id" }) })
+        @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "notification_definition_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "locale", "program_type", "notification_definition_id" }),
+        @UniqueConstraint(columnNames = { "program_id", "notification_definition_id" }) })
 public class NotificationConfiguration extends WorkflowResourceConfiguration {
 
     @Id
@@ -45,14 +45,14 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
     @Column(name = "locale")
     @Enumerated(EnumType.STRING)
     private PrismLocale locale;
-    
+
     @Column(name = "program_type")
     @Enumerated(EnumType.STRING)
     private PrismProgramType programType;
-    
+
     @ManyToOne
-    @JoinColumn(name = "notification_template_id", nullable = false)
-    private NotificationTemplateDefinition notificationTemplate;
+    @JoinColumn(name = "notification_definition_id", nullable = false)
+    private NotificationDefinition notificationDefinition;
 
     @Column(name = "subject", nullable = false)
     private String subject;
@@ -127,12 +127,12 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
         this.program = program;
     }
 
-    public NotificationTemplateDefinition getNotificationTemplate() {
-        return notificationTemplate;
+    public NotificationDefinition getNotificationDefinition() {
+        return notificationDefinition;
     }
 
-    public void setNotificationTemplate(NotificationTemplateDefinition notificationTemplate) {
-        this.notificationTemplate = notificationTemplate;
+    public void setNotificationTemplate(NotificationDefinition notificationDefinition) {
+        this.notificationDefinition = notificationDefinition;
     }
 
     public final String getSubject() {
@@ -184,8 +184,8 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
         return this;
     }
 
-    public NotificationConfiguration withNotificationTemplate(NotificationTemplateDefinition notificationTemplate) {
-        this.notificationTemplate = notificationTemplate;
+    public NotificationConfiguration withNotificationDefinition(NotificationDefinition notificationDefinition) {
+        this.notificationDefinition = notificationDefinition;
         return this;
     }
 
@@ -211,7 +211,7 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("notificationTemplate", notificationTemplate);
+        return super.getResourceSignature().addProperty("notificationDefinition", notificationDefinition);
     }
 
 }

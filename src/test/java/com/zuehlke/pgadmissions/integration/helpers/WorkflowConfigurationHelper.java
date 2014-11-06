@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplateDefinition;
+import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -143,12 +143,12 @@ public class WorkflowConfigurationHelper {
             if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
                 assertNotSame(stateAction.getState(), stateAction.getStateTransitions().iterator().next());
                 assertFalse(stateAction.getRaisesUrgentFlag());
-                assertNull(stateAction.getNotificationTemplate());
+                assertNull(stateAction.getNotificationDefinition());
                 assertTrue(stateAction.getStateActionAssignments().isEmpty());
             }
 
             if (stateAction.getRaisesUrgentFlag()) {
-                assertNotNull(stateAction.getNotificationTemplate());
+                assertNotNull(stateAction.getNotificationDefinition());
             }
 
             if (stateAction.isDefaultAction()) {
@@ -297,7 +297,7 @@ public class WorkflowConfigurationHelper {
     private void verifyStateActionNotifications(State state) {
         for (StateAction stateAction : state.getStateActions()) {
             for (StateActionNotification notification : stateAction.getStateActionNotifications()) {
-                NotificationTemplateDefinition template = notification.getNotificationTemplate();
+                NotificationDefinition template = notification.getNotificationDefinition();
                 com.zuehlke.pgadmissions.domain.workflow.Scope templateScope = template.getScope();
                 logger.info("Verifying notification: " + template.getId().toString());
 

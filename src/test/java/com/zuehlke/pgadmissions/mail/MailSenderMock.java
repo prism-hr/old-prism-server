@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.mail;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
@@ -16,10 +16,10 @@ public class MailSenderMock extends MailSender {
         sentMessages.add(message);
     }
 
-    public MailMessageDTO assertEmailSent(User recipient, PrismNotificationTemplate templateId) {
+    public MailMessageDTO assertEmailSent(User recipient, PrismNotificationDefinition templateId) {
         for (MailMessageDTO message : sentMessages) {
             if (HibernateUtils.sameEntities(recipient, message.getModelDTO().getUser())
-                    && templateId == message.getConfiguration().getNotificationTemplate().getId()) {
+                    && templateId == message.getConfiguration().getNotificationDefinition().getId()) {
                 sentMessages.remove(message);
                 return message;
             }
@@ -31,7 +31,7 @@ public class MailSenderMock extends MailSender {
         if (!sentMessages.isEmpty()) {
             StringBuilder sb = new StringBuilder("Unexpected messages sent: ");
             for (MailMessageDTO message : sentMessages) {
-                sb.append("Template: ").append(message.getConfiguration().getNotificationTemplate().getId()).append(", recipient:")
+                sb.append("Template: ").append(message.getConfiguration().getNotificationDefinition().getId()).append(", recipient:")
                         .append(message.getModelDTO().getUser()).append("; ");
             }
             throw new AssertionError(sb);

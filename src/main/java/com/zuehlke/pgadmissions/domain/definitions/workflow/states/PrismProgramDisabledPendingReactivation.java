@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
@@ -51,7 +51,7 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(true) //
             .withActionEnhancement(PrismActionEnhancement.PROGRAM_VIEW_EDIT_AS_USER) //
-            .withNotificationTemplate(PrismNotificationTemplate.SYSTEM_PROGRAM_TASK_REQUEST) //
+            .withNotificationTemplate(PrismNotificationDefinition.SYSTEM_PROGRAM_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 
@@ -60,10 +60,10 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.SYSTEM_PROGRAM_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationDefinition.SYSTEM_PROGRAM_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.SYSTEM_PROGRAM_UPDATE_NOTIFICATION))) //
+                        .withTemplate(PrismNotificationDefinition.SYSTEM_PROGRAM_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVED) // 
@@ -184,10 +184,10 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.SYSTEM_PROGRAM_UPDATE_NOTIFICATION), // 
+                        .withTemplate(PrismNotificationDefinition.SYSTEM_PROGRAM_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.SYSTEM_PROGRAM_UPDATE_NOTIFICATION))) //
+                        .withTemplate(PrismNotificationDefinition.SYSTEM_PROGRAM_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_DISABLED_COMPLETED) // 

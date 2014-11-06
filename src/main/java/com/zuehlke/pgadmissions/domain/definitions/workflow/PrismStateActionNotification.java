@@ -6,13 +6,13 @@ public class PrismStateActionNotification {
     
     private PrismRole role;
     
-    private PrismNotificationTemplate template;
+    private PrismNotificationDefinition template;
 
     public PrismRole getRole() {
         return role;
     }
 
-    public PrismNotificationTemplate getTemplate() {
+    public PrismNotificationDefinition getTemplate() {
         return template;
     }
 
@@ -21,7 +21,7 @@ public class PrismStateActionNotification {
         return this;
     }
     
-    public PrismStateActionNotification withTemplate(PrismNotificationTemplate template) {
+    public PrismStateActionNotification withTemplate(PrismNotificationDefinition template) {
         this.template = template;
         return this;
     }

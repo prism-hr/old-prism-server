@@ -150,7 +150,7 @@ public class NotificationTemplatePropertyLoader {
     }
 
     public String getActionComplete() throws IOException, TemplateException {
-        return buildRedirectionControl(SYSTEM_PROCEED, SYSTEM_DECLINE);
+        return buildRedirectionControl(SYSTEM_PROCEED, templateModelDTO.getTransitionAction().isDeclinableAction() ? SYSTEM_DECLINE : null);
     }
 
     public String getCommentContent() {

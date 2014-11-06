@@ -31,6 +31,7 @@ import org.joda.time.LocalDateTime;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.definitions.CommentCustomPropertyType;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
@@ -205,6 +206,10 @@ public class Comment {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
     private Set<CommentAppointmentPreference> appointmentPreferences = Sets.newHashSet();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "comment_id", nullable = false)
+    private Set<CommentCustomProperty> customProperties = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id")
@@ -683,7 +688,12 @@ public class Comment {
     }
 
     public Comment addAssignedUser(User user, Role role, PrismRoleTransitionType roleTransitionType) {
-        assignedUsers.add(new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(roleTransitionType).withComment(this));
+        assignedUsers.add(new CommentAssignedUser().withComment(this).withUser(user).withRole(role).withRoleTransitionType(roleTransitionType));
+        return this;
+    }
+    
+    public Comment addCustomProperty(CommentCustomPropertyType propertyType, String propertyValue) {
+        customProperties.add(new CommentCustomProperty().withComment(this).withPropertyType(propertyType).withPropertyValue(propertyValue));
         return this;
     }
 

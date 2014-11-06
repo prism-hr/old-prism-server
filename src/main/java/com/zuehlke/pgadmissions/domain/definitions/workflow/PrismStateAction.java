@@ -14,7 +14,7 @@ public class PrismStateAction {
     
     private PrismActionEnhancement actionEnhancement;
     
-    private PrismNotificationTemplate notificationTemplate;
+    private PrismNotificationDefinition notificationTemplate;
     
     private List<PrismStateActionAssignment> assignments = Lists.newArrayList();
     
@@ -38,7 +38,7 @@ public class PrismStateAction {
         return actionEnhancement;
     }
 
-    public PrismNotificationTemplate getNotificationTemplate() {
+    public PrismNotificationDefinition getNotificationTemplate() {
         return notificationTemplate;
     }
     
@@ -74,7 +74,7 @@ public class PrismStateAction {
         return this;
     }
     
-    public PrismStateAction withNotificationTemplate(PrismNotificationTemplate notificationTemplate) {
+    public PrismStateAction withNotificationTemplate(PrismNotificationDefinition notificationTemplate) {
         this.notificationTemplate = notificationTemplate;
         return this;
     }

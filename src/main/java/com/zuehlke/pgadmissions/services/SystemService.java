@@ -5,7 +5,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemL
 import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -19,11 +18,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.dao.SystemDAO;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -32,8 +28,8 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate.PrismReminderDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PrismReminderDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
@@ -52,7 +48,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplateDefinition;
+import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
@@ -70,6 +66,7 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import com.zuehlke.pgadmissions.utils.FileUtils;
 
 @Service
 public class SystemService {
@@ -164,8 +161,8 @@ public class SystemService {
         initializeStates();
 
         LOGGER.info("Initialising notification template definitions");
-        verifyBackwardCompatibility(NotificationTemplateDefinition.class);
-        initializeNotificationTemplateDefinitions();
+        verifyBackwardCompatibility(NotificationDefinition.class);
+        initializeNotificationDefinitions();
 
         LOGGER.info("Initialising state transition evaluation definitions");
         verifyBackwardCompatibility(StateTransitionEvaluation.class);
@@ -178,7 +175,7 @@ public class SystemService {
         LOGGER.info("Initialising display property definitions");
         verifyBackwardCompatibility(DisplayPropertyDefinition.class);
         initializeDisplayPropertyDefinitions();
-        
+
         LOGGER.info("Initialising state action definitions");
         initializeStateActionDefinitions();
 
@@ -189,7 +186,7 @@ public class SystemService {
         initializeDisplayPropertyConfigurations(system);
 
         LOGGER.info("Initialising notification configurations");
-        initializeNotificationTemplateConfigurations(system);
+        initializeNotificationConfigurations(system);
 
         LOGGER.info("Initialising state duration configurations");
         initializeStateDurationConfigurations(system);
@@ -251,7 +248,7 @@ public class SystemService {
                     .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
                     .withTransitionAction(prismAction.isTransitionAction()).withDeclinableAction(prismAction.isDeclinableAction())
                     .withVisibleAction(prismAction.isVisibleAction()).withEmphasizedAction(prismAction.isEmphasizedAction()).withScope(scope)
-                    .withCreationScope(creationScope);
+                    .withCustomizableAction(prismAction.isCustomizableAction()).withCreationScope(creationScope);
             Action action = entityService.createOrUpdate(transientAction);
             action.getRedactions().clear();
 
@@ -289,20 +286,20 @@ public class SystemService {
         }
     }
 
-    private void initializeNotificationTemplateDefinitions() throws DeduplicationException, CustomizationException {
-        HashMap<PrismNotificationTemplate, NotificationTemplateDefinition> definitions = Maps.newHashMap();
-        for (PrismNotificationTemplate prismTemplate : PrismNotificationTemplate.values()) {
-            Scope scope = entityService.getByProperty(Scope.class, "id", prismTemplate.getScope());
-            NotificationTemplateDefinition transientNotificationTemplateDefinition = new NotificationTemplateDefinition().withId(prismTemplate)
-                    .withNotificationType(prismTemplate.getNotificationType()).withNotificationPurpose(prismTemplate.getNotificationPurpose()).withScope(scope);
-            NotificationTemplateDefinition persistentNotificationTemplateDefinition = entityService.createOrUpdate(transientNotificationTemplateDefinition);
-            definitions.put(prismTemplate, persistentNotificationTemplateDefinition);
+    private void initializeNotificationDefinitions() throws DeduplicationException, CustomizationException {
+        HashMap<PrismNotificationDefinition, NotificationDefinition> definitions = Maps.newHashMap();
+        for (PrismNotificationDefinition prismNotificationDefinition : PrismNotificationDefinition.values()) {
+            Scope scope = entityService.getByProperty(Scope.class, "id", prismNotificationDefinition.getScope());
+            NotificationDefinition transientNotificationDefinition = new NotificationDefinition().withId(prismNotificationDefinition)
+                    .withNotificationType(prismNotificationDefinition.getNotificationType())
+                    .withNotificationPurpose(prismNotificationDefinition.getNotificationPurpose()).withScope(scope);
+            NotificationDefinition persistentNotificationTemplateDefinition = entityService.createOrUpdate(transientNotificationDefinition);
+            definitions.put(prismNotificationDefinition, persistentNotificationTemplateDefinition);
         }
-        HashMap<PrismNotificationTemplate, PrismReminderDefinition> reminderDefinitions = PrismNotificationTemplate.getReminderdefinitions();
-        for (PrismNotificationTemplate prismTemplateWithReminder : reminderDefinitions.keySet()) {
-            NotificationTemplateDefinition notificationTemplateWithReminderDefinition = definitions.get(prismTemplateWithReminder);
-            notificationTemplateWithReminderDefinition
-                    .setReminderTemplate(definitions.get(reminderDefinitions.get(notificationTemplateWithReminderDefinition)));
+        HashMap<PrismNotificationDefinition, PrismReminderDefinition> reminderDefinitions = PrismNotificationDefinition.getReminderdefinitions();
+        for (PrismNotificationDefinition prismNotificationDefinitionWithReminder : reminderDefinitions.keySet()) {
+            NotificationDefinition notificationDefinitionWithReminder = definitions.get(prismNotificationDefinitionWithReminder);
+            notificationDefinitionWithReminder.setReminderDefinition(definitions.get(reminderDefinitions.get(notificationDefinitionWithReminder)));
         }
     }
 
@@ -354,18 +351,18 @@ public class SystemService {
         }
     }
 
-    private void initializeNotificationTemplateConfigurations(System system) throws DeduplicationException, CustomizationException {
-        for (PrismNotificationTemplate prismNotificationTemplate : PrismNotificationTemplate.values()) {
-            NotificationTemplateDefinition notificationTemplateDefinition = notificationService.getById(prismNotificationTemplate);
+    private void initializeNotificationConfigurations(System system) throws DeduplicationException, CustomizationException {
+        for (PrismNotificationDefinition prismNotificationDefinition : PrismNotificationDefinition.values()) {
+            NotificationDefinition notificationDefinition = notificationService.getById(prismNotificationDefinition);
 
-            String subject = getFileContent(defaultEmailSubjectDirectory + prismNotificationTemplate.getInitialTemplateSubject());
-            String content = getFileContent(defaultEmailContentDirectory + prismNotificationTemplate.getInitialTemplateContent());
+            String subject = FileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationDefinition.getInitialTemplateSubject());
+            String content = FileUtils.getContent(defaultEmailContentDirectory + prismNotificationDefinition.getInitialTemplateContent());
 
-            PrismProgramType programType = prismNotificationTemplate.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null;
+            PrismProgramType programType = prismNotificationDefinition.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null;
 
-            NotificationConfiguration transientNotificationTemplateConfiguration = notificationService.createConfiguration(system, getSystemLocale(),
-                    programType, notificationTemplateDefinition, subject, content, prismNotificationTemplate.getReminderInterval());
-            entityService.createOrUpdate(transientNotificationTemplateConfiguration);
+            NotificationConfiguration transientNotificationConfiguration = notificationService.createConfiguration(system, getSystemLocale(), programType,
+                    notificationDefinition, subject, content, prismNotificationDefinition.getReminderInterval());
+            entityService.createOrUpdate(transientNotificationConfiguration);
         }
     }
 
@@ -387,10 +384,10 @@ public class SystemService {
         for (State state : stateService.getStates()) {
             for (PrismStateAction prismStateAction : PrismState.getStateActions(state.getId())) {
                 Action action = actionService.getById(prismStateAction.getAction());
-                NotificationTemplateDefinition template = notificationService.getById(prismStateAction.getNotificationTemplate());
+                NotificationDefinition template = notificationService.getById(prismStateAction.getNotificationTemplate());
                 StateAction stateAction = new StateAction().withState(state).withAction(action).withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag())
                         .withDefaultAction(prismStateAction.isDefaultAction()).withActionEnhancement(prismStateAction.getActionEnhancement())
-                        .withNotificationTemplate(template);
+                        .withNotificationDefinition(template);
                 entityService.save(stateAction);
                 state.getStateActions().add(stateAction);
 
@@ -419,8 +416,9 @@ public class SystemService {
     private void initializeStateActionNotifications(PrismStateAction prismStateAction, StateAction stateAction) {
         for (PrismStateActionNotification prismNotification : prismStateAction.getNotifications()) {
             Role role = roleService.getById(prismNotification.getRole());
-            NotificationTemplateDefinition template = notificationService.getById(prismNotification.getTemplate());
-            StateActionNotification notification = new StateActionNotification().withStateAction(stateAction).withRole(role).withNotificationTemplate(template);
+            NotificationDefinition template = notificationService.getById(prismNotification.getTemplate());
+            StateActionNotification notification = new StateActionNotification().withStateAction(stateAction).withRole(role)
+                    .withNotificationDefinition(template);
             entityService.save(notification);
             stateAction.getStateActionNotifications().add(notification);
         }
@@ -477,14 +475,6 @@ public class SystemService {
         } catch (IllegalArgumentException e) {
             throw new WorkflowConfigurationException("You attempted to remove an entity of type " + workflowResourceClass.getSimpleName()
                     + " which is required for backward compatibility by the workflow engine", e);
-        }
-    }
-
-    private String getFileContent(String filePath) {
-        try {
-            return Joiner.on(java.lang.System.lineSeparator()).join(Resources.readLines(Resources.getResource(filePath), Charsets.UTF_8));
-        } catch (IOException e) {
-            throw new Error(e);
         }
     }
 

@@ -49,8 +49,8 @@ public class StateAction implements IUniqueEntity {
     private PrismActionEnhancement actionEnhancement;
 
     @ManyToOne
-    @JoinColumn(name = "notification_template_id")
-    private NotificationTemplateDefinition notificationTemplate;
+    @JoinColumn(name = "notification_definition_id")
+    private NotificationDefinition notificationDefinition;
 
     @OneToMany(mappedBy = "stateAction")
     private Set<StateActionAssignment> stateActionAssignments = Sets.newHashSet();
@@ -101,12 +101,12 @@ public class StateAction implements IUniqueEntity {
         this.defaultAction = defaultAction;
     }
 
-    public NotificationTemplateDefinition getNotificationTemplate() {
-        return notificationTemplate;
+    public NotificationDefinition getNotificationDefinition() {
+        return notificationDefinition;
     }
 
-    public void setNotificationTemplate(NotificationTemplateDefinition notificationTemplate) {
-        this.notificationTemplate = notificationTemplate;
+    public void setNotificationDefinition(NotificationDefinition notificationTemplate) {
+        this.notificationDefinition = notificationTemplate;
     }
 
     public PrismActionEnhancement getActionEnhancement() {
@@ -154,8 +154,8 @@ public class StateAction implements IUniqueEntity {
         return this;
     }
 
-    public StateAction withNotificationTemplate(NotificationTemplateDefinition notificationTemplate) {
-        this.notificationTemplate = notificationTemplate;
+    public StateAction withNotificationDefinition(NotificationDefinition notificationTemplate) {
+        this.notificationDefinition = notificationTemplate;
         return this;
     }
 

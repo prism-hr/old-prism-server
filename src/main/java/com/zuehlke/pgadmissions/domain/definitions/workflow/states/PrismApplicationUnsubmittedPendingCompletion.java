@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
@@ -22,7 +22,7 @@ public class PrismApplicationUnsubmittedPendingCompletion extends PrismWorkflowS
             .withAction(PrismAction.APPLICATION_COMPLETE) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(true) //
-            .withNotificationTemplate(PrismNotificationTemplate.APPLICATION_COMPLETE_REQUEST) //
+            .withNotificationTemplate(PrismNotificationDefinition.APPLICATION_COMPLETE_REQUEST) //
                 .withAssignments(Arrays.asList( //
                     new PrismStateActionAssignment() //
                         .withRole(PrismRole.APPLICATION_CREATOR)
@@ -30,7 +30,7 @@ public class PrismApplicationUnsubmittedPendingCompletion extends PrismWorkflowS
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() //
                         .withRole(PrismRole.APPLICATION_CREATOR) //
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_COMPLETE_NOTIFICATION))) //
+                        .withTemplate(PrismNotificationDefinition.APPLICATION_COMPLETE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_VALIDATION) //
@@ -65,7 +65,7 @@ public class PrismApplicationUnsubmittedPendingCompletion extends PrismWorkflowS
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() //
                         .withRole(PrismRole.APPLICATION_CREATOR) //
-                        .withTemplate(PrismNotificationTemplate.APPLICATION_TERMINATE_NOTIFICATION))) //
+                        .withTemplate(PrismNotificationDefinition.APPLICATION_TERMINATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_WITHDRAWN_COMPLETED) //

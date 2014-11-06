@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplateProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -69,7 +69,7 @@ import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.NotificationService;
-import com.zuehlke.pgadmissions.utils.TimeZoneList;
+import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
 
 @RestController
 @RequestMapping("/api/static")
@@ -147,7 +147,7 @@ public class StaticDataResource {
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
         }
 
-        staticData.put("timeZones", TimeZoneList.getInstance().getTimeZoneDefinitions());
+        staticData.put("timeZones", TimeZoneUtils.getInstance().getTimeZoneDefinitions());
 
         List<FilterRepresentation> filters = Lists.newArrayListWithCapacity(FilterProperty.values().length);
         for (FilterProperty filterProperty : FilterProperty.values()) {
@@ -156,15 +156,15 @@ public class StaticDataResource {
         }
         staticData.put("filters", filters);
 
-        Map<PrismScope, List<PrismNotificationTemplate>> templatesMap = Maps.newHashMap();
+        Map<PrismScope, List<PrismNotificationDefinition>> templatesMap = Maps.newHashMap();
         for (PrismScope prismScope : PrismScope.values()) {
-            List<PrismNotificationTemplate> templates = notificationService.getEditableTemplates(prismScope);
+            List<PrismNotificationDefinition> templates = notificationService.getEditableTemplates(prismScope);
             templatesMap.put(prismScope, templates);
         }
         staticData.put("notificationTemplatesPerScope", templatesMap);
 
-        List<Map<String, Object>> templateDefinitions = Lists.newArrayListWithCapacity(PrismNotificationTemplate.values().length);
-        for (PrismNotificationTemplate template : PrismNotificationTemplate.values()) {
+        List<Map<String, Object>> templateDefinitions = Lists.newArrayListWithCapacity(PrismNotificationDefinition.values().length);
+        for (PrismNotificationDefinition template : PrismNotificationDefinition.values()) {
             Map<String, Object> definition = Maps.newHashMap();
             definition.put("id", template.name());
             if (template.getReminderInterval() != null) {

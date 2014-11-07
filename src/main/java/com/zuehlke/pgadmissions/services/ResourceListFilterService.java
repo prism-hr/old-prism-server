@@ -1,13 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
@@ -22,6 +14,13 @@ import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -41,7 +40,8 @@ public class ResourceListFilterService {
 
     public void save(User user, Scope scope, ResourceListFilterDTO filterDTO) throws DeduplicationException {
         ResourceListFilter transientFilter = new ResourceListFilter().withUserAccount(user.getUserAccount()).withScope(scope)
-                .withMatchMode(filterDTO.getMatchMode()).withSortOrder(filterDTO.getSortOrder()).withUrgentOnly(filterDTO.getUrgentOnly());
+                .withValueString(filterDTO.getValueString()).withMatchMode(filterDTO.getMatchMode())
+                .withSortOrder(filterDTO.getSortOrder()).withUrgentOnly(filterDTO.getUrgentOnly());
         ResourceListFilter persistentFilter = entityService.createOrUpdate(transientFilter);
 
         List<ResourceListFilterConstraintDTO> constraints = filterDTO.getConstraints();
@@ -49,17 +49,17 @@ public class ResourceListFilterService {
             for (int i = 0; i < constraints.size(); i++) {
                 ResourceListFilterConstraintDTO constraintDTO = filterDTO.getConstraints().get(i);
                 FilterProperty filterProperty = constraintDTO.getFilterProperty();
-    
+
                 ResourceListFilterConstraint transientConstraint = new ResourceListFilterConstraint().withFilter(persistentFilter)
                         .withFilterProperty(filterProperty).withFilterExpression(constraintDTO.getFilterExpression()).withNegated(constraintDTO.getNegated())
                         .withDisplayPosition(i).withValueString(constraintDTO.getValueString()).withValueDateStart(constraintDTO.getValueDateStart())
                         .withValueDateClose(constraintDTO.getValueDateClose()).withValueDecimalStart(constraintDTO.getValueDecimalStart())
                         .withValueDecimalClose(constraintDTO.getValueDecimalClose());
-    
+
                 if (filterProperty == FilterProperty.STATE_GROUP_TITLE) {
                     transientConstraint.setValueStateGroup(stateService.getStateGroupById(constraintDTO.getValueStateGroup()));
                 }
-    
+
                 persistentFilter.getConstraints().add(transientConstraint);
                 entityService.save(transientConstraint);
             }

@@ -13,5 +13,5 @@ ${SYSTEM_PROGRAM_HOMEPAGE}
 
 <p>
     Yours sincerely,
-    <br/> ${TEMPLATE_AUTHOR_DISPLAY_NAME}
+    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>

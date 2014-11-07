@@ -247,7 +247,36 @@ public class PrismApplicationInterviewPendingScheduling extends PrismWorkflowSta
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
                                 .withRestrictToOwner(false)))))); //
-    
+ 
+        stateActions.add(new PrismStateAction() //
+            .withAction(PrismAction.APPLICATION_CONFIRM_ELIGIBILITY) //
+            .withRaisesUrgentFlag(true) //
+            .withDefaultAction(false) //
+            .withNotificationTemplate(PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST) //
+                .withAssignments(Arrays.asList( // 
+                    new PrismStateActionAssignment() // 
+                        .withRole(PrismRole.INSTITUTION_ADMITTER))) //
+                .withNotifications(Arrays.asList( // 
+                    new PrismStateActionNotification() // 
+                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
+                        .withTemplate(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
+                    new PrismStateActionNotification() // 
+                        .withRole(PrismRole.INSTITUTION_ADMITTER) // 
+                        .withTemplate(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
+                    new PrismStateActionNotification() // 
+                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR) // 
+                        .withTemplate(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
+                    new PrismStateActionNotification() // 
+                        .withRole(PrismRole.PROJECT_ADMINISTRATOR) // 
+                        .withTemplate(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
+                    new PrismStateActionNotification() // 
+                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) // 
+                        .withTemplate(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION))) //
+                .withTransitions(Arrays.asList( // 
+                    new PrismStateTransition() // 
+                        .withTransitionState(PrismState.APPLICATION_INTERVIEW_PENDING_SCHEDULING) // 
+                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST)))); //
+        
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS) //
             .withRaisesUrgentFlag(true) //
@@ -379,7 +408,16 @@ public class PrismApplicationInterviewPendingScheduling extends PrismWorkflowSta
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR), // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR)))); //
-    
+        
+        stateActions.add(new PrismStateAction() //
+            .withAction(PrismAction.APPLICATION_ESCALATE) //
+            .withRaisesUrgentFlag(false) //
+            .withDefaultAction(false) //
+                .withTransitions(Arrays.asList( // 
+                    new PrismStateTransition() // 
+                        .withTransitionState(PrismState.APPLICATION_REJECTED_COMPLETED) // 
+                        .withTransitionAction(PrismAction.APPLICATION_ESCALATE)))); //
+        
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY) //
             .withRaisesUrgentFlag(true) //

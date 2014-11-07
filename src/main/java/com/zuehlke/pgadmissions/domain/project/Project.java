@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
+import com.zuehlke.pgadmissions.domain.workflow.ResourceAction;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 
@@ -152,6 +153,9 @@ public class Project extends ResourceParent {
     @OneToMany(mappedBy = "project")
     private Set<UserRole> userRoles = Sets.newHashSet();
 
+    @OneToMany(mappedBy = "project")
+    private Set<ResourceAction> resourceActions = Sets.newHashSet();
+    
     @Override
     public Integer getId() {
         return id;
@@ -299,8 +303,14 @@ public class Project extends ResourceParent {
         return comments;
     }
 
+    @Override
     public final Set<UserRole> getUserRoles() {
         return userRoles;
+    }
+
+    @Override
+    public final Set<ResourceAction> getResourceActions() {
+        return resourceActions;
     }
 
     @Override
@@ -473,11 +483,6 @@ public class Project extends ResourceParent {
     public Project withCode(final String code) {
         this.code = code;
         return this;
-    }
-
-    @Override
-    public void addComment(Comment comment) {
-        comments.add(comment);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.integration.helpers;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory.SYSTEM_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_NO;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_YES;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.DE_DE;
@@ -46,7 +45,7 @@ public class PropertyLoaderHelper {
 
         User herman = userService.getOrCreateUser("herman", "ze german", "hermanzegerman@germany.com", DE_DE);
         DisplayPropertyDefinition displayProperty = customizationService.getDisplayPropertyDefinitionById(SYSTEM_YES);
-        customizationService.createOrUpdateDisplayProperty(systemService.getSystem(), DE_DE, null, SYSTEM_GLOBAL, displayProperty, "Ja");
+        customizationService.createOrUpdateDisplayProperty(systemService.getSystem(), DE_DE, null, displayProperty, "Ja");
         PropertyLoader propertyLoaderDe = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem(), herman);
         
         assertEquals(propertyLoaderDe.load(SYSTEM_YES), "Ja");

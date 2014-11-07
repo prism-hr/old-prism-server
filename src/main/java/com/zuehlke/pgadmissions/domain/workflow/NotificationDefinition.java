@@ -11,17 +11,17 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationPurpose;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 
 @Entity
-@Table(name = "NOTIFICATION_TEMPLATE")
-public class NotificationTemplateDefinition extends WorkflowDefinition {
+@Table(name = "NOTIFICATION_DEFINITION")
+public class NotificationDefinition extends WorkflowDefinition {
 
     @Id
     @Column(name = "id")
     @Enumerated(EnumType.STRING)
-    private PrismNotificationTemplate id;
+    private PrismNotificationDefinition id;
 
     @Column(name = "notification_type", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -36,15 +36,15 @@ public class NotificationTemplateDefinition extends WorkflowDefinition {
     private Scope scope;
 
     @OneToOne
-    @JoinColumn(name = "reminder_notification_template_id")
-    private NotificationTemplateDefinition reminderTemplate;
+    @JoinColumn(name = "reminder_definition_id")
+    private NotificationDefinition reminderDefinition;
 
     @Override
-    public PrismNotificationTemplate getId() {
+    public PrismNotificationDefinition getId() {
         return id;
     }
 
-    public void setId(PrismNotificationTemplate id) {
+    public void setId(PrismNotificationDefinition id) {
         this.id = id;
     }
 
@@ -74,30 +74,30 @@ public class NotificationTemplateDefinition extends WorkflowDefinition {
         this.scope = scope;
     }
 
-    public NotificationTemplateDefinition getReminderTemplate() {
-        return reminderTemplate;
+    public NotificationDefinition getReminderDefinition() {
+        return reminderDefinition;
     }
 
-    public void setReminderTemplate(NotificationTemplateDefinition reminderTemplate) {
-        this.reminderTemplate = reminderTemplate;
+    public void setReminderDefinition(NotificationDefinition reminderDefinition) {
+        this.reminderDefinition = reminderDefinition;
     }
 
-    public NotificationTemplateDefinition withId(PrismNotificationTemplate id) {
+    public NotificationDefinition withId(PrismNotificationDefinition id) {
         this.id = id;
         return this;
     }
 
-    public NotificationTemplateDefinition withNotificationType(PrismNotificationType notificationType) {
+    public NotificationDefinition withNotificationType(PrismNotificationType notificationType) {
         this.notificationType = notificationType;
         return this;
     }
 
-    public NotificationTemplateDefinition withNotificationPurpose(PrismNotificationPurpose notificationPurpose) {
+    public NotificationDefinition withNotificationPurpose(PrismNotificationPurpose notificationPurpose) {
         this.notificationPurpose = notificationPurpose;
         return this;
     }
 
-    public NotificationTemplateDefinition withScope(Scope scope) {
+    public NotificationDefinition withScope(Scope scope) {
         this.scope = scope;
         return this;
     }

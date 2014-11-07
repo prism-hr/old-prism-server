@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.user.User;
 
@@ -128,16 +129,21 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<String> getLocalizedThemes(Application application) {
-        Project project = application.getProject();
+    public List<String> getLocalizedProgramThemes(Program program) {
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(AdvertTheme.class) //
                 .setProjection(Projections.groupProperty("theme")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert.program", "program", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.project", "project", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eqOrIsNull("program.id", application.getProgram().getId())) //
-                        .add(Restrictions.eqOrIsNull("project.id", project == null ? null : project.getId()))) //
+                .createAlias("advert.program", "program", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("program.id", program.getId())) //
+                .list();
+    }
+
+    public List<String> getLocalizedProjectThemes(Project project) {
+        return (List<String>) sessionFactory.getCurrentSession().createCriteria(AdvertTheme.class) //
+                .setProjection(Projections.groupProperty("theme")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.project", "project", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("project.id", project.getId())) //
                 .list();
     }
 

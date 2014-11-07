@@ -186,7 +186,7 @@ public class ResourceService {
         resource.setState(transitionState);
     }
 
-    public void processResource(Resource resource, Comment comment) {
+    public void processResource(Resource resource, Comment comment) throws DeduplicationException {
         LocalDate baselineCustom;
         LocalDate baseline = new LocalDate();
 
@@ -207,8 +207,10 @@ public class ResourceService {
 
         baseline = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
 
-        StateDurationConfiguration stateDuration = stateService.getStateDuration(resource);
+        StateDurationConfiguration stateDuration = stateService.getStateDurationConfiguration(resource, userService.getCurrentUser(), resource.getState());
         resource.setDueDate(baseline.plusDays(stateDuration == null ? 0 : stateDuration.getDuration()));
+
+        actionService.activateConfigurableActions(resource, comment);
     }
 
     public void postProcessResource(Resource resource, Comment comment) throws DeduplicationException {
@@ -255,6 +257,10 @@ public class ResourceService {
         }
 
         actionService.executeUserAction(resource, action, comment);
+    }
+
+    public void deleteResourceAction(Resource resource, Action action) {
+        resourceDAO.deleteResourceAction(resource, action);
     }
 
     public Resource getOperativeResource(Resource resource, Action action) {

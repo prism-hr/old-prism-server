@@ -39,7 +39,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
-import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
+import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
 import com.zuehlke.pgadmissions.services.helpers.NotificationTemplatePropertyLoader;
@@ -146,14 +146,14 @@ public class MailSender {
     }
 
     public Map<String, Object> createNotificationModelForValidation(NotificationDefinition notificationTemplate) {
-        return createNotificationModel(notificationTemplate, new NotificationTemplateModelDTO(), true);
+        return createNotificationModel(notificationTemplate, new NotificationDefinitionModelDTO(), true);
     }
     
-    public Map<String, Object> createNotificationModel(NotificationDefinition notificationTemplate, NotificationTemplateModelDTO modelDTO) {
+    public Map<String, Object> createNotificationModel(NotificationDefinition notificationTemplate, NotificationDefinitionModelDTO modelDTO) {
         return createNotificationModel(notificationTemplate, modelDTO, false);
     }
 
-    private Map<String, Object> createNotificationModel(NotificationDefinition notificationTemplate, NotificationTemplateModelDTO modelDTO, boolean validationMode) {
+    private Map<String, Object> createNotificationModel(NotificationDefinition notificationTemplate, NotificationDefinitionModelDTO modelDTO, boolean validationMode) {
         Map<String, Object> model = Maps.newHashMap();
         List<PrismNotificationTemplatePropertyCategory> categories = notificationTemplate.getId().getPropertyCategories();
         NotificationTemplatePropertyLoader loader = applicationContext.getBean(NotificationTemplatePropertyLoader.class).localize(modelDTO, propertyLoader);

@@ -13,6 +13,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 
 public class PrismApplicationUnsubmitted extends PrismWorkflowState {
 
@@ -40,13 +41,13 @@ public class PrismApplicationUnsubmitted extends PrismWorkflowState {
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_REFEREE) //
                                 .withRestrictToOwner(false) //
-                                .withMinimumPermitted(3) //
-                                .withMaximumPermitted(3), // 
+                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_REFEREE), // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
-                                .withRestrictToOwner(false)))))); //
+                                .withRestrictToOwner(false) //
+                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_SUGGESTED_SUPERVISOR)))))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_ESCALATE) //

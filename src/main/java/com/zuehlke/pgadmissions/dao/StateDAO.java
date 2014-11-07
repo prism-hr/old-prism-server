@@ -61,20 +61,6 @@ public class StateDAO {
                 .uniqueResult();
     }
 
-    public StateDurationConfiguration getStateDuration(Resource resource, State state) {
-        return (StateDurationConfiguration) sessionFactory.getCurrentSession().createCriteria(StateDurationConfiguration.class) //
-                .add(Restrictions.eq("state", state)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("system", resource.getSystem())) //
-                        .add(Restrictions.eq("institution", resource.getInstitution())) //
-                        .add(Restrictions.eq("program", resource.getProgram()))) //
-                .addOrder(Order.desc("program")) //
-                .addOrder(Order.desc("institution")) //
-                .addOrder(Order.desc("system")) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-
     public List<StateTransitionPendingDTO> getStateTransitionsPending(PrismScope scopeId) {
         String scopeReference = scopeId.getLowerCaseName();
         return (List<StateTransitionPendingDTO>) sessionFactory.getCurrentSession().createCriteria(StateTransitionPending.class, "stateTransitionPending") //
@@ -84,8 +70,7 @@ public class StateDAO {
                 .add(Restrictions.isNotNull(scopeReference)) //
                 .addOrder(Order.asc(scopeReference + ".id")) //
                 .addOrder(Order.asc("id")) //
-                .setResultTransformer(Transformers.aliasToBean(StateTransitionPendingDTO.class))
-                .list();
+                .setResultTransformer(Transformers.aliasToBean(StateTransitionPendingDTO.class)).list();
     }
 
     public void deleteObseleteStateDurations(List<State> activeStates) {
@@ -127,15 +112,14 @@ public class StateDAO {
                 .createAlias("stateTransitionEvaluation", "stateTransitionEvaluation", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state", resource.getState())) //
                 .add(Restrictions.eq("stateTransitionEvaluation.nextStateSelection", true)); //
-                
-                Junction disjunction = Restrictions.disjunction();
-                for (ActionRepresentation permittedAction : permittedActions) {
-                    disjunction.add(Restrictions.eq("stateAction.action.id", permittedAction.getName()));
-                }
-                
-                return criteria.add(disjunction) //
-                        .addOrder(Order.asc("stateGroup.sequenceOrder"))
-                        .list(); //
+
+        Junction disjunction = Restrictions.disjunction();
+        for (ActionRepresentation permittedAction : permittedActions) {
+            disjunction.add(Restrictions.eq("stateAction.action.id", permittedAction.getName()));
+        }
+
+        return criteria.add(disjunction) //
+                .addOrder(Order.asc("stateGroup.sequenceOrder")).list(); //
     }
 
     public List<PrismState> getActiveProgramStates() {
@@ -151,7 +135,7 @@ public class StateDAO {
                 .add(Restrictions.eq("action.id", PrismAction.PROJECT_CREATE_APPLICATION)) //
                 .list();
     }
-    
+
     public List<PrismState> getStatesByStateGroup(PrismStateGroup stateGroupId) {
         return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(State.class) //
                 .setProjection(Projections.property("id")) //

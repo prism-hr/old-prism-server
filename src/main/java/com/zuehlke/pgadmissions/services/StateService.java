@@ -115,6 +115,14 @@ public class StateService {
         return entityService.list(StateTransitionEvaluation.class);
     }
 
+    public StateDurationConfiguration getStateDurationConfiguration(Resource resource, User user, State state) {
+        return customizationService.getConfiguration(StateDurationConfiguration.class, resource, user, "state", state);
+    }
+
+    public StateDurationConfiguration getStateDurationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, State state) {
+        return customizationService.getConfiguration(StateDurationConfiguration.class, resource, locale, programType, "state", state);
+    }
+
     public void createOrUpdateStateDurationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
             StateDurationDefinition stateDurationDefinition, Integer duration) throws DeduplicationException, CustomizationException {
         customizationService.validateConfiguration(resource, stateDurationDefinition, locale, programType);
@@ -122,14 +130,6 @@ public class StateService {
                 .withProgramType(programType).withStateDurationDefinition(stateDurationDefinition).withDuration(duration)
                 .withSystemDefault(customizationService.isSystemDefault(stateDurationDefinition, locale, programType));
         entityService.createOrUpdate(transientStateDuration);
-    }
-
-    public StateDurationConfiguration getStateDuration(Resource resource) {
-        return stateDAO.getStateDuration(resource, resource.getState());
-    }
-
-    public StateDurationConfiguration getStateDuration(Resource resource, State state) {
-        return stateDAO.getStateDuration(resource, state);
     }
 
     public void deleteStateActions() {
@@ -288,14 +288,6 @@ public class StateService {
         PrismState transitionStateId = PrismState.INSTITUTION_APPROVAL;
         if (roleService.hasUserRole(resource, comment.getUser(), PrismRole.SYSTEM_ADMINISTRATOR)) {
             transitionStateId = PrismState.INSTITUTION_APPROVED;
-        }
-        return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
-    }
-
-    public StateTransition getApplicationEligibilityAssessedOutcome(Resource resource, Comment comment) {
-        PrismState transitionStateId = PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION;
-        if (comment.isApplicationCreatorEligibilityUnsure()) {
-            transitionStateId = PrismState.APPLICATION_VALIDATION_PENDING_FEEDBACK;
         }
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }

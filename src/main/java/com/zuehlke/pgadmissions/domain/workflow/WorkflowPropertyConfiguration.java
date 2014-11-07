@@ -207,6 +207,10 @@ public class WorkflowPropertyConfiguration extends WorkflowResourceConfiguration
         this.systemDefault = systemDefault;
         return this;
     }
+    
+    public boolean hasRangeSpecification() {
+        return !(minimum == null && maximum == null);
+    }
 
     @Override
     public ResourceSignature getResourceSignature() {

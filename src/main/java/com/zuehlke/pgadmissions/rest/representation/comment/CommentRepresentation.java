@@ -99,6 +99,8 @@ public class CommentRepresentation {
     private Set<AppointmentTimeslotRepresentation> appointmentTimeslots = Sets.newLinkedHashSet();
 
     private Set<AppointmentPreferenceRepresentation> appointmentPreferences = Sets.newLinkedHashSet();
+    
+    private Set<CommentPropertyRepresentation> properties = Sets.newLinkedHashSet();
 
     public Integer getId() {
         return id;
@@ -493,6 +495,14 @@ public class CommentRepresentation {
     
     public void addAppointmentTimeslot(AppointmentTimeslotRepresentation appointmentTimeslot) {
         appointmentTimeslots.add(appointmentTimeslot);
+    }
+
+    public final Set<CommentPropertyRepresentation> getProperties() {
+        return properties;
+    }
+
+    public final void setProperties(Set<CommentPropertyRepresentation> properties) {
+        this.properties = properties;
     }
 
 }

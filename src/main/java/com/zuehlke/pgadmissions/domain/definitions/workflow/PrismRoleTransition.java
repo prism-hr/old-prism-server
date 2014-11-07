@@ -16,6 +16,8 @@ public class PrismRoleTransition {
 
     private Integer maximumPermitted;
 
+    private PrismWorkflowPropertyDefinition propertyDefinition;
+
     public PrismRole getRole() {
         return role;
     }
@@ -28,7 +30,7 @@ public class PrismRoleTransition {
         return transitionRole;
     }
 
-    public boolean isRestrictToActionOwner() {
+    public Boolean getRestrictToActionOwner() {
         return restrictToActionOwner;
     }
 
@@ -38,6 +40,10 @@ public class PrismRoleTransition {
 
     public Integer getMaximumPermitted() {
         return maximumPermitted;
+    }
+
+    public final PrismWorkflowPropertyDefinition getPropertyDefinition() {
+        return propertyDefinition;
     }
 
     public PrismRoleTransition withRole(PrismRole role) {
@@ -69,6 +75,11 @@ public class PrismRoleTransition {
         this.maximumPermitted = maximumPermitted;
         return this;
     }
+    
+    public PrismRoleTransition withPropertyDefinition(PrismWorkflowPropertyDefinition propertyDefinition) {
+        this.propertyDefinition = propertyDefinition;
+        return this;
+    }
 
     @Override
     public int hashCode() {
@@ -85,8 +96,9 @@ public class PrismRoleTransition {
         }
         final PrismRoleTransition other = (PrismRoleTransition) obj;
         return Objects.equal(role, other.getRole()) && Objects.equal(transitionType, other.getTransitionType())
-                && Objects.equal(transitionRole, other.getTransitionRole()) && Objects.equal(restrictToActionOwner, other.isRestrictToActionOwner())
-                && Objects.equal(minimumPermitted, other.getMinimumPermitted()) && Objects.equal(maximumPermitted, other.getMaximumPermitted());
+                && Objects.equal(transitionRole, other.getTransitionRole()) && Objects.equal(restrictToActionOwner, other.getRestrictToActionOwner())
+                && Objects.equal(minimumPermitted, other.getMinimumPermitted()) && Objects.equal(maximumPermitted, other.getMaximumPermitted())
+                && Objects.equal(propertyDefinition, other.getPropertyDefinition());
     }
 
 }

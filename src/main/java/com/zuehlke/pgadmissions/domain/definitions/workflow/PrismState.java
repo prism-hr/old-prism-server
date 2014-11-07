@@ -5,8 +5,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.APPLICATION_ASSESS_ELIGIBILITY_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.APPLICATION_CONFIRM_ELIGIBILITY_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.APPLICATION_CONFIRM_SUPERVISION_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.APPLICATION_ESCALATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.APPLICATION_INTERVIEW_DURATION;
@@ -52,8 +50,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicat
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationUnsubmitted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationUnsubmittedPendingCompletion;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidation;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidationPendingCompletion;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidationPendingFeedback;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnCompleted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnCompletedPurged;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnCompletedUnsubmitted;
@@ -124,11 +120,7 @@ public enum PrismState {
     APPLICATION_UNSUBMITTED(PrismStateGroup.APPLICATION_UNSUBMITTED, APPLICATION_ESCALATE_DURATION, APPLICATION, PrismApplicationUnsubmitted.class), //
     APPLICATION_UNSUBMITTED_PENDING_COMPLETION(PrismStateGroup.APPLICATION_UNSUBMITTED, APPLICATION_ESCALATE_DURATION, APPLICATION,
             PrismApplicationUnsubmittedPendingCompletion.class), //
-    APPLICATION_VALIDATION(PrismStateGroup.APPLICATION_VALIDATION, APPLICATION_ASSESS_ELIGIBILITY_DURATION, APPLICATION, PrismApplicationValidation.class), //
-    APPLICATION_VALIDATION_PENDING_COMPLETION(PrismStateGroup.APPLICATION_VALIDATION, APPLICATION_ESCALATE_DURATION, APPLICATION,
-            PrismApplicationValidationPendingCompletion.class), //
-    APPLICATION_VALIDATION_PENDING_FEEDBACK(PrismStateGroup.APPLICATION_VALIDATION, APPLICATION_CONFIRM_ELIGIBILITY_DURATION, APPLICATION,
-            PrismApplicationValidationPendingFeedback.class), //
+    APPLICATION_VALIDATION(PrismStateGroup.APPLICATION_VALIDATION, APPLICATION_ESCALATE_DURATION, APPLICATION, PrismApplicationValidation.class), //
     APPLICATION_WITHDRAWN_PENDING_EXPORT(PrismStateGroup.APPLICATION_WITHDRAWN, null, APPLICATION, PrismApplicationWithdrawnPendingExport.class), //
     APPLICATION_WITHDRAWN_COMPLETED(PrismStateGroup.APPLICATION_WITHDRAWN, APPLICATION_PURGE_DURATION, APPLICATION, PrismApplicationWithdrawnCompleted.class), //
     APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED(PrismStateGroup.APPLICATION_WITHDRAWN, APPLICATION_PURGE_DURATION, APPLICATION,
@@ -155,8 +147,7 @@ public enum PrismState {
     PROGRAM_REJECTED(PrismStateGroup.PROGRAM_REJECTED, null, PROGRAM, PrismProgramRejected.class), //
     PROGRAM_WITHDRAWN(PrismStateGroup.PROGRAM_WITHDRAWN, null, PROGRAM, PrismProgramWithdrawn.class), //
     PROJECT_APPROVAL(PrismStateGroup.PROJECT_APPROVAL, APPLICATION_ESCALATE_DURATION, PROJECT, PrismProjectApproval.class), //
-    PROJECT_APPROVAL_PENDING_CORRECTION(PrismStateGroup.PROJECT_APPROVAL, APPLICATION_ESCALATE_DURATION, PROJECT,
-            PrismProjectApprovalPendingCorrection.class), //
+    PROJECT_APPROVAL_PENDING_CORRECTION(PrismStateGroup.PROJECT_APPROVAL, APPLICATION_ESCALATE_DURATION, PROJECT, PrismProjectApprovalPendingCorrection.class), //
     PROJECT_APPROVED(PrismStateGroup.PROJECT_APPROVED, APPLICATION_ESCALATE_DURATION, PROJECT, PrismProjectApproved.class), //
     PROJECT_DEACTIVATED(PrismStateGroup.PROJECT_APPROVED, PROJECT_APPROVE_DURATION, PROJECT, PrismProjectDeactivated.class), //
     PROJECT_DISABLED_COMPLETED(PrismStateGroup.PROJECT_DISABLED, null, PROJECT, PrismProjectDisabledCompleted.class), //

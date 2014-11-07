@@ -56,6 +56,12 @@ public class Action extends WorkflowDefinition {
     @Column(name = "customizable_action", nullable = false)
     private Boolean customizableAction;
 
+    @Column(name = "configurable_action", nullable = false)
+    private Boolean configurableAction;
+
+    @Column(name = "singleton_action", nullable = false)
+    private Boolean singletonAction;
+    
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
@@ -147,6 +153,22 @@ public class Action extends WorkflowDefinition {
         this.customizableAction = customizableAction;
     }
 
+    public final Boolean getConfigurableAction() {
+        return configurableAction;
+    }
+
+    public final void setConfigurableAction(Boolean configurableAction) {
+        this.configurableAction = configurableAction;
+    }
+
+    public final Boolean getSingletonAction() {
+        return singletonAction;
+    }
+
+    public final void setSingletonAction(Boolean singletonAction) {
+        this.singletonAction = singletonAction;
+    }
+
     public final Action getFallbackAction() {
         return fallbackAction;
     }
@@ -227,6 +249,16 @@ public class Action extends WorkflowDefinition {
     
     public Action withCustomizableAction(Boolean customizableAction) {
         this.customizableAction = customizableAction;
+        return this;
+    }
+    
+    public Action withConfigurableAction(Boolean configurableAction) {
+        this.configurableAction = configurableAction;
+        return this;
+    }
+    
+    public Action withSingletonAction(Boolean singletonAction) {
+        this.singletonAction = singletonAction;
         return this;
     }
 

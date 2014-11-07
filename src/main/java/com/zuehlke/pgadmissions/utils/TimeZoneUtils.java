@@ -9,7 +9,7 @@ import java.util.TimeZone;
 
 import com.google.common.collect.Lists;
 
-public class TimeZoneList {
+public class TimeZoneUtils {
 
     private static final List<TimeZoneMapping> ZONEMAPPINGS = new ArrayList<TimeZoneMapping>();
 
@@ -114,9 +114,9 @@ public class TimeZoneList {
         ZONEMAPPINGS.add(new TimeZoneMapping("Yakutsk Standard Time", "Asia/Yakutsk", "(GMT +09:00) Yakutsk"));
     }
 
-    private static TimeZoneList INSTANCE = new TimeZoneList();
+    private static TimeZoneUtils INSTANCE = new TimeZoneUtils();
 
-    public static final TimeZoneList getInstance() {
+    public static final TimeZoneUtils getInstance() {
         return INSTANCE;
     }
 
@@ -124,7 +124,7 @@ public class TimeZoneList {
 
     private List<TimeZoneDefinition> timeZoneDefinitions;
 
-    private TimeZoneList() {
+    private TimeZoneUtils() {
         HashSet<String> availableIdsSet = new HashSet<String>();
         for (String availableId : TimeZone.getAvailableIDs()) {
             availableIdsSet.add(availableId);
@@ -234,7 +234,7 @@ public class TimeZoneList {
     }
 
     public static void main(String[] args) {
-        List<TimeZoneWithDisplayNames> returnedZones = TimeZoneList.getInstance().getTimeZones();
+        List<TimeZoneWithDisplayNames> returnedZones = TimeZoneUtils.getInstance().getTimeZones();
         for (TimeZoneWithDisplayNames zone : returnedZones) {
             System.out.println(zone.getDisplayName());
         }

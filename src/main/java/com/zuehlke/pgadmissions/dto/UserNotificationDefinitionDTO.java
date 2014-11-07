@@ -10,7 +10,7 @@ public class UserNotificationDefinitionDTO {
 
     private PrismRole roleId;
 
-    private PrismNotificationDefinition notificationTemplateId;
+    private PrismNotificationDefinition notificationDefinitionId;
 
     private PrismAction actionId;
 
@@ -30,12 +30,12 @@ public class UserNotificationDefinitionDTO {
         this.roleId = roleId;
     }
 
-    public PrismNotificationDefinition getNotificationTemplateId() {
-        return notificationTemplateId;
+    public PrismNotificationDefinition getNotificationDefinitionId() {
+        return notificationDefinitionId;
     }
 
-    public void setNotificationTemplateId(PrismNotificationDefinition notificationTemplateId) {
-        this.notificationTemplateId = notificationTemplateId;
+    public void setNotificationDefinitionId(PrismNotificationDefinition notificationDefinitionId) {
+        this.notificationDefinitionId = notificationDefinitionId;
     }
 
     public PrismAction getActionId() {

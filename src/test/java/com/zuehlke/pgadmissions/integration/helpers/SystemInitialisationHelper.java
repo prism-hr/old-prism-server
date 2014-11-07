@@ -237,7 +237,7 @@ public class SystemInitialisationHelper {
 
     public void verifyNotificationTemplateCreation() {
         System system = systemService.getSystem();
-        for (NotificationDefinition template : notificationService.getTemplates()) {
+        for (NotificationDefinition template : notificationService.getDefinitions()) {
             PrismNotificationDefinition prismNotificationTemplate = template.getId();
 
             assertEquals(prismNotificationTemplate.getNotificationType(), template.getNotificationType());
@@ -263,7 +263,7 @@ public class SystemInitialisationHelper {
     public void verifyStateDurationCreation() {
         System system = systemService.getSystem();
         for (State state : stateService.getConfigurableStates()) {
-            StateDurationConfiguration stateDuration = stateService.getStateDuration(system, state);
+            StateDurationConfiguration stateDuration = stateService.getStateDurationConfiguration(system, system.getUser(), state);
 
             assertEquals(stateDuration.getLocale(), getSystemLocale());
             assertEquals(stateDuration.getProgramType(), state.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null);
@@ -350,7 +350,7 @@ public class SystemInitialisationHelper {
             for (RoleTransition roleTransition : stateTransition.getRoleTransitions()) {
                 prismStateTransition.getRoleTransitions().add(
                         new PrismRoleTransition().withRole(roleTransition.getRole().getId()).withTransitionType(roleTransition.getRoleTransitionType())
-                                .withTransitionRole(roleTransition.getTransitionRole().getId()).withRestrictToOwner(roleTransition.isRestrictToActionOwner())
+                                .withTransitionRole(roleTransition.getTransitionRole().getId()).withRestrictToOwner(roleTransition.getRestrictToActionOwner())
                                 .withMinimumPermitted(roleTransition.getMinimumPermitted()).withMaximumPermitted(roleTransition.getMaximumPermitted()));
             }
 

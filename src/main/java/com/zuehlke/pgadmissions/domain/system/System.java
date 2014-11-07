@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
+import com.zuehlke.pgadmissions.domain.workflow.ResourceAction;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
@@ -118,6 +119,9 @@ public class System extends Resource {
 
     @OneToMany(mappedBy = "system")
     private Set<UserRole> userRoles = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "system")
+    private Set<ResourceAction> resourceActions = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -349,19 +353,26 @@ public class System extends Resource {
     public final Set<Application> getApplications() {
         return applications;
     }
+
+    @Override
+    public Set<Comment> getComments() {
+        return comments;
+    }
     
+    @Override
     public Set<UserRole> getUserRoles() {
         return userRoles;
     }
 
-    public Set<Comment> getComments() {
-        return comments;
+    @Override
+    public final Set<ResourceAction> getResourceActions() {
+        return resourceActions;
     }
-
+    
     public Set<Project> getProjects() {
         return projects;
     }
-    
+
     public System withTitle(String title) {
         this.title = title;
         return this;
@@ -406,15 +417,10 @@ public class System extends Resource {
         this.updatedTimestamp = updatedTimestamp;
         return this;
     }
-    
+
     public System withCipherSalt(String cipherSalt) {
         this.cipherSalt = cipherSalt;
         return this;
-    }
-
-    @Override
-    public void addComment(Comment comment) {
-        comments.add(comment);
     }
 
     @Override

@@ -61,6 +61,9 @@ public class UserRole extends WorkflowResourceExecution {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
+    @Column(name = "activated", nullable = false)
+    private Boolean activated;
+
     @Column(name = "last_notified_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedDate;
@@ -143,6 +146,14 @@ public class UserRole extends WorkflowResourceExecution {
         this.role = role;
     }
 
+    public final Boolean getActivated() {
+        return activated;
+    }
+
+    public final void setActivated(Boolean activated) {
+        this.activated = activated;
+    }
+
     public final LocalDate getLastNotifiedDate() {
         return lastNotifiedDate;
     }
@@ -171,6 +182,11 @@ public class UserRole extends WorkflowResourceExecution {
 
     public UserRole withRole(Role role) {
         this.role = role;
+        return this;
+    }
+
+    public UserRole withActivated(Boolean activated) {
+        this.activated = activated;
         return this;
     }
 

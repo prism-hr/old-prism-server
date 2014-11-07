@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
@@ -24,6 +25,8 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -51,6 +54,9 @@ public class RoleService {
     private UserService userService;
 
     @Autowired
+    private WorkflowService workflowService;
+
+    @Autowired
     private ApplicationContext applicationContext;
 
     public Role getById(PrismRole roleId) {
@@ -73,13 +79,13 @@ public class RoleService {
         Role newRole = getById(newRoleId);
         List<Integer> excludingUserRoles = roleDAO.getExcludingUserRoles(resource, user, newRole);
         if (excludingUserRoles.isEmpty()) {
-            UserRole transientUserRole = new UserRole().withResource(resource).withUser(user).withRole(newRole).withAssignedTimestamp(new DateTime());
+            UserRole transientUserRole = new UserRole().withResource(resource).withUser(user).withRole(newRole)
+                    .withActivated(resource.getResourceScope() == PrismScope.APPLICATION ? false : true).withAssignedTimestamp(new DateTime());
             UserRole persistentUserRole = entityService.getOrCreate(transientUserRole);
             entityService.flush();
             return persistentUserRole;
         }
-        Action action = actionService.getViewEditAction(resource);
-        throwWorkflowPermissionException(resource, action, user, newRole);
+        throwWorkflowPermissionException(resource, actionService.getViewEditAction(resource), user, newRole);
         return null;
     }
 
@@ -174,7 +180,7 @@ public class RoleService {
     private List<User> getRoleTransitionUsers(Comment comment, RoleTransition roleTransition) throws WorkflowEngineException {
         User actionOwner = comment.getUser();
         Resource resource = comment.getResource();
-        User restrictedToUser = roleTransition.isRestrictToActionOwner() ? actionOwner : null;
+        User restrictedToUser = roleTransition.getRestrictToActionOwner() ? actionOwner : null;
 
         List<User> users;
         if (roleTransition.getRoleTransitionType().isSpecified()) {
@@ -183,8 +189,24 @@ public class RoleService {
             users = roleDAO.getUnspecifiedRoleTransitionUsers(resource, roleTransition, restrictedToUser);
         }
 
-        Integer minimumPermitted = roleTransition.getMinimumPermitted();
-        Integer maximumPermitted = roleTransition.getMaximumPermitted();
+        Integer minimumPermitted;
+        Integer maximumPermitted;
+
+        WorkflowPropertyDefinition workflowPropertyDefinition = roleTransition.getWorkflowPropertyDefinition();
+        if (workflowPropertyDefinition == null) {
+            minimumPermitted = roleTransition.getMinimumPermitted();
+            maximumPermitted = roleTransition.getMaximumPermitted();
+        } else {
+            WorkflowPropertyConfiguration workflowPropertyConfiguration = workflowService.getWorkflowPropertyConfiguration(resource, actionOwner,
+                    workflowPropertyDefinition);
+            if (workflowPropertyConfiguration.hasRangeSpecification()) {
+                minimumPermitted = workflowPropertyConfiguration.getMinimum();
+                maximumPermitted = workflowPropertyConfiguration.getMaximum();
+            } else {
+                minimumPermitted = roleTransition.getMinimumPermitted();
+                maximumPermitted = roleTransition.getMaximumPermitted();
+            }
+        }
 
         if (!(minimumPermitted == null || users.size() >= minimumPermitted) && !(maximumPermitted == null || users.size() <= maximumPermitted)) {
             actionService.throwWorkflowEngineException(comment.getResource(), comment.getAction(), "Attempted to "

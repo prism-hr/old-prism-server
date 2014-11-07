@@ -13,20 +13,27 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.ActionConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.ResourceAction;
+import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
+import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
@@ -41,6 +48,9 @@ public class ActionService {
 
     @Autowired
     private ActionDAO actionDAO;
+
+    @Autowired
+    private CustomizationService customizationService;
 
     @Autowired
     private EntityService entityService;
@@ -59,6 +69,23 @@ public class ActionService {
 
     public Action getById(PrismAction id) {
         return entityService.getById(Action.class, id);
+    }
+
+    public ActionConfiguration getActionConfiguration(Resource resource, User user, Action action) {
+        return customizationService.getConfiguration(ActionConfiguration.class, resource, user, "action", action);
+    }
+
+    public ActionConfiguration getActionConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action) {
+        return customizationService.getConfiguration(ActionConfiguration.class, resource, locale, programType, "action", action);
+    }
+
+    public void createOrUpdateActionConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action, StateGroup startStateGroup)
+            throws DeduplicationException, CustomizationException {
+        customizationService.validateConfiguration(resource, action, locale, programType);
+        ActionConfiguration transientConfiguration = new ActionConfiguration().withResource(resource).withLocale(locale).withProgramType(programType)
+                .withAction(action).withStartStateGroup(startStateGroup).withResourceActionEvaluation(action.getId().getResourceActionEvaluation())
+                .withSystemDefault(customizationService.isSystemDefault(action, locale, programType));
+        entityService.createOrUpdate(transientConfiguration);
     }
 
     public void validateInvokeAction(Resource resource, Action action, Comment comment) {
@@ -139,9 +166,9 @@ public class ActionService {
         return representations;
     }
 
-    public Set<ActionRepresentation> getPermittedActions(Integer systemId, Integer institutionId, Integer programId, Integer projectId, Integer applicationId,
-            PrismState stateId, User user) {
-        return Sets.newLinkedHashSet(actionDAO.getPermittedActions(systemId, institutionId, programId, projectId, applicationId, stateId, user));
+    public Set<ActionRepresentation> getPermittedActions(PrismScope resourcScope, Integer systemId, Integer institutionId, Integer programId,
+            Integer projectId, Integer applicationId, PrismState stateId, User user) {
+        return Sets.newLinkedHashSet(actionDAO.getPermittedActions(resourcScope, systemId, institutionId, programId, projectId, applicationId, stateId, user));
     }
 
     public List<PrismActionEnhancement> getPermittedActionEnhancements(Resource resource, User user) {
@@ -153,10 +180,10 @@ public class ActionService {
 
     public ActionOutcomeDTO executeUserAction(Resource resource, Action action, Comment comment) throws DeduplicationException {
         validateInvokeAction(resource, action, comment);
-        return executeSystemAction(resource, action, comment);
+        return executeAction(resource, action, comment);
     }
 
-    public ActionOutcomeDTO executeSystemAction(Resource resource, Action action, Comment comment) throws DeduplicationException {
+    public ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment) throws DeduplicationException {
         User actionOwner = comment.getUser();
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE || action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE) {
@@ -176,6 +203,10 @@ public class ActionService {
         StateTransition stateTransition = stateService.executeStateTransition(resource, action, comment);
         Action transitionAction = stateTransition == null ? action.getFallbackAction() : stateTransition.getTransitionAction();
         Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
+
+        if (action.getSingletonAction()) {
+            resourceService.deleteResourceAction(resource, action);
+        }
 
         return new ActionOutcomeDTO().withUser(actionOwner).withResource(resource).withTransitionResource(transitionResource)
                 .withTransitionAction(transitionAction);
@@ -241,6 +272,14 @@ public class ActionService {
         throw new WorkflowEngineException("Error executing " + action.getId().name() + " on " + resource.getCode() + ". Explanation was \"" + message + "\".");
     }
 
+    public List<Action> getCustomizableActions() {
+        return actionDAO.getCustomizableActions();
+    }
+
+    public List<Action> getConfigurableActions() {
+        return actionDAO.getConfigurableActions();
+    }
+
     public void validateUserAction(Resource resource, Action action, User invoker) {
         if (checkActionAvailable(resource, action, invoker)) {
             return;
@@ -248,6 +287,19 @@ public class ActionService {
             return;
         }
         throwWorkflowPermissionException(resource, action);
+    }
+
+    public void activateConfigurableActions(Resource resource, Comment comment) throws DeduplicationException {
+        if (comment.isStateGroupTransitionComment()) {
+            User userCurrent = userService.getCurrentUser();
+            List<Action> configurableActions = getConfigurableActions();
+            for (Action configurableAction : configurableActions) {
+                ActionConfiguration configuration = getActionConfiguration(resource, userCurrent, configurableAction);
+                if (configuration.getStartStateGroup().getSequenceOrder() >= comment.getTransitionState().getStateGroup().getSequenceOrder()) {
+                    entityService.getOrCreate(new ResourceAction().withResource(resource).withAction(configurableAction));
+                }
+            }
+        }
     }
 
     private boolean checkActionAvailable(Resource resource, Action action, User invoker) {

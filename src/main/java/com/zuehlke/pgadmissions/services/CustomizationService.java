@@ -47,12 +47,13 @@ public class CustomizationService {
         return entityService.getById(DisplayPropertyDefinition.class, id);
     }
 
-    public void createOrUpdateDisplayProperty(Resource resource, PrismLocale locale, PrismProgramType programType, PrismDisplayCategory displayCategory,
-            DisplayPropertyDefinition displayProperty, String value) throws DeduplicationException, CustomizationException {
+    public void createOrUpdateDisplayProperty(Resource resource, PrismLocale locale, PrismProgramType programType, DisplayPropertyDefinition displayProperty,
+            String value) throws DeduplicationException, CustomizationException {
         validateConfiguration(resource, displayProperty, locale, programType);
-        DisplayPropertyConfiguration transientValue = new DisplayPropertyConfiguration().withResource(resource).withProgramType(programType).withLocale(locale)
-                .withDisplayPropertyDefinition(displayProperty).withValue(value).withSystemDefault(isSystemDefault(displayProperty, locale, programType));
-        entityService.createOrUpdate(transientValue);
+        DisplayPropertyConfiguration transientConfiguration = new DisplayPropertyConfiguration().withResource(resource).withProgramType(programType)
+                .withLocale(locale).withDisplayPropertyDefinition(displayProperty).withValue(value)
+                .withSystemDefault(isSystemDefault(displayProperty, locale, programType));
+        entityService.createOrUpdate(transientConfiguration);
     }
 
     public <T extends WorkflowResourceConfiguration> T getConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale,

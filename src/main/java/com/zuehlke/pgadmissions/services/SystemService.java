@@ -131,6 +131,9 @@ public class SystemService {
     private CustomizationService customizationService;
 
     @Autowired
+    private WorkflowService workflowService;
+
+    @Autowired
     private ApplicationContext applicationContext;
 
     @Transactional
@@ -160,10 +163,6 @@ public class SystemService {
         verifyBackwardCompatibility(State.class);
         initializeStates();
 
-        LOGGER.info("Initialising notification template definitions");
-        verifyBackwardCompatibility(NotificationDefinition.class);
-        initializeNotificationDefinitions();
-
         LOGGER.info("Initialising state transition evaluation definitions");
         verifyBackwardCompatibility(StateTransitionEvaluation.class);
         initializeStateTransitionEvaluations();
@@ -176,20 +175,27 @@ public class SystemService {
         verifyBackwardCompatibility(DisplayPropertyDefinition.class);
         initializeDisplayPropertyDefinitions();
 
+        LOGGER.info("Initialising notification template definitions");
+        verifyBackwardCompatibility(NotificationDefinition.class);
+        initializeNotificationDefinitions();
+
         LOGGER.info("Initialising state action definitions");
         initializeStateActionDefinitions();
 
         LOGGER.info("Initialising system object");
         System system = initializeSystemResource();
 
+        LOGGER.info("Intialising action configurations");
+        initializeActionConfigurations(system);
+
+        LOGGER.info("Initialising state duration configurations");
+        initializeStateDurationConfigurations(system);
+
         LOGGER.info("Initialising display property configurations");
         initializeDisplayPropertyConfigurations(system);
 
         LOGGER.info("Initialising notification configurations");
         initializeNotificationConfigurations(system);
-
-        LOGGER.info("Initialising state duration configurations");
-        initializeStateDurationConfigurations(system);
 
         LOGGER.info("Initialising system user");
         initializeSystemUser(system);
@@ -248,7 +254,8 @@ public class SystemService {
                     .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
                     .withTransitionAction(prismAction.isTransitionAction()).withDeclinableAction(prismAction.isDeclinableAction())
                     .withVisibleAction(prismAction.isVisibleAction()).withEmphasizedAction(prismAction.isEmphasizedAction()).withScope(scope)
-                    .withCustomizableAction(prismAction.isCustomizableAction()).withCreationScope(creationScope);
+                    .withCustomizableAction(prismAction.isCustomizableAction()).withConfigurableAction(prismAction.isConfigurableAction())
+                    .withSingletonAction(prismAction.isSingletonAction()).withCreationScope(creationScope);
             Action action = entityService.createOrUpdate(transientAction);
             action.getRedactions().clear();
 
@@ -286,23 +293,6 @@ public class SystemService {
         }
     }
 
-    private void initializeNotificationDefinitions() throws DeduplicationException, CustomizationException {
-        HashMap<PrismNotificationDefinition, NotificationDefinition> definitions = Maps.newHashMap();
-        for (PrismNotificationDefinition prismNotificationDefinition : PrismNotificationDefinition.values()) {
-            Scope scope = entityService.getByProperty(Scope.class, "id", prismNotificationDefinition.getScope());
-            NotificationDefinition transientNotificationDefinition = new NotificationDefinition().withId(prismNotificationDefinition)
-                    .withNotificationType(prismNotificationDefinition.getNotificationType())
-                    .withNotificationPurpose(prismNotificationDefinition.getNotificationPurpose()).withScope(scope);
-            NotificationDefinition persistentNotificationTemplateDefinition = entityService.createOrUpdate(transientNotificationDefinition);
-            definitions.put(prismNotificationDefinition, persistentNotificationTemplateDefinition);
-        }
-        HashMap<PrismNotificationDefinition, PrismReminderDefinition> reminderDefinitions = PrismNotificationDefinition.getReminderdefinitions();
-        for (PrismNotificationDefinition prismNotificationDefinitionWithReminder : reminderDefinitions.keySet()) {
-            NotificationDefinition notificationDefinitionWithReminder = definitions.get(prismNotificationDefinitionWithReminder);
-            notificationDefinitionWithReminder.setReminderDefinition(definitions.get(reminderDefinitions.get(notificationDefinitionWithReminder)));
-        }
-    }
-
     private void initializeStateTransitionEvaluations() throws DeduplicationException {
         for (PrismStateTransitionEvaluation prismTransitionEvaluation : PrismStateTransitionEvaluation.values()) {
             Scope scope = entityService.getById(Scope.class, prismTransitionEvaluation.getScope());
@@ -317,6 +307,23 @@ public class SystemService {
             Scope scope = scopeService.getById(prismStateDuration.getScope());
             StateDurationDefinition transientStateDurationDefinition = new StateDurationDefinition().withId(prismStateDuration).withScope(scope);
             entityService.createOrUpdate(transientStateDurationDefinition);
+        }
+    }
+
+    private void initializeNotificationDefinitions() throws DeduplicationException, CustomizationException {
+        HashMap<PrismNotificationDefinition, NotificationDefinition> definitions = Maps.newHashMap();
+        for (PrismNotificationDefinition prismNotificationDefinition : PrismNotificationDefinition.values()) {
+            Scope scope = entityService.getByProperty(Scope.class, "id", prismNotificationDefinition.getScope());
+            NotificationDefinition transientNotificationDefinition = new NotificationDefinition().withId(prismNotificationDefinition)
+                    .withNotificationType(prismNotificationDefinition.getNotificationType())
+                    .withNotificationPurpose(prismNotificationDefinition.getNotificationPurpose()).withScope(scope);
+            NotificationDefinition persistentNotificationTemplateDefinition = entityService.createOrUpdate(transientNotificationDefinition);
+            definitions.put(prismNotificationDefinition, persistentNotificationTemplateDefinition);
+        }
+        HashMap<PrismNotificationDefinition, PrismReminderDefinition> reminderDefinitions = PrismNotificationDefinition.getReminderdefinitions();
+        for (PrismNotificationDefinition prismNotificationDefinitionWithReminder : reminderDefinitions.keySet()) {
+            NotificationDefinition notificationDefinitionWithReminder = definitions.get(prismNotificationDefinitionWithReminder);
+            notificationDefinitionWithReminder.setReminderDefinition(definitions.get(reminderDefinitions.get(notificationDefinitionWithReminder)));
         }
     }
 
@@ -341,13 +348,33 @@ public class SystemService {
         return system;
     }
 
+    private void initializeActionConfigurations(System system) throws DeduplicationException, CustomizationException {
+        for (Action action : actionService.getConfigurableActions()) {
+            PrismAction prismAction = action.getId();
+            StateGroup startStateGroup = stateService.getStateGroupById(prismAction.getDefaultStartStateGroup());
+            actionService.createOrUpdateActionConfiguration(system, getSystemLocale(), getSystemProgramType(), action, startStateGroup);
+        }
+    }
+
+    private void initializeStateDurationConfigurations(System system) throws DeduplicationException, CustomizationException {
+        for (PrismState prismState : PrismState.values()) {
+            PrismStateDuration prismStateDuration = prismState.getDuration();
+            Integer defaultDuration = prismStateDuration == null ? null : prismStateDuration.getDefaultDuration();
+            if (defaultDuration != null) {
+                StateDurationDefinition stateDurationDefinition = stateService.getStateDurationDefinitionById(prismStateDuration);
+                PrismProgramType programType = prismState.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null;
+                stateService.createOrUpdateStateDurationConfiguration(system, getSystemLocale(), programType, stateDurationDefinition, defaultDuration);
+            }
+        }
+    }
+
     private void initializeDisplayPropertyConfigurations(System system) throws DeduplicationException, CustomizationException {
         for (PrismDisplayProperty prismDisplayProperty : PrismDisplayProperty.values()) {
             Scope scope = scopeService.getById(prismDisplayProperty.getScope());
             DisplayPropertyDefinition displayPropertyDefinition = customizationService.getDisplayPropertyDefinitionById(prismDisplayProperty);
             PrismProgramType programType = scope.getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null;
-            customizationService.createOrUpdateDisplayProperty(system, getSystemLocale(), programType, prismDisplayProperty.getDisplayCategory(),
-                    displayPropertyDefinition, prismDisplayProperty.getDefaultValue());
+            customizationService.createOrUpdateDisplayProperty(system, getSystemLocale(), programType, displayPropertyDefinition,
+                    prismDisplayProperty.getDefaultValue());
         }
     }
 
@@ -363,18 +390,6 @@ public class SystemService {
             NotificationConfiguration transientNotificationConfiguration = notificationService.createConfiguration(system, getSystemLocale(), programType,
                     notificationDefinition, subject, content, prismNotificationDefinition.getReminderInterval());
             entityService.createOrUpdate(transientNotificationConfiguration);
-        }
-    }
-
-    private void initializeStateDurationConfigurations(System system) throws DeduplicationException, CustomizationException {
-        for (PrismState prismState : PrismState.values()) {
-            PrismStateDuration prismStateDuration = prismState.getDuration();
-            Integer defaultDuration = prismStateDuration == null ? null : prismStateDuration.getDefaultDuration();
-            if (defaultDuration != null) {
-                StateDurationDefinition stateDurationDefinition = stateService.getStateDurationDefinitionById(prismStateDuration);
-                PrismProgramType programType = prismState.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null;
-                stateService.createOrUpdateStateDurationConfiguration(system, getSystemLocale(), programType, stateDurationDefinition, defaultDuration);
-            }
         }
     }
 
@@ -449,8 +464,9 @@ public class SystemService {
             Role transitionRole = roleService.getById(prismRoleTransition.getTransitionRole());
             RoleTransition roleTransition = new RoleTransition().withStateTransition(stateTransition).withRole(role)
                     .withRoleTransitionType(prismRoleTransition.getTransitionType()).withTransitionRole(transitionRole)
-                    .withRestrictToActionOwner(prismRoleTransition.isRestrictToActionOwner()).withMinimumPermitted(prismRoleTransition.getMinimumPermitted())
-                    .withMaximumPermitted(prismRoleTransition.getMaximumPermitted());
+                    .withRestrictToActionOwner(prismRoleTransition.getRestrictToActionOwner()).withMinimumPermitted(prismRoleTransition.getMinimumPermitted())
+                    .withMaximumPermitted(prismRoleTransition.getMaximumPermitted())
+                    .withWorkflowPropertyDefinition(workflowService.getWorkflowPropertyDefinitionById(prismRoleTransition.getPropertyDefinition()));
             entityService.save(roleTransition);
             stateTransition.getRoleTransitions().add(roleTransition);
         }
@@ -464,7 +480,7 @@ public class SystemService {
                     .withContent(applicationContext.getBean(PropertyLoader.class).localize(system, user).load(SYSTEM_COMMENT_INITIALIZED_SYSTEM))
                     .withDeclinedResponse(false).withUser(user).withCreatedTimestamp(new DateTime())
                     .addAssignedUser(user, roleService.getCreatorRole(system), PrismRoleTransitionType.CREATE);
-            ActionOutcomeDTO outcome = actionService.executeSystemAction(system, action, comment);
+            ActionOutcomeDTO outcome = actionService.executeAction(system, action, comment);
             notificationService.sendRegistrationNotification(user, outcome, comment);
         }
     }

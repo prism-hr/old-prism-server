@@ -349,7 +349,7 @@ public class ImportedEntityService {
 
         Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                 .addAssignedUser(invoker, invokerRole, PrismRoleTransitionType.CREATE);
-        actionService.executeSystemAction(program, action, comment);
+        actionService.executeAction(program, action, comment);
     }
 
     private String truncateString(String string, int characters) {

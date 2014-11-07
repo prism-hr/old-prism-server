@@ -7,8 +7,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 
 public enum PrismStateDuration {
 
-    APPLICATION_ASSESS_ELIGIBILITY_DURATION(3, null, APPLICATION), //
-    APPLICATION_CONFIRM_ELIGIBILITY_DURATION(3, null, APPLICATION), //
     APPLICATION_PROVIDE_REVIEW_DURATION(7, true, APPLICATION), //
     APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION(3, null, APPLICATION), //
     APPLICATION_INTERVIEW_DURATION(null, true, APPLICATION), //
@@ -41,7 +39,7 @@ public enum PrismStateDuration {
     public final boolean isDuration() {
         return defaultDuration != null;
     }
-    
+
     public final boolean isEvaluation() {
         return evaluation;
     }

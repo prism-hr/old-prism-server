@@ -5,7 +5,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 
-public class NotificationTemplateModelDTO {
+public class NotificationDefinitionModelDTO {
 
     private User user;
 
@@ -63,42 +63,42 @@ public class NotificationTemplateModelDTO {
         return newPassword;
     }
 
-    public NotificationTemplateModelDTO withUser(User user) {
+    public NotificationDefinitionModelDTO withUser(User user) {
         this.user = user;
         return this;
     }
 
-    public NotificationTemplateModelDTO withAuthor(User author) {
+    public NotificationDefinitionModelDTO withAuthor(User author) {
         this.author = author;
         return this;
     }
 
-    public NotificationTemplateModelDTO withInvoker(User invoker) {
+    public NotificationDefinitionModelDTO withInvoker(User invoker) {
         this.invoker = invoker;
         return this;
     }
 
-    public NotificationTemplateModelDTO withResource(Resource resource) {
+    public NotificationDefinitionModelDTO withResource(Resource resource) {
         this.resource = resource;
         return this;
     }
 
-    public NotificationTemplateModelDTO withComment(final Comment comment) {
+    public NotificationDefinitionModelDTO withComment(final Comment comment) {
         this.comment = comment;
         return this;
     }
 
-    public NotificationTemplateModelDTO withTransitionAction(final PrismAction transitionAction) {
+    public NotificationDefinitionModelDTO withTransitionAction(final PrismAction transitionAction) {
         this.transitionAction = transitionAction;
         return this;
     }
 
-    public NotificationTemplateModelDTO withDataImportErrorMessage(final String dataImportErrorMessage) {
+    public NotificationDefinitionModelDTO withDataImportErrorMessage(final String dataImportErrorMessage) {
         this.dataImportErrorMessage = dataImportErrorMessage;
         return this;
     }
 
-    public NotificationTemplateModelDTO withNewPassword(final String newPassword) {
+    public NotificationDefinitionModelDTO withNewPassword(final String newPassword) {
         this.newPassword = newPassword;
         return this;
     }

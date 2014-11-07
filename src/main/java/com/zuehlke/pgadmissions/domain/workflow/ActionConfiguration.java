@@ -4,33 +4,26 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismResourceActionEvaluation;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 
 @Entity
-@Table(name = "ACTION_TRIGGER_STATE", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "action_id", "state_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "program_type", "action_id", "state_id" }),
-        @UniqueConstraint(columnNames = { "program_id", "action_id", "state_id" }) })
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class ActionTriggerState extends WorkflowResourceConfiguration {
+@Table(name = "ACTION_CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "program_type", "locale", "action_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "program_type", "action_id" }), @UniqueConstraint(columnNames = { "program_id", "action_id" }) })
+public class ActionConfiguration extends WorkflowResourceConfiguration {
 
     @Id
-    @GeneratedValue
     private Integer id;
 
     @ManyToOne
@@ -48,66 +41,82 @@ public class ActionTriggerState extends WorkflowResourceConfiguration {
     @Column(name = "locale")
     @Enumerated(EnumType.STRING)
     private PrismLocale locale;
-
+    
     @Column(name = "program_type")
     @Enumerated(EnumType.STRING)
     private PrismProgramType programType;
-
+    
     @ManyToOne
     @JoinColumn(name = "action_id", nullable = false)
     private Action action;
 
     @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false)
-    private State state;
+    @JoinColumn(name = "start_state_group_id", nullable = false)
+    private StateGroup startStateGroup;
+    
+    @Column(name = "id", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismResourceActionEvaluation resourceActionEvaluation;
 
     @Column(name = "system_default", nullable = false)
     private Boolean systemDefault;
 
+    @Override
     public final Integer getId() {
         return id;
     }
 
+    @Override
     public final void setId(Integer id) {
         this.id = id;
     }
 
+    @Override
     public final System getSystem() {
         return system;
     }
 
+    @Override
     public final void setSystem(System system) {
         this.system = system;
     }
 
+    @Override
     public final Institution getInstitution() {
         return institution;
     }
 
+    @Override
     public final void setInstitution(Institution institution) {
         this.institution = institution;
     }
 
+    @Override
     public final Program getProgram() {
         return program;
     }
 
+    @Override
     public final void setProgram(Program program) {
         this.program = program;
     }
-
+    
+    @Override
     public final PrismLocale getLocale() {
         return locale;
     }
 
+    @Override
     public final void setLocale(PrismLocale locale) {
         this.locale = locale;
     }
-
+    
+    @Override
     public final PrismProgramType getProgramType() {
         return programType;
     }
 
+    @Override
     public final void setProgramType(PrismProgramType programType) {
         this.programType = programType;
     }
@@ -120,57 +129,70 @@ public class ActionTriggerState extends WorkflowResourceConfiguration {
         this.action = action;
     }
 
-    public final State getState() {
-        return state;
+    public final StateGroup getStartStateGroup() {
+        return startStateGroup;
     }
 
-    public final void setState(State state) {
-        this.state = state;
+    public final void setStartStateGroup(StateGroup startStateGroup) {
+        this.startStateGroup = startStateGroup;
+    }
+
+    public final PrismResourceActionEvaluation getResourceActionEvaluation() {
+        return resourceActionEvaluation;
+    }
+
+    public final void setResourceActionEvaluation(PrismResourceActionEvaluation resourceActionEvaluation) {
+        this.resourceActionEvaluation = resourceActionEvaluation;
     }
 
     @Override
-    public Boolean getSystemDefault() {
+    public final Boolean getSystemDefault() {
         return systemDefault;
     }
 
     @Override
-    public void setSystemDefault(Boolean systemDefault) {
+    public final void setSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
     }
 
-    public ActionTriggerState withResource(Resource resource) {
+    public ActionConfiguration withResource(Resource resource) {
         setResource(resource);
         return this;
     }
-
-    public ActionTriggerState withLocale(PrismLocale locale) {
+    
+    public ActionConfiguration withLocale(PrismLocale locale) {
         this.locale = locale;
         return this;
     }
-
-    public ActionTriggerState withProgramType(PrismProgramType programType) {
+    
+    public ActionConfiguration withProgramType(PrismProgramType programType) {
         this.programType = programType;
         return this;
     }
 
-    public ActionTriggerState withAction(Action action) {
+    public ActionConfiguration withAction(Action action) {
         this.action = action;
         return this;
     }
 
-    public ActionTriggerState withState(State state) {
-        this.state = state;
+    public ActionConfiguration withStartStateGroup(StateGroup startStateGroup) {
+        this.startStateGroup = startStateGroup;
+        return this;
+    }
+    
+    public ActionConfiguration withResourceActionEvaluation(PrismResourceActionEvaluation resourceActionEvaluation) {
+        this.resourceActionEvaluation = resourceActionEvaluation;
         return this;
     }
 
-    public ActionTriggerState withSystemDefault(Boolean systemDefault) {
+    public ActionConfiguration withSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
         return this;
     }
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("action", action).addProperty("state", state);
+        return super.getResourceSignature().addProperty("action", action);
     }
 
 }

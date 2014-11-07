@@ -31,7 +31,7 @@ import org.joda.time.LocalDateTime;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.CommentCustomPropertyType;
+import com.zuehlke.pgadmissions.domain.definitions.ActionPropertyType;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
@@ -170,14 +170,6 @@ public class Comment {
     @Column(name = "application_use_custom_recruiter_questions")
     private Boolean useCustomRecruiterQuestions;
 
-    @Lob
-    @Column(name = "comment_custom_question")
-    private String customQuestion;
-
-    @Lob
-    @Column(name = "custom_question_response")
-    private String customQuestionResponse;
-
     @Column(name = "application_export_reference")
     private String exportReference;
 
@@ -209,7 +201,7 @@ public class Comment {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
-    private Set<CommentCustomProperty> customProperties = Sets.newHashSet();
+    private Set<CommentProperty> properties = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id")
@@ -479,22 +471,6 @@ public class Comment {
         this.useCustomRecruiterQuestions = useCustomRecruiterQuestions;
     }
 
-    public final String getCustomQuestion() {
-        return customQuestion;
-    }
-
-    public final void setCustomQuestion(String customQuestion) {
-        this.customQuestion = customQuestion;
-    }
-
-    public String getCustomQuestionResponse() {
-        return customQuestionResponse;
-    }
-
-    public void setCustomQuestionResponse(String customQuestionResponse) {
-        this.customQuestionResponse = customQuestionResponse;
-    }
-
     public String getExportReference() {
         return exportReference;
     }
@@ -539,16 +515,20 @@ public class Comment {
         this.createdTimestamp = createdTimestamp;
     }
 
-    public Set<Document> getDocuments() {
-        return documents;
-    }
-
     public Set<CommentAppointmentTimeslot> getAppointmentTimeslots() {
         return appointmentTimeslots;
     }
 
     public Set<CommentAppointmentPreference> getAppointmentPreferences() {
         return appointmentPreferences;
+    }
+
+    public Set<Document> getDocuments() {
+        return documents;
+    }
+
+    public final Set<CommentProperty> getProperties() {
+        return properties;
     }
 
     public Resource getResource() {
@@ -691,9 +671,9 @@ public class Comment {
         assignedUsers.add(new CommentAssignedUser().withComment(this).withUser(user).withRole(role).withRoleTransitionType(roleTransitionType));
         return this;
     }
-    
-    public Comment addCustomProperty(CommentCustomPropertyType propertyType, String propertyValue) {
-        customProperties.add(new CommentCustomProperty().withComment(this).withPropertyType(propertyType).withPropertyValue(propertyValue));
+
+    public Comment addProperty(ActionPropertyType propertyType, String propertyValue) {
+        properties.add(new CommentProperty().withComment(this).withPropertyType(propertyType).withPropertyValue(propertyValue));
         return this;
     }
 
@@ -819,8 +799,8 @@ public class Comment {
     }
 
     public boolean isApplicationAutomatedRejectionComment() {
-        return action.getId() == PrismAction.APPLICATION_TERMINATE && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED
-                && rejectionReason == null;
+        return Arrays.asList(PrismAction.APPLICATION_ESCALATE, PrismAction.APPLICATION_TERMINATE).contains(action.getId())
+                && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED && rejectionReason == null;
     }
 
     public boolean isApplicationInterviewPendingInterviewComment() {
@@ -852,6 +832,10 @@ public class Comment {
             }
         }
         return false;
+    }
+
+    public boolean isStateGroupTransitionComment() {
+        return !state.getStateGroup().getId().equals(transitionState.getStateGroup().getId());
     }
 
     public boolean isUserCreationComment() {

@@ -51,6 +51,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
+import com.zuehlke.pgadmissions.domain.workflow.ResourceAction;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @AnalyzerDef(name = "institutionNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
@@ -213,10 +214,13 @@ public class Institution extends ResourceParent {
     private Set<Application> applications = Sets.newHashSet();
 
     @OneToMany(mappedBy = "institution")
+    private Set<Comment> comments = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "institution")
     private Set<UserRole> userRoles = Sets.newHashSet();
 
     @OneToMany(mappedBy = "institution")
-    private Set<Comment> comments = Sets.newHashSet();
+    private Set<ResourceAction> resourceActions = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -457,8 +461,19 @@ public class Institution extends ResourceParent {
         return importedEntityFeeds;
     }
 
+    @Override
+    public Set<Comment> getComments() {
+        return comments;
+    }
+    
+    @Override
     public Set<UserRole> getUserRoles() {
         return userRoles;
+    }
+    
+    @Override
+    public final Set<ResourceAction> getResourceActions() {
+        return resourceActions;
     }
 
     public Institution withId(Integer id) {
@@ -734,11 +749,6 @@ public class Institution extends ResourceParent {
 
     public Set<Application> getApplications() {
         return applications;
-    }
-
-    @Override
-    public void addComment(Comment comment) {
-        comments.add(comment);
     }
 
     @Override

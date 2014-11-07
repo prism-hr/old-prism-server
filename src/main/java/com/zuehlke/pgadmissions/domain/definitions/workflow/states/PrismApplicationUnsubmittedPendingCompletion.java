@@ -13,6 +13,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 
 public class PrismApplicationUnsubmittedPendingCompletion extends PrismWorkflowState {
 
@@ -22,32 +23,31 @@ public class PrismApplicationUnsubmittedPendingCompletion extends PrismWorkflowS
             .withAction(PrismAction.APPLICATION_COMPLETE) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(true) //
-            .withNotificationTemplate(PrismNotificationDefinition.APPLICATION_COMPLETE_REQUEST) //
-                .withAssignments(Arrays.asList( //
-                    new PrismStateActionAssignment() //
+                .withAssignments(Arrays.asList( // 
+                    new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_CREATOR)
                         .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR))) //
                 .withNotifications(Arrays.asList( // 
-                    new PrismStateActionNotification() //
-                        .withRole(PrismRole.APPLICATION_CREATOR) //
+                    new PrismStateActionNotification() // 
+                        .withRole(PrismRole.APPLICATION_CREATOR) // 
                         .withTemplate(PrismNotificationDefinition.APPLICATION_COMPLETE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
-                    new PrismStateTransition() //
-                        .withTransitionState(PrismState.APPLICATION_VALIDATION) //
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) //
-                        .withRoleTransitions(Arrays.asList( //
+                    new PrismStateTransition() // 
+                        .withTransitionState(PrismState.APPLICATION_VALIDATION) // 
+                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
+                        .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_REFEREE) //
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_REFEREE) //
                                 .withRestrictToOwner(false) //
-                                .withMinimumPermitted(3) //
-                                .withMaximumPermitted(3), //
+                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_REFEREE), // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
-                                .withRestrictToOwner(false)))))); //
+                                .withRestrictToOwner(false) //
+                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_SUGGESTED_SUPERVISOR)))))); //
        
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_ESCALATE) //

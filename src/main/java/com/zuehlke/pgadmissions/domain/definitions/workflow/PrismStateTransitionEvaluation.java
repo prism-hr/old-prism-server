@@ -5,7 +5,6 @@ import org.apache.commons.lang.WordUtils;
 public enum PrismStateTransitionEvaluation {
 
     APPLICATION_SUPERVISION_CONFIRMED_OUTCOME(false, PrismScope.APPLICATION), //
-    APPLICATION_ELIGIBILITY_ASSESSED_OUTCOME(false, PrismScope.APPLICATION), //
     APPLICATION_STATE_COMPLETED_OUTCOME(true, PrismScope.APPLICATION), //
     APPLICATION_EXPORTED_OUTCOME(false, PrismScope.APPLICATION), //
     APPLICATION_INTERVIEW_RSVPED_OUTCOME(false, PrismScope.APPLICATION), //

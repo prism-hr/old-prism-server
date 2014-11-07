@@ -36,7 +36,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public enum PrismNotificationTemplate {
+public enum PrismNotificationDefinition {
 
     APPLICATION_COMPLETE_NOTIFICATION(INDIVIDUAL, UPDATE, APPLICATION, Lists.newArrayList(INSTITUTION_GLOBAL, APPLICATION_GLOBAL, COMMENT_GLOBAL,
             TEMPLATE_GLOBAL)), //
@@ -97,26 +97,26 @@ public enum PrismNotificationTemplate {
 
     private final List<PrismNotificationTemplatePropertyCategory> propertyCategories;
 
-    private static final HashMap<PrismNotificationTemplate, PrismReminderDefinition> reminderDefinitions = Maps.newHashMap();
+    private static final HashMap<PrismNotificationDefinition, PrismReminderDefinition> reminderDefinitions = Maps.newHashMap();
 
     static {
-        PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.APPLICATION_COMPLETE_REQUEST,
-                PrismNotificationTemplate.APPLICATION_COMPLETE_REQUEST_REMINDER, 7);
-        PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST,
-                PrismNotificationTemplate.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_REMINDER, 1);
-        PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.APPLICATION_PROVIDE_REFERENCE_REQUEST,
-                PrismNotificationTemplate.APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER, 7);
-        PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.SYSTEM_APPLICATION_TASK_REQUEST,
-                PrismNotificationTemplate.SYSTEM_APPLICATION_TASK_REQUEST_REMINDER, 3);
-        PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.SYSTEM_INSTITUTION_TASK_REQUEST,
-                PrismNotificationTemplate.SYSTEM_INSTITUTION_TASK_REQUEST_REMINDER, 3);
-        PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.SYSTEM_PROGRAM_TASK_REQUEST,
-                PrismNotificationTemplate.SYSTEM_PROGRAM_TASK_REQUEST_REMINDER, 3);
-        PrismNotificationTemplate.buildReminderDefinition(PrismNotificationTemplate.SYSTEM_PROJECT_TASK_REQUEST,
-                PrismNotificationTemplate.SYSTEM_PROJECT_TASK_REQUEST_REMINDER, 3);
+        PrismNotificationDefinition.buildReminderDefinition(PrismNotificationDefinition.APPLICATION_COMPLETE_REQUEST,
+                PrismNotificationDefinition.APPLICATION_COMPLETE_REQUEST_REMINDER, 7);
+        PrismNotificationDefinition.buildReminderDefinition(PrismNotificationDefinition.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST,
+                PrismNotificationDefinition.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_REMINDER, 1);
+        PrismNotificationDefinition.buildReminderDefinition(PrismNotificationDefinition.APPLICATION_PROVIDE_REFERENCE_REQUEST,
+                PrismNotificationDefinition.APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER, 7);
+        PrismNotificationDefinition.buildReminderDefinition(PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST,
+                PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST_REMINDER, 3);
+        PrismNotificationDefinition.buildReminderDefinition(PrismNotificationDefinition.SYSTEM_INSTITUTION_TASK_REQUEST,
+                PrismNotificationDefinition.SYSTEM_INSTITUTION_TASK_REQUEST_REMINDER, 3);
+        PrismNotificationDefinition.buildReminderDefinition(PrismNotificationDefinition.SYSTEM_PROGRAM_TASK_REQUEST,
+                PrismNotificationDefinition.SYSTEM_PROGRAM_TASK_REQUEST_REMINDER, 3);
+        PrismNotificationDefinition.buildReminderDefinition(PrismNotificationDefinition.SYSTEM_PROJECT_TASK_REQUEST,
+                PrismNotificationDefinition.SYSTEM_PROJECT_TASK_REQUEST_REMINDER, 3);
     }
 
-    private PrismNotificationTemplate(PrismNotificationType notificationType, PrismNotificationPurpose notificationPurpose, PrismScope scope,
+    private PrismNotificationDefinition(PrismNotificationType notificationType, PrismNotificationPurpose notificationPurpose, PrismScope scope,
             List<PrismNotificationTemplatePropertyCategory> propertyCategories) {
         this.notificationType = notificationType;
         this.notificationPurpose = notificationPurpose;
@@ -148,11 +148,11 @@ public enum PrismNotificationTemplate {
         return name().toLowerCase() + "_content.ftl";
     }
 
-    public static final HashMap<PrismNotificationTemplate, PrismReminderDefinition> getReminderdefinitions() {
+    public static final HashMap<PrismNotificationDefinition, PrismReminderDefinition> getReminderdefinitions() {
         return reminderDefinitions;
     }
 
-    public final PrismNotificationTemplate getReminderTemplate() {
+    public final PrismNotificationDefinition getReminderTemplate() {
         PrismReminderDefinition reminder = reminderDefinitions.get(this);
         return reminder == null ? null : reminder.getTemplate();
     }
@@ -162,17 +162,17 @@ public enum PrismNotificationTemplate {
         return reminder == null ? null : reminder.getInterval();
     }
 
-    private static void buildReminderDefinition(PrismNotificationTemplate template, PrismNotificationTemplate reminder, int interval) {
+    private static void buildReminderDefinition(PrismNotificationDefinition template, PrismNotificationDefinition reminder, int interval) {
         reminderDefinitions.put(template, new PrismReminderDefinition().withTemplate(reminder).withInterval(interval));
     }
 
     public static class PrismReminderDefinition {
 
-        private PrismNotificationTemplate template;
+        private PrismNotificationDefinition template;
 
         private Integer interval;
 
-        public PrismNotificationTemplate getTemplate() {
+        public PrismNotificationDefinition getTemplate() {
             return template;
         }
 
@@ -180,12 +180,12 @@ public enum PrismNotificationTemplate {
             return interval;
         }
 
-        public PrismNotificationTemplate.PrismReminderDefinition withTemplate(PrismNotificationTemplate template) {
+        public PrismNotificationDefinition.PrismReminderDefinition withTemplate(PrismNotificationDefinition template) {
             this.template = template;
             return this;
         }
 
-        public PrismNotificationTemplate.PrismReminderDefinition withInterval(int interval) {
+        public PrismNotificationDefinition.PrismReminderDefinition withInterval(int interval) {
             this.interval = interval;
             return this;
         }

@@ -355,7 +355,7 @@ public class NotificationTemplatePropertyLoader {
         model.put("link", link);
 
         if (declineLinkLabel != null) {
-            ImmutableMap<String, String> declineLink = ImmutableMap.of("url", uri + "&decline=true", "label", propertyLoader.load(declineLinkLabel));
+            ImmutableMap<String, String> declineLink = ImmutableMap.of("url", uri + "&decline=1", "label", propertyLoader.load(declineLinkLabel));
             model.put("declineLink", declineLink);
         }
 

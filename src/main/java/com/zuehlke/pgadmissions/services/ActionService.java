@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.services;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.primitives.Booleans;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,7 +68,13 @@ public class ActionService {
         User delegateOwner = comment.getUser();
 
         User currentUser = userService.getCurrentUser();
-        authenticateActionInvocation(currentUser, action, owner, delegateOwner);
+        Boolean isDeclineComment = comment.getDeclinedResponse();
+
+        authenticateActionInvocation(currentUser, action, owner, delegateOwner, isDeclineComment);
+
+        if (BooleanUtils.toBoolean(isDeclineComment)) {
+            return;
+        }
 
         Resource operative = resourceService.getOperativeResource(resource, action);
 
@@ -88,7 +96,7 @@ public class ActionService {
         User delegateOwner = comment.getDelegateUser();
 
         User currentUser = userService.getCurrentUser();
-        authenticateActionInvocation(currentUser, action, owner, delegateOwner);
+        authenticateActionInvocation(currentUser, action, owner, delegateOwner, null);
 
         Resource resource = comment.getResource();
 
@@ -259,7 +267,10 @@ public class ActionService {
         return checkActionAvailable(resource, delegateAction, invoker);
     }
 
-    private void authenticateActionInvocation(User currentUser, Action action, User owner, User delegateOwner) {
+    private void authenticateActionInvocation(User currentUser, Action action, User owner, User delegateOwner, Boolean declinedResponse) {
+        if (action.getDeclinableAction() && BooleanUtils.toBoolean(declinedResponse)) {
+            return;
+        }
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             return;
         } else if (owner != null && Objects.equal(owner.getId(), currentUser.getId())) {

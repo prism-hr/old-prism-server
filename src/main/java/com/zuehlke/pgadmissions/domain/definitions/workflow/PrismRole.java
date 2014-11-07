@@ -1,5 +1,11 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -8,30 +14,32 @@ import com.google.common.collect.HashMultimap;
 
 public enum PrismRole {
 
-    APPLICATION_ADMINISTRATOR(PrismScope.APPLICATION, false), //
-    APPLICATION_CREATOR(PrismScope.APPLICATION, true), //
-    APPLICATION_INTERVIEWEE(PrismScope.APPLICATION, false), //
-    APPLICATION_INTERVIEWER(PrismScope.APPLICATION, false), //
-    APPLICATION_POTENTIAL_INTERVIEWEE(PrismScope.APPLICATION, false), //
-    APPLICATION_POTENTIAL_INTERVIEWER(PrismScope.APPLICATION, false), //
-    APPLICATION_PRIMARY_SUPERVISOR(PrismScope.APPLICATION, false), //
-    APPLICATION_REFEREE(PrismScope.APPLICATION, false), //
-    APPLICATION_REVIEWER(PrismScope.APPLICATION, false), //
-    APPLICATION_SECONDARY_SUPERVISOR(PrismScope.APPLICATION, false), //
-    APPLICATION_SUGGESTED_SUPERVISOR(PrismScope.APPLICATION, false), //
-    APPLICATION_VIEWER_RECRUITER(PrismScope.APPLICATION, false), //
-    APPLICATION_VIEWER_REFEREE(PrismScope.APPLICATION, false), //
-    INSTITUTION_ADMINISTRATOR(PrismScope.INSTITUTION, true), //
-    INSTITUTION_ADMITTER(PrismScope.INSTITUTION, false), //
-    PROGRAM_ADMINISTRATOR(PrismScope.PROGRAM, true), //
-    PROGRAM_APPROVER(PrismScope.PROGRAM, false), //
-    PROGRAM_VIEWER(PrismScope.PROGRAM, false), //
-    PROJECT_ADMINISTRATOR(PrismScope.PROJECT, false), //
-    PROJECT_PRIMARY_SUPERVISOR(PrismScope.PROJECT, true), //
-    PROJECT_SECONDARY_SUPERVISOR(PrismScope.PROJECT, false), //
-    SYSTEM_ADMINISTRATOR(PrismScope.SYSTEM, true);
+    APPLICATION_ADMINISTRATOR(false, true, APPLICATION), //
+    APPLICATION_CREATOR(true, true, APPLICATION), //
+    APPLICATION_INTERVIEWEE(false, true, APPLICATION), //
+    APPLICATION_INTERVIEWER(false, true, APPLICATION), //
+    APPLICATION_POTENTIAL_INTERVIEWEE(false, true, APPLICATION), //
+    APPLICATION_POTENTIAL_INTERVIEWER(false, true, APPLICATION), //
+    APPLICATION_PRIMARY_SUPERVISOR(false, true, APPLICATION), //
+    APPLICATION_REFEREE(false, false, APPLICATION), //
+    APPLICATION_REVIEWER(false, true, APPLICATION), //
+    APPLICATION_SECONDARY_SUPERVISOR(false, true, APPLICATION), //
+    APPLICATION_SUGGESTED_SUPERVISOR(false, true, APPLICATION), //
+    APPLICATION_VIEWER_RECRUITER(false, true, APPLICATION), //
+    APPLICATION_VIEWER_REFEREE(false, true, APPLICATION), //
+    INSTITUTION_ADMINISTRATOR(true, true, INSTITUTION), //
+    INSTITUTION_ADMITTER(false, true, INSTITUTION), //
+    PROGRAM_ADMINISTRATOR(true, true, PROGRAM), //
+    PROGRAM_APPROVER(false, true, PROGRAM), //
+    PROGRAM_VIEWER(false, true, PROGRAM), //
+    PROJECT_ADMINISTRATOR(false, true, PROJECT), //
+    PROJECT_PRIMARY_SUPERVISOR(true, true, PROJECT), //
+    PROJECT_SECONDARY_SUPERVISOR(false, true, PROJECT), //
+    SYSTEM_ADMINISTRATOR(true, true, SYSTEM);
     
-    private Boolean scopeOwner;
+    private boolean scopeOwner;
+    
+    private boolean activateImmediately;
     
     private PrismScope scope;
     
@@ -57,14 +65,19 @@ public enum PrismRole {
             }
         }
     }
-    
-    private PrismRole(PrismScope scope, boolean scopeOwner) {
-        this.scope = scope;
+
+    private PrismRole(boolean scopeOwner, boolean activateImmediately, PrismScope scope) {
         this.scopeOwner = scopeOwner;
+        this.activateImmediately = activateImmediately;
+        this.scope = scope;
     }
 
     public boolean isScopeOwner() {
         return scopeOwner;
+    }
+
+    public final boolean isActivateImmediately() {
+        return activateImmediately;
     }
 
     public PrismScope getScope() {

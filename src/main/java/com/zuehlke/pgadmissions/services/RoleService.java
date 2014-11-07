@@ -17,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
@@ -79,8 +78,8 @@ public class RoleService {
         Role newRole = getById(newRoleId);
         List<Integer> excludingUserRoles = roleDAO.getExcludingUserRoles(resource, user, newRole);
         if (excludingUserRoles.isEmpty()) {
-            UserRole transientUserRole = new UserRole().withResource(resource).withUser(user).withRole(newRole)
-                    .withActivated(resource.getResourceScope() == PrismScope.APPLICATION ? false : true).withAssignedTimestamp(new DateTime());
+            UserRole transientUserRole = new UserRole().withResource(resource).withUser(user).withRole(newRole).withActivated(newRole.getActivateImmediately())
+                    .withAssignedTimestamp(new DateTime());
             UserRole persistentUserRole = entityService.getOrCreate(transientUserRole);
             entityService.flush();
             return persistentUserRole;

@@ -131,7 +131,7 @@ public class SystemInitialisationHelper {
     public void verifyRoleCreation() {
         for (Role role : roleService.getRoles()) {
             assertEquals(role.getId().getScope(), role.getScope().getId());
-            assertEquals(role.getId().isScopeOwner(), role.isScopeCreator());
+            assertEquals(role.getId().isScopeOwner(), role.getScopeCreator());
 
             Set<Role> excludedRoles = role.getExcludedRoles();
             Set<PrismRole> prismExcludedRoles = PrismRole.getExcludedRoles(role.getId());

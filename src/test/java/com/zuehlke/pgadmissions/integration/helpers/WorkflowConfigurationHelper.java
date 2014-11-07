@@ -256,7 +256,7 @@ public class WorkflowConfigurationHelper {
                 actualRolesCreated.add(transitionRoleId);
 
                 PrismActionCategory actionCategory = action.getActionCategory();
-                if (transitionRole.isScopeCreator() && roleTransitionType == PrismRoleTransitionType.CREATE
+                if (transitionRole.getScopeCreator() && roleTransitionType == PrismRoleTransitionType.CREATE
                         && (actionCategory == PrismActionCategory.CREATE_RESOURCE || actionCategory == PrismActionCategory.INITIALISE_RESOURCE)) {
                     assertTrue(roleTransition.getMinimumPermitted() == 1);
                     assertTrue(roleTransition.getMaximumPermitted() == 1);

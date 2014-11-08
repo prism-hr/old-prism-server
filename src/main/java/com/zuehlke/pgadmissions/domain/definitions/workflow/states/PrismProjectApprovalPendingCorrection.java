@@ -20,8 +20,7 @@ public class PrismProjectApprovalPendingCorrection extends PrismWorkflowState {
             .withAction(PrismAction.PROJECT_CORRECT) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(true) //
-            //TODO: request and reminder
-            .withNotificationTemplate(PrismNotificationDefinition.SYSTEM_PROJECT_TASK_REQUEST) //
+            .withNotificationTemplate(PrismNotificationDefinition.PROJECT_CORRECT_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.PROJECT_ADMINISTRATOR), //

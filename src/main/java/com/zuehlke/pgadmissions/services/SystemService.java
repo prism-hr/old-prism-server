@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PrismReminderDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -38,7 +39,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
@@ -304,9 +304,10 @@ public class SystemService {
     }
 
     private void initializeStateDurationDefinitions() throws DeduplicationException {
-        for (PrismStateDuration prismStateDuration : PrismStateDuration.values()) {
+        for (PrismDuration prismStateDuration : PrismDuration.values()) {
             Scope scope = scopeService.getById(prismStateDuration.getScope());
-            StateDurationDefinition transientStateDurationDefinition = new StateDurationDefinition().withId(prismStateDuration).withScope(scope);
+            StateDurationDefinition transientStateDurationDefinition = new StateDurationDefinition().withId(prismStateDuration)
+                    .withDurationEvaluation(prismStateDuration.getDurationEvaluation()).withScope(scope);
             entityService.createOrUpdate(transientStateDurationDefinition);
         }
     }
@@ -325,6 +326,7 @@ public class SystemService {
         for (PrismNotificationDefinition prismNotificationDefinitionWithReminder : reminderDefinitions.keySet()) {
             NotificationDefinition notificationDefinitionWithReminder = definitions.get(prismNotificationDefinitionWithReminder);
             notificationDefinitionWithReminder.setReminderDefinition(definitions.get(reminderDefinitions.get(notificationDefinitionWithReminder)));
+            notificationDefinitionWithReminder.setReminderDuration(prismNotificationDefinitionWithReminder.getReminderDuration());
         }
     }
 
@@ -359,7 +361,7 @@ public class SystemService {
 
     private void initializeStateDurationConfigurations(System system) throws DeduplicationException, CustomizationException {
         for (PrismState prismState : PrismState.values()) {
-            PrismStateDuration prismStateDuration = prismState.getDuration();
+            PrismDuration prismStateDuration = prismState.getDuration();
             Integer defaultDuration = prismStateDuration == null ? null : prismStateDuration.getDefaultDuration();
             if (defaultDuration != null) {
                 StateDurationDefinition stateDurationDefinition = stateService.getStateDurationDefinitionById(prismStateDuration);
@@ -389,7 +391,7 @@ public class SystemService {
             PrismProgramType programType = prismNotificationDefinition.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null;
 
             NotificationConfiguration transientNotificationConfiguration = notificationService.createConfiguration(system, getSystemLocale(), programType,
-                    notificationDefinition, subject, content, prismNotificationDefinition.getReminderInterval());
+                    notificationDefinition, subject, content, notificationDefinition.getReminderDuration().getDefaultDuration());
             entityService.createOrUpdate(transientNotificationConfiguration);
         }
     }

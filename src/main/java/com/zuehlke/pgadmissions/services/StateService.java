@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -91,7 +91,7 @@ public class StateService {
         return entityService.getById(StateGroup.class, stateGroupId);
     }
 
-    public StateDurationDefinition getStateDurationDefinitionById(PrismStateDuration stateDurationDefinitionId) {
+    public StateDurationDefinition getStateDurationDefinitionById(PrismDuration stateDurationDefinitionId) {
         return entityService.getById(StateDurationDefinition.class, stateDurationDefinitionId);
     }
 

@@ -12,7 +12,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDurationEvaluation;
 
 @Entity
 @Table(name = "STATE_DURATION_DEFINITION")
@@ -22,30 +23,31 @@ public class StateDurationDefinition extends WorkflowDefinition {
     @Id
     @Column(name = "id", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PrismStateDuration id;
-    
-    @Column(name = "evaluation")
-    private Boolean evaluation;
+    private PrismDuration id;
+
+    @Column(name = "duration_evaluation", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismDurationEvaluation durationEvaluation;
 
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
 
     @Override
-    public PrismStateDuration getId() {
+    public PrismDuration getId() {
         return id;
     }
 
-    public void setId(PrismStateDuration id) {
+    public void setId(PrismDuration id) {
         this.id = id;
     }
 
-    public final Boolean getEvaluation() {
-        return evaluation;
+    public final PrismDurationEvaluation getDurationEvaluation() {
+        return durationEvaluation;
     }
 
-    public final void setEvaluation(Boolean evaluation) {
-        this.evaluation = evaluation;
+    public final void setDurationEvaluation(PrismDurationEvaluation durationEvaluation) {
+        this.durationEvaluation = durationEvaluation;
     }
 
     @Override
@@ -58,13 +60,13 @@ public class StateDurationDefinition extends WorkflowDefinition {
         this.scope = scope;
     }
 
-    public StateDurationDefinition withId(PrismStateDuration id) {
+    public StateDurationDefinition withId(PrismDuration id) {
         this.id = id;
         return this;
     }
-    
-    public StateDurationDefinition withEvaluation(Boolean evaluation) {
-        this.evaluation = evaluation;
+
+    public StateDurationDefinition withDurationEvaluation(PrismDurationEvaluation durationEvaluation) {
+        this.durationEvaluation = durationEvaluation;
         return this;
     }
 

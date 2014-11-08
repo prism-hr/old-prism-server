@@ -1,5 +1,15 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.APPLICATION_COMPLETE_REMINDER_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REMINDER_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.APPLICATION_PROVIDE_REFERENCE_REMINDER_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.INSTITUTION_CORRECT_REMINDER_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.PROGRAM_CORRECT_REMINDER_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.PROJECT_CORRECT_REMINDER_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.SYSTEM_APPLICATION_TASK_REMINDER_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.SYSTEM_INSTITUTION_TASK_REMINDER_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.SYSTEM_PROGRAM_TASK_REMINDER_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.SYSTEM_PROJECT_TASK_REMINDER_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationPurpose.REMINDER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationPurpose.REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationPurpose.UPDATE;
@@ -65,13 +75,21 @@ public enum PrismNotificationDefinition {
             ACTION_GLOBAL, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
     INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION(INDIVIDUAL, UPDATE, INSTITUTION, Lists.newArrayList(INSTITUTION_GLOBAL, COMMENT_GLOBAL,
             COMMENT_TRANSITION, TEMPLATE_GLOBAL)), //
+    INSTITUTION_CORRECT_REQUEST(INDIVIDUAL, REQUEST, INSTITUTION, Lists.newArrayList(INSTITUTION_GLOBAL, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
+    INSTITUTION_CORRECT_REQUEST_REMINDER(INDIVIDUAL, REMINDER, INSTITUTION, Lists.newArrayList(INSTITUTION_GLOBAL, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
     INSTITUTION_STARTUP_NOTIFICATION(INDIVIDUAL, UPDATE, INSTITUTION, Lists.newArrayList(INSTITUTION_GLOBAL, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
     INSTITUTION_IMPORT_ERROR_NOTIFICATION(INDIVIDUAL, UPDATE, INSTITUTION, Lists.newArrayList(INSTITUTION_GLOBAL, INSTITUTION_APPROVED, COMMENT_GLOBAL,
             TEMPLATE_GLOBAL)), //
     PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION(INDIVIDUAL, UPDATE, PROGRAM, Lists.newArrayList(INSTITUTION_GLOBAL, PROGRAM_GLOBAL, COMMENT_GLOBAL,
             COMMENT_TRANSITION, TEMPLATE_GLOBAL)), //
+    PROGRAM_CORRECT_REQUEST(INDIVIDUAL, REQUEST, PROGRAM, Lists.newArrayList(INSTITUTION_GLOBAL, PROGRAM_GLOBAL, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
+    PROGRAM_CORRECT_REQUEST_REMINDER(INDIVIDUAL, REMINDER, PROGRAM, Lists.newArrayList(INSTITUTION_GLOBAL, PROGRAM_GLOBAL, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
     PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION(INDIVIDUAL, UPDATE, PROJECT, Lists.newArrayList(INSTITUTION_GLOBAL, PROGRAM_GLOBAL, PROJECT_GLOBAL,
             COMMENT_GLOBAL, COMMENT_TRANSITION, TEMPLATE_GLOBAL)), //
+    PROJECT_CORRECT_REQUEST(INDIVIDUAL, REQUEST, PROJECT, Lists.newArrayList(INSTITUTION_GLOBAL, PROGRAM_GLOBAL, PROJECT_GLOBAL, COMMENT_GLOBAL,
+            TEMPLATE_GLOBAL)), //
+    PROJECT_CORRECT_REQUEST_REMINDER(INDIVIDUAL, REMINDER, PROJECT, Lists.newArrayList(INSTITUTION_GLOBAL, PROGRAM_GLOBAL, PROJECT_GLOBAL, COMMENT_GLOBAL,
+            TEMPLATE_GLOBAL)), //
     SYSTEM_INVITATION_NOTIFICATION(INDIVIDUAL, UPDATE, SYSTEM, Lists.newArrayList(SYSTEM_USER_ACCOUNT, ACTION_GLOBAL, TEMPLATE_GLOBAL)), //
     SYSTEM_COMPLETE_REGISTRATION_REQUEST(INDIVIDUAL, REQUEST, SYSTEM, Lists.newArrayList(SYSTEM_USER_ACCOUNT, ACTION_GLOBAL, TEMPLATE_GLOBAL)), //
     SYSTEM_PASSWORD_NOTIFICATION(INDIVIDUAL, UPDATE, SYSTEM, Lists.newArrayList(SYSTEM_USER_PASSWORD, TEMPLATE_GLOBAL)), //
@@ -100,20 +118,18 @@ public enum PrismNotificationDefinition {
     private static final HashMap<PrismNotificationDefinition, PrismReminderDefinition> reminderDefinitions = Maps.newHashMap();
 
     static {
-        PrismNotificationDefinition.buildReminderDefinition(PrismNotificationDefinition.APPLICATION_COMPLETE_REQUEST,
-                PrismNotificationDefinition.APPLICATION_COMPLETE_REQUEST_REMINDER, 7);
-        PrismNotificationDefinition.buildReminderDefinition(PrismNotificationDefinition.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST,
-                PrismNotificationDefinition.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_REMINDER, 1);
-        PrismNotificationDefinition.buildReminderDefinition(PrismNotificationDefinition.APPLICATION_PROVIDE_REFERENCE_REQUEST,
-                PrismNotificationDefinition.APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER, 7);
-        PrismNotificationDefinition.buildReminderDefinition(PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST,
-                PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST_REMINDER, 3);
-        PrismNotificationDefinition.buildReminderDefinition(PrismNotificationDefinition.SYSTEM_INSTITUTION_TASK_REQUEST,
-                PrismNotificationDefinition.SYSTEM_INSTITUTION_TASK_REQUEST_REMINDER, 3);
-        PrismNotificationDefinition.buildReminderDefinition(PrismNotificationDefinition.SYSTEM_PROGRAM_TASK_REQUEST,
-                PrismNotificationDefinition.SYSTEM_PROGRAM_TASK_REQUEST_REMINDER, 3);
-        PrismNotificationDefinition.buildReminderDefinition(PrismNotificationDefinition.SYSTEM_PROJECT_TASK_REQUEST,
-                PrismNotificationDefinition.SYSTEM_PROJECT_TASK_REQUEST_REMINDER, 3);
+        buildReminderDefinition(APPLICATION_COMPLETE_REQUEST, APPLICATION_COMPLETE_REQUEST_REMINDER, APPLICATION_COMPLETE_REMINDER_DURATION);
+        buildReminderDefinition(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST, APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_REMINDER,
+                APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REMINDER_DURATION);
+        buildReminderDefinition(APPLICATION_PROVIDE_REFERENCE_REQUEST, APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER,
+                APPLICATION_PROVIDE_REFERENCE_REMINDER_DURATION);
+        buildReminderDefinition(INSTITUTION_CORRECT_REQUEST, INSTITUTION_CORRECT_REQUEST_REMINDER, INSTITUTION_CORRECT_REMINDER_DURATION);
+        buildReminderDefinition(PROGRAM_CORRECT_REQUEST, PROGRAM_CORRECT_REQUEST_REMINDER, PROGRAM_CORRECT_REMINDER_DURATION);
+        buildReminderDefinition(PROJECT_CORRECT_REQUEST, PROJECT_CORRECT_REQUEST_REMINDER, PROJECT_CORRECT_REMINDER_DURATION);
+        buildReminderDefinition(SYSTEM_APPLICATION_TASK_REQUEST, SYSTEM_APPLICATION_TASK_REQUEST_REMINDER, SYSTEM_APPLICATION_TASK_REMINDER_DURATION);
+        buildReminderDefinition(SYSTEM_INSTITUTION_TASK_REQUEST, SYSTEM_INSTITUTION_TASK_REQUEST_REMINDER, SYSTEM_INSTITUTION_TASK_REMINDER_DURATION);
+        buildReminderDefinition(SYSTEM_PROGRAM_TASK_REQUEST, SYSTEM_PROGRAM_TASK_REQUEST_REMINDER, SYSTEM_PROGRAM_TASK_REMINDER_DURATION);
+        buildReminderDefinition(SYSTEM_PROJECT_TASK_REQUEST, SYSTEM_PROJECT_TASK_REQUEST_REMINDER, SYSTEM_PROJECT_TASK_REMINDER_DURATION);
     }
 
     private PrismNotificationDefinition(PrismNotificationType notificationType, PrismNotificationPurpose notificationPurpose, PrismScope scope,
@@ -156,37 +172,37 @@ public enum PrismNotificationDefinition {
         PrismReminderDefinition reminder = reminderDefinitions.get(this);
         return reminder == null ? null : reminder.getTemplate();
     }
-    
-    public final Integer getReminderInterval() {
+
+    public final PrismDuration getReminderDuration() {
         PrismReminderDefinition reminder = reminderDefinitions.get(this);
-        return reminder == null ? null : reminder.getInterval();
+        return reminder == null ? null : reminder.getDuration();
     }
 
-    private static void buildReminderDefinition(PrismNotificationDefinition template, PrismNotificationDefinition reminder, int interval) {
-        reminderDefinitions.put(template, new PrismReminderDefinition().withTemplate(reminder).withInterval(interval));
+    private static void buildReminderDefinition(PrismNotificationDefinition template, PrismNotificationDefinition reminder, PrismDuration duration) {
+        reminderDefinitions.put(template, new PrismReminderDefinition().withTemplate(reminder).withDuration(duration));
     }
 
     public static class PrismReminderDefinition {
 
         private PrismNotificationDefinition template;
 
-        private Integer interval;
+        private PrismDuration duration;
 
         public PrismNotificationDefinition getTemplate() {
             return template;
         }
 
-        public int getInterval() {
-            return interval;
+        public final PrismDuration getDuration() {
+            return duration;
         }
 
-        public PrismNotificationDefinition.PrismReminderDefinition withTemplate(PrismNotificationDefinition template) {
+        public PrismReminderDefinition withTemplate(PrismNotificationDefinition template) {
             this.template = template;
             return this;
         }
 
-        public PrismNotificationDefinition.PrismReminderDefinition withInterval(int interval) {
-            this.interval = interval;
+        public PrismNotificationDefinition.PrismReminderDefinition withDuration(PrismDuration duration) {
+            this.duration = duration;
             return this;
         }
 

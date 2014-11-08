@@ -252,7 +252,7 @@ public class SystemInitialisationHelper {
             assertEquals(configuration.getLocale(), getSystemLocale());
             assertEquals(configuration.getProgramType(), programType);
             assertEquals(configuration.getNotificationDefinition(), template);
-            assertEquals(prismNotificationTemplate.getReminderInterval(), configuration.getReminderInterval());
+            assertEquals(prismNotificationTemplate.getReminderDuration(), configuration.getReminderInterval());
             assertTrue(configuration.getSystemDefault());
 
             assertEquals(FileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationTemplate.getInitialTemplateSubject()), configuration.getSubject());

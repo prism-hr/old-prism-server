@@ -12,7 +12,7 @@ import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismResourceActionEvaluation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionConfigurationEvaluation;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -54,9 +54,9 @@ public class ActionConfiguration extends WorkflowResourceConfiguration {
     @JoinColumn(name = "start_state_group_id", nullable = false)
     private StateGroup startStateGroup;
     
-    @Column(name = "id", nullable = false)
+    @Column(name = "action_configuration_evaluation", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PrismResourceActionEvaluation resourceActionEvaluation;
+    private PrismActionConfigurationEvaluation actionConfigurationEvaluation;
 
     @Column(name = "system_default", nullable = false)
     private Boolean systemDefault;
@@ -137,12 +137,12 @@ public class ActionConfiguration extends WorkflowResourceConfiguration {
         this.startStateGroup = startStateGroup;
     }
 
-    public final PrismResourceActionEvaluation getResourceActionEvaluation() {
-        return resourceActionEvaluation;
+    public final PrismActionConfigurationEvaluation getActionConfigurationEvaluation() {
+        return actionConfigurationEvaluation;
     }
 
-    public final void setResourceActionEvaluation(PrismResourceActionEvaluation resourceActionEvaluation) {
-        this.resourceActionEvaluation = resourceActionEvaluation;
+    public final void setActionConfigurationEvaluation(PrismActionConfigurationEvaluation actionConfigurationEvaluation) {
+        this.actionConfigurationEvaluation = actionConfigurationEvaluation;
     }
 
     @Override
@@ -180,8 +180,8 @@ public class ActionConfiguration extends WorkflowResourceConfiguration {
         return this;
     }
     
-    public ActionConfiguration withResourceActionEvaluation(PrismResourceActionEvaluation resourceActionEvaluation) {
-        this.resourceActionEvaluation = resourceActionEvaluation;
+    public ActionConfiguration withActionConfigurationEvaluation(PrismActionConfigurationEvaluation actionConfigurationEvaluation) {
+        this.actionConfigurationEvaluation = actionConfigurationEvaluation;
         return this;
     }
 

@@ -83,7 +83,7 @@ public class ActionService {
             throws DeduplicationException, CustomizationException {
         customizationService.validateConfiguration(resource, action, locale, programType);
         ActionConfiguration transientConfiguration = new ActionConfiguration().withResource(resource).withLocale(locale).withProgramType(programType)
-                .withAction(action).withStartStateGroup(startStateGroup).withResourceActionEvaluation(action.getId().getResourceActionEvaluation())
+                .withAction(action).withStartStateGroup(startStateGroup).withActionConfigurationEvaluation(action.getId().getResourceActionEvaluation())
                 .withSystemDefault(customizationService.isSystemDefault(action, locale, programType));
         entityService.createOrUpdate(transientConfiguration);
     }

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.utils;
 
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.WordUtils;
 
 public class ReflectionUtils {
 
@@ -35,6 +36,15 @@ public class ReflectionUtils {
         } catch (Exception e) {
             throw new Error(e);
         }
+    }
+    
+    public static String getMethodName(Enum<?> definition) {
+        String[] nameParts = definition.name().split("_");
+        String methodName = "get";
+        for (String namePart : nameParts) {
+            methodName = methodName + WordUtils.capitalizeFully(namePart);
+        }
+        return methodName;
     }
 
 }

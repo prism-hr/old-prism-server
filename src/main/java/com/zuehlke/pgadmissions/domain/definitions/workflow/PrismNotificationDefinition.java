@@ -1,15 +1,5 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.APPLICATION_COMPLETE_REMINDER_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REMINDER_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.APPLICATION_PROVIDE_REFERENCE_REMINDER_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.INSTITUTION_CORRECT_REMINDER_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.PROGRAM_CORRECT_REMINDER_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.PROJECT_CORRECT_REMINDER_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.SYSTEM_APPLICATION_TASK_REMINDER_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.SYSTEM_INSTITUTION_TASK_REMINDER_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.SYSTEM_PROGRAM_TASK_REMINDER_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.SYSTEM_PROJECT_TASK_REMINDER_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationPurpose.REMINDER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationPurpose.REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationPurpose.UPDATE;
@@ -118,18 +108,16 @@ public enum PrismNotificationDefinition {
     private static final HashMap<PrismNotificationDefinition, PrismReminderDefinition> reminderDefinitions = Maps.newHashMap();
 
     static {
-        buildReminderDefinition(APPLICATION_COMPLETE_REQUEST, APPLICATION_COMPLETE_REQUEST_REMINDER, APPLICATION_COMPLETE_REMINDER_DURATION);
-        buildReminderDefinition(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST, APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_REMINDER,
-                APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REMINDER_DURATION);
-        buildReminderDefinition(APPLICATION_PROVIDE_REFERENCE_REQUEST, APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER,
-                APPLICATION_PROVIDE_REFERENCE_REMINDER_DURATION);
-        buildReminderDefinition(INSTITUTION_CORRECT_REQUEST, INSTITUTION_CORRECT_REQUEST_REMINDER, INSTITUTION_CORRECT_REMINDER_DURATION);
-        buildReminderDefinition(PROGRAM_CORRECT_REQUEST, PROGRAM_CORRECT_REQUEST_REMINDER, PROGRAM_CORRECT_REMINDER_DURATION);
-        buildReminderDefinition(PROJECT_CORRECT_REQUEST, PROJECT_CORRECT_REQUEST_REMINDER, PROJECT_CORRECT_REMINDER_DURATION);
-        buildReminderDefinition(SYSTEM_APPLICATION_TASK_REQUEST, SYSTEM_APPLICATION_TASK_REQUEST_REMINDER, SYSTEM_APPLICATION_TASK_REMINDER_DURATION);
-        buildReminderDefinition(SYSTEM_INSTITUTION_TASK_REQUEST, SYSTEM_INSTITUTION_TASK_REQUEST_REMINDER, SYSTEM_INSTITUTION_TASK_REMINDER_DURATION);
-        buildReminderDefinition(SYSTEM_PROGRAM_TASK_REQUEST, SYSTEM_PROGRAM_TASK_REQUEST_REMINDER, SYSTEM_PROGRAM_TASK_REMINDER_DURATION);
-        buildReminderDefinition(SYSTEM_PROJECT_TASK_REQUEST, SYSTEM_PROJECT_TASK_REQUEST_REMINDER, SYSTEM_PROJECT_TASK_REMINDER_DURATION);
+        buildReminderDefinition(APPLICATION_COMPLETE_REQUEST, APPLICATION_COMPLETE_REQUEST_REMINDER, 7);
+        buildReminderDefinition(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST, APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_REMINDER, 1);
+        buildReminderDefinition(APPLICATION_PROVIDE_REFERENCE_REQUEST, APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER, 7);
+        buildReminderDefinition(INSTITUTION_CORRECT_REQUEST, INSTITUTION_CORRECT_REQUEST_REMINDER, 3);
+        buildReminderDefinition(PROGRAM_CORRECT_REQUEST, PROGRAM_CORRECT_REQUEST_REMINDER, 3);
+        buildReminderDefinition(PROJECT_CORRECT_REQUEST, PROJECT_CORRECT_REQUEST_REMINDER, 3);
+        buildReminderDefinition(SYSTEM_APPLICATION_TASK_REQUEST, SYSTEM_APPLICATION_TASK_REQUEST_REMINDER, 3);
+        buildReminderDefinition(SYSTEM_INSTITUTION_TASK_REQUEST, SYSTEM_INSTITUTION_TASK_REQUEST_REMINDER, 3);
+        buildReminderDefinition(SYSTEM_PROGRAM_TASK_REQUEST, SYSTEM_PROGRAM_TASK_REQUEST_REMINDER, 3);
+        buildReminderDefinition(SYSTEM_PROJECT_TASK_REQUEST, SYSTEM_PROJECT_TASK_REQUEST_REMINDER, 3);
     }
 
     private PrismNotificationDefinition(PrismNotificationType notificationType, PrismNotificationPurpose notificationPurpose, PrismScope scope,
@@ -173,27 +161,31 @@ public enum PrismNotificationDefinition {
         return reminder == null ? null : reminder.getTemplate();
     }
 
-    public final PrismDuration getReminderDuration() {
+    public final Integer getDefaultReminderDuration() {
         PrismReminderDefinition reminder = reminderDefinitions.get(this);
-        return reminder == null ? null : reminder.getDuration();
+        return reminder == null ? null : reminder.getDefaultDuration();
     }
 
-    private static void buildReminderDefinition(PrismNotificationDefinition template, PrismNotificationDefinition reminder, PrismDuration duration) {
-        reminderDefinitions.put(template, new PrismReminderDefinition().withTemplate(reminder).withDuration(duration));
+    private static void buildReminderDefinition(PrismNotificationDefinition template, PrismNotificationDefinition reminder, Integer defaultDuration) {
+        reminderDefinitions.put(template, new PrismReminderDefinition().withTemplate(reminder).withDefaultDuration(defaultDuration));
     }
 
     public static class PrismReminderDefinition {
 
         private PrismNotificationDefinition template;
 
-        private PrismDuration duration;
+        private Integer defaultDuration;
 
         public PrismNotificationDefinition getTemplate() {
             return template;
         }
 
-        public final PrismDuration getDuration() {
-            return duration;
+        public final Integer getDefaultDuration() {
+            return defaultDuration;
+        }
+
+        public final void setDefaultDuration(Integer defaultDuration) {
+            this.defaultDuration = defaultDuration;
         }
 
         public PrismReminderDefinition withTemplate(PrismNotificationDefinition template) {
@@ -201,8 +193,8 @@ public enum PrismNotificationDefinition {
             return this;
         }
 
-        public PrismNotificationDefinition.PrismReminderDefinition withDuration(PrismDuration duration) {
-            this.duration = duration;
+        public PrismReminderDefinition withDefaultDuration(Integer defaultDuration) {
+            this.defaultDuration = defaultDuration;
             return this;
         }
 

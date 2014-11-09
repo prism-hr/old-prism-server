@@ -155,7 +155,7 @@ CREATE TABLE RESOURCE_ACTION (
 ;
 
 ALTER TABLE ACTION_CONFIGURATION
-	ADD COLUMN resource_action_evaluation VARCHAR(50)
+	ADD COLUMN action_configuration_evaluation VARCHAR(50) AFTER start_state_group_id
 ;
 
 ALTER TABLE USER_ROLE

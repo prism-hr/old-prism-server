@@ -44,7 +44,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionTy
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldRestriction.NOT_EMPTY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldRestriction.NOT_NULL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldRestriction.SIZE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismResourceActionEvaluation.APPLICATION_ASSESS_ELIGIBILITY_OUTCOME;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionConfigurationEvaluation.APPLICATION_ASSESS_ELIGIBILITY_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
@@ -355,7 +355,7 @@ public enum PrismAction {
         return configurationDefinition == null ? null : configurationDefinition.getDefaultStartStateGroup();
     }
     
-    public PrismResourceActionEvaluation getResourceActionEvaluation() {
+    public PrismActionConfigurationEvaluation getResourceActionEvaluation() {
         return configurationDefinition == null ? null : configurationDefinition.getResourceActionEvaluation();
     }
 
@@ -379,7 +379,7 @@ public enum PrismAction {
 
         private PrismStateGroup defaultStartStateGroup;
 
-        private PrismResourceActionEvaluation resourceActionEvaluation;
+        private PrismActionConfigurationEvaluation resourceActionEvaluation;
         
         private Boolean singletonAction;
 
@@ -395,7 +395,7 @@ public enum PrismAction {
             return defaultStartStateGroup;
         }
 
-        public final PrismResourceActionEvaluation getResourceActionEvaluation() {
+        public final PrismActionConfigurationEvaluation getResourceActionEvaluation() {
             return resourceActionEvaluation;
         }
 
@@ -418,7 +418,7 @@ public enum PrismAction {
             return this;
         }
 
-        public PrismAction.PrismActionConfigurationDefinition withResourceActionEvaluation(PrismResourceActionEvaluation resourceActionEvaluation) {
+        public PrismAction.PrismActionConfigurationDefinition withResourceActionEvaluation(PrismActionConfigurationEvaluation resourceActionEvaluation) {
             this.resourceActionEvaluation = resourceActionEvaluation;
             return this;
         }

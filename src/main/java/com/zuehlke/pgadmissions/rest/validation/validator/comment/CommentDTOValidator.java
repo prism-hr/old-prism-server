@@ -39,7 +39,7 @@ public class CommentDTOValidator extends LocalValidatorFactoryBean implements Va
 
         for (PrismActionCommentField field : PrismActionCommentField.values()) {
             List<PrismActionValidationFieldResolution> resolutions = fieldDefinitions.get(field);
-            String fieldName = field.getFieldName();
+            String fieldName = ReflectionUtils.getMethodName(field);
             Object fieldValue = ReflectionUtils.getProperty(comment, fieldName);
             if (resolutions != null) {
                 for (PrismActionValidationFieldResolution fieldResolution : resolutions) {

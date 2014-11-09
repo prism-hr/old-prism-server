@@ -105,22 +105,20 @@ public class NotificationService {
                 .getConfigurationStrict(NotificationConfiguration.class, resource, locale, programType, "notificationDefinition", definition);
     }
 
-    public NotificationConfiguration createConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
-            NotificationDefinition definition, String subject, String content, Integer reminderInterval) throws CustomizationException {
-        customizationService.validateConfiguration(resource, definition, locale, programType);
-        return new NotificationConfiguration().withResource(resource).withLocale(locale).withProgramType(programType).withNotificationDefinition(definition)
-                .withSubject(subject).withContent(content).withReminderInterval(reminderInterval)
-                .withSystemDefault(customizationService.isSystemDefault(definition, locale, programType));
+    public void updateConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationDefinition definition,
+            NotificationConfigurationDTO notificationConfigurationDTO) throws DeduplicationException, CustomizationException {
+        createOrUpdateConfiguration(resource, locale, programType, definition, notificationConfigurationDTO.getSubject(),
+                notificationConfigurationDTO.getContent(), notificationConfigurationDTO.getReminderInterval());
+        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_NOTIFICATION"));
     }
 
-    public void updateConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationDefinition definition,
-            NotificationConfigurationDTO notificationConfigurationDTO) throws DeduplicationException {
-        NotificationConfiguration configuration = new NotificationConfiguration().withResource(resource).withLocale(locale).withProgramType(programType)
-                .withNotificationDefinition(definition).withSubject(notificationConfigurationDTO.getSubject())
-                .withContent(notificationConfigurationDTO.getContent()).withReminderInterval(notificationConfigurationDTO.getReminderInterval())
-                .withSystemDefault(customizationService.isSystemDefault(definition, locale, programType));
-        entityService.createOrUpdate(configuration);
-        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_NOTIFICATION"));
+    public void createOrUpdateConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationDefinition definition,
+            String subject, String content, Integer reminderInterval) throws CustomizationException, DeduplicationException {
+        customizationService.validateConfiguration(resource, definition, locale, programType);
+        NotificationConfiguration transientConfiguration = new NotificationConfiguration().withResource(resource).withLocale(locale)
+                .withProgramType(programType).withNotificationDefinition(definition).withSubject(subject).withContent(content)
+                .withReminderInterval(reminderInterval).withSystemDefault(customizationService.isSystemDefault(definition, locale, programType));
+        entityService.createOrUpdate(transientConfiguration);
     }
 
     public void restoreDefaultConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationDefinition definition)
@@ -335,7 +333,7 @@ public class NotificationService {
 
             Role role = roleService.getById(request.getRoleId());
             UserRole userRole = roleService.getUserRole(resource, user, role);
-            
+
             userRole.setActivated(true);
             userRole.setLastNotifiedDate(baseline);
         }

@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -112,16 +111,12 @@ public class ApplicationService {
 
     public Application create(User user, ApplicationDTO applicationDTO) throws Exception {
         Resource parentResource = entityService.getById(applicationDTO.getResourceScope().getResourceClass(), applicationDTO.getResourceId());
-        Advert advert = (Advert) PropertyUtils.getSimpleProperty(parentResource, "advert");
         Application application = new Application().withUser(user).withParentResource(parentResource).withDoRetain(false).withCreatedTimestamp(new DateTime());
 
         Application previousApplication = getPreviousApplication(application);
         if (previousApplication != null) {
             applicationCopyHelper.copyApplicationData(application, previousApplication);
         }
-
-        AdvertClosingDate closingDate = advert.getClosingDate();
-        application.setClosingDate(closingDate == null ? null : closingDate.getClosingDate());
 
         return application;
     }
@@ -201,12 +196,10 @@ public class ApplicationService {
     }
 
     public LocalDate resolveDueDateBaseline(Application application, Comment comment) {
-        if (comment.isApplicationAssignReviewersComment()) {
+        if (comment.isApplicationSubmittedComment()) {
             LocalDate closingDate = application.getClosingDate();
 
             if (closingDate != null) {
-                application.setClosingDate(null);
-                application.setPreviousClosingDate(closingDate);
                 return closingDate;
             }
         }
@@ -275,6 +268,7 @@ public class ApplicationService {
 
         if (actionId == PrismAction.APPLICATION_COMPLETE) {
             validateApplicationCompleteness(applicationId);
+            setClosingDate(application);
         }
 
         Action action = actionService.getById(actionId);
@@ -425,6 +419,12 @@ public class ApplicationService {
         }
 
         return recommended;
+    }
+    
+    private void setClosingDate(Application application) {
+        Advert advert = application.isProgramApplication() ? application.getProgram().getAdvert() : application.getProject().getAdvert();
+        AdvertClosingDate advertClosingDate = advert.getClosingDate();
+        application.setClosingDate(advertClosingDate == null ? null : advertClosingDate.getClosingDate());
     }
 
 }

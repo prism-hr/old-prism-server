@@ -5,18 +5,18 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.APPLICATION_CONFIRM_SUPERVISION_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.APPLICATION_ESCALATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.APPLICATION_INTERVIEW_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.APPLICATION_PROVIDE_REVIEW_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.APPLICATION_PURGE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.INSTITUTION_ESCALATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.PROGRAM_APPROVE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.PROGRAM_ESCALATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.PROJECT_APPROVE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration.PROJECT_ESCALATE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.APPLICATION_CONFIRM_SUPERVISION_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.APPLICATION_ESCALATE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.APPLICATION_INTERVIEW_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.APPLICATION_PROVIDE_REFERENCE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.APPLICATION_PROVIDE_REVIEW_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.APPLICATION_PURGE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.INSTITUTION_ESCALATE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.PROGRAM_ESCALATE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.PROJECT_APPROVE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.PROJECT_ESCALATE_DURATION;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,6 +50,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicat
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationUnsubmitted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationUnsubmittedPendingCompletion;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidationPendingCompletion;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnCompleted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnCompletedPurged;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWithdrawnCompletedUnsubmitted;
@@ -122,7 +123,8 @@ public enum PrismState {
     APPLICATION_UNSUBMITTED(PrismStateGroup.APPLICATION_UNSUBMITTED, APPLICATION_ESCALATE_DURATION, APPLICATION, PrismApplicationUnsubmitted.class), //
     APPLICATION_UNSUBMITTED_PENDING_COMPLETION(PrismStateGroup.APPLICATION_UNSUBMITTED, APPLICATION_ESCALATE_DURATION, APPLICATION,
             PrismApplicationUnsubmittedPendingCompletion.class), //
-    APPLICATION_VALIDATION(PrismStateGroup.APPLICATION_VALIDATION, APPLICATION_ESCALATE_DURATION, APPLICATION, PrismApplicationValidation.class), //
+    APPLICATION_VALIDATION(PrismStateGroup.APPLICATION_VALIDATION, APPLICATION_PROVIDE_REFERENCE_DURATION, APPLICATION, PrismApplicationValidation.class), //
+    APPLICATION_VALIDATION_PENDING_COMPLETION(PrismStateGroup.APPLICATION_VALIDATION, APPLICATION_ESCALATE_DURATION, APPLICATION, PrismApplicationValidationPendingCompletion.class), //
     APPLICATION_WITHDRAWN_PENDING_EXPORT(PrismStateGroup.APPLICATION_WITHDRAWN, APPLICATION_ESCALATE_DURATION, APPLICATION,
             PrismApplicationWithdrawnPendingExport.class), //
     APPLICATION_WITHDRAWN_COMPLETED(PrismStateGroup.APPLICATION_WITHDRAWN, APPLICATION_PURGE_DURATION, APPLICATION, PrismApplicationWithdrawnCompleted.class), //
@@ -141,8 +143,8 @@ public enum PrismState {
     INSTITUTION_WITHDRAWN(PrismStateGroup.INSTITUTION_WITHDRAWN, null, INSTITUTION, PrismInstitutionWithdrawn.class), //
     PROGRAM_APPROVAL(PrismStateGroup.PROGRAM_APPROVAL, PROGRAM_ESCALATE_DURATION, PROGRAM, PrismProgramApproval.class), //
     PROGRAM_APPROVAL_PENDING_CORRECTION(PrismStateGroup.PROGRAM_APPROVAL, PROGRAM_ESCALATE_DURATION, PROGRAM, PrismProgramApprovalPendingCorrection.class), //
-    PROGRAM_APPROVED(PrismStateGroup.PROGRAM_APPROVED, PROGRAM_APPROVE_DURATION, PROGRAM, PrismProgramApproved.class), //
-    PROGRAM_DEACTIVATED(PrismStateGroup.PROGRAM_APPROVED, PROGRAM_APPROVE_DURATION, PROGRAM, PrismProgramDeactivated.class), //
+    PROGRAM_APPROVED(PrismStateGroup.PROGRAM_APPROVED, PROGRAM_ESCALATE_DURATION, PROGRAM, PrismProgramApproved.class), //
+    PROGRAM_DEACTIVATED(PrismStateGroup.PROGRAM_APPROVED, PROGRAM_ESCALATE_DURATION, PROGRAM, PrismProgramDeactivated.class), //
     PROGRAM_DISABLED_COMPLETED(PrismStateGroup.PROGRAM_DISABLED, null, PROGRAM, PrismProgramDisabledCompleted.class), //
     PROGRAM_DISABLED_PENDING_IMPORT_REACTIVATION(PrismStateGroup.PROGRAM_DISABLED, PROGRAM_ESCALATE_DURATION, PROGRAM,
             PrismProgramDisabledPendingImportReactivation.class), //
@@ -163,7 +165,7 @@ public enum PrismState {
 
     private PrismStateGroup stateGroup;
 
-    private PrismDuration duration;
+    private PrismStateDuration duration;
 
     private PrismScope scope;
 
@@ -180,7 +182,7 @@ public enum PrismState {
         }
     }
 
-    private PrismState(PrismStateGroup stateGroup, PrismDuration duration, PrismScope scope, Class<? extends PrismWorkflowState> workflowStateClass) {
+    private PrismState(PrismStateGroup stateGroup, PrismStateDuration duration, PrismScope scope, Class<? extends PrismWorkflowState> workflowStateClass) {
         this.stateGroup = stateGroup;
         this.duration = duration;
         this.scope = scope;
@@ -191,7 +193,7 @@ public enum PrismState {
         return stateGroup;
     }
 
-    public final PrismDuration getDuration() {
+    public final PrismStateDuration getDuration() {
         return duration;
     }
 

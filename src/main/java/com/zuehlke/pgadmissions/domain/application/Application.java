@@ -85,10 +85,6 @@ public class Application extends Resource {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate closingDate;
 
-    @Column(name = "previous_closing_date")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate previousClosingDate;
-
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_program_detail_id", unique = true)
     private ApplicationProgramDetail programDetail;
@@ -390,14 +386,6 @@ public class Application extends Resource {
 
     public void setClosingDate(LocalDate closingDate) {
         this.closingDate = closingDate;
-    }
-
-    public final LocalDate getPreviousClosingDate() {
-        return previousClosingDate;
-    }
-
-    public final void setPreviousClosingDate(LocalDate previousClosingDate) {
-        this.previousClosingDate = previousClosingDate;
     }
 
     public ApplicationPersonalDetail getPersonalDetail() {

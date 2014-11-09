@@ -92,7 +92,7 @@ public class NotificationTemplatePropertyLoader {
     private ApplicationContext applicationContext;
 
     public String load(PrismNotificationTemplateProperty property) {
-        String value = (String) ReflectionUtils.invokeMethod(this, property.getMethodName());
+        String value = (String) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(property));
         return value == null ? "[" + propertyLoader.load(SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR) + ". " + propertyLoader.load(SYSTEM_HELPDESK_REPORT)
                 + ": " + templateModelDTO.getResource().getSystem().getHelpdesk() + "]" : value;
     }

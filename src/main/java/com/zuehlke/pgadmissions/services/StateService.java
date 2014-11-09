@@ -7,6 +7,7 @@ import java.util.Set;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -91,7 +92,7 @@ public class StateService {
         return entityService.getById(StateGroup.class, stateGroupId);
     }
 
-    public StateDurationDefinition getStateDurationDefinitionById(PrismDuration stateDurationDefinitionId) {
+    public StateDurationDefinition getStateDurationDefinitionById(PrismStateDuration stateDurationDefinitionId) {
         return entityService.getById(StateDurationDefinition.class, stateDurationDefinitionId);
     }
 
@@ -207,10 +208,19 @@ public class StateService {
 
         if (potentialStateTransitions.size() > 1) {
             PrismStateTransitionEvaluation transitionEvaluation = potentialStateTransitions.get(0).getStateTransitionEvaluation().getId();
-            return (StateTransition) ReflectionUtils.invokeMethod(this, transitionEvaluation.getMethodName(), operative, comment);
+            return (StateTransition) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(transitionEvaluation), operative, comment);
         }
 
         return potentialStateTransitions.isEmpty() ? null : potentialStateTransitions.get(0);
+    }
+
+    public StateTransition getApplicationCompletedOutcome(Resource resource, Comment comment) {
+        PrismState transitionStateId = PrismState.APPLICATION_VALIDATION;
+        LocalDate closingDate = resource.getApplication().getClosingDate();
+        if (closingDate == null || closingDate.isBefore(new LocalDate())) {
+            transitionStateId = PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION;
+        }
+        return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
 
     public StateTransition getApplicationStateCompletedOutcome(Resource resource, Comment comment) {

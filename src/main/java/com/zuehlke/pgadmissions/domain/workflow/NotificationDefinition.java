@@ -10,7 +10,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDuration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationPurpose;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
@@ -39,11 +38,7 @@ public class NotificationDefinition extends WorkflowDefinition {
     @OneToOne
     @JoinColumn(name = "reminder_definition_id")
     private NotificationDefinition reminderDefinition;
-    
-    @Column(name = "reminder_duration")
-    @Enumerated(EnumType.STRING)
-    private PrismDuration reminderDuration;
-    
+
     @Override
     public PrismNotificationDefinition getId() {
         return id;
@@ -85,14 +80,6 @@ public class NotificationDefinition extends WorkflowDefinition {
 
     public void setReminderDefinition(NotificationDefinition reminderDefinition) {
         this.reminderDefinition = reminderDefinition;
-    }
-
-    public final PrismDuration getReminderDuration() {
-        return reminderDuration;
-    }
-
-    public final void setReminderDuration(PrismDuration reminderDuration) {
-        this.reminderDuration = reminderDuration;
     }
 
     public NotificationDefinition withId(PrismNotificationDefinition id) {

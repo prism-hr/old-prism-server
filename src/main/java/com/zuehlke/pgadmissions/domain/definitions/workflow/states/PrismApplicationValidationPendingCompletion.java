@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNoti
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 
-public class PrismApplicationValidation extends PrismWorkflowState {
+public class PrismApplicationValidationPendingCompletion extends PrismWorkflowState {
 
     @Override
     protected void setStateActions() {
@@ -60,7 +60,7 @@ public class PrismApplicationValidation extends PrismWorkflowState {
         
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_COMPLETE_VALIDATION_STAGE) //
-            .withRaisesUrgentFlag(false) //
+            .withRaisesUrgentFlag(true) //
             .withDefaultAction(false) //
             .withNotificationTemplate(PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
@@ -133,7 +133,7 @@ public class PrismApplicationValidation extends PrismWorkflowState {
             .withDefaultAction(false) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
-                        .withTransitionState(PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION) // 
+                        .withTransitionState(PrismState.APPLICATION_REJECTED_COMPLETED) // 
                         .withTransitionAction(PrismAction.APPLICATION_ESCALATE)))); //
         
         stateActions.add(new PrismStateAction() //

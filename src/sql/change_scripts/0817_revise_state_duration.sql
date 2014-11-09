@@ -1,5 +1,5 @@
 CREATE TABLE STATE_DURATION_DEFINITION (
-	id VARCHAR(100) NOT NULL,
+	id VARCHAR(50) NOT NULL,
 	duration_evaluation VARCHAR(50),
 	scope_id VARCHAR(50) NOT NULL,
 	PRIMARY KEY (id),
@@ -17,7 +17,7 @@ FROM STATE_DURATION_CONFIGURATION
 
 ALTER TABLE STATE_DURATION_CONFIGURATION
 	DROP FOREIGN KEY state_duration_configuration_ibfk_4,
-	CHANGE COLUMN state_id state_duration_definition_id VARCHAR(100) NOT NULL,
+	CHANGE COLUMN state_id state_duration_definition_id VARCHAR(50) NOT NULL,
 	ADD FOREIGN KEY (state_duration_definition_id) REFERENCES STATE_DURATION_DEFINITION (id)
 ;
 
@@ -184,4 +184,9 @@ ALTER TABLE NOTIFICATION_CONFIGURATION
 	DROP COLUMN day_reminder_interval,
 	ADD COLUMN reminder_duration VARCHAR(100)
 ;
+
+ALTER TABLE APPLICATION
+	DROP COLUMN previous_closing_date
+;
+
 

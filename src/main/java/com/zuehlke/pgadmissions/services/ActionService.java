@@ -75,6 +75,10 @@ public class ActionService {
         return customizationService.getConfiguration(ActionConfiguration.class, resource, user, "action", action);
     }
 
+    public ActionConfiguration getActionConfiguration(Resource resource, User user, PrismAction actionId) {
+        return customizationService.getConfiguration(ActionConfiguration.class, resource, user, "action", getById(actionId));
+    }
+
     public ActionConfiguration getActionConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action) {
         return customizationService.getConfiguration(ActionConfiguration.class, resource, locale, programType, "action", action);
     }
@@ -83,8 +87,7 @@ public class ActionService {
             throws DeduplicationException, CustomizationException {
         customizationService.validateConfiguration(resource, action, locale, programType);
         ActionConfiguration transientConfiguration = new ActionConfiguration().withResource(resource).withLocale(locale).withProgramType(programType)
-                .withAction(action).withStartStateGroup(startStateGroup).withActionConfigurationEvaluation(action.getId().getResourceActionEvaluation())
-                .withSystemDefault(customizationService.isSystemDefault(action, locale, programType));
+                .withAction(action).withStartStateGroup(startStateGroup).withSystemDefault(customizationService.isSystemDefault(action, locale, programType));
         entityService.createOrUpdate(transientConfiguration);
     }
 
@@ -296,7 +299,10 @@ public class ActionService {
             for (Action configurableAction : configurableActions) {
                 ActionConfiguration configuration = getActionConfiguration(resource, userCurrent, configurableAction);
                 if (configuration.getStartStateGroup().getSequenceOrder() >= comment.getTransitionState().getStateGroup().getSequenceOrder()) {
-                    entityService.getOrCreate(new ResourceAction().withResource(resource).withAction(configurableAction));
+                    PrismAction actionId = configurableAction.getId();
+                    if (actionId == PrismAction.APPLICATION_PROVIDE_REFERENCE
+                            || (actionId == PrismAction.APPLICATION_CONFIRM_ELIGIBILITY && comment.isApplicationCreatorEligibilityUnsure()))
+                        entityService.getOrCreate(new ResourceAction().withResource(resource).withAction(configurableAction));
                 }
             }
         }

@@ -13,7 +13,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismDurationEvaluation;
 
 @Entity
 @Table(name = "STATE_DURATION_DEFINITION")
@@ -24,10 +23,6 @@ public class StateDurationDefinition extends WorkflowDefinition {
     @Column(name = "id", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismStateDuration id;
-
-    @Column(name = "duration_evaluation", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PrismDurationEvaluation durationEvaluation;
 
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
@@ -42,14 +37,6 @@ public class StateDurationDefinition extends WorkflowDefinition {
         this.id = id;
     }
 
-    public final PrismDurationEvaluation getDurationEvaluation() {
-        return durationEvaluation;
-    }
-
-    public final void setDurationEvaluation(PrismDurationEvaluation durationEvaluation) {
-        this.durationEvaluation = durationEvaluation;
-    }
-
     @Override
     public Scope getScope() {
         return scope;
@@ -62,11 +49,6 @@ public class StateDurationDefinition extends WorkflowDefinition {
 
     public StateDurationDefinition withId(PrismStateDuration id) {
         this.id = id;
-        return this;
-    }
-
-    public StateDurationDefinition withDurationEvaluation(PrismDurationEvaluation durationEvaluation) {
-        this.durationEvaluation = durationEvaluation;
         return this;
     }
 

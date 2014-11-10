@@ -86,7 +86,7 @@ public class PrismApplicationValidationPendingCompletion extends PrismWorkflowSt
                         .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) // 
                         .withTemplate(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
-                    new PrismStateTransition() // 
+                        new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_APPROVAL) // 
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_SUPERVISORS) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_STATE_COMPLETED_OUTCOME), // 

@@ -197,11 +197,7 @@ public class ApplicationService {
 
     public LocalDate resolveDueDateBaseline(Application application, Comment comment) {
         if (comment.isApplicationSubmittedComment()) {
-            LocalDate closingDate = application.getClosingDate();
-
-            if (closingDate != null) {
-                return closingDate;
-            }
+            return application.getClosingDate();
         }
 
         if (comment.isApplicationInterviewPendingInterviewComment()) {

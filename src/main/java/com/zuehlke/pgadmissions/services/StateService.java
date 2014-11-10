@@ -215,7 +215,6 @@ public class StateService {
     }
 
     public StateTransition getApplicationCompletedOutcome(Resource resource, Comment comment) {
-        // TODO : reference triggers.
         PrismState transitionStateId = PrismState.APPLICATION_VALIDATION;
         LocalDate closingDate = resource.getApplication().getClosingDate();
         if (closingDate == null || closingDate.isBefore(new LocalDate())) {

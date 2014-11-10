@@ -50,7 +50,7 @@ public class PrismApplicationUnsubmittedPendingCompletion extends PrismWorkflowS
                                 .withTransitionRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
                                 .withRestrictToOwner(false) //
                                 .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_SUGGESTED_SUPERVISOR))),
-                                new PrismStateTransition() // 
+                    new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_COMPLETED_OUTCOME) //

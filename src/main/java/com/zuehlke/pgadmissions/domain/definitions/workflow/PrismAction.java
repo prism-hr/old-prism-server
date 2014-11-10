@@ -44,7 +44,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionTy
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldRestriction.NOT_EMPTY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldRestriction.NOT_NULL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldRestriction.SIZE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionConfigurationEvaluation.APPLICATION_ASSESS_ELIGIBILITY_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
@@ -52,7 +51,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_REVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_VALIDATION;
 
@@ -112,8 +111,8 @@ public enum PrismAction {
                     .withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder().addResolution(CONTENT, NOT_EMPTY)
             .addResolution(DOCUMENTS, new PrismActionValidationFieldResolution(SIZE, "min", 0)).addResolution(QUALIFIED, NOT_NULL)
             .addResolution(COMPETENT_IN_WORK_LANGUAGE, NOT_NULL).addResolution(RESIDENCE_STATE, NOT_NULL).build(), new PrismActionConfigurationDefinition()
-            .withMinimumStartStateGroup(APPLICATION_VALIDATION).withMaximumStartStateGroup(APPLICATION_APPROVED).withDefaultStartStateGroup(APPLICATION_REVIEW)
-            .withResourceActionEvaluation(APPLICATION_ASSESS_ELIGIBILITY_OUTCOME).withSingletonAction(true)), //
+            .withMinimumStartStateGroup(APPLICATION_VALIDATION).withMaximumStartStateGroup(APPLICATION_APPROVAL).withDefaultStartStateGroup(APPLICATION_REVIEW)
+            .withSingletonAction(true)), //
     APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, false, APPLICATION, null, Arrays.asList(
             new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_ASSESSMENT_CONTENT),
             new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
@@ -157,14 +156,15 @@ public enum PrismAction {
             new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT), new PrismActionRedaction().withRole(APPLICATION_REFEREE)
                     .withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder().addResolution(CONTENT, NOT_EMPTY)
             .addResolution(DOCUMENTS, new PrismActionValidationFieldResolution(SIZE, "max", 1)).addResolution(RATING, NOT_NULL)
-            .addResolution(SUITABLE_FOR_INSTITUTION, NOT_NULL).addResolution(SUITABLE_FOR_OPPORTUNITY, NOT_NULL).build(), null), //
+            .addResolution(SUITABLE_FOR_INSTITUTION, NOT_NULL).addResolution(SUITABLE_FOR_OPPORTUNITY, NOT_NULL).build(),
+            new PrismActionConfigurationDefinition().withMinimumStartStateGroup(APPLICATION_VALIDATION).withMaximumStartStateGroup(APPLICATION_APPROVAL)
+                    .withDefaultStartStateGroup(APPLICATION_REVIEW)), //
     APPLICATION_PROVIDE_REVIEW(USER_INVOCATION, PROCESS_RESOURCE, true, false, false, true, false, true, APPLICATION, null, Arrays.asList(
             new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT), new PrismActionRedaction().withRole(APPLICATION_REFEREE)
                     .withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder().addResolution(CONTENT, NOT_EMPTY)
             .addResolution(DOCUMENTS, new PrismActionValidationFieldResolution(SIZE, "min", 0)).addResolution(RATING, NOT_NULL)
             .addResolution(SUITABLE_FOR_INSTITUTION, NOT_NULL).addResolution(SUITABLE_FOR_OPPORTUNITY, NOT_NULL).addResolution(DESIRE_TO_RECRUIT, NOT_NULL)
-            .build(), new PrismActionConfigurationDefinition().withMinimumStartStateGroup(APPLICATION_VALIDATION)
-            .withMaximumStartStateGroup(APPLICATION_APPROVED).withDefaultStartStateGroup(APPLICATION_REVIEW)), //
+            .build(), null), //
     APPLICATION_PURGE(SYSTEM_INVOCATION, PURGE_RESOURCE, false, false, false, true, false, false, APPLICATION, null, null, null, null), //
     APPLICATION_TERMINATE(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, true, false, true, false, false, APPLICATION, null, null, null, null), //
     APPLICATION_UPDATE_INTERVIEW_AVAILABILITY(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, false, APPLICATION, null, Arrays.asList(
@@ -354,15 +354,11 @@ public enum PrismAction {
     public PrismStateGroup getDefaultStartStateGroup() {
         return configurationDefinition == null ? null : configurationDefinition.getDefaultStartStateGroup();
     }
-    
-    public PrismActionConfigurationEvaluation getResourceActionEvaluation() {
-        return configurationDefinition == null ? null : configurationDefinition.getResourceActionEvaluation();
-    }
 
     public boolean isSingletonAction() {
         return configurationDefinition == null ? false : BooleanUtils.isTrue(configurationDefinition.getSingletonAction());
     }
-    
+
     public static List<PrismAction> getCreationActions() {
         return creationActions;
     }
@@ -379,8 +375,6 @@ public enum PrismAction {
 
         private PrismStateGroup defaultStartStateGroup;
 
-        private PrismActionConfigurationEvaluation resourceActionEvaluation;
-        
         private Boolean singletonAction;
 
         public final PrismStateGroup getMinimumStartStateGroup() {
@@ -393,10 +387,6 @@ public enum PrismAction {
 
         public final PrismStateGroup getDefaultStartStateGroup() {
             return defaultStartStateGroup;
-        }
-
-        public final PrismActionConfigurationEvaluation getResourceActionEvaluation() {
-            return resourceActionEvaluation;
         }
 
         public final Boolean getSingletonAction() {
@@ -418,11 +408,6 @@ public enum PrismAction {
             return this;
         }
 
-        public PrismAction.PrismActionConfigurationDefinition withResourceActionEvaluation(PrismActionConfigurationEvaluation resourceActionEvaluation) {
-            this.resourceActionEvaluation = resourceActionEvaluation;
-            return this;
-        }
-        
         public PrismAction.PrismActionConfigurationDefinition withSingletonAction(Boolean singletonAction) {
             this.singletonAction = singletonAction;
             return this;

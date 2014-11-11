@@ -204,7 +204,7 @@ public class Comment {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
-    private Set<CommentProperty> properties = Sets.newHashSet();
+    private Set<CommentPropertyAnswer> propertyAnswers = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id")
@@ -526,8 +526,8 @@ public class Comment {
         return documents;
     }
 
-    public final Set<CommentProperty> getProperties() {
-        return properties;
+    public final Set<CommentPropertyAnswer> getPropertyAnswers() {
+        return propertyAnswers;
     }
 
     public DateTime getCreatedTimestamp() {

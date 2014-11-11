@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 
 @Component
-public class ConfirmSupervisionCommentCustomValidator implements Validator {
+public class CommentConfirmSupervisionCustomValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {

@@ -362,7 +362,7 @@ public class SystemService {
             Scope scope = scopeService.getById(prismDisplayProperty.getScope());
             DisplayPropertyDefinition displayPropertyDefinition = customizationService.getDisplayPropertyDefinitionById(prismDisplayProperty);
             PrismProgramType programType = scope.getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null;
-            customizationService.createOrUpdateDisplayProperty(system, getSystemLocale(), programType, displayPropertyDefinition,
+            customizationService.createOrUpdateDisplayPropertyConfiguration(system, getSystemLocale(), programType, displayPropertyDefinition,
                     prismDisplayProperty.getDefaultValue());
         }
     }
@@ -376,7 +376,7 @@ public class SystemService {
 
             PrismProgramType programType = prismNotificationDefinition.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null;
 
-            notificationService.createOrUpdateConfiguration(system, getSystemLocale(), programType, notificationDefinition, subject, content,
+            notificationService.createOrUpdateNotificationConfiguration(system, getSystemLocale(), programType, notificationDefinition, subject, content,
                     prismNotificationDefinition.getDefaultReminderDuration());
         }
     }

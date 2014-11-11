@@ -45,7 +45,7 @@ public class PropertyLoaderHelper {
 
         User herman = userService.getOrCreateUser("herman", "ze german", "hermanzegerman@germany.com", DE_DE);
         DisplayPropertyDefinition displayProperty = customizationService.getDisplayPropertyDefinitionById(SYSTEM_YES);
-        customizationService.createOrUpdateDisplayProperty(systemService.getSystem(), DE_DE, null, displayProperty, "Ja");
+        customizationService.createOrUpdateDisplayPropertyConfiguration(systemService.getSystem(), DE_DE, null, displayProperty, "Ja");
         PropertyLoader propertyLoaderDe = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem(), herman);
         
         assertEquals(propertyLoaderDe.load(SYSTEM_YES), "Ja");

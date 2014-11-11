@@ -7,6 +7,7 @@ import java.util.TimeZone;
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
@@ -72,19 +73,24 @@ public class CommentDTO {
     private ProjectDTO project;
 
     @Valid
-    private Set<CommentAssignedUserDTO> assignedUsers = Sets.newLinkedHashSet();
+    @NotEmpty
+    private Set<CommentAssignedUserDTO> assignedUsers;
 
     @Valid
-    private Set<CommentTransitionStateDTO> transitionStates = Sets.newLinkedHashSet();
+    @NotEmpty
+    private Set<CommentTransitionStateDTO> transitionStates;
 
-    private Set<LocalDateTime> appointmentTimeslots = Sets.newLinkedHashSet();
+    @NotEmpty
+    private Set<LocalDateTime> appointmentTimeslots;
 
-    private Set<Integer> appointmentPreferences = Sets.newLinkedHashSet();
+    @NotEmpty
+    private Set<Integer> appointmentPreferences;
 
     @Valid
-    private Set<CommentPropertyDTO> properties = Sets.newLinkedHashSet();
+    private CommentPropertyAnswerDTO propertyAnswer;
 
     @Valid
+    @NotEmpty
     private Set<FileDTO> documents = Sets.newLinkedHashSet();
 
     public Integer getUser() {
@@ -311,12 +317,12 @@ public class CommentDTO {
         this.appointmentPreferences = appointmentPreferences;
     }
 
-    public final Set<CommentPropertyDTO> getProperties() {
-        return properties;
+    public final CommentPropertyAnswerDTO getPropertyAnswer() {
+        return propertyAnswer;
     }
 
-    public final void setProperties(Set<CommentPropertyDTO> properties) {
-        this.properties = properties;
+    public final void setPropertyAnswer(CommentPropertyAnswerDTO propertyAnswer) {
+        this.propertyAnswer = propertyAnswer;
     }
 
     public Set<FileDTO> getDocuments() {

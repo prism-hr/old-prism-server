@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.zuehlke.pgadmissions.domain.definitions.ActionPropertyType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -53,9 +54,13 @@ public class ActionPropertyConfiguration extends WorkflowResourceConfiguration {
     @ManyToOne
     @JoinColumn(name = "action_id", nullable = false)
     private Action action;
-
+    
     @Column(name = "version")
     private Integer version;
+    
+    @Column(name = "action_property_type")
+    @Enumerated(EnumType.STRING)
+    private ActionPropertyType actionPropertyType;
 
     @Lob
     @Column(name = "display_name", nullable = false)
@@ -166,13 +171,21 @@ public class ActionPropertyConfiguration extends WorkflowResourceConfiguration {
     public void setAction(Action action) {
         this.action = action;
     }
-
+    
     public final Integer getVersion() {
         return version;
     }
 
     public final void setVersion(Integer version) {
         this.version = version;
+    }
+
+    public final ActionPropertyType getActionPropertyType() {
+        return actionPropertyType;
+    }
+
+    public final void setActionPropertyType(ActionPropertyType actionPropertyType) {
+        this.actionPropertyType = actionPropertyType;
     }
 
     public final String getName() {
@@ -300,6 +313,11 @@ public class ActionPropertyConfiguration extends WorkflowResourceConfiguration {
 
     public ActionPropertyConfiguration withAction(Action action) {
         this.action = action;
+        return this;
+    }
+    
+    public ActionPropertyConfiguration withActionPropertyType(ActionPropertyType actionPropertyType) {
+        this.actionPropertyType = actionPropertyType;
         return this;
     }
 

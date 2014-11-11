@@ -46,7 +46,7 @@ import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.RefereeRepresentation;
-import com.zuehlke.pgadmissions.rest.validation.validator.comment.CommentDTOValidator;
+import com.zuehlke.pgadmissions.rest.validation.validator.comment.CommentValidator;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationSectionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -80,7 +80,7 @@ public class ApplicationResource {
     private Mapper dozerBeanMapper;
 
     @Autowired
-    private CommentDTOValidator commentDTOValidator;
+    private CommentValidator commentDTOValidator;
 
     @RequestMapping(value = "/{applicationId}/startDate", method = RequestMethod.GET)
     private ApplicationStartDateRepresentation getStartDateRepresentation(@PathVariable Integer applicationId, @RequestParam PrismStudyOption studyOptionId) {

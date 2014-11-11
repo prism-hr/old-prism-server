@@ -1,16 +1,13 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
 import java.math.BigDecimal;
-import java.util.Set;
+import java.util.List;
 
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
-
-import com.google.common.collect.Sets;
 
 public class ActionPropertyConfigurationDTO {
 
@@ -32,14 +29,14 @@ public class ActionPropertyConfigurationDTO {
     @NotEmpty
     private String placeholder;
 
-    @NotBlank
-    private Set<String> options = Sets.newLinkedHashSet();
+    @NotEmpty
+    private List<String> options;
 
     @NotNull
     private Boolean required;
 
-    @NotBlank
-    private Set<String> validationRules = Sets.newLinkedHashSet();
+    @NotEmpty
+    private List<String> validationRules;
 
     @DecimalMin("0.01")
     @DecimalMax("1.00")
@@ -93,11 +90,11 @@ public class ActionPropertyConfigurationDTO {
         this.placeholder = placeholder;
     }
 
-    public final Set<String> getOptions() {
+    public final List<String> getOptions() {
         return options;
     }
 
-    public final void setOptions(Set<String> options) {
+    public final void setOptions(List<String> options) {
         this.options = options;
     }
 
@@ -109,11 +106,11 @@ public class ActionPropertyConfigurationDTO {
         this.required = required;
     }
 
-    public final Set<String> getValidationRules() {
+    public final List<String> getValidationRules() {
         return validationRules;
     }
 
-    public final void setValidationRules(Set<String> validationRules) {
+    public final void setValidationRules(List<String> validationRules) {
         this.validationRules = validationRules;
     }
 

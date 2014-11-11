@@ -17,6 +17,8 @@ public class PrismStateTransition {
 
     private List<PrismAction> propagatedActions = Lists.newArrayList();
 
+    private List<PrismState> stateTerminations = Lists.newArrayList();
+
     public PrismState getTransitionState() {
         return transitionState;
     }
@@ -35,6 +37,10 @@ public class PrismStateTransition {
 
     public List<PrismAction> getPropagatedActions() {
         return propagatedActions;
+    }
+
+    public final List<PrismState> getStateTerminations() {
+        return stateTerminations;
     }
 
     public PrismStateTransition withTransitionState(PrismState transitionState) {
@@ -64,7 +70,7 @@ public class PrismStateTransition {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(transitionState, transitionAction, transitionEvaluation, roleTransitions, propagatedActions);
+        return Objects.hashCode(transitionState, transitionAction, transitionEvaluation, roleTransitions, propagatedActions, stateTerminations);
     }
 
     @Override
@@ -78,10 +84,12 @@ public class PrismStateTransition {
         final PrismStateTransition other = (PrismStateTransition) obj;
         final List<PrismRoleTransition> otherRoleTransitions = other.getRoleTransitions();
         final List<PrismAction> otherPropagatedActions = other.getPropagatedActions();
+        final List<PrismState> otherStateTerminations = other.getStateTerminations();
         return Objects.equal(transitionState, other.getTransitionState()) && Objects.equal(transitionAction, other.getTransitionAction())
                 && Objects.equal(transitionEvaluation, other.getTransitionEvaluation()) && roleTransitions.size() == otherRoleTransitions.size()
                 && roleTransitions.containsAll(otherRoleTransitions) && propagatedActions.size() == otherPropagatedActions.size()
-                && propagatedActions.containsAll(otherPropagatedActions);
+                && propagatedActions.containsAll(otherPropagatedActions) && stateTerminations.size() == otherStateTerminations.size()
+                && stateTerminations.containsAll(otherStateTerminations);
     }
-    
+
 }

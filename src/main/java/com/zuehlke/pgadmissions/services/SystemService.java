@@ -184,9 +184,6 @@ public class SystemService {
         LOGGER.info("Initialising system object");
         System system = initializeSystemResource();
 
-        LOGGER.info("Intialising action configurations");
-        initializeActionConfigurations(system);
-
         LOGGER.info("Initialising state duration configurations");
         initializeStateDurationConfigurations(system);
 
@@ -226,8 +223,7 @@ public class SystemService {
 
         for (PrismRole prismRole : PrismRole.values()) {
             Scope scope = entityService.getById(Scope.class, prismRole.getScope());
-            Role transientRole = new Role().withId(prismRole).withScopeCreator(prismRole.isScopeOwner())
-                    .withActivateImmediately(prismRole.isActivateImmediately()).withScope(scope);
+            Role transientRole = new Role().withId(prismRole).withScopeCreator(prismRole.isScopeOwner()).withScope(scope);
             Role role = entityService.createOrUpdate(transientRole);
             role.getExcludedRoles().clear();
 
@@ -254,8 +250,7 @@ public class SystemService {
                     .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
                     .withTransitionAction(prismAction.isTransitionAction()).withDeclinableAction(prismAction.isDeclinableAction())
                     .withVisibleAction(prismAction.isVisibleAction()).withEmphasizedAction(prismAction.isEmphasizedAction()).withScope(scope)
-                    .withCustomizableAction(prismAction.isCustomizableAction()).withConfigurableAction(prismAction.isConfigurableAction())
-                    .withSingletonAction(prismAction.isSingletonAction()).withCreationScope(creationScope);
+                    .withCustomizableAction(prismAction.isCustomizableAction()).withCreationScope(creationScope);
             Action action = entityService.createOrUpdate(transientAction);
             action.getRedactions().clear();
 
@@ -279,16 +274,26 @@ public class SystemService {
         for (PrismStateGroup prismStateGroup : PrismStateGroup.values()) {
             Scope scope = entityService.getById(Scope.class, prismStateGroup.getScope());
             StateGroup transientStateGroup = new StateGroup().withId(prismStateGroup).withSequenceOrder(prismStateGroup.getSequenceOrder())
-                    .withRepeatable(prismStateGroup.isRepeatable()).withScope(scope);
+                    .withRepeatable(prismStateGroup.isRepeatable()).withParallelizable(prismStateGroup.isParallelizable()).withScope(scope);
             entityService.createOrUpdate(transientStateGroup);
+        }
+    }
+
+    private void initializeStateDurationDefinitions() throws DeduplicationException {
+        for (PrismStateDuration prismStateDuration : PrismStateDuration.values()) {
+            Scope scope = scopeService.getById(prismStateDuration.getScope());
+            StateDurationDefinition transientStateDurationDefinition = new StateDurationDefinition().withId(prismStateDuration).withScope(scope);
+            entityService.createOrUpdate(transientStateDurationDefinition);
         }
     }
 
     private void initializeStates() throws DeduplicationException {
         for (PrismState prismState : PrismState.values()) {
+            StateDurationDefinition stateDurationDefinition = stateService.getStateDurationDefinitionById(prismState.getDefaultDuration());
             Scope scope = entityService.getByProperty(Scope.class, "id", prismState.getScope());
             StateGroup stateGroup = entityService.getByProperty(StateGroup.class, "id", prismState.getStateGroup());
-            State transientState = new State().withId(prismState).withStateGroup(stateGroup).withScope(scope);
+            State transientState = new State().withId(prismState).withStateGroup(stateGroup).withStateDurationDefinition(stateDurationDefinition)
+                    .withStateDurationEvaluation(prismState.getStateDurationEvaluation()).withScope(scope);
             entityService.createOrUpdate(transientState);
         }
     }
@@ -299,14 +304,6 @@ public class SystemService {
             StateTransitionEvaluation transientStateTransitionEvaluation = new StateTransitionEvaluation().withId(prismTransitionEvaluation)
                     .withNextStateSelection(prismTransitionEvaluation.isNextStateSelection()).withScope(scope);
             entityService.createOrUpdate(transientStateTransitionEvaluation);
-        }
-    }
-
-    private void initializeStateDurationDefinitions() throws DeduplicationException {
-        for (PrismStateDuration prismStateDuration : PrismStateDuration.values()) {
-            Scope scope = scopeService.getById(prismStateDuration.getScope());
-            StateDurationDefinition transientStateDurationDefinition = new StateDurationDefinition().withId(prismStateDuration).withScope(scope);
-            entityService.createOrUpdate(transientStateDurationDefinition);
         }
     }
 
@@ -348,17 +345,9 @@ public class SystemService {
         return system;
     }
 
-    private void initializeActionConfigurations(System system) throws DeduplicationException, CustomizationException {
-        for (Action action : actionService.getConfigurableActions()) {
-            PrismAction prismAction = action.getId();
-            StateGroup startStateGroup = stateService.getStateGroupById(prismAction.getDefaultStartStateGroup());
-            actionService.createOrUpdateActionConfiguration(system, getSystemLocale(), getSystemProgramType(), action, startStateGroup);
-        }
-    }
-
     private void initializeStateDurationConfigurations(System system) throws DeduplicationException, CustomizationException {
         for (PrismState prismState : PrismState.values()) {
-            PrismStateDuration prismStateDuration = prismState.getDuration();
+            PrismStateDuration prismStateDuration = prismState.getDefaultDuration();
             Integer defaultDuration = prismStateDuration == null ? null : prismStateDuration.getDefaultDuration();
             if (defaultDuration != null) {
                 StateDurationDefinition stateDurationDefinition = stateService.getStateDurationDefinitionById(prismStateDuration);
@@ -413,7 +402,8 @@ public class SystemService {
 
         stateService.deleteObsoleteStateDurations();
         notificationService.deleteObsoleteNotificationConfigurations();
-        roleService.deleteInactiveRoles();
+        roleService.deleteObseleteUserRoles();
+        workflowService.deleteObseleteWorkflowPropertyConfigurations();
     }
 
     private void initializeStateActionAssignments(PrismStateAction prismStateAction, StateAction stateAction) {

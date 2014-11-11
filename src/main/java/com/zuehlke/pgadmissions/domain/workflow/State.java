@@ -17,6 +17,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
 
 @Entity
 @Table(name = "STATE")
@@ -31,6 +32,14 @@ public class State extends WorkflowDefinition {
     @ManyToOne
     @JoinColumn(name = "state_group_id", nullable = false)
     private StateGroup stateGroup;
+
+    @ManyToOne
+    @JoinColumn(name = "state_duration_definition_id")
+    private StateDurationDefinition stateDurationDefinition;
+    
+    @Column(name = "state_duration_evaluation")
+    @Enumerated(EnumType.STRING)
+    private PrismStateDurationEvaluation stateDurationEvaluation;
 
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
@@ -56,6 +65,22 @@ public class State extends WorkflowDefinition {
         this.stateGroup = stateGroup;
     }
 
+    public final StateDurationDefinition getStateDurationDefinition() {
+        return stateDurationDefinition;
+    }
+
+    public final void setStateDurationDefinition(StateDurationDefinition stateDurationDefinition) {
+        this.stateDurationDefinition = stateDurationDefinition;
+    }
+
+    public final PrismStateDurationEvaluation getStateDurationEvaluation() {
+        return stateDurationEvaluation;
+    }
+
+    public final void setStateDurationEvaluation(PrismStateDurationEvaluation stateDurationEvaluation) {
+        this.stateDurationEvaluation = stateDurationEvaluation;
+    }
+
     @Override
     public Scope getScope() {
         return scope;
@@ -77,6 +102,16 @@ public class State extends WorkflowDefinition {
 
     public State withStateGroup(StateGroup stateGroup) {
         this.stateGroup = stateGroup;
+        return this;
+    }
+
+    public State withStateDurationDefinition(StateDurationDefinition stateDurationDefinition) {
+        this.stateDurationDefinition = stateDurationDefinition;
+        return this;
+    }
+    
+    public State withStateDurationEvaluation(PrismStateDurationEvaluation stateDurationEvaluation) {
+        this.stateDurationEvaluation = stateDurationEvaluation;
         return this;
     }
 

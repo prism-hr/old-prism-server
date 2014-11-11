@@ -52,7 +52,6 @@ public class NotificationDAO {
     }
 
     public List<UserNotificationDefinitionDTO> getIndividualRequestDefinitions(Resource resource, User invoker, LocalDate baseline) {
-        String resourceReference = resource.getResourceScope().getLowerCaseName();
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
@@ -64,13 +63,8 @@ public class NotificationDAO {
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("userRole." + resourceReference, resourceReference, JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".resourceActions", "resourceAction", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("stateAction.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state", resource.getState())) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("configurableAction", false)) //
-                        .add(Restrictions.eqProperty("id", "resourceAction.action.id"))) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", PrismNotificationType.INDIVIDUAL)) //
                 .add(Restrictions.ne("userRole.user", invoker)) //
                 .add(Restrictions.disjunction() //
@@ -115,7 +109,6 @@ public class NotificationDAO {
     }
 
     public List<UserNotificationDefinitionDTO> getIndividualReminderDefinitions(Resource resource, LocalDate baseline) {
-        String resourceReference = resource.getResourceScope().getLowerCaseName();
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
@@ -127,13 +120,8 @@ public class NotificationDAO {
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("userRole." + resourceReference, resourceReference, JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".resourceActions", "resourceAction", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("stateAction.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state", resource.getState())) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("configurableAction", false)) //
-                        .add(Restrictions.eqProperty("id", "resourceAction.action.id"))) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", PrismNotificationType.INDIVIDUAL)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.system", resource.getSystem())) //
@@ -147,7 +135,6 @@ public class NotificationDAO {
     }
 
     public List<UserNotificationDefinitionDTO> getSyndicatedRequestDefinitions(Resource resource, LocalDate baseline) {
-        String resourceReference = resource.getResourceScope().getLowerCaseName();
         String lastNotifiedDateReference = "user.lastNotifiedDate" + resource.getClass().getSimpleName();
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
                 .setProjection(Projections.projectionList() //
@@ -158,13 +145,8 @@ public class NotificationDAO {
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("userRole." + resourceReference, resourceReference, JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".resourceActions", "resourceAction", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("stateAction.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state", resource.getState())) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("configurableAction", false)) //
-                        .add(Restrictions.eqProperty("id", "resourceAction.action.id"))) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", PrismNotificationType.SYNDICATED)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.system", resource.getSystem())) //
@@ -181,7 +163,6 @@ public class NotificationDAO {
 
     public List<UserNotificationDefinitionDTO> getSyndicatedUpdateDefinitions(Resource resource, State state, Action action, User invoker, LocalDate baseline) {
         String lastNotifiedDateReference = "user.lastNotifiedDate" + resource.getClass().getSimpleName();
-
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //

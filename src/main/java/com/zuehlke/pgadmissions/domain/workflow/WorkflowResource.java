@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 public abstract class WorkflowResource implements IUniqueEntity {
 
@@ -26,37 +28,11 @@ public abstract class WorkflowResource implements IUniqueEntity {
     public abstract void setProgram(Program program);
 
     public Resource getResource() {
-        System system = getSystem();
-        Institution institution = getInstitution();
-        Program program = getProgram();
-        if (system != null) {
-            return system;
-        } else if (institution != null) {
-            return institution;
-        }
-        return program;
+        return ObjectUtils.firstNonNull(getSystem(), getInstitution(), getProgram());
     }
 
     public void setResource(Resource resource) {
-        setSystem(null);
-        setInstitution(null);
-        setProgram(null);
-
-        PrismScope resourceScope = resource.getResourceScope();
-
-        switch (resourceScope) {
-        case SYSTEM:
-            setSystem(resource.getSystem());
-            break;
-        case INSTITUTION:
-            setInstitution(resource.getInstitution());
-            break;
-        case PROGRAM:
-            setProgram(resource.getProgram());
-            break;
-        default:
-            throw new Error();
-        }
+        ReflectionUtils.invokeMethod(this, "set" + resource.getClass().getSimpleName(), resource);
     }
 
     @Override

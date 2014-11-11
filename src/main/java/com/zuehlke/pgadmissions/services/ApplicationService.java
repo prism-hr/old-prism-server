@@ -19,11 +19,8 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
@@ -32,6 +29,8 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.comment.CommentProperty;
+import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
@@ -54,6 +53,8 @@ import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentAssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.CommentPropertyDTO;
+import com.zuehlke.pgadmissions.rest.dto.CommentTransitionStateDTO;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
@@ -101,6 +102,9 @@ public class ApplicationService {
 
     @Autowired
     private ImportedEntityService importedEntityService;
+
+    @Autowired
+    private StateService stateService;
 
     @Autowired
     private CompleteApplicationValidator completeApplicationValidator;
@@ -195,18 +199,6 @@ public class ApplicationService {
         }
     }
 
-    public LocalDate resolveDueDateBaseline(Application application, Comment comment) {
-        if (comment.isApplicationSubmittedComment()) {
-            return application.getClosingDate();
-        }
-
-        if (comment.isApplicationInterviewPendingInterviewComment()) {
-            return comment.getInterviewDateTime().toLocalDate();
-        }
-
-        return null;
-    }
-
     public void postProcessApplication(Application application, Comment comment) throws DeduplicationException {
         if (comment.isApplicationCreatedComment()) {
             applicationSummaryService.incrementApplicationCreatedCount(application);
@@ -224,7 +216,7 @@ public class ApplicationService {
             synchroniseOfferRecommendation(application, comment);
         }
 
-        if (comment.isRatingComment()) {
+        if (comment.isApplicationRatingComment()) {
             applicationSummaryService.summariseApplication(application, comment);
         }
 
@@ -235,6 +227,10 @@ public class ApplicationService {
         if (comment.isApplicationSubmittedComment()) {
             application.setSubmittedTimestamp(new DateTime());
             applicationSummaryService.incrementApplicationSubmittedCount(application);
+        }
+
+        if (comment.isApplicationSubmittedToClosingDateComment()) {
+            application.setClosingDate(application.getDueDate());
         }
 
         if (comment.isApplicationApprovedComment()) {
@@ -264,7 +260,6 @@ public class ApplicationService {
 
         if (actionId == PrismAction.APPLICATION_COMPLETE) {
             validateApplicationCompleteness(applicationId);
-            setClosingDate(application);
         }
 
         Action action = actionService.getById(actionId);
@@ -272,6 +267,7 @@ public class ApplicationService {
         User delegateUser = userService.getById(commentDTO.getDelegateUser());
         State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
         LocalDate positionProvisionalStartDate = commentDTO.getPositionProvisionalStartDate();
+
         Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withDelegateUser(delegateUser).withAction(action)
                 .withTransitionState(transitionState).withCreatedTimestamp(new DateTime())
                 .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse())).withApplicationEligible(commentDTO.getEligible())
@@ -282,54 +278,59 @@ public class ApplicationService {
                 .withPositionDescription(commentDTO.getPositionDescription()).withPositionProvisionalStartDate(positionProvisionalStartDate)
                 .withAppointmentConditions(commentDTO.getAppointmentConditions()).withApplicationRating(commentDTO.getApplicationRating());
 
-        if (commentDTO.getDocuments() != null) {
-            for (FileDTO fileDTO : commentDTO.getDocuments()) {
-                Document document = entityService.getById(Document.class, fileDTO.getId());
-                comment.getDocuments().add(document);
-            }
-        }
-
         if (commentDTO.getRejectionReason() != null) {
             RejectionReason rejectionReason = entityService.getById(RejectionReason.class, commentDTO.getRejectionReason());
             comment.setRejectionReason(rejectionReason);
             comment.setContent(rejectionReason.getName());
         }
 
-        if (commentDTO.getAppointmentTimeslots() != null) {
-            for (LocalDateTime dateTime : commentDTO.getAppointmentTimeslots()) {
-                CommentAppointmentTimeslot timeslot = new CommentAppointmentTimeslot().withDateTime(dateTime);
-                comment.getAppointmentTimeslots().add(timeslot);
-            }
-        }
-
-        if (commentDTO.getAppointmentPreferences() != null) {
-            for (Integer timeslotId : commentDTO.getAppointmentPreferences()) {
-                CommentAppointmentTimeslot timeslot = entityService.getById(CommentAppointmentTimeslot.class, timeslotId);
-                comment.getAppointmentPreferences().add(new CommentAppointmentPreference().withDateTime(timeslot.getDateTime()));
-            }
-        }
-
-        List<CommentAssignedUser> assignedUsers = Lists.newLinkedList();
         if (actionId.equals(PrismAction.APPLICATION_COMPLETE)) {
             Role refereeRole = entityService.getById(Role.class, PrismRole.APPLICATION_REFEREE);
             for (ApplicationReferee referee : application.getReferees()) {
-                assignedUsers.add(new CommentAssignedUser().withComment(comment).withUser(referee.getUser()).withRole(refereeRole));
+                comment.getAssignedUsers().add(new CommentAssignedUser().withUser(referee.getUser()).withRole(refereeRole));
             }
             Role supervisorRole = entityService.getById(Role.class, PrismRole.APPLICATION_SUGGESTED_SUPERVISOR);
             for (ApplicationSupervisor supervisor : application.getSupervisors()) {
-                assignedUsers.add(new CommentAssignedUser().withComment(comment).withUser(supervisor.getUser()).withRole(supervisorRole));
-            }
-        } else if (commentDTO.getAssignedUsers() != null) {
-            for (CommentAssignedUserDTO assignedUserDTO : commentDTO.getAssignedUsers()) {
-                AssignedUserDTO commentUserDTO = assignedUserDTO.getUser();
-
-                User commentUser = userService.getOrCreateUser(commentUserDTO.getFirstName(), commentUserDTO.getLastName(), commentUserDTO.getEmail(),
-                        application.getLocale());
-                assignedUsers.add(new CommentAssignedUser().withUser(commentUser).withRole(entityService.getById(Role.class, assignedUserDTO.getRole())));
+                comment.getAssignedUsers().add(new CommentAssignedUser().withUser(supervisor.getUser()).withRole(supervisorRole));
             }
         }
 
-        comment.getAssignedUsers().addAll(assignedUsers);
+        for (CommentAssignedUserDTO assignedUserDTO : commentDTO.getAssignedUsers()) {
+            AssignedUserDTO commentUserDTO = assignedUserDTO.getUser();
+            User commentUser = userService.getOrCreateUser(commentUserDTO.getFirstName(), commentUserDTO.getLastName(), commentUserDTO.getEmail(),
+                    application.getLocale());
+            comment.getAssignedUsers().add(
+                    new CommentAssignedUser().withUser(commentUser).withRole(entityService.getById(Role.class, assignedUserDTO.getRole())));
+        }
+
+        for (CommentTransitionStateDTO commentTransitionStateDTO : commentDTO.getTransitionStates()) {
+            State transitionStateItem = stateService.getById(commentTransitionStateDTO.getTransitionState());
+            CommentTransitionState commentTransitionState = new CommentTransitionState().withTransitionState(transitionStateItem).withPrimaryState(
+                    commentTransitionStateDTO.getPrimaryState());
+            comment.getTransitionStates().add(commentTransitionState);
+        }
+
+        for (LocalDateTime dateTime : commentDTO.getAppointmentTimeslots()) {
+            CommentAppointmentTimeslot timeslot = new CommentAppointmentTimeslot().withDateTime(dateTime);
+            comment.getAppointmentTimeslots().add(timeslot);
+        }
+
+        for (Integer timeslotId : commentDTO.getAppointmentPreferences()) {
+            CommentAppointmentTimeslot timeslot = entityService.getById(CommentAppointmentTimeslot.class, timeslotId);
+            comment.getAppointmentPreferences().add(new CommentAppointmentPreference().withDateTime(timeslot.getDateTime()));
+        }
+
+        for (FileDTO fileDTO : commentDTO.getDocuments()) {
+            Document document = entityService.getById(Document.class, fileDTO.getId());
+            comment.getDocuments().add(document);
+        }
+
+        for (CommentPropertyDTO propertyDTO : commentDTO.getProperties()) {
+            CommentProperty property = new CommentProperty().withPropertyType(propertyDTO.getPropertyType()).withPropertyLabel(propertyDTO.getPropertyLabel())
+                    .withPropertyValue(propertyDTO.getPropertyValue()).withPropertyWeight(propertyDTO.getPropertyWeight());
+            comment.getProperties().add(property);
+        }
+
         return actionService.executeUserAction(application, action, comment);
     }
 
@@ -415,12 +416,6 @@ public class ApplicationService {
         }
 
         return recommended;
-    }
-    
-    private void setClosingDate(Application application) {
-        Advert advert = application.isProgramApplication() ? application.getProgram().getAdvert() : application.getProject().getAdvert();
-        AdvertClosingDate advertClosingDate = advert.getClosingDate();
-        application.setClosingDate(advertClosingDate == null ? null : advertClosingDate.getClosingDate());
     }
 
 }

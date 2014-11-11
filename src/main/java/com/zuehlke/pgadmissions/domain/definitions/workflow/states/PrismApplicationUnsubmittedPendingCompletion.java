@@ -43,13 +43,13 @@ public class PrismApplicationUnsubmittedPendingCompletion extends PrismWorkflowS
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_REFEREE) //
                                 .withRestrictToOwner(false) //
-                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_REFEREE), // 
+                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE), // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
                                 .withRestrictToOwner(false) //
-                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_SUGGESTED_SUPERVISOR))),
+                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR))),
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
@@ -60,13 +60,13 @@ public class PrismApplicationUnsubmittedPendingCompletion extends PrismWorkflowS
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_REFEREE) //
                                 .withRestrictToOwner(false) //
-                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_REFEREE), // 
+                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE), // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
                                 .withRestrictToOwner(false) //
-                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_SUGGESTED_SUPERVISOR)))))); //
+                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR)))))); //
        
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_ESCALATE) //

@@ -169,7 +169,7 @@ public class ResourceResource {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
         roleService.updateUserRole(resource, user, PrismRoleTransitionType.CREATE, role);
-        // TODO: return validation error if workflow engine exception is thrown.
+        // TODO: return PrismValidationError if workflow engine exception is thrown.
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles/{role}", method = RequestMethod.DELETE)
@@ -178,7 +178,7 @@ public class ResourceResource {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
         roleService.updateUserRole(resource, user, PrismRoleTransitionType.DELETE, role);
-        // TODO: return validation error if workflow engine exception is thrown.
+        // TODO: return PrismValidationError if workflow engine exception is thrown.
     }
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)

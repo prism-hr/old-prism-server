@@ -38,9 +38,6 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
     @Column(name = "scope_creator", nullable = false)
     private Boolean scopeCreator;
 
-    @Column(name = "activateImmediately", nullable = false)
-    private Boolean activateImmediately;
-    
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
@@ -70,14 +67,6 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
 
     public void setScopeCreator(Boolean scopeCreator) {
         this.scopeCreator = scopeCreator;
-    }
-
-    public final Boolean getActivateImmediately() {
-        return activateImmediately;
-    }
-
-    public final void setActivateImmediately(Boolean activateImmediately) {
-        this.activateImmediately = activateImmediately;
     }
 
     @Override
@@ -112,11 +101,6 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
         return this;
     }
 
-    public Role withActivateImmediately(Boolean activateImmediately) {
-        this.activateImmediately = activateImmediately;
-        return this;
-    }
-    
     public Role withScope(Scope scope) {
         this.scope = scope;
         return this;

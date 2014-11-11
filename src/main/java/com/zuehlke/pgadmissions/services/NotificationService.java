@@ -187,7 +187,6 @@ public class NotificationService {
                 sent.put(notificationDefinition, user);
             }
 
-            userRole.setActivated(true);
             userRole.setLastNotifiedDate(baseline);
         }
 
@@ -333,8 +332,6 @@ public class NotificationService {
 
             Role role = roleService.getById(request.getRoleId());
             UserRole userRole = roleService.getUserRole(resource, user, role);
-
-            userRole.setActivated(true);
             userRole.setLastNotifiedDate(baseline);
         }
     }

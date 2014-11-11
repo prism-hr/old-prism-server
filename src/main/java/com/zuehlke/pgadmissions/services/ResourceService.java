@@ -17,9 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
@@ -29,10 +32,12 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -51,6 +56,7 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Service
 @Transactional
@@ -140,7 +146,7 @@ public class ResourceService {
         }
 
         if (entityService.getDuplicateEntity(resource) != null && !user.isEnabled()) {
-            // TODO throw DuplicationException
+            // TODO throw PrismValidationException
             actionService.throwWorkflowPermissionException(resource, action);
         }
 
@@ -181,36 +187,35 @@ public class ResourceService {
         return "PRiSM-" + PrismScope.getResourceScope(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId());
     }
 
-    public void recordStateTransition(Resource resource, State state, State transitionState) {
+    public void recordStateTransition(Resource resource, State state, State transitionState, Comment comment) throws DeduplicationException {
         resource.setPreviousState(state);
         resource.setState(transitionState);
+
+        resourceDAO.deletePrimaryState(resource);
+        entityService.save(new ResourceState().withResource(resource).withState(transitionState).withPrimaryState(true));
+
+        for (CommentTransitionState commentTransitionState : comment.getTransitionStates()) {
+            if (!commentTransitionState.getPrimaryState()) {
+                entityService.createOrUpdate(new ResourceState().withResource(resource).withState(commentTransitionState.getTransitionState())
+                        .withPrimaryState(false));
+            }
+        }
     }
 
     public void processResource(Resource resource, Comment comment) throws DeduplicationException {
-        LocalDate baselineCustom;
+        LocalDate baselineCustom = null;
         LocalDate baseline = new LocalDate();
 
-        switch (resource.getResourceScope()) {
-        case PROGRAM:
-            baselineCustom = programService.resolveDueDateBaseline((Program) resource, comment);
-            break;
-        case PROJECT:
-            baselineCustom = projectService.resolveDueDateBaseline((Project) resource, comment);
-            break;
-        case APPLICATION:
-            baselineCustom = applicationService.resolveDueDateBaseline((Application) resource, comment);
-            break;
-        default:
-            baselineCustom = null;
-            break;
+        PrismStateDurationEvaluation stateDurationEvaluation = resource.getState().getStateDurationEvaluation();
+        if (stateDurationEvaluation != null) {
+            baselineCustom = (LocalDate) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(stateDurationEvaluation), resource, comment);
         }
 
         baseline = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
 
-        StateDurationConfiguration stateDuration = stateService.getStateDurationConfiguration(resource, userService.getCurrentUser(), resource.getState());
+        StateDurationConfiguration stateDuration = stateService.getStateDurationConfiguration(resource, userService.getCurrentUser(), resource.getState()
+                .getStateDurationDefinition());
         resource.setDueDate(baseline.plusDays(stateDuration == null ? 0 : stateDuration.getDuration()));
-
-        actionService.activateConfigurableActions(resource, comment);
     }
 
     public void postProcessResource(Resource resource, Comment comment) throws DeduplicationException {
@@ -315,6 +320,24 @@ public class ResourceService {
         case SYSTEM:
             break;
         }
+    }
+
+    public LocalDate getApplicationClosingDate(Resource resource, Comment comment) {
+        Advert advert = resource.getApplication().getAdvert();
+        AdvertClosingDate closingDate = advert.getClosingDate();
+        return closingDate == null ? null : closingDate.getClosingDate();
+    }
+
+    public LocalDate getApplicationInterviewDate(Resource resource, Comment comment) {
+        return comment.getInterviewDateTime().toLocalDate();
+    }
+
+    public LocalDate getProjectClosingDate(Resource resource, Comment comment) {
+        return resource.getProject().getEndDate();
+    }
+
+    public LocalDate getProgramClosingDate(Resource resource, Comment comment) {
+        return resource.getProgram().getEndDate();
     }
 
     private Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter,

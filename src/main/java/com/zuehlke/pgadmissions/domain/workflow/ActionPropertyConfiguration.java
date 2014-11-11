@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-import java.math.BigDecimal;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -22,9 +20,9 @@ import com.zuehlke.pgadmissions.domain.system.System;
 
 @Entity
 @Table(name = "ACTION_PROPERTY_CONFIGURATION", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "system_id", "program_type", "locale", "action_id, display_index" }),
-        @UniqueConstraint(columnNames = { "institution_id", "program_type", "action_id, display_index" }),
-        @UniqueConstraint(columnNames = { "program_id", "action_id, display_index" }) })
+        @UniqueConstraint(columnNames = { "system_id", "program_type", "locale", "action_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "program_type", "action_id" }),
+        @UniqueConstraint(columnNames = { "program_id", "action_id" }) })
 public class ActionPropertyConfiguration extends WorkflowResourceConfiguration {
 
     @Id
@@ -55,40 +53,8 @@ public class ActionPropertyConfiguration extends WorkflowResourceConfiguration {
     private Action action;
 
     @Lob
-    @Column(name = "display_name", nullable = false)
-    private String name;
-
-    @Column(name = "display_editable", nullable = false)
-    private Boolean editable;
-
-    @Column(name = "display_index", nullable = false)
-    private Integer index;
-
-    @Lob
-    @Column(name = "display_label", nullable = false)
-    private String label;
-
-    @Lob
-    @Column(name = "display_description")
-    private String description;
-
-    @Lob
-    @Column(name = "display_placeholder")
-    private String placeholder;
-
-    @Lob
-    @Column(name = "display_options")
-    private String options;
-
-    @Column(name = "display_required", nullable = false)
-    private Boolean required;
-    
-    @Lob
-    @Column(name = "display_validation")
-    private String validation;
-    
-    @Column(name = "display_weighting")
-    private BigDecimal weighting;
+    @Column(name = "json", nullable = false)
+    private String json;
 
     @Column(name = "system_default", nullable = false)
     private Boolean systemDefault;
@@ -161,84 +127,12 @@ public class ActionPropertyConfiguration extends WorkflowResourceConfiguration {
         this.action = action;
     }
 
-    public final String getName() {
-        return name;
+    public final String getJson() {
+        return json;
     }
 
-    public final void setName(String name) {
-        this.name = name;
-    }
-
-    public final Boolean getEditable() {
-        return editable;
-    }
-
-    public final void setEditable(Boolean editable) {
-        this.editable = editable;
-    }
-
-    public final Integer getIndex() {
-        return index;
-    }
-
-    public final void setIndex(Integer index) {
-        this.index = index;
-    }
-
-    public final String getLabel() {
-        return label;
-    }
-
-    public final void setLabel(String label) {
-        this.label = label;
-    }
-
-    public final String getDescription() {
-        return description;
-    }
-
-    public final void setDescription(String description) {
-        this.description = description;
-    }
-
-    public final String getPlaceholder() {
-        return placeholder;
-    }
-
-    public final void setPlaceholder(String placeholder) {
-        this.placeholder = placeholder;
-    }
-
-    public final String getOptions() {
-        return options;
-    }
-
-    public final void setOptions(String options) {
-        this.options = options;
-    }
-
-    public final Boolean getRequired() {
-        return required;
-    }
-
-    public final void setRequired(Boolean required) {
-        this.required = required;
-    }
-
-    public final String getValidation() {
-        return validation;
-    }
-
-    public final void setValidation(String validation) {
-        this.validation = validation;
-    }
-
-    public final BigDecimal getWeighting() {
-        return weighting;
-    }
-
-    public final void setWeighting(BigDecimal weighting) {
-        this.weighting = weighting;
+    public final void setJson(String json) {
+        this.json = json;
     }
 
     @Override
@@ -281,59 +175,13 @@ public class ActionPropertyConfiguration extends WorkflowResourceConfiguration {
         return this;
     }
 
+    public ActionPropertyConfiguration withJson(String json) {
+        this.json = json;
+        return this;
+    }
+    
     public ActionPropertyConfiguration withSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
-        return this;
-    }
-    
-    
-    public ActionPropertyConfiguration withName(String name) {
-        this.name = name;
-        return this;
-    }
-    
-    public ActionPropertyConfiguration withEditable(Boolean editable) {
-        this.editable = editable;
-        return this;
-    }
-    
-    public ActionPropertyConfiguration withIndex(Integer index) {
-        this.index = index;
-        return this;
-    }
-    
-    public ActionPropertyConfiguration withLabel(String label) {
-        this.label = label;
-        return this;
-    }
-    
-    public ActionPropertyConfiguration withDescription(String description) {
-        this.description = description;
-        return this;
-    }
-    
-    public ActionPropertyConfiguration withPlaceholder(String placeholder) {
-        this.placeholder = placeholder;
-        return this;
-    }
-    
-    public ActionPropertyConfiguration withOptions(String options) {
-        this.options = options;
-        return this;
-    }
-    
-    public ActionPropertyConfiguration withRequired(Boolean required) {
-        this.required = required;
-        return this;
-    }
-    
-    public ActionPropertyConfiguration withValidation(String validation) {
-        this.validation = validation;
-        return this;
-    }
-    
-    public ActionPropertyConfiguration withWeighting(BigDecimal weighting) {
-        this.weighting = weighting;
         return this;
     }
 

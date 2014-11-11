@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -30,8 +32,15 @@ public class CommentProperty {
     private ActionPropertyType propertyType;
 
     @Lob
+    @Column(name = "property_label", nullable = false)
+    private String propertyLabel;
+
+    @Lob
     @Column(name = "property_value", nullable = false)
     private String propertyValue;
+
+    @Column(name = "property_weight")
+    private BigDecimal propertyWeight;
 
     public final Integer getId() {
         return id;
@@ -57,6 +66,14 @@ public class CommentProperty {
         this.propertyType = propertyType;
     }
 
+    public final String getPropertyLabel() {
+        return propertyLabel;
+    }
+
+    public final void setPropertyLabel(String propertyLabel) {
+        this.propertyLabel = propertyLabel;
+    }
+
     public final String getPropertyValue() {
         return propertyValue;
     }
@@ -65,9 +82,12 @@ public class CommentProperty {
         this.propertyValue = propertyValue;
     }
 
-    public CommentProperty withComment(Comment comment) {
-        this.comment = comment;
-        return this;
+    public final BigDecimal getPropertyWeight() {
+        return propertyWeight;
+    }
+
+    public final void setPropertyWeight(BigDecimal propertyWeight) {
+        this.propertyWeight = propertyWeight;
     }
 
     public CommentProperty withPropertyType(ActionPropertyType propertyType) {
@@ -75,8 +95,18 @@ public class CommentProperty {
         return this;
     }
 
+    public CommentProperty withPropertyLabel(String propertyLabel) {
+        this.propertyLabel = propertyLabel;
+        return this;
+    }
+
     public CommentProperty withPropertyValue(String value) {
         this.propertyValue = value;
+        return this;
+    }
+
+    public CommentProperty withPropertyWeight(BigDecimal propertyWeight) {
+        this.propertyWeight = propertyWeight;
         return this;
     }
 

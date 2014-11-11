@@ -52,6 +52,10 @@ public class StateTransition implements IUniqueEntity {
     @JoinTable(name = "STATE_TRANSITION_PROPAGATION", joinColumns = { @JoinColumn(name = "state_transition_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "propagated_action_id", nullable = false) })
     private Set<Action> propagatedActions = Sets.newHashSet();
 
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "STATE_TERMINATION", joinColumns = { @JoinColumn(name = "state_transition_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "termination_state_id", nullable = false) })
+    private Set<State> stateTerminations = Sets.newHashSet();
+
     public Integer getId() {
         return id;
     }
@@ -98,6 +102,10 @@ public class StateTransition implements IUniqueEntity {
 
     public Set<Action> getPropagatedActions() {
         return propagatedActions;
+    }
+
+    public final Set<State> getStateTerminations() {
+        return stateTerminations;
     }
 
     public StateTransition withStateAction(StateAction stateAction) {

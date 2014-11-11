@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -36,6 +37,7 @@ import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
+import com.zuehlke.pgadmissions.rest.dto.ActionPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.StateTransitionRepresentation;
@@ -78,19 +80,38 @@ public class ActionService {
         return customizationService.getConfiguration(ActionPropertyConfiguration.class, resource, locale, programType, "action", action);
     }
 
-    public void updateConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action, String json)
-            throws DeduplicationException, CustomizationException {
-        createOrUpdateActionPropertyConfiguration(resource, locale, programType, action, json);
+    public void updateConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action,
+            Set<ActionPropertyConfigurationDTO> actionPropertyConfigurationDTOs) throws DeduplicationException, CustomizationException {
+        createActionOrUpdatePropertyConfiguration(resource, locale, programType, action, actionPropertyConfigurationDTOs);
         resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_NOTIFICATION"));
     }
 
-    public void createOrUpdateActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action, String json)
-            throws CustomizationException, DeduplicationException {
-        customizationService.validateConfiguration(resource, action, locale, programType);
-        ActionPropertyConfiguration transientConfiguration = new ActionPropertyConfiguration().withResource(resource).withLocale(locale)
-                .withProgramType(programType).withAction(action).withJson(json)
-                .withSystemDefault(customizationService.isSystemDefault(action, locale, programType));
-        entityService.createOrUpdate(transientConfiguration);
+    public void createActionOrUpdatePropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action,
+            Set<ActionPropertyConfigurationDTO> actionPropertyConfigurationDTOs) throws CustomizationException, DeduplicationException {
+        if (action.getCustomizableAction()) {
+            customizationService.validateConfiguration(resource, action, locale, programType);
+            actionDAO.deleteActionConfiguration(resource, locale, programType, action);
+
+            Integer version = null;
+            for (ActionPropertyConfigurationDTO actionPropertyConfigurationDTO : actionPropertyConfigurationDTOs) {
+                Set<String> options = actionPropertyConfigurationDTO.getOptions();
+                Set<String> validationRules = actionPropertyConfigurationDTO.getValidationRules();
+
+                ActionPropertyConfiguration persistentActionPropertyConfiguration = entityService.createOrUpdate(new ActionPropertyConfiguration()
+                        .withResource(resource).withLocale(locale).withProgramType(programType).withAction(action).withVersion(version)
+                        .withName(actionPropertyConfigurationDTO.getName()).withEditable(actionPropertyConfigurationDTO.getEditable())
+                        .withIndex(actionPropertyConfigurationDTO.getIndex()).withLabel(actionPropertyConfigurationDTO.getLabel())
+                        .withDescription(actionPropertyConfigurationDTO.getDescription()).withOptions(options.isEmpty() ? null : Joiner.on("|").join(options))
+                        .withRequired(actionPropertyConfigurationDTO.getRequired())
+                        .withValidation(validationRules.isEmpty() ? null : Joiner.on("|").join(validationRules))
+                        .withWeighting(actionPropertyConfigurationDTO.getWeighting()));
+
+                if (persistentActionPropertyConfiguration.getVersion() == null) {
+                    version = persistentActionPropertyConfiguration.getId();
+                    persistentActionPropertyConfiguration.setVersion(version);
+                }
+            }
+        }
     }
 
     public void validateInvokeAction(Resource resource, Action action, Comment comment) {

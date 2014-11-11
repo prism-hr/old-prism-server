@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
@@ -286,6 +288,19 @@ public class ActionDAO {
         return (List<Action>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
                 .add(Restrictions.eq("configurableAction", true)) //
                 .list();
+    }
+    
+    public void deleteActionConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action) {
+        String localeConstraint = locale == null ? "" : "and locale = " + locale.name() + " ";
+        String programTypeConstraint = programType == null ? "" : "and programType = " + programType.name();
+        sessionFactory.getCurrentSession().createQuery( //
+                "update ActionPropertyConfiguration " //
+                    + "set active = false " //
+                    + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+                        + localeConstraint //
+                        + programTypeConstraint)
+                .setParameter("resource", resource)
+                .executeUpdate();
     }
 
 }

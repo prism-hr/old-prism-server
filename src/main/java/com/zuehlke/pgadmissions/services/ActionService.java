@@ -13,6 +13,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -26,9 +27,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.ActionConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.ResourceAction;
-import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
+import com.zuehlke.pgadmissions.domain.workflow.ActionPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
@@ -71,23 +70,26 @@ public class ActionService {
         return entityService.getById(Action.class, id);
     }
 
-    public ActionConfiguration getActionConfiguration(Resource resource, User user, Action action) {
-        return customizationService.getConfiguration(ActionConfiguration.class, resource, user, "action", action);
+    public ActionPropertyConfiguration getActionPropertyConfiguration(Resource resource, User user, Action action) {
+        return customizationService.getConfiguration(ActionPropertyConfiguration.class, resource, user, "action", action);
     }
 
-    public ActionConfiguration getActionConfiguration(Resource resource, User user, PrismAction actionId) {
-        return customizationService.getConfiguration(ActionConfiguration.class, resource, user, "action", getById(actionId));
+    public ActionPropertyConfiguration getActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action) {
+        return customizationService.getConfiguration(ActionPropertyConfiguration.class, resource, locale, programType, "action", action);
     }
 
-    public ActionConfiguration getActionConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action) {
-        return customizationService.getConfiguration(ActionConfiguration.class, resource, locale, programType, "action", action);
-    }
-
-    public void createOrUpdateActionConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action, StateGroup startStateGroup)
+    public void updateConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action, String json)
             throws DeduplicationException, CustomizationException {
+        createOrUpdateActionPropertyConfiguration(resource, locale, programType, action, json);
+        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_NOTIFICATION"));
+    }
+
+    public void createOrUpdateActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action, String json)
+            throws CustomizationException, DeduplicationException {
         customizationService.validateConfiguration(resource, action, locale, programType);
-        ActionConfiguration transientConfiguration = new ActionConfiguration().withResource(resource).withLocale(locale).withProgramType(programType)
-                .withAction(action).withStartStateGroup(startStateGroup).withSystemDefault(customizationService.isSystemDefault(action, locale, programType));
+        ActionPropertyConfiguration transientConfiguration = new ActionPropertyConfiguration().withResource(resource).withLocale(locale)
+                .withProgramType(programType).withAction(action).withJson(json)
+                .withSystemDefault(customizationService.isSystemDefault(action, locale, programType));
         entityService.createOrUpdate(transientConfiguration);
     }
 
@@ -207,10 +209,6 @@ public class ActionService {
         Action transitionAction = stateTransition == null ? action.getFallbackAction() : stateTransition.getTransitionAction();
         Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
-        if (action.getSingletonAction()) {
-            resourceService.deleteResourceAction(resource, action);
-        }
-
         return new ActionOutcomeDTO().withUser(actionOwner).withResource(resource).withTransitionResource(transitionResource)
                 .withTransitionAction(transitionAction);
     }
@@ -290,22 +288,6 @@ public class ActionService {
             return;
         }
         throwWorkflowPermissionException(resource, action);
-    }
-
-    public void activateConfigurableActions(Resource resource, Comment comment) throws DeduplicationException {
-        if (comment.isStateGroupTransitionComment()) {
-            User userCurrent = userService.getCurrentUser();
-            List<Action> configurableActions = getConfigurableActions();
-            for (Action configurableAction : configurableActions) {
-                ActionConfiguration configuration = getActionConfiguration(resource, userCurrent, configurableAction);
-                if (configuration.getStartStateGroup().getSequenceOrder() >= comment.getTransitionState().getStateGroup().getSequenceOrder()) {
-                    PrismAction actionId = configurableAction.getId();
-                    if (actionId == PrismAction.APPLICATION_PROVIDE_REFERENCE
-                            || (actionId == PrismAction.APPLICATION_CONFIRM_ELIGIBILITY && comment.isApplicationCreatorEligibilityUnsure()))
-                        entityService.getOrCreate(new ResourceAction().withResource(resource).withAction(configurableAction));
-                }
-            }
-        }
     }
 
     private boolean checkActionAvailable(Resource resource, Action action, User invoker) {

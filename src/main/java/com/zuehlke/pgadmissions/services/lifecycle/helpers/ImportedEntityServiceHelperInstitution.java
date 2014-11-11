@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
+import java.io.IOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
@@ -9,6 +10,7 @@ import java.util.Set;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -23,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Component;
+import org.xml.sax.SAXException;
 
 import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
@@ -58,7 +61,7 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
     @Autowired
     private NotificationService notificationService;
 
-    public void execute() throws DeduplicationException {
+    public void execute() throws DeduplicationException, InstantiationException, IllegalAccessException, IOException, JAXBException, SAXException {
         institutionService.populateDefaultImportedEntityFeeds();
         for (ImportedEntityFeed importedEntityFeed : importedEntityService.getImportedEntityFeeds()) {
             String maxRedirects = null;
@@ -85,43 +88,30 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
         }
     }
 
-    private void importEntities(ImportedEntityFeed importedEntityFeed) throws DataImportException {
-        String fileLocation = importedEntityFeed.getLocation();
-
+    private void importEntities(ImportedEntityFeed importedEntityFeed) throws IOException, JAXBException, SAXException, DataImportException,
+            DeduplicationException, InstantiationException, IllegalAccessException {
         Institution institution = importedEntityFeed.getInstitution();
-
-        try {
-            List unmarshalled = unmarshalEntities(importedEntityFeed);
-            if (unmarshalled == null) {
-                LOGGER.info("Skipping the import from file: " + fileLocation);
-            } else {
-                LOGGER.info("Starting the import from file: " + fileLocation);
-
-                Class<ImportedEntity> importedEntityClass = (Class<ImportedEntity>) importedEntityFeed.getImportedEntityType().getEntityClass();
-
-                if ((!BooleanUtils.isTrue(institution.getUclInstitution() && !contextEnvironment.equals("prod")))) {
-                    if (importedEntityClass.equals(Program.class)) {
-                        mergeImportedPrograms(institution, (List<ProgrammeOccurrence>) unmarshalled);
-                    } else if (importedEntityClass.equals(ImportedInstitution.class)) {
-                        mergeImportedInstitutions(institution, (List<com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution>) unmarshalled);
-                    } else if (importedEntityClass.equals(ImportedLanguageQualificationType.class)) {
-                        mergeImportedLanguageQualificationTypes(institution,
-                                (List<com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType>) unmarshalled);
-                    } else {
-                        mergeImportedEntities(importedEntityClass, institution, (List<Object>) unmarshalled);
-                    }
-
-                    importedEntityService.setLastImportedTimestamp(importedEntityFeed);
+        List unmarshalled = unmarshalEntities(importedEntityFeed);
+        if (unmarshalled != null) {
+            Class<ImportedEntity> importedEntityClass = (Class<ImportedEntity>) importedEntityFeed.getImportedEntityType().getEntityClass();
+            if ((!BooleanUtils.isTrue(institution.getUclInstitution() && !contextEnvironment.equals("prod")))) {
+                if (importedEntityClass.equals(Program.class)) {
+                    mergeImportedPrograms(institution, (List<ProgrammeOccurrence>) unmarshalled);
+                } else if (importedEntityClass.equals(ImportedInstitution.class)) {
+                    mergeImportedInstitutions(institution, (List<com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution>) unmarshalled);
+                } else if (importedEntityClass.equals(ImportedLanguageQualificationType.class)) {
+                    mergeImportedLanguageQualificationTypes(institution,
+                            (List<com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType>) unmarshalled);
                 } else {
-                    LOGGER.info("Skipped the import from file " + fileLocation + " for: " + institution.getCode());
+                    mergeImportedEntities(importedEntityClass, institution, (List<Object>) unmarshalled);
                 }
+
+                importedEntityService.setLastImportedTimestamp(importedEntityFeed);
             }
-        } catch (Exception e) {
-            throw new DataImportException("Error during the import of file: " + fileLocation + " for " + institution.getCode(), e);
         }
     }
 
-    private List<Object> unmarshalEntities(final ImportedEntityFeed importedEntityFeed) throws Exception {
+    private List<Object> unmarshalEntities(final ImportedEntityFeed importedEntityFeed) throws IOException, JAXBException, SAXException {
         try {
             Authenticator.setDefault(new Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
@@ -156,7 +146,8 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
         }
     }
 
-    private void mergeImportedPrograms(Institution institution, List<ProgrammeOccurrence> programDefinitions) throws Exception {
+    private void mergeImportedPrograms(Institution institution, List<ProgrammeOccurrence> programDefinitions) throws DeduplicationException,
+            DataImportException {
         LocalDate baseline = new LocalDate();
 
         importedEntityService.disableAllImportedPrograms(institution, baseline);
@@ -169,7 +160,8 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
     }
 
     private void mergeImportedInstitutions(Institution institution,
-            List<com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution> institutionDefinitions) throws Exception {
+            List<com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution> institutionDefinitions) throws DataImportException,
+            DeduplicationException {
         importedEntityService.disableAllEntities(ImportedInstitution.class, institution);
         for (com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution transientImportedInstitution : institutionDefinitions) {
             importedEntityService.mergeImportedInstitution(institution, transientImportedInstitution);
@@ -177,14 +169,15 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
     }
 
     private void mergeImportedLanguageQualificationTypes(Institution institution, List<LanguageQualificationType> languageQualificationTypeDefinitions)
-            throws Exception {
+            throws DeduplicationException {
         importedEntityService.disableAllEntities(ImportedLanguageQualificationType.class, institution);
         for (LanguageQualificationType languageQualificationTypeDefinition : languageQualificationTypeDefinitions) {
             importedEntityService.mergeImportedLanguageQualificationType(institution, languageQualificationTypeDefinition);
         }
     }
 
-    private void mergeImportedEntities(Class<ImportedEntity> importedEntityClass, Institution institution, List<Object> entityDefinitions) throws Exception {
+    private void mergeImportedEntities(Class<ImportedEntity> importedEntityClass, Institution institution, List<Object> entityDefinitions)
+            throws InstantiationException, IllegalAccessException, DeduplicationException {
         importedEntityService.disableAllEntities(importedEntityClass, institution);
         for (Object entityDefinition : entityDefinitions) {
             importedEntityService.mergeImportedEntity(importedEntityClass, institution, entityDefinition);

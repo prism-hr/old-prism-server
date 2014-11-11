@@ -1,6 +1,8 @@
+DROP TABLE ACTION_TRIGGER_STATE
+;
+
 CREATE TABLE STATE_DURATION_DEFINITION (
 	id VARCHAR(50) NOT NULL,
-	duration_evaluation VARCHAR(50),
 	scope_id VARCHAR(50) NOT NULL,
 	PRIMARY KEY (id),
 	INDEX (scope_id),
@@ -52,38 +54,11 @@ ALTER TABLE STATE_ACTION_NOTIFICATION
 
 ALTER TABLE ACTION
 	ADD COLUMN customizable_action INT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER emphasizedAction,
-	ADD COLUMN configurable_action INT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER customizableAction,
-	ADD COLUMN singleton_action INT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER configurable_action,
-	ADD INDEX (customizable_action),
 	ADD INDEX (customizable_action)
 ;
 
 ALTER TABLE ACTION
-	MODIFY COLUMN customizable_action INT(1) UNSIGNED NOT NULL,
-	MODIFY COLUMN configurable_action INT(1) UNSIGNED NOT NULL,
-	MODIFY COLUMN singleton_action INT(1) UNSIGNED NOT NULL
-;
-
-CREATE TABLE ACTION_CONFIGURATION (
-	id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-	system_id INT(10) UNSIGNED,
-	institution_id INT(10) UNSIGNED,
-	program_id INT(10) UNSIGNED,
-	locale VARCHAR(10),
-	program_type VARCHAR(50),
-	action_id VARCHAR(100) NOT NULL,
-	start_state_group_id VARCHAR(50) NOT NULL,
-	system_default INT(1) UNSIGNED NOT NULL,
-	PRIMARY KEY (id),
-	UNIQUE INDEX (system_id, locale, program_type, action_id),
-	UNIQUE INDEX (institution_id, program_type, action_id),
-	UNIQUE INDEX (program_id, action_id),
-	INDEX (action_id),
-	INDEX (start_state_group_id),
-	INDEX system_default (system_id, system_default),
-	FOREIGN KEY (action_id) REFERENCES ACTION (id),
-	FOREIGN KEY (start_state_group_id) REFERENCES STATE_GROUP (id)
-) ENGINE = INNODB
+	MODIFY COLUMN customizable_action INT(1) UNSIGNED NOT NULL
 ;
 
 CREATE TABLE ACTION_PROPERTY_CONFIGURATION (
@@ -94,22 +69,12 @@ CREATE TABLE ACTION_PROPERTY_CONFIGURATION (
 	locale VARCHAR(10),
 	program_type VARCHAR(50),
 	action_id VARCHAR(100) NOT NULL,
-	action_property_type VARCHAR(50) NOT NULL,
-	display_name TEXT NOT NULL,
-	display_editable INT(1) UNSIGNED NOT NULL,
-	display_index INT(3) UNSIGNED NOT NULL,
-	display_label TEXT NOT NULL,
-	display_description TEXT,
-	display_placeholder TEXT,
-	display_options TEXT,
-	display_required INT(1) UNSIGNED NOT NULL,
-	display_validation TEXT,
-	display_weighting DECIMAL(3,2),
+	json TEXT NOT NULL,
 	system_default INT(1) UNSIGNED NOT NULL,
 	PRIMARY KEY (id),
-	UNIQUE INDEX (system_id, locale, program_type, action_id, display_index),
-	UNIQUE INDEX (institution_id, program_type, action_id, display_index),
-	UNIQUE INDEX (program_id, action_id, display_index),
+	UNIQUE INDEX (system_id, locale, program_type, action_id),
+	UNIQUE INDEX (institution_id, program_type, action_id),
+	UNIQUE INDEX (program_id, action_id),
 	INDEX (action_id),
 	INDEX system_default (system_id, system_default),
 	FOREIGN KEY (system_id) REFERENCES SYSTEM (id),
@@ -122,30 +87,46 @@ CREATE TABLE COMMENT_PROPERTY (
 	id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 	comment_id INT(10) UNSIGNED NOT NULL,
 	action_property_type VARCHAR(50) NOT NULL,
-	property_value TEXT,
+	property_label TEXT NOT NULL,
+	property_value TEXT NOT NULL,
+	property_weight DECIMAL(3,2),
 	PRIMARY KEY (id),
 	INDEX (comment_id),
 	FOREIGN KEY (comment_id) REFERENCES COMMENT (id)
 ) ENGINE = INNODB
 ;
 
-DROP TABLE ACTION_TRIGGER_STATE
+ALTER TABLE ROLE
+	CHANGE COLUMN is_scope_creator scope_creator INT(1) UNSIGNED NOT NULL
 ;
 
-CREATE TABLE RESOURCE_ACTION (
+ALTER TABLE NOTIFICATION_CONFIGURATION
+	DROP COLUMN day_reminder_interval
+;
+
+ALTER TABLE APPLICATION
+	DROP COLUMN previous_closing_date
+;
+
+ALTER TABLE STATE
+	ADD COLUMN state_duration_evaluation VARCHAR(50) AFTER state_group_id
+;
+
+CREATE TABLE RESOURCE_STATE (
 	id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 	system_id INT(10) UNSIGNED,
 	institution_id INT(10) UNSIGNED,
 	program_id INT(10) UNSIGNED,
 	project_id INT(10) UNSIGNED,
 	application_id INT(10) UNSIGNED,
-	action_id VARCHAR(100) NOT NULL,
+	state_id VARCHAR(50) NOT NULL,
+	primary_state INT(1) UNSIGNED NOT NULL,
 	PRIMARY KEY (id),
-	INDEX (system_id),
-	INDEX (institution_id),
-	INDEX (program_id),
-	INDEX (project_id),
-	INDEX (application_id),
+	UNIQUE INDEX (system_id, state_id, primary_state),
+	UNIQUE INDEX (institution_id, state_id, primary_state),
+	UNIQUE INDEX (program_id, state_id, primary_state),
+	UNIQUE INDEX (project_id, state_id, primary_state),
+	UNIQUE INDEX (application_id, state_id, primary_state),
 	FOREIGN KEY (system_id) REFERENCES SYSTEM (id),
 	FOREIGN KEY (institution_id) REFERENCES INSTITUTION (id),
 	FOREIGN KEY (program_id) REFERENCES PROGRAM (id),
@@ -154,45 +135,105 @@ CREATE TABLE RESOURCE_ACTION (
 ) ENGINE = INNODB
 ;
 
-ALTER TABLE ACTION_CONFIGURATION
-	ADD COLUMN action_configuration_evaluation VARCHAR(50) AFTER start_state_group_id
+ALTER TABLE STATE_GROUP
+	ADD COLUMN parallelizable INT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER repeatable
 ;
 
-ALTER TABLE USER_ROLE
-	ADD COLUMN activated INT(1) UNSIGNED NOT NULL DEFAULT 1 AFTER role_id,
-	ADD INDEX (system_id, user_id, role_id, activated),
-	ADD INDEX (institution_id, user_id, role_id, activated),
-	ADD INDEX (program_id, user_id, role_id, activated),
-	ADD INDEX (project_id, user_id, role_id, activated),
-	ADD INDEX (application_id, user_id, role_id, activated)
+ALTER TABLE STATE_GROUP
+	MODIFY COLUMN parallelizable INT(1) UNSIGNED NOT NULL
 ;
 
-ALTER TABLE USER_ROLE
-	MODIFY COLUMN activated INT(1) UNSIGNED NOT NULL
+CREATE TABLE COMMENT_TRANSITION_STATE (
+	id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	comment_id INT(10) UNSIGNED NOT NULL,
+	transition_state_id VARCHAR(50) NOT NULL,
+	primary_state INT(1) UNSIGNED NOT NULL,
+	PRIMARY KEY (id),
+	UNIQUE INDEX (comment_id, transition_state_id),
+	INDEX primary_state (comment_id, primary_state),
+	FOREIGN KEY (comment_id) REFERENCES COMMENT (id),
+	FOREIGN KEY (transition_state_id) REFERENCES STATE (id)
+) ENGINE = INNODB
 ;
 
-ALTER TABLE ROLE
-	CHANGE COLUMN is_scope_creator scope_creator INT(1) UNSIGNED NOT NULL,
-	ADD COLUMN activate_immediately INT(1) UNSIGNED NOT NULL DEFAULT 1 AFTER scope_creator
+INSERT INTO COMMENT_TRANSITION_STATE (comment_id, transition_state_id, primary_state)
+	SELECT id, transition_state_id, 1
+	FROM COMMENT
+	WHERE transition_state_id IS NOT NULL
 ;
 
-ALTER TABLE ROLE
-	MODIFY COLUMN activate_immediately INT(1) UNSIGNED NOT NULL
+INSERT INTO RESOURCE_STATE (application_id, state_id, primary_state)
+	SELECT id, state_id, 1
+	FROM APPLICATION
 ;
 
-ALTER TABLE NOTIFICATION_CONFIGURATION
-	DROP COLUMN day_reminder_interval,
-	ADD COLUMN reminder_duration VARCHAR(100)
+INSERT INTO RESOURCE_STATE (project_id, state_id, primary_state)
+	SELECT id, state_id, 1
+	FROM PROJECT
 ;
 
-ALTER TABLE APPLICATION
-	DROP COLUMN previous_closing_date
+INSERT INTO RESOURCE_STATE (program_id, state_id, primary_state)
+	SELECT id, state_id, 1
+	FROM PROGRAM
 ;
 
-ALTER TABLE STATE_DURATION_DEFINITION
-	DROP COLUMN evaluation
+DELETE COMMENT_ASSIGNED_USER.*
+FROM COMMENT_ASSIGNED_USER INNER JOIN COMMENT
+	ON COMMENT_ASSIGNED_USER.comment_id = COMMENT.id
+INNER JOIN INSTITUTION
+	ON COMMENT.institution_id = INSTITUTION.id
+WHERE INSTITUTION.state_id IS NULL
 ;
 
-ALTER TABLE ACTION_CONFIGURATION
-	DROP COLUMN action_configuration_evaluation
+DELETE COMMENT.*
+FROM COMMENT INNER JOIN INSTITUTION
+	ON COMMENT.institution_id = INSTITUTION.id
+WHERE INSTITUTION.state_id IS NULL
 ;
+
+UPDATE INSTITUTION
+SET institution_address_id = NULL
+WHERE state_id IS NULL
+;
+
+DELETE INSTITUTION_ADDRESS.*
+FROM INSTITUTION INNER JOIN INSTITUTION_ADDRESS
+	ON INSTITUTION.id = INSTITUTION_ADDRESS.institution_id
+WHERE INSTITUTION.state_id IS NULL
+;
+
+DELETE
+FROM INSTITUTION
+WHERE state_id IS NULL
+;
+
+INSERT INTO RESOURCE_STATE (institution_id, state_id, primary_state)
+	SELECT id, state_id, 1
+	FROM INSTITUTION
+;
+
+INSERT INTO RESOURCE_STATE (system_id, state_id, primary_state)
+	SELECT id, state_id, 1
+	FROM SYSTEM
+;
+
+ALTER TABLE COMMENT
+	MODIFY COLUMN application_rating DECIMAL(3,2)
+;
+
+CREATE TABLE STATE_TERMINATION (
+	state_transition_id INT(10) UNSIGNED NOT NULL,
+	termination_state_id VARCHAR(50) NOT NULL,
+	PRIMARY KEY (state_transition_id, termination_state_id),
+	INDEX (termination_state_id),
+	FOREIGN KEY (state_transition_id) REFERENCES STATE_TRANSITION (id),
+	FOREIGN KEY (termination_state_id) REFERENCES STATE (id)
+) ENGINE = INNODB
+;
+
+ALTER TABLE STATE
+	ADD COLUMN state_duration_definition_id VARCHAR(50) AFTER state_group_id,
+	ADD INDEX (state_duration_definition_id),
+	ADD FOREIGN KEY (state_duration_definition_id) REFERENCES STATE_DURATION_DEFINITION (id)
+;
+

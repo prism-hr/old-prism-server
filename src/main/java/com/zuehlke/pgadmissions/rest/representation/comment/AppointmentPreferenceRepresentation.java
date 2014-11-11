@@ -13,4 +13,5 @@ public class AppointmentPreferenceRepresentation {
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
     }
+    
 }

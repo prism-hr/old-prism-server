@@ -78,8 +78,7 @@ public class RoleService {
         Role newRole = getById(newRoleId);
         List<Integer> excludingUserRoles = roleDAO.getExcludingUserRoles(resource, user, newRole);
         if (excludingUserRoles.isEmpty()) {
-            UserRole transientUserRole = new UserRole().withResource(resource).withUser(user).withRole(newRole).withActivated(newRole.getActivateImmediately())
-                    .withAssignedTimestamp(new DateTime());
+            UserRole transientUserRole = new UserRole().withResource(resource).withUser(user).withRole(newRole).withAssignedTimestamp(new DateTime());
             UserRole persistentUserRole = entityService.getOrCreate(transientUserRole);
             entityService.flush();
             return persistentUserRole;
@@ -146,7 +145,7 @@ public class RoleService {
         return roleDAO.getActiveRoles();
     }
 
-    public void deleteInactiveRoles() {
+    public void deleteObseleteUserRoles() {
         roleDAO.deleteObseleteUserRoles(getActiveRoles());
     }
 

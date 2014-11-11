@@ -125,10 +125,12 @@ public class ImportedEntityService {
     }
 
     public void mergeImportedProgram(Institution institution, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline)
-            throws DeduplicationException {
+            throws DeduplicationException, DataImportException {
         Programme programDefinition = programInstanceDefinitions.iterator().next().getProgramme();
         Program persistentProgram = mergeProgram(institution, programDefinition);
 
+        LocalDate startDate = null;
+        LocalDate closeDate = null;
         for (ProgrammeOccurrence occurrence : programInstanceDefinitions) {
             StudyOption studyOption = mergeStudyOption(institution, occurrence.getModeOfAttendance());
 
@@ -150,8 +152,16 @@ public class ImportedEntityService {
             ProgramStudyOptionInstance persistentProgramStudyOptionInstance = entityService.createOrUpdate(transientProgramStudyOptionInstance);
             persistentProgramStudyOption.getStudyOptionInstances().add(persistentProgramStudyOptionInstance);
 
-            executeProgramImportAction(persistentProgram);
+            startDate = startDate == null || startDate.isBefore(transientStartDate) ? transientStartDate : startDate;
+            closeDate = closeDate == null || closeDate.isBefore(transientCloseDate) ? transientCloseDate : closeDate;
         }
+
+        if (startDate.isAfter(baseline) || closeDate.isBefore(baseline)) {
+            throw new DataImportException("Attempted to import a program that cannot be used");
+        }
+
+        persistentProgram.setEndDate(closeDate);
+        executeProgramImportAction(persistentProgram);
     }
 
     public void mergeImportedInstitution(Institution institution, com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution institutionDefinition)
@@ -171,7 +181,8 @@ public class ImportedEntityService {
         entityService.createOrUpdate(transientImportedInstitution);
     }
 
-    public void mergeImportedLanguageQualificationType(Institution institution, LanguageQualificationType languageQualificationTypeDefinition) throws Exception {
+    public void mergeImportedLanguageQualificationType(Institution institution, LanguageQualificationType languageQualificationTypeDefinition)
+            throws DeduplicationException {
         int precision = 2;
         ImportedLanguageQualificationType transientImportedLanguageQualificationType = new ImportedLanguageQualificationType().withInstitution(institution)
                 .withCode(languageQualificationTypeDefinition.getCode()).withName(languageQualificationTypeDefinition.getName())
@@ -189,7 +200,8 @@ public class ImportedEntityService {
         entityService.createOrUpdate(transientImportedLanguageQualificationType);
     }
 
-    public <T extends ImportedEntity> void mergeImportedEntity(Class<T> entityClass, Institution institution, Object entityDefinition) throws Exception {
+    public <T extends ImportedEntity> void mergeImportedEntity(Class<T> entityClass, Institution institution, Object entityDefinition)
+            throws InstantiationException, IllegalAccessException, DeduplicationException {
         ImportedEntity transientEntity = entityClass.newInstance();
         transientEntity.setInstitution(institution);
         transientEntity.setCode((String) ReflectionUtils.getProperty(entityDefinition, "code"));

@@ -29,6 +29,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
@@ -727,6 +728,10 @@ public class Application extends Resource {
 
     public boolean isProgramApplication() {
         return project == null;
+    }
+    
+    public Advert getAdvert() {
+        return isProgramApplication() ? program.getAdvert() : project.getAdvert();
     }
 
     @Override

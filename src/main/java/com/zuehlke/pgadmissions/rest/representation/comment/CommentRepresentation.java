@@ -93,14 +93,16 @@ public class CommentRepresentation {
     private DateTime createdTimestamp;
 
     private Set<CommentAssignedUserRepresentation> assignedUsers = Sets.newLinkedHashSet();
-
-    private Set<FileRepresentation> documents = Sets.newLinkedHashSet();
+    
+    private Set<CommentTransitionStateRepresentation> transitionStates = Sets.newLinkedHashSet();
 
     private Set<AppointmentTimeslotRepresentation> appointmentTimeslots = Sets.newLinkedHashSet();
 
     private Set<AppointmentPreferenceRepresentation> appointmentPreferences = Sets.newLinkedHashSet();
-    
+
     private Set<CommentPropertyRepresentation> properties = Sets.newLinkedHashSet();
+
+    private Set<FileRepresentation> documents = Sets.newLinkedHashSet();
 
     public Integer getId() {
         return id;
@@ -414,12 +416,12 @@ public class CommentRepresentation {
         this.assignedUsers = assignedUsers;
     }
 
-    public Set<FileRepresentation> getDocuments() {
-        return documents;
+    public final Set<CommentTransitionStateRepresentation> getTransitionStates() {
+        return transitionStates;
     }
 
-    public void setDocuments(Set<FileRepresentation> documents) {
-        this.documents = documents;
+    public final void setTransitionStates(Set<CommentTransitionStateRepresentation> transitionStates) {
+        this.transitionStates = transitionStates;
     }
 
     public Set<AppointmentTimeslotRepresentation> getAppointmentTimeslots() {
@@ -437,33 +439,49 @@ public class CommentRepresentation {
     public void setAppointmentPreferences(Set<AppointmentPreferenceRepresentation> appointmentPreferences) {
         this.appointmentPreferences = appointmentPreferences;
     }
+    
+    public Set<FileRepresentation> getDocuments() {
+        return documents;
+    }
 
-    public CommentRepresentation withId(Integer id) {
+    public void setDocuments(Set<FileRepresentation> documents) {
+        this.documents = documents;
+    }
+    
+    public final Set<CommentPropertyRepresentation> getProperties() {
+        return properties;
+    }
+
+    public final void setProperties(Set<CommentPropertyRepresentation> properties) {
+        this.properties = properties;
+    }
+
+    public CommentRepresentation addId(Integer id) {
         this.id = id;
         return this;
     }
 
-    public CommentRepresentation withUser(UserRepresentation user) {
+    public CommentRepresentation addUser(UserRepresentation user) {
         this.user = user;
         return this;
     }
 
-    public CommentRepresentation withDelegateUser(UserRepresentation delegateUser) {
+    public CommentRepresentation addDelegateUser(UserRepresentation delegateUser) {
         this.delegateUser = delegateUser;
         return this;
     }
 
-    public CommentRepresentation withAction(PrismAction action) {
+    public CommentRepresentation addAction(PrismAction action) {
         this.action = action;
         return this;
     }
 
-    public CommentRepresentation withDeclinedResponse(Boolean declinedResponse) {
+    public CommentRepresentation addDeclinedResponse(Boolean declinedResponse) {
         this.declinedResponse = declinedResponse;
         return this;
     }
 
-    public CommentRepresentation withCreatedTimestamp(DateTime createdTimestamp) {
+    public CommentRepresentation addCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
         return this;
     }
@@ -482,27 +500,19 @@ public class CommentRepresentation {
         this.interviewDuration = interviewDuration;
         return this;
     }
-    
+
     public CommentRepresentation addIntervieweeInstructions(String intervieweeInstructions) {
         this.intervieweeInstructions = intervieweeInstructions;
         return this;
     }
-    
+
     public CommentRepresentation addInterviewLocation(String interviewLocation) {
         this.interviewLocation = interviewLocation;
         return this;
     }
-    
+
     public void addAppointmentTimeslot(AppointmentTimeslotRepresentation appointmentTimeslot) {
         appointmentTimeslots.add(appointmentTimeslot);
-    }
-
-    public final Set<CommentPropertyRepresentation> getProperties() {
-        return properties;
-    }
-
-    public final void setProperties(Set<CommentPropertyRepresentation> properties) {
-        this.properties = properties;
     }
 
 }

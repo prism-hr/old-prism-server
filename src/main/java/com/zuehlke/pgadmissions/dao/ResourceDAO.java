@@ -214,6 +214,16 @@ public class ResourceDAO {
                 .add(Restrictions.eq("role.id", roleId)) //
                 .list();
     }
+    
+    public void deletePrimaryState(Resource resource) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete ResourceState " //
+                    + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+                        + "and primaryState = :primaryState") //
+                .setParameter("resource", resource) //
+                .setParameter("primaryState", true) //
+                .executeUpdate();
+    }
 
     private void addResourceListCustomColumns(PrismScope scopeId, ProjectionList projectionList) {
         HashMultimap<String, String> customColumns = scopeId.getConsoleListCustomColumns();

@@ -179,7 +179,7 @@ public class WorkflowConfigurationHelper {
         assertTrue(actionsEmpty || viewEditActions.size() >= 1);
 
         System system = systemService.getSystem();
-        if (stateService.getStateDurationConfiguration(system, system.getUser(), state) != null) {
+        if (stateService.getStateDurationConfiguration(system, system.getUser(), state.getStateDurationDefinition()) != null) {
             assertFalse(escalationActions.isEmpty());
         }
     }

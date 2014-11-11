@@ -177,7 +177,7 @@ public class SystemInitialisationHelper {
     public void verifyStateGroupCreation() {
         for (StateGroup stateGroup : stateService.getStateGroups()) {
             assertEquals(stateGroup.getId().getSequenceOrder(), stateGroup.getSequenceOrder());
-            assertEquals(stateGroup.getId().isRepeatable(), stateGroup.isRepeatable());
+            assertEquals(stateGroup.getId().isRepeatable(), stateGroup.getRepeatable());
             assertEquals(stateGroup.getId().getScope(), stateGroup.getScope().getId());
         }
     }
@@ -263,11 +263,11 @@ public class SystemInitialisationHelper {
     public void verifyStateDurationCreation() {
         System system = systemService.getSystem();
         for (State state : stateService.getConfigurableStates()) {
-            StateDurationConfiguration stateDuration = stateService.getStateDurationConfiguration(system, system.getUser(), state);
+            StateDurationConfiguration stateDuration = stateService.getStateDurationConfiguration(system, system.getUser(), state.getStateDurationDefinition());
 
             assertEquals(stateDuration.getLocale(), getSystemLocale());
             assertEquals(stateDuration.getProgramType(), state.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null);
-            assertEquals(state.getId().getDuration(), stateDuration.getDuration());
+            assertEquals(state.getId().getDefaultDuration(), stateDuration.getDuration());
             assertTrue(stateDuration.getSystemDefault());
         }
     }

@@ -14,6 +14,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.ActionPropertyType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
@@ -72,38 +73,30 @@ public class ActionService {
         return entityService.getById(Action.class, id);
     }
 
-    public ActionPropertyConfiguration getActionPropertyConfiguration(Resource resource, User user, Action action) {
-        return customizationService.getConfiguration(ActionPropertyConfiguration.class, resource, user, "action", action);
+    public List<ActionPropertyConfiguration> getActionPropertyConfigurationByVersion(Integer version) {
+        return actionDAO.getActionPropertyConfigurationByVersion(version);
     }
 
-    public ActionPropertyConfiguration getActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action) {
-        return customizationService.getConfiguration(ActionPropertyConfiguration.class, resource, locale, programType, "action", action);
-    }
-
-    public void updateConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action,
-            Set<ActionPropertyConfigurationDTO> actionPropertyConfigurationDTOs) throws DeduplicationException, CustomizationException {
-        createActionOrUpdatePropertyConfiguration(resource, locale, programType, action, actionPropertyConfigurationDTOs);
-        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_NOTIFICATION"));
-    }
-
-    public void createActionOrUpdatePropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action,
-            Set<ActionPropertyConfigurationDTO> actionPropertyConfigurationDTOs) throws CustomizationException, DeduplicationException {
+    public void createOrUpdateActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action,
+            List<ActionPropertyConfigurationDTO> actionPropertyConfigurationDTOs) throws CustomizationException, DeduplicationException {
         if (action.getCustomizableAction()) {
             customizationService.validateConfiguration(resource, action, locale, programType);
             actionDAO.deleteActionConfiguration(resource, locale, programType, action);
 
             Integer version = null;
             for (ActionPropertyConfigurationDTO actionPropertyConfigurationDTO : actionPropertyConfigurationDTOs) {
-                Set<String> options = actionPropertyConfigurationDTO.getOptions();
-                Set<String> validationRules = actionPropertyConfigurationDTO.getValidationRules();
+                String name = actionPropertyConfigurationDTO.getName();
+
+                List<String> options = actionPropertyConfigurationDTO.getOptions();
+                List<String> validationRules = actionPropertyConfigurationDTO.getValidationRules();
 
                 ActionPropertyConfiguration persistentActionPropertyConfiguration = entityService.createOrUpdate(new ActionPropertyConfiguration()
                         .withResource(resource).withLocale(locale).withProgramType(programType).withAction(action).withVersion(version)
-                        .withName(actionPropertyConfigurationDTO.getName()).withEditable(actionPropertyConfigurationDTO.getEditable())
-                        .withIndex(actionPropertyConfigurationDTO.getIndex()).withLabel(actionPropertyConfigurationDTO.getLabel())
-                        .withDescription(actionPropertyConfigurationDTO.getDescription()).withOptions(options.isEmpty() ? null : Joiner.on("|").join(options))
-                        .withRequired(actionPropertyConfigurationDTO.getRequired())
-                        .withValidation(validationRules.isEmpty() ? null : Joiner.on("|").join(validationRules))
+                        .withActionPropertyType(ActionPropertyType.getByDisplayName(name)).withName(name)
+                        .withEditable(actionPropertyConfigurationDTO.getEditable()).withIndex(actionPropertyConfigurationDTO.getIndex())
+                        .withLabel(actionPropertyConfigurationDTO.getLabel()).withDescription(actionPropertyConfigurationDTO.getDescription())
+                        .withOptions(options == null ? null : Joiner.on("|").join(options)).withRequired(actionPropertyConfigurationDTO.getRequired())
+                        .withValidation(validationRules == null ? null : Joiner.on("|").join(validationRules))
                         .withWeighting(actionPropertyConfigurationDTO.getWeighting()));
 
                 if (persistentActionPropertyConfiguration.getVersion() == null) {
@@ -112,6 +105,20 @@ public class ActionService {
                 }
             }
         }
+
+        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_ACTION_PROPERTY"));
+    }
+
+    public void restoreDefaultActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action)
+            throws DeduplicationException {
+        actionDAO.deleteActionConfiguration(resource, locale, programType, action);
+        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_ACTION_PROPERTY_DEFAULT"));
+    }
+
+    public void restoreGlobalActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action)
+            throws DeduplicationException {
+        actionDAO.restoreGlobalActionConfiguration(resource, locale, programType, action);
+        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_ACTION_PROPERTY_GLOBAL"));
     }
 
     public void validateInvokeAction(Resource resource, Action action, Comment comment) {

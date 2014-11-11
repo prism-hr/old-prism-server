@@ -2,10 +2,13 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PURGE_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.Arrays;
 import java.util.List;
 
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -28,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.ActionPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
@@ -289,18 +293,72 @@ public class ActionDAO {
                 .add(Restrictions.eq("configurableAction", true)) //
                 .list();
     }
-    
+
     public void deleteActionConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action) {
         String localeConstraint = locale == null ? "" : "and locale = " + locale.name() + " ";
         String programTypeConstraint = programType == null ? "" : "and programType = " + programType.name();
         sessionFactory.getCurrentSession().createQuery( //
                 "update ActionPropertyConfiguration " //
-                    + "set active = false " //
-                    + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+                        + "set active = false " //
+                        + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
                         + localeConstraint //
-                        + programTypeConstraint)
-                .setParameter("resource", resource)
-                .executeUpdate();
+                        + programTypeConstraint).setParameter("resource", resource).executeUpdate();
     }
 
+    public void restoreGlobalActionConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action) {
+        PrismScope resourceScope = resource.getResourceScope();
+        String programTypeConstraint = programType == null ? "and programType is null " : "and programType = :programType ";
+        String localeConstraint = locale == null ? "and locale is null " : " and locale = :locale ";
+        
+        Query query;
+        if (resourceScope == SYSTEM) {
+            query = sessionFactory.getCurrentSession().createQuery( //
+                    "update ActionPropertyConfiguration " //
+                        + "set active = false "
+                        + "where action = :action " //
+                        + "and (institution in (" //
+                            + "from Institution " //
+                            + "where system = :system ) " //
+                                + programTypeConstraint //
+                                + localeConstraint + " "//
+                        + "or program in (" //
+                            + "from Program " //
+                            + "where system = :system) " //
+                                + programTypeConstraint //
+                                + localeConstraint + ")");
+        } else if (resourceScope == INSTITUTION) {
+            query = sessionFactory.getCurrentSession().createQuery( //
+                    "update ActionPropertyConfiguration " //
+                        + "set active = false " //
+                        + "where action = :action " //
+                        + "and (program in (" //
+                            + "from Program " //
+                            + "where institution = :institution) " //
+                                + programTypeConstraint //
+                                + localeConstraint + ")");
+        } else {
+            throw new Error();
+        }
+        
+        query.setParameter(resourceScope.getLowerCaseName(), resource) //
+                .setParameter("action", action);
+        
+        if (programType != null) {
+            query.setParameter("programType", programType);
+        }
+        
+        if (locale != null) {
+            query.setParameter("locale", locale);
+        }
+        
+        query.executeUpdate();
+    }
+
+    public List<ActionPropertyConfiguration> getActionPropertyConfigurationByVersion(Integer version) {
+        return (List<ActionPropertyConfiguration>) sessionFactory.getCurrentSession().createCriteria(ActionPropertyConfiguration.class) //
+                .add(Restrictions.eq("version", version)) //
+                .addOrder(Order.asc("index")) //
+                .list();
+    }
+    
 }

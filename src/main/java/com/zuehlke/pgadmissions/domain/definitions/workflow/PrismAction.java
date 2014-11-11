@@ -59,8 +59,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.rest.validation.validator.comment.AssignInterviewersCommentCustomValidator;
-import com.zuehlke.pgadmissions.rest.validation.validator.comment.ConfirmSupervisionCommentCustomValidator;
+import com.zuehlke.pgadmissions.rest.validation.validator.comment.CommentAssignInterviewersCustomValidator;
+import com.zuehlke.pgadmissions.rest.validation.validator.comment.CommentConfirmSupervisionCustomValidator;
 
 public enum PrismAction {
 
@@ -70,7 +70,7 @@ public enum PrismAction {
             .addResolution(ASSIGNED_USERS, new PrismActionValidationFieldResolution(SIZE, "min", 0)).addResolution(INTERVIEW_TIME_ZONE, NOT_NULL)
             .addResolution(INTERVIEW_DURATION, NOT_NULL).addResolution(INTERVIEW_DATE_TIME).addResolution(APPOINTMENT_TIMESLOTS)
             .addResolution(INTERVIEWER_INSTRUCTIONS).addResolution(INTERVIEWEE_INSTRUCTIONS).addResolution(INTERVIEW_LOCATION)
-            .setCustomValidator(new AssignInterviewersCommentCustomValidator()).build()), //
+            .setCustomValidator(new CommentAssignInterviewersCustomValidator()).build()), //
     APPLICATION_ASSIGN_REVIEWERS(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, false, APPLICATION, null, Arrays.asList(
             new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT), new PrismActionRedaction().withRole(APPLICATION_REFEREE)
                     .withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
@@ -128,13 +128,13 @@ public enum PrismAction {
     APPLICATION_CONFIRM_PRIMARY_SUPERVISION(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, false, APPLICATION, null, Arrays.asList(
             new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT), new PrismActionRedaction().withRole(APPLICATION_REFEREE)
                     .withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder().addResolution(RECRUITER_ACCEPT_APPOINTMENT, NOT_NULL)
-            .setCustomValidator(new ConfirmSupervisionCommentCustomValidator()).build()), //
+            .setCustomValidator(new CommentConfirmSupervisionCustomValidator()).build()), //
     APPLICATION_CONFIRM_SECONDARY_SUPERVISION(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, false, APPLICATION, null, Arrays.asList(
             new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT), new PrismActionRedaction().withRole(APPLICATION_REFEREE)
                     .withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder().addResolution(RECRUITER_ACCEPT_APPOINTMENT, NOT_NULL)
             .addResolution(CONTENT).addResolution(ASSIGNED_USERS).addResolution(POSITION_TITLE).addResolution(POSITION_DESCRIPTION)
             .addResolution(POSITION_PROVISIONAL_START_DATE).addResolution(APPOINTMENT_CONDITIONS)
-            .setCustomValidator(new ConfirmSupervisionCommentCustomValidator()).build()), //
+            .setCustomValidator(new CommentConfirmSupervisionCustomValidator()).build()), //
     APPLICATION_CORRECT(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, false, APPLICATION, null, null, null), //
     APPLICATION_EMAIL_CREATOR(USER_INVOCATION, EMAIL_RESOURCE_CREATOR, false, false, false, false, false, false, APPLICATION, null, null, null), //
     APPLICATION_ESCALATE(SYSTEM_INVOCATION, ESCALATE_RESOURCE, false, false, false, false, false, false, APPLICATION, null, null, null), //

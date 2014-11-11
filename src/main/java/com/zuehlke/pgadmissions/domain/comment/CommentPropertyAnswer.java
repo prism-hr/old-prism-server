@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.definitions.ActionPropertyType;
 
 @Entity
 @Table(name = "COMMENT_PROPERTY")
-public class CommentProperty {
+public class CommentPropertyAnswer {
 
     @Id
     @GeneratedValue
@@ -90,22 +90,22 @@ public class CommentProperty {
         this.propertyWeight = propertyWeight;
     }
 
-    public CommentProperty withPropertyType(ActionPropertyType propertyType) {
+    public CommentPropertyAnswer withPropertyType(ActionPropertyType propertyType) {
         this.propertyType = propertyType;
         return this;
     }
 
-    public CommentProperty withPropertyLabel(String propertyLabel) {
+    public CommentPropertyAnswer withPropertyLabel(String propertyLabel) {
         this.propertyLabel = propertyLabel;
         return this;
     }
 
-    public CommentProperty withPropertyValue(String value) {
+    public CommentPropertyAnswer withPropertyValue(String value) {
         this.propertyValue = value;
         return this;
     }
 
-    public CommentProperty withPropertyWeight(BigDecimal propertyWeight) {
+    public CommentPropertyAnswer withPropertyWeight(BigDecimal propertyWeight) {
         this.propertyWeight = propertyWeight;
         return this;
     }

@@ -248,7 +248,7 @@ public class SystemInitialisationHelper {
 
             PrismProgramType programType = template.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null;
 
-            NotificationConfiguration configuration = notificationService.getConfigurationStrict(system, system.getLocale(), programType, template);
+            NotificationConfiguration configuration = notificationService.getNotificationConfiguration(system, system.getLocale(), programType, template);
             assertEquals(configuration.getLocale(), getSystemLocale());
             assertEquals(configuration.getProgramType(), programType);
             assertEquals(configuration.getNotificationDefinition(), template);

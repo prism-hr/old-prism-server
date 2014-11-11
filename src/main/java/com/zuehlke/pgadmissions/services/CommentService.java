@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.comment.CommentProperty;
+import com.zuehlke.pgadmissions.domain.comment.CommentPropertyAnswer;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -271,8 +271,8 @@ public class CommentService {
         Set<CommentAppointmentPreference> persistentPreferences = Sets.newHashSet(transientPreferences);
         transientPreferences.clear();
 
-        Set<CommentProperty> transientProperties = comment.getProperties();
-        Set<CommentProperty> persistentProperties = Sets.newHashSet(transientProperties);
+        Set<CommentPropertyAnswer> transientProperties = comment.getPropertyAnswers();
+        Set<CommentPropertyAnswer> persistentProperties = Sets.newHashSet(transientProperties);
         transientProperties.clear();
 
         entityService.save(comment);
@@ -281,7 +281,7 @@ public class CommentService {
         comment.getTransitionStates().addAll(persistentTransitionStates);
         comment.getAppointmentTimeslots().addAll(persistentTimeslots);
         comment.getAppointmentPreferences().addAll(persistentPreferences);
-        comment.getProperties().addAll(persistentProperties);
+        addPropertyAnswers(comment, persistentProperties);
     }
 
     public void update(Integer commentId, CommentDTO commentDTO) {
@@ -422,7 +422,7 @@ public class CommentService {
 
     private void buildAggregatedRating(Comment comment) {
         BigDecimal aggregatedRating = new BigDecimal(0.00);
-        for (CommentProperty property : comment.getProperties()) {
+        for (CommentPropertyAnswer property : comment.getPropertyAnswers()) {
             switch (property.getPropertyType()) {
             case RATING_NORMAL:
                 aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(property, 5));
@@ -437,7 +437,7 @@ public class CommentService {
         comment.setApplicationRating(aggregatedRating);
     }
 
-    private BigDecimal getWeightedRatingComponent(CommentProperty property, Integer denominator) {
+    private BigDecimal getWeightedRatingComponent(CommentPropertyAnswer property, Integer denominator) {
         return new BigDecimal(property.getPropertyValue()).divide(new BigDecimal(denominator)).multiply(new BigDecimal(5))
                 .multiply(property.getPropertyWeight()).setScale(2, RoundingMode.HALF_UP);
     }
@@ -460,6 +460,10 @@ public class CommentService {
                 resource.addComment(preference);
             }
         }
+    }
+    
+    private void addPropertyAnswers(Comment comment, Set<CommentPropertyAnswer> persistentProperties) {
+        comment.getPropertyAnswers().addAll(persistentProperties);
     }
 
 }

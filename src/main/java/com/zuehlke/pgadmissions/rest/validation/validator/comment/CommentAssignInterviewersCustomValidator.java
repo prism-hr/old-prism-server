@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 
 @Component
-public class AssignInterviewersCommentCustomValidator implements Validator {
+public class CommentAssignInterviewersCustomValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -51,4 +51,5 @@ public class AssignInterviewersCommentCustomValidator implements Validator {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "interviewerInstructions", "notEmpty");
         }
     }
+    
 }

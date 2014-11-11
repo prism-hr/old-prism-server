@@ -127,10 +127,16 @@ public class StateService {
                 statedurationDefinition);
     }
 
-    public void updateConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, StateDurationDefinition stateDurationDefinition,
-            Integer duration) throws DeduplicationException, CustomizationException {
+    public StateDurationConfiguration getStateDurationConfigurationStrict(Resource resource, PrismLocale locale, PrismProgramType programType,
+            StateDurationDefinition definition) {
+        return customizationService.getConfigurationStrict(StateDurationConfiguration.class, resource, locale, programType, "stateDurationConfiguration",
+                definition);
+    }
+
+    public void updateStateDurationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
+            StateDurationDefinition stateDurationDefinition, Integer duration) throws DeduplicationException, CustomizationException {
         createOrUpdateStateDurationConfiguration(resource, locale, programType, stateDurationDefinition, duration);
-        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_NOTIFICATION"));
+        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_STATE_DURATION"));
     }
 
     public void createOrUpdateStateDurationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
@@ -140,6 +146,19 @@ public class StateService {
                 .withProgramType(programType).withStateDurationDefinition(stateDurationDefinition).withDuration(duration)
                 .withSystemDefault(customizationService.isSystemDefault(stateDurationDefinition, locale, programType));
         entityService.createOrUpdate(transientStateDuration);
+    }
+
+    public void restoreDefaultStateDurationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, StateDurationDefinition definition)
+            throws DeduplicationException {
+        customizationService
+                .restoreDefaultConfiguration(StateDurationConfiguration.class, resource, locale, programType, "stateDurationDefinition", definition);
+        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_STATE_DURATION_DEFAULT"));
+    }
+
+    public void restoreGlobalStateDurationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, StateDurationDefinition definition)
+            throws DeduplicationException {
+        customizationService.restoreGlobalConfiguration(StateDurationConfiguration.class, resource, locale, programType, "stateDurationDefinition", definition);
+        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_STATE_DURATION_GLOBAL"));
     }
 
     public void deleteStateActions() {

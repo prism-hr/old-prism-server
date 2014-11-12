@@ -711,6 +711,11 @@ public class Comment {
         return this;
     }
 
+    public Comment addTransitionState(State transitionState, Boolean primaryState) {
+        transitionStates.add(new CommentTransitionState().withTransitionState(transitionState).withPrimaryState(primaryState));
+        return this;
+    }
+
     public boolean isApplicationCreatorEligibilityUnsure() {
         return getApplicationEligible() == YesNoUnsureResponse.UNSURE;
     }

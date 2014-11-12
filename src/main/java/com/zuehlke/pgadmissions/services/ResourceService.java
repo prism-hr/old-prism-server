@@ -192,13 +192,10 @@ public class ResourceService {
         resource.setState(transitionState);
 
         resourceDAO.deletePrimaryState(resource);
-        entityService.save(new ResourceState().withResource(resource).withState(transitionState).withPrimaryState(true));
 
         for (CommentTransitionState commentTransitionState : comment.getTransitionStates()) {
-            if (!commentTransitionState.getPrimaryState()) {
-                entityService.createOrUpdate(new ResourceState().withResource(resource).withState(commentTransitionState.getTransitionState())
-                        .withPrimaryState(false));
-            }
+            entityService.createOrUpdate(new ResourceState().withResource(resource).withState(commentTransitionState.getTransitionState())
+                    .withPrimaryState(false));
         }
     }
 
@@ -264,10 +261,14 @@ public class ResourceService {
         actionService.executeUserAction(resource, action, comment);
     }
 
-    public void deleteResourceAction(Resource resource, Action action) {
-        resourceDAO.deleteResourceAction(resource, action);
+    public void deleteResourceState(Resource resource, State state) {
+        resourceDAO.deleteResourceState(resource, state);
     }
 
+    public void deleteSecondaryResourceState(Resource resource, State state) {
+        resourceDAO.deleteSecondaryResourceState(resource, state);
+    }
+    
     public Resource getOperativeResource(Resource resource, Action action) {
         return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
     }

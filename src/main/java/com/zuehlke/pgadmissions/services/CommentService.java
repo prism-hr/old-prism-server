@@ -305,6 +305,7 @@ public class CommentService {
     public void recordStateTransition(Comment comment, State state, State transitionState) {
         comment.setState(state);
         comment.setTransitionState(transitionState);
+        comment.addTransitionState(transitionState, true);
     }
 
     public void delete(Application application, Comment exclusion) {
@@ -461,7 +462,7 @@ public class CommentService {
             }
         }
     }
-    
+
     private void addPropertyAnswers(Comment comment, Set<CommentPropertyAnswer> persistentProperties) {
         comment.getPropertyAnswers().addAll(persistentProperties);
     }

@@ -53,12 +53,18 @@ public class StateDAO {
     }
 
     public StateTransition getStateTransition(State state, Action action, PrismState transitionStateId) {
-        return (StateTransition) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .createAlias("stateAction", "stateAction") //
                 .add(Restrictions.eq("stateAction.state", state)) //
-                .add(Restrictions.eq("stateAction.action", action)) //
-                .add(Restrictions.eq("transitionState.id", transitionStateId)) //
-                .uniqueResult();
+                .add(Restrictions.eq("stateAction.action", action));
+
+        if (transitionStateId == null) {
+            criteria.add(Restrictions.isNull("transitionState"));
+        } else {
+            criteria.add(Restrictions.eq("transitionState.id", transitionStateId));
+        }
+
+        return (StateTransition) criteria.uniqueResult();
     }
 
     public List<StateTransitionPendingDTO> getStateTransitionsPending(PrismScope scopeId) {

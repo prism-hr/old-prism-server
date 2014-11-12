@@ -25,6 +25,8 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
 
     private String homepage;
 
+    private FileRepresentation logoDocument;
+
     public String getDomicile() {
         return domicile;
     }
@@ -95,5 +97,13 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
 
     public void setHomepage(String homepage) {
         this.homepage = homepage;
+    }
+
+    public FileRepresentation getLogoDocument() {
+        return logoDocument;
+    }
+
+    public void setLogoDocument(FileRepresentation logoDocument) {
+        this.logoDocument = logoDocument;
     }
 }

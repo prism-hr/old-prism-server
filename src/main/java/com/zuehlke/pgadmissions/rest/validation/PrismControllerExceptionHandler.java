@@ -1,10 +1,12 @@
 package com.zuehlke.pgadmissions.rest.validation;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
+import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -20,11 +22,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @ControllerAdvice
 public class PrismControllerExceptionHandler extends ResponseEntityExceptionHandler {
@@ -49,10 +49,19 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         Map<String, String> body = null;
-        if(ex.getReason() != null){
+        if (ex.getReason() != null) {
             body = Collections.singletonMap("reason", ex.getReason());
         }
         return handleExceptionInternal(ex, body, headers, HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(value = ResourceNotFoundException.class)
+    public final ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        Map<String, String> body = null;
+        body = Collections.singletonMap("reason", ex.getMessage());
+        return handleExceptionInternal(ex, body, headers, HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler(value = PrismValidationException.class)

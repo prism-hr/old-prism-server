@@ -109,7 +109,7 @@ public class ResourceService {
         return resource == null ? null : resource.getId();
     }
 
-    public ActionOutcomeDTO executeAction(Integer resourceId, CommentDTO commentDTO) throws DeduplicationException {
+    public ActionOutcomeDTO executeAction(Integer resourceId, CommentDTO commentDTO) {
         switch (commentDTO.getAction().getScope()) {
         case APPLICATION:
             return applicationService.executeAction(resourceId, commentDTO);

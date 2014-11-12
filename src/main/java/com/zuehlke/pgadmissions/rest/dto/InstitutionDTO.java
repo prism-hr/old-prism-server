@@ -36,7 +36,7 @@ public class InstitutionDTO {
     @NotEmpty
     private String homepage;
 
-    private Integer logoDocumentId;
+    private FileDTO logoDocument;
 
     private String logoUri;
 
@@ -119,12 +119,12 @@ public class InstitutionDTO {
         this.defaultStudyOption = defaultStudyOption;
     }
 
-    public final Integer getLogoDocumentId() {
-        return logoDocumentId;
+    public final FileDTO getLogoDocument() {
+        return logoDocument;
     }
 
-    public final void setLogoDocumentId(Integer logoDocumentId) {
-        this.logoDocumentId = logoDocumentId;
+    public final void setLogoDocument(FileDTO logoDocument) {
+        this.logoDocument = logoDocument;
     }
 
     public final String getLogoUri() {

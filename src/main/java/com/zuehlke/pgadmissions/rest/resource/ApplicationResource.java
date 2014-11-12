@@ -83,7 +83,7 @@ public class ApplicationResource {
     private CommentValidator commentDTOValidator;
 
     @RequestMapping(value = "/{applicationId}/startDate", method = RequestMethod.GET)
-    private ApplicationStartDateRepresentation getStartDateRepresentation(@PathVariable Integer applicationId, @RequestParam PrismStudyOption studyOptionId) {
+    public ApplicationStartDateRepresentation getStartDateRepresentation(@PathVariable Integer applicationId, @RequestParam PrismStudyOption studyOptionId) {
         return applicationService.getStartDateRepresentation(applicationId, studyOptionId);
     }
 

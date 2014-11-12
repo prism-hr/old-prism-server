@@ -9,6 +9,7 @@
     <security:http pattern="/api/static" security="none"/>
     <security:http pattern="/api/opportunities" security="none"/>
     <security:http pattern="/api/domiciles/**" security="none"/>
+    <security:http pattern="/api/images/**" security="none"/>
 
     <security:http realm="Prism API" use-expressions="true" auto-config="false" create-session="stateless"
                    entry-point-ref="unauthorizedEntryPoint"
@@ -20,6 +21,7 @@
         <security:intercept-url pattern="/api/user/resetPassword" access="permitAll"/>
         <security:intercept-url pattern="/api/files" access="permitAll"/>
         <security:intercept-url pattern="/api/institutions/**" access="permitAll"/>
+        <security:intercept-url pattern="/api/decline/**" access="permitAll"/>
         <security:intercept-url pattern="/workflowConfiguration/*" access="permitAll"/>
         <security:intercept-url pattern="/**" access="isAuthenticated()"/>
     </security:http>

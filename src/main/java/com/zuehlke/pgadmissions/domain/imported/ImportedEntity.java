@@ -10,6 +10,8 @@ public abstract class ImportedEntity implements IUniqueEntity {
     public abstract Integer getId();
 
     public abstract void setId(Integer id);
+    
+    public abstract ImportedEntity getRoot();
 
     public abstract Institution getInstitution();
 
@@ -23,7 +25,7 @@ public abstract class ImportedEntity implements IUniqueEntity {
 
     public abstract void setName(String name);
 
-    public abstract Boolean isEnabled();
+    public abstract Boolean getEnabled();
 
     public abstract void setEnabled(Boolean enabled);
 

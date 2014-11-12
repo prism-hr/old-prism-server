@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.imported.Domicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
@@ -71,7 +71,7 @@ public class ImportedEntityDAO {
         return sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class) //
                 .createAlias("institution", "institution", JoinType.INNER_JOIN) //
                 .createAlias("institution.state", "state", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED)) //
+                .add(Restrictions.eq("state.stateGroup.id", PrismStateGroup.INSTITUTION_APPROVED)) //
                 .addOrder(Order.asc("institution")) //
                 .addOrder(Order.asc("importedEntityType")) //
                 .list();
@@ -143,6 +143,16 @@ public class ImportedEntityDAO {
                 .add(Restrictions.ne("importedEntityType", PrismImportedEntity.PROGRAM)) //
                 .add(Restrictions.isNull("lastImportedTimestamp")) //
                 .list();
+    }
+
+    public <T extends ImportedEntity> T getCorrespondingImportedEntity(Institution toInstitution, ImportedEntity fromEntity) {
+        ImportedEntity root = fromEntity.getRoot();
+        root = root == null ? fromEntity : root;
+        return (T) sessionFactory.getCurrentSession().createCriteria(fromEntity.getClass()) //
+                .add(Restrictions.eq("root", root)) //
+                .add(Restrictions.eq("institution", toInstitution)) //
+                .add(Restrictions.eq("enabled", true)) //
+                .uniqueResult();
     }
 
 }

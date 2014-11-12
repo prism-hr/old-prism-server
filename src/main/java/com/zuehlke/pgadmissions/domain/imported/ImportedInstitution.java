@@ -40,6 +40,10 @@ public class ImportedInstitution extends ImportedEntity {
     @Id
     @GeneratedValue
     private Integer id;
+    
+    @ManyToOne
+    @JoinColumn(name = "root_id")
+    private ImportedInstitution root;
 
     @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
@@ -65,6 +69,15 @@ public class ImportedInstitution extends ImportedEntity {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+    
+    @Override
+    public final ImportedInstitution getRoot() {
+        return root;
+    }
+
+    public final void setRoot(ImportedInstitution root) {
+        this.root = root;
     }
 
     public Institution getInstitution() {
@@ -99,16 +112,16 @@ public class ImportedInstitution extends ImportedEntity {
         this.name = name;
     }
 
-    public Boolean isEnabled() {
+    public Boolean getEnabled() {
         return enabled;
     }
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
-
-    public ImportedInstitution withId(Integer id) {
-        this.id = id;
+    
+    public ImportedInstitution withRoot(ImportedInstitution root) {
+        this.root = root;
         return this;
     }
 

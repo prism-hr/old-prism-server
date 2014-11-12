@@ -46,7 +46,8 @@ public class DocumentService {
     public Document create(String fileName, byte[] content, String contentType) throws IOException {
         if (contentType.startsWith("image/")) {
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(content));
-            image = Scalr.resize(image, 340, 240);
+            image = Scalr.resize(image, Scalr.Mode.FIT_TO_WIDTH, 340, 240);
+            image = Scalr.resize(image, Scalr.Mode.FIT_TO_HEIGHT, 340, 240);
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(image, "jpg", baos);

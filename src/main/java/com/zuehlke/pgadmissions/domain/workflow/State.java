@@ -18,6 +18,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 
 @Entity
 @Table(name = "STATE")
@@ -45,6 +46,9 @@ public class State extends WorkflowDefinition {
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
 
+    @OneToMany(mappedBy = "state")
+    private Set<ResourceState> resourceStates = Sets.newHashSet();
+    
     @OneToMany(mappedBy = "state")
     private Set<StateAction> stateActions = Sets.newHashSet();
 
@@ -91,7 +95,11 @@ public class State extends WorkflowDefinition {
         this.scope = scope;
     }
 
-    public Set<StateAction> getStateActions() {
+    public final Set<ResourceState> getResourceStates() {
+        return resourceStates;
+    }
+    
+    public final Set<StateAction> getStateActions() {
         return stateActions;
     }
 

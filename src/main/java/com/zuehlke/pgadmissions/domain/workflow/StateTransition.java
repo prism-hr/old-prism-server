@@ -34,7 +34,7 @@ public class StateTransition implements IUniqueEntity {
     private StateAction stateAction;
 
     @ManyToOne
-    @JoinColumn(name = "transition_state_id", nullable = false)
+    @JoinColumn(name = "transition_state_id")
     private State transitionState;
 
     @ManyToOne

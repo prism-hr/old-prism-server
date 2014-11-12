@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
@@ -98,13 +98,24 @@ public class ResourceDAO {
                 .list();
     }
 
-    public void deleteResourceAction(Resource resource, Action action) {
+    public void deleteResourceState(Resource resource, State state) {
         sessionFactory.getCurrentSession().createQuery( //
-                "delete ResourceAction " //
+                "delete ResourceState " //
                     + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
-                        + "and action = :action") //
+                        + "and state = :state") //
                 .setParameter("resource", resource) //
-                .setParameter("action", action) //
+                .setParameter("state", state) //
+                .executeUpdate();
+    }
+    
+    public void deleteSecondaryResourceState(Resource resource, State state) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete ResourceState " //
+                    + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+                        + "and state = :state "
+                        + "and primaryState is false") //
+                .setParameter("resource", resource) //
+                .setParameter("state", state) //
                 .executeUpdate();
     }
     

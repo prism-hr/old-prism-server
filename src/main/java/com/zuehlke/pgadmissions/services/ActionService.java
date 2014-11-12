@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -199,9 +200,11 @@ public class ActionService {
         return representations;
     }
 
-    public Set<ActionRepresentation> getPermittedActions(PrismScope resourcScope, Integer systemId, Integer institutionId, Integer programId,
-            Integer projectId, Integer applicationId, PrismState stateId, User user) {
-        return Sets.newLinkedHashSet(actionDAO.getPermittedActions(resourcScope, systemId, institutionId, programId, projectId, applicationId, stateId, user));
+    public Set<ActionRepresentation> getPermittedActions(PrismScope resourceScope, Integer systemId, Integer institutionId, Integer programId,
+            Integer projectId, Integer applicationId, User user) {
+        return Sets.newLinkedHashSet(actionDAO.getPermittedActions(resourceScope,
+                ObjectUtils.firstNonNull(applicationId, projectId, programId, institutionId, systemId), systemId, institutionId, programId, projectId,
+                applicationId, user));
     }
 
     public List<PrismActionEnhancement> getPermittedActionEnhancements(Resource resource, User user) {

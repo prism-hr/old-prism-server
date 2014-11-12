@@ -73,5 +73,5 @@ public class CommentDTOValidator extends LocalValidatorFactoryBean implements Va
             ValidationUtils.invokeValidator(customValidator, comment, errors);
         }
     }
-    
+
 }

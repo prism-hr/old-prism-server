@@ -31,7 +31,8 @@ public class RestApiUtils {
         } else if ("systems".equals(resourceScope)) {
             return new ResourceDescriptor(com.zuehlke.pgadmissions.domain.system.System.class, SystemExtendedRepresentation.class, PrismScope.SYSTEM);
         }
-        logger.error("Unknown resource scope " + resourceScope);
-        throw new ResourceNotFoundException();
+        String msg = "Unknown resource scope " + resourceScope;
+        logger.error(msg);
+        throw new ResourceNotFoundException(msg);
     }
 }

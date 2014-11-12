@@ -8,15 +8,20 @@ import com.google.common.primitives.Ints;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationDownloadService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.EntityService;
+import org.imgscalr.Scalr;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +48,21 @@ public class FileResource {
     @RequestMapping(value = "/files/{fileId}", method = RequestMethod.GET)
     public void downloadFile(@PathVariable(value = "fileId") Integer documentId, HttpServletResponse response) throws IOException {
         Document document = documentService.getById(documentId);
+        // TODO check permissions for given document
+        sendFileToClient(response, document);
+    }
 
+    @RequestMapping(value = "/images/{fileId}", method = RequestMethod.GET)
+    public void downloadImage(@PathVariable(value = "fileId") Integer fileId, HttpServletResponse response) throws IOException {
+        Document file = documentService.getById(fileId);
+        if(!file.getContentType().startsWith("image/")){
+            throw new ResourceNotFoundException("Requested file is not a image");
+        }
+
+        sendFileToClient(response, file);
+    }
+
+    private void sendFileToClient(HttpServletResponse response, Document document) throws IOException {
         response.setHeader("Content-Disposition", "attachment; filename=\"" + document.getFileName() + "\"");
         response.setHeader("File-Name", document.getFileName());
         response.setContentType(document.getContentType());
@@ -52,6 +71,7 @@ public class FileResource {
         ServletOutputStream outputStream = response.getOutputStream();
         outputStream.write(document.getContent());
     }
+
 
     @RequestMapping(value = "/pdfDownload", method = RequestMethod.GET)
     public void downloadPdf(@RequestParam(value = "applicationIds") String applicationIds, HttpServletResponse response) throws IOException {

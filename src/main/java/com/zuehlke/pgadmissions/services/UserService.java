@@ -102,7 +102,7 @@ public class UserService {
         User user = getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail(), resource.getLocale());
         if ((registrationDTO.getActivationCode() != null && !user.getActivationCode().equals(registrationDTO.getActivationCode()))
                 || user.getUserAccount() != null) {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException("Incorrect code or user already exists");
         }
 
         user.setUserAccount(new UserAccount().withPassword(EncryptionUtils.getMD5(registrationDTO.getPassword()))

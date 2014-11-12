@@ -29,6 +29,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
@@ -43,6 +44,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
+import com.zuehlke.pgadmissions.domain.workflow.ResourceAction;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
@@ -83,10 +85,6 @@ public class Application extends Resource {
     @Column(name = "closing_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate closingDate;
-
-    @Column(name = "previous_closing_date")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate previousClosingDate;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_program_detail_id", unique = true)
@@ -183,15 +181,15 @@ public class Application extends Resource {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
-    
+
     @Column(name = "last_reminded_request_individual")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastRemindedRequestIndividual;
-    
+
     @Column(name = "last_reminded_request_syndicated")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastRemindedRequestSyndicated;
-    
+
     @Column(name = "last_notified_update_syndicated")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedUpdateSyndicated;
@@ -204,6 +202,9 @@ public class Application extends Resource {
 
     @OneToMany(mappedBy = "application")
     private Set<UserRole> userRoles = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "application")
+    private Set<ResourceAction> resourceActions = Sets.newHashSet();
 
     @Transient
     private Boolean acceptedTerms;
@@ -341,7 +342,7 @@ public class Application extends Resource {
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
     }
-    
+
     @Override
     public final LocalDate getLastRemindedRequestIndividual() {
         return lastRemindedRequestIndividual;
@@ -386,14 +387,6 @@ public class Application extends Resource {
 
     public void setClosingDate(LocalDate closingDate) {
         this.closingDate = closingDate;
-    }
-
-    public final LocalDate getPreviousClosingDate() {
-        return previousClosingDate;
-    }
-
-    public final void setPreviousClosingDate(LocalDate previousClosingDate) {
-        this.previousClosingDate = previousClosingDate;
     }
 
     public ApplicationPersonalDetail getPersonalDetail() {
@@ -516,8 +509,14 @@ public class Application extends Resource {
         return comments;
     }
 
+    @Override
     public final Set<UserRole> getUserRoles() {
         return userRoles;
+    }
+
+    @Override
+    public final Set<ResourceAction> getResourceActions() {
+        return resourceActions;
     }
 
     public Application withId(Integer id) {
@@ -665,11 +664,6 @@ public class Application extends Resource {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    @Override
-    public void addComment(Comment comment) {
-        comments.add(comment);
-    }
-
     public Set<ResourceParent> getParentResources() {
         Set<ResourceParent> parentResources = Sets.newLinkedHashSet();
         if (project != null) {
@@ -730,6 +724,14 @@ public class Application extends Resource {
 
     public PrismProgramStartType getDefaultStartType() {
         return project == null && program.getProgramType().getPrismProgramType().getDefaultStartType() == SCHEDULED ? SCHEDULED : IMMEDIATE;
+    }
+
+    public boolean isProgramApplication() {
+        return project == null;
+    }
+    
+    public Advert getAdvert() {
+        return isProgramApplication() ? program.getAdvert() : project.getAdvert();
     }
 
     @Override

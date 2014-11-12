@@ -7,9 +7,8 @@ import java.util.Set;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +17,7 @@ import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -37,7 +38,8 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
-import com.zuehlke.pgadmissions.domain.workflow.StateDuration;
+import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
@@ -51,8 +53,6 @@ import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 @Service
 @Transactional
 public class StateService {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(StateService.class);
 
     @Autowired
     private StateDAO stateDAO;
@@ -89,6 +89,10 @@ public class StateService {
         return entityService.getById(StateGroup.class, stateGroupId);
     }
 
+    public StateDurationDefinition getStateDurationDefinitionById(PrismStateDuration stateDurationDefinitionId) {
+        return entityService.getById(StateDurationDefinition.class, stateDurationDefinitionId);
+    }
+
     public StateTransitionEvaluation getStateTransitionEvaluationById(PrismStateTransitionEvaluation stateTransitionEvaluationId) {
         return entityService.getById(StateTransitionEvaluation.class, stateTransitionEvaluationId);
     }
@@ -109,20 +113,48 @@ public class StateService {
         return entityService.list(StateTransitionEvaluation.class);
     }
 
-    public void createOrUpdateStateDuration(Resource resource, PrismLocale locale, PrismProgramType programType, State state, Integer duration)
-            throws DeduplicationException, CustomizationException {
-        customizationService.validateConfiguration(resource, state, locale, programType);
-        StateDuration transientStateDuration = new StateDuration().withResource(resource).withLocale(locale).withProgramType(programType).withState(state)
-                .withDuration(duration).withSystemDefault(customizationService.isSystemDefault(state, locale, programType));
+    public StateDurationConfiguration getStateDurationConfiguration(Resource resource, User user, StateDurationDefinition stateDurationDefinition) {
+        return customizationService.getConfiguration(StateDurationConfiguration.class, resource, user, "stateDurationDefinition", stateDurationDefinition);
+    }
+
+    public StateDurationConfiguration getStateDurationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
+            StateDurationDefinition statedurationDefinition) {
+        return customizationService.getConfiguration(StateDurationConfiguration.class, resource, locale, programType, "stateDurationDefinition",
+                statedurationDefinition);
+    }
+
+    public StateDurationConfiguration getStateDurationConfigurationStrict(Resource resource, PrismLocale locale, PrismProgramType programType,
+            StateDurationDefinition definition) {
+        return customizationService.getConfigurationStrict(StateDurationConfiguration.class, resource, locale, programType, "stateDurationConfiguration",
+                definition);
+    }
+
+    public void updateStateDurationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
+            StateDurationDefinition stateDurationDefinition, Integer duration) throws DeduplicationException, CustomizationException {
+        createOrUpdateStateDurationConfiguration(resource, locale, programType, stateDurationDefinition, duration);
+        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_STATE_DURATION"));
+    }
+
+    public void createOrUpdateStateDurationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
+            StateDurationDefinition stateDurationDefinition, Integer duration) throws DeduplicationException, CustomizationException {
+        customizationService.validateConfiguration(resource, stateDurationDefinition, locale, programType);
+        StateDurationConfiguration transientStateDuration = new StateDurationConfiguration().withResource(resource).withLocale(locale)
+                .withProgramType(programType).withStateDurationDefinition(stateDurationDefinition).withDuration(duration)
+                .withSystemDefault(customizationService.isSystemDefault(stateDurationDefinition, locale, programType));
         entityService.createOrUpdate(transientStateDuration);
     }
 
-    public StateDuration getStateDuration(Resource resource) {
-        return stateDAO.getStateDuration(resource, resource.getState());
+    public void restoreDefaultStateDurationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, StateDurationDefinition definition)
+            throws DeduplicationException {
+        customizationService
+                .restoreDefaultConfiguration(StateDurationConfiguration.class, resource, locale, programType, "stateDurationDefinition", definition);
+        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_STATE_DURATION_DEFAULT"));
     }
 
-    public StateDuration getStateDuration(Resource resource, State state) {
-        return stateDAO.getStateDuration(resource, state);
+    public void restoreGlobalStateDurationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, StateDurationDefinition definition)
+            throws DeduplicationException {
+        customizationService.restoreGlobalConfiguration(StateDurationConfiguration.class, resource, locale, programType, "stateDurationDefinition", definition);
+        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_STATE_DURATION_GLOBAL"));
     }
 
     public void deleteStateActions() {
@@ -168,13 +200,14 @@ public class StateService {
             commentService.recordStateTransition(comment, state, state);
         } else {
             State transitionState = stateTransition.getTransitionState();
+            transitionState = transitionState == null ? state : transitionState;
             state = state == null ? transitionState : state;
 
-            resourceService.recordStateTransition(resource, state, transitionState);
             commentService.recordStateTransition(comment, state, transitionState);
+            resourceService.recordStateTransition(resource, state, transitionState, comment);
 
-            resourceService.processResource(resource, comment);
             commentService.processComment(comment);
+            resourceService.processResource(resource, comment);
 
             roleService.executeRoleTransitions(stateTransition, comment);
 
@@ -186,10 +219,11 @@ public class StateService {
             }
 
             notificationService.sendWorkflowNotifications(resource, comment);
+            executeStateTerminations(resource, stateTransition);
         }
 
-        resourceService.postProcessResource(resource, comment);
         commentService.postProcessComment(comment);
+        resourceService.postProcessResource(resource, comment);
 
         return stateTransition;
     }
@@ -200,10 +234,19 @@ public class StateService {
 
         if (potentialStateTransitions.size() > 1) {
             PrismStateTransitionEvaluation transitionEvaluation = potentialStateTransitions.get(0).getStateTransitionEvaluation().getId();
-            return (StateTransition) ReflectionUtils.invokeMethod(this, transitionEvaluation.getMethodName(), operative, comment);
+            return (StateTransition) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(transitionEvaluation), operative, comment);
         }
 
         return potentialStateTransitions.isEmpty() ? null : potentialStateTransitions.get(0);
+    }
+
+    public StateTransition getApplicationCompletedOutcome(Resource resource, Comment comment) {
+        PrismState transitionStateId = PrismState.APPLICATION_VALIDATION;
+        LocalDate closingDate = resource.getApplication().getClosingDate();
+        if (closingDate == null || closingDate.isBefore(new LocalDate())) {
+            transitionStateId = PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION;
+        }
+        return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
 
     public StateTransition getApplicationStateCompletedOutcome(Resource resource, Comment comment) {
@@ -285,14 +328,6 @@ public class StateService {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
 
-    public StateTransition getApplicationEligibilityAssessedOutcome(Resource resource, Comment comment) {
-        PrismState transitionStateId = PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION;
-        if (comment.isApplicationCreatorEligibilityUnsure()) {
-            transitionStateId = PrismState.APPLICATION_VALIDATION_PENDING_FEEDBACK;
-        }
-        return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
-    }
-
     public StateTransition getApplicationExportedOutcome(Resource resource, Comment comment) {
         State currentState = resource.getState();
         PrismState transitionStateId = currentState.getId();
@@ -325,6 +360,52 @@ public class StateService {
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
 
+    public StateTransition getApplicationVerifiedOutcome(Resource resource, Comment comment) {
+        resourceService.deleteSecondaryResourceState(resource, getById(PrismState.APPLICATION_VERIFICATION));
+        PrismStateGroup stateGroupId = resource.getState().getStateGroup().getId();
+        if (stateGroupId == PrismStateGroup.APPLICATION_VERIFICATION) {
+            return stateDAO.getStateTransition(resource.getState(), comment.getAction(), PrismState.APPLICATION_VERIFICATION_PENDING_COMPLETION);
+        } else {
+            return stateDAO.getStateTransition(resource.getState(), comment.getAction(), null);
+        }
+    }
+
+    public StateTransition getApplicationVerificationCompletedOutcome(Resource resource, Comment comment) {
+        resourceService.deleteSecondaryResourceState(resource, getById(PrismState.APPLICATION_VERIFICATION));
+        PrismStateGroup stateGroupId = resource.getState().getStateGroup().getId();
+        if (stateGroupId == PrismStateGroup.APPLICATION_VERIFICATION) {
+            return getApplicationStateCompletedOutcome(resource, comment);
+        } else {
+            return stateDAO.getStateTransition(resource.getState(), comment.getAction(), null);
+        }
+    }
+
+    public StateTransition getApplicationReferencedOutcome(Resource resource, Comment comment) throws DeduplicationException {
+        PrismStateGroup stateGroupId = resource.getState().getStateGroup().getId();
+        if (stateGroupId == PrismStateGroup.APPLICATION_REFERENCE) {
+            if (roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_REFEREE)).size() == 1) {
+                resourceService.deleteSecondaryResourceState(resource, getById(PrismState.APPLICATION_REFERENCE));
+                stateDAO.getStateTransition(resource.getState(), comment.getAction(), PrismState.APPLICATION_REFERENCE_PENDING_COMPLETION);
+            }
+        } else {
+            if (roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_REFEREE)).size() == 1) {
+                resourceService.deleteSecondaryResourceState(resource, getById(PrismState.APPLICATION_REFERENCE));
+                stateDAO.getStateTransition(resource.getState(), comment.getAction(), null);
+            }
+        }
+        return null;
+    }
+
+    public StateTransition getApplicationReferenceCompletedOutcome(Resource resource, Comment comment) {
+        resourceService.deleteSecondaryResourceState(resource, getById(PrismState.APPLICATION_REFERENCE));
+        PrismStateGroup stateGroupId = resource.getState().getStateGroup().getId();
+        if (stateGroupId == PrismStateGroup.APPLICATION_REFERENCE) {
+            return getApplicationStateCompletedOutcome(resource, comment);
+        } else {
+            return stateDAO.getStateTransition(resource.getState(), comment.getAction(), null);
+        }
+    }
+
     public StateTransition getProgramCreatedOutcome(Resource resource, Comment comment) {
         PrismState transitionStateId = PrismState.PROGRAM_APPROVAL;
         if (roleService.hasUserRole(resource, comment.getUser(), PrismRole.INSTITUTION_ADMINISTRATOR)) {
@@ -354,7 +435,7 @@ public class StateService {
     public StateTransition getProgramApprovedOutcome(Resource resource, Comment comment) {
         return getUserDefinedNextState(resource, comment);
     }
-    
+
     public StateTransition getProjectApprovedOutcome(Resource resource, Comment comment) {
         return getUserDefinedNextState(resource, comment);
     }
@@ -377,29 +458,10 @@ public class StateService {
         return getViewEditNextState(resource, comment);
     }
 
-    private StateTransition getViewEditNextState(Resource resource, Comment comment) {
-        if (comment.getTransitionState() == null) {
-            PrismState transitionStateId = resource.getState().getId();
-            return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
-        }
-        return getUserDefinedNextState(resource, comment);
-    }
-
-    private StateTransition getUserDefinedNextState(Resource resource, Comment comment) {
-        if (comment.getTransitionState() == null) {
-            return null;
-        }
-        PrismState transitionStateId = comment.getTransitionState().getId();
-        return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
-    }
-
     public <T extends Resource> void executeDeferredStateTransition(Class<T> resourceClass, Integer resourceId, PrismAction actionId)
             throws DeduplicationException {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Action action = actionService.getById(actionId);
-
-        LOGGER.info("Calling " + action.getId() + " on " + resource.getCode());
-
         Comment comment = new Comment().withResource(resource).withUser(systemService.getSystem().getUser()).withAction(action).withDeclinedResponse(false)
                 .withCreatedTimestamp(new DateTime());
         executeStateTransition(resource, action, comment);
@@ -424,6 +486,28 @@ public class StateService {
 
     public List<PrismState> getAvailableNextStates(Resource resource, Set<ActionRepresentation> permittedActions) {
         return stateDAO.getAvailableNextStates(resource, permittedActions);
+    }
+
+    private StateTransition getViewEditNextState(Resource resource, Comment comment) {
+        if (comment.getTransitionState() == null) {
+            PrismState transitionStateId = resource.getState().getId();
+            return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
+        }
+        return getUserDefinedNextState(resource, comment);
+    }
+
+    private StateTransition getUserDefinedNextState(Resource resource, Comment comment) {
+        if (comment.getTransitionState() == null) {
+            return null;
+        }
+        PrismState transitionStateId = comment.getTransitionState().getId();
+        return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
+    }
+
+    private void executeStateTerminations(Resource resource, StateTransition stateTransition) {
+        for (State terminateState : stateTransition.getStateTerminations()) {
+            resourceService.deleteSecondaryResourceState(resource, terminateState);
+        }
     }
 
 }

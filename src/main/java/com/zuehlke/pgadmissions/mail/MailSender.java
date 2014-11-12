@@ -31,15 +31,15 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplateProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
-import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
+import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
 import com.zuehlke.pgadmissions.services.helpers.NotificationTemplatePropertyLoader;
@@ -86,10 +86,10 @@ public class MailSender {
     public void sendEmail(final MailMessageDTO message) {
         final NotificationConfiguration configuration = message.getConfiguration();
         try {
-            Map<String, Object> model = createNotificationModel(message.getConfiguration().getNotificationTemplate(), message.getModelDTO());
-            final String subject = processHeader(configuration.getNotificationTemplate().getId(), configuration.getSubject(), model);
+            Map<String, Object> model = createNotificationModel(message.getConfiguration().getNotificationDefinition(), message.getModelDTO());
+            final String subject = processHeader(configuration.getNotificationDefinition().getId(), configuration.getSubject(), model);
 
-            final String htmlContent = processContent(configuration.getNotificationTemplate().getId(), configuration.getContent(), model, subject);
+            final String htmlContent = processContent(configuration.getNotificationDefinition().getId(), configuration.getContent(), model, subject);
             final String plainTextContent = mailToPlainTextConverter.getPlainText(htmlContent) + "\n\n" + propertyLoader.load(SYSTEM_EMAIL_LINK_MESSAGE);
 
             if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat")) {
@@ -113,7 +113,7 @@ public class MailSender {
                 LOGGER.info("Sending Development Email: " + message.toString());
             }
         } catch (Exception e) {
-            if (configuration.getNotificationTemplate().getNotificationType() == PrismNotificationType.INDIVIDUAL) {
+            if (configuration.getNotificationDefinition().getNotificationType() == PrismNotificationType.INDIVIDUAL) {
                 throw new Error(e);
             } else {
                 LOGGER.error(String.format("Failed to send email %s", message.toString()), e);
@@ -127,12 +127,12 @@ public class MailSender {
         return this;
     }
 
-    public String processHeader(PrismNotificationTemplate templateId, String templateValue, Map<String, Object> model) throws IOException, TemplateException {
+    public String processHeader(PrismNotificationDefinition templateId, String templateValue, Map<String, Object> model) throws IOException, TemplateException {
         Template template = new Template(templateId.name(), new StringReader(templateValue), freemarkerConfig.getConfiguration());
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
     }
 
-    public String processContent(PrismNotificationTemplate templateId, String templateValue, Map<String, Object> model, String subject) throws IOException,
+    public String processContent(PrismNotificationDefinition templateId, String templateValue, Map<String, Object> model, String subject) throws IOException,
             TemplateException {
         Template template = new Template(templateId.name(), new StringReader(templateValue), freemarkerConfig.getConfiguration());
         String content = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
@@ -145,15 +145,15 @@ public class MailSender {
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
     }
 
-    public Map<String, Object> createNotificationModelForValidation(NotificationTemplate notificationTemplate) {
-        return createNotificationModel(notificationTemplate, new NotificationTemplateModelDTO(), true);
+    public Map<String, Object> createNotificationModelForValidation(NotificationDefinition notificationTemplate) {
+        return createNotificationModel(notificationTemplate, new NotificationDefinitionModelDTO(), true);
     }
     
-    public Map<String, Object> createNotificationModel(NotificationTemplate notificationTemplate, NotificationTemplateModelDTO modelDTO) {
+    public Map<String, Object> createNotificationModel(NotificationDefinition notificationTemplate, NotificationDefinitionModelDTO modelDTO) {
         return createNotificationModel(notificationTemplate, modelDTO, false);
     }
 
-    private Map<String, Object> createNotificationModel(NotificationTemplate notificationTemplate, NotificationTemplateModelDTO modelDTO, boolean validationMode) {
+    private Map<String, Object> createNotificationModel(NotificationDefinition notificationTemplate, NotificationDefinitionModelDTO modelDTO, boolean validationMode) {
         Map<String, Object> model = Maps.newHashMap();
         List<PrismNotificationTemplatePropertyCategory> categories = notificationTemplate.getId().getPropertyCategories();
         NotificationTemplatePropertyLoader loader = applicationContext.getBean(NotificationTemplatePropertyLoader.class).localize(modelDTO, propertyLoader);

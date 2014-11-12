@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
+import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
@@ -97,6 +98,27 @@ public class ResourceDAO {
                 .list();
     }
 
+    public void deleteResourceState(Resource resource, State state) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete ResourceState " //
+                    + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+                        + "and state = :state") //
+                .setParameter("resource", resource) //
+                .setParameter("state", state) //
+                .executeUpdate();
+    }
+    
+    public void deleteSecondaryResourceState(Resource resource, State state) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete ResourceState " //
+                    + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+                        + "and state = :state "
+                        + "and primaryState is false") //
+                .setParameter("resource", resource) //
+                .setParameter("state", state) //
+                .executeUpdate();
+    }
+    
     public List<ResourceConsoleListRowDTO> getResourceConsoleList(User user, PrismScope scopeId, List<PrismScope> parentScopeIds,
             Set<Integer> assignedResources, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords) {
         if (assignedResources.isEmpty()) {
@@ -202,6 +224,16 @@ public class ResourceDAO {
                         .add(Restrictions.ilike("user.email", searchTerm, MatchMode.ANYWHERE))) //
                 .add(Restrictions.eq("role.id", roleId)) //
                 .list();
+    }
+    
+    public void deletePrimaryState(Resource resource) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete ResourceState " //
+                    + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+                        + "and primaryState = :primaryState") //
+                .setParameter("resource", resource) //
+                .setParameter("primaryState", true) //
+                .executeUpdate();
     }
 
     private void addResourceListCustomColumns(PrismScope scopeId, ProjectionList projectionList) {

@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_COMMENT_UPDATED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_VIEW_EDIT;
-
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -15,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.imported.ProgramType;
@@ -96,8 +94,8 @@ public class ProgramService {
 
     public Program create(User user, ProgramDTO programDTO) {
         Institution institution = entityService.getById(Institution.class, programDTO.getInstitutionId());
-        Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withInstitution(institution)
-                .withImported(false).withRequireProjectDefinition(false);
+        Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withInstitution(institution).withImported(false)
+                .withRequireProjectDefinition(false);
         copyProgramDetails(program, programDTO);
         copyStudyOptions(program, programDTO);
         return program;
@@ -121,13 +119,6 @@ public class ProgramService {
 
     public LocalDate getProgramClosureDate(Program program) {
         return programDAO.getProgramClosureDate(program);
-    }
-
-    public LocalDate resolveDueDateBaseline(Program program, Comment comment) {
-        if (comment.isProgramApproveOrDeactivateComment()) {
-            return program.getEndDate();
-        }
-        return null;
     }
 
     public List<Program> getProgramsWithElapsedStudyOptions(LocalDate baseline) {
@@ -158,10 +149,10 @@ public class ProgramService {
         PrismAction actionId = commentDTO.getAction();
         Action action = actionService.getById(actionId);
 
-        boolean viewEditAction = actionId == PROGRAM_VIEW_EDIT;
+        boolean viewEditAction = actionId == PrismAction.PROGRAM_VIEW_EDIT;
 
-        String commentContent = viewEditAction ? applicationContext.getBean(PropertyLoader.class).localize(program, user).load(PROGRAM_COMMENT_UPDATED)
-                : commentDTO.getContent();
+        String commentContent = viewEditAction ? applicationContext.getBean(PropertyLoader.class).localize(program, user)
+                .load(PrismDisplayProperty.PROGRAM_COMMENT_UPDATED) : commentDTO.getContent();
 
         ProgramDTO programDTO = (ProgramDTO) commentDTO.fetchResouceDTO();
         LocalDate dueDate = programDTO.getEndDate();

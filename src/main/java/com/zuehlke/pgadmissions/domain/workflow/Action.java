@@ -53,6 +53,9 @@ public class Action extends WorkflowDefinition {
     @Column(name = "emphasized_action", nullable = false)
     private Boolean emphasizedAction;
 
+    @Column(name = "customizable_action", nullable = false)
+    private Boolean customizableAction;
+
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
@@ -136,6 +139,14 @@ public class Action extends WorkflowDefinition {
         this.emphasizedAction = emphasizedAction;
     }
 
+    public final Boolean getCustomizableAction() {
+        return customizableAction;
+    }
+
+    public final void setCustomizableAction(Boolean customizableAction) {
+        this.customizableAction = customizableAction;
+    }
+
     public final Action getFallbackAction() {
         return fallbackAction;
     }
@@ -211,6 +222,11 @@ public class Action extends WorkflowDefinition {
 
     public Action withEmphasizedAction(Boolean emphasizedAction) {
         this.emphasizedAction = emphasizedAction;
+        return this;
+    }
+
+    public Action withCustomizableAction(Boolean customizableAction) {
+        this.customizableAction = customizableAction;
         return this;
     }
 

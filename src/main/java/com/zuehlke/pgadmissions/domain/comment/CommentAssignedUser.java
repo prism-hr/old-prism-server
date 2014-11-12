@@ -81,11 +81,6 @@ public class CommentAssignedUser implements IUniqueEntity {
         this.roleTransitionType = roleTransitionType;
     }
 
-    public CommentAssignedUser withComment(Comment comment) {
-        this.comment = comment;
-        return this;
-    }
-
     public CommentAssignedUser withUser(User user) {
         this.user = user;
         return this;

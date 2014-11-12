@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.display.DisplayValue;
+import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResource;
@@ -48,9 +48,9 @@ public class CustomizationDAO {
                 .uniqueResult();
     }
 
-    public List<DisplayValue> getDisplayProperties(Resource resource, PrismLocale locale, PrismProgramType programType, PrismDisplayCategory category,
-            PrismScope propertyScope) {
-        return (List<DisplayValue>) sessionFactory.getCurrentSession().createCriteria(DisplayValue.class) //
+    public List<DisplayPropertyConfiguration> getDisplayProperties(Resource resource, PrismLocale locale, PrismProgramType programType,
+            PrismDisplayCategory category, PrismScope propertyScope) {
+        return (List<DisplayPropertyConfiguration>) sessionFactory.getCurrentSession().createCriteria(DisplayPropertyConfiguration.class) //
                 .createAlias("displayProperty", "displayProperty", JoinType.INNER_JOIN) //
                 .add(getFilterCondition(resource, locale, programType, propertyScope)) //
                 .add(Restrictions.eq("displayProperty.displayCategory", category)) //
@@ -74,49 +74,49 @@ public class CustomizationDAO {
     public <T extends WorkflowResource> void restoreGlobalConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale,
             PrismProgramType programType, String keyIndex, WorkflowDefinition keyValue) {
         PrismScope resourceScope = resource.getResourceScope();
-        
+
         String programTypeConstraint = programType == null ? "and programType is null " : "and programType = :programType ";
         String localeConstraint = locale == null ? "and locale is null " : " and locale = :locale ";
-        
+
         Query query;
         if (resourceScope == SYSTEM) {
             query = sessionFactory.getCurrentSession().createQuery( //
                     "delete " + entityClass.getSimpleName() + " " //
-                        + "where " + keyIndex + " = :keyValue " //
-                        + "and (institution in (" //
+                            + "where " + keyIndex + " = :keyValue " //
+                            + "and (institution in (" //
                             + "from Institution " //
-                            + "where system = :system ) " //
-                                + programTypeConstraint //
-                                + localeConstraint + " "//
-                        + "or program in (" //
+                            + "where system = :system) " //
+                            + programTypeConstraint //
+                            + localeConstraint + " "//
+                            + "or program in (" //
                             + "from Program " //
                             + "where system = :system) " //
-                                + programTypeConstraint //
-                                + localeConstraint + ")");
+                            + programTypeConstraint //
+                            + localeConstraint + ")");
         } else if (resourceScope == INSTITUTION) {
             query = sessionFactory.getCurrentSession().createQuery( //
                     "delete " + entityClass.getSimpleName() + " " //
-                        + "where " + keyIndex + " = :keyValue " //
-                        + "and (program in (" //
+                            + "where " + keyIndex + " = :keyValue " //
+                            + "and (program in (" //
                             + "from Program " //
                             + "where institution = :institution) " //
-                                + programTypeConstraint //
-                                + localeConstraint + ")");
+                            + programTypeConstraint //
+                            + localeConstraint + ")");
         } else {
             throw new Error();
         }
-        
+
         query.setParameter(resourceScope.getLowerCaseName(), resource) //
                 .setParameter("keyValue", keyValue);
-        
+
         if (programType != null) {
             query.setParameter("programType", programType);
         }
-        
+
         if (locale != null) {
             query.setParameter("locale", locale);
         }
-        
+
         query.executeUpdate();
     }
 

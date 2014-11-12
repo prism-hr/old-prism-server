@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
@@ -21,17 +21,17 @@ public class PrismInstitutionApproval extends PrismWorkflowState {
             .withAction(PrismAction.INSTITUTION_COMPLETE_APPROVAL_STAGE) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(false) //
-            .withNotificationTemplate(PrismNotificationTemplate.SYSTEM_INSTITUTION_TASK_REQUEST) //
+            .withNotificationTemplate(PrismNotificationDefinition.SYSTEM_INSTITUTION_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.SYSTEM_ADMINISTRATOR))) //
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.SYSTEM_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.SYSTEM_INSTITUTION_UPDATE_NOTIFICATION),
+                        .withTemplate(PrismNotificationDefinition.SYSTEM_INSTITUTION_UPDATE_NOTIFICATION),
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationTemplate.INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION))) //
+                        .withTemplate(PrismNotificationDefinition.INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( //
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.INSTITUTION_APPROVAL_PENDING_CORRECTION) // 

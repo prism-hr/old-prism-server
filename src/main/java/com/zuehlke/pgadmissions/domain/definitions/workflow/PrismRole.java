@@ -1,42 +1,47 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+
 import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
 
-
 public enum PrismRole {
 
-    APPLICATION_ADMINISTRATOR(PrismScope.APPLICATION, false), //
-    APPLICATION_CREATOR(PrismScope.APPLICATION, true), //
-    APPLICATION_INTERVIEWEE(PrismScope.APPLICATION, false), //
-    APPLICATION_INTERVIEWER(PrismScope.APPLICATION, false), //
-    APPLICATION_POTENTIAL_INTERVIEWEE(PrismScope.APPLICATION, false), //
-    APPLICATION_POTENTIAL_INTERVIEWER(PrismScope.APPLICATION, false), //
-    APPLICATION_PRIMARY_SUPERVISOR(PrismScope.APPLICATION, false), //
-    APPLICATION_REFEREE(PrismScope.APPLICATION, false), //
-    APPLICATION_REVIEWER(PrismScope.APPLICATION, false), //
-    APPLICATION_SECONDARY_SUPERVISOR(PrismScope.APPLICATION, false), //
-    APPLICATION_SUGGESTED_SUPERVISOR(PrismScope.APPLICATION, false), //
-    APPLICATION_VIEWER_RECRUITER(PrismScope.APPLICATION, false), //
-    APPLICATION_VIEWER_REFEREE(PrismScope.APPLICATION, false), //
-    INSTITUTION_ADMINISTRATOR(PrismScope.INSTITUTION, true), //
-    INSTITUTION_ADMITTER(PrismScope.INSTITUTION, false), //
-    PROGRAM_ADMINISTRATOR(PrismScope.PROGRAM, true), //
-    PROGRAM_APPROVER(PrismScope.PROGRAM, false), //
-    PROGRAM_VIEWER(PrismScope.PROGRAM, false), //
-    PROJECT_ADMINISTRATOR(PrismScope.PROJECT, false), //
-    PROJECT_PRIMARY_SUPERVISOR(PrismScope.PROJECT, true), //
-    PROJECT_SECONDARY_SUPERVISOR(PrismScope.PROJECT, false), //
-    SYSTEM_ADMINISTRATOR(PrismScope.SYSTEM, true);
-    
-    private Boolean scopeOwner;
-    
+    APPLICATION_ADMINISTRATOR(false, APPLICATION), //
+    APPLICATION_CREATOR(true, APPLICATION), //
+    APPLICATION_INTERVIEWEE(false, APPLICATION), //
+    APPLICATION_INTERVIEWER(false, APPLICATION), //
+    APPLICATION_POTENTIAL_INTERVIEWEE(false, APPLICATION), //
+    APPLICATION_POTENTIAL_INTERVIEWER(false, APPLICATION), //
+    APPLICATION_PRIMARY_SUPERVISOR(false, APPLICATION), //
+    APPLICATION_REFEREE(false, APPLICATION), //
+    APPLICATION_REVIEWER(false, APPLICATION), //
+    APPLICATION_SECONDARY_SUPERVISOR(false, APPLICATION), //
+    APPLICATION_SUGGESTED_SUPERVISOR(false, APPLICATION), //
+    APPLICATION_VIEWER_RECRUITER(false, APPLICATION), //
+    APPLICATION_VIEWER_REFEREE(false, APPLICATION), //
+    INSTITUTION_ADMINISTRATOR(true, INSTITUTION), //
+    INSTITUTION_ADMITTER(false, INSTITUTION), //
+    PROGRAM_ADMINISTRATOR(true, PROGRAM), //
+    PROGRAM_APPROVER(false, PROGRAM), //
+    PROGRAM_VIEWER(false, PROGRAM), //
+    PROJECT_ADMINISTRATOR(false, PROJECT), //
+    PROJECT_PRIMARY_SUPERVISOR(true, PROJECT), //
+    PROJECT_SECONDARY_SUPERVISOR(false, PROJECT), //
+    SYSTEM_ADMINISTRATOR(true, SYSTEM);
+
+    private boolean scopeOwner;
+
     private PrismScope scope;
-    
+
     private static final HashMultimap<PrismRole, PrismRole> excludedRoles = HashMultimap.create();
-    
+
     private static HashMultimap<PrismScope, PrismRole> scopeOwners = HashMultimap.create();
 
     static {
@@ -50,17 +55,17 @@ public enum PrismRole {
         excludedRoles.put(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR, PrismRole.APPLICATION_CREATOR);
         excludedRoles.put(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROJECT_SECONDARY_SUPERVISOR);
         excludedRoles.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.PROJECT_PRIMARY_SUPERVISOR);
-        
+
         for (PrismRole role : PrismRole.values()) {
             if (role.isScopeOwner()) {
                 scopeOwners.put(role.getScope(), role);
             }
         }
     }
-    
-    private PrismRole(PrismScope scope, boolean scopeOwner) {
-        this.scope = scope;
+
+    private PrismRole(boolean scopeOwner, PrismScope scope) {
         this.scopeOwner = scopeOwner;
+        this.scope = scope;
     }
 
     public boolean isScopeOwner() {
@@ -70,11 +75,11 @@ public enum PrismRole {
     public PrismScope getScope() {
         return scope;
     }
-    
+
     public static Set<PrismRole> getExcludedRoles(PrismRole role) {
         return excludedRoles.get(role) == null ? new HashSet<PrismRole>() : excludedRoles.get(role);
     }
-    
+
     public static Set<PrismRole> getScopeOwners(PrismScope scope) {
         return scopeOwners.get(scope);
     }

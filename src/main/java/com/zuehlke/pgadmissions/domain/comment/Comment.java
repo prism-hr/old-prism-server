@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain.comment;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TimeZone;
@@ -22,8 +21,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -50,6 +49,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Entity
 @Table(name = "COMMENT")
@@ -161,21 +161,13 @@ public class Comment {
     private String rejectionReasonSystem;
 
     @Column(name = "application_rating")
-    private Integer applicationRating;
+    private BigDecimal applicationRating;
 
     @Column(name = "application_use_custom_referee_questions")
     private Boolean useCustomRefereeQuestions;
 
     @Column(name = "application_use_custom_recruiter_questions")
     private Boolean useCustomRecruiterQuestions;
-
-    @Lob
-    @Column(name = "comment_custom_question")
-    private String customQuestion;
-
-    @Lob
-    @Column(name = "custom_question_response")
-    private String customQuestionResponse;
 
     @Column(name = "application_export_reference")
     private String exportReference;
@@ -200,11 +192,19 @@ public class Comment {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
+    private Set<CommentTransitionState> transitionStates = Sets.newHashSet();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "comment_id", nullable = false)
     private Set<CommentAppointmentTimeslot> appointmentTimeslots = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
     private Set<CommentAppointmentPreference> appointmentPreferences = Sets.newHashSet();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "comment_id", nullable = false)
+    private Set<CommentPropertyAnswer> propertyAnswers = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id")
@@ -450,11 +450,11 @@ public class Comment {
         this.rejectionReasonSystem = rejectionReasonSystem;
     }
 
-    public Integer getApplicationRating() {
+    public final BigDecimal getApplicationRating() {
         return applicationRating;
     }
 
-    public void setApplicationRating(Integer applicationRating) {
+    public final void setApplicationRating(BigDecimal applicationRating) {
         this.applicationRating = applicationRating;
     }
 
@@ -472,22 +472,6 @@ public class Comment {
 
     public void setUseCustomRecruiterQuestions(Boolean useCustomRecruiterQuestions) {
         this.useCustomRecruiterQuestions = useCustomRecruiterQuestions;
-    }
-
-    public final String getCustomQuestion() {
-        return customQuestion;
-    }
-
-    public final void setCustomQuestion(String customQuestion) {
-        this.customQuestion = customQuestion;
-    }
-
-    public String getCustomQuestionResponse() {
-        return customQuestionResponse;
-    }
-
-    public void setCustomQuestionResponse(String customQuestionResponse) {
-        this.customQuestionResponse = customQuestionResponse;
     }
 
     public String getExportReference() {
@@ -526,16 +510,8 @@ public class Comment {
         return assignedUsers;
     }
 
-    public DateTime getCreatedTimestamp() {
-        return createdTimestamp;
-    }
-
-    public void setCreatedTimestamp(DateTime createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
-    }
-
-    public Set<Document> getDocuments() {
-        return documents;
+    public final Set<CommentTransitionState> getTransitionStates() {
+        return transitionStates;
     }
 
     public Set<CommentAppointmentTimeslot> getAppointmentTimeslots() {
@@ -546,30 +522,28 @@ public class Comment {
         return appointmentPreferences;
     }
 
+    public Set<Document> getDocuments() {
+        return documents;
+    }
+
+    public final Set<CommentPropertyAnswer> getPropertyAnswers() {
+        return propertyAnswers;
+    }
+
+    public DateTime getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    public void setCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+    }
+
     public Resource getResource() {
-        if (system != null) {
-            return system;
-        } else if (institution != null) {
-            return institution;
-        } else if (program != null) {
-            return program;
-        } else if (project != null) {
-            return project;
-        }
-        return application;
+        return ObjectUtils.firstNonNull(system, institution, program, project, application);
     }
 
     public void setResource(Resource resource) {
-        this.system = null;
-        this.institution = null;
-        this.program = null;
-        this.project = null;
-        this.application = null;
-        try {
-            PropertyUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
+        ReflectionUtils.setProperty(this, resource.getResourceScope().getLowerCaseName(), resource);
     }
 
     public Comment withId(Integer id) {
@@ -662,7 +636,7 @@ public class Comment {
         return this;
     }
 
-    public Comment withApplicationRating(final Integer applicationRating) {
+    public Comment withApplicationRating(BigDecimal applicationRating) {
         this.applicationRating = applicationRating;
         return this;
     }
@@ -679,11 +653,6 @@ public class Comment {
 
     public Comment withCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
-        return this;
-    }
-
-    public Comment addAssignedUser(User user, Role role, PrismRoleTransitionType roleTransitionType) {
-        assignedUsers.add(new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(roleTransitionType).withComment(this));
         return this;
     }
 
@@ -737,6 +706,16 @@ public class Comment {
         return this;
     }
 
+    public Comment addAssignedUser(User user, Role role, PrismRoleTransitionType roleTransitionType) {
+        assignedUsers.add(new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(roleTransitionType));
+        return this;
+    }
+
+    public Comment addTransitionState(State transitionState, Boolean primaryState) {
+        transitionStates.add(new CommentTransitionState().withTransitionState(transitionState).withPrimaryState(primaryState));
+        return this;
+    }
+
     public boolean isApplicationCreatorEligibilityUnsure() {
         return getApplicationEligible() == YesNoUnsureResponse.UNSURE;
     }
@@ -754,7 +733,7 @@ public class Comment {
         return action.getScope().getId() == PrismScope.PROJECT
                 && Arrays.asList(PrismState.PROJECT_APPROVED, PrismState.PROJECT_DEACTIVATED).contains(transitionState.getId());
     }
-    
+
     public boolean isProjectCreateApplicationComment() {
         return action.getId() == PrismAction.PROGRAM_CREATE_APPLICATION;
     }
@@ -776,7 +755,12 @@ public class Comment {
     }
 
     public boolean isApplicationSubmittedComment() {
-        return transitionState.getId() == PrismState.APPLICATION_VALIDATION;
+        return state.getStateGroup().getId() == PrismStateGroup.APPLICATION_UNSUBMITTED
+                && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_VALIDATION;
+    }
+
+    public boolean isApplicationSubmittedToClosingDateComment() {
+        return state.getStateGroup().getId() == PrismStateGroup.APPLICATION_UNSUBMITTED && transitionState.getId() == PrismState.APPLICATION_VALIDATION;
     }
 
     public boolean isApplicationApprovedComment() {
@@ -795,7 +779,7 @@ public class Comment {
         return action.getId() == PrismAction.APPLICATION_PURGE;
     }
 
-    public boolean isRatingComment() {
+    public boolean isApplicationRatingComment() {
         return action.getRatingAction() && !declinedResponse;
     }
 
@@ -809,14 +793,31 @@ public class Comment {
     }
 
     public boolean isApplicationAutomatedRejectionComment() {
-        return action.getId() == PrismAction.APPLICATION_TERMINATE && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED
-                && rejectionReason == null;
+        return Arrays.asList(PrismAction.APPLICATION_ESCALATE, PrismAction.APPLICATION_TERMINATE).contains(action.getId())
+                && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED && rejectionReason == null;
+    }
+
+    public boolean isApplicationInterviewPendingInterviewComment() {
+        return transitionState.getId() == PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
     }
 
     public boolean isInterviewScheduledExpeditedComment() {
         return action.getId() == PrismAction.APPLICATION_ASSIGN_INTERVIEWERS
                 && Arrays.asList(PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW, PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK).contains(
                         transitionState.getId());
+    }
+
+    public boolean isStateGroupTransitionComment() {
+        return !state.getStateGroup().getId().equals(transitionState.getStateGroup().getId());
+    }
+
+    public boolean isUserCreationComment() {
+        for (CommentAssignedUser assignee : assignedUsers) {
+            if (assignee.getRoleTransitionType() == CREATE && assignee.getUser().getPassword() == null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isTransitionComment() {
@@ -827,7 +828,7 @@ public class Comment {
                 return true;
             } else if (stateGroup == null) {
                 return false;
-            } else if (stateGroup.isRepeatable()) {
+            } else if (stateGroup.getRepeatable()) {
                 return true;
             } else if (transitionStateGroup == null) {
                 return false;
@@ -840,17 +841,8 @@ public class Comment {
         return false;
     }
 
-    public boolean isUserCreationComment() {
-        for (CommentAssignedUser assignee : assignedUsers) {
-            if (assignee.getRoleTransitionType() == CREATE && assignee.getUser().getPassword() == null) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public String getApplicationRatingDisplay() {
-        return applicationRating == null ? null : new BigDecimal(applicationRating).setScale(2, RoundingMode.HALF_UP).toPlainString();
+        return applicationRating == null ? null : applicationRating.toPlainString();
     }
 
     public String getUserDisplay() {

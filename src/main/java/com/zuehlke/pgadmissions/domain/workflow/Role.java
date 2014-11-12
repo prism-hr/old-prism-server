@@ -35,7 +35,7 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
     @Enumerated(EnumType.STRING)
     private PrismRole id;
 
-    @Column(name = "is_scope_creator", nullable = false)
+    @Column(name = "scope_creator", nullable = false)
     private Boolean scopeCreator;
 
     @ManyToOne
@@ -61,11 +61,11 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
         this.id = id;
     }
 
-    public boolean isScopeCreator() {
+    public Boolean getScopeCreator() {
         return scopeCreator;
     }
 
-    public void setScopeOwner(boolean scopeCreator) {
+    public void setScopeCreator(Boolean scopeCreator) {
         this.scopeCreator = scopeCreator;
     }
 
@@ -96,7 +96,7 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
         return this;
     }
 
-    public Role withScopeCreator(boolean scopeCreator) {
+    public Role withScopeCreator(Boolean scopeCreator) {
         this.scopeCreator = scopeCreator;
         return this;
     }

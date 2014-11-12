@@ -16,6 +16,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,8 +31,9 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionT
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -46,8 +48,8 @@ import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
 @Service
-@Scope("prototype")
 @Transactional
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WorkflowConfigurationHelper {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -143,12 +145,12 @@ public class WorkflowConfigurationHelper {
             if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
                 assertNotSame(stateAction.getState(), stateAction.getStateTransitions().iterator().next());
                 assertFalse(stateAction.getRaisesUrgentFlag());
-                assertNull(stateAction.getNotificationTemplate());
+                assertNull(stateAction.getNotificationDefinition());
                 assertTrue(stateAction.getStateActionAssignments().isEmpty());
             }
 
             if (stateAction.getRaisesUrgentFlag()) {
-                assertNotNull(stateAction.getNotificationTemplate());
+                assertNotNull(stateAction.getNotificationDefinition());
             }
 
             if (stateAction.isDefaultAction()) {
@@ -176,7 +178,8 @@ public class WorkflowConfigurationHelper {
         assertTrue(systemDefaultActions.size() <= 1);
         assertTrue(actionsEmpty || viewEditActions.size() >= 1);
 
-        if (stateService.getStateDuration(systemService.getSystem(), state) != null) {
+        System system = systemService.getSystem();
+        if (stateService.getStateDurationConfiguration(system, system.getUser(), state.getStateDurationDefinition()) != null) {
             assertFalse(escalationActions.isEmpty());
         }
     }
@@ -253,7 +256,7 @@ public class WorkflowConfigurationHelper {
                 actualRolesCreated.add(transitionRoleId);
 
                 PrismActionCategory actionCategory = action.getActionCategory();
-                if (transitionRole.isScopeCreator() && roleTransitionType == PrismRoleTransitionType.CREATE
+                if (transitionRole.getScopeCreator() && roleTransitionType == PrismRoleTransitionType.CREATE
                         && (actionCategory == PrismActionCategory.CREATE_RESOURCE || actionCategory == PrismActionCategory.INITIALISE_RESOURCE)) {
                     assertTrue(roleTransition.getMinimumPermitted() == 1);
                     assertTrue(roleTransition.getMaximumPermitted() == 1);
@@ -297,7 +300,7 @@ public class WorkflowConfigurationHelper {
     private void verifyStateActionNotifications(State state) {
         for (StateAction stateAction : state.getStateActions()) {
             for (StateActionNotification notification : stateAction.getStateActionNotifications()) {
-                NotificationTemplate template = notification.getNotificationTemplate();
+                NotificationDefinition template = notification.getNotificationDefinition();
                 com.zuehlke.pgadmissions.domain.workflow.Scope templateScope = template.getScope();
                 logger.info("Verifying notification: " + template.getId().toString());
 

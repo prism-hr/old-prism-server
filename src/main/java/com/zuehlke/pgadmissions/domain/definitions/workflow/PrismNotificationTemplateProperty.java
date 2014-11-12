@@ -22,8 +22,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 
 import java.util.List;
 
-import org.apache.commons.lang.WordUtils;
-
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
 
@@ -107,15 +105,6 @@ public enum PrismNotificationTemplateProperty {
 
     public static List<PrismNotificationTemplateProperty> getProperties(PrismNotificationTemplatePropertyCategory category) {
         return categoryProperties.get(category);
-    }
-
-    public String getMethodName() {
-        String[] nameParts = name().split("_");
-        String methodName = "get";
-        for (String namePart : nameParts) {
-            methodName = methodName + WordUtils.capitalizeFully(namePart);
-        }
-        return methodName;
     }
 
 }

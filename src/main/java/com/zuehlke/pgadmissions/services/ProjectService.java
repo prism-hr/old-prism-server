@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROJECT_COMMENT_UPDATED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_VIEW_EDIT;
-
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -78,10 +76,10 @@ public class ProjectService {
         PrismAction actionId = commentDTO.getAction();
         Action action = actionService.getById(actionId);
 
-        boolean viewEditAction = actionId == PROJECT_VIEW_EDIT;
+        boolean viewEditAction = actionId == PrismAction.PROJECT_VIEW_EDIT;
 
-        String commentContent = viewEditAction ? applicationContext.getBean(PropertyLoader.class).localize(project, user).load(PROJECT_COMMENT_UPDATED)
-                : commentDTO.getContent();
+        String commentContent = viewEditAction ? applicationContext.getBean(PropertyLoader.class).localize(project, user)
+                .load(PrismDisplayProperty.PROJECT_COMMENT_UPDATED) : commentDTO.getContent();
 
         ProjectDTO projectDTO = (ProjectDTO) commentDTO.fetchResouceDTO();
         LocalDate dueDate = projectDTO.getEndDate();
@@ -118,13 +116,6 @@ public class ProjectService {
         advert.setStudyDurationMinimum(projectDTO.getStudyDurationMinimum());
         advert.setStudyDurationMaximum(projectDTO.getStudyDurationMaximum());
         advert.setAddress(advertService.createAddressCopy(project.getInstitution().getAddress()));
-    }
-
-    public LocalDate resolveDueDateBaseline(Project project, Comment comment) {
-        if (comment.isProjectApproveOrDeactivateComment()) {
-            return project.getEndDate();
-        }
-        return null;
     }
 
     public void postProcessProject(Project project, Comment comment) {

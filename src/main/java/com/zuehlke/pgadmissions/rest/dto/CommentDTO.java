@@ -1,15 +1,17 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.util.List;
+import java.math.BigDecimal;
 import java.util.Set;
 import java.util.TimeZone;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -27,17 +29,11 @@ public class CommentDTO {
 
     private PrismState transitionState;
 
-    @Valid
-    private Set<CommentAssignedUserDTO> assignedUsers;
-
-    @Valid
-    private List<FileDTO> documents;
-
     private YesNoUnsureResponse eligible;
 
     private Boolean interested;
 
-    private Integer applicationRating;
+    private BigDecimal applicationRating;
 
     private LocalDateTime interviewDateTime;
 
@@ -53,10 +49,6 @@ public class CommentDTO {
 
     @Size(max = 100)
     private String interviewLocation;
-
-    private Set<LocalDateTime> appointmentTimeslots;
-
-    private Set<Integer> appointmentPreferences;
 
     private Boolean recruiterAcceptAppointment;
 
@@ -79,6 +71,27 @@ public class CommentDTO {
     private ProgramDTO program;
 
     private ProjectDTO project;
+
+    @Valid
+    @NotEmpty
+    private Set<CommentAssignedUserDTO> assignedUsers;
+
+    @Valid
+    @NotEmpty
+    private Set<CommentTransitionStateDTO> transitionStates;
+
+    @NotEmpty
+    private Set<LocalDateTime> appointmentTimeslots;
+
+    @NotEmpty
+    private Set<Integer> appointmentPreferences;
+
+    @Valid
+    private CommentPropertyAnswerDTO propertyAnswer;
+
+    @Valid
+    @NotEmpty
+    private Set<FileDTO> documents = Sets.newLinkedHashSet();
 
     public Integer getUser() {
         return user;
@@ -120,22 +133,6 @@ public class CommentDTO {
         this.transitionState = transitionState;
     }
 
-    public Set<CommentAssignedUserDTO> getAssignedUsers() {
-        return assignedUsers;
-    }
-
-    public void setAssignedUsers(Set<CommentAssignedUserDTO> assignedUsers) {
-        this.assignedUsers = assignedUsers;
-    }
-
-    public List<FileDTO> getDocuments() {
-        return documents;
-    }
-
-    public void setDocuments(List<FileDTO> documents) {
-        this.documents = documents;
-    }
-
     public YesNoUnsureResponse getEligible() {
         return eligible;
     }
@@ -152,11 +149,11 @@ public class CommentDTO {
         this.interested = interested;
     }
 
-    public Integer getApplicationRating() {
+    public BigDecimal getApplicationRating() {
         return applicationRating;
     }
 
-    public void setApplicationRating(Integer applicationRating) {
+    public void setApplicationRating(BigDecimal applicationRating) {
         this.applicationRating = applicationRating;
     }
 
@@ -206,22 +203,6 @@ public class CommentDTO {
 
     public void setInterviewLocation(String interviewLocation) {
         this.interviewLocation = interviewLocation;
-    }
-
-    public Set<LocalDateTime> getAppointmentTimeslots() {
-        return appointmentTimeslots;
-    }
-
-    public void setAppointmentTimeslots(Set<LocalDateTime> appointmentTimeslots) {
-        this.appointmentTimeslots = appointmentTimeslots;
-    }
-
-    public Set<Integer> getAppointmentPreferences() {
-        return appointmentPreferences;
-    }
-
-    public void setAppointmentPreferences(Set<Integer> appointmentPreferences) {
-        this.appointmentPreferences = appointmentPreferences;
     }
 
     public Boolean getRecruiterAcceptAppointment() {
@@ -302,6 +283,54 @@ public class CommentDTO {
 
     public void setProject(ProjectDTO project) {
         this.project = project;
+    }
+
+    public Set<CommentAssignedUserDTO> getAssignedUsers() {
+        return assignedUsers;
+    }
+
+    public void setAssignedUsers(Set<CommentAssignedUserDTO> assignedUsers) {
+        this.assignedUsers = assignedUsers;
+    }
+
+    public final Set<CommentTransitionStateDTO> getTransitionStates() {
+        return transitionStates;
+    }
+
+    public final void setTransitionStates(Set<CommentTransitionStateDTO> transitionStates) {
+        this.transitionStates = transitionStates;
+    }
+
+    public Set<LocalDateTime> getAppointmentTimeslots() {
+        return appointmentTimeslots;
+    }
+
+    public void setAppointmentTimeslots(Set<LocalDateTime> appointmentTimeslots) {
+        this.appointmentTimeslots = appointmentTimeslots;
+    }
+
+    public Set<Integer> getAppointmentPreferences() {
+        return appointmentPreferences;
+    }
+
+    public void setAppointmentPreferences(Set<Integer> appointmentPreferences) {
+        this.appointmentPreferences = appointmentPreferences;
+    }
+
+    public final CommentPropertyAnswerDTO getPropertyAnswer() {
+        return propertyAnswer;
+    }
+
+    public final void setPropertyAnswer(CommentPropertyAnswerDTO propertyAnswer) {
+        this.propertyAnswer = propertyAnswer;
+    }
+
+    public Set<FileDTO> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(Set<FileDTO> documents) {
+        this.documents = documents;
     }
 
     public Object fetchResouceDTO() {

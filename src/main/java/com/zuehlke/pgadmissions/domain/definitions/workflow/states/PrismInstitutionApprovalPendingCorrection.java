@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
@@ -19,8 +19,7 @@ public class PrismInstitutionApprovalPendingCorrection extends PrismWorkflowStat
             .withAction(PrismAction.INSTITUTION_CORRECT) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(true) //
-            //TODO: request and reminder
-            .withNotificationTemplate(PrismNotificationTemplate.SYSTEM_INSTITUTION_TASK_REQUEST) //
+            .withNotificationTemplate(PrismNotificationDefinition.INSTITUTION_CORRECT_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR))) //

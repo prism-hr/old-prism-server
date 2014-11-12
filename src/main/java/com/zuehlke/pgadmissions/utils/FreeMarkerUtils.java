@@ -10,7 +10,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import freemarker.template.Template;
 
 @Component
-public class FreeMarkerHelper {
+public class FreeMarkerUtils {
     
     @Autowired
     private FreeMarkerConfigurer freeMarkerConfigurer;

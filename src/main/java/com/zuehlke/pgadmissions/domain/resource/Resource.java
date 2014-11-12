@@ -1,5 +1,10 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
+import java.util.Set;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -10,10 +15,10 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserRole;
+import com.zuehlke.pgadmissions.domain.workflow.ResourceAction;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 public abstract class Resource implements IUniqueEntity {
 
@@ -89,8 +94,16 @@ public abstract class Resource implements IUniqueEntity {
 
     public abstract void setSequenceIdentifier(String sequenceIdentifier);
 
-    public abstract void addComment(Comment comment);
+    public abstract Set<Comment> getComments();
 
+    public abstract Set<ResourceAction> getResourceActions();
+
+    public abstract Set<UserRole> getUserRoles();
+    
+    public void addComment(Comment comment) {
+        getComments().add(comment);
+    }
+    
     public String getHelpdeskDisplay() {
         if (getResourceScope() == PrismScope.SYSTEM) {
             return getSystem().getHelpdesk();
@@ -102,17 +115,17 @@ public abstract class Resource implements IUniqueEntity {
     public Resource getParentResource() {
         PrismScope resourceScope = PrismScope.getResourceScope(this.getClass());
         switch (resourceScope) {
-            case SYSTEM:
-                return this;
-            case INSTITUTION:
-                return getSystem();
-            case PROGRAM:
-                return getInstitution();
-            case PROJECT:
-                return getProgram();
-            case APPLICATION:
-                Resource project = getProject();
-                return project == null ? getProgram() : project;
+        case SYSTEM:
+            return this;
+        case INSTITUTION:
+            return getSystem();
+        case PROGRAM:
+            return getInstitution();
+        case PROJECT:
+            return getProgram();
+        case APPLICATION:
+            Resource project = getProject();
+            return project == null ? getProgram() : project;
         }
         throw new Error();
     }

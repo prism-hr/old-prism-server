@@ -8,17 +8,17 @@ import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource
 
 public final class MailMessageDTO {
 
-    private NotificationTemplateModelDTO modelDTO;
+    private NotificationDefinitionModelDTO modelDTO;
 
     private NotificationConfiguration configuration;
 
     private List<AttachmentInputSource> attachments;
 
-    public NotificationTemplateModelDTO getModelDTO() {
+    public NotificationDefinitionModelDTO getModelDTO() {
         return modelDTO;
     }
 
-    public void setModelDTO(NotificationTemplateModelDTO modelDTO) {
+    public void setModelDTO(NotificationDefinitionModelDTO modelDTO) {
         this.modelDTO = modelDTO;
     }
 
@@ -44,7 +44,7 @@ public final class MailMessageDTO {
                 .add("to", modelDTO.getUser().getEmail())
                 .add("resourceScope", modelDTO.getResource().getResourceScope())
                 .add("resourceId", modelDTO.getResource().getId())
-                .add("template", configuration.getNotificationTemplate().getId())
+                .add("template", configuration.getNotificationDefinition().getId())
                 .toString();
     }
 

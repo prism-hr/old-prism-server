@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.domain.workflow;
+package com.zuehlke.pgadmissions.domain.display;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,14 +20,14 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceConfiguration;
 
 @Entity
-@Table(name = "ACTION_TRIGGER_STATE", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "action_id", "state_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "program_type", "action_id", "state_id" }),
-        @UniqueConstraint(columnNames = { "program_id", "action_id", "state_id" }) })
+@Table(name = "DISPLAY_PROJECT_CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "display_property_definition_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "program_type", "display_property_definition_id" }),
+        @UniqueConstraint(columnNames = { "program_id", "display_property_definition_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class ActionTriggerState extends WorkflowResourceConfiguration {
+public class DisplayPropertyConfiguration extends WorkflowResourceConfiguration {
 
     @Id
     @GeneratedValue
@@ -44,22 +44,21 @@ public class ActionTriggerState extends WorkflowResourceConfiguration {
     @ManyToOne
     @JoinColumn(name = "program_id")
     private Program program;
-
+    
     @Column(name = "locale")
     @Enumerated(EnumType.STRING)
     private PrismLocale locale;
-
+    
     @Column(name = "program_type")
     @Enumerated(EnumType.STRING)
     private PrismProgramType programType;
-
+    
     @ManyToOne
-    @JoinColumn(name = "action_id", nullable = false)
-    private Action action;
+    @JoinColumn(name = "display_property_definition_id", nullable = false)
+    private DisplayPropertyDefinition displayPropertyDefinition;
 
-    @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false)
-    private State state;
+    @Column(name = "value", nullable = false)
+    private String value;
 
     @Column(name = "system_default", nullable = false)
     private Boolean systemDefault;
@@ -72,105 +71,115 @@ public class ActionTriggerState extends WorkflowResourceConfiguration {
         this.id = id;
     }
 
+    @Override
     public final System getSystem() {
         return system;
     }
 
+    @Override
     public final void setSystem(System system) {
         this.system = system;
     }
 
+    @Override
     public final Institution getInstitution() {
         return institution;
     }
 
+    @Override
     public final void setInstitution(Institution institution) {
         this.institution = institution;
     }
 
+    @Override
     public final Program getProgram() {
         return program;
     }
 
+    @Override
     public final void setProgram(Program program) {
         this.program = program;
     }
 
+    @Override
     public final PrismLocale getLocale() {
         return locale;
     }
 
+    @Override
     public final void setLocale(PrismLocale locale) {
         this.locale = locale;
     }
-
+    
+    @Override
     public final PrismProgramType getProgramType() {
         return programType;
     }
 
+    @Override
     public final void setProgramType(PrismProgramType programType) {
         this.programType = programType;
     }
 
-    public final Action getAction() {
-        return action;
+    public final DisplayPropertyDefinition getDisplayPropertyDefinition() {
+        return displayPropertyDefinition;
     }
 
-    public final void setAction(Action action) {
-        this.action = action;
+    public final void setDisplayPropertyDefinition(DisplayPropertyDefinition displayPropertyDefinition) {
+        this.displayPropertyDefinition = displayPropertyDefinition;
     }
 
-    public final State getState() {
-        return state;
+    public final String getValue() {
+        return value;
     }
 
-    public final void setState(State state) {
-        this.state = state;
+    public final void setValue(String value) {
+        this.value = value;
     }
 
     @Override
-    public Boolean getSystemDefault() {
+    public final Boolean getSystemDefault() {
         return systemDefault;
     }
 
     @Override
-    public void setSystemDefault(Boolean systemDefault) {
+    public final void setSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
     }
-
-    public ActionTriggerState withResource(Resource resource) {
+    
+    public DisplayPropertyConfiguration withResource(Resource resource) {
         setResource(resource);
         return this;
     }
-
-    public ActionTriggerState withLocale(PrismLocale locale) {
+    
+    public DisplayPropertyConfiguration withLocale(PrismLocale locale) {
         this.locale = locale;
         return this;
     }
-
-    public ActionTriggerState withProgramType(PrismProgramType programType) {
+    
+    public DisplayPropertyConfiguration withProgramType(PrismProgramType programType) {
         this.programType = programType;
         return this;
     }
-
-    public ActionTriggerState withAction(Action action) {
-        this.action = action;
+    
+    public DisplayPropertyConfiguration withDisplayPropertyDefinition(DisplayPropertyDefinition displayPropertyDefinition) {
+        this.displayPropertyDefinition = displayPropertyDefinition;
         return this;
     }
-
-    public ActionTriggerState withState(State state) {
-        this.state = state;
+    
+    public DisplayPropertyConfiguration withValue(String value) {
+        this.value = value;
         return this;
     }
-
-    public ActionTriggerState withSystemDefault(Boolean systemDefault) {
+    
+    public DisplayPropertyConfiguration withSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
         return this;
     }
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("action", action).addProperty("state", state);
+        return super.getResourceSignature().addProperty("displayProperty", displayPropertyDefinition);
     }
 
 }

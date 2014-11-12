@@ -81,7 +81,15 @@ public enum PrismDisplayProperty {
     SYSTEM_APPLY(SYSTEM_GLOBAL, "Apply Now", SYSTEM), //
     SYSTEM_COMMENT_UPDATED_USER_ROLE(SYSTEM_COMMENT, "Updated system user roles", SYSTEM), //
     SYSTEM_COMMENT_UPDATED_NOTIFICATION(SYSTEM_COMMENT, "Updated system notification configuration", SYSTEM), //
-    SYSTEM_COMMENT_RESTORED_NOTIFICATION_GLOBAL(SYSTEM_COMMENT, "Restored system global notification template", SYSTEM), //
+    SYSTEM_COMMENT_RESTORED_NOTIFICATION_GLOBAL(SYSTEM_COMMENT, "Restored system global notification configuration", SYSTEM), //
+    SYSTEM_COMMENT_UPDATED_STATE_DURATION(SYSTEM_COMMENT, "Updated system state duration configuration", SYSTEM), //
+    SYSTEM_COMMENT_RESTORED_STATE_DURATION_GLOBAL(SYSTEM_COMMENT, "Restored system global state duration configuration", SYSTEM), //
+    SYSTEM_COMMENT_UPDATED_ACTION_PROPERTY(SYSTEM_COMMENT, "Updated system action property configuration", SYSTEM), //
+    SYSTEM_COMMENT_RESTORED_ACTION_PROPERTY_GLOBAL(SYSTEM_COMMENT, "Restored system global action property configuration", SYSTEM), //
+    SYSTEM_COMMENT_UPDATED_WORKFLOW_PROPERTY(SYSTEM_COMMENT, "Updated system workflow property configuration", SYSTEM), //
+    SYSTEM_COMMENT_RESTORED_WORKFLOW_PROPERTY_GLOBAL(SYSTEM_COMMENT, "Restored system global workflow property configuration", SYSTEM), //
+    SYSTEM_COMMENT_UPDATED_DISPLAY_PROPERTY(SYSTEM_COMMENT, "Updated system display property configuration", SYSTEM), //
+    SYSTEM_COMMENT_RESTORED_DISPLAY_PROPERTY_GLOBAL(SYSTEM_COMMENT, "Restored system global display property configuration", SYSTEM), //
     SYSTEM_COMMENT_INITIALIZED_SYSTEM(SYSTEM_COMMENT, "System initialised and ready to use", SYSTEM), //
     SYSTEM_COMMENT_INITIALIZED_INSTITUTION(SYSTEM_COMMENT, "Institution initialised and ready to use", SYSTEM), //
     INSTITUTION_HEADER(INSTITUTION_GLOBAL, "Institution", INSTITUTION), //
@@ -95,8 +103,20 @@ public enum PrismDisplayProperty {
     INSTITUTION_COMMENT_UPDATED(INSTITUTION_COMMENT, "Updated institution", INSTITUTION), //
     INSTITUTION_COMMENT_UPDATED_USER_ROLE(INSTITUTION_COMMENT, "Updated institution user roles", INSTITUTION), //
     INSTITUTION_COMMENT_UPDATED_NOTIFICATION(INSTITUTION_COMMENT, "Updated institution notification configuration", INSTITUTION), //
-    INSTITUTION_COMMENT_RESTORED_NOTIFICATION_DEFAULT(INSTITUTION_COMMENT, "Restored system default notification template", INSTITUTION), //
-    INSTITUTION_COMMENT_RESTORED_NOTIFICATION_GLOBAL(INSTITUTION_COMMENT, "Restored institution global notification template", INSTITUTION), //
+    INSTITUTION_COMMENT_RESTORED_NOTIFICATION_CONFIGURATION_DEFAULT(INSTITUTION_COMMENT, "Restored system default notification configuration", INSTITUTION), //
+    INSTITUTION_COMMENT_RESTORED_NOTIFICATION_GLOBAL(INSTITUTION_COMMENT, "Restored institution global notification configuration", INSTITUTION), //
+    INSTITUTION_COMMENT_UPDATED_STATE_DURATION(INSTITUTION_COMMENT, "Updated institution notification configuration", INSTITUTION), //
+    INSTITUTION_COMMENT_RESTORED_STATE_DURATION_DEFAULT(INSTITUTION_COMMENT, "Restored system default state duration configuration", INSTITUTION), //
+    INSTITUTION_COMMENT_RESTORED_STATE_DURATION_GLOBAL(INSTITUTION_COMMENT, "Restored institution global state duration configuration", INSTITUTION), //
+    INSTITUTION_COMMENT_UPDATED_ACTION_PROPERTY(INSTITUTION_COMMENT, "Updated institution action property configuration", INSTITUTION), //
+    INSTITUTION_COMMENT_RESTORED_ACTION_PROPERTY_DEFAULT(INSTITUTION_COMMENT, "Restored system default action property configuration", INSTITUTION), //
+    INSTITUTION_COMMENT_RESTORED_ACTION_PROPERTY_GLOBAL(INSTITUTION_COMMENT, "Restored institution global action property configuration", INSTITUTION), //
+    INSTITUTION_COMMENT_UPDATED_WORKFLOW_PROPERTY(INSTITUTION_COMMENT, "Updated institution workflow property configuration", INSTITUTION), //
+    INSTITUTION_COMMENT_RESTORED_WORKFLOW_PROPERTY_DEFAULT(INSTITUTION_COMMENT, "Restored system default workflow property configuration", INSTITUTION), //
+    INSTITUTION_COMMENT_RESTORED_WORKFLOW_PROPERTY_GLOBAL(INSTITUTION_COMMENT, "Restored institution global workflow property configuration", INSTITUTION), //
+    INSTITUTION_COMMENT_UPDATED_DISPLAY_PROPERTY(INSTITUTION_COMMENT, "Updated institution display property configuration", INSTITUTION), //
+    INSTITUTION_COMMENT_RESTORED_DISPLAY_PROPERTY_DEFAULT(INSTITUTION_COMMENT, "Restored system default display property configuration", INSTITUTION), //
+    INSTITUTION_COMMENT_RESTORED_DISPLAY_PROPERTY_GLOBAL(INSTITUTION_COMMENT, "Restored institution global display property configuration", INSTITUTION), //
     PROGRAM_HEADER(PROGRAM_GLOBAL, "Program", PROGRAM), //
     PROGRAM_STUDY_OPTION(PROGRAM_GLOBAL, "Study Option", PROGRAM), //
     PROGRAM_STUDY_OPTION_FULL_TIME(PROGRAM_GLOBAL, "Full Time", PROGRAM), //
@@ -126,7 +146,15 @@ public enum PrismDisplayProperty {
     PROGRAM_COMMENT_UPDATED(PROGRAM_COMMENT, "Updated program", PROGRAM), //
     PROGRAM_COMMENT_UPDATED_USER_ROLE(PROGRAM_COMMENT, "Updated program user roles", PROGRAM), //
     PROGRAM_COMMENT_UPDATED_NOTIFICATION(PROGRAM_COMMENT, "Updated program notification configuration", PROGRAM), //
-    PROGRAM_COMMENT_RESTORED_NOTIFICATION_DEFAULT(PROGRAM_COMMENT, "Restored institution default notification template", PROGRAM), //
+    PROGRAM_COMMENT_RESTORED_NOTIFICATION_DEFAULT(PROGRAM_COMMENT, "Restored institution default notification configuration", PROGRAM), //
+    PROGRAM_COMMENT_UPDATED_STATE_DURATION(PROGRAM_COMMENT, "Updated program state duration configuration", PROGRAM), //
+    PROGRAM_COMMENT_RESTORED_STATE_DURATION_DEFAULT(PROGRAM_COMMENT, "Restored institution default state duration configuration", PROGRAM), //
+    PROGRAM_COMMENT_UPDATED_ACTION_PROPERTY(PROGRAM_COMMENT, "Updated program action property configuration", PROGRAM), //
+    PROGRAM_COMMENT_RESTORED_ACTION_PROPERTY_DEFAULT(PROGRAM_COMMENT, "Restored institution action property configuration", PROGRAM), //
+    PROGRAM_COMMENT_UPDATED_WORKFLOW_PROPERTY(PROGRAM_COMMENT, "Updated program workflow property configuration", PROGRAM), //
+    PROGRAM_COMMENT_RESTORED_WORKFLOW_PROPERTY_DEFAULT(PROGRAM_COMMENT, "Restored institution workflow property configuration", PROGRAM), //
+    PROGRAM_COMMENT_UPDATED_DISPLAY_PROPERTY(PROGRAM_COMMENT, "Updated program display property configuration", PROGRAM), //
+    PROGRAM_COMMENT_RESTORED_DISPLAY_PROPERTY_DEFAULT(PROGRAM_COMMENT, "Restored institution display property configuration", PROGRAM), //
     PROGRAM_COMMENT_UPDATED_ADVERT(PROGRAM_COMMENT, "Updated program advert", PROGRAM), //
     PROGRAM_COMMENT_UPDATED_FEE_AND_PAYMENT(PROGRAM_COMMENT, "Updated program fees and payments", PROGRAM), //
     PROGRAM_COMMENT_UPDATED_CATEGORY(PROGRAM_COMMENT, "Updated program categories", PROGRAM), //
@@ -233,7 +261,7 @@ public enum PrismDisplayProperty {
     APPLICATION_ADDITIONAL_INFORMATION_CONVICTION(APPLICATION_ADDITIONAL_INFORMATION, "Unspent Criminal Convictions", APPLICATION), //
     APPLICATION_COMMENT_DECLINED_REFEREE(APPLICATION_COMMENT, "Declined to provide a reference", APPLICATION), //
     APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION(APPLICATION_COMMENT, "Recommended offer conditions", APPLICATION), //
-    APPLICATION_COMMENT_REJECTION_SYSTEM(APPLICATION_COMMENT, "The opportunity that you applied for has been discontinued", APPLICATION), //
+    APPLICATION_COMMENT_REJECTION_SYSTEM(APPLICATION_COMMENT, "We are currently unable to offer you a position", APPLICATION), //
     APPLICATION_COMMENT_DIRECTIONS(APPLICATION_COMMENT, "Directions", APPLICATION), //
     APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED(APPLICATION_COMMENT, "No directions provided. Please contact the interviewer for further information",
             APPLICATION), //

@@ -19,10 +19,11 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 
 @Entity
-@Table(name = "state_duration", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "state_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "locale", "program_type", "state_id" }),
-        @UniqueConstraint(columnNames = { "program_id", "state_id" }) })
-public class StateDuration extends WorkflowResourceConfiguration {
+@Table(name = "STATE_DURATION_CONFIGURATION", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "state_duration_definition_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "locale", "program_type", "state_duration_definition_id" }),
+        @UniqueConstraint(columnNames = { "program_id", "state_duration_definition_id" }) })
+public class StateDurationConfiguration extends WorkflowResourceConfiguration {
 
     @Id
     @GeneratedValue
@@ -49,10 +50,10 @@ public class StateDuration extends WorkflowResourceConfiguration {
     private PrismProgramType programType;
 
     @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false)
-    private State state;
+    @JoinColumn(name = "state_duration_definition_id", nullable = false)
+    private StateDurationDefinition stateDurationDefinition;
 
-    @Column(name = "day_duration", nullable = false)
+    @Column(name = "day_duration")
     private Integer duration;
 
     @Column(name = "system_default", nullable = false)
@@ -116,12 +117,12 @@ public class StateDuration extends WorkflowResourceConfiguration {
         this.programType = programType;
     }
 
-    public State getState() {
-        return state;
+    public final StateDurationDefinition getStateDurationDefinition() {
+        return stateDurationDefinition;
     }
 
-    public void setState(State state) {
-        this.state = state;
+    public final void setStateDurationDefinition(StateDurationDefinition stateDurationDefinition) {
+        this.stateDurationDefinition = stateDurationDefinition;
     }
 
     public Integer getDuration() {
@@ -142,39 +143,39 @@ public class StateDuration extends WorkflowResourceConfiguration {
         this.systemDefault = systemDefault;
     }
 
-    public StateDuration withResource(Resource resource) {
+    public StateDurationConfiguration withResource(Resource resource) {
         setResource(resource);
         return this;
     }
 
-    public StateDuration withProgramType(PrismProgramType programType) {
+    public StateDurationConfiguration withProgramType(PrismProgramType programType) {
         this.programType = programType;
         return this;
     }
 
-    public StateDuration withLocale(PrismLocale locale) {
+    public StateDurationConfiguration withLocale(PrismLocale locale) {
         this.locale = locale;
         return this;
     }
 
-    public StateDuration withState(State state) {
-        this.state = state;
+    public StateDurationConfiguration withStateDurationDefinition(StateDurationDefinition stateDurationDefinition) {
+        this.stateDurationDefinition = stateDurationDefinition;
         return this;
     }
 
-    public StateDuration withDuration(Integer duration) {
+    public StateDurationConfiguration withDuration(Integer duration) {
         this.duration = duration;
         return this;
     }
 
-    public StateDuration withSystemDefault(Boolean systemDefault) {
+    public StateDurationConfiguration withSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
         return this;
     }
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("state", state);
+        return super.getResourceSignature().addProperty("stateDurationDefinition", stateDurationDefinition);
     }
 
 }

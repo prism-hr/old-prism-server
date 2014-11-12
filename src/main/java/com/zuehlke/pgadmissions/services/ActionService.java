@@ -3,35 +3,43 @@ package com.zuehlke.pgadmissions.services;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.primitives.Booleans;
-import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.ActionPropertyType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.ActionPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
+import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
+import com.zuehlke.pgadmissions.rest.dto.ActionPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.StateTransitionRepresentation;
@@ -43,6 +51,9 @@ public class ActionService {
 
     @Autowired
     private ActionDAO actionDAO;
+
+    @Autowired
+    private CustomizationService customizationService;
 
     @Autowired
     private EntityService entityService;
@@ -63,18 +74,60 @@ public class ActionService {
         return entityService.getById(Action.class, id);
     }
 
+    public List<ActionPropertyConfiguration> getActionPropertyConfigurationByVersion(Integer version) {
+        return actionDAO.getActionPropertyConfigurationByVersion(version);
+    }
+
+    public void createOrUpdateActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action,
+            List<ActionPropertyConfigurationDTO> actionPropertyConfigurationDTOs) throws CustomizationException, DeduplicationException {
+        if (action.getCustomizableAction()) {
+            customizationService.validateConfiguration(resource, action, locale, programType);
+            actionDAO.deleteActionConfiguration(resource, locale, programType, action);
+
+            Integer version = null;
+            for (ActionPropertyConfigurationDTO actionPropertyConfigurationDTO : actionPropertyConfigurationDTOs) {
+                String name = actionPropertyConfigurationDTO.getName();
+
+                List<String> options = actionPropertyConfigurationDTO.getOptions();
+                List<String> validationRules = actionPropertyConfigurationDTO.getValidationRules();
+
+                ActionPropertyConfiguration persistentActionPropertyConfiguration = entityService.createOrUpdate(new ActionPropertyConfiguration()
+                        .withResource(resource).withLocale(locale).withProgramType(programType).withAction(action).withVersion(version)
+                        .withActionPropertyType(ActionPropertyType.getByDisplayName(name)).withName(name)
+                        .withEditable(actionPropertyConfigurationDTO.getEditable()).withIndex(actionPropertyConfigurationDTO.getIndex())
+                        .withLabel(actionPropertyConfigurationDTO.getLabel()).withDescription(actionPropertyConfigurationDTO.getDescription())
+                        .withOptions(options == null ? null : Joiner.on("|").join(options)).withRequired(actionPropertyConfigurationDTO.getRequired())
+                        .withValidation(validationRules == null ? null : Joiner.on("|").join(validationRules))
+                        .withWeighting(actionPropertyConfigurationDTO.getWeighting()));
+
+                if (persistentActionPropertyConfiguration.getVersion() == null) {
+                    version = persistentActionPropertyConfiguration.getId();
+                    persistentActionPropertyConfiguration.setVersion(version);
+                }
+            }
+        }
+
+        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_ACTION_PROPERTY"));
+    }
+
+    public void restoreDefaultActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action)
+            throws DeduplicationException {
+        actionDAO.deleteActionConfiguration(resource, locale, programType, action);
+        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_ACTION_PROPERTY_DEFAULT"));
+    }
+
+    public void restoreGlobalActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action)
+            throws DeduplicationException {
+        actionDAO.restoreGlobalActionConfiguration(resource, locale, programType, action);
+        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_ACTION_PROPERTY_GLOBAL"));
+    }
+
     public void validateInvokeAction(Resource resource, Action action, Comment comment) {
         User owner = comment.getAuthor();
         User delegateOwner = comment.getUser();
 
         User currentUser = userService.getCurrentUser();
-        Boolean isDeclineComment = comment.getDeclinedResponse();
-
-        authenticateActionInvocation(currentUser, action, owner, delegateOwner, isDeclineComment);
-
-        if (BooleanUtils.toBoolean(isDeclineComment)) {
-            return;
-        }
+        authenticateActionInvocation(currentUser, action, owner, delegateOwner);
 
         Resource operative = resourceService.getOperativeResource(resource, action);
 
@@ -96,7 +149,7 @@ public class ActionService {
         User delegateOwner = comment.getDelegateUser();
 
         User currentUser = userService.getCurrentUser();
-        authenticateActionInvocation(currentUser, action, owner, delegateOwner, null);
+        authenticateActionInvocation(currentUser, action, owner, delegateOwner);
 
         Resource resource = comment.getResource();
 
@@ -147,9 +200,11 @@ public class ActionService {
         return representations;
     }
 
-    public Set<ActionRepresentation> getPermittedActions(Integer systemId, Integer institutionId, Integer programId, Integer projectId, Integer applicationId,
-            PrismState stateId, User user) {
-        return Sets.newLinkedHashSet(actionDAO.getPermittedActions(systemId, institutionId, programId, projectId, applicationId, stateId, user));
+    public Set<ActionRepresentation> getPermittedActions(PrismScope resourceScope, Integer systemId, Integer institutionId, Integer programId,
+            Integer projectId, Integer applicationId, User user) {
+        return Sets.newLinkedHashSet(actionDAO.getPermittedActions(resourceScope,
+                ObjectUtils.firstNonNull(applicationId, projectId, programId, institutionId, systemId), systemId, institutionId, programId, projectId,
+                applicationId, user));
     }
 
     public List<PrismActionEnhancement> getPermittedActionEnhancements(Resource resource, User user) {
@@ -161,10 +216,10 @@ public class ActionService {
 
     public ActionOutcomeDTO executeUserAction(Resource resource, Action action, Comment comment) throws DeduplicationException {
         validateInvokeAction(resource, action, comment);
-        return executeSystemAction(resource, action, comment);
+        return executeAction(resource, action, comment);
     }
 
-    public ActionOutcomeDTO executeSystemAction(Resource resource, Action action, Comment comment) throws DeduplicationException {
+    public ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment) throws DeduplicationException {
         User actionOwner = comment.getUser();
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE || action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE) {
@@ -249,6 +304,14 @@ public class ActionService {
         throw new WorkflowEngineException("Error executing " + action.getId().name() + " on " + resource.getCode() + ". Explanation was \"" + message + "\".");
     }
 
+    public List<Action> getCustomizableActions() {
+        return actionDAO.getCustomizableActions();
+    }
+
+    public List<Action> getConfigurableActions() {
+        return actionDAO.getConfigurableActions();
+    }
+
     public void validateUserAction(Resource resource, Action action, User invoker) {
         if (checkActionAvailable(resource, action, invoker)) {
             return;
@@ -267,10 +330,7 @@ public class ActionService {
         return checkActionAvailable(resource, delegateAction, invoker);
     }
 
-    private void authenticateActionInvocation(User currentUser, Action action, User owner, User delegateOwner, Boolean declinedResponse) {
-        if (action.getDeclinableAction() && BooleanUtils.toBoolean(declinedResponse)) {
-            return;
-        }
+    private void authenticateActionInvocation(User currentUser, Action action, User owner, User delegateOwner) {
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             return;
         } else if (owner != null && Objects.equal(owner.getId(), currentUser.getId())) {

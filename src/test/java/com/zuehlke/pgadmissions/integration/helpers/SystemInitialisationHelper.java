@@ -8,7 +8,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -17,16 +16,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Joiner;
-import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -35,15 +31,15 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
-import com.zuehlke.pgadmissions.domain.display.DisplayProperty;
-import com.zuehlke.pgadmissions.domain.display.DisplayValue;
+import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
+import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
@@ -51,7 +47,7 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
-import com.zuehlke.pgadmissions.domain.workflow.StateDuration;
+import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
@@ -64,6 +60,7 @@ import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.utils.FileUtils;
 
 @Service
 @Transactional
@@ -134,7 +131,7 @@ public class SystemInitialisationHelper {
     public void verifyRoleCreation() {
         for (Role role : roleService.getRoles()) {
             assertEquals(role.getId().getScope(), role.getScope().getId());
-            assertEquals(role.getId().isScopeOwner(), role.isScopeCreator());
+            assertEquals(role.getId().isScopeOwner(), role.getScopeCreator());
 
             Set<Role> excludedRoles = role.getExcludedRoles();
             Set<PrismRole> prismExcludedRoles = PrismRole.getExcludedRoles(role.getId());
@@ -180,7 +177,7 @@ public class SystemInitialisationHelper {
     public void verifyStateGroupCreation() {
         for (StateGroup stateGroup : stateService.getStateGroups()) {
             assertEquals(stateGroup.getId().getSequenceOrder(), stateGroup.getSequenceOrder());
-            assertEquals(stateGroup.getId().isRepeatable(), stateGroup.isRepeatable());
+            assertEquals(stateGroup.getId().isRepeatable(), stateGroup.getRepeatable());
             assertEquals(stateGroup.getId().getScope(), stateGroup.getScope().getId());
         }
     }
@@ -224,11 +221,11 @@ public class SystemInitialisationHelper {
 
     public void verifyDisplayPropertyCreation() {
         System system = systemService.getSystem();
-        for (DisplayValue value : localizationService.getAllLocalizedProperties()) {
+        for (DisplayPropertyConfiguration value : localizationService.getAllLocalizedProperties()) {
             assertEquals(value.getResource(), system);
             assertEquals(value.getLocale(), system.getLocale());
 
-            DisplayProperty displayProperty = value.getDisplayProperty();
+            DisplayPropertyDefinition displayProperty = value.getDisplayPropertyDefinition();
             PrismDisplayProperty prismDisplayProperty = (PrismDisplayProperty) displayProperty.getId();
 
             assertEquals(value.getProgramType(), displayProperty.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null);
@@ -240,37 +237,37 @@ public class SystemInitialisationHelper {
 
     public void verifyNotificationTemplateCreation() {
         System system = systemService.getSystem();
-        for (NotificationTemplate template : notificationService.getTemplates()) {
-            PrismNotificationTemplate prismNotificationTemplate = template.getId();
+        for (NotificationDefinition template : notificationService.getDefinitions()) {
+            PrismNotificationDefinition prismNotificationTemplate = template.getId();
 
             assertEquals(prismNotificationTemplate.getNotificationType(), template.getNotificationType());
             assertEquals(prismNotificationTemplate.getNotificationPurpose(), template.getNotificationPurpose());
             assertEquals(prismNotificationTemplate.getScope(), template.getScope().getId());
-            assertEquals(prismNotificationTemplate.getReminderTemplate(), (template.getReminderTemplate()) == null ? null : template.getReminderTemplate()
+            assertEquals(prismNotificationTemplate.getReminderTemplate(), (template.getReminderDefinition()) == null ? null : template.getReminderDefinition()
                     .getId());
 
             PrismProgramType programType = template.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null;
 
-            NotificationConfiguration configuration = notificationService.getConfigurationStrict(system, system.getLocale(), programType, template);
+            NotificationConfiguration configuration = notificationService.getNotificationConfiguration(system, system.getLocale(), programType, template);
             assertEquals(configuration.getLocale(), getSystemLocale());
             assertEquals(configuration.getProgramType(), programType);
-            assertEquals(configuration.getNotificationTemplate(), template);
-            assertEquals(prismNotificationTemplate.getReminderInterval(), configuration.getReminderInterval());
+            assertEquals(configuration.getNotificationDefinition(), template);
+            assertEquals(prismNotificationTemplate.getDefaultReminderDuration(), configuration.getReminderInterval());
             assertTrue(configuration.getSystemDefault());
 
-            assertEquals(getFileContent(defaultEmailSubjectDirectory + prismNotificationTemplate.getInitialTemplateSubject()), configuration.getSubject());
-            assertEquals(getFileContent(defaultEmailContentDirectory + prismNotificationTemplate.getInitialTemplateContent()), configuration.getContent());
+            assertEquals(FileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationTemplate.getInitialTemplateSubject()), configuration.getSubject());
+            assertEquals(FileUtils.getContent(defaultEmailContentDirectory + prismNotificationTemplate.getInitialTemplateContent()), configuration.getContent());
         }
     }
 
     public void verifyStateDurationCreation() {
         System system = systemService.getSystem();
         for (State state : stateService.getConfigurableStates()) {
-            StateDuration stateDuration = stateService.getStateDuration(system, state);
+            StateDurationConfiguration stateDuration = stateService.getStateDurationConfiguration(system, system.getUser(), state.getStateDurationDefinition());
 
             assertEquals(stateDuration.getLocale(), getSystemLocale());
             assertEquals(stateDuration.getProgramType(), state.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null);
-            assertEquals(state.getId().getDuration(), stateDuration.getDuration());
+            assertEquals(state.getId().getDefaultDuration(), stateDuration.getDuration());
             assertTrue(stateDuration.getSystemDefault());
         }
     }
@@ -291,13 +288,13 @@ public class SystemInitialisationHelper {
             assertEquals(prismStateAction.isDefaultAction(), stateAction.isDefaultAction());
             assertEquals(prismStateAction.getActionEnhancement(), stateAction.getActionEnhancement());
 
-            NotificationTemplate template = stateAction.getNotificationTemplate();
-            PrismNotificationTemplate prismTemplate = prismStateAction.getNotificationTemplate();
+            NotificationDefinition template = stateAction.getNotificationDefinition();
+            PrismNotificationDefinition prismTemplate = prismStateAction.getNotificationTemplate();
             if (prismTemplate == null) {
                 assertNull(template);
             } else {
                 assertNotNull(template);
-                assertEquals(prismTemplate, stateAction.getNotificationTemplate().getId());
+                assertEquals(prismTemplate, stateAction.getNotificationDefinition().getId());
             }
 
             verifyStateActionAssignmentCreation(stateAction, prismStateAction);
@@ -312,7 +309,7 @@ public class SystemInitialisationHelper {
     public void verifySystemUserRegistration() throws Exception {
         System system = systemService.getSystem();
         userHelper.registerAndActivateUser(PrismAction.SYSTEM_STARTUP, system.getId(), system.getUser(),
-                PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+                PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
     }
 
     private void verifyStateActionAssignmentCreation(StateAction stateAction, PrismStateAction prismStateAction) {
@@ -334,7 +331,7 @@ public class SystemInitialisationHelper {
 
         for (StateActionNotification stateActionNotification : stateActionNotifications) {
             PrismStateActionNotification prismStateActionNotification = new PrismStateActionNotification().withRole(stateActionNotification.getRole().getId())
-                    .withTemplate(stateActionNotification.getNotificationTemplate().getId());
+                    .withTemplate(stateActionNotification.getNotificationDefinition().getId());
             assertTrue(prismStateAction.getNotifications().contains(prismStateActionNotification));
         }
     }
@@ -353,7 +350,7 @@ public class SystemInitialisationHelper {
             for (RoleTransition roleTransition : stateTransition.getRoleTransitions()) {
                 prismStateTransition.getRoleTransitions().add(
                         new PrismRoleTransition().withRole(roleTransition.getRole().getId()).withTransitionType(roleTransition.getRoleTransitionType())
-                                .withTransitionRole(roleTransition.getTransitionRole().getId()).withRestrictToOwner(roleTransition.isRestrictToActionOwner())
+                                .withTransitionRole(roleTransition.getTransitionRole().getId()).withRestrictToOwner(roleTransition.getRestrictToActionOwner())
                                 .withMinimumPermitted(roleTransition.getMinimumPermitted()).withMaximumPermitted(roleTransition.getMaximumPermitted()));
             }
 
@@ -362,14 +359,6 @@ public class SystemInitialisationHelper {
             }
 
             assertTrue(prismStateAction.getTransitions().contains(prismStateTransition));
-        }
-    }
-
-    private String getFileContent(String filePath) {
-        try {
-            return Joiner.on(java.lang.System.lineSeparator()).join(Resources.readLines(Resources.getResource(filePath), Charsets.UTF_8));
-        } catch (IOException e) {
-            throw new Error(e);
         }
     }
 

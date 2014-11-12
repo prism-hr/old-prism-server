@@ -279,7 +279,15 @@ public class AdvertService {
     }
 
     public List<String> getLocalizedThemes(Application application) {
-        return advertDAO.getLocalizedThemes(application);
+        if (application.isProgramApplication()) {
+            return advertDAO.getLocalizedProgramThemes(application.getProgram());
+        } else {
+            List<String> themes = advertDAO.getLocalizedProjectThemes(application.getProject());
+            if (themes.isEmpty()) {
+                return advertDAO.getLocalizedProgramThemes(application.getProgram());
+            }
+            return themes;
+        }
     }
 
     private String getCurrencyAtLocale(Advert advert) {

@@ -179,7 +179,7 @@ public class ApplicationExportService {
 
         Comment comment = new Comment().withUser(exportInstitution.getUser()).withAction(exportAction).withDeclinedResponse(false)
                 .withExportReference(exportId).withExportException(exportException).withCreatedTimestamp(new DateTime());
-        actionService.executeSystemAction(application, exportAction, comment);
+        actionService.executeAction(application, exportAction, comment);
 
         UserInstitutionIdentity transientUserInstitutionIdentity = new UserInstitutionIdentity().withUser(application.getUser())
                 .withInstitution(exportInstitution).withIdentityType(PrismUserIdentity.STUDY_APPLICANT).withIdentitier(exportUserId);

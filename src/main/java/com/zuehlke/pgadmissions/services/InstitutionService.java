@@ -187,7 +187,7 @@ public class InstitutionService {
         Comment comment = new Comment().withAction(action)
                 .withContent(applicationContext.getBean(PropertyLoader.class).localize(institution, user).load(SYSTEM_COMMENT_INITIALIZED_INSTITUTION))
                 .withDeclinedResponse(false).withUser(user).withCreatedTimestamp(new DateTime());
-        actionService.executeSystemAction(institution, action, comment);
+        actionService.executeAction(institution, action, comment);
     }
 
     public List<Integer> getInstitutionsToActivate() {

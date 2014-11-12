@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +27,8 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.comment.CommentPropertyAnswer;
+import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
@@ -255,6 +259,10 @@ public class CommentService {
         Set<CommentAssignedUser> persistentAssignees = Sets.newHashSet(transientAssignees);
         transientAssignees.clear();
 
+        Set<CommentTransitionState> transientTransitionStates = comment.getTransitionStates();
+        Set<CommentTransitionState> persistentTransitionStates = Sets.newHashSet(transientTransitionStates);
+        transientTransitionStates.clear();
+
         Set<CommentAppointmentTimeslot> transientTimeslots = comment.getAppointmentTimeslots();
         Set<CommentAppointmentTimeslot> persistentTimeslots = Sets.newHashSet(transientTimeslots);
         transientTimeslots.clear();
@@ -263,11 +271,17 @@ public class CommentService {
         Set<CommentAppointmentPreference> persistentPreferences = Sets.newHashSet(transientPreferences);
         transientPreferences.clear();
 
+        Set<CommentPropertyAnswer> transientProperties = comment.getPropertyAnswers();
+        Set<CommentPropertyAnswer> persistentProperties = Sets.newHashSet(transientProperties);
+        transientProperties.clear();
+
         entityService.save(comment);
 
         addAssignedUsers(comment, persistentAssignees);
+        comment.getTransitionStates().addAll(persistentTransitionStates);
         comment.getAppointmentTimeslots().addAll(persistentTimeslots);
         comment.getAppointmentPreferences().addAll(persistentPreferences);
+        addPropertyAnswers(comment, persistentProperties);
     }
 
     public void update(Integer commentId, CommentDTO commentDTO) {
@@ -291,6 +305,7 @@ public class CommentService {
     public void recordStateTransition(Comment comment, State state, State transitionState) {
         comment.setState(state);
         comment.setTransitionState(transitionState);
+        comment.addTransitionState(transitionState, true);
     }
 
     public void delete(Application application, Comment exclusion) {
@@ -310,24 +325,12 @@ public class CommentService {
     }
 
     public void postProcessComment(Comment comment) {
+        if (comment.isApplicationRatingComment() && comment.getApplicationRating() == null) {
+            buildAggregatedRating(comment);
+        }
+
         if (comment.isInterviewScheduledExpeditedComment()) {
-            LocalDateTime interviewDateTime = comment.getInterviewDateTime();
-            comment.getAppointmentTimeslots().add(new CommentAppointmentTimeslot().withDateTime(interviewDateTime));
-
-            Resource resource = comment.getResource();
-            Action action = actionService.getById(PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY);
-
-            DateTime baseline = new DateTime();
-            for (CommentAssignedUser assignee : comment.getAssignedUsers()) {
-                PrismRole roleId = assignee.getRole().getId();
-                if (Arrays.asList(PrismRole.APPLICATION_INTERVIEWEE, PrismRole.APPLICATION_INTERVIEWER).contains(roleId)) {
-                    Comment preference = new Comment().withResource(resource).withAction(action).withUser(assignee.getUser()).withRole(roleId.name())
-                            .withDeclinedResponse(false).withState(resource.getState()).withTransitionState(resource.getState()).withCreatedTimestamp(baseline);
-                    preference.getAppointmentPreferences().add(new CommentAppointmentPreference().withDateTime(interviewDateTime));
-                    create(preference);
-                    resource.addComment(preference);
-                }
-            }
+            appendInterviewPreferenceComments(comment);
         }
     }
 
@@ -384,7 +387,7 @@ public class CommentService {
     private CommentRepresentation getCommentRepresentation(User user, Comment comment, Set<PrismActionRedactionType> redactions) {
         Action action = comment.getAction();
         Integer userId = user.getId();
-        
+
         User author = comment.getUser();
         User authorDelegate = comment.getDelegateUser();
 
@@ -398,9 +401,9 @@ public class CommentService {
             UserRepresentation authorDelegateRepresenation = authorDelegate == null ? null : new UserRepresentation()
                     .withFirstName(authorDelegate.getFirstName()).withLastName(authorDelegate.getLastName()).withEmail(authorDelegate.getEmail());
 
-            representation = new CommentRepresentation().withId(comment.getId()).withUser(authorRepresentation).withDelegateUser(authorDelegateRepresenation)
-                    .withAction(comment.getAction().getId()).withDeclinedResponse(comment.getDeclinedResponse())
-                    .withCreatedTimestamp(comment.getCreatedTimestamp());
+            representation = new CommentRepresentation().addId(comment.getId()).addUser(authorRepresentation).addDelegateUser(authorDelegateRepresenation)
+                    .addAction(comment.getAction().getId()).addDeclinedResponse(comment.getDeclinedResponse())
+                    .addCreatedTimestamp(comment.getCreatedTimestamp());
 
             if (redactions.contains(ALL_ASSESSMENT_CONTENT)) {
                 representation.addInterviewTimeZone(comment.getInterviewTimeZone()).addInterviewDateTime(comment.getInterviewDateTime())
@@ -413,10 +416,55 @@ public class CommentService {
                 }
             }
         }
-        
+
         representation.setEmphasizedAction(action.getEmphasizedAction());
         return representation;
     }
 
+    private void buildAggregatedRating(Comment comment) {
+        BigDecimal aggregatedRating = new BigDecimal(0.00);
+        for (CommentPropertyAnswer property : comment.getPropertyAnswers()) {
+            switch (property.getPropertyType()) {
+            case RATING_NORMAL:
+                aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(property, 5));
+                break;
+            case RATING_WEIGHTED:
+                aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(property, 8));
+                break;
+            default:
+                continue;
+            }
+        }
+        comment.setApplicationRating(aggregatedRating);
+    }
+
+    private BigDecimal getWeightedRatingComponent(CommentPropertyAnswer property, Integer denominator) {
+        return new BigDecimal(property.getPropertyValue()).divide(new BigDecimal(denominator)).multiply(new BigDecimal(5))
+                .multiply(property.getPropertyWeight()).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    private void appendInterviewPreferenceComments(Comment comment) {
+        LocalDateTime interviewDateTime = comment.getInterviewDateTime();
+        comment.getAppointmentTimeslots().add(new CommentAppointmentTimeslot().withDateTime(interviewDateTime));
+
+        Resource resource = comment.getResource();
+        Action action = actionService.getById(PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY);
+
+        DateTime baseline = new DateTime();
+        for (CommentAssignedUser assignee : comment.getAssignedUsers()) {
+            PrismRole roleId = assignee.getRole().getId();
+            if (Arrays.asList(PrismRole.APPLICATION_INTERVIEWEE, PrismRole.APPLICATION_INTERVIEWER).contains(roleId)) {
+                Comment preference = new Comment().withResource(resource).withAction(action).withUser(assignee.getUser()).withRole(roleId.name())
+                        .withDeclinedResponse(false).withState(resource.getState()).withTransitionState(resource.getState()).withCreatedTimestamp(baseline);
+                preference.getAppointmentPreferences().add(new CommentAppointmentPreference().withDateTime(interviewDateTime));
+                create(preference);
+                resource.addComment(preference);
+            }
+        }
+    }
+
+    private void addPropertyAnswers(Comment comment, Set<CommentPropertyAnswer> persistentProperties) {
+        comment.getPropertyAnswers().addAll(persistentProperties);
+    }
 
 }

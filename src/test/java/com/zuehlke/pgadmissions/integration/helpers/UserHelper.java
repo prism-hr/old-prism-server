@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplate;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -36,7 +36,7 @@ public class UserHelper {
     @Autowired
     private UserService userService;
 
-    public void registerAndActivateUser(PrismAction actionId, Integer resourceId, User user, PrismNotificationTemplate activationTemplate) throws Exception {
+    public void registerAndActivateUser(PrismAction actionId, Integer resourceId, User user, PrismNotificationDefinition activationTemplate) throws Exception {
         if (user.getUserAccount() != null && user.getUserAccount().getPassword() == null) {
             throw new IllegalStateException("User already registered");
         }
@@ -50,7 +50,7 @@ public class UserHelper {
                         .withActivationCode(user.getActivationCode()).withPassword("password").withResourceId(resourceId)
                         .withAction(new ActionDTO().withAction(actionId)), testContextReferrer);
 
-        mailSenderMock.assertEmailSent(user, PrismNotificationTemplate.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+        mailSenderMock.assertEmailSent(user, PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
 
         PrismScope resourceScope = actionId.getCreationScope() == null ? actionId.getScope() : actionId.getCreationScope();
         Resource resource = resourceService.getById(resourceScope.getResourceClass(), resourceId);

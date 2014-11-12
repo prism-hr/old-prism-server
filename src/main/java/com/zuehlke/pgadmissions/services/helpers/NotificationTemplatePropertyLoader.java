@@ -59,7 +59,7 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.dto.NotificationTemplateModelDTO;
+import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
@@ -74,7 +74,7 @@ public class NotificationTemplatePropertyLoader {
 
     private PropertyLoader propertyLoader;
 
-    private NotificationTemplateModelDTO templateModelDTO;
+    private NotificationDefinitionModelDTO templateModelDTO;
 
     @Value("${email.control.template}")
     private String emailControlTemplateLocation;
@@ -92,7 +92,7 @@ public class NotificationTemplatePropertyLoader {
     private ApplicationContext applicationContext;
 
     public String load(PrismNotificationTemplateProperty property) {
-        String value = (String) ReflectionUtils.invokeMethod(this, property.getMethodName());
+        String value = (String) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(property));
         return value == null ? "[" + propertyLoader.load(SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR) + ". " + propertyLoader.load(SYSTEM_HELPDESK_REPORT)
                 + ": " + templateModelDTO.getResource().getSystem().getHelpdesk() + "]" : value;
     }
@@ -150,7 +150,7 @@ public class NotificationTemplatePropertyLoader {
     }
 
     public String getActionComplete() throws IOException, TemplateException {
-        return buildRedirectionControl(SYSTEM_PROCEED, SYSTEM_DECLINE);
+        return buildRedirectionControl(SYSTEM_PROCEED, templateModelDTO.getTransitionAction().isDeclinableAction() ? SYSTEM_DECLINE : null);
     }
 
     public String getCommentContent() {
@@ -322,7 +322,7 @@ public class NotificationTemplatePropertyLoader {
         return buildRedirectionControl(SYSTEM_ACTIVATE_ACCOUNT);
     }
 
-    public NotificationTemplatePropertyLoader localize(NotificationTemplateModelDTO templateModelDTO, PropertyLoader propertyLoader) {
+    public NotificationTemplatePropertyLoader localize(NotificationDefinitionModelDTO templateModelDTO, PropertyLoader propertyLoader) {
         this.templateModelDTO = templateModelDTO;
         Comment comment = this.templateModelDTO.getComment();
         if (comment == null) {

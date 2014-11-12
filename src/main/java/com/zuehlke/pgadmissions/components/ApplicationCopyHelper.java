@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.components;
 
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,9 +20,13 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.Address;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 
 @Component
 public class ApplicationCopyHelper {
+
+    @Autowired
+    private ImportedEntityService importedEntityService;
 
     @Transactional
     public void copyApplicationData(Application to, Application from) {
@@ -216,8 +221,15 @@ public class ApplicationCopyHelper {
     }
 
     private <T extends ImportedEntity> T getEnabledImportedObject(Institution toInstitution, T fromEntity) {
-        if (fromEntity == null || (fromEntity.isEnabled() && fromEntity.getInstitution() == toInstitution)) {
-            return fromEntity;
+        if (fromEntity == null) {
+            return null;
+        } else {
+            Institution fromInstitution = fromEntity.getInstitution();
+            if (fromEntity.getEnabled() && fromInstitution == toInstitution) {
+                return fromEntity;
+            } else if (fromInstitution != toInstitution) {
+                return importedEntityService.getCorrespondingImportedEntity(toInstitution, fromEntity);
+            }
         }
         return null;
     }

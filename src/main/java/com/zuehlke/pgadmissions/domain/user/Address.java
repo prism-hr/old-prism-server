@@ -21,7 +21,7 @@ public class Address {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "domicile_id", nullable = false)
+    @JoinColumn(name = "domicile_id")
     private Domicile domicile;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)

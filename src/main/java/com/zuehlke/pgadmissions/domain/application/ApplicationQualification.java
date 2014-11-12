@@ -48,7 +48,7 @@ public class ApplicationQualification {
     private String language;
 
     @ManyToOne
-    @JoinColumn(name = "qualification_type_id", nullable = false)
+    @JoinColumn(name = "qualification_type_id")
     private QualificationType type;
 
     @Column(name = "grade", nullable = false)
@@ -59,7 +59,7 @@ public class ApplicationQualification {
     private Document document;
 
     @ManyToOne
-    @JoinColumn(name = "institution_id", nullable = false)
+    @JoinColumn(name = "institution_id")
     private ImportedInstitution institution;
 
     @Column(name = "completed", nullable = false)

@@ -57,7 +57,7 @@ public class ApplicationPersonalDetail {
     private ApplicationPassport passport;
 
     @ManyToOne
-    @JoinColumn(name = "nationality_id1", nullable = false)
+    @JoinColumn(name = "nationality_id1")
     private Language firstNationality;
 
     @ManyToOne
@@ -65,11 +65,11 @@ public class ApplicationPersonalDetail {
     private Language secondNationality;
 
     @ManyToOne
-    @JoinColumn(name = "title_id", nullable = false)
+    @JoinColumn(name = "title_id")
     private Title title;
 
     @ManyToOne
-    @JoinColumn(name = "gender_id", nullable = false)
+    @JoinColumn(name = "gender_id")
     private Gender gender;
 
     @Column(name = "date_of_birth", nullable = false)
@@ -77,19 +77,19 @@ public class ApplicationPersonalDetail {
     private LocalDate dateOfBirth;
 
     @ManyToOne
-    @JoinColumn(name = "country_id", nullable = false)
+    @JoinColumn(name = "country_id")
     private Country country;
 
     @ManyToOne
-    @JoinColumn(name = "ethnicity_id", nullable = false)
+    @JoinColumn(name = "ethnicity_id")
     private Ethnicity ethnicity;
 
     @ManyToOne
-    @JoinColumn(name = "disability_id", nullable = false)
+    @JoinColumn(name = "disability_id")
     private Disability disability;
 
     @ManyToOne
-    @JoinColumn(name = "domicile_id", nullable = false)
+    @JoinColumn(name = "domicile_id")
     private Domicile domicile;
 
     public void setId(Integer id) {

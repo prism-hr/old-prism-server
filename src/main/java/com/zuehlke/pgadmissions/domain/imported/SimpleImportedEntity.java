@@ -50,6 +50,10 @@ public abstract class SimpleImportedEntity extends ImportedEntity {
     private Integer id;
 
     @ManyToOne
+    @JoinColumn(name = "root_id")
+    private SimpleImportedEntity root;
+
+    @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
 
@@ -73,6 +77,15 @@ public abstract class SimpleImportedEntity extends ImportedEntity {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @Override
+    public final SimpleImportedEntity getRoot() {
+        return root;
+    }
+
+    public final void setRoot(SimpleImportedEntity root) {
+        this.root = root;
     }
 
     public Institution getInstitution() {
@@ -108,7 +121,7 @@ public abstract class SimpleImportedEntity extends ImportedEntity {
         this.name = name;
     }
 
-    public Boolean isEnabled() {
+    public Boolean getEnabled() {
         return enabled;
     }
 

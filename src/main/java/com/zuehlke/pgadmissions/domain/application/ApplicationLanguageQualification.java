@@ -25,7 +25,7 @@ public class ApplicationLanguageQualification {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "language_qualification_type_id", nullable = false)
+    @JoinColumn(name = "language_qualification_type_id")
     private ImportedLanguageQualificationType type;
 
     @Column(name = "exam_date", nullable = false)

@@ -54,7 +54,7 @@ public class PrismApplicationValidation extends PrismWorkflowState {
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_VALIDATION) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST)))); //
+                        .withTransitionAction(PrismAction.APPLICATION_COMMENT)))); //
         
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_COMPLETE_VALIDATION_STAGE) //
@@ -97,12 +97,20 @@ public class PrismApplicationValidation extends PrismWorkflowState {
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_INTERVIEWERS) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_STATE_COMPLETED_OUTCOME), // 
                     new PrismStateTransition() // 
+                        .withTransitionState(PrismState.APPLICATION_REFERENCE) // 
+                        .withTransitionAction(PrismAction.APPLICATION_PROVIDE_REFERENCE) // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_STATE_COMPLETED_OUTCOME), //
+                    new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REJECTED) // 
                         .withTransitionAction(PrismAction.APPLICATION_CONFIRM_REJECTION) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_STATE_COMPLETED_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REVIEW) // 
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_REVIEWERS) // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_STATE_COMPLETED_OUTCOME),
+                    new PrismStateTransition() // 
+                        .withTransitionState(PrismState.APPLICATION_VERIFICATION) // 
+                        .withTransitionAction(PrismAction.APPLICATION_CONFIRM_ELIGIBILITY) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_STATE_COMPLETED_OUTCOME)))); //
     
         stateActions.add(new PrismStateAction() //

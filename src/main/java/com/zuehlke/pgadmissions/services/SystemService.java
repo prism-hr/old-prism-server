@@ -1,10 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_COMMENT_INITIALIZED_SYSTEM;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-
 import java.util.HashMap;
 import java.util.Set;
 
@@ -334,7 +329,7 @@ public class SystemService {
     }
 
     private System initializeSystemResource() throws DeduplicationException {
-        User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail, getSystemLocale());
+        User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail, PrismLocale.getSystemLocale());
         State systemRunning = stateService.getById(PrismState.SYSTEM_RUNNING);
         DateTime startupTimestamp = new DateTime();
         System transientSystem = new System().withId(systemId).withTitle(systemName).withLocale(PrismLocale.getSystemLocale()).withHomepage(systemHomepage)
@@ -351,8 +346,10 @@ public class SystemService {
             Integer defaultDuration = prismStateDuration == null ? null : prismStateDuration.getDefaultDuration();
             if (defaultDuration != null) {
                 StateDurationDefinition stateDurationDefinition = stateService.getStateDurationDefinitionById(prismStateDuration);
-                PrismProgramType programType = prismState.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null;
-                stateService.createOrUpdateStateDurationConfiguration(system, getSystemLocale(), programType, stateDurationDefinition, defaultDuration);
+                PrismProgramType programType = prismState.getScope().getPrecedence() > PrismScope.INSTITUTION.getPrecedence() ? PrismProgramType
+                        .getSystemProgramType() : null;
+                stateService.createOrUpdateStateDurationConfiguration(system, PrismLocale.getSystemLocale(), programType, stateDurationDefinition,
+                        defaultDuration);
             }
         }
     }
@@ -361,8 +358,8 @@ public class SystemService {
         for (PrismDisplayProperty prismDisplayProperty : PrismDisplayProperty.values()) {
             Scope scope = scopeService.getById(prismDisplayProperty.getScope());
             DisplayPropertyDefinition displayPropertyDefinition = customizationService.getDisplayPropertyDefinitionById(prismDisplayProperty);
-            PrismProgramType programType = scope.getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null;
-            customizationService.createOrUpdateDisplayPropertyConfiguration(system, getSystemLocale(), programType, displayPropertyDefinition,
+            PrismProgramType programType = scope.getPrecedence() > PrismScope.INSTITUTION.getPrecedence() ? PrismProgramType.getSystemProgramType() : null;
+            customizationService.createOrUpdateDisplayPropertyConfiguration(system, PrismLocale.getSystemLocale(), programType, displayPropertyDefinition,
                     prismDisplayProperty.getDefaultValue());
         }
     }
@@ -374,10 +371,11 @@ public class SystemService {
             String subject = FileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationDefinition.getInitialTemplateSubject());
             String content = FileUtils.getContent(defaultEmailContentDirectory + prismNotificationDefinition.getInitialTemplateContent());
 
-            PrismProgramType programType = prismNotificationDefinition.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null;
+            PrismProgramType programType = prismNotificationDefinition.getScope().getPrecedence() > PrismScope.INSTITUTION.getPrecedence() ? PrismProgramType
+                    .getSystemProgramType() : null;
 
-            notificationService.createOrUpdateNotificationConfiguration(system, getSystemLocale(), programType, notificationDefinition, subject, content,
-                    prismNotificationDefinition.getDefaultReminderDuration());
+            notificationService.createOrUpdateNotificationConfiguration(system, PrismLocale.getSystemLocale(), programType, notificationDefinition, subject,
+                    content, prismNotificationDefinition.getDefaultReminderDuration());
         }
     }
 
@@ -437,13 +435,10 @@ public class SystemService {
                     .withTransitionAction(transitionAction).withStateTransitionEvaluation(transitionEvaluation);
             entityService.save(stateTransition);
             stateAction.getStateTransitions().add(stateTransition);
-            initializeRoleTransitions(prismStateTransition, stateTransition);
 
-            Set<Action> propagatedActions = stateTransition.getPropagatedActions();
-            for (PrismAction prismAction : prismStateTransition.getPropagatedActions()) {
-                Action action = actionService.getById(prismAction);
-                propagatedActions.add(action);
-            }
+            initializeRoleTransitions(prismStateTransition, stateTransition);
+            initializeStateTerminations(prismStateTransition, stateTransition);
+            initializePropagatedActions(prismStateTransition, stateTransition);
         }
     }
 
@@ -461,14 +456,30 @@ public class SystemService {
         }
     }
 
+    private void initializeStateTerminations(PrismStateTransition prismStateTransition, StateTransition stateTransition) {
+        for (PrismState prismState : prismStateTransition.getStateTerminations()) {
+            stateTransition.getStateTerminations().add(stateService.getById(prismState));
+        }
+    }
+
+    private void initializePropagatedActions(PrismStateTransition prismStateTransition, StateTransition stateTransition) {
+        Set<Action> propagatedActions = stateTransition.getPropagatedActions();
+        for (PrismAction prismAction : prismStateTransition.getPropagatedActions()) {
+            Action action = actionService.getById(prismAction);
+            propagatedActions.add(action);
+        }
+    }
+
     private void initializeSystemUser(System system) throws DeduplicationException {
         User user = system.getUser();
         if (user.getUserAccount() == null) {
             Action action = actionService.getById(PrismAction.SYSTEM_STARTUP);
-            Comment comment = new Comment().withAction(action)
-                    .withContent(applicationContext.getBean(PropertyLoader.class).localize(system, user).load(SYSTEM_COMMENT_INITIALIZED_SYSTEM))
-                    .withDeclinedResponse(false).withUser(user).withCreatedTimestamp(new DateTime())
-                    .addAssignedUser(user, roleService.getCreatorRole(system), PrismRoleTransitionType.CREATE);
+            Comment comment = new Comment()
+                    .withAction(action)
+                    .withContent(
+                            applicationContext.getBean(PropertyLoader.class).localize(system, user)
+                                    .load(PrismDisplayProperty.SYSTEM_COMMENT_INITIALIZED_SYSTEM)).withDeclinedResponse(false).withUser(user)
+                    .withCreatedTimestamp(new DateTime()).addAssignedUser(user, roleService.getCreatorRole(system), PrismRoleTransitionType.CREATE);
             ActionOutcomeDTO outcome = actionService.executeAction(system, action, comment);
             notificationService.sendRegistrationNotification(user, outcome, comment);
         }

@@ -124,7 +124,7 @@
             <b>domicile</b>
         </field>
     </mapping>
-    
+
     <mapping>
         <class-a>com.zuehlke.pgadmissions.domain.user.User</class-a>
         <class-b>com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation</class-b>
@@ -140,10 +140,6 @@
         <field>
             <a>domicile.id</a>
             <b>domicile</b>
-        </field>
-        <field>
-            <a>region.id</a>
-            <b>region</b>
         </field>
     </mapping>
 

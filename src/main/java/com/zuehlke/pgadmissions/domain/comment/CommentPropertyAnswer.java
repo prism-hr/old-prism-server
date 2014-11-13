@@ -13,7 +13,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.zuehlke.pgadmissions.domain.definitions.ActionPropertyType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionConfigurationProperty;
 
 @Entity
 @Table(name = "COMMENT_PROPERTY")
@@ -29,7 +29,7 @@ public class CommentPropertyAnswer {
 
     @Column(name = "action_property_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    private ActionPropertyType propertyType;
+    private PrismActionConfigurationProperty propertyType;
 
     @Lob
     @Column(name = "property_label", nullable = false)
@@ -58,11 +58,11 @@ public class CommentPropertyAnswer {
         this.comment = comment;
     }
 
-    public final ActionPropertyType getPropertyType() {
+    public final PrismActionConfigurationProperty getPropertyType() {
         return propertyType;
     }
 
-    public final void setPropertyType(ActionPropertyType propertyType) {
+    public final void setPropertyType(PrismActionConfigurationProperty propertyType) {
         this.propertyType = propertyType;
     }
 
@@ -90,7 +90,7 @@ public class CommentPropertyAnswer {
         this.propertyWeight = propertyWeight;
     }
 
-    public CommentPropertyAnswer withPropertyType(ActionPropertyType propertyType) {
+    public CommentPropertyAnswer withPropertyType(PrismActionConfigurationProperty propertyType) {
         this.propertyType = propertyType;
         return this;
     }

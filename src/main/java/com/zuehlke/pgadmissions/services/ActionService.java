@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 import java.util.Set;
 
@@ -18,12 +16,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.ActionPropertyType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionConfigurationProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
@@ -43,6 +41,7 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.ActionPropertyConfigurationDTO;
+import com.zuehlke.pgadmissions.rest.dto.ActionPropertyConfigurationDTO.ActionPropertyDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.StateTransitionRepresentation;
@@ -82,40 +81,31 @@ public class ActionService {
     }
 
     public void createOrUpdateActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action,
-            List<ActionPropertyConfigurationDTO> actionPropertyConfigurationDTOs) throws CustomizationException, DeduplicationException {
+            ActionPropertyConfigurationDTO actionPropertyConfigurationDTO) throws CustomizationException, DeduplicationException {
         if (action.getCustomizableAction()) {
             customizationService.validateConfiguration(resource, action, locale, programType);
             actionDAO.deleteActionConfiguration(resource, locale, programType, action);
 
-            Integer version = null;
-            BigDecimal cumulativeRatingWeight = new BigDecimal(0.00);
-            
-            for (ActionPropertyConfigurationDTO actionPropertyConfigurationDTO : actionPropertyConfigurationDTOs) {
-                String name = actionPropertyConfigurationDTO.getName();
+            Integer version = null;            
+            for (ActionPropertyDTO actionPropertyDTO : actionPropertyConfigurationDTO.getProperties()) {
+                String name = actionPropertyDTO.getName();
 
-                List<String> options = actionPropertyConfigurationDTO.getOptions();
-                List<String> validationRules = actionPropertyConfigurationDTO.getValidationRules();
+                List<String> options = actionPropertyDTO.getOptions();
+                List<String> validationRules = actionPropertyDTO.getValidationRules();
 
                 ActionPropertyConfiguration persistentActionPropertyConfiguration = entityService.createOrUpdate(new ActionPropertyConfiguration()
                         .withResource(resource).withLocale(locale).withProgramType(programType).withAction(action).withVersion(version)
-                        .withActionPropertyType(ActionPropertyType.getByDisplayName(name)).withName(name)
-                        .withEditable(actionPropertyConfigurationDTO.getEditable()).withIndex(actionPropertyConfigurationDTO.getIndex())
-                        .withLabel(actionPropertyConfigurationDTO.getLabel()).withDescription(actionPropertyConfigurationDTO.getDescription())
-                        .withOptions(options == null ? null : Joiner.on("|").join(options)).withRequired(actionPropertyConfigurationDTO.getRequired())
+                        .withActionPropertyType(PrismActionConfigurationProperty.getByDisplayName(name)).withName(name)
+                        .withEditable(actionPropertyDTO.getEditable()).withIndex(actionPropertyDTO.getIndex())
+                        .withLabel(actionPropertyDTO.getLabel()).withDescription(actionPropertyDTO.getDescription())
+                        .withOptions(options == null ? null : Joiner.on("|").join(options)).withRequired(actionPropertyDTO.getRequired())
                         .withValidation(validationRules == null ? null : Joiner.on("|").join(validationRules))
-                        .withWeighting(actionPropertyConfigurationDTO.getWeighting()));
+                        .withWeighting(actionPropertyDTO.getWeighting()));
 
                 if (persistentActionPropertyConfiguration.getVersion() == null) {
                     version = persistentActionPropertyConfiguration.getId();
                     persistentActionPropertyConfiguration.setVersion(version);
                 }
-                
-                BigDecimal ratingWeight = actionPropertyConfigurationDTO.getWeighting();
-                cumulativeRatingWeight = ratingWeight == null ? cumulativeRatingWeight : cumulativeRatingWeight.add(ratingWeight).setScale(2, RoundingMode.HALF_UP);
-            }
-            
-            if (!cumulativeRatingWeight.equals(new BigDecimal(1.00))) {
-                throw new Error();
             }
         }
 

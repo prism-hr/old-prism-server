@@ -11,11 +11,11 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionConfigurationProperty;
-import com.zuehlke.pgadmissions.rest.dto.ActionPropertyConfigurationDTO;
-import com.zuehlke.pgadmissions.rest.dto.ActionPropertyConfigurationDTO.ActionPropertyDTO;
+import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionsDTO;
+import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionsDTO.ActionCustomQuestionDTO;
 
 @Component
-public class ActionPropertyConfigurationValidator extends LocalValidatorFactoryBean implements Validator {
+public class ActionCustomQuestionValidator extends LocalValidatorFactoryBean implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -24,12 +24,12 @@ public class ActionPropertyConfigurationValidator extends LocalValidatorFactoryB
     
     @Override
     public void validate(Object target, Errors errors) {
-        ActionPropertyConfigurationDTO configuration = (ActionPropertyConfigurationDTO) target;
+        ActionCustomQuestionsDTO configuration = (ActionCustomQuestionsDTO) target;
         
         int cumulativeRatingCount = 0;
         BigDecimal cumulativeRatingWeight = new BigDecimal(0.00);
         
-        for (ActionPropertyDTO property : configuration.getProperties()) {
+        for (ActionCustomQuestionDTO property : configuration.getProperties()) {
             PrismActionConfigurationProperty type = PrismActionConfigurationProperty.getByDisplayName(property.getName());
             
             BigDecimal weighting = property.getWeighting();

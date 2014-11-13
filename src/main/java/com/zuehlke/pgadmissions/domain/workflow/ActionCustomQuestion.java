@@ -22,11 +22,11 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 
 @Entity
-@Table(name = "ACTION_PROPERTY_CONFIGURATION", uniqueConstraints = {
+@Table(name = "ACTION_CUSTOM_QUESTION", uniqueConstraints = {
         @UniqueConstraint(columnNames = { "system_id", "program_type", "locale", "action_id, display_index" }),
         @UniqueConstraint(columnNames = { "institution_id", "program_type", "action_id, display_index" }),
         @UniqueConstraint(columnNames = { "program_id", "action_id, display_index" }) })
-public class ActionPropertyConfiguration extends WorkflowResourceConfiguration {
+public class ActionCustomQuestion extends WorkflowResourceConfiguration {
 
     @Id
     private Integer id;
@@ -286,102 +286,102 @@ public class ActionPropertyConfiguration extends WorkflowResourceConfiguration {
         this.systemDefault = systemDefault;
     }
 
-    public ActionPropertyConfiguration withResource(Resource resource) {
+    public ActionCustomQuestion withResource(Resource resource) {
         setResource(resource);
         return this;
     }
 
-    public ActionPropertyConfiguration withInstitution(Institution institution) {
+    public ActionCustomQuestion withInstitution(Institution institution) {
         this.institution = institution;
         return this;
     }
 
-    public ActionPropertyConfiguration withProgram(Program program) {
+    public ActionCustomQuestion withProgram(Program program) {
         this.program = program;
         return this;
     }
 
-    public ActionPropertyConfiguration withLocale(PrismLocale locale) {
+    public ActionCustomQuestion withLocale(PrismLocale locale) {
         this.locale = locale;
         return this;
     }
 
-    public ActionPropertyConfiguration withProgramType(PrismProgramType programType) {
+    public ActionCustomQuestion withProgramType(PrismProgramType programType) {
         this.programType = programType;
         return this;
     }
 
-    public ActionPropertyConfiguration withAction(Action action) {
+    public ActionCustomQuestion withAction(Action action) {
         this.action = action;
         return this;
     }
     
-    public ActionPropertyConfiguration withActionPropertyType(PrismActionConfigurationProperty actionPropertyType) {
+    public ActionCustomQuestion withActionPropertyType(PrismActionConfigurationProperty actionPropertyType) {
         this.actionPropertyType = actionPropertyType;
         return this;
     }
 
-    public ActionPropertyConfiguration withVersion(Integer version) {
+    public ActionCustomQuestion withVersion(Integer version) {
         this.version = version;
         return this;
     }
 
-    public ActionPropertyConfiguration withName(String name) {
+    public ActionCustomQuestion withName(String name) {
         this.name = name;
         return this;
     }
 
-    public ActionPropertyConfiguration withEditable(Boolean editable) {
+    public ActionCustomQuestion withEditable(Boolean editable) {
         this.editable = editable;
         return this;
     }
 
-    public ActionPropertyConfiguration withIndex(Integer index) {
+    public ActionCustomQuestion withIndex(Integer index) {
         this.index = index;
         return this;
     }
 
-    public ActionPropertyConfiguration withLabel(String label) {
+    public ActionCustomQuestion withLabel(String label) {
         this.label = label;
         return this;
     }
 
-    public ActionPropertyConfiguration withDescription(String description) {
+    public ActionCustomQuestion withDescription(String description) {
         this.description = description;
         return this;
     }
 
-    public ActionPropertyConfiguration withPlaceholder(String placeholder) {
+    public ActionCustomQuestion withPlaceholder(String placeholder) {
         this.placeholder = placeholder;
         return this;
     }
 
-    public ActionPropertyConfiguration withOptions(String options) {
+    public ActionCustomQuestion withOptions(String options) {
         this.options = options;
         return this;
     }
 
-    public ActionPropertyConfiguration withRequired(Boolean required) {
+    public ActionCustomQuestion withRequired(Boolean required) {
         this.required = required;
         return this;
     }
 
-    public ActionPropertyConfiguration withValidation(String validation) {
+    public ActionCustomQuestion withValidation(String validation) {
         this.validation = validation;
         return this;
     }
 
-    public ActionPropertyConfiguration withWeighting(BigDecimal weighting) {
+    public ActionCustomQuestion withWeighting(BigDecimal weighting) {
         this.weighting = weighting;
         return this;
     }
 
-    public ActionPropertyConfiguration withActive(Boolean active) {
+    public ActionCustomQuestion withActive(Boolean active) {
         this.active = active;
         return this;
     }
 
-    public ActionPropertyConfiguration withSystemDefault(Boolean systemDefault) {
+    public ActionCustomQuestion withSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
         return this;
     }

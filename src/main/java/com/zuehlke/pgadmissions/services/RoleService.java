@@ -141,12 +141,8 @@ public class RoleService {
         return roleDAO.getRoleUsers(resource, role);
     }
 
-    public List<Role> getActiveRoles() {
-        return roleDAO.getActiveRoles();
-    }
-
     public void deleteObseleteUserRoles() {
-        roleDAO.deleteObseleteUserRoles(getActiveRoles());
+        roleDAO.deleteObseleteUserRoles();
     }
 
     public Role getCreatorRole(Resource resource) {

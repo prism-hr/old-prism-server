@@ -10,7 +10,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionConfigurationProperty;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismCustomQuestionType;
 import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionsDTO;
 import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionsDTO.ActionCustomQuestionDTO;
 
@@ -30,7 +30,7 @@ public class ActionCustomQuestionValidator extends LocalValidatorFactoryBean imp
         BigDecimal cumulativeRatingWeight = new BigDecimal(0.00);
         
         for (ActionCustomQuestionDTO property : configuration.getProperties()) {
-            PrismActionConfigurationProperty type = PrismActionConfigurationProperty.getByDisplayName(property.getName());
+            PrismCustomQuestionType type = PrismCustomQuestionType.getByDisplayName(property.getName());
             
             BigDecimal weighting = property.getWeighting();
             if (type.name().startsWith("RATING") && weighting == null) {

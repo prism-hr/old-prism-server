@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionConfigurationProperty;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismCustomQuestionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
@@ -95,7 +95,7 @@ public class ActionService {
 
                 ActionCustomQuestion persistentActionPropertyConfiguration = entityService.createOrUpdate(new ActionCustomQuestion()
                         .withResource(resource).withLocale(locale).withProgramType(programType).withAction(action).withVersion(version)
-                        .withActionPropertyType(PrismActionConfigurationProperty.getByDisplayName(name)).withName(name)
+                        .withCustomQuestionType(PrismCustomQuestionType.getByDisplayName(name)).withName(name)
                         .withEditable(actionPropertyDTO.getEditable()).withIndex(actionPropertyDTO.getIndex())
                         .withLabel(actionPropertyDTO.getLabel()).withDescription(actionPropertyDTO.getDescription())
                         .withOptions(options == null ? null : Joiner.on("|").join(options)).withRequired(actionPropertyDTO.getRequired())

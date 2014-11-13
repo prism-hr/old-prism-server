@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowProperty;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -54,6 +55,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -169,7 +171,11 @@ public class SystemService {
         verifyBackwardCompatibility(DisplayPropertyDefinition.class);
         initializeDisplayPropertyDefinitions();
 
-        LOGGER.info("Initialising notification template definitions");
+        LOGGER.info("Initialising workflow property definitions");
+        verifyBackwardCompatibility(WorkflowPropertyDefinition.class);
+        initializeWorkflowPropertyDefinitions();
+
+        LOGGER.info("Initialising notification definitions");
         verifyBackwardCompatibility(NotificationDefinition.class);
         initializeNotificationDefinitions();
 
@@ -184,6 +190,9 @@ public class SystemService {
 
         LOGGER.info("Initialising display property configurations");
         initializeDisplayPropertyConfigurations(system);
+
+        LOGGER.info("Initialising workflow property configurations");
+        initializeWorkflowPropertyConfigurations(system);
 
         LOGGER.info("Initialising notification configurations");
         initializeNotificationConfigurations(system);
@@ -328,6 +337,15 @@ public class SystemService {
         }
     }
 
+    private void initializeWorkflowPropertyDefinitions() {
+        for (PrismWorkflowProperty prismWorkflowProperty : PrismWorkflowProperty.values()) {
+            Scope scope = scopeService.getById(prismWorkflowProperty.getScope());
+            WorkflowPropertyDefinition transientWorkflowPropertyDefinition = new WorkflowPropertyDefinition().withId(prismWorkflowProperty)
+                    .withWorkflowPropertyCategory(prismWorkflowProperty.getWorkflowPropertyCategory()).withScope(scope);
+            entityService.createOrUpdate(transientWorkflowPropertyDefinition);
+        }
+    }
+
     private System initializeSystemResource() throws DeduplicationException {
         User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail, PrismLocale.getSystemLocale());
         State systemRunning = stateService.getById(PrismState.SYSTEM_RUNNING);
@@ -361,6 +379,16 @@ public class SystemService {
             PrismProgramType programType = scope.getPrecedence() > PrismScope.INSTITUTION.getPrecedence() ? PrismProgramType.getSystemProgramType() : null;
             customizationService.createOrUpdateDisplayPropertyConfiguration(system, PrismLocale.getSystemLocale(), programType, displayPropertyDefinition,
                     prismDisplayProperty.getDefaultValue());
+        }
+    }
+
+    private void initializeWorkflowPropertyConfigurations(System system) throws DeduplicationException, CustomizationException {
+        for (PrismWorkflowProperty prismWorkflowProperty : PrismWorkflowProperty.values()) {
+            Scope scope = scopeService.getById(prismWorkflowProperty.getScope());
+            WorkflowPropertyDefinition workflowPropertyDefinition = workflowService.getWorkflowPropertyDefinitionById(prismWorkflowProperty);
+            PrismProgramType programType = scope.getPrecedence() > PrismScope.INSTITUTION.getPrecedence() ? PrismProgramType.getSystemProgramType() : null;
+            workflowService.createOrUpdateWorkflowPropertyConfiguration(system, PrismLocale.getSystemLocale(), programType, workflowPropertyDefinition,
+                    prismWorkflowProperty.isDefaultEnabled(), prismWorkflowProperty.getDefaultMinimum(), prismWorkflowProperty.getDefaultMaximum());
         }
     }
 
@@ -401,7 +429,6 @@ public class SystemService {
         stateService.deleteObsoleteStateDurations();
         notificationService.deleteObsoleteNotificationConfigurations();
         roleService.deleteObseleteUserRoles();
-        workflowService.deleteObseleteWorkflowPropertyConfigurations();
     }
 
     private void initializeStateActionAssignments(PrismStateAction prismStateAction, StateAction stateAction) {
@@ -418,7 +445,7 @@ public class SystemService {
     private void initializeStateActionNotifications(PrismStateAction prismStateAction, StateAction stateAction) {
         for (PrismStateActionNotification prismNotification : prismStateAction.getNotifications()) {
             Role role = roleService.getById(prismNotification.getRole());
-            NotificationDefinition template = notificationService.getById(prismNotification.getTemplate());
+            NotificationDefinition template = notificationService.getById(prismNotification.getDefinition());
             StateActionNotification notification = new StateActionNotification().withStateAction(stateAction).withRole(role)
                     .withNotificationDefinition(template);
             entityService.save(notification);

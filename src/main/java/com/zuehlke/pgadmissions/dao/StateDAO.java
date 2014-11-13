@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
-import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
@@ -34,15 +33,6 @@ public class StateDAO {
 
     @Autowired
     private SessionFactory sessionFactory;
-
-    public List<State> getConfigurableStates() {
-        return (List<State>) sessionFactory.getCurrentSession().createCriteria(StateDurationConfiguration.class) //
-                .setProjection(Projections.property("state")) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.isNotNull("system")) //
-                .list();
-    }
 
     public List<StateTransition> getStateTransitions(Resource resource, Action action) {
         return (List<StateTransition>) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
@@ -79,11 +69,19 @@ public class StateDAO {
                 .setResultTransformer(Transformers.aliasToBean(StateTransitionPendingDTO.class)).list();
     }
 
-    public void deleteObseleteStateDurations(List<State> activeStates) {
+    public List<State> getConfigurableStates() {
+        return (List<State>) sessionFactory.getCurrentSession().createCriteria(State.class) //
+                .add(Restrictions.isNotNull("stateDurationDefinition")) //
+                .list();
+    }
+
+    public void deleteObseleteStateDurations() {
         sessionFactory.getCurrentSession().createQuery( //
-                "delete StateDuration " //
-                        + "where state not in (:configurableStates)") //
-                .setParameterList("configurableStates", activeStates) //
+                "delete StateDurationConfiguration " //
+                    + "where stateDurationDefinition not in ( " //
+                        + "select stateDurationDefinition " //
+                        + "from State " //
+                        + "group by stateDurationDefinition)") //
                 .executeUpdate();
     }
 

@@ -52,7 +52,7 @@ public class RoleTransition implements IUniqueEntity {
     private Integer maximumPermitted;
 
     @ManyToOne
-    @JoinColumn(name = "workflowPropertyDefinition")
+    @JoinColumn(name = "workflow_property_definition_id")
     private WorkflowPropertyDefinition workflowPropertyDefinition;
 
     public Integer getId() {

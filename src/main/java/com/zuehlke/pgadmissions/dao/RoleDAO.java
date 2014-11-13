@@ -132,22 +132,29 @@ public class RoleDAO {
     }
 
     public List<PrismRole> getUserRoles(Resource resource, User user) {
-        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class)
-                //
-                .setProjection(Projections.groupProperty("role.id")).add(Restrictions.eq("user", user))
-                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)).list();
+        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("role.id")).add(Restrictions.eq("user", user)) //
+                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
+                .list();
     }
 
     public List<Role> getActiveRoles() {
         return sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
-                .setProjection(Projections.groupProperty("role")).list();
+                .setProjection(Projections.groupProperty("role")) //
+                .list();
     }
 
-    public void deleteObseleteUserRoles(List<Role> activeRoles) {
+    public void deleteObseleteUserRoles() {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete UserRole " //
-                        + "where role not in (:activeRoles)") //
-                .setParameterList("activeRoles", activeRoles) //
+                     + "where role not in ( " //
+                         + "select role " //
+                         + "from RoleTransition " //
+                         + "group by role) " //
+                     + "and role not in ( " //
+                         + "select transitionRole " //
+                         + "from RoleTransition " //
+                         + "group by transitionRole)") //
                 .executeUpdate();
     }
 

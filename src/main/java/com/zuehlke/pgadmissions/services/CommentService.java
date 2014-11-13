@@ -424,7 +424,7 @@ public class CommentService {
     private void buildAggregatedRating(Comment comment) {
         BigDecimal aggregatedRating = new BigDecimal(0.00);
         for (CommentCustomResponse property : comment.getPropertyAnswers()) {
-            switch (property.getPropertyType()) {
+            switch (property.getCustomQuestionType()) {
             case RATING_NORMAL:
                 aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(property, 5));
                 break;

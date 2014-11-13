@@ -321,10 +321,11 @@ public class SystemService {
             NotificationDefinition persistentNotificationTemplateDefinition = entityService.createOrUpdate(transientNotificationDefinition);
             definitions.put(prismNotificationDefinition, persistentNotificationTemplateDefinition);
         }
-        HashMap<PrismNotificationDefinition, PrismReminderDefinition> reminderDefinitions = PrismNotificationDefinition.getReminderdefinitions();
-        for (PrismNotificationDefinition prismNotificationDefinitionWithReminder : reminderDefinitions.keySet()) {
-            NotificationDefinition notificationDefinitionWithReminder = definitions.get(prismNotificationDefinitionWithReminder);
-            notificationDefinitionWithReminder.setReminderDefinition(definitions.get(reminderDefinitions.get(notificationDefinitionWithReminder)));
+        HashMap<PrismNotificationDefinition, PrismReminderDefinition> requestReminderDefinitions = PrismNotificationDefinition.getReminderDefinitions();
+        for (PrismNotificationDefinition prismRequestDefinition : requestReminderDefinitions.keySet()) {
+            NotificationDefinition requestDefinition = definitions.get(prismRequestDefinition);
+            NotificationDefinition reminderDefinition = definitions.get(prismRequestDefinition.getReminderDefinition());
+            requestDefinition.setReminderDefinition(reminderDefinition);
         }
     }
 

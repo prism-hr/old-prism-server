@@ -243,7 +243,7 @@ public class SystemInitialisationHelper {
             assertEquals(prismNotificationTemplate.getNotificationType(), template.getNotificationType());
             assertEquals(prismNotificationTemplate.getNotificationPurpose(), template.getNotificationPurpose());
             assertEquals(prismNotificationTemplate.getScope(), template.getScope().getId());
-            assertEquals(prismNotificationTemplate.getReminderTemplate(), (template.getReminderDefinition()) == null ? null : template.getReminderDefinition()
+            assertEquals(prismNotificationTemplate.getReminderDefinition(), (template.getReminderDefinition()) == null ? null : template.getReminderDefinition()
                     .getId());
 
             PrismProgramType programType = template.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null;

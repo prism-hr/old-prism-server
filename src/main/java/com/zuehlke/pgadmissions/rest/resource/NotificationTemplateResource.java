@@ -98,9 +98,9 @@ public class NotificationTemplateResource {
 
     private Map<String, String> validateTemplate(Resource resource, NotificationDefinition notificationTemplate,
             NotificationConfigurationDTO notificationConfigurationDTO, BindingResult errors) {
-        if (notificationTemplate.getId().getReminderTemplate() == null && notificationConfigurationDTO.getReminderInterval() != null) {
+        if (notificationTemplate.getId().getReminderDefinition() == null && notificationConfigurationDTO.getReminderInterval() != null) {
             errors.rejectValue("reminderInterval", "forbidden");
-        } else if (notificationTemplate.getId().getReminderTemplate() != null && notificationConfigurationDTO.getReminderInterval() == null) {
+        } else if (notificationTemplate.getId().getReminderDefinition() != null && notificationConfigurationDTO.getReminderInterval() == null) {
             errors.rejectValue("reminderInterval", "notNull");
         }
 

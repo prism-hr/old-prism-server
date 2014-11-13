@@ -168,7 +168,7 @@ public class StaticDataResource {
             Map<String, Object> definition = Maps.newHashMap();
             definition.put("id", template.name());
             if (template.getDefaultReminderDuration() != null) {
-                definition.put("reminderTemplate", template.getReminderTemplate().name());
+                definition.put("reminderTemplate", template.getReminderDefinition().name());
             }
             List<PrismNotificationTemplatePropertyCategory> categories = template.getPropertyCategories();
             categories.add(SYSTEM_APPLICATION_SYNDICATED);

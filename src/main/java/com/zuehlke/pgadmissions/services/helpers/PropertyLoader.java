@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
@@ -42,7 +42,7 @@ public class PropertyLoader {
     public String load(PrismDisplayProperty property) {
         String value = properties.get(property);
         if (value == null) {
-            PrismDisplayCategory category = property.getDisplayCategory();
+            PrismDisplayPropertyCategory category = property.getDisplayCategory();
             properties.putAll(customizationService.getDisplayProperties(resource, locale, programType, category, property.getScope()));
             value = properties.get(property);
         }

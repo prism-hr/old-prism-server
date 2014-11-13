@@ -332,7 +332,7 @@ public class SystemService {
         for (PrismDisplayProperty prismDisplayProperty : PrismDisplayProperty.values()) {
             Scope scope = scopeService.getById(prismDisplayProperty.getScope());
             DisplayPropertyDefinition transientDisplayProperty = new DisplayPropertyDefinition().withId(prismDisplayProperty)
-                    .withDisplayCategory(prismDisplayProperty.getDisplayCategory()).withScope(scope);
+                    .withDisplayPropertyCategory(prismDisplayProperty.getDisplayCategory()).withScope(scope);
             entityService.createOrUpdate(transientDisplayProperty);
         }
     }

@@ -61,7 +61,7 @@ public class NotificationConfiguration extends WorkflowResourceConfiguration {
     @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name = "day_reminder_interval")
+    @Column(name = "reminder_interval")
     private Integer reminderInterval;
 
     @Column(name = "system_default", nullable = false)

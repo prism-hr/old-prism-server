@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-public enum PrismDisplayCategory {
+public enum PrismDisplayPropertyCategory {
 
     SYSTEM_GLOBAL, //
     SYSTEM_COMMENT, //

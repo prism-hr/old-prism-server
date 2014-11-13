@@ -208,7 +208,7 @@ public class WorkflowPropertyConfiguration extends WorkflowResourceConfiguration
         return this;
     }
     
-    public boolean hasRangeSpecification() {
+    public boolean isRangeSpecification() {
         return !(minimum == null && maximum == null);
     }
 

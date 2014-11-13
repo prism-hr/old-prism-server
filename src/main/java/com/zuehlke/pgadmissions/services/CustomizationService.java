@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.CustomizationDAO;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
@@ -119,7 +119,7 @@ public class CustomizationService {
     }
 
     public HashMap<PrismDisplayProperty, String> getDisplayProperties(Resource resource, PrismLocale locale, PrismProgramType programType,
-            PrismDisplayCategory category, PrismScope propertyScope) {
+            PrismDisplayPropertyCategory category, PrismScope propertyScope) {
         List<DisplayPropertyConfiguration> displayValues = customizationDAO.getDisplayProperties(resource, locale, programType, category, propertyScope);
         HashMap<PrismDisplayProperty, String> displayProperties = Maps.newHashMap();
         for (DisplayPropertyConfiguration displayValue : displayValues) {

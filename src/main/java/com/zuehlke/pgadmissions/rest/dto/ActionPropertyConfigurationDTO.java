@@ -9,117 +9,133 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.google.common.collect.Lists;
+
 public class ActionPropertyConfigurationDTO {
 
-    @NotNull
-    private String name;
+    private List<ActionPropertyDTO> properties = Lists.newLinkedList();
 
-    @NotNull
-    private Boolean editable;
-
-    @NotNull
-    private Integer index;
-
-    @NotNull
-    private String label;
-
-    @NotNull
-    private String description;
-
-    @NotEmpty
-    private String placeholder;
-
-    @NotEmpty
-    private List<String> options;
-
-    @NotNull
-    private Boolean required;
-
-    @NotEmpty
-    private List<String> validationRules;
-
-    @DecimalMin("0.01")
-    @DecimalMax("1.00")
-    private BigDecimal weighting;
-
-    public final String getName() {
-        return name;
+    public final List<ActionPropertyDTO> getProperties() {
+        return properties;
     }
 
-    public final void setName(String name) {
-        this.name = name;
+    public final void setProperties(List<ActionPropertyDTO> properties) {
+        this.properties = properties;
     }
 
-    public final Boolean getEditable() {
-        return editable;
-    }
+    public static class ActionPropertyDTO {
 
-    public final void setEditable(Boolean editable) {
-        this.editable = editable;
-    }
+        @NotNull
+        private String name;
 
-    public final Integer getIndex() {
-        return index;
-    }
+        @NotNull
+        private Boolean editable;
 
-    public final void setIndex(Integer index) {
-        this.index = index;
-    }
+        @NotNull
+        private Integer index;
 
-    public final String getLabel() {
-        return label;
-    }
+        @NotNull
+        private String label;
 
-    public final void setLabel(String label) {
-        this.label = label;
-    }
+        @NotNull
+        private String description;
 
-    public final String getDescription() {
-        return description;
-    }
+        @NotEmpty
+        private String placeholder;
 
-    public final void setDescription(String description) {
-        this.description = description;
-    }
+        @NotEmpty
+        private List<String> options;
 
-    public final String getPlaceholder() {
-        return placeholder;
-    }
+        @NotNull
+        private Boolean required;
 
-    public final void setPlaceholder(String placeholder) {
-        this.placeholder = placeholder;
-    }
+        @NotEmpty
+        private List<String> validationRules;
 
-    public final List<String> getOptions() {
-        return options;
-    }
+        @DecimalMin("0.01")
+        @DecimalMax("1.00")
+        private BigDecimal weighting;
 
-    public final void setOptions(List<String> options) {
-        this.options = options;
-    }
+        public final String getName() {
+            return name;
+        }
 
-    public final Boolean getRequired() {
-        return required;
-    }
+        public final void setName(String name) {
+            this.name = name;
+        }
 
-    public final void setRequired(Boolean required) {
-        this.required = required;
-    }
+        public final Boolean getEditable() {
+            return editable;
+        }
 
-    public final List<String> getValidationRules() {
-        return validationRules;
-    }
+        public final void setEditable(Boolean editable) {
+            this.editable = editable;
+        }
 
-    public final void setValidationRules(List<String> validationRules) {
-        this.validationRules = validationRules;
-    }
+        public final Integer getIndex() {
+            return index;
+        }
 
-    public final BigDecimal getWeighting() {
-        return weighting;
-    }
+        public final void setIndex(Integer index) {
+            this.index = index;
+        }
 
-    public final void setWeighting(BigDecimal weighting) {
-        this.weighting = weighting;
+        public final String getLabel() {
+            return label;
+        }
+
+        public final void setLabel(String label) {
+            this.label = label;
+        }
+
+        public final String getDescription() {
+            return description;
+        }
+
+        public final void setDescription(String description) {
+            this.description = description;
+        }
+
+        public final String getPlaceholder() {
+            return placeholder;
+        }
+
+        public final void setPlaceholder(String placeholder) {
+            this.placeholder = placeholder;
+        }
+
+        public final List<String> getOptions() {
+            return options;
+        }
+
+        public final void setOptions(List<String> options) {
+            this.options = options;
+        }
+
+        public final Boolean getRequired() {
+            return required;
+        }
+
+        public final void setRequired(Boolean required) {
+            this.required = required;
+        }
+
+        public final List<String> getValidationRules() {
+            return validationRules;
+        }
+
+        public final void setValidationRules(List<String> validationRules) {
+            this.validationRules = validationRules;
+        }
+
+        public final BigDecimal getWeighting() {
+            return weighting;
+        }
+
+        public final void setWeighting(BigDecimal weighting) {
+            this.weighting = weighting;
+        }
+
     }
 
 }

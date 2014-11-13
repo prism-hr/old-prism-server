@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.domain.definitions;
+package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,7 +9,7 @@ import org.joda.time.LocalDate;
 
 import com.google.common.collect.Maps;
 
-public enum ActionPropertyType {
+public enum PrismActionConfigurationProperty {
 
     INPUT(String.class, "input", null), //
     TEXTAREA(String.class, "textArea", null), //
@@ -28,15 +28,15 @@ public enum ActionPropertyType {
     
     private List<Object> permittedValues;
     
-    private static final HashMap<String, ActionPropertyType> displayNameIndex = Maps.newHashMap();
+    private static final HashMap<String, PrismActionConfigurationProperty> displayNameIndex = Maps.newHashMap();
     
     static {
-        for (ActionPropertyType value: values()) {
+        for (PrismActionConfigurationProperty value: values()) {
             displayNameIndex.put(value.getDisplayName(), value);
         }
     }
 
-    private ActionPropertyType(Class<?> propertyClass, String displayName, List<Object> permittedValues) {
+    private PrismActionConfigurationProperty(Class<?> propertyClass, String displayName, List<Object> permittedValues) {
         this.propertyClass = propertyClass;
         this.displayName = displayName;
         this.permittedValues = permittedValues;
@@ -54,7 +54,7 @@ public enum ActionPropertyType {
         return permittedValues;
     }
 
-    public static final ActionPropertyType getByDisplayName(String displayName) {
+    public static final PrismActionConfigurationProperty getByDisplayName(String displayName) {
         return displayNameIndex.get(displayName);
     }
 

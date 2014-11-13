@@ -92,6 +92,7 @@ public enum PrismDisplayProperty {
     SYSTEM_COMMENT_RESTORED_DISPLAY_PROPERTY_GLOBAL(SYSTEM_COMMENT, "Restored system global display property configuration", SYSTEM), //
     SYSTEM_COMMENT_INITIALIZED_SYSTEM(SYSTEM_COMMENT, "System initialised and ready to use", SYSTEM), //
     SYSTEM_COMMENT_INITIALIZED_INSTITUTION(SYSTEM_COMMENT, "Institution initialised and ready to use", SYSTEM), //
+    SYSTEM_COMMENT_CUSTOM_FORM_WEIGHT_ERROR(SYSTEM_COMMENT, "The weights for your rating fields must add up to one", SYSTEM), //
     INSTITUTION_HEADER(INSTITUTION_GLOBAL, "Institution", INSTITUTION), //
     INSTITUTION_COMMENT_APPROVED(
             INSTITUTION_COMMENT,

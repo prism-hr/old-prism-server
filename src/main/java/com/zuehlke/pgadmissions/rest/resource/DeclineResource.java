@@ -1,5 +1,12 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
+import org.dozer.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -8,12 +15,6 @@ import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ApplicationRepresentation;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.UserService;
-import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = {"api/decline"})
@@ -44,7 +45,7 @@ public class DeclineResource {
     public ApplicationRepresentation getDeclineResource(@RequestParam Integer resourceId,
                                                         @RequestParam PrismAction actionId,
                                                         @RequestParam String activationCode) {
-        User user = userService.getUserByActivationCode(activationCode);
+        userService.getUserByActivationCode(activationCode);
         Resource resource = resourceService.getById(actionId.getScope().getResourceClass(), resourceId);
         if (actionId.getScope() != PrismScope.APPLICATION) {
             throw new UnsupportedOperationException(actionId.getScope() + " action cannot be declined");
@@ -52,6 +53,5 @@ public class DeclineResource {
 
         return dozerBeanMapper.map(resource, ApplicationRepresentation.class);
     }
-
 
 }

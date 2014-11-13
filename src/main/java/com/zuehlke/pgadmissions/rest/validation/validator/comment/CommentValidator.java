@@ -13,9 +13,9 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import com.zuehlke.pgadmissions.domain.definitions.ActionPropertyType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionConfigurationProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldResolution;
 import com.zuehlke.pgadmissions.domain.workflow.ActionPropertyConfiguration;
@@ -64,7 +64,7 @@ public class CommentValidator extends LocalValidatorFactoryBean implements Valid
                 ActionPropertyConfiguration property = properties.get(i);
                 Object propertyValue = propertyValues.get(i);
                 
-                ActionPropertyType propertyType = property.getActionPropertyType();
+                PrismActionConfigurationProperty propertyType = property.getActionPropertyType();
                 
                 if (!propertyValue.getClass().equals(propertyType.getPropertyClass())) {
                     throw new Error();

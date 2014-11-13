@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.comment.CommentPropertyAnswer;
+import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -271,8 +271,8 @@ public class CommentService {
         Set<CommentAppointmentPreference> persistentPreferences = Sets.newHashSet(transientPreferences);
         transientPreferences.clear();
 
-        Set<CommentPropertyAnswer> transientProperties = comment.getPropertyAnswers();
-        Set<CommentPropertyAnswer> persistentProperties = Sets.newHashSet(transientProperties);
+        Set<CommentCustomResponse> transientProperties = comment.getPropertyAnswers();
+        Set<CommentCustomResponse> persistentProperties = Sets.newHashSet(transientProperties);
         transientProperties.clear();
 
         entityService.save(comment);
@@ -423,7 +423,7 @@ public class CommentService {
 
     private void buildAggregatedRating(Comment comment) {
         BigDecimal aggregatedRating = new BigDecimal(0.00);
-        for (CommentPropertyAnswer property : comment.getPropertyAnswers()) {
+        for (CommentCustomResponse property : comment.getPropertyAnswers()) {
             switch (property.getPropertyType()) {
             case RATING_NORMAL:
                 aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(property, 5));
@@ -438,7 +438,7 @@ public class CommentService {
         comment.setApplicationRating(aggregatedRating);
     }
 
-    private BigDecimal getWeightedRatingComponent(CommentPropertyAnswer property, Integer denominator) {
+    private BigDecimal getWeightedRatingComponent(CommentCustomResponse property, Integer denominator) {
         return new BigDecimal(property.getPropertyValue()).divide(new BigDecimal(denominator)).multiply(new BigDecimal(5))
                 .multiply(property.getPropertyWeight()).setScale(2, RoundingMode.HALF_UP);
     }
@@ -463,7 +463,7 @@ public class CommentService {
         }
     }
 
-    private void addPropertyAnswers(Comment comment, Set<CommentPropertyAnswer> persistentProperties) {
+    private void addPropertyAnswers(Comment comment, Set<CommentCustomResponse> persistentProperties) {
         comment.getPropertyAnswers().addAll(persistentProperties);
     }
 

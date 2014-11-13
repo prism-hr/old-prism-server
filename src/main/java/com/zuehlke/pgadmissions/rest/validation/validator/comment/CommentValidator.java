@@ -18,9 +18,9 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentFi
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionConfigurationProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldResolution;
-import com.zuehlke.pgadmissions.domain.workflow.ActionPropertyConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestion;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
-import com.zuehlke.pgadmissions.rest.dto.CommentPropertyAnswerDTO;
+import com.zuehlke.pgadmissions.rest.dto.CustomQuestionResponseDTO;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
@@ -49,11 +49,11 @@ public class CommentValidator extends LocalValidatorFactoryBean implements Valid
         }
         Map<PrismActionCommentField, List<PrismActionValidationFieldResolution>> fieldDefinitions = validationDefinition.getFieldResolutions();
 
-        CommentPropertyAnswerDTO propertyAnswerDTO = comment.getPropertyAnswer();
+        CustomQuestionResponseDTO propertyAnswerDTO = comment.getCustomQuestionResponse();
         if (propertyAnswerDTO != null) {
             errors.pushNestedPath("propertyAnswer");
             
-            List<ActionPropertyConfiguration> properties = actionService.getActionPropertyConfigurationByVersion(propertyAnswerDTO.getVersion());
+            List<ActionCustomQuestion> properties = actionService.getActionPropertyConfigurationByVersion(propertyAnswerDTO.getVersion());
             List<Object> propertyValues = propertyAnswerDTO.getValues();
             
             if (properties.size() != propertyValues.size()) {
@@ -61,7 +61,7 @@ public class CommentValidator extends LocalValidatorFactoryBean implements Valid
             }
            
             for (int i = 0; i < properties.size(); i++) {
-                ActionPropertyConfiguration property = properties.get(i);
+                ActionCustomQuestion property = properties.get(i);
                 Object propertyValue = propertyValues.get(i);
                 
                 PrismActionConfigurationProperty propertyType = property.getActionPropertyType();

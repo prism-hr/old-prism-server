@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.ActionPropertyConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestion;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
@@ -40,8 +40,8 @@ import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
-import com.zuehlke.pgadmissions.rest.dto.ActionPropertyConfigurationDTO;
-import com.zuehlke.pgadmissions.rest.dto.ActionPropertyConfigurationDTO.ActionPropertyDTO;
+import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionsDTO;
+import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionsDTO.ActionCustomQuestionDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.StateTransitionRepresentation;
@@ -76,24 +76,24 @@ public class ActionService {
         return entityService.getById(Action.class, id);
     }
 
-    public List<ActionPropertyConfiguration> getActionPropertyConfigurationByVersion(Integer version) {
+    public List<ActionCustomQuestion> getActionPropertyConfigurationByVersion(Integer version) {
         return actionDAO.getActionPropertyConfigurationByVersion(version);
     }
 
     public void createOrUpdateActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action,
-            ActionPropertyConfigurationDTO actionPropertyConfigurationDTO) throws CustomizationException, DeduplicationException {
+            ActionCustomQuestionsDTO actionPropertyConfigurationDTO) throws CustomizationException, DeduplicationException {
         if (action.getCustomizableAction()) {
             customizationService.validateConfiguration(resource, action, locale, programType);
             actionDAO.deleteActionConfiguration(resource, locale, programType, action);
 
             Integer version = null;            
-            for (ActionPropertyDTO actionPropertyDTO : actionPropertyConfigurationDTO.getProperties()) {
+            for (ActionCustomQuestionDTO actionPropertyDTO : actionPropertyConfigurationDTO.getProperties()) {
                 String name = actionPropertyDTO.getName();
 
                 List<String> options = actionPropertyDTO.getOptions();
                 List<String> validationRules = actionPropertyDTO.getValidationRules();
 
-                ActionPropertyConfiguration persistentActionPropertyConfiguration = entityService.createOrUpdate(new ActionPropertyConfiguration()
+                ActionCustomQuestion persistentActionPropertyConfiguration = entityService.createOrUpdate(new ActionCustomQuestion()
                         .withResource(resource).withLocale(locale).withProgramType(programType).withAction(action).withVersion(version)
                         .withActionPropertyType(PrismActionConfigurationProperty.getByDisplayName(name)).withName(name)
                         .withEditable(actionPropertyDTO.getEditable()).withIndex(actionPropertyDTO.getIndex())

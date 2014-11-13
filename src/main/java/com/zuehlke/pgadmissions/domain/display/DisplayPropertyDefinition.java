@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
@@ -27,9 +27,9 @@ public class DisplayPropertyDefinition extends WorkflowDefinition {
     @Enumerated(EnumType.STRING)
     private PrismDisplayProperty id;
 
-    @Column(name = "display_category", nullable = false)
+    @Column(name = "display_property_category", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PrismDisplayCategory displayCategory;
+    private PrismDisplayPropertyCategory displayPropertyCategory;
 
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
@@ -44,12 +44,12 @@ public class DisplayPropertyDefinition extends WorkflowDefinition {
         this.id = id;
     }
 
-    public final PrismDisplayCategory getDisplayCategory() {
-        return displayCategory;
+    public final PrismDisplayPropertyCategory getDisplayPropertyCategory() {
+        return displayPropertyCategory;
     }
 
-    public final void setDisplayCategory(PrismDisplayCategory displayCategory) {
-        this.displayCategory = displayCategory;
+    public final void setDisplayPropertyCategory(PrismDisplayPropertyCategory displayPropertyCategory) {
+        this.displayPropertyCategory = displayPropertyCategory;
     }
 
     @Override
@@ -67,8 +67,8 @@ public class DisplayPropertyDefinition extends WorkflowDefinition {
         return this;
     }
 
-    public DisplayPropertyDefinition withDisplayCategory(PrismDisplayCategory displayCategory) {
-        this.displayCategory = displayCategory;
+    public DisplayPropertyDefinition withDisplayPropertyCategory(PrismDisplayPropertyCategory displayPropertyCategory) {
+        this.displayPropertyCategory = displayPropertyCategory;
         return this;
     }
 

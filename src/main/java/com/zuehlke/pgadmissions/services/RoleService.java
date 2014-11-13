@@ -193,7 +193,7 @@ public class RoleService {
         } else {
             WorkflowPropertyConfiguration workflowPropertyConfiguration = workflowService.getWorkflowPropertyConfiguration(resource, actionOwner,
                     workflowPropertyDefinition);
-            if (workflowPropertyConfiguration.hasRangeSpecification()) {
+            if (workflowPropertyConfiguration.isRangeSpecification()) {
                 minimumPermitted = workflowPropertyConfiguration.getMinimum();
                 maximumPermitted = workflowPropertyConfiguration.getMaximum();
             } else {

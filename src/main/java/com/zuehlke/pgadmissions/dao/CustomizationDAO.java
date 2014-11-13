@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -49,7 +49,7 @@ public class CustomizationDAO {
     }
 
     public List<DisplayPropertyConfiguration> getDisplayProperties(Resource resource, PrismLocale locale, PrismProgramType programType,
-            PrismDisplayCategory category, PrismScope propertyScope) {
+            PrismDisplayPropertyCategory category, PrismScope propertyScope) {
         return (List<DisplayPropertyConfiguration>) sessionFactory.getCurrentSession().createCriteria(DisplayPropertyConfiguration.class) //
                 .createAlias("displayProperty", "displayProperty", JoinType.INNER_JOIN) //
                 .add(getFilterCondition(resource, locale, programType, propertyScope)) //

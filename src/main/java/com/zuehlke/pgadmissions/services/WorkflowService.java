@@ -56,7 +56,7 @@ public class WorkflowService {
             WorkflowPropertyDefinition definition, Boolean enabled, Integer minimum, Integer maximum) throws CustomizationException, DeduplicationException {
         customizationService.validateConfiguration(resource, definition, locale, programType);
         WorkflowPropertyConfiguration transientConfiguration = new WorkflowPropertyConfiguration().withResource(resource).withLocale(locale)
-                .withProgramType(programType).withEnabled(enabled).withMinimum(minimum).withMaximum(maximum)
+                .withProgramType(programType).withWorkflowPropertyDefinition(definition).withEnabled(enabled).withMinimum(minimum).withMaximum(maximum)
                 .withSystemDefault(customizationService.isSystemDefault(definition, locale, programType));
         entityService.createOrUpdate(transientConfiguration);
     }

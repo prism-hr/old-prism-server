@@ -23,7 +23,8 @@ import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceConfiguration;
 
 @Entity
-@Table(name = "DISPLAY_PROJECT_CONFIGURATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "display_property_definition_id" }),
+@Table(name = "DISPLAY_PROPERTY_CONFIGURATION", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "display_property_definition_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "program_type", "display_property_definition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "display_property_definition_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -44,15 +45,15 @@ public class DisplayPropertyConfiguration extends WorkflowResourceConfiguration 
     @ManyToOne
     @JoinColumn(name = "program_id")
     private Program program;
-    
+
     @Column(name = "locale")
     @Enumerated(EnumType.STRING)
     private PrismLocale locale;
-    
+
     @Column(name = "program_type")
     @Enumerated(EnumType.STRING)
     private PrismProgramType programType;
-    
+
     @ManyToOne
     @JoinColumn(name = "display_property_definition_id", nullable = false)
     private DisplayPropertyDefinition displayPropertyDefinition;
@@ -110,7 +111,7 @@ public class DisplayPropertyConfiguration extends WorkflowResourceConfiguration 
     public final void setLocale(PrismLocale locale) {
         this.locale = locale;
     }
-    
+
     @Override
     public final PrismProgramType getProgramType() {
         return programType;
@@ -146,32 +147,32 @@ public class DisplayPropertyConfiguration extends WorkflowResourceConfiguration 
     public final void setSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
     }
-    
+
     public DisplayPropertyConfiguration withResource(Resource resource) {
         setResource(resource);
         return this;
     }
-    
+
     public DisplayPropertyConfiguration withLocale(PrismLocale locale) {
         this.locale = locale;
         return this;
     }
-    
+
     public DisplayPropertyConfiguration withProgramType(PrismProgramType programType) {
         this.programType = programType;
         return this;
     }
-    
+
     public DisplayPropertyConfiguration withDisplayPropertyDefinition(DisplayPropertyDefinition displayPropertyDefinition) {
         this.displayPropertyDefinition = displayPropertyDefinition;
         return this;
     }
-    
+
     public DisplayPropertyConfiguration withValue(String value) {
         this.value = value;
         return this;
     }
-    
+
     public DisplayPropertyConfiguration withSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
         return this;
@@ -179,7 +180,7 @@ public class DisplayPropertyConfiguration extends WorkflowResourceConfiguration 
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("displayProperty", displayPropertyDefinition);
+        return super.getResourceSignature().addProperty("displayPropertyDefinition", displayPropertyDefinition);
     }
 
 }

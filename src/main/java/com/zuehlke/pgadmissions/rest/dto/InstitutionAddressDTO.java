@@ -7,8 +7,6 @@ public class InstitutionAddressDTO {
     @NotEmpty
     private String domicile;
 
-    private String region;
-
     @NotEmpty
     private String addressLine1;
 
@@ -27,14 +25,6 @@ public class InstitutionAddressDTO {
 
     public void setDomicile(String domicile) {
         this.domicile = domicile;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
     }
 
     public String getAddressLine1() {

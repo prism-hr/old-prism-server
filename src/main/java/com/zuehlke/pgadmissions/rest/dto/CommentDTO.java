@@ -87,7 +87,7 @@ public class CommentDTO {
     private Set<Integer> appointmentPreferences;
 
     @Valid
-    private CommentPropertyAnswerDTO propertyAnswer;
+    private CustomQuestionResponseDTO customQuestionResponse;
 
     @Valid
     @NotEmpty
@@ -317,12 +317,12 @@ public class CommentDTO {
         this.appointmentPreferences = appointmentPreferences;
     }
 
-    public final CommentPropertyAnswerDTO getPropertyAnswer() {
-        return propertyAnswer;
+    public final CustomQuestionResponseDTO getCustomQuestionResponse() {
+        return customQuestionResponse;
     }
 
-    public final void setPropertyAnswer(CommentPropertyAnswerDTO propertyAnswer) {
-        this.propertyAnswer = propertyAnswer;
+    public final void setCustomQuestionResponse(CustomQuestionResponseDTO customQuestionResponse) {
+        this.customQuestionResponse = customQuestionResponse;
     }
 
     public Set<FileDTO> getDocuments() {

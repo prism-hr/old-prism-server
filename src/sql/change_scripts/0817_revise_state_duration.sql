@@ -340,3 +340,7 @@ ALTER TABLE INSTITUTION_ADDRESS
 	DROP FOREIGN KEY institution_address_ibfk_3,
 	DROP COLUMN institution_domicile_region_id
 ;
+
+ALTER TABLE COMMENT
+	ADD COLUMN action_custom_question_version INT(10) UNSIGNED AFTER application_use_custom_recruiter_questions
+;

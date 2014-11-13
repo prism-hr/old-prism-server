@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.comment.CommentPropertyAnswer;
+import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
@@ -43,7 +43,7 @@ import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.ActionPropertyConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestion;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
@@ -292,7 +292,7 @@ public class ApplicationService {
             appendAppointmentPreferences(comment, commentDTO);
         }
 
-        if (commentDTO.getPropertyAnswer() != null) {
+        if (commentDTO.getCustomQuestionResponse() != null) {
             appendPropertyAnswers(comment, commentDTO);
         }
         
@@ -440,12 +440,13 @@ public class ApplicationService {
     }
 
     private void appendPropertyAnswers(Comment comment, CommentDTO commentDTO) {
-        Integer version = commentDTO.getPropertyAnswer().getVersion();
-        List<ActionPropertyConfiguration> actionPropertyConfigurations = actionService.getActionPropertyConfigurationByVersion(version);
-        List<Object> propertyAnswerValues = commentDTO.getPropertyAnswer().getValues();
+        Integer version = commentDTO.getCustomQuestionResponse().getVersion();
+        comment.setActionCustomQuestionVersion(version);
+        List<ActionCustomQuestion> actionPropertyConfigurations = actionService.getActionPropertyConfigurationByVersion(version);
+        List<Object> propertyAnswerValues = commentDTO.getCustomQuestionResponse().getValues();
         for (int i = 0; i < actionPropertyConfigurations.size(); i++) {
-            ActionPropertyConfiguration configuration = actionPropertyConfigurations.get(i);
-            CommentPropertyAnswer property = new CommentPropertyAnswer().withPropertyType(configuration.getActionPropertyType())
+            ActionCustomQuestion configuration = actionPropertyConfigurations.get(i);
+            CommentCustomResponse property = new CommentCustomResponse().withPropertyType(configuration.getActionPropertyType())
                     .withPropertyLabel(configuration.getLabel()).withPropertyValue(propertyAnswerValues.get(i).toString())
                     .withPropertyWeight(configuration.getWeighting());
             comment.getPropertyAnswers().add(property);

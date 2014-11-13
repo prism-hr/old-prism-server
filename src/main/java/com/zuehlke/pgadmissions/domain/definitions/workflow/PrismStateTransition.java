@@ -67,6 +67,11 @@ public class PrismStateTransition {
         this.propagatedActions = propagatedActions == null ? this.propagatedActions : propagatedActions;
         return this;
     }
+    
+    public PrismStateTransition withStateTerminations(List<PrismState> stateTerminations) {
+        this.stateTerminations = stateTerminations == null ? this.stateTerminations : stateTerminations;
+        return this;
+    }
 
     @Override
     public int hashCode() {

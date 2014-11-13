@@ -158,8 +158,6 @@ public class PrismApplicationVerificationPendingCompletion extends PrismWorkflow
             .withDefaultAction(false) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
-                    new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_REFEREE), // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_VIEWER_RECRUITER), // 

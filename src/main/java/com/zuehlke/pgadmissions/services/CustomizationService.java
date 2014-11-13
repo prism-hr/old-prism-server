@@ -85,11 +85,14 @@ public class CustomizationService {
 
     public <T extends WorkflowResourceConfiguration> T getConfiguration(Class<T> entityClass, Resource resource, User user, String keyIndex,
             WorkflowDefinition keyValue) {
-        PrismScope resourceScope = resource.getResourceScope();
-        PrismLocale locale = resourceScope == SYSTEM ? user.getLocale() : resource.getLocale();
-        PrismProgramType programType = resourceScope.getPrecedence() > INSTITUTION.getPrecedence() ? resource.getProgram().getProgramType()
-                .getPrismProgramType() : null;
-        return customizationDAO.getConfiguration(entityClass, resource, locale, programType, keyIndex, keyValue);
+        if (keyValue != null) {
+            PrismScope resourceScope = resource.getResourceScope();
+            PrismLocale locale = resourceScope == SYSTEM ? user.getLocale() : resource.getLocale();
+            PrismProgramType programType = resourceScope.getPrecedence() > INSTITUTION.getPrecedence() ? resource.getProgram().getProgramType()
+                    .getPrismProgramType() : null;
+            return customizationDAO.getConfiguration(entityClass, resource, locale, programType, keyIndex, keyValue);
+        }
+        return null;
     }
 
     public <T extends WorkflowResourceConfiguration> T getConfigurationStrict(Class<T> entityClass, Resource resource, PrismLocale locale,
@@ -119,8 +122,8 @@ public class CustomizationService {
     }
 
     public HashMap<PrismDisplayProperty, String> getDisplayProperties(Resource resource, PrismLocale locale, PrismProgramType programType,
-            PrismDisplayPropertyCategory category, PrismScope propertyScope) {
-        List<DisplayPropertyConfiguration> displayValues = customizationDAO.getDisplayProperties(resource, locale, programType, category, propertyScope);
+            PrismDisplayPropertyCategory displayPropertyCategory, PrismScope propertyScope) {
+        List<DisplayPropertyConfiguration> displayValues = customizationDAO.getDisplayProperties(resource, locale, programType, displayPropertyCategory, propertyScope);
         HashMap<PrismDisplayProperty, String> displayProperties = Maps.newHashMap();
         for (DisplayPropertyConfiguration displayValue : displayValues) {
             PrismDisplayProperty displayPropertyId = (PrismDisplayProperty) displayValue.getDisplayPropertyDefinition().getId();

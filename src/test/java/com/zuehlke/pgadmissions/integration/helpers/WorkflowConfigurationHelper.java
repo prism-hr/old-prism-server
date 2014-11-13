@@ -204,30 +204,31 @@ public class WorkflowConfigurationHelper {
         int stateTransitionCount = stateTransitions.size();
 
         for (StateTransition stateTransition : stateTransitions) {
-
-            StateTransitionEvaluation thisTransitionEvaluation = stateTransition.getStateTransitionEvaluation();
-            PrismStateTransitionEvaluation thisTransitionEvaluationId = thisTransitionEvaluation == null ? null : thisTransitionEvaluation.getId();
-
-            assertTrue(stateTransition.getRoleTransitions().size() > 0 || state != stateTransition.getTransitionState()
-                    || action != stateTransition.getTransitionAction() || thisTransitionEvaluationId != null);
-
-            logger.info("Verifying state transition: " + state.getId().toString() + " "
-                    + (thisTransitionEvaluationId == null ? "" : thisTransitionEvaluationId + " ") + stateTransition.getTransitionState().getId().toString());
-
-            if (stateTransitionCount == 1) {
-                assertNull(thisTransitionEvaluationId);
-            } else {
-                assertTrue(lastTransitionEvaluation == null || lastTransitionEvaluation == thisTransitionEvaluationId);
-            }
-
             State transitionState = stateTransition.getTransitionState();
-            assertTrue(state.getScope() == transitionState.getScope() || action.getCreationScope() == transitionState.getScope());
-
-            lastTransitionEvaluation = thisTransitionEvaluationId;
-            verifyRoleTransitions(stateTransition);
-
-            if (!stateTransition.getPropagatedActions().isEmpty()) {
-                propagatingStateTransitions.add(stateTransition);
+            
+            if (transitionState == null) {
+                assertTrue(state.getId().getStateGroup().isParallelizable());
+            } else {
+                StateTransitionEvaluation thisTransitionEvaluation = stateTransition.getStateTransitionEvaluation();
+                PrismStateTransitionEvaluation thisTransitionEvaluationId = thisTransitionEvaluation == null ? null : thisTransitionEvaluation.getId();
+                
+                logger.info("Verifying state transition: " + state.getId().toString() + " "
+                        + (thisTransitionEvaluationId == null ? "" : thisTransitionEvaluationId + " ") + transitionState.getId().name());
+                
+                if (stateTransitionCount == 1) {
+                    assertNull(thisTransitionEvaluationId);
+                } else {
+                    assertTrue(lastTransitionEvaluation == null || lastTransitionEvaluation == thisTransitionEvaluationId);
+                }
+    
+                assertTrue(state.getScope() == transitionState.getScope() || action.getCreationScope() == transitionState.getScope());
+    
+                lastTransitionEvaluation = thisTransitionEvaluationId;
+                verifyRoleTransitions(stateTransition);
+    
+                if (!stateTransition.getPropagatedActions().isEmpty()) {
+                    propagatingStateTransitions.add(stateTransition);
+                }
             }
         }
     }

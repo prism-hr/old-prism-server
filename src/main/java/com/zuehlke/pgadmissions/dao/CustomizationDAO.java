@@ -49,11 +49,11 @@ public class CustomizationDAO {
     }
 
     public List<DisplayPropertyConfiguration> getDisplayProperties(Resource resource, PrismLocale locale, PrismProgramType programType,
-            PrismDisplayPropertyCategory category, PrismScope propertyScope) {
+            PrismDisplayPropertyCategory displayPropertyCategory, PrismScope propertyScope) {
         return (List<DisplayPropertyConfiguration>) sessionFactory.getCurrentSession().createCriteria(DisplayPropertyConfiguration.class) //
-                .createAlias("displayProperty", "displayProperty", JoinType.INNER_JOIN) //
+                .createAlias("displayPropertyDefinition", "displayPropertyDefinition", JoinType.INNER_JOIN) //
                 .add(getFilterCondition(resource, locale, programType, propertyScope)) //
-                .add(Restrictions.eq("displayProperty.displayCategory", category)) //
+                .add(Restrictions.eq("displayPropertyDefinition.displayPropertyCategory", displayPropertyCategory)) //
                 .addOrder(Order.desc("program")) //
                 .addOrder(Order.desc("institution")) //
                 .addOrder(Order.desc("system")) //
@@ -81,27 +81,27 @@ public class CustomizationDAO {
         Query query;
         if (resourceScope == SYSTEM) {
             query = sessionFactory.getCurrentSession().createQuery( //
-                    "delete " + entityClass.getSimpleName() + " " //
-                            + "where " + keyIndex + " = :keyValue " //
-                            + "and (institution in (" //
+                "delete " + entityClass.getSimpleName() + " " //
+                    + "where " + keyIndex + " = :keyValue " //
+                        + "and (institution in (" //
                             + "from Institution " //
                             + "where system = :system) " //
-                            + programTypeConstraint //
-                            + localeConstraint + " "//
-                            + "or program in (" //
+                        + programTypeConstraint //
+                        + localeConstraint + " "//
+                        + "or program in (" //
                             + "from Program " //
                             + "where system = :system) " //
-                            + programTypeConstraint //
-                            + localeConstraint + ")");
+                        + programTypeConstraint //
+                        + localeConstraint + ")");
         } else if (resourceScope == INSTITUTION) {
             query = sessionFactory.getCurrentSession().createQuery( //
-                    "delete " + entityClass.getSimpleName() + " " //
-                            + "where " + keyIndex + " = :keyValue " //
-                            + "and (program in (" //
+                "delete " + entityClass.getSimpleName() + " " //
+                    + "where " + keyIndex + " = :keyValue " //
+                        + "and (program in (" //
                             + "from Program " //
                             + "where institution = :institution) " //
-                            + programTypeConstraint //
-                            + localeConstraint + ")");
+                        + programTypeConstraint //
+                        + localeConstraint + ")");
         } else {
             throw new Error();
         }

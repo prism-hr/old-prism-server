@@ -103,12 +103,11 @@ public class InstitutionService {
     public Institution create(User user, InstitutionDTO institutionDTO) {
         InstitutionAddressDTO institutionAddressDTO = institutionDTO.getAddress();
         InstitutionDomicile institutionAddressCountry = entityService.getById(InstitutionDomicile.class, institutionAddressDTO.getDomicile());
-        InstitutionDomicileRegion institutionAddressRegion = entityService.getById(InstitutionDomicileRegion.class, institutionAddressDTO.getRegion());
 
         InstitutionAddress address = new InstitutionAddress().withAddressLine1(institutionAddressDTO.getAddressLine1())
                 .withAddressLine2(institutionAddressDTO.getAddressLine2()).withAddressTown(institutionAddressDTO.getAddressTown())
                 .withAddressDistrict(institutionAddressDTO.getAddressDistrict()).withAddressCode(institutionAddressDTO.getAddressCode())
-                .withRegion(institutionAddressRegion).withDomicile(institutionAddressCountry);
+                .withDomicile(institutionAddressCountry);
 
         InstitutionDomicile institutionCountry = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
 
@@ -129,7 +128,6 @@ public class InstitutionService {
         InstitutionAddress address = institution.getAddress();
         InstitutionAddressDTO addressDTO = institutionDTO.getAddress();
         InstitutionDomicile domicile = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
-        InstitutionDomicileRegion region = entityService.getById(InstitutionDomicileRegion.class, addressDTO.getRegion());
 
         institution.setDomicile(domicile);
         institution.setTitle(institutionDTO.getTitle());
@@ -137,7 +135,6 @@ public class InstitutionService {
         institution.setSummary(institutionDTO.getSummary());
         institution.setDescription(institutionDTO.getDescription());
 
-        address.setRegion(region);
         address.setAddressLine1(addressDTO.getAddressLine1());
         address.setAddressLine2(addressDTO.getAddressLine2());
         address.setAddressTown(addressDTO.getAddressTown());

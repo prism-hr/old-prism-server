@@ -5,8 +5,6 @@ public class InstitutionAddressRepresentation {
 
     private String domicile;
 
-    private String region;
-
     private String addressLine1;
 
     private String addressLine2;
@@ -25,14 +23,6 @@ public class InstitutionAddressRepresentation {
 
     public void setDomicile(String domicile) {
         this.domicile = domicile;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
     }
 
     public String getAddressLine1() {

@@ -34,7 +34,7 @@ public class GeocodableLocationService {
 
     @Value("${integration.google.api.key}")
     private String googleApiKey;
-    
+
     @Value("${integration.google.geocoding.api.uri}")
     private String googleGeocodeApiUri;
 
@@ -43,7 +43,7 @@ public class GeocodableLocationService {
 
     @Autowired
     private EntityService entityService;
-    
+
     @Autowired
     private RestTemplate restTemplate;
 
@@ -71,21 +71,19 @@ public class GeocodableLocationService {
     public void setLocation(InstitutionAddress address) {
         try {
             List<String> addressTokens = Lists.reverse(address.getAddressTokens());
-            String domicileTokenString = Joiner.on(", ").join(address.getDomicileTokens());
 
             for (int i = addressTokens.size(); i > 0; i--) {
                 List<String> requestTokens = addressTokens.subList(0, i);
 
-                LocationSearchResponseDTO response = getLocation(Joiner.on(", ").join(Lists.reverse(requestTokens)) + ", " + domicileTokenString);
+                LocationSearchResponseDTO response = getLocation(Joiner.on(", ").join(Lists.reverse(requestTokens)) + ", " + address.getDomicile().getName());
                 if (response.getStatus().equals("OK")) {
                     setLocation(address, response);
                     return;
                 }
             }
 
-            InstitutionDomicileRegion region = address.getRegion();
             InstitutionDomicile domicile = address.getDomicile();
-            address.setLocation(region == null ? domicile.getLocation() : region.getLocation());
+            address.setLocation(domicile.getLocation());
         } catch (Exception e) {
             logger.error("Problem obtaining location for " + address.getLocationString(), e);
         }

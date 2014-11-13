@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Set;
 
@@ -86,6 +88,8 @@ public class ActionService {
             actionDAO.deleteActionConfiguration(resource, locale, programType, action);
 
             Integer version = null;
+            BigDecimal cumulativeRatingWeight = new BigDecimal(0.00);
+            
             for (ActionPropertyConfigurationDTO actionPropertyConfigurationDTO : actionPropertyConfigurationDTOs) {
                 String name = actionPropertyConfigurationDTO.getName();
 
@@ -105,6 +109,13 @@ public class ActionService {
                     version = persistentActionPropertyConfiguration.getId();
                     persistentActionPropertyConfiguration.setVersion(version);
                 }
+                
+                BigDecimal ratingWeight = actionPropertyConfigurationDTO.getWeighting();
+                cumulativeRatingWeight = ratingWeight == null ? cumulativeRatingWeight : cumulativeRatingWeight.add(ratingWeight).setScale(2, RoundingMode.HALF_UP);
+            }
+            
+            if (!cumulativeRatingWeight.equals(new BigDecimal(1.00))) {
+                throw new Error();
             }
         }
 

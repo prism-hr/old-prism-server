@@ -152,13 +152,13 @@ public enum PrismNotificationDefinition {
         return name().toLowerCase() + "_content.ftl";
     }
 
-    public static final HashMap<PrismNotificationDefinition, PrismReminderDefinition> getReminderdefinitions() {
+    public static final HashMap<PrismNotificationDefinition, PrismReminderDefinition> getReminderDefinitions() {
         return reminderDefinitions;
     }
 
-    public final PrismNotificationDefinition getReminderTemplate() {
+    public final PrismNotificationDefinition getReminderDefinition() {
         PrismReminderDefinition reminder = reminderDefinitions.get(this);
-        return reminder == null ? null : reminder.getTemplate();
+        return reminder == null ? null : reminder.getDefinition();
     }
 
     public final Integer getDefaultReminderDuration() {
@@ -167,17 +167,17 @@ public enum PrismNotificationDefinition {
     }
 
     private static void buildReminderDefinition(PrismNotificationDefinition template, PrismNotificationDefinition reminder, Integer defaultDuration) {
-        reminderDefinitions.put(template, new PrismReminderDefinition().withTemplate(reminder).withDefaultDuration(defaultDuration));
+        reminderDefinitions.put(template, new PrismReminderDefinition().withDefinition(reminder).withDefaultDuration(defaultDuration));
     }
 
     public static class PrismReminderDefinition {
 
-        private PrismNotificationDefinition template;
+        private PrismNotificationDefinition definition;
 
         private Integer defaultDuration;
 
-        public PrismNotificationDefinition getTemplate() {
-            return template;
+        public PrismNotificationDefinition getDefinition() {
+            return definition;
         }
 
         public final Integer getDefaultDuration() {
@@ -188,8 +188,8 @@ public enum PrismNotificationDefinition {
             this.defaultDuration = defaultDuration;
         }
 
-        public PrismReminderDefinition withTemplate(PrismNotificationDefinition template) {
-            this.template = template;
+        public PrismReminderDefinition withDefinition(PrismNotificationDefinition definition) {
+            this.definition = definition;
             return this;
         }
 

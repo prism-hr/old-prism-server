@@ -16,8 +16,8 @@ import javax.persistence.Table;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionConfigurationProperty;
 
 @Entity
-@Table(name = "COMMENT_PROPERTY")
-public class CommentPropertyAnswer {
+@Table(name = "COMMENT_CUSTOM_RESPONSE")
+public class CommentCustomResponse {
 
     @Id
     @GeneratedValue
@@ -90,22 +90,22 @@ public class CommentPropertyAnswer {
         this.propertyWeight = propertyWeight;
     }
 
-    public CommentPropertyAnswer withPropertyType(PrismActionConfigurationProperty propertyType) {
+    public CommentCustomResponse withPropertyType(PrismActionConfigurationProperty propertyType) {
         this.propertyType = propertyType;
         return this;
     }
 
-    public CommentPropertyAnswer withPropertyLabel(String propertyLabel) {
+    public CommentCustomResponse withPropertyLabel(String propertyLabel) {
         this.propertyLabel = propertyLabel;
         return this;
     }
 
-    public CommentPropertyAnswer withPropertyValue(String value) {
+    public CommentCustomResponse withPropertyValue(String value) {
         this.propertyValue = value;
         return this;
     }
 
-    public CommentPropertyAnswer withPropertyWeight(BigDecimal propertyWeight) {
+    public CommentCustomResponse withPropertyWeight(BigDecimal propertyWeight) {
         this.propertyWeight = propertyWeight;
         return this;
     }

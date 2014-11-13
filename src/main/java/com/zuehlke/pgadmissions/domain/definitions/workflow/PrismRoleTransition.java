@@ -83,7 +83,7 @@ public class PrismRoleTransition {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(role, transitionType, transitionRole, restrictToActionOwner, minimumPermitted, maximumPermitted);
+        return Objects.hashCode(role, transitionType, transitionRole, restrictToActionOwner, minimumPermitted, maximumPermitted, propertyDefinition);
     }
 
     @Override

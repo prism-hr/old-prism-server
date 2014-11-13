@@ -51,6 +51,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.EntityService;
@@ -243,8 +244,8 @@ public class SystemInitialisationHelper {
             assertEquals(prismNotificationTemplate.getNotificationType(), template.getNotificationType());
             assertEquals(prismNotificationTemplate.getNotificationPurpose(), template.getNotificationPurpose());
             assertEquals(prismNotificationTemplate.getScope(), template.getScope().getId());
-            assertEquals(prismNotificationTemplate.getReminderDefinition(), (template.getReminderDefinition()) == null ? null : template.getReminderDefinition()
-                    .getId());
+            assertEquals(prismNotificationTemplate.getReminderDefinition(), (template.getReminderDefinition()) == null ? null : template
+                    .getReminderDefinition().getId());
 
             PrismProgramType programType = template.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null;
 
@@ -343,19 +344,27 @@ public class SystemInitialisationHelper {
         for (StateTransition stateTransition : stateTransitions) {
             StateTransitionEvaluation evaluation = stateTransition.getStateTransitionEvaluation();
 
-            PrismStateTransition prismStateTransition = new PrismStateTransition().withTransitionState(stateTransition.getTransitionState().getId())
+            State transitionState = stateTransition.getTransitionState();
+            PrismStateTransition prismStateTransition = new PrismStateTransition()
+                    .withTransitionState(transitionState == null ? null : transitionState.getId())
                     .withTransitionAction(stateTransition.getTransitionAction().getId())
                     .withTransitionEvaluation(evaluation == null ? null : evaluation.getId());
 
             for (RoleTransition roleTransition : stateTransition.getRoleTransitions()) {
+                WorkflowPropertyDefinition workflowPropertyDefinition = roleTransition.getWorkflowPropertyDefinition();
                 prismStateTransition.getRoleTransitions().add(
                         new PrismRoleTransition().withRole(roleTransition.getRole().getId()).withTransitionType(roleTransition.getRoleTransitionType())
                                 .withTransitionRole(roleTransition.getTransitionRole().getId()).withRestrictToOwner(roleTransition.getRestrictToActionOwner())
-                                .withMinimumPermitted(roleTransition.getMinimumPermitted()).withMaximumPermitted(roleTransition.getMaximumPermitted()));
+                                .withMinimumPermitted(roleTransition.getMinimumPermitted()).withMaximumPermitted(roleTransition.getMaximumPermitted())
+                                .withPropertyDefinition(workflowPropertyDefinition == null ? null : workflowPropertyDefinition.getId()));
             }
 
             for (Action propagatedAction : stateTransition.getPropagatedActions()) {
                 prismStateTransition.getPropagatedActions().add(propagatedAction.getId());
+            }
+
+            for (State state : stateTransition.getStateTerminations()) {
+                prismStateTransition.getStateTerminations().add(state.getId());
             }
 
             assertTrue(prismStateAction.getTransitions().contains(prismStateTransition));

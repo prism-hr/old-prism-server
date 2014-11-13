@@ -79,14 +79,14 @@ public class PrismStateTransition {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
+    public boolean equals(Object object) {
+        if (object == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != object.getClass()) {
             return false;
         }
-        final PrismStateTransition other = (PrismStateTransition) obj;
+        final PrismStateTransition other = (PrismStateTransition) object;
         final List<PrismRoleTransition> otherRoleTransitions = other.getRoleTransitions();
         final List<PrismAction> otherPropagatedActions = other.getPropagatedActions();
         final List<PrismState> otherStateTerminations = other.getStateTerminations();

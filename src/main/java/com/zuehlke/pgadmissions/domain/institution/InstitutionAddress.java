@@ -28,10 +28,6 @@ public class InstitutionAddress extends GeocodableLocation {
     private InstitutionDomicile domicile;
 
     @ManyToOne
-    @JoinColumn(name = "institution_domicile_region_id")
-    private InstitutionDomicileRegion region;
-
-    @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
 
@@ -67,14 +63,6 @@ public class InstitutionAddress extends GeocodableLocation {
 
     public void setDomicile(InstitutionDomicile domicile) {
         this.domicile = domicile;
-    }
-
-    public InstitutionDomicileRegion getRegion() {
-        return region;
-    }
-
-    public void setRegion(InstitutionDomicileRegion region) {
-        this.region = region;
     }
 
     public final Institution getInstitution() {
@@ -170,11 +158,6 @@ public class InstitutionAddress extends GeocodableLocation {
         return this;
     }
 
-    public InstitutionAddress withRegion(final InstitutionDomicileRegion region) {
-        this.region = region;
-        return this;
-    }
-
     public InstitutionAddress withDomicile(final InstitutionDomicile domicile) {
         this.domicile = domicile;
         return this;
@@ -182,15 +165,11 @@ public class InstitutionAddress extends GeocodableLocation {
 
     @Override
     public String getLocationString() {
-        return Joiner.on(", ").join(getAddressTokens()) + ", " + Joiner.on(", ").join(getDomicileTokens());
+        return Joiner.on(", ").join(getAddressTokens()) + ", " + domicile.getName();
     }
 
     public List<String> getAddressTokens() {
         return filterLocationTokens(addressLine1, addressLine2, addressTown, addressDistrict, addressCode);
-    }
-
-    public List<String> getDomicileTokens() {
-        return filterLocationTokens(region == null ? null : region.getName(), domicile.getName());
     }
 
 }

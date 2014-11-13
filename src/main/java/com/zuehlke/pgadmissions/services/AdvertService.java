@@ -124,14 +124,12 @@ public class AdvertService {
 
         InstitutionAddressDTO addressDTO = advertDetailsDTO.getAddress();
         InstitutionDomicile country = entityService.getById(InstitutionDomicile.class, addressDTO.getDomicile());
-        InstitutionDomicileRegion region = entityService.getById(InstitutionDomicileRegion.class, addressDTO.getRegion());
 
         advert.setDescription(advertDetailsDTO.getDescription());
         advert.setHomepage(advertDetailsDTO.getHomepage());
 
         InstitutionAddress address = advert.getAddress();
         address.setDomicile(country);
-        address.setRegion(region);
         address.setInstitution(resource.getInstitution());
         address.setAddressLine1(addressDTO.getAddressLine1());
         address.setAddressLine2(addressDTO.getAddressLine2());
@@ -267,7 +265,7 @@ public class AdvertService {
     }
 
     public InstitutionAddress createAddressCopy(InstitutionAddress address) {
-        InstitutionAddress newAddress = new InstitutionAddress().withDomicile(address.getDomicile()).withRegion(address.getRegion())
+        InstitutionAddress newAddress = new InstitutionAddress().withDomicile(address.getDomicile())
                 .withInstitution(address.getInstitution()).withAddressLine1(address.getAddressLine1()).withAddressLine2(address.getAddressLine2())
                 .withAddressTown(address.getAddressTown()).withAddressDistrict(address.getAddressDistrict()).withAddressCode(address.getAddressCode());
         entityService.save(newAddress);

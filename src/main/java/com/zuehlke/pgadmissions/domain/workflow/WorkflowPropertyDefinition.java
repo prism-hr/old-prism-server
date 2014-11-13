@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyCategory;
 
 @Entity
@@ -23,7 +23,7 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
     @Id
     @Column(name = "id", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PrismDisplayProperty id;
+    private PrismWorkflowProperty id;
 
     @Column(name = "workflow_property_category", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -34,11 +34,11 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
     private Scope scope;
 
     @Override
-    public PrismDisplayProperty getId() {
+    public final PrismWorkflowProperty getId() {
         return id;
     }
 
-    public void setId(PrismDisplayProperty id) {
+    public final void setId(PrismWorkflowProperty id) {
         this.id = id;
     }
 
@@ -60,11 +60,11 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
         this.scope = scope;
     }
 
-    public WorkflowPropertyDefinition withId(PrismDisplayProperty id) {
+    public WorkflowPropertyDefinition withId(PrismWorkflowProperty id) {
         this.id = id;
         return this;
     }
-    
+
     public WorkflowPropertyDefinition withWorkflowPropertyCategory(PrismWorkflowPropertyCategory workflowPropertyCategory) {
         this.workflowPropertyCategory = workflowPropertyCategory;
         return this;

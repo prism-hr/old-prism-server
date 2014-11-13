@@ -1,16 +1,13 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.WorkflowDAO;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowProperty;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
@@ -25,9 +22,6 @@ import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO;
 public class WorkflowService {
 
     @Autowired
-    private WorkflowDAO workflowDAO;
-
-    @Autowired
     private CustomizationService customizationService;
 
     @Autowired
@@ -36,7 +30,7 @@ public class WorkflowService {
     @Autowired
     private EntityService entityService;
 
-    public WorkflowPropertyDefinition getWorkflowPropertyDefinitionById(PrismWorkflowPropertyDefinition id) {
+    public WorkflowPropertyDefinition getWorkflowPropertyDefinitionById(PrismWorkflowProperty id) {
         return entityService.getById(WorkflowPropertyDefinition.class, id);
     }
 
@@ -81,14 +75,6 @@ public class WorkflowService {
                 definition);
         resourceService
                 .executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_WORKFLOW_PROPERTY_GLOBAL"));
-    }
-
-    public List<WorkflowPropertyDefinition> getActiveWorkflowPropertyDefinitions() {
-        return workflowDAO.getActiveWorkflowPropertyDefinitions();
-    }
-
-    public void deleteObseleteWorkflowPropertyConfigurations() {
-        workflowDAO.deleteObseleteWorkflowPropertyConfigurations(getActiveWorkflowPropertyDefinitions());
     }
 
 }

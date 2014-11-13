@@ -446,7 +446,7 @@ public class ApplicationService {
         List<Object> propertyAnswerValues = commentDTO.getCustomQuestionResponse().getValues();
         for (int i = 0; i < actionPropertyConfigurations.size(); i++) {
             ActionCustomQuestion configuration = actionPropertyConfigurations.get(i);
-            CommentCustomResponse property = new CommentCustomResponse().withPropertyType(configuration.getActionPropertyType())
+            CommentCustomResponse property = new CommentCustomResponse().withCustomQuestionType(configuration.getCustomQuestionType())
                     .withPropertyLabel(configuration.getLabel()).withPropertyValue(propertyAnswerValues.get(i).toString())
                     .withPropertyWeight(configuration.getWeighting());
             comment.getPropertyAnswers().add(property);

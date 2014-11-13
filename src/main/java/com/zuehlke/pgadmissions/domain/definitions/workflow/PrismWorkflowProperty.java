@@ -6,7 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflow
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyCategory.APPLICATION_ROLE_ASSIGNMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyCategory.PROJECT_ROLE_ASSIGNMENT;
 
-public enum PrismWorkflowPropertyDefinition {
+public enum PrismWorkflowProperty {
 
     APPLICATION_THEME_PRIMARY(APPLICATION_DATA, 0, 10, true, 1, 1, APPLICATION), //
     APPLICATION_THEME_SECONDARY(APPLICATION_DATA, 0, 10, true, 0, 2, APPLICATION), //
@@ -45,7 +45,7 @@ public enum PrismWorkflowPropertyDefinition {
 
     private PrismScope scope;
 
-    private PrismWorkflowPropertyDefinition(PrismWorkflowPropertyCategory workflowPropertyCategory, Integer globalMinimum, Integer globalMaximum,
+    private PrismWorkflowProperty(PrismWorkflowPropertyCategory workflowPropertyCategory, Integer globalMinimum, Integer globalMaximum,
             boolean defaultEnabled, Integer defaultMinimum, Integer defaultMaximum, PrismScope scope) {
         this.workflowPropertyCategory = workflowPropertyCategory;
         this.globalMinimum = globalMinimum;

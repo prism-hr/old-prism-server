@@ -15,7 +15,7 @@ import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionConfigurationProperty;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismCustomQuestionType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -23,9 +23,9 @@ import com.zuehlke.pgadmissions.domain.system.System;
 
 @Entity
 @Table(name = "ACTION_CUSTOM_QUESTION", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "system_id", "program_type", "locale", "action_id, display_index" }),
-        @UniqueConstraint(columnNames = { "institution_id", "program_type", "action_id, display_index" }),
-        @UniqueConstraint(columnNames = { "program_id", "action_id, display_index" }) })
+        @UniqueConstraint(columnNames = { "system_id", "program_type", "locale", "action_id", "display_index" }),
+        @UniqueConstraint(columnNames = { "institution_id", "program_type", "action_id", "display_index" }),
+        @UniqueConstraint(columnNames = { "program_id", "action_id", "display_index" }) })
 public class ActionCustomQuestion extends WorkflowResourceConfiguration {
 
     @Id
@@ -58,9 +58,9 @@ public class ActionCustomQuestion extends WorkflowResourceConfiguration {
     @Column(name = "version")
     private Integer version;
     
-    @Column(name = "action_property_type")
+    @Column(name = "custom_question_type")
     @Enumerated(EnumType.STRING)
-    private PrismActionConfigurationProperty actionPropertyType;
+    private PrismCustomQuestionType customQuestionType;
 
     @Lob
     @Column(name = "display_name", nullable = false)
@@ -180,12 +180,12 @@ public class ActionCustomQuestion extends WorkflowResourceConfiguration {
         this.version = version;
     }
 
-    public final PrismActionConfigurationProperty getActionPropertyType() {
-        return actionPropertyType;
+    public final PrismCustomQuestionType getCustomQuestionType() {
+        return customQuestionType;
     }
 
-    public final void setActionPropertyType(PrismActionConfigurationProperty actionPropertyType) {
-        this.actionPropertyType = actionPropertyType;
+    public final void setCustomQuestionType(PrismCustomQuestionType customQuestionType) {
+        this.customQuestionType = customQuestionType;
     }
 
     public final String getName() {
@@ -316,8 +316,8 @@ public class ActionCustomQuestion extends WorkflowResourceConfiguration {
         return this;
     }
     
-    public ActionCustomQuestion withActionPropertyType(PrismActionConfigurationProperty actionPropertyType) {
-        this.actionPropertyType = actionPropertyType;
+    public ActionCustomQuestion withCustomQuestionType(PrismCustomQuestionType customQuestionType) {
+        this.customQuestionType = customQuestionType;
         return this;
     }
 

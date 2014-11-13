@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssi
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowProperty;
 
 public class PrismApplicationUnsubmitted extends PrismWorkflowState {
 
@@ -31,7 +31,7 @@ public class PrismApplicationUnsubmitted extends PrismWorkflowState {
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.APPLICATION_CREATOR) // 
-                        .withTemplate(PrismNotificationDefinition.APPLICATION_COMPLETE_NOTIFICATION))) //
+                        .withDefinition(PrismNotificationDefinition.APPLICATION_COMPLETE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_VALIDATION) // 
@@ -43,13 +43,13 @@ public class PrismApplicationUnsubmitted extends PrismWorkflowState {
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_REFEREE) //
                                 .withRestrictToOwner(false) //
-                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE), // 
+                                .withPropertyDefinition(PrismWorkflowProperty.APPLICATION_ASSIGN_REFEREE), // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
                                 .withRestrictToOwner(false) //
-                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR))),
+                                .withPropertyDefinition(PrismWorkflowProperty.APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR))),
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
@@ -60,13 +60,13 @@ public class PrismApplicationUnsubmitted extends PrismWorkflowState {
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_REFEREE) //
                                 .withRestrictToOwner(false) //
-                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE), // 
+                                .withPropertyDefinition(PrismWorkflowProperty.APPLICATION_ASSIGN_REFEREE), // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
                                 .withRestrictToOwner(false) //
-                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR)))))); //
+                                .withPropertyDefinition(PrismWorkflowProperty.APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR)))))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_ESCALATE) //
@@ -84,7 +84,7 @@ public class PrismApplicationUnsubmitted extends PrismWorkflowState {
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.APPLICATION_CREATOR) // 
-                        .withTemplate(PrismNotificationDefinition.APPLICATION_TERMINATE_NOTIFICATION))) //
+                        .withDefinition(PrismNotificationDefinition.APPLICATION_TERMINATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_WITHDRAWN_COMPLETED) // 

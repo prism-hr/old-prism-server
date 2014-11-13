@@ -9,7 +9,7 @@ import org.joda.time.LocalDate;
 
 import com.google.common.collect.Maps;
 
-public enum PrismActionConfigurationProperty {
+public enum PrismCustomQuestionType {
 
     INPUT(String.class, "input", null), //
     TEXTAREA(String.class, "textArea", null), //
@@ -28,15 +28,15 @@ public enum PrismActionConfigurationProperty {
     
     private List<Object> permittedValues;
     
-    private static final HashMap<String, PrismActionConfigurationProperty> displayNameIndex = Maps.newHashMap();
+    private static final HashMap<String, PrismCustomQuestionType> displayNameIndex = Maps.newHashMap();
     
     static {
-        for (PrismActionConfigurationProperty value: values()) {
+        for (PrismCustomQuestionType value: values()) {
             displayNameIndex.put(value.getDisplayName(), value);
         }
     }
 
-    private PrismActionConfigurationProperty(Class<?> propertyClass, String displayName, List<Object> permittedValues) {
+    private PrismCustomQuestionType(Class<?> propertyClass, String displayName, List<Object> permittedValues) {
         this.propertyClass = propertyClass;
         this.displayName = displayName;
         this.permittedValues = permittedValues;
@@ -54,7 +54,7 @@ public enum PrismActionConfigurationProperty {
         return permittedValues;
     }
 
-    public static final PrismActionConfigurationProperty getByDisplayName(String displayName) {
+    public static final PrismCustomQuestionType getByDisplayName(String displayName) {
         return displayNameIndex.get(displayName);
     }
 

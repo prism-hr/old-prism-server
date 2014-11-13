@@ -13,7 +13,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionConfigurationProperty;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismCustomQuestionType;
 
 @Entity
 @Table(name = "COMMENT_CUSTOM_RESPONSE")
@@ -27,9 +27,9 @@ public class CommentCustomResponse {
     @JoinColumn(name = "comment_id", nullable = false, insertable = false, updatable = false)
     private Comment comment;
 
-    @Column(name = "action_property_type", nullable = false)
+    @Column(name = "custom_question_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PrismActionConfigurationProperty propertyType;
+    private PrismCustomQuestionType customQuestionType;
 
     @Lob
     @Column(name = "property_label", nullable = false)
@@ -58,12 +58,12 @@ public class CommentCustomResponse {
         this.comment = comment;
     }
 
-    public final PrismActionConfigurationProperty getPropertyType() {
-        return propertyType;
+    public final PrismCustomQuestionType getCustomQuestionType() {
+        return customQuestionType;
     }
 
-    public final void setPropertyType(PrismActionConfigurationProperty propertyType) {
-        this.propertyType = propertyType;
+    public final void setCustomQuestionType(PrismCustomQuestionType customQuestionType) {
+        this.customQuestionType = customQuestionType;
     }
 
     public final String getPropertyLabel() {
@@ -90,8 +90,8 @@ public class CommentCustomResponse {
         this.propertyWeight = propertyWeight;
     }
 
-    public CommentCustomResponse withPropertyType(PrismActionConfigurationProperty propertyType) {
-        this.propertyType = propertyType;
+    public CommentCustomResponse withCustomQuestionType(PrismCustomQuestionType customQuestionType) {
+        this.customQuestionType = customQuestionType;
         return this;
     }
 

@@ -60,10 +60,10 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationDefinition.SYSTEM_PROGRAM_UPDATE_NOTIFICATION), // 
+                        .withDefinition(PrismNotificationDefinition.SYSTEM_PROGRAM_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationDefinition.SYSTEM_PROGRAM_UPDATE_NOTIFICATION))) //
+                        .withDefinition(PrismNotificationDefinition.SYSTEM_PROGRAM_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVED) // 
@@ -184,10 +184,10 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
                 .withNotifications(Arrays.asList( // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationDefinition.SYSTEM_PROGRAM_UPDATE_NOTIFICATION), // 
+                        .withDefinition(PrismNotificationDefinition.SYSTEM_PROGRAM_UPDATE_NOTIFICATION), // 
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR) // 
-                        .withTemplate(PrismNotificationDefinition.SYSTEM_PROGRAM_UPDATE_NOTIFICATION))) //
+                        .withDefinition(PrismNotificationDefinition.SYSTEM_PROGRAM_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_DISABLED_COMPLETED) // 

@@ -97,14 +97,14 @@ public class StateService {
         return entityService.getById(StateTransitionEvaluation.class, stateTransitionEvaluationId);
     }
 
-    public List<State> getConfigurableStates() {
-        return stateDAO.getConfigurableStates();
-    }
-
     public List<State> getStates() {
         return entityService.list(State.class);
     }
 
+    public List<State> getConfigurableStates() {
+        return stateDAO.getConfigurableStates();
+    }
+    
     public List<StateGroup> getStateGroups() {
         return entityService.list(StateGroup.class);
     }
@@ -166,7 +166,7 @@ public class StateService {
     }
 
     public void deleteObsoleteStateDurations() {
-        stateDAO.deleteObseleteStateDurations(getConfigurableStates());
+        stateDAO.deleteObseleteStateDurations();
     }
 
     public List<StateAction> getStateActions() {

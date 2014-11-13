@@ -335,3 +335,8 @@ ALTER TABLE APPLICATION_QUALIFICATION
 	MODIFY COLUMN institution_id INT(10) UNSIGNED,
 	MODIFY COLUMN qualification_type_id INT(10) UNSIGNED
 ;
+
+ALTER TABLE INSTITUTION_ADDRESS
+	DROP FOREIGN KEY institution_address_ibfk_3,
+	DROP COLUMN institution_domicile_region_id
+;

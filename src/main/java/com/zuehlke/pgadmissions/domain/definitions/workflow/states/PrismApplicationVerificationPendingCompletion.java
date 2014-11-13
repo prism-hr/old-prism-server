@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.states;
 
 import java.util.Arrays;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
@@ -180,7 +181,7 @@ public class PrismApplicationVerificationPendingCompletion extends PrismWorkflow
                         .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR)))); //
         
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.APPLICATION_TERMINATE) //
+            .withAction(PrismAction.APPLICATION_ESCALATE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
                 .withNotifications(Arrays.asList( // 
@@ -194,20 +195,36 @@ public class PrismApplicationVerificationPendingCompletion extends PrismWorkflow
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
+                                .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.UPDATE) //
+                                .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
+                                .withRestrictToOwner(false), // 
+                            new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_REFEREE) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_VIEWER_REFEREE) //
-                                .withRestrictToOwner(false))), // 
+                                .withRestrictToOwner(false))) //
+                        .withStateTerminations(Lists.newArrayList( //
+                            PrismState.APPLICATION_REFERENCE, //
+                            PrismState.APPLICATION_VERIFICATION)), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REJECTED_PENDING_EXPORT) // 
                         .withTransitionAction(PrismAction.APPLICATION_TERMINATE) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
+                                .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.UPDATE) //
+                                .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
+                                .withRestrictToOwner(false), // 
+                            new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_REFEREE) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_VIEWER_REFEREE) //
-                                .withRestrictToOwner(false)))))); //
+                                .withRestrictToOwner(false)))
+                        .withStateTerminations(Lists.newArrayList( //
+                            PrismState.APPLICATION_REFERENCE, //
+                            PrismState.APPLICATION_VERIFICATION))))); //
         
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_TERMINATE) //
@@ -224,20 +241,36 @@ public class PrismApplicationVerificationPendingCompletion extends PrismWorkflow
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
+                                .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.UPDATE) //
+                                .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
+                                .withRestrictToOwner(false), // 
+                            new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_REFEREE) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_VIEWER_REFEREE) //
-                                .withRestrictToOwner(false))), // 
+                                .withRestrictToOwner(false))) //
+                        .withStateTerminations(Lists.newArrayList( //
+                            PrismState.APPLICATION_REFERENCE, //
+                            PrismState.APPLICATION_VERIFICATION)), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REJECTED_PENDING_EXPORT) // 
                         .withTransitionAction(PrismAction.APPLICATION_TERMINATE) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
+                                .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.UPDATE) //
+                                .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
+                                .withRestrictToOwner(false), // 
+                            new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_REFEREE) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_VIEWER_REFEREE) //
-                                .withRestrictToOwner(false)))))); //
+                                .withRestrictToOwner(false)))
+                        .withStateTerminations(Lists.newArrayList( //
+                            PrismState.APPLICATION_REFERENCE, //
+                            PrismState.APPLICATION_VERIFICATION))))); //
         
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_VIEW_EDIT) //

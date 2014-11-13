@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.states;
 
 import java.util.Arrays;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
@@ -316,7 +317,10 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
                                 .withRole(PrismRole.APPLICATION_REFEREE) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_VIEWER_REFEREE) //
-                                .withRestrictToOwner(false))), // 
+                                .withRestrictToOwner(false))) //
+                        .withStateTerminations(Lists.newArrayList( //
+                            PrismState.APPLICATION_REFERENCE,
+                            PrismState.APPLICATION_VERIFICATION)), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REJECTED_PENDING_EXPORT) // 
                         .withTransitionAction(PrismAction.APPLICATION_TERMINATE) // 
@@ -341,7 +345,10 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
                                 .withRole(PrismRole.APPLICATION_REFEREE) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_VIEWER_REFEREE) //
-                                .withRestrictToOwner(false)))))); //
+                                .withRestrictToOwner(false)))
+                        .withStateTerminations(Lists.newArrayList( //
+                            PrismState.APPLICATION_REFERENCE,
+                            PrismState.APPLICATION_VERIFICATION))))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY) //

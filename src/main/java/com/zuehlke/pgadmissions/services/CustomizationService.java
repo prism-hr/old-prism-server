@@ -14,10 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.CustomizationDAO;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -98,6 +100,36 @@ public class CustomizationService {
     public <T extends WorkflowResourceConfiguration> T getConfigurationStrict(Class<T> entityClass, Resource resource, PrismLocale locale,
             PrismProgramType programType, String keyIndex, WorkflowDefinition keyValue) {
         return customizationDAO.getConfigurationStrict(entityClass, resource, locale, programType, keyIndex, keyValue);
+    }
+    
+    public <T extends WorkflowDefinition> List<Enum<?>> listDefinitions(Class<T> entityClass, PrismScope scope) {
+        return customizationDAO.listDefinitions(entityClass, scope);
+    }
+
+    public <T extends WorkflowResourceConfiguration> List<T> listConfigurations(Class<T> entityClass, Resource resource, PrismLocale locale,
+            PrismProgramType programType, String definitionReference) {
+        List<T> configurations = customizationDAO.listConfigurations(entityClass, resource, locale, programType, definitionReference);
+
+        if (configurations.isEmpty()) {
+            return configurations;
+        } else {
+            T stereotype = configurations.get(0);
+
+            Resource stereotypeResource = stereotype.getResource();
+            PrismLocale stereotypeLocale = stereotype.getLocale();
+            PrismProgramType stereotypeProgramType = stereotype.getProgramType();
+
+            List<T> filteredConfigurations = Lists.newLinkedList();
+
+            for (T configuration : configurations) {
+                if (Objects.equal(configuration.getResource(), stereotypeResource) && Objects.equal(configuration.getLocale(), stereotypeLocale)
+                        && Objects.equal(configuration.getProgramType(), stereotypeProgramType)) {
+                    filteredConfigurations.add(configuration);
+                }
+            }
+            
+            return filteredConfigurations;
+        }
     }
 
     public <T extends WorkflowResourceConfiguration> void restoreDefaultConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale,

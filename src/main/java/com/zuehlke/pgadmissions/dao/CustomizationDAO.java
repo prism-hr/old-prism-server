@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResource;
 
@@ -62,16 +63,16 @@ public class CustomizationDAO {
                 .list();
     }
 
-    public <T extends WorkflowResource> T getConfigurationStrict(Class<T> entityClass, Resource resource, PrismLocale locale, PrismProgramType programType,
-            String keyIndex, WorkflowDefinition keyValue) {
-        return (T) sessionFactory.getCurrentSession().createCriteria(entityClass) //
-                .add(Restrictions.eq(keyIndex, keyValue)) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
-                .add(Restrictions.eq("locale", locale)) //
-                .add(Restrictions.eqOrIsNull("programType", programType)) //
-                .uniqueResult();
+    public <T extends WorkflowDefinition> List<Enum<?>> listDefinitions(Class<T> entityClass, PrismScope scope) {
+        return (List<Enum<?>>) sessionFactory.getCurrentSession().createCriteria(entityClass) //
+                .setProjection(Projections.property("id")) //
+                .createAlias("scope", "scope", JoinType.INNER_JOIN) //
+                .add(Restrictions.ge("scope.precedence", scope.getPrecedence())) //
+                .addOrder(Order.asc("scope.id")) //
+                .addOrder(Order.asc("id")) //
+                .list();
     }
-
+    
     public <T extends WorkflowResource> List<T> listConfigurations(Class<T> entityClass, Resource resource, PrismLocale locale, PrismProgramType programType,
             String definitionReference) {
         Criterion programTypeConstraint = programType == null ? Restrictions.isNull("programType") : Restrictions.in("programType",
@@ -98,18 +99,38 @@ public class CustomizationDAO {
                 .list();
     }
     
-    public <T extends WorkflowDefinition> List<Enum<?>> listDefinitions(Class<T> entityClass, PrismScope scope) {
-        return (List<Enum<?>>) sessionFactory.getCurrentSession().createCriteria(entityClass) //
-                .setProjection(Projections.property("id")) //
-                .createAlias("scope", "scope", JoinType.INNER_JOIN) //
-                .add(Restrictions.ge("scope.precedence", scope.getPrecedence())) //
-                .addOrder(Order.asc("scope.id")) //
-                .addOrder(Order.asc("id")) //
-                .list();
+    public <T extends WorkflowConfiguration> void restoreDefaultConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale, PrismProgramType programType) {
+        String localeConstraint = locale == null ? "" : "and locale = " + locale.name() + " ";
+        String programTypeConstraint = programType == null ? "" : "and programType = " + programType.name();
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete " + entityClass.getClass().getSimpleName() + " "  //
+                    + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+                        + localeConstraint //
+                        + programTypeConstraint) //
+                .setParameter("resource", resource) //
+                .executeUpdate();
     }
-
-    public <T extends WorkflowResource> void restoreGlobalConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale,
-            PrismProgramType programType, String keyIndex, WorkflowDefinition keyValue) {
+    
+    public <T extends WorkflowConfiguration> T getConfigurationStrict(Class<T> entityClass, Resource resource, PrismLocale locale, PrismProgramType programType) {
+        return (T) sessionFactory.getCurrentSession().createCriteria(entityClass) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.eq("locale", locale)) //
+                .add(Restrictions.eqOrIsNull("programType", programType)) //
+                .uniqueResult();
+    }
+    
+    public <T extends WorkflowConfiguration> T getConfigurationStrict(Class<T> entityClass, Resource resource, PrismLocale locale, PrismProgramType programType,
+            String keyIndex, WorkflowDefinition keyValue) {
+        return (T) sessionFactory.getCurrentSession().createCriteria(entityClass) //
+                .add(Restrictions.eq(keyIndex, keyValue)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.eq("locale", locale)) //
+                .add(Restrictions.eqOrIsNull("programType", programType)) //
+                .uniqueResult();
+    }
+    
+    public <T extends WorkflowConfiguration> void restoreGlobalConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale,
+            PrismProgramType programType) {
         PrismScope resourceScope = resource.getResourceScope();
 
         String programTypeConstraint = programType == null ? "and programType is null " : "and programType = :programType ";
@@ -119,7 +140,6 @@ public class CustomizationDAO {
         if (resourceScope == SYSTEM) {
             query = sessionFactory.getCurrentSession().createQuery( //
                 "delete " + entityClass.getSimpleName() + " " //
-                + "where " + keyIndex + " = :keyValue " //
                     + "and (institution in (" //
                         + "from Institution " //
                         + "where system = :system) " //
@@ -133,7 +153,6 @@ public class CustomizationDAO {
         } else if (resourceScope == INSTITUTION) {
             query = sessionFactory.getCurrentSession().createQuery( //
                 "delete " + entityClass.getSimpleName() + " " //
-                    + "where " + keyIndex + " = :keyValue " //
                         + "and (program in (" //
                             + "from Program " //
                             + "where institution = :institution) " //
@@ -143,8 +162,7 @@ public class CustomizationDAO {
             throw new Error();
         }
         
-        query.setParameter(resourceScope.getLowerCaseName(), resource) //
-                .setParameter("keyValue", keyValue);
+        query.setParameter(resourceScope.getLowerCaseName(), resource);
 
         if (programType != null) {
             query.setParameter("programType", programType);

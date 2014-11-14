@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.system.System;
         @UniqueConstraint(columnNames = { "institution_id", "program_type", "workflow_property_definition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "workflow_property_definition_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class WorkflowPropertyConfiguration extends WorkflowResourceConfiguration {
+public class WorkflowPropertyConfiguration extends WorkflowConfiguration {
 
     @Id
     @GeneratedValue

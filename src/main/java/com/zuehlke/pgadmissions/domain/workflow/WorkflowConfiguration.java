@@ -7,7 +7,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
-public abstract class WorkflowResourceConfiguration extends WorkflowResource {
+public abstract class WorkflowConfiguration extends WorkflowResource {
 
     public abstract PrismProgramType getProgramType();
 

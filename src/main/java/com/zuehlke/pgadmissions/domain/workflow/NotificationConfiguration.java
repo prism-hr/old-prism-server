@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.system.System;
         @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "notification_definition_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "locale", "program_type", "notification_definition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "notification_definition_id" }) })
-public class NotificationConfiguration extends WorkflowResourceConfiguration {
+public class NotificationConfiguration extends WorkflowConfiguration {
 
     @Id
     @GeneratedValue

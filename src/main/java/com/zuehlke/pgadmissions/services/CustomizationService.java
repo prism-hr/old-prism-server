@@ -27,8 +27,8 @@ import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceConfiguration;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 
@@ -67,25 +67,12 @@ public class CustomizationService {
         entityService.createOrUpdate(transientConfiguration);
     }
 
-    public void restoreDefaultDisplayPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
-            DisplayPropertyDefinition definition) throws DeduplicationException {
-        restoreDefaultConfiguration(DisplayPropertyConfiguration.class, resource, locale, programType, "displayPropertyDefinition", definition);
-        resourceService
-                .executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_DISPLAY_PROPERTY_DEFAULT"));
-    }
-
-    public void restoreGlobalDisplayPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
-            DisplayPropertyDefinition definition) throws DeduplicationException {
-        restoreGlobalConfiguration(DisplayPropertyConfiguration.class, resource, locale, programType, "displayPropertyDefinition", definition);
-        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_DISPLAY_PROPERTY_GLOBAL"));
-    }
-
-    public <T extends WorkflowResourceConfiguration> T getConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale,
-            PrismProgramType programType, String keyIndex, WorkflowDefinition keyValue) {
+    public <T extends WorkflowConfiguration> T getConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale, PrismProgramType programType,
+            String keyIndex, WorkflowDefinition keyValue) {
         return customizationDAO.getConfiguration(entityClass, resource, locale, programType, keyIndex, keyValue);
     }
 
-    public <T extends WorkflowResourceConfiguration> T getConfiguration(Class<T> entityClass, Resource resource, User user, String definitionReference,
+    public <T extends WorkflowConfiguration> T getConfiguration(Class<T> entityClass, Resource resource, User user, String definitionReference,
             WorkflowDefinition definition) {
         if (definition != null) {
             PrismScope resourceScope = resource.getResourceScope();
@@ -97,16 +84,11 @@ public class CustomizationService {
         return null;
     }
 
-    public <T extends WorkflowResourceConfiguration> T getConfigurationStrict(Class<T> entityClass, Resource resource, PrismLocale locale,
-            PrismProgramType programType, String keyIndex, WorkflowDefinition keyValue) {
-        return customizationDAO.getConfigurationStrict(entityClass, resource, locale, programType, keyIndex, keyValue);
-    }
-    
     public <T extends WorkflowDefinition> List<Enum<?>> listDefinitions(Class<T> entityClass, PrismScope scope) {
         return customizationDAO.listDefinitions(entityClass, scope);
     }
 
-    public <T extends WorkflowResourceConfiguration> List<T> listConfigurations(Class<T> entityClass, Resource resource, PrismLocale locale,
+    public <T extends WorkflowConfiguration> List<T> listConfigurations(Class<T> entityClass, Resource resource, PrismLocale locale,
             PrismProgramType programType, String definitionReference) {
         List<T> configurations = customizationDAO.listConfigurations(entityClass, resource, locale, programType, definitionReference);
 
@@ -127,30 +109,21 @@ public class CustomizationService {
                     filteredConfigurations.add(configuration);
                 }
             }
-            
+
             return filteredConfigurations;
         }
     }
 
-    public <T extends WorkflowResourceConfiguration> void restoreDefaultConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale,
-            PrismProgramType programType, String keyIndex, WorkflowDefinition keyValue) {
-        if (Arrays.asList(INSTITUTION, PROGRAM).contains(resource.getResourceScope())) {
-            T configuration = getConfigurationStrict(entityClass, resource, locale, programType, keyIndex, keyValue);
-            if (configuration != null) {
-                entityService.delete(configuration);
-            }
-        } else {
-            throw new Error();
-        }
+    public <T extends WorkflowConfiguration> void restoreDefaultConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale,
+            PrismProgramType programType) throws CustomizationException {
+        validateRestoreDefaultConfiguration(resource, locale, programType);
+        customizationDAO.restoreDefaultConfiguration(entityClass, resource, locale, programType);
     }
 
-    public <T extends WorkflowResourceConfiguration> void restoreGlobalConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale,
-            PrismProgramType programType, String keyIndex, WorkflowDefinition keyValue) {
-        if (Arrays.asList(SYSTEM, INSTITUTION).contains(resource.getResourceScope())) {
-            customizationDAO.restoreGlobalConfiguration(entityClass, resource, locale, programType, keyIndex, keyValue);
-        } else {
-            throw new Error();
-        }
+    public <T extends WorkflowConfiguration> void restoreGlobalConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale,
+            PrismProgramType programType) throws CustomizationException {
+        validateRestoreGlobalConfiguration(resource, locale, programType);
+        customizationDAO.restoreGlobalConfiguration(entityClass, resource, locale, programType);
     }
 
     public HashMap<PrismDisplayProperty, String> getDisplayProperties(Resource resource, PrismLocale locale, PrismProgramType programType,
@@ -195,6 +168,18 @@ public class CustomizationService {
         } else if (definitionPrecedence < PROGRAM.getPrecedence() && programType != null) {
             throw new CustomizationException("Tried to configure " + definition.getClass().getSimpleName() + ": " + definition.getId().toString()
                     + " with program type. Only scopes within program may specify program type.");
+        }
+    }
+
+    public void validateRestoreDefaultConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType) throws CustomizationException {
+        if (!Arrays.asList(INSTITUTION, PROGRAM).contains(resource.getResourceScope())) {
+            throw new CustomizationException("Tried to restore default configurations as a system level entity");
+        }
+    }
+
+    public void validateRestoreGlobalConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType) throws CustomizationException {
+        if (!Arrays.asList(SYSTEM, INSTITUTION).contains(resource.getResourceScope())) {
+            throw new CustomizationException("Tried to restore global configurations as a program level entity");
         }
     }
 

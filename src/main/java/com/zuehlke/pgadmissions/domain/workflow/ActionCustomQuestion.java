@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.system.System;
         @UniqueConstraint(columnNames = { "system_id", "program_type", "locale", "action_id", "display_index" }),
         @UniqueConstraint(columnNames = { "institution_id", "program_type", "action_id", "display_index" }),
         @UniqueConstraint(columnNames = { "program_id", "action_id", "display_index" }) })
-public class ActionCustomQuestion extends WorkflowResourceConfiguration {
+public class ActionCustomQuestion extends WorkflowConfiguration {
 
     @Id
     private Integer id;

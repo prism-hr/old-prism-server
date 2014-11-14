@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
 
 @Entity
 @Table(name = "DISPLAY_PROPERTY_CONFIGURATION", uniqueConstraints = {
@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceConfiguration;
         @UniqueConstraint(columnNames = { "institution_id", "program_type", "display_property_definition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "display_property_definition_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class DisplayPropertyConfiguration extends WorkflowResourceConfiguration {
+public class DisplayPropertyConfiguration extends WorkflowConfiguration {
 
     @Id
     @GeneratedValue

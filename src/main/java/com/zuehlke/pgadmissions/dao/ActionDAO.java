@@ -94,17 +94,16 @@ public class ActionDAO {
 
     public Action getPermittedAction(Resource resource, Action action, User user) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.property("stateAction.action")) //
+                .setProjection(Projections.property("action")) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions.eq("stateAction.action", action)) //
-                .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
+                .add(Restrictions.eq("action", action)) //
+                .add(Restrictions.eq("actionType", PrismActionType.USER_INVOCATION)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("stateActionAssignment.id")) //
                         .add(Restrictions.conjunction() //

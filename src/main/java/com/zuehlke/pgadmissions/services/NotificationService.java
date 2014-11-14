@@ -117,15 +117,17 @@ public class NotificationService {
         entityService.createOrUpdate(transientConfiguration);
     }
 
-    public void restoreDefaultNotificationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationDefinition definition)
-            throws DeduplicationException {
-        customizationService.restoreDefaultConfiguration(NotificationConfiguration.class, resource, locale, programType, "notificationDefinition", definition);
+    public void restoreDefaultNotificationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
+            NotificationDefinition notificationDefinition) throws DeduplicationException, CustomizationException {
+        customizationService.validateConfiguration(resource, notificationDefinition, locale, programType);
+        notificationDAO.restoreDefaultNotificationConfiguration(resource, locale, programType, notificationDefinition);
         resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_NOTIFICATION_DEFAULT"));
     }
 
-    public void restoreGlobalNotificationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationDefinition definition)
-            throws DeduplicationException {
-        customizationService.restoreGlobalConfiguration(NotificationConfiguration.class, resource, locale, programType, "notificationDefinition", definition);
+    public void restoreGlobalNotificationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
+            NotificationDefinition notificationDefinition) throws DeduplicationException, CustomizationException {
+        customizationService.validateRestoreGlobalConfiguration(resource, locale, programType);
+        notificationDAO.restoreGlobalConfiguration(resource, locale, programType, notificationDefinition);
         resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_NOTIFICATION_GLOBAL"));
     }
 
@@ -307,9 +309,9 @@ public class NotificationService {
         sendNotification(SYSTEM_PASSWORD_NOTIFICATION, new NotificationDefinitionModelDTO().withUser(user).withAuthor(system.getUser()).withResource(system)
                 .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST).withNewPassword(newPassword));
     }
-    
+
     public List<PrismNotificationDefinition> getEditableTemplates(PrismScope scope) {
-        return (List<PrismNotificationDefinition>)(List<?>) customizationService.listDefinitions(NotificationDefinition.class, scope);
+        return (List<PrismNotificationDefinition>) (List<?>) customizationService.listDefinitions(NotificationDefinition.class, scope);
     }
 
     private void sendIndividualRequestNotifications(Resource resource, Comment comment, User author, LocalDate baseline) {

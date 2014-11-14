@@ -10,7 +10,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowProperty;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
@@ -39,12 +38,7 @@ public class WorkflowService {
                 workflowPropertyDefinition);
     }
 
-    public WorkflowPropertyConfiguration getWorkflowPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
-            WorkflowPropertyDefinition workflowPropertyDefinition) {
-        return customizationService.getConfiguration(WorkflowPropertyConfiguration.class, resource, locale, programType, "workflowPropertyDefinition",
-                workflowPropertyDefinition);
-    }
-
+    // TODO: make this work with a list of representations
     public void updateWorkflowPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, WorkflowPropertyDefinition definition,
             WorkflowPropertyConfigurationDTO workflowPropertyConfigurationDTO) throws DeduplicationException, CustomizationException {
         createOrUpdateWorkflowPropertyConfiguration(resource, locale, programType, definition, workflowPropertyConfigurationDTO.getEnabled(),
@@ -59,22 +53,6 @@ public class WorkflowService {
                 .withProgramType(programType).withWorkflowPropertyDefinition(definition).withEnabled(enabled).withMinimum(minimum).withMaximum(maximum)
                 .withSystemDefault(customizationService.isSystemDefault(definition, locale, programType));
         entityService.createOrUpdate(transientConfiguration);
-    }
-
-    public void restoreDefaultWorkflowPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
-            WorkflowPropertyDefinition definition) throws DeduplicationException {
-        customizationService.restoreDefaultConfiguration(WorkflowPropertyConfiguration.class, resource, locale, programType, "workflowPropertyDefinition",
-                definition);
-        resourceService.executeUpdate(resource,
-                PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_WORKFLOW_PROPERTY_DEFAULT"));
-    }
-
-    public void restoreGlobalWorkflowPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
-            StateDurationDefinition definition) throws DeduplicationException {
-        customizationService.restoreGlobalConfiguration(WorkflowPropertyConfiguration.class, resource, locale, programType, "workflowPropertyDefinition",
-                definition);
-        resourceService
-                .executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_WORKFLOW_PROPERTY_GLOBAL"));
     }
 
 }

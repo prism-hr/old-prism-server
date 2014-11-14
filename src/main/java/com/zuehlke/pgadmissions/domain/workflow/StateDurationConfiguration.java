@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.system.System;
         @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "state_duration_definition_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "locale", "program_type", "state_duration_definition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "state_duration_definition_id" }) })
-public class StateDurationConfiguration extends WorkflowResourceConfiguration {
+public class StateDurationConfiguration extends WorkflowConfiguration {
 
     @Id
     @GeneratedValue

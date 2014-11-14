@@ -123,12 +123,7 @@ public class StateService {
                 statedurationDefinition);
     }
 
-    public StateDurationConfiguration getStateDurationConfigurationStrict(Resource resource, PrismLocale locale, PrismProgramType programType,
-            StateDurationDefinition definition) {
-        return customizationService.getConfigurationStrict(StateDurationConfiguration.class, resource, locale, programType, "stateDurationConfiguration",
-                definition);
-    }
-
+    // TODO: make this work with a list of representations
     public void updateStateDurationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
             StateDurationDefinition stateDurationDefinition, Integer duration) throws DeduplicationException, CustomizationException {
         createOrUpdateStateDurationConfiguration(resource, locale, programType, stateDurationDefinition, duration);
@@ -142,19 +137,6 @@ public class StateService {
                 .withProgramType(programType).withStateDurationDefinition(stateDurationDefinition).withDuration(duration)
                 .withSystemDefault(customizationService.isSystemDefault(stateDurationDefinition, locale, programType));
         entityService.createOrUpdate(transientStateDuration);
-    }
-
-    public void restoreDefaultStateDurationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, StateDurationDefinition definition)
-            throws DeduplicationException {
-        customizationService
-                .restoreDefaultConfiguration(StateDurationConfiguration.class, resource, locale, programType, "stateDurationDefinition", definition);
-        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_STATE_DURATION_DEFAULT"));
-    }
-
-    public void restoreGlobalStateDurationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, StateDurationDefinition definition)
-            throws DeduplicationException {
-        customizationService.restoreGlobalConfiguration(StateDurationConfiguration.class, resource, locale, programType, "stateDurationDefinition", definition);
-        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_STATE_DURATION_GLOBAL"));
     }
 
     public void deleteStateActions() {
@@ -343,7 +325,7 @@ public class StateService {
     public StateTransition getApplicationProcessedOutcome(Resource resource, Comment comment) {
         PrismState transitionStateId;
         PrismAction actionId = comment.getAction().getId();
-        if (actionId == PrismAction.APPLICATION_TERMINATE || actionId == PrismAction.APPLICATION_WITHDRAW) {
+        if (Arrays.asList(PrismAction.APPLICATION_TERMINATE, PrismAction.APPLICATION_WITHDRAW, PrismAction.APPLICATION_ESCALATE).contains(actionId)) {
             if (BooleanUtils.isTrue(resource.getInstitution().getUclInstitution())) {
                 transitionStateId = PrismState.APPLICATION_REJECTED_PENDING_EXPORT;
             } else {
@@ -356,6 +338,17 @@ public class StateService {
             } else {
                 transitionStateId = PrismState.valueOf(stateId.name() + "_COMPLETED");
             }
+        }
+        return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
+    }
+
+    public StateTransition getApplicationTerminatedOutcome(Resource resource, Comment comment) {
+        PrismState transitionStateId = PrismState.APPLICATION_REJECTED_COMPLETED;
+        PrismStateGroup stateGroupId = resource.getState().getStateGroup().getId();
+        if (stateGroupId == PrismStateGroup.APPLICATION_UNSUBMITTED) {
+            transitionStateId = PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED;
+        } else if (resource.getInstitution().getUclInstitution()) {
+            transitionStateId = PrismState.APPLICATION_REJECTED_PENDING_EXPORT;
         }
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
@@ -498,12 +491,12 @@ public class StateService {
         PrismState transitionStateId = comment.getTransitionState().getId();
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
-    
+
     private void executeStateTerminations(Resource resource, State transitionState, StateTransition stateTransition) {
         if (transitionState.getParallelizable()) {
             resourceService.deleteSecondaryResourceState(resource, transitionState);
         }
-        
+
         for (State terminateState : stateTransition.getStateTerminations()) {
             resourceService.deleteSecondaryResourceState(resource, terminateState);
         }

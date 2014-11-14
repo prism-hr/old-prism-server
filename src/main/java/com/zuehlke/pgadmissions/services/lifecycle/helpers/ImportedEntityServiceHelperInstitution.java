@@ -15,7 +15,6 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -94,7 +93,7 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
         List unmarshalled = unmarshalEntities(importedEntityFeed);
         if (unmarshalled != null) {
             Class<ImportedEntity> importedEntityClass = (Class<ImportedEntity>) importedEntityFeed.getImportedEntityType().getEntityClass();
-            if ((!BooleanUtils.isTrue(institution.getUclInstitution() && !contextEnvironment.equals("prod")))) {
+            if ((institution.getUclInstitution() && contextEnvironment.equals("prod")) || !importedEntityFeed.isAuthenticated()) {
                 if (importedEntityClass.equals(Program.class)) {
                     mergeImportedPrograms(institution, (List<ProgrammeOccurrence>) unmarshalled);
                 } else if (importedEntityClass.equals(ImportedInstitution.class)) {

@@ -90,10 +90,10 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
     private void importEntities(ImportedEntityFeed importedEntityFeed) throws IOException, JAXBException, SAXException, DataImportException,
             DeduplicationException, InstantiationException, IllegalAccessException {
         Institution institution = importedEntityFeed.getInstitution();
-        List unmarshalled = unmarshalEntities(importedEntityFeed);
-        if (unmarshalled != null) {
-            Class<ImportedEntity> importedEntityClass = (Class<ImportedEntity>) importedEntityFeed.getImportedEntityType().getEntityClass();
-            if ((institution.getUclInstitution() && contextEnvironment.equals("prod")) || !importedEntityFeed.isAuthenticated()) {
+        if (contextEnvironment.equals("prod") || !institutionService.hasAuthenticatedFeeds(institution)) {
+            List unmarshalled = unmarshalEntities(importedEntityFeed);
+            if (unmarshalled != null) {
+                Class<ImportedEntity> importedEntityClass = (Class<ImportedEntity>) importedEntityFeed.getImportedEntityType().getEntityClass();
                 if (importedEntityClass.equals(Program.class)) {
                     mergeImportedPrograms(institution, (List<ProgrammeOccurrence>) unmarshalled);
                 } else if (importedEntityClass.equals(ImportedInstitution.class)) {
@@ -104,7 +104,6 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
                 } else {
                     mergeImportedEntities(importedEntityClass, institution, (List<Object>) unmarshalled);
                 }
-
                 importedEntityService.setLastImportedTimestamp(importedEntityFeed);
             }
         }

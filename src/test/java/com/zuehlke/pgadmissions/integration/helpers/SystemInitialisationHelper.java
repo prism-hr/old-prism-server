@@ -187,6 +187,7 @@ public class SystemInitialisationHelper {
         for (State state : stateService.getStates()) {
             assertEquals(state.getId().getStateGroup(), state.getStateGroup().getId());
             assertEquals(state.getId().getScope(), state.getScope().getId());
+            assertEquals(state.getId().isParallelizable(), state.getParallelizable());
         }
     }
 

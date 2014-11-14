@@ -42,6 +42,9 @@ public class State extends WorkflowDefinition {
     @Enumerated(EnumType.STRING)
     private PrismStateDurationEvaluation stateDurationEvaluation;
 
+    @Column(name = "parallelizable", nullable = false)
+    private Boolean parallelizable;
+    
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
@@ -85,6 +88,14 @@ public class State extends WorkflowDefinition {
         this.stateDurationEvaluation = stateDurationEvaluation;
     }
 
+    public final Boolean getParallelizable() {
+        return parallelizable;
+    }
+
+    public final void setParallelizable(Boolean parallelizable) {
+        this.parallelizable = parallelizable;
+    }
+
     @Override
     public Scope getScope() {
         return scope;
@@ -120,6 +131,11 @@ public class State extends WorkflowDefinition {
     
     public State withStateDurationEvaluation(PrismStateDurationEvaluation stateDurationEvaluation) {
         this.stateDurationEvaluation = stateDurationEvaluation;
+        return this;
+    }
+    
+    public State withParallelizable(Boolean parallelizable) {
+        this.parallelizable = parallelizable;
         return this;
     }
 

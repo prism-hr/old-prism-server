@@ -207,7 +207,7 @@ public class WorkflowConfigurationHelper {
             State transitionState = stateTransition.getTransitionState();
             
             if (transitionState == null) {
-                assertTrue(state.getId().getStateGroup().isParallelizable());
+                assertTrue(state.getParallelizable());
             } else {
                 StateTransitionEvaluation thisTransitionEvaluation = stateTransition.getStateTransitionEvaluation();
                 PrismStateTransitionEvaluation thisTransitionEvaluationId = thisTransitionEvaluation == null ? null : thisTransitionEvaluation.getId();

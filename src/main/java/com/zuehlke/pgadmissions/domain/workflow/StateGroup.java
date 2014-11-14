@@ -31,9 +31,6 @@ public class StateGroup extends WorkflowDefinition {
     @Column(name = "repeatable", nullable = false)
     private Boolean repeatable;
 
-    @Column(name = "parallelizable", nullable = false)
-    private Boolean parallelizable;
-
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
@@ -63,14 +60,6 @@ public class StateGroup extends WorkflowDefinition {
         this.repeatable = repeatable;
     }
 
-    public final Boolean getParallelizable() {
-        return parallelizable;
-    }
-
-    public final void setParallelizable(Boolean parallelizable) {
-        this.parallelizable = parallelizable;
-    }
-
     @Override
     public Scope getScope() {
         return scope;
@@ -93,11 +82,6 @@ public class StateGroup extends WorkflowDefinition {
 
     public StateGroup withRepeatable(Boolean repeatable) {
         this.repeatable = repeatable;
-        return this;
-    }
-
-    public StateGroup withParallelizable(Boolean parallelizable) {
-        this.parallelizable = parallelizable;
         return this;
     }
 

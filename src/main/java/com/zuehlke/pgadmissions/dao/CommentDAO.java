@@ -188,10 +188,12 @@ public class CommentDAO {
     public List<Comment> getStateComments(Resource resource, Comment start, Comment close, PrismStateGroup stateGroupId, List<Comment> exclusions) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
-                .createAlias("state", "state") //
+                .createAlias("state", "state", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
                 .add(Restrictions.eq("action.visibleAction", true)) //
-                .add(Restrictions.eqOrIsNull("state.stateGroup.id", stateGroupId)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("state.stateGroup.id", stateGroupId)) //
+                        .add(Restrictions.isNull("state"))) //
                 .add(Restrictions.ge("createdTimestamp", start.getCreatedTimestamp()));
 
         for (Comment exclusion : exclusions) {

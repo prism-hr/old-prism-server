@@ -457,10 +457,11 @@ public class SystemService {
     private void initializeStateTransitions(PrismStateAction prismStateAction, StateAction stateAction) {
         for (PrismStateTransition prismStateTransition : prismStateAction.getTransitions()) {
             State transitionState = stateService.getById(prismStateTransition.getTransitionState());
+            State terminationState = stateService.getById(prismStateTransition.getTerminationState());
             Action transitionAction = actionService.getById(prismStateTransition.getTransitionAction());
             StateTransitionEvaluation transitionEvaluation = stateService.getStateTransitionEvaluationById(prismStateTransition.getTransitionEvaluation());
             StateTransition stateTransition = new StateTransition().withStateAction(stateAction).withTransitionState(transitionState)
-                    .withTransitionAction(transitionAction).withStateTransitionEvaluation(transitionEvaluation);
+                    .withTerminationState(terminationState).withTransitionAction(transitionAction).withStateTransitionEvaluation(transitionEvaluation);
             entityService.save(stateTransition);
             stateAction.getStateTransitions().add(stateTransition);
 

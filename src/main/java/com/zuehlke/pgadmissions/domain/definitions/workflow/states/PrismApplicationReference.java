@@ -188,8 +188,8 @@ public class PrismApplicationReference extends PrismWorkflowState {
                                 .withTransitionRole(PrismRole.APPLICATION_VIEWER_REFEREE) //
                                 .withRestrictToOwner(true))),
                     new PrismStateTransition() // 
-                        .withTransitionState(PrismState.APPLICATION_REFERENCE_PENDING_COMPLETION) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
+                        .withTransitionState(PrismState.APPLICATION_REFERENCE_PENDING_COMPLETION) //
+                        .withTransitionAction(PrismAction.APPLICATION_COMPLETE_REFERENCE_STAGE) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCED_OUTCOME) //
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
@@ -197,7 +197,8 @@ public class PrismApplicationReference extends PrismWorkflowState {
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_VIEWER_REFEREE) //
                                 .withRestrictToOwner(true))),
-                    new PrismStateTransition() //  
+                    new PrismStateTransition() //
+                        .withTerminationState(PrismState.APPLICATION_REFERENCE) //
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCED_OUTCOME) //
                         .withRoleTransitions(Arrays.asList( // 

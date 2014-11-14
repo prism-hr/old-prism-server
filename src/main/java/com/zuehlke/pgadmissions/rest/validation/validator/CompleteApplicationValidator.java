@@ -23,7 +23,7 @@ public class CompleteApplicationValidator extends LocalValidatorFactoryBean impl
 
     @Autowired
     private ApplicationService applicationService;
-    
+
     @Autowired
     private ProgramService programService;
 
@@ -55,10 +55,10 @@ public class CompleteApplicationValidator extends LocalValidatorFactoryBean impl
         if (programDetail != null) {
             errors.pushNestedPath("programDetail");
             LocalDate startDate = programDetail.getStartDate();
-            
+
             Program program = application.getProgram();
             ProgramStudyOption studyOption = programService.getEnabledProgramStudyOption(program, programDetail.getStudyOption());
-            
+
             if (studyOption == null) {
                 List<ProgramStudyOption> otherStudyOptions = programService.getEnabledProgramStudyOptions(program);
                 if (otherStudyOptions.isEmpty()) {
@@ -66,9 +66,9 @@ public class CompleteApplicationValidator extends LocalValidatorFactoryBean impl
                 }
                 errors.rejectValue("studyOption", "notAvailable");
             } else {
-                LocalDate earliestStartDate = applicationService.getEarliestStartDate(studyOption, new LocalDate());
-                LocalDate latestStartDate = applicationService.getLatestStartDate(studyOption);
-    
+                LocalDate earliestStartDate = applicationService.getEarliestStartDate(studyOption.getId(), new LocalDate());
+                LocalDate latestStartDate = applicationService.getLatestStartDate(studyOption.getId());
+
                 if (startDate.isBefore(earliestStartDate)) {
                     errors.rejectValue("startDate", "notBefore", new Object[]{earliestStartDate}, null);
                 } else if (startDate.isAfter(latestStartDate)) {

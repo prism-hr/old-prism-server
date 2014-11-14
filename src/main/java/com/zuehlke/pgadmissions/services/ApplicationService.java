@@ -138,26 +138,28 @@ public class ApplicationService {
         Application application = getById(applicationId);
         StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, application.getInstitution(), studyOptionId.name());
         ProgramStudyOption programStudyOption = programService.getEnabledProgramStudyOption(application.getProgram(), studyOption);
-        return new ApplicationStartDateRepresentation().withEarliestDate(getEarliestStartDate(programStudyOption, baseline))
-                .withRecommendedDate(getRecommendedStartDate(application, programStudyOption, baseline)).withLatestDate(getLatestStartDate(programStudyOption));
+        return new ApplicationStartDateRepresentation().withEarliestDate(getEarliestStartDate(programStudyOption.getId(), baseline))
+                .withRecommendedDate(getRecommendedStartDate(application, programStudyOption, baseline)).withLatestDate(getLatestStartDate(programStudyOption.getId()));
     }
 
-    public LocalDate getEarliestStartDate(ProgramStudyOption studyOption, LocalDate baseline) {
-        if (studyOption == null) {
+    public LocalDate getEarliestStartDate(Integer studyOptionId, LocalDate baseline) {
+        if (studyOptionId == null) {
             return null;
         }
 
+        ProgramStudyOption studyOption = entityService.getById(ProgramStudyOption.class, studyOptionId);
         LocalDate studyOptionStart = studyOption.getApplicationStartDate();
         LocalDate earliestStartDate = studyOptionStart.isBefore(baseline) ? baseline : studyOptionStart;
         earliestStartDate = earliestStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
         return earliestStartDate.isBefore(studyOptionStart) ? earliestStartDate.plusWeeks(1) : earliestStartDate;
     }
 
-    public LocalDate getLatestStartDate(ProgramStudyOption studyOption) {
-        if (studyOption == null) {
+    public LocalDate getLatestStartDate(Integer studyOptionId) {
+        if (studyOptionId == null) {
             return null;
         }
 
+        ProgramStudyOption studyOption = entityService.getById(ProgramStudyOption.class, studyOptionId);
         LocalDate closeDate = studyOption.getApplicationCloseDate().plusMonths(
                 studyOption.getProgram().getProgramType().getPrismProgramType().getDefaultStartBuffer());
         LocalDate latestStartDate = closeDate.withDayOfWeek(DateTimeConstants.MONDAY);
@@ -295,11 +297,11 @@ public class ApplicationService {
         if (commentDTO.getCustomQuestionResponse() != null) {
             appendPropertyAnswers(comment, commentDTO);
         }
-        
+
         if (commentDTO.getDocuments() != null) {
             appendDocuments(comment, commentDTO);
         }
-        
+
         if (commentDTO.getRejectionReason() != null) {
             appendRejectionReason(comment, commentDTO);
         }
@@ -369,8 +371,8 @@ public class ApplicationService {
             return null;
         }
 
-        LocalDate earliest = getEarliestStartDate(studyOption, baseline);
-        LocalDate latest = getLatestStartDate(studyOption);
+        LocalDate earliest = getEarliestStartDate(studyOption.getId(), baseline);
+        LocalDate latest = getLatestStartDate(studyOption.getId());
 
         PrismProgramType programType = application.getProgram().getProgramType().getPrismProgramType();
         DefaultStartDateDTO defaults = programType.getDefaultStartDate(baseline);
@@ -459,7 +461,7 @@ public class ApplicationService {
             comment.getDocuments().add(document);
         }
     }
-    
+
     private void appendRejectionReason(Comment comment, CommentDTO commentDTO) {
         RejectionReason rejectionReason = entityService.getById(RejectionReason.class, commentDTO.getRejectionReason());
         comment.setRejectionReason(rejectionReason);

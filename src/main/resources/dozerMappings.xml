@@ -65,7 +65,7 @@
         <class-b>com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation</class-b>
         <field>
         	<a>creatorId</a>
-        	<b>user.Id</b>
+        	<b>user.id</b>
         </field>
         <field>
             <a>creatorFirstName</a>
@@ -150,6 +150,15 @@
             <a>action.id</a>
             <b>action</b>
         </field>
+        <field>
+            <a>transitionState.id</a>
+            <b>transitionState</b>
+        </field>
+    </mapping>
+
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.comment.CommentTransitionState</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.comment.CommentTransitionStateRepresentation</class-b>
         <field>
             <a>transitionState.id</a>
             <b>transitionState</b>

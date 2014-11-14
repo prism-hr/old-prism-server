@@ -1,3 +1,7 @@
+ALTER TABLE NOTIFICATION_DEFINITION
+	ADD FOREIGN KEY (reminder_definition_id) REFERENCES NOTIFICATION_DEFINITION (id)
+;
+
 ALTER TABLE NOTIFICATION_CONFIGURATION
 	DROP FOREIGN KEY notification_configuration_ibfk_4,
 	CHANGE COLUMN notification_template_id notification_definition_id VARCHAR(100) NOT NULL,

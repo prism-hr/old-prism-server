@@ -12,16 +12,15 @@ import com.zuehlke.pgadmissions.services.UserService;
 @Service
 @Transactional
 public class SocialPresenceHelper {
-    
+
     @Autowired
     private InstitutionService institutionService;
-    
+
     @Autowired
     private UserService userService;
-    
+
     public void verifySocialPresenceLookup() throws IOException {
         institutionService.getSocialProfiles("University College London");
-        userService.getSocialProfiles("Anthony", "Finkelstein");
     }
-    
+
 }

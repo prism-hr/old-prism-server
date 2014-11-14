@@ -92,101 +92,109 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismWorkflow
 
 public enum PrismState {
 
-    APPLICATION_UNSUBMITTED(PrismStateGroup.APPLICATION_UNSUBMITTED, APPLICATION_ESCALATE_DURATION, null, APPLICATION, PrismApplicationUnsubmitted.class), //
-    APPLICATION_UNSUBMITTED_PENDING_COMPLETION(PrismStateGroup.APPLICATION_UNSUBMITTED, APPLICATION_ESCALATE_DURATION, null, APPLICATION,
+    APPLICATION_UNSUBMITTED(PrismStateGroup.APPLICATION_UNSUBMITTED, APPLICATION_ESCALATE_DURATION, null, false, APPLICATION, PrismApplicationUnsubmitted.class), //
+    APPLICATION_UNSUBMITTED_PENDING_COMPLETION(PrismStateGroup.APPLICATION_UNSUBMITTED, APPLICATION_ESCALATE_DURATION, null, false, APPLICATION,
             PrismApplicationUnsubmittedPendingCompletion.class), //
-    APPLICATION_VALIDATION(PrismStateGroup.APPLICATION_VALIDATION, null, APPLICATION_CLOSING_DATE, APPLICATION, PrismApplicationValidation.class), //
-    APPLICATION_VALIDATION_PENDING_COMPLETION(PrismStateGroup.APPLICATION_VALIDATION, APPLICATION_ESCALATE_DURATION, null, APPLICATION,
+    APPLICATION_VALIDATION(PrismStateGroup.APPLICATION_VALIDATION, null, APPLICATION_CLOSING_DATE, false, APPLICATION, PrismApplicationValidation.class), //
+    APPLICATION_VALIDATION_PENDING_COMPLETION(PrismStateGroup.APPLICATION_VALIDATION, APPLICATION_ESCALATE_DURATION, null, false, APPLICATION,
             PrismApplicationValidationPendingCompletion.class), //
-    APPLICATION_VERIFICATION(PrismStateGroup.APPLICATION_VERIFICATION, APPLICATION_CONFIRM_ELIGIBILITY_DURATION, null, APPLICATION,
+    APPLICATION_VERIFICATION(PrismStateGroup.APPLICATION_VERIFICATION, APPLICATION_CONFIRM_ELIGIBILITY_DURATION, null, true, APPLICATION,
             PrismApplicationVerification.class), //
-    APPLICATION_VERIFICATION_PENDING_COMPLETION(PrismStateGroup.APPLICATION_VERIFICATION, APPLICATION_ESCALATE_DURATION, null, APPLICATION,
+    APPLICATION_VERIFICATION_PENDING_COMPLETION(PrismStateGroup.APPLICATION_VERIFICATION, APPLICATION_ESCALATE_DURATION, null, false, APPLICATION,
             PrismApplicationVerificationPendingCompletion.class), //
-    APPLICATION_REFERENCE(PrismStateGroup.APPLICATION_REFERENCE, APPLICATION_PROVIDE_REFERENCE_DURATION, null, APPLICATION, PrismApplicationReference.class), //
-    APPLICATION_REFERENCE_PENDING_COMPLETION(PrismStateGroup.APPLICATION_REFERENCE, APPLICATION_ESCALATE_DURATION, null, APPLICATION,
+    APPLICATION_REFERENCE(PrismStateGroup.APPLICATION_REFERENCE, APPLICATION_PROVIDE_REFERENCE_DURATION, null, true, APPLICATION,
+            PrismApplicationReference.class), //
+    APPLICATION_REFERENCE_PENDING_COMPLETION(PrismStateGroup.APPLICATION_REFERENCE, APPLICATION_ESCALATE_DURATION, null, false, APPLICATION,
             PrismApplicationReferencePendingCompletion.class), //
-    APPLICATION_REVIEW(PrismStateGroup.APPLICATION_REVIEW, APPLICATION_ESCALATE_DURATION, null, APPLICATION, PrismApplicationReview.class), //
-    APPLICATION_REVIEW_PENDING_FEEDBACK(PrismStateGroup.APPLICATION_REVIEW, APPLICATION_PROVIDE_REVIEW_DURATION, null, APPLICATION,
+    APPLICATION_REVIEW(PrismStateGroup.APPLICATION_REVIEW, APPLICATION_ESCALATE_DURATION, null, false, APPLICATION, PrismApplicationReview.class), //
+    APPLICATION_REVIEW_PENDING_FEEDBACK(PrismStateGroup.APPLICATION_REVIEW, APPLICATION_PROVIDE_REVIEW_DURATION, null, false, APPLICATION,
             PrismApplicationReviewPendingFeedback.class), //
-    APPLICATION_REVIEW_PENDING_COMPLETION(PrismStateGroup.APPLICATION_REVIEW, APPLICATION_ESCALATE_DURATION, null, APPLICATION,
+    APPLICATION_REVIEW_PENDING_COMPLETION(PrismStateGroup.APPLICATION_REVIEW, APPLICATION_ESCALATE_DURATION, null, false, APPLICATION,
             PrismApplicationReviewPendingCompletion.class), //
-    APPLICATION_INTERVIEW(PrismStateGroup.APPLICATION_INTERVIEW, APPLICATION_ESCALATE_DURATION, null, APPLICATION, PrismApplicationInterview.class), //
-    APPLICATION_INTERVIEW_PENDING_AVAILABILITY(PrismStateGroup.APPLICATION_INTERVIEW, APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION, null, APPLICATION,
-            PrismApplicationInterviewPendingAvailability.class), //
-    APPLICATION_INTERVIEW_PENDING_SCHEDULING(PrismStateGroup.APPLICATION_INTERVIEW, APPLICATION_ESCALATE_DURATION, null, APPLICATION,
+    APPLICATION_INTERVIEW(PrismStateGroup.APPLICATION_INTERVIEW, APPLICATION_ESCALATE_DURATION, null, false, APPLICATION, PrismApplicationInterview.class), //
+    APPLICATION_INTERVIEW_PENDING_AVAILABILITY(PrismStateGroup.APPLICATION_INTERVIEW, APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION, null, false,
+            APPLICATION, PrismApplicationInterviewPendingAvailability.class), //
+    APPLICATION_INTERVIEW_PENDING_SCHEDULING(PrismStateGroup.APPLICATION_INTERVIEW, APPLICATION_ESCALATE_DURATION, null, false, APPLICATION,
             PrismApplicationInterviewPendingScheduling.class), //
-    APPLICATION_INTERVIEW_PENDING_INTERVIEW(PrismStateGroup.APPLICATION_INTERVIEW, null, APPLICATION_INTERVIEW_DATE, APPLICATION,
+    APPLICATION_INTERVIEW_PENDING_INTERVIEW(PrismStateGroup.APPLICATION_INTERVIEW, null, APPLICATION_INTERVIEW_DATE, false, APPLICATION,
             PrismApplicationInterviewPendingInterview.class), //
-    APPLICATION_INTERVIEW_PENDING_FEEDBACK(PrismStateGroup.APPLICATION_INTERVIEW, APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION, null, APPLICATION,
+    APPLICATION_INTERVIEW_PENDING_FEEDBACK(PrismStateGroup.APPLICATION_INTERVIEW, APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION, null, false, APPLICATION,
             PrismApplicationInterviewPendingFeedback.class), //
-    APPLICATION_INTERVIEW_PENDING_COMPLETION(PrismStateGroup.APPLICATION_INTERVIEW, APPLICATION_ESCALATE_DURATION, null, APPLICATION,
+    APPLICATION_INTERVIEW_PENDING_COMPLETION(PrismStateGroup.APPLICATION_INTERVIEW, APPLICATION_ESCALATE_DURATION, null, false, APPLICATION,
             PrismApplicationInterviewPendingCompletion.class), //
-    APPLICATION_APPROVAL(PrismStateGroup.APPLICATION_APPROVAL, APPLICATION_ESCALATE_DURATION, null, APPLICATION, PrismApplicationApproval.class), //
-    APPLICATION_APPROVAL_PENDING_FEEDBACK(PrismStateGroup.APPLICATION_APPROVAL, APPLICATION_CONFIRM_SUPERVISION_DURATION, null, APPLICATION,
+    APPLICATION_APPROVAL(PrismStateGroup.APPLICATION_APPROVAL, APPLICATION_ESCALATE_DURATION, null, false, APPLICATION, PrismApplicationApproval.class), //
+    APPLICATION_APPROVAL_PENDING_FEEDBACK(PrismStateGroup.APPLICATION_APPROVAL, APPLICATION_CONFIRM_SUPERVISION_DURATION, null, false, APPLICATION,
             PrismApplicationApprovalPendingFeedback.class), //
-    APPLICATION_APPROVAL_PENDING_COMPLETION(PrismStateGroup.APPLICATION_APPROVAL, APPLICATION_ESCALATE_DURATION, null, APPLICATION,
+    APPLICATION_APPROVAL_PENDING_COMPLETION(PrismStateGroup.APPLICATION_APPROVAL, APPLICATION_ESCALATE_DURATION, null, false, APPLICATION,
             PrismApplicationApprovalPendingCompletion.class), //
-    APPLICATION_APPROVED(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null, APPLICATION, PrismApplicationApproved.class), //
-    APPLICATION_APPROVED_PENDING_EXPORT(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null, APPLICATION,
+    APPLICATION_APPROVED(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null, false, APPLICATION, PrismApplicationApproved.class), //
+    APPLICATION_APPROVED_PENDING_EXPORT(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null, false, APPLICATION,
             PrismApplicationApprovedPendingExport.class), //
-    APPLICATION_APPROVED_PENDING_CORRECTION(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null, APPLICATION,
+    APPLICATION_APPROVED_PENDING_CORRECTION(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null, false, APPLICATION,
             PrismApplicationApprovedPendingCorrection.class), //
-    APPLICATION_APPROVED_COMPLETED(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_PURGE_DURATION, null, APPLICATION, PrismApplicationApprovedCompleted.class), //
-    APPLICATION_APPROVED_COMPLETED_PURGED(PrismStateGroup.APPLICATION_APPROVED, null, null, APPLICATION, PrismApplicationApprovedCompletedPurged.class), //
-    APPLICATION_REJECTED(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_ESCALATE_DURATION, null, APPLICATION, PrismApplicationRejected.class), //
-    APPLICATION_REJECTED_PENDING_EXPORT(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_ESCALATE_DURATION, null, APPLICATION,
+    APPLICATION_APPROVED_COMPLETED(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_PURGE_DURATION, null, false, APPLICATION,
+            PrismApplicationApprovedCompleted.class), //
+    APPLICATION_APPROVED_COMPLETED_PURGED(PrismStateGroup.APPLICATION_APPROVED, null, null, false, APPLICATION, PrismApplicationApprovedCompletedPurged.class), //
+    APPLICATION_REJECTED(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_ESCALATE_DURATION, null, false, APPLICATION, PrismApplicationRejected.class), //
+    APPLICATION_REJECTED_PENDING_EXPORT(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_ESCALATE_DURATION, null, false, APPLICATION,
             PrismApplicationRejectedPendingExport.class), //
-    APPLICATION_REJECTED_PENDING_CORRECTION(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_ESCALATE_DURATION, null, APPLICATION,
+    APPLICATION_REJECTED_PENDING_CORRECTION(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_ESCALATE_DURATION, null, false, APPLICATION,
             PrismApplicationRejectedPendingCorrection.class), //
-    APPLICATION_REJECTED_COMPLETED(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_PURGE_DURATION, null, APPLICATION, PrismApplicationRejectedCompleted.class), //
-    APPLICATION_REJECTED_COMPLETED_PURGED(PrismStateGroup.APPLICATION_REJECTED, null, null, APPLICATION, PrismApplicationRejectedCompletedPurged.class), //
-    APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED(PrismStateGroup.APPLICATION_WITHDRAWN, APPLICATION_PURGE_DURATION, null, APPLICATION,
+    APPLICATION_REJECTED_COMPLETED(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_PURGE_DURATION, null, false, APPLICATION,
+            PrismApplicationRejectedCompleted.class), //
+    APPLICATION_REJECTED_COMPLETED_PURGED(PrismStateGroup.APPLICATION_REJECTED, null, null, false, APPLICATION, PrismApplicationRejectedCompletedPurged.class), //
+    APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED(PrismStateGroup.APPLICATION_WITHDRAWN, APPLICATION_PURGE_DURATION, null, false, APPLICATION,
             PrismApplicationWithdrawnCompletedUnsubmitted.class), //
-    APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_PURGED(PrismStateGroup.APPLICATION_WITHDRAWN, null, null, APPLICATION,
+    APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_PURGED(PrismStateGroup.APPLICATION_WITHDRAWN, null, null, false, APPLICATION,
             PrismApplicationWithdrawnCompletedPurged.class), //
-    APPLICATION_WITHDRAWN_PENDING_EXPORT(PrismStateGroup.APPLICATION_WITHDRAWN, APPLICATION_ESCALATE_DURATION, null, APPLICATION,
+    APPLICATION_WITHDRAWN_PENDING_EXPORT(PrismStateGroup.APPLICATION_WITHDRAWN, APPLICATION_ESCALATE_DURATION, null, false, APPLICATION,
             PrismApplicationWithdrawnPendingExport.class), //
-    APPLICATION_WITHDRAWN_PENDING_CORRECTION(PrismStateGroup.APPLICATION_WITHDRAWN, APPLICATION_ESCALATE_DURATION, null, APPLICATION,
+    APPLICATION_WITHDRAWN_PENDING_CORRECTION(PrismStateGroup.APPLICATION_WITHDRAWN, APPLICATION_ESCALATE_DURATION, null, false, APPLICATION,
             PrismApplicationWithdrawnPendingCorrection.class), //
-    APPLICATION_WITHDRAWN_COMPLETED(PrismStateGroup.APPLICATION_WITHDRAWN, APPLICATION_PURGE_DURATION, null, APPLICATION,
+    APPLICATION_WITHDRAWN_COMPLETED(PrismStateGroup.APPLICATION_WITHDRAWN, APPLICATION_PURGE_DURATION, null, false, APPLICATION,
             PrismApplicationWithdrawnCompleted.class), //
-    APPLICATION_WITHDRAWN_COMPLETED_PURGED(PrismStateGroup.APPLICATION_WITHDRAWN, null, null, APPLICATION, PrismApplicationWithdrawnCompletedPurged.class), //
-    PROJECT_APPROVAL(PrismStateGroup.PROJECT_APPROVAL, PROJECT_ESCALATE_DURATION, null, PROJECT, PrismProjectApproval.class), //
-    PROJECT_APPROVAL_PENDING_CORRECTION(PrismStateGroup.PROJECT_APPROVAL, PROJECT_ESCALATE_DURATION, null, PROJECT, PrismProjectApprovalPendingCorrection.class), //
-    PROJECT_APPROVED(PrismStateGroup.PROJECT_APPROVED, null, PROJECT_END_DATE, PROJECT, PrismProjectApproved.class), //
-    PROJECT_DEACTIVATED(PrismStateGroup.PROJECT_APPROVED, null, PROJECT_END_DATE, PROJECT, PrismProjectDeactivated.class), //
-    PROJECT_DISABLED_PENDING_REACTIVATION(PrismStateGroup.PROJECT_DISABLED, PROJECT_ESCALATE_DURATION, null, PROJECT,
+    APPLICATION_WITHDRAWN_COMPLETED_PURGED(PrismStateGroup.APPLICATION_WITHDRAWN, null, null, false, APPLICATION,
+            PrismApplicationWithdrawnCompletedPurged.class), //
+    PROJECT_APPROVAL(PrismStateGroup.PROJECT_APPROVAL, PROJECT_ESCALATE_DURATION, null, false, PROJECT, PrismProjectApproval.class), //
+    PROJECT_APPROVAL_PENDING_CORRECTION(PrismStateGroup.PROJECT_APPROVAL, PROJECT_ESCALATE_DURATION, null, false, PROJECT,
+            PrismProjectApprovalPendingCorrection.class), //
+    PROJECT_APPROVED(PrismStateGroup.PROJECT_APPROVED, null, PROJECT_END_DATE, false, PROJECT, PrismProjectApproved.class), //
+    PROJECT_DEACTIVATED(PrismStateGroup.PROJECT_APPROVED, null, PROJECT_END_DATE, false, PROJECT, PrismProjectDeactivated.class), //
+    PROJECT_DISABLED_PENDING_REACTIVATION(PrismStateGroup.PROJECT_DISABLED, PROJECT_ESCALATE_DURATION, null, false, PROJECT,
             PrismProjectDisabledPendingReactivation.class), //
-    PROJECT_DISABLED_PENDING_PROGRAM_REACTIVATION(PrismStateGroup.PROJECT_DISABLED, PROJECT_ESCALATE_DURATION, null, PROJECT,
+    PROJECT_DISABLED_PENDING_PROGRAM_REACTIVATION(PrismStateGroup.PROJECT_DISABLED, PROJECT_ESCALATE_DURATION, null, false, PROJECT,
             PrismProjectDisabledPendingProgramReactivation.class), //
-    PROJECT_DISABLED_COMPLETED(PrismStateGroup.PROJECT_DISABLED, null, null, PROJECT, PrismProjectDisabledCompleted.class), //
-    PROJECT_REJECTED(PrismStateGroup.PROJECT_REJECTED, null, null, PROJECT, PrismProjectRejected.class), //
-    PROJECT_WITHDRAWN(PrismStateGroup.PROJECT_WITHDRAWN, null, null, PROJECT, PrismProjectWithdrawn.class), //
-    PROGRAM_APPROVAL(PrismStateGroup.PROGRAM_APPROVAL, PROGRAM_ESCALATE_DURATION, null, PROGRAM, PrismProgramApproval.class), //
-    PROGRAM_APPROVAL_PENDING_CORRECTION(PrismStateGroup.PROGRAM_APPROVAL, PROGRAM_ESCALATE_DURATION, null, PROGRAM, PrismProgramApprovalPendingCorrection.class), //
-    PROGRAM_APPROVED(PrismStateGroup.PROGRAM_APPROVED, null, PROGRAM_END_DATE, PROGRAM, PrismProgramApproved.class), //
-    PROGRAM_DEACTIVATED(PrismStateGroup.PROGRAM_APPROVED, null, PROGRAM_END_DATE, PROGRAM, PrismProgramDeactivated.class), //
-    PROGRAM_DISABLED_PENDING_REACTIVATION(PrismStateGroup.PROGRAM_DISABLED, PROGRAM_ESCALATE_DURATION, null, PROGRAM,
+    PROJECT_DISABLED_COMPLETED(PrismStateGroup.PROJECT_DISABLED, null, null, false, PROJECT, PrismProjectDisabledCompleted.class), //
+    PROJECT_REJECTED(PrismStateGroup.PROJECT_REJECTED, null, null, false, PROJECT, PrismProjectRejected.class), //
+    PROJECT_WITHDRAWN(PrismStateGroup.PROJECT_WITHDRAWN, null, null, false, PROJECT, PrismProjectWithdrawn.class), //
+    PROGRAM_APPROVAL(PrismStateGroup.PROGRAM_APPROVAL, PROGRAM_ESCALATE_DURATION, null, false, PROGRAM, PrismProgramApproval.class), //
+    PROGRAM_APPROVAL_PENDING_CORRECTION(PrismStateGroup.PROGRAM_APPROVAL, PROGRAM_ESCALATE_DURATION, null, false, PROGRAM,
+            PrismProgramApprovalPendingCorrection.class), //
+    PROGRAM_APPROVED(PrismStateGroup.PROGRAM_APPROVED, null, PROGRAM_END_DATE, false, PROGRAM, PrismProgramApproved.class), //
+    PROGRAM_DEACTIVATED(PrismStateGroup.PROGRAM_APPROVED, null, PROGRAM_END_DATE, false, PROGRAM, PrismProgramDeactivated.class), //
+    PROGRAM_DISABLED_PENDING_REACTIVATION(PrismStateGroup.PROGRAM_DISABLED, PROGRAM_ESCALATE_DURATION, null, false, PROGRAM,
             PrismProgramDisabledPendingReactivation.class), //
-    PROGRAM_DISABLED_PENDING_IMPORT_REACTIVATION(PrismStateGroup.PROGRAM_DISABLED, PROGRAM_ESCALATE_DURATION, null, PROGRAM,
+    PROGRAM_DISABLED_PENDING_IMPORT_REACTIVATION(PrismStateGroup.PROGRAM_DISABLED, PROGRAM_ESCALATE_DURATION, null, false, PROGRAM,
             PrismProgramDisabledPendingImportReactivation.class), //
-    PROGRAM_DISABLED_COMPLETED(PrismStateGroup.PROGRAM_DISABLED, null, null, PROGRAM, PrismProgramDisabledCompleted.class), //
-    PROGRAM_REJECTED(PrismStateGroup.PROGRAM_REJECTED, null, null, PROGRAM, PrismProgramRejected.class), //
-    PROGRAM_WITHDRAWN(PrismStateGroup.PROGRAM_WITHDRAWN, null, null, PROGRAM, PrismProgramWithdrawn.class), //
-    INSTITUTION_APPROVAL(PrismStateGroup.INSTITUTION_APPROVAL, INSTITUTION_ESCALATE_DURATION, null, INSTITUTION, PrismInstitutionApproval.class), //
-    INSTITUTION_APPROVAL_PENDING_CORRECTION(PrismStateGroup.INSTITUTION_APPROVAL, INSTITUTION_ESCALATE_DURATION, null, INSTITUTION,
+    PROGRAM_DISABLED_COMPLETED(PrismStateGroup.PROGRAM_DISABLED, null, null, false, PROGRAM, PrismProgramDisabledCompleted.class), //
+    PROGRAM_REJECTED(PrismStateGroup.PROGRAM_REJECTED, null, null, false, PROGRAM, PrismProgramRejected.class), //
+    PROGRAM_WITHDRAWN(PrismStateGroup.PROGRAM_WITHDRAWN, null, null, false, PROGRAM, PrismProgramWithdrawn.class), //
+    INSTITUTION_APPROVAL(PrismStateGroup.INSTITUTION_APPROVAL, INSTITUTION_ESCALATE_DURATION, null, false, INSTITUTION, PrismInstitutionApproval.class), //
+    INSTITUTION_APPROVAL_PENDING_CORRECTION(PrismStateGroup.INSTITUTION_APPROVAL, INSTITUTION_ESCALATE_DURATION, null, false, INSTITUTION,
             PrismInstitutionApprovalPendingCorrection.class), //
-    INSTITUTION_APPROVED(PrismStateGroup.INSTITUTION_APPROVED, null, null, INSTITUTION, PrismInstitutionApproved.class), //
-    INSTITUTION_APPROVED_COMPLETED(PrismStateGroup.INSTITUTION_APPROVED, null, null, INSTITUTION, PrismInstitutionApprovedCompleted.class), //
-    INSTITUTION_REJECTED(PrismStateGroup.INSTITUTION_REJECTED, null, null, INSTITUTION, PrismInstitutionRejected.class), //
-    INSTITUTION_WITHDRAWN(PrismStateGroup.INSTITUTION_WITHDRAWN, null, null, INSTITUTION, PrismInstitutionWithdrawn.class), //
-    SYSTEM_RUNNING(PrismStateGroup.SYSTEM_RUNNING, null, null, SYSTEM, PrismSystemApproved.class);
+    INSTITUTION_APPROVED(PrismStateGroup.INSTITUTION_APPROVED, null, null, false, INSTITUTION, PrismInstitutionApproved.class), //
+    INSTITUTION_APPROVED_COMPLETED(PrismStateGroup.INSTITUTION_APPROVED, null, null, false, INSTITUTION, PrismInstitutionApprovedCompleted.class), //
+    INSTITUTION_REJECTED(PrismStateGroup.INSTITUTION_REJECTED, null, null, false, INSTITUTION, PrismInstitutionRejected.class), //
+    INSTITUTION_WITHDRAWN(PrismStateGroup.INSTITUTION_WITHDRAWN, null, null, false, INSTITUTION, PrismInstitutionWithdrawn.class), //
+    SYSTEM_RUNNING(PrismStateGroup.SYSTEM_RUNNING, null, null, false, SYSTEM, PrismSystemApproved.class);
 
     private PrismStateGroup stateGroup;
 
     private PrismStateDuration defaultDuration;
 
     private PrismStateDurationEvaluation stateDurationEvaluation;
+
+    private boolean parallelizable;
 
     private PrismScope scope;
 
@@ -203,11 +211,12 @@ public enum PrismState {
         }
     }
 
-    private PrismState(PrismStateGroup stateGroup, PrismStateDuration defaultDuration, PrismStateDurationEvaluation stateDurationEvaluation, PrismScope scope,
-            Class<? extends PrismWorkflowState> workflowStateClass) {
+    private PrismState(PrismStateGroup stateGroup, PrismStateDuration defaultDuration, PrismStateDurationEvaluation stateDurationEvaluation,
+            boolean parallelizable, PrismScope scope, Class<? extends PrismWorkflowState> workflowStateClass) {
         this.stateGroup = stateGroup;
         this.defaultDuration = defaultDuration;
         this.stateDurationEvaluation = stateDurationEvaluation;
+        this.parallelizable = parallelizable;
         this.scope = scope;
         this.workflowStateClass = workflowStateClass;
     }
@@ -222,6 +231,10 @@ public enum PrismState {
 
     public final PrismStateDurationEvaluation getStateDurationEvaluation() {
         return stateDurationEvaluation;
+    }
+
+    public final boolean isParallelizable() {
+        return parallelizable;
     }
 
     public PrismScope getScope() {

@@ -219,7 +219,7 @@ public class StateService {
             }
 
             notificationService.sendWorkflowNotifications(resource, comment);
-            executeStateTerminations(resource, stateTransition);
+            executeStateTerminations(resource, transitionState, stateTransition);
         }
 
         commentService.postProcessComment(comment);
@@ -498,8 +498,12 @@ public class StateService {
         PrismState transitionStateId = comment.getTransitionState().getId();
         return stateDAO.getStateTransition(resource.getState(), comment.getAction(), transitionStateId);
     }
-
-    private void executeStateTerminations(Resource resource, StateTransition stateTransition) {
+    
+    private void executeStateTerminations(Resource resource, State transitionState, StateTransition stateTransition) {
+        if (transitionState.getParallelizable()) {
+            resourceService.deleteSecondaryResourceState(resource, transitionState);
+        }
+        
         for (State terminateState : stateTransition.getStateTerminations()) {
             resourceService.deleteSecondaryResourceState(resource, terminateState);
         }

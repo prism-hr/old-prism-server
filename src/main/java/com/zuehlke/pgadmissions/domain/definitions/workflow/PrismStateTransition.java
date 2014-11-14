@@ -8,8 +8,6 @@ import com.google.common.collect.Lists;
 public class PrismStateTransition {
 
     private PrismState transitionState;
-    
-    private PrismState terminationState;
 
     private PrismAction transitionAction;
 
@@ -23,10 +21,6 @@ public class PrismStateTransition {
 
     public PrismState getTransitionState() {
         return transitionState;
-    }
-
-    public PrismState getTerminationState() {
-        return terminationState;
     }
 
     public PrismAction getTransitionAction() {
@@ -51,11 +45,6 @@ public class PrismStateTransition {
 
     public PrismStateTransition withTransitionState(PrismState transitionState) {
         this.transitionState = transitionState;
-        return this;
-    }
-    
-    public PrismStateTransition withTerminationState(PrismState terminationState) {
-        this.terminationState = terminationState;
         return this;
     }
 

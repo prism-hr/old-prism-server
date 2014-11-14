@@ -278,16 +278,8 @@ public class SystemService {
         for (PrismStateGroup prismStateGroup : PrismStateGroup.values()) {
             Scope scope = entityService.getById(Scope.class, prismStateGroup.getScope());
             StateGroup transientStateGroup = new StateGroup().withId(prismStateGroup).withSequenceOrder(prismStateGroup.getSequenceOrder())
-                    .withRepeatable(prismStateGroup.isRepeatable()).withParallelizable(prismStateGroup.isParallelizable()).withScope(scope);
+                    .withRepeatable(prismStateGroup.isRepeatable()).withScope(scope);
             entityService.createOrUpdate(transientStateGroup);
-        }
-    }
-
-    private void initializeStateDurationDefinitions() throws DeduplicationException {
-        for (PrismStateDuration prismStateDuration : PrismStateDuration.values()) {
-            Scope scope = scopeService.getById(prismStateDuration.getScope());
-            StateDurationDefinition transientStateDurationDefinition = new StateDurationDefinition().withId(prismStateDuration).withScope(scope);
-            entityService.createOrUpdate(transientStateDurationDefinition);
         }
     }
 
@@ -297,7 +289,7 @@ public class SystemService {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismState.getScope());
             StateGroup stateGroup = entityService.getByProperty(StateGroup.class, "id", prismState.getStateGroup());
             State transientState = new State().withId(prismState).withStateGroup(stateGroup).withStateDurationDefinition(stateDurationDefinition)
-                    .withStateDurationEvaluation(prismState.getStateDurationEvaluation()).withScope(scope);
+                    .withStateDurationEvaluation(prismState.getStateDurationEvaluation()).withParallelizable(prismState.isParallelizable()).withScope(scope);
             entityService.createOrUpdate(transientState);
         }
     }
@@ -308,6 +300,14 @@ public class SystemService {
             StateTransitionEvaluation transientStateTransitionEvaluation = new StateTransitionEvaluation().withId(prismTransitionEvaluation)
                     .withNextStateSelection(prismTransitionEvaluation.isNextStateSelection()).withScope(scope);
             entityService.createOrUpdate(transientStateTransitionEvaluation);
+        }
+    }
+
+    private void initializeStateDurationDefinitions() throws DeduplicationException {
+        for (PrismStateDuration prismStateDuration : PrismStateDuration.values()) {
+            Scope scope = scopeService.getById(prismStateDuration.getScope());
+            StateDurationDefinition transientStateDurationDefinition = new StateDurationDefinition().withId(prismStateDuration).withScope(scope);
+            entityService.createOrUpdate(transientStateDurationDefinition);
         }
     }
 
@@ -457,11 +457,10 @@ public class SystemService {
     private void initializeStateTransitions(PrismStateAction prismStateAction, StateAction stateAction) {
         for (PrismStateTransition prismStateTransition : prismStateAction.getTransitions()) {
             State transitionState = stateService.getById(prismStateTransition.getTransitionState());
-            State terminationState = stateService.getById(prismStateTransition.getTerminationState());
             Action transitionAction = actionService.getById(prismStateTransition.getTransitionAction());
             StateTransitionEvaluation transitionEvaluation = stateService.getStateTransitionEvaluationById(prismStateTransition.getTransitionEvaluation());
             StateTransition stateTransition = new StateTransition().withStateAction(stateAction).withTransitionState(transitionState)
-                    .withTerminationState(terminationState).withTransitionAction(transitionAction).withStateTransitionEvaluation(transitionEvaluation);
+                    .withTransitionAction(transitionAction).withStateTransitionEvaluation(transitionEvaluation);
             entityService.save(stateTransition);
             stateAction.getStateTransitions().add(stateTransition);
 

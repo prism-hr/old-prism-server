@@ -154,6 +154,14 @@
             <a>transitionState.id</a>
             <b>transitionState</b>
         </field>
+        <field>
+            <a>applicationEligible</a>
+            <b>eligible</b>
+        </field>
+        <field>
+            <a>applicationInterested</a>
+            <b>interested</b>
+        </field>
     </mapping>
 
     <mapping>

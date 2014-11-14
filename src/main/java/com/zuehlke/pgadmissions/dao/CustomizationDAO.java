@@ -13,6 +13,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +72,42 @@ public class CustomizationDAO {
                 .uniqueResult();
     }
 
+    public <T extends WorkflowResource> List<T> listConfigurations(Class<T> entityClass, Resource resource, PrismLocale locale, PrismProgramType programType,
+            String definitionReference) {
+        Criterion programTypeConstraint = programType == null ? Restrictions.isNull("programType") : Restrictions.in("programType",
+                Lists.newArrayList(programType, getSystemProgramType()));
+
+        Criterion localeConstraint = resource.getResourceScope() == PrismScope.SYSTEM ? Restrictions
+                .in("locale", Lists.newArrayList(locale, getSystemLocale())) : Restrictions.isNull("locale");
+
+        return (List<T>) sessionFactory.getCurrentSession().createCriteria(entityClass) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.eq("system", resource.getSystem())) //
+                                .add(localeConstraint) //
+                                .add(programTypeConstraint)) //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.eq("institution", resource.getInstitution())) //
+                                .add(programTypeConstraint)) //
+                        .add(Restrictions.eq("program", resource.getProgram()))) //
+                .addOrder(Order.asc(definitionReference)) //
+                .addOrder(Order.desc("program")) //
+                .addOrder(Order.desc("institution")) //
+                .addOrder(Order.desc("system")) //
+                .addOrder(Order.asc("systemDefault")) //
+                .list();
+    }
+    
+    public <T extends WorkflowDefinition> List<Enum<?>> listDefinitions(Class<T> entityClass, PrismScope scope) {
+        return (List<Enum<?>>) sessionFactory.getCurrentSession().createCriteria(entityClass) //
+                .setProjection(Projections.property("id")) //
+                .createAlias("scope", "scope", JoinType.INNER_JOIN) //
+                .add(Restrictions.ge("scope.precedence", scope.getPrecedence())) //
+                .addOrder(Order.asc("scope.id")) //
+                .addOrder(Order.asc("id")) //
+                .list();
+    }
+
     public <T extends WorkflowResource> void restoreGlobalConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale,
             PrismProgramType programType, String keyIndex, WorkflowDefinition keyValue) {
         PrismScope resourceScope = resource.getResourceScope();
@@ -82,12 +119,12 @@ public class CustomizationDAO {
         if (resourceScope == SYSTEM) {
             query = sessionFactory.getCurrentSession().createQuery( //
                 "delete " + entityClass.getSimpleName() + " " //
-                    + "where " + keyIndex + " = :keyValue " //
-                        + "and (institution in (" //
-                            + "from Institution " //
-                            + "where system = :system) " //
-                        + programTypeConstraint //
-                        + localeConstraint + " "//
+                + "where " + keyIndex + " = :keyValue " //
+                    + "and (institution in (" //
+                        + "from Institution " //
+                        + "where system = :system) " //
+                    + programTypeConstraint //
+                    + localeConstraint + " "//
                         + "or program in (" //
                             + "from Program " //
                             + "where system = :system) " //
@@ -105,7 +142,7 @@ public class CustomizationDAO {
         } else {
             throw new Error();
         }
-
+        
         query.setParameter(resourceScope.getLowerCaseName(), resource) //
                 .setParameter("keyValue", keyValue);
 

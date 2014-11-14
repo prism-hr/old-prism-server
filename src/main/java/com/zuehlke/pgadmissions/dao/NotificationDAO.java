@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.dao;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -12,9 +11,7 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -212,16 +209,6 @@ public class NotificationDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userAccount.sendApplicationRecommendationNotification")) //
                         .add(Restrictions.lt("userAccount.lastNotifiedDateApplicationRecommendation", lastSentBaseline))) //
-                .list();
-    }
-
-    public List<PrismNotificationDefinition> geEditableDefinitions(PrismScope scope) {
-        return (List<PrismNotificationDefinition>) sessionFactory.getCurrentSession().createCriteria(NotificationDefinition.class) //
-                .setProjection(Projections.property("id")) //
-                .createAlias("scope", "scope", JoinType.INNER_JOIN) //
-                .add(Restrictions.ge("scope.precedence", scope.getPrecedence())) //
-                .addOrder(Order.asc("scope.id")) //
-                .addOrder(Order.asc("id")) //
                 .list();
     }
 

@@ -52,6 +52,7 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
+@SuppressWarnings("unchecked")
 public class NotificationService {
 
     @Value("${application.host}")
@@ -306,9 +307,9 @@ public class NotificationService {
         sendNotification(SYSTEM_PASSWORD_NOTIFICATION, new NotificationDefinitionModelDTO().withUser(user).withAuthor(system.getUser()).withResource(system)
                 .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST).withNewPassword(newPassword));
     }
-
+    
     public List<PrismNotificationDefinition> getEditableTemplates(PrismScope scope) {
-        return notificationDAO.geEditableDefinitions(scope);
+        return (List<PrismNotificationDefinition>)(List<?>) customizationService.listDefinitions(NotificationDefinition.class, scope);
     }
 
     private void sendIndividualRequestNotifications(Resource resource, Comment comment, User author, LocalDate baseline) {

@@ -35,8 +35,8 @@ public class CommentRepresentation {
     private LocalDate userSpecifiedDueDate;
 
     private YesNoUnsureResponse eligible;
-
-    private YesNoUnsureResponse competentInWorkLanguage;
+    
+    private Boolean interested;
 
     private String residenceState;
 
@@ -184,12 +184,12 @@ public class CommentRepresentation {
         this.eligible = eligible;
     }
 
-    public YesNoUnsureResponse getCompetentInWorkLanguage() {
-        return competentInWorkLanguage;
+    public final Boolean getInterested() {
+        return interested;
     }
 
-    public void setCompetentInWorkLanguage(YesNoUnsureResponse competentInWorkLanguage) {
-        this.competentInWorkLanguage = competentInWorkLanguage;
+    public final void setInterested(Boolean interested) {
+        this.interested = interested;
     }
 
     public final String getResidenceState() {

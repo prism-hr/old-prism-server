@@ -1,5 +1,5 @@
 ALTER TABLE DISPLAY_PROPERTY_CONFIGURATION
-	DROP FOREIGN KEY display_property_configuration_ibfk_1
+	DROP FOREIGN KEY display_property_configuration_ibfk_1,
 	CHANGE COLUMN display_property_id display_property_definition_id VARCHAR(100) NOT NULL,
 	ADD FOREIGN KEY (display_property_configuration_id) REFERENCES DISPLAY_PROPERTY_CONFIGURATION (id)
 ;

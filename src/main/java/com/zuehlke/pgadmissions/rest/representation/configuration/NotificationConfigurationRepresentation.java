@@ -1,6 +1,6 @@
-package com.zuehlke.pgadmissions.rest.representation;
+package com.zuehlke.pgadmissions.rest.representation.configuration;
 
-public class NotificationConfigurationRepresentation {
+public class NotificationConfigurationRepresentation extends AbstractConfigurationRepresentation {
 
     private String subject;
 

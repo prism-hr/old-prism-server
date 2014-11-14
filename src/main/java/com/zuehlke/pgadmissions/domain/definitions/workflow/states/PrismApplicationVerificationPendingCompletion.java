@@ -24,9 +24,7 @@ public class PrismApplicationVerificationPendingCompletion extends PrismWorkflow
         .withAction(PrismAction.APPLICATION_COMMENT) //
         .withRaisesUrgentFlag(false) //
         .withDefaultAction(false) //
-            .withAssignments(Arrays.asList( // 
-                new PrismStateActionAssignment() // 
-                    .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 
+            .withAssignments(Arrays.asList( //
                 new PrismStateActionAssignment() // 
                     .withRole(PrismRole.APPLICATION_VIEWER_RECRUITER), // 
                 new PrismStateActionAssignment() // 
@@ -45,10 +43,7 @@ public class PrismApplicationVerificationPendingCompletion extends PrismWorkflow
                     .withRole(PrismRole.PROJECT_ADMINISTRATOR), // 
                 new PrismStateActionAssignment() // 
                     .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR))) //
-            .withNotifications(Arrays.asList( // 
-                new PrismStateActionNotification() // 
-                    .withRole(PrismRole.APPLICATION_ADMINISTRATOR) // 
-                    .withDefinition(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
+            .withNotifications(Arrays.asList( //
                 new PrismStateActionNotification() // 
                     .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
                     .withDefinition(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
@@ -191,12 +186,7 @@ public class PrismApplicationVerificationPendingCompletion extends PrismWorkflow
                         .withTransitionState(PrismState.APPLICATION_REJECTED_COMPLETED) // 
                         .withTransitionAction(PrismAction.APPLICATION_TERMINATE) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) // 
-                        .withRoleTransitions(Arrays.asList( // 
-                            new PrismRoleTransition() //
-                                .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
-                                .withTransitionType(PrismRoleTransitionType.UPDATE) //
-                                .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
-                                .withRestrictToOwner(false), // 
+                        .withRoleTransitions(Arrays.asList( //
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_REFEREE) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
@@ -209,12 +199,7 @@ public class PrismApplicationVerificationPendingCompletion extends PrismWorkflow
                         .withTransitionState(PrismState.APPLICATION_REJECTED_PENDING_EXPORT) // 
                         .withTransitionAction(PrismAction.APPLICATION_TERMINATE) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) // 
-                        .withRoleTransitions(Arrays.asList( // 
-                            new PrismRoleTransition() //
-                                .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
-                                .withTransitionType(PrismRoleTransitionType.UPDATE) //
-                                .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
-                                .withRestrictToOwner(false), // 
+                        .withRoleTransitions(Arrays.asList( //
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_REFEREE) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
@@ -237,12 +222,7 @@ public class PrismApplicationVerificationPendingCompletion extends PrismWorkflow
                         .withTransitionState(PrismState.APPLICATION_REJECTED_COMPLETED) // 
                         .withTransitionAction(PrismAction.APPLICATION_TERMINATE) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) // 
-                        .withRoleTransitions(Arrays.asList( // 
-                            new PrismRoleTransition() //
-                                .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
-                                .withTransitionType(PrismRoleTransitionType.UPDATE) //
-                                .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
-                                .withRestrictToOwner(false), // 
+                        .withRoleTransitions(Arrays.asList( //
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_REFEREE) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
@@ -255,12 +235,7 @@ public class PrismApplicationVerificationPendingCompletion extends PrismWorkflow
                         .withTransitionState(PrismState.APPLICATION_REJECTED_PENDING_EXPORT) // 
                         .withTransitionAction(PrismAction.APPLICATION_TERMINATE) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) // 
-                        .withRoleTransitions(Arrays.asList( // 
-                            new PrismRoleTransition() //
-                                .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
-                                .withTransitionType(PrismRoleTransitionType.UPDATE) //
-                                .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
-                                .withRestrictToOwner(false), // 
+                        .withRoleTransitions(Arrays.asList( //
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_REFEREE) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
@@ -299,10 +274,7 @@ public class PrismApplicationVerificationPendingCompletion extends PrismWorkflow
                                 .withTransitionType(PrismRoleTransitionType.DELETE) //
                                 .withTransitionRole(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR) //
                                 .withRestrictToOwner(false))))) //
-                .withAssignments(Arrays.asList( // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
-                        .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER), // 
+                .withAssignments(Arrays.asList( //
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_CREATOR) //
                         .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR), // 

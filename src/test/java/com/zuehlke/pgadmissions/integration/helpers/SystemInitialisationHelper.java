@@ -264,12 +264,14 @@ public class SystemInitialisationHelper {
     public void verifyStateDurationCreation() {
         System system = systemService.getSystem();
         for (State state : stateService.getConfigurableStates()) {
-            StateDurationConfiguration stateDuration = stateService.getStateDurationConfiguration(system, system.getUser(), state.getStateDurationDefinition());
+            StateDurationConfiguration stateDurationConfiguration = stateService.getStateDurationConfiguration(system, system.getUser(),
+                    state.getStateDurationDefinition());
 
-            assertEquals(stateDuration.getLocale(), getSystemLocale());
-            assertEquals(stateDuration.getProgramType(), state.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null);
-            assertEquals(state.getId().getDefaultDuration(), stateDuration.getDuration());
-            assertTrue(stateDuration.getSystemDefault());
+            assertEquals(stateDurationConfiguration.getLocale(), getSystemLocale());
+            assertEquals(stateDurationConfiguration.getProgramType(), state.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType()
+                    : null);
+            assertEquals(state.getId().getDefaultDuration(), stateDurationConfiguration.getDuration());
+            assertTrue(stateDurationConfiguration.getSystemDefault());
         }
     }
 

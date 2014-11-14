@@ -70,6 +70,7 @@ public class PrismApplicationReviewPendingCompletion extends PrismWorkflowState 
             .withAction(PrismAction.APPLICATION_COMPLETE_REVIEW_STAGE) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(false) //
+            .withNotificationTemplate(PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_ADMINISTRATOR), // 

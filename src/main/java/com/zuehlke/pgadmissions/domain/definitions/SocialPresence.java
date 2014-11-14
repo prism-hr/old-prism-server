@@ -8,7 +8,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 
 public enum SocialPresence {
 
-    LINKEDIN_COMPANY("https://www.linkedin.com/company/", "014399221313847880480:klv9napshqc&q", new Class[] { Institution.class }), //
+    LINKEDIN("https://www.linkedin.com/company/", "014399221313847880480:klv9napshqc&q", new Class[] { Institution.class }), //
     TWITTER("https://twitter.com/", "014399221313847880480:_wynbi1gc5o", new Class[] { Institution.class, User.class }), //
     FACEBOOK("https://www.facebook.com/", "014399221313847880480:wzhqxjux4rk", new Class[] { Institution.class });
 

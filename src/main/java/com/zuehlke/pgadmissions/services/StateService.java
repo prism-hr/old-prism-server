@@ -104,7 +104,7 @@ public class StateService {
     public List<State> getConfigurableStates() {
         return stateDAO.getConfigurableStates();
     }
-    
+
     public List<StateGroup> getStateGroups() {
         return entityService.list(StateGroup.class);
     }
@@ -361,7 +361,6 @@ public class StateService {
     }
 
     public StateTransition getApplicationVerifiedOutcome(Resource resource, Comment comment) {
-        resourceService.deleteSecondaryResourceState(resource, getById(PrismState.APPLICATION_VERIFICATION));
         PrismStateGroup stateGroupId = resource.getState().getStateGroup().getId();
         if (stateGroupId == PrismStateGroup.APPLICATION_VERIFICATION) {
             return stateDAO.getStateTransition(resource.getState(), comment.getAction(), PrismState.APPLICATION_VERIFICATION_PENDING_COMPLETION);
@@ -371,7 +370,6 @@ public class StateService {
     }
 
     public StateTransition getApplicationVerificationCompletedOutcome(Resource resource, Comment comment) {
-        resourceService.deleteSecondaryResourceState(resource, getById(PrismState.APPLICATION_VERIFICATION));
         PrismStateGroup stateGroupId = resource.getState().getStateGroup().getId();
         if (stateGroupId == PrismStateGroup.APPLICATION_VERIFICATION) {
             return getApplicationStateCompletedOutcome(resource, comment);
@@ -384,12 +382,10 @@ public class StateService {
         PrismStateGroup stateGroupId = resource.getState().getStateGroup().getId();
         if (stateGroupId == PrismStateGroup.APPLICATION_REFERENCE) {
             if (roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_REFEREE)).size() == 1) {
-                resourceService.deleteSecondaryResourceState(resource, getById(PrismState.APPLICATION_REFERENCE));
                 stateDAO.getStateTransition(resource.getState(), comment.getAction(), PrismState.APPLICATION_REFERENCE_PENDING_COMPLETION);
             }
         } else {
             if (roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_REFEREE)).size() == 1) {
-                resourceService.deleteSecondaryResourceState(resource, getById(PrismState.APPLICATION_REFERENCE));
                 stateDAO.getStateTransition(resource.getState(), comment.getAction(), null);
             }
         }
@@ -397,7 +393,6 @@ public class StateService {
     }
 
     public StateTransition getApplicationReferenceCompletedOutcome(Resource resource, Comment comment) {
-        resourceService.deleteSecondaryResourceState(resource, getById(PrismState.APPLICATION_REFERENCE));
         PrismStateGroup stateGroupId = resource.getState().getStateGroup().getId();
         if (stateGroupId == PrismStateGroup.APPLICATION_REFERENCE) {
             return getApplicationStateCompletedOutcome(resource, comment);

@@ -36,6 +36,10 @@ public class StateTransition implements IUniqueEntity {
     @ManyToOne
     @JoinColumn(name = "transition_state_id")
     private State transitionState;
+    
+    @ManyToOne
+    @JoinColumn(name = "termination_state_id")
+    private State terminationState;
 
     @ManyToOne
     @JoinColumn(name = "transition_action_id", nullable = false)
@@ -44,7 +48,7 @@ public class StateTransition implements IUniqueEntity {
     @ManyToOne
     @JoinColumn(name = "state_transition_evaluation_id")
     private StateTransitionEvaluation stateTransitionEvaluation;
-
+    
     @OneToMany(mappedBy = "stateTransition")
     private Set<RoleTransition> roleTransitions = Sets.newHashSet();
 
@@ -78,6 +82,14 @@ public class StateTransition implements IUniqueEntity {
 
     public void setTransitionState(State transitionState) {
         this.transitionState = transitionState;
+    }
+
+    public final State getTerminationState() {
+        return terminationState;
+    }
+
+    public final void setTerminationState(State terminationState) {
+        this.terminationState = terminationState;
     }
 
     public Action getTransitionAction() {
@@ -115,6 +127,11 @@ public class StateTransition implements IUniqueEntity {
 
     public StateTransition withTransitionState(State transitionState) {
         this.transitionState = transitionState;
+        return this;
+    }
+    
+    public StateTransition withTerminationState(State terminationState) {
+        this.terminationState = terminationState;
         return this;
     }
 

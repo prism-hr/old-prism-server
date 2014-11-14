@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
@@ -38,7 +37,6 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.UserAccountDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
-import com.zuehlke.pgadmissions.rest.representation.SocialPresenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -270,10 +268,6 @@ public class UserService {
 
     public List<Integer> getMatchingUsers(String searchTerm) {
         return userDAO.getMatchingUsers(searchTerm);
-    }
-
-    public SocialPresenceRepresentation getSocialProfiles(String firstName, String lastName) throws IOException {
-        return socialPresenceService.getPotentialUserProfiles(firstName, lastName);
     }
 
 }

@@ -48,6 +48,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
@@ -264,13 +265,14 @@ public class SystemInitialisationHelper {
     public void verifyStateDurationCreation() {
         System system = systemService.getSystem();
         for (State state : stateService.getConfigurableStates()) {
-            StateDurationConfiguration stateDurationConfiguration = stateService.getStateDurationConfiguration(system, system.getUser(),
-                    state.getStateDurationDefinition());
+            StateDurationConfiguration stateDurationConfiguration = stateService.getStateDurationConfiguration(system, system.getUser().getLocale(), state
+                    .getScope().getPrecedence() > PrismScope.INSTITUTION.getPrecedence() ? PrismProgramType.getSystemProgramType() : null, state
+                    .getStateDurationDefinition());
 
             assertEquals(stateDurationConfiguration.getLocale(), getSystemLocale());
             assertEquals(stateDurationConfiguration.getProgramType(), state.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType()
                     : null);
-            assertEquals(state.getId().getDefaultDuration(), stateDurationConfiguration.getDuration());
+            assertEquals(state.getId().getDefaultDuration().getDefaultDuration(), stateDurationConfiguration.getDuration());
             assertTrue(stateDurationConfiguration.getSystemDefault());
         }
     }

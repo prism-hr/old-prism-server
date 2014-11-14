@@ -53,7 +53,7 @@ public class StateDurationConfiguration extends WorkflowResourceConfiguration {
     @JoinColumn(name = "state_duration_definition_id", nullable = false)
     private StateDurationDefinition stateDurationDefinition;
 
-    @Column(name = "day_duration")
+    @Column(name = "duration")
     private Integer duration;
 
     @Column(name = "system_default", nullable = false)

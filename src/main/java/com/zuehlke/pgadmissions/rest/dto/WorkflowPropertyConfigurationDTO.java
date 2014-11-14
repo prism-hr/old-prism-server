@@ -4,8 +4,6 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 public class WorkflowPropertyConfigurationDTO {
 
     @NotNull
@@ -13,12 +11,10 @@ public class WorkflowPropertyConfigurationDTO {
     
     @Min(0)
     @Max(999)
-    @NotEmpty
     private Integer minimum;
 
     @Min(0)
     @Max(999)
-    @NotEmpty
     private Integer maximum;
 
     public final Boolean getEnabled() {

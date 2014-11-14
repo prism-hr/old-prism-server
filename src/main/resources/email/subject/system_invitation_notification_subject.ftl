@@ -1,0 +1,1 @@
+Invitation to register with ${TEMPLATE_SYSTEM_TITLE}

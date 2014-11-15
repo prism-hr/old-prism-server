@@ -7,6 +7,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.WorkflowResourceConfigurationType;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestApiUtils;
 import com.zuehlke.pgadmissions.rest.representation.configuration.AbstractConfigurationRepresentation;
@@ -14,6 +15,7 @@ import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.WordUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -44,7 +46,7 @@ public class ResourceConfigurationResource {
     public List<AbstractConfigurationRepresentation> getConfigurations(
             @ModelAttribute ResourceDescriptor resourceDescriptor,
             @PathVariable Integer resourceId,
-            @PathVariable WorkflowResourceConfigurationType configurationType,
+            @ModelAttribute WorkflowResourceConfigurationType configurationType,
             @RequestParam(required = false) PrismLocale locale,
             @RequestParam(required = false) PrismProgramType programType) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
@@ -52,8 +54,12 @@ public class ResourceConfigurationResource {
         List<WorkflowConfiguration> configurations = customizationService.listConfigurations(configurationType, resource, locale, programType);
 
         List<AbstractConfigurationRepresentation> representations = Lists.newArrayListWithCapacity(configurations.size());
+        String definitionPropertyName = configurationType.getDefinitionPropertyName();
         for (WorkflowConfiguration configuration : configurations) {
-            representations.add(dozerBeanMapper.map(configuration, configurationType.getRepresentationClass()));
+            WorkflowDefinition workflowDefinition = (WorkflowDefinition) PropertyUtils.getSimpleProperty(configuration, definitionPropertyName);
+            AbstractConfigurationRepresentation representation = dozerBeanMapper.map(configuration, configurationType.getRepresentationClass());
+            representation.setDefinitionId(workflowDefinition.getId());
+            representations.add(representation);
         }
         return representations;
     }

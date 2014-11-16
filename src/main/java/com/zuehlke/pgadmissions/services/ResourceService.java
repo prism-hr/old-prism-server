@@ -15,6 +15,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
@@ -39,6 +41,7 @@ import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -253,9 +256,11 @@ public class ResourceService {
         }
 
         if (comment.isUserCreationComment()) {
-            resource.setLastRemindedRequestIndividual(null);
-            resource.setLastRemindedRequestSyndicated(null);
-            resource.setLastNotifiedUpdateSyndicated(null);
+            resetNotifications(resource);
+        }
+
+        if (comment.isTransitionComment()) {
+            createOrUpdateStateTransitionSummary(resource, baselineTime);
         }
     }
 
@@ -357,6 +362,14 @@ public class ResourceService {
 
     public LocalDate getProgramClosingDate(Resource resource, Comment comment) {
         return resource.getProgram().getEndDate();
+    }
+    
+    public List<PrismState> getRecommendedNextStates(Resource resource) {
+        List<PrismState> recommendations = Lists.newLinkedList();
+        for (String recommendation : resourceDAO.getRecommendedNextStates(resource).split("|")) {
+            recommendations.add(PrismState.valueOf(recommendation));
+        }
+        return recommendations;
     }
 
     private Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter,
@@ -481,6 +494,28 @@ public class ResourceService {
                         entityService.createOrUpdate(new ResourceState().withResource(resource).withState(commentTransitionState.getTransitionState())
                                 .withPrimaryState(false)));
             }
+        }
+    }
+    
+    private void resetNotifications(Resource resource) {
+        resource.setLastRemindedRequestIndividual(null);
+        resource.setLastRemindedRequestSyndicated(null);
+        resource.setLastNotifiedUpdateSyndicated(null);
+    }
+    
+    private void createOrUpdateStateTransitionSummary(Resource resource, DateTime baselineTime) {
+        String nextStateSelection = Joiner.on("|").join(resourceDAO.getCurrentStates(resource));
+
+        ResourceStateTransitionSummary transientTransitionSummary = new ResourceStateTransitionSummary().withResource(resource.getParentResource())
+                .withStateGroup(resource.getState().getStateGroup()).withNextStateSelection(nextStateSelection).withFrequency(1)
+                .withUpdatedTimestamp(baselineTime);
+        ResourceStateTransitionSummary persistentTransitionSummary = entityService.getDuplicateEntity(transientTransitionSummary);
+
+        if (persistentTransitionSummary == null) {
+            entityService.save(transientTransitionSummary);
+        } else {
+            persistentTransitionSummary.setFrequency(persistentTransitionSummary.getFrequency() + 1);
+            persistentTransitionSummary.setUpdatedTimestamp(baselineTime);
         }
     }
 

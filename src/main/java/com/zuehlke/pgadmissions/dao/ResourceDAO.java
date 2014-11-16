@@ -274,7 +274,7 @@ public class ResourceDAO {
 
     public String getRecommendedNextStates(Resource resource) {
         return (String) sessionFactory.getCurrentSession().createCriteria(ResourceStateTransitionSummary.class) //
-                .setProjection(Projections.property("nextStateSelection")) //
+                .setProjection(Projections.property("transitionStateSelection")) //
                 .add(Restrictions.eq("resource", resource.getParentResource())) //
                 .add(Restrictions.eq("stateGroup", resource.getState().getStateGroup())) //
                 .addOrder(Order.desc("frequency")) //

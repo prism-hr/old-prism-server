@@ -8,8 +8,8 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestion;
+import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowProper
 
 public enum PrismWorkflowConfiguration {
 
-    CUSTOM_QUESTION(ActionCustomQuestion.class, Action.class, null, null, null), //
+    CUSTOM_QUESTION(ActionCustomQuestionConfiguration.class, ActionCustomQuestionDefinition.class, null, null, null), //
     DISPLAY_PROPERTY(DisplayPropertyConfiguration.class, DisplayPropertyDefinition.class, null, null, null), //
     NOTIFICATION(NotificationConfiguration.class, NotificationDefinition.class, NotificationConfigurationRepresentation.class, 1, 28), //
     STATE_DURATION(StateDurationConfiguration.class, StateDurationDefinition.class, StateDurationConfigurationRepresentation.class, 1, 168), //

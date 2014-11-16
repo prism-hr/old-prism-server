@@ -21,17 +21,17 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismCustomQuestionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismCustomQuestionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestion;
+import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
@@ -76,13 +76,13 @@ public class ActionService {
         return entityService.getById(Action.class, id);
     }
 
-    public List<ActionCustomQuestion> getActionPropertyConfigurationByVersion(Integer version) {
+    public List<ActionCustomQuestionConfiguration> getActionPropertyConfigurationByVersion(Integer version) {
         return actionDAO.getActionPropertyConfigurationByVersion(version);
     }
 
     public void createOrUpdateActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action,
             ActionCustomQuestionsDTO actionPropertyConfigurationDTO) throws CustomizationException, DeduplicationException {
-        if (action.getCustomizableAction()) {
+        if (action.isCustomizableAction()) {
             customizationService.validateConfiguration(resource, action, locale, programType);
             actionDAO.deleteActionConfiguration(resource, locale, programType, action);
 
@@ -93,14 +93,13 @@ public class ActionService {
                 List<String> options = actionPropertyDTO.getOptions();
                 List<String> validationRules = actionPropertyDTO.getValidationRules();
 
-                ActionCustomQuestion persistentActionPropertyConfiguration = entityService.createOrUpdate(new ActionCustomQuestion()
-                        .withResource(resource).withLocale(locale).withProgramType(programType).withAction(action).withVersion(version)
-                        .withCustomQuestionType(PrismCustomQuestionType.getByComponentName(name)).withName(name)
-                        .withEditable(actionPropertyDTO.getEditable()).withIndex(actionPropertyDTO.getIndex())
-                        .withLabel(actionPropertyDTO.getLabel()).withDescription(actionPropertyDTO.getDescription())
+                ActionCustomQuestionConfiguration persistentActionPropertyConfiguration = entityService.createOrUpdate(new ActionCustomQuestionConfiguration()
+                        .withResource(resource).withLocale(locale).withProgramType(programType)
+                        .withActionCustomQuestionDefinition(action.getActionCustomQuestionDefinition()).withVersion(version)
+                        .withCustomQuestionType(PrismCustomQuestionType.getByComponentName(name)).withName(name).withEditable(actionPropertyDTO.getEditable())
+                        .withIndex(actionPropertyDTO.getIndex()).withLabel(actionPropertyDTO.getLabel()).withDescription(actionPropertyDTO.getDescription())
                         .withOptions(options == null ? null : Joiner.on("|").join(options)).withRequired(actionPropertyDTO.getRequired())
-                        .withValidation(validationRules == null ? null : Joiner.on("|").join(validationRules))
-                        .withWeighting(actionPropertyDTO.getWeighting()));
+                        .withValidation(validationRules == null ? null : Joiner.on("|").join(validationRules)).withWeighting(actionPropertyDTO.getWeighting()));
 
                 if (persistentActionPropertyConfiguration.getVersion() == null) {
                     version = persistentActionPropertyConfiguration.getId();

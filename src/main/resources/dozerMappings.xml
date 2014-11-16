@@ -192,7 +192,7 @@
     </mapping>
 
     <mapping>
-        <class-a>com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestion</class-a>
+        <class-a>com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration</class-a>
         <class-b>com.zuehlke.pgadmissions.rest.representation.configuration.CustomQuestionConfigurationRepresentation</class-b>
         <field type="one-way">
             <a>customQuestionType.componentName</a>

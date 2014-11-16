@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestion;
+import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
@@ -364,8 +364,8 @@ public class ActionDAO {
         query.executeUpdate();
     }
 
-    public List<ActionCustomQuestion> getActionPropertyConfigurationByVersion(Integer version) {
-        return (List<ActionCustomQuestion>) sessionFactory.getCurrentSession().createCriteria(ActionCustomQuestion.class) //
+    public List<ActionCustomQuestionConfiguration> getActionPropertyConfigurationByVersion(Integer version) {
+        return (List<ActionCustomQuestionConfiguration>) sessionFactory.getCurrentSession().createCriteria(ActionCustomQuestionConfiguration.class) //
                 .add(Restrictions.eq("version", version)) //
                 .addOrder(Order.asc("index")) //
                 .list();

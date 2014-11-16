@@ -66,7 +66,7 @@ public class CustomizationDAO {
     public <T extends WorkflowDefinition> List<WorkflowDefinition> listDefinitions(Class<T> entityClass, PrismScope scope) {
         return (List<WorkflowDefinition>) sessionFactory.getCurrentSession().createCriteria(entityClass) //
                 .createAlias("scope", "scope", JoinType.INNER_JOIN) //
-                .add(Restrictions.ge("scope.precedence", scope.getPrecedence())) //
+                .add(Restrictions.eq("scope.id", scope)) //
                 .addOrder(Order.asc("scope.id")) //
                 .addOrder(Order.asc("id")) //
                 .list();

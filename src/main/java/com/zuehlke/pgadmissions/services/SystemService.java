@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestion;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PrismReminderDefinition;
@@ -42,6 +43,7 @@ import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
@@ -147,6 +149,10 @@ public class SystemService {
         verifyBackwardCompatibility(Role.class);
         initializeRoles();
 
+        LOGGER.info("Initialising action custom question definitions");
+        verifyBackwardCompatibility(ActionCustomQuestionDefinition.class);
+        initializeActionCustomQuestionDefinitions();
+
         LOGGER.info("Initialising action definitions");
         verifyBackwardCompatibility(Action.class);
         initializeActions();
@@ -244,17 +250,28 @@ public class SystemService {
         }
     }
 
+    private void initializeActionCustomQuestionDefinitions() {
+        for (PrismActionCustomQuestion prismActionCustomQuestion : PrismActionCustomQuestion.values()) {
+            Scope scope = entityService.getById(Scope.class, prismActionCustomQuestion.getScope());
+            ActionCustomQuestionDefinition transientActionCustomQuestionDefinition = new ActionCustomQuestionDefinition().withId(prismActionCustomQuestion)
+                    .withScope(scope);
+            entityService.createOrUpdate(transientActionCustomQuestionDefinition);
+        }
+    }
+
     private void initializeActions() throws DeduplicationException {
         entityService.deleteAll(ActionRedaction.class);
 
         for (PrismAction prismAction : PrismAction.values()) {
             Scope scope = entityService.getById(Scope.class, prismAction.getScope());
             Scope creationScope = entityService.getById(Scope.class, prismAction.getCreationScope());
+            ActionCustomQuestionDefinition actionCustomQuestionDefinition = entityService.getById(ActionCustomQuestionDefinition.class,
+                    prismAction.getActionCustomQuestion());
             Action transientAction = new Action().withId(prismAction).withActionType(prismAction.getActionType())
                     .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
                     .withTransitionAction(prismAction.isTransitionAction()).withDeclinableAction(prismAction.isDeclinableAction())
                     .withVisibleAction(prismAction.isVisibleAction()).withEmphasizedAction(prismAction.isEmphasizedAction()).withScope(scope)
-                    .withCustomizableAction(prismAction.isCustomizableAction()).withCreationScope(creationScope);
+                    .withActionCustomQuestionDefinition(actionCustomQuestionDefinition).withCreationScope(creationScope);
             Action action = entityService.createOrUpdate(transientAction);
             action.getRedactions().clear();
 
@@ -342,9 +359,9 @@ public class SystemService {
         for (PrismWorkflowProperty prismWorkflowProperty : PrismWorkflowProperty.values()) {
             Scope scope = scopeService.getById(prismWorkflowProperty.getScope());
             WorkflowPropertyDefinition transientWorkflowPropertyDefinition = new WorkflowPropertyDefinition().withId(prismWorkflowProperty)
-                    .withWorkflowPropertyCategory(prismWorkflowProperty.getWorkflowPropertyCategory()).withOptional(prismWorkflowProperty.isOptional())
-                    .withRangeSpecification(prismWorkflowProperty.isRangeSpecification()).withMinimumPermitted(prismWorkflowProperty.getMinimumPermitted())
-                    .withMaximumPermitted(prismWorkflowProperty.getMaximumPermitted()).withScope(scope);
+                    .withOptional(prismWorkflowProperty.isOptional()).withRangeSpecification(prismWorkflowProperty.isRangeSpecification())
+                    .withMinimumPermitted(prismWorkflowProperty.getMinimumPermitted()).withMaximumPermitted(prismWorkflowProperty.getMaximumPermitted())
+                    .withScope(scope);
             entityService.createOrUpdate(transientWorkflowPropertyDefinition);
         }
     }

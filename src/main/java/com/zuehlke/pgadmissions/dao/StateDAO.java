@@ -109,25 +109,6 @@ public class StateDAO {
                 .list();
     }
 
-    public List<PrismState> getAvailableNextStates(Resource resource, Set<ActionRepresentation> permittedActions) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
-                .setProjection(Projections.property("transitionState.id")) //
-                .createAlias("stateAction", "stateAction") //
-                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
-                .createAlias("stateTransitionEvaluation", "stateTransitionEvaluation", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("stateAction.state", resource.getState())) //
-                .add(Restrictions.eq("stateTransitionEvaluation.nextStateSelection", true)); //
-
-        Junction disjunction = Restrictions.disjunction();
-        for (ActionRepresentation permittedAction : permittedActions) {
-            disjunction.add(Restrictions.eq("stateAction.action.id", permittedAction.getName()));
-        }
-
-        return criteria.add(disjunction) //
-                .addOrder(Order.asc("stateGroup.sequenceOrder")).list(); //
-    }
-
     public List<PrismState> getActiveProgramStates() {
         return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("state.id")) //
@@ -157,12 +138,32 @@ public class StateDAO {
                 .list();
     }
     
+    public List<PrismState> getAvailableNextStates(Resource resource, Set<ActionRepresentation> permittedActions) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
+                .setProjection(Projections.property("transitionState.id")) //
+                .createAlias("stateAction", "stateAction") //
+                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
+                .createAlias("stateTransitionEvaluation", "stateTransitionEvaluation", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("stateAction.state", resource.getState())) //
+                .add(Restrictions.eq("stateTransitionEvaluation.nextStateSelection", true)); //
+
+        Junction disjunction = Restrictions.disjunction();
+        for (ActionRepresentation permittedAction : permittedActions) {
+            disjunction.add(Restrictions.eq("stateAction.action.id", permittedAction.getName()));
+        }
+
+        return criteria.add(disjunction) //
+                .addOrder(Order.asc("stateGroup.sequenceOrder")).list(); //
+    }
+    
     public String getRecommendedNextStates(Resource resource) {
         Resource parentResource = resource.getParentResource();
         return (String) sessionFactory.getCurrentSession().createCriteria(ResourceStateTransitionSummary.class) //
                 .setProjection(Projections.property("transitionStateSelection")) //
                 .add(Restrictions.eq(parentResource.getResourceScope().getLowerCaseName(), parentResource)) //
                 .add(Restrictions.eq("stateGroup", resource.getState().getStateGroup())) //
+                .add(Restrictions.ge("frequency", 3)) //
                 .addOrder(Order.desc("frequency")) //
                 .addOrder(Order.desc("updatedTimestamp")) //
                 .setMaxResults(1) //

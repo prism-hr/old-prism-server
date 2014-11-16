@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
 import java.util.List;
 
-public enum PrismNotificationTemplatePropertyCategory {
+public enum PrismNotificationDefinitionPropertyCategory {
 
     TEMPLATE_GLOBAL, //
     ACTION_GLOBAL, //
@@ -24,8 +24,8 @@ public enum PrismNotificationTemplatePropertyCategory {
     SYSTEM_USER_PASSWORD, //
     SYSTEM_USER_ACCOUNT;
 
-    public List<PrismNotificationTemplateProperty> getProperties() {
-        return PrismNotificationTemplateProperty.getProperties(this);
+    public List<PrismNotificationDefinitionProperty> getProperties() {
+        return PrismNotificationDefinitionProperty.getProperties(this);
     }
 
 }

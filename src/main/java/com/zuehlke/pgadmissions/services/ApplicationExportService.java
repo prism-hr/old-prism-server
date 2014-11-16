@@ -181,10 +181,9 @@ public class ApplicationExportService {
                 .withExportReference(exportId).withExportException(exportException).withCreatedTimestamp(new DateTime());
         actionService.executeAction(application, exportAction, comment);
 
-        UserInstitutionIdentity transientUserInstitutionIdentity = new UserInstitutionIdentity().withUser(application.getUser())
-                .withInstitution(exportInstitution).withIdentityType(PrismUserIdentity.STUDY_APPLICANT).withIdentitier(exportUserId);
-
-        entityService.createOrUpdate(transientUserInstitutionIdentity);
+        if (exportUserId != null) {
+            userService.createOrUpdateUserInstitutionIdentity(application, exportUserId);
+        }
     }
 
     private OutputStream sendDocumentExportRequest(Application application, String exportId) throws SftpException, IOException, ResourceNotFoundException,

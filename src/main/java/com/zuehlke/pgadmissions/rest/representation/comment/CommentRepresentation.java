@@ -8,7 +8,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
+import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
@@ -34,7 +34,7 @@ public class CommentRepresentation {
 
     private LocalDate userSpecifiedDueDate;
 
-    private YesNoUnsureResponse eligible;
+    private PrismYesNoUnsureResponse eligible;
     
     private Boolean interested;
 
@@ -176,11 +176,11 @@ public class CommentRepresentation {
         this.userSpecifiedDueDate = userSpecifiedDueDate;
     }
 
-    public final YesNoUnsureResponse getEligible() {
+    public final PrismYesNoUnsureResponse getEligible() {
         return eligible;
     }
 
-    public final void setEligible(YesNoUnsureResponse eligible) {
+    public final void setEligible(PrismYesNoUnsureResponse eligible) {
         this.eligible = eligible;
     }
 

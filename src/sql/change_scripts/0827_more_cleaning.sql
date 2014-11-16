@@ -1,9 +1,12 @@
 ALTER TABLE WORKFLOW_PROPERTY_DEFINITION
-	ADD COLUMN range_specification INT(1) UNSIGNED NOT NULL DEFAULT 0,
-	ADD INDEX (scope_id, workflow_property_category)
+	ADD COLUMN optional INT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER workflow_property_category,
+	ADD COLUMN range_specification INT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER optional,
+	ADD COLUMN minimum_permitted INT(3) UNSIGNED AFTER range_specification,
+	ADD COLUMN maximum_permitted INT(3) UNSIGNED AFTER minimum_permitted
 ;
 
 ALTER TABLE WORKFLOW_PROPERTY_DEFINITION
+	MODIFY COLUMN optional INT(1) UNSIGNED NOT NULL,
 	MODIFY COLUMN range_specification INT(1) UNSIGNED NOT NULL
 ;
 

@@ -25,17 +25,21 @@ import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowProper
 
 public enum PrismWorkflowConfiguration {
 
-    CUSTOM_QUESTION(ActionCustomQuestion.class, Action.class, null), //
-    DISPLAY_PROPERTY(DisplayPropertyConfiguration.class, DisplayPropertyDefinition.class, null), //
-    NOTIFICATION(NotificationConfiguration.class, NotificationDefinition.class, NotificationConfigurationRepresentation.class), //
-    STATE_DURATION(StateDurationConfiguration.class, StateDurationDefinition.class, StateDurationConfigurationRepresentation.class), //
-    WORKFLOW_PROPERTY(WorkflowPropertyConfiguration.class, WorkflowPropertyDefinition.class, WorkflowPropertyConfigurationRepresentation.class);
+    CUSTOM_QUESTION(ActionCustomQuestion.class, Action.class, null, null, null), //
+    DISPLAY_PROPERTY(DisplayPropertyConfiguration.class, DisplayPropertyDefinition.class, null, null, null), //
+    NOTIFICATION(NotificationConfiguration.class, NotificationDefinition.class, NotificationConfigurationRepresentation.class, 1, 28), //
+    STATE_DURATION(StateDurationConfiguration.class, StateDurationDefinition.class, StateDurationConfigurationRepresentation.class, 1, 168), //
+    WORKFLOW_PROPERTY(WorkflowPropertyConfiguration.class, WorkflowPropertyDefinition.class, WorkflowPropertyConfigurationRepresentation.class, null, null);
 
     private Class<? extends WorkflowConfiguration> configurationClass;
 
     private Class<? extends WorkflowDefinition> definitionClass;
 
     private Class<? extends AbstractConfigurationRepresentation> representationClass;
+
+    private Integer minimumPermitted;
+
+    private Integer maximumPermitted;
 
     private static final Map<Class<? extends WorkflowConfiguration>, PrismWorkflowConfiguration> reverseMap = Maps.newHashMap();
 
@@ -46,10 +50,12 @@ public enum PrismWorkflowConfiguration {
     }
 
     private PrismWorkflowConfiguration(Class<? extends WorkflowConfiguration> configurationClass, Class<? extends WorkflowDefinition> definitionClass,
-            Class<? extends AbstractConfigurationRepresentation> representationClass) {
+            Class<? extends AbstractConfigurationRepresentation> representationClass, Integer minimumPermitted, Integer maximumPermitted) {
         this.configurationClass = configurationClass;
         this.definitionClass = definitionClass;
         this.representationClass = representationClass;
+        this.minimumPermitted = minimumPermitted;
+        this.maximumPermitted = maximumPermitted;
     }
 
     public Class<? extends WorkflowConfiguration> getConfigurationClass() {
@@ -62,6 +68,14 @@ public enum PrismWorkflowConfiguration {
 
     public Class<? extends AbstractConfigurationRepresentation> getRepresentationClass() {
         return representationClass;
+    }
+
+    public final Integer getMinimumPermitted() {
+        return minimumPermitted;
+    }
+
+    public final Integer getMaximumPermitted() {
+        return maximumPermitted;
     }
 
     public String getDefinitionPropertyName() {

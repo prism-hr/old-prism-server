@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
+import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -268,6 +269,12 @@ public class UserService {
 
     public List<Integer> getMatchingUsers(String searchTerm) {
         return userDAO.getMatchingUsers(searchTerm);
+    }
+    
+    public void createOrUpdateUserInstitutionIdentity(Application application, String exportUserId) {
+        UserInstitutionIdentity transientUserInstitutionIdentity = new UserInstitutionIdentity().withUser(application.getUser())
+                .withInstitution(application.getInstitution()).withIdentityType(PrismUserIdentity.STUDY_APPLICANT).withIdentitier(exportUserId);
+        entityService.createOrUpdate(transientUserInstitutionIdentity);
     }
 
 }

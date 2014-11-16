@@ -84,50 +84,50 @@ public enum PrismProgramType {
         relations.put(STUDY_POSTGRADUATE_TAUGHT, SCHOLARSHIP_POSTGRADUATE_TAUGHT);
         relations.put(STUDY_POSTGRADUATE_RESEARCH, SCHOLARSHIP_POSTGRADUATE_RESEARCH);
 
-        recommendations.put(STUDY_UNDERGRADUATE, new PrismProgramTypeRecommendation(SCHOLARSHIP_UNDERGRADUATE, 1, DurationUnit.WEEK,
+        recommendations.put(STUDY_UNDERGRADUATE, new PrismProgramTypeRecommendation(SCHOLARSHIP_UNDERGRADUATE, 1, PrismDurationUnit.WEEK,
                 PrismProgramTypeRecommendationBaselineType.FROM_OFFER));
-        recommendations.put(STUDY_UNDERGRADUATE, new PrismProgramTypeRecommendation(TRAINING, 3, DurationUnit.MONTH,
+        recommendations.put(STUDY_UNDERGRADUATE, new PrismProgramTypeRecommendation(TRAINING, 3, PrismDurationUnit.MONTH,
                 PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(STUDY_UNDERGRADUATE, new PrismProgramTypeRecommendation(WORK_EXPERIENCE, 6, DurationUnit.MONTH,
+        recommendations.put(STUDY_UNDERGRADUATE, new PrismProgramTypeRecommendation(WORK_EXPERIENCE, 6, PrismDurationUnit.MONTH,
                 PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(STUDY_UNDERGRADUATE, new PrismProgramTypeRecommendation(STUDY_POSTGRADUATE_TAUGHT, 1, DurationUnit.YEAR,
+        recommendations.put(STUDY_UNDERGRADUATE, new PrismProgramTypeRecommendation(STUDY_POSTGRADUATE_TAUGHT, 1, PrismDurationUnit.YEAR,
                 PrismProgramTypeRecommendationBaselineType.FROM_CLOSE));
-        recommendations.put(STUDY_UNDERGRADUATE, new PrismProgramTypeRecommendation(STUDY_POSTGRADUATE_RESEARCH, 1, DurationUnit.YEAR,
+        recommendations.put(STUDY_UNDERGRADUATE, new PrismProgramTypeRecommendation(STUDY_POSTGRADUATE_RESEARCH, 1, PrismDurationUnit.YEAR,
                 PrismProgramTypeRecommendationBaselineType.FROM_CLOSE));
-        recommendations.put(STUDY_UNDERGRADUATE, new PrismProgramTypeRecommendation(EMPLOYMENT, 1, DurationUnit.YEAR,
+        recommendations.put(STUDY_UNDERGRADUATE, new PrismProgramTypeRecommendation(EMPLOYMENT, 1, PrismDurationUnit.YEAR,
                 PrismProgramTypeRecommendationBaselineType.FROM_CLOSE));
 
-        recommendations.put(STUDY_POSTGRADUATE_TAUGHT, new PrismProgramTypeRecommendation(SCHOLARSHIP_POSTGRADUATE_TAUGHT, 1, DurationUnit.WEEK,
+        recommendations.put(STUDY_POSTGRADUATE_TAUGHT, new PrismProgramTypeRecommendation(SCHOLARSHIP_POSTGRADUATE_TAUGHT, 1, PrismDurationUnit.WEEK,
                 PrismProgramTypeRecommendationBaselineType.FROM_OFFER));
-        recommendations.put(STUDY_POSTGRADUATE_TAUGHT, new PrismProgramTypeRecommendation(TRAINING, 3, DurationUnit.MONTH,
+        recommendations.put(STUDY_POSTGRADUATE_TAUGHT, new PrismProgramTypeRecommendation(TRAINING, 3, PrismDurationUnit.MONTH,
                 PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(STUDY_POSTGRADUATE_TAUGHT, new PrismProgramTypeRecommendation(WORK_EXPERIENCE, 3, DurationUnit.MONTH,
+        recommendations.put(STUDY_POSTGRADUATE_TAUGHT, new PrismProgramTypeRecommendation(WORK_EXPERIENCE, 3, PrismDurationUnit.MONTH,
                 PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(STUDY_POSTGRADUATE_TAUGHT, new PrismProgramTypeRecommendation(STUDY_POSTGRADUATE_RESEARCH, 1, DurationUnit.YEAR,
+        recommendations.put(STUDY_POSTGRADUATE_TAUGHT, new PrismProgramTypeRecommendation(STUDY_POSTGRADUATE_RESEARCH, 1, PrismDurationUnit.YEAR,
                 PrismProgramTypeRecommendationBaselineType.FROM_CLOSE));
-        recommendations.put(STUDY_POSTGRADUATE_TAUGHT, new PrismProgramTypeRecommendation(EMPLOYMENT, 1, DurationUnit.YEAR,
+        recommendations.put(STUDY_POSTGRADUATE_TAUGHT, new PrismProgramTypeRecommendation(EMPLOYMENT, 1, PrismDurationUnit.YEAR,
                 PrismProgramTypeRecommendationBaselineType.FROM_CLOSE));
 
-        recommendations.put(STUDY_POSTGRADUATE_RESEARCH, new PrismProgramTypeRecommendation(SCHOLARSHIP_POSTGRADUATE_RESEARCH, 1, DurationUnit.WEEK,
+        recommendations.put(STUDY_POSTGRADUATE_RESEARCH, new PrismProgramTypeRecommendation(SCHOLARSHIP_POSTGRADUATE_RESEARCH, 1, PrismDurationUnit.WEEK,
                 PrismProgramTypeRecommendationBaselineType.FROM_OFFER));
-        recommendations.put(STUDY_POSTGRADUATE_RESEARCH, new PrismProgramTypeRecommendation(TRAINING, 3, DurationUnit.MONTH,
+        recommendations.put(STUDY_POSTGRADUATE_RESEARCH, new PrismProgramTypeRecommendation(TRAINING, 3, PrismDurationUnit.MONTH,
                 PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(STUDY_POSTGRADUATE_RESEARCH, new PrismProgramTypeRecommendation(WORK_EXPERIENCE, 3, DurationUnit.MONTH,
+        recommendations.put(STUDY_POSTGRADUATE_RESEARCH, new PrismProgramTypeRecommendation(WORK_EXPERIENCE, 3, PrismDurationUnit.MONTH,
                 PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(STUDY_POSTGRADUATE_RESEARCH, new PrismProgramTypeRecommendation(EMPLOYMENT, 1, DurationUnit.YEAR,
+        recommendations.put(STUDY_POSTGRADUATE_RESEARCH, new PrismProgramTypeRecommendation(EMPLOYMENT, 1, PrismDurationUnit.YEAR,
                 PrismProgramTypeRecommendationBaselineType.FROM_CLOSE));
 
-        recommendations.put(EMPLOYMENT, new PrismProgramTypeRecommendation(TRAINING, 3, DurationUnit.MONTH,
+        recommendations.put(EMPLOYMENT, new PrismProgramTypeRecommendation(TRAINING, 3, PrismDurationUnit.MONTH,
                 PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(EMPLOYMENT, new PrismProgramTypeRecommendation(STUDY_UNDERGRADUATE, 1, DurationUnit.YEAR,
+        recommendations.put(EMPLOYMENT, new PrismProgramTypeRecommendation(STUDY_UNDERGRADUATE, 1, PrismDurationUnit.YEAR,
                 PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(EMPLOYMENT, new PrismProgramTypeRecommendation(STUDY_POSTGRADUATE_TAUGHT, 1, DurationUnit.YEAR,
+        recommendations.put(EMPLOYMENT, new PrismProgramTypeRecommendation(STUDY_POSTGRADUATE_TAUGHT, 1, PrismDurationUnit.YEAR,
                 PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(EMPLOYMENT, new PrismProgramTypeRecommendation(STUDY_POSTGRADUATE_RESEARCH, 1, DurationUnit.YEAR,
+        recommendations.put(EMPLOYMENT, new PrismProgramTypeRecommendation(STUDY_POSTGRADUATE_RESEARCH, 1, PrismDurationUnit.YEAR,
                 PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(EMPLOYMENT, new PrismProgramTypeRecommendation(EMPLOYMENT_SECONDMENT, 1, DurationUnit.YEAR,
+        recommendations.put(EMPLOYMENT, new PrismProgramTypeRecommendation(EMPLOYMENT_SECONDMENT, 1, PrismDurationUnit.YEAR,
                 PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(EMPLOYMENT, new PrismProgramTypeRecommendation(EMPLOYMENT, 1, DurationUnit.YEAR,
+        recommendations.put(EMPLOYMENT, new PrismProgramTypeRecommendation(EMPLOYMENT, 1, PrismDurationUnit.YEAR,
                 PrismProgramTypeRecommendationBaselineType.FROM_START));
 
         for (PrismProgramType programType : PrismProgramType.values()) {

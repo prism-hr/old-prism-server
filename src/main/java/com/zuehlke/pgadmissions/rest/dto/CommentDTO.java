@@ -12,7 +12,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
+import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
@@ -29,7 +29,7 @@ public class CommentDTO {
 
     private PrismState transitionState;
 
-    private YesNoUnsureResponse eligible;
+    private PrismYesNoUnsureResponse eligible;
 
     private Boolean interested;
 
@@ -133,11 +133,11 @@ public class CommentDTO {
         this.transitionState = transitionState;
     }
 
-    public YesNoUnsureResponse getEligible() {
+    public PrismYesNoUnsureResponse getEligible() {
         return eligible;
     }
 
-    public void setEligible(YesNoUnsureResponse eligible) {
+    public void setEligible(PrismYesNoUnsureResponse eligible) {
         this.eligible = eligible;
     }
 

@@ -1,10 +1,28 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.CustomizationDAO;
-import com.zuehlke.pgadmissions.domain.definitions.*;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismWorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
@@ -14,17 +32,6 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 @Service
 @Transactional
@@ -78,7 +85,7 @@ public class CustomizationService {
         return null;
     }
 
-    public <T extends WorkflowDefinition> List<Enum<?>> listDefinitions(Class<T> entityClass, PrismScope scope) {
+    public <T extends WorkflowDefinition> List<WorkflowDefinition> listDefinitions(Class<T> entityClass, PrismScope scope) {
         return customizationDAO.listDefinitions(entityClass, scope);
     }
 

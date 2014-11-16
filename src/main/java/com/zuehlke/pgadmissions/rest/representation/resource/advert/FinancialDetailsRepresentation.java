@@ -2,13 +2,13 @@ package com.zuehlke.pgadmissions.rest.representation.resource.advert;
 
 import java.math.BigDecimal;
 
-import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 
 public class FinancialDetailsRepresentation {
 
     private String currency;
 
-    private DurationUnit interval;
+    private PrismDurationUnit interval;
 
     private BigDecimal minimum;
 
@@ -22,11 +22,11 @@ public class FinancialDetailsRepresentation {
         this.currency = currency;
     }
 
-    public DurationUnit getInterval() {
+    public PrismDurationUnit getInterval() {
         return interval;
     }
 
-    public void setInterval(DurationUnit interval) {
+    public void setInterval(PrismDurationUnit interval) {
         this.interval = interval;
     }
 

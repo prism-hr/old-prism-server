@@ -6,7 +6,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.dozer.DozerConverter;
 
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
-import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.FinancialDetailsRepresentation;
 
 public class FinancialDetailsRepresentationConverter extends DozerConverter<AdvertFinancialDetail, FinancialDetailsRepresentation> {
@@ -21,7 +21,7 @@ public class FinancialDetailsRepresentationConverter extends DozerConverter<Adve
             return null;
         }
         destination = new FinancialDetailsRepresentation();
-        DurationUnit interval = source.getInterval();
+        PrismDurationUnit interval = source.getInterval();
 
         destination.setCurrency(source.getCurrencySpecified());
         destination.setInterval(interval);

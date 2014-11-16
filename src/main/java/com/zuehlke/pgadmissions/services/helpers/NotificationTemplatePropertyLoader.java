@@ -53,7 +53,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplateProperty;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -91,7 +91,7 @@ public class NotificationTemplatePropertyLoader {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public String load(PrismNotificationTemplateProperty property) {
+    public String load(PrismNotificationDefinitionProperty property) {
         String value = (String) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(property));
         return value == null ? "[" + propertyLoader.load(SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR) + ". " + propertyLoader.load(SYSTEM_HELPDESK_REPORT)
                 + ": " + templateModelDTO.getResource().getSystem().getHelpdesk() + "]" : value;

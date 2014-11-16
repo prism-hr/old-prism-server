@@ -30,7 +30,7 @@ import org.joda.time.LocalDateTime;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
+import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
@@ -113,7 +113,7 @@ public class Comment {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "application_eligible")
-    private YesNoUnsureResponse applicationEligible;
+    private PrismYesNoUnsureResponse applicationEligible;
 
     @Column(name = "application_interested")
     private Boolean applicationInterested;
@@ -337,7 +337,7 @@ public class Comment {
         this.transitionState = transitionState;
     }
 
-    public YesNoUnsureResponse getApplicationEligible() {
+    public PrismYesNoUnsureResponse getApplicationEligible() {
         return applicationEligible;
     }
 
@@ -349,7 +349,7 @@ public class Comment {
         this.applicationInterested = applicationInterested;
     }
 
-    public void setApplicationEligible(YesNoUnsureResponse applicationEligible) {
+    public void setApplicationEligible(PrismYesNoUnsureResponse applicationEligible) {
         this.applicationEligible = applicationEligible;
     }
 
@@ -675,7 +675,7 @@ public class Comment {
         return this;
     }
 
-    public Comment withApplicationEligible(final YesNoUnsureResponse eligible) {
+    public Comment withApplicationEligible(final PrismYesNoUnsureResponse eligible) {
         this.applicationEligible = eligible;
         return this;
     }
@@ -741,7 +741,7 @@ public class Comment {
     }
 
     public boolean isApplicationCreatorEligibilityUnsure() {
-        return getApplicationEligible() == YesNoUnsureResponse.UNSURE;
+        return getApplicationEligible() == PrismYesNoUnsureResponse.UNSURE;
     }
 
     public User getAuthor() {

@@ -37,8 +37,7 @@ INSERT INTO RESOURCE_STATE (application_id, state_id, primary_state)
 ;
 
 ALTER TABLE WORKFLOW_PROPERTY_DEFINITION
-	DROP COLUMN workflow_property_category,
-	DROP INDEX scope_id_2
+	DROP COLUMN workflow_property_category
 ;
 
 CREATE TABLE ACTION_CUSTOM_QUESTION_DEFINITION (

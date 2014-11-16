@@ -1,0 +1,3 @@
+ALTER TABLE INSTITUTION
+	CHANGE COLUMN facebook_id facebook_uri VARCHAR(255)
+;

@@ -202,7 +202,7 @@ public class ResourceService {
         resourceDAO.deletePrimaryResourceState(resource);
 
         resource.getResourcePreviousStates().add(
-                entityService.createOrUpdate(new ResourcePreviousState().withResource(resource).withPreviousState(state)).withPrimaryState(true));
+                entityService.createOrUpdate(new ResourcePreviousState().withResource(resource).withPreviousState(state).withPrimaryState(true)));
         resource.getResourceStates().add(
                 entityService.createOrUpdate(new ResourceState().withResource(resource).withState(transitionState).withPrimaryState(true)));
 
@@ -363,7 +363,7 @@ public class ResourceService {
     public LocalDate getProgramClosingDate(Resource resource, Comment comment) {
         return resource.getProgram().getEndDate();
     }
-    
+
     public List<PrismState> getRecommendedNextStates(Resource resource) {
         List<PrismState> recommendations = Lists.newLinkedList();
         for (String recommendation : resourceDAO.getRecommendedNextStates(resource).split("|")) {
@@ -496,13 +496,13 @@ public class ResourceService {
             }
         }
     }
-    
+
     private void resetNotifications(Resource resource) {
         resource.setLastRemindedRequestIndividual(null);
         resource.setLastRemindedRequestSyndicated(null);
         resource.setLastNotifiedUpdateSyndicated(null);
     }
-    
+
     private void createOrUpdateStateTransitionSummary(Resource resource, DateTime baselineTime) {
         String nextStateSelection = Joiner.on("|").join(resourceDAO.getCurrentStates(resource));
 

@@ -4,7 +4,17 @@ import com.zuehlke.pgadmissions.domain.definitions.WorkflowResourceConfiguration
 
 public class AbstractConfigurationRepresentation {
 
+    private Enum<?> definitionId;
+
     private WorkflowResourceConfigurationType configurationType;
+
+    public Enum<?> getDefinitionId() {
+        return definitionId;
+    }
+
+    public void setDefinitionId(Enum<?> definitionId) {
+        this.definitionId = definitionId;
+    }
 
     public WorkflowResourceConfigurationType getConfigurationType() {
         return configurationType;

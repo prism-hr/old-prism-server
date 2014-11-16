@@ -18,7 +18,7 @@ public class WordUtils {
 
     public static String singularize(String entityName) {
         if (entityName.endsWith("ies")) {
-            return entityName.substring(0, entityName.length() - 3);
+            return entityName.substring(0, entityName.length() - 3) + "y";
         } else if (entityName.endsWith("es")) {
             return entityName.substring(0, entityName.length() - 2);
         } else if (entityName.endsWith("s")) {

@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFilterCategory;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
@@ -332,21 +332,21 @@ public class AdvertService {
             BigDecimal minimumGenerated;
             BigDecimal maximumGenerated;
 
-            DurationUnit interval = financialDetails.getInterval();
+            PrismDurationUnit interval = financialDetails.getInterval();
             String intervalPrefixGenerated;
 
-            if (interval == DurationUnit.MONTH) {
+            if (interval == PrismDurationUnit.MONTH) {
                 minimumSpecified = financialDetails.getMonthMinimumSpecified();
                 maximumSpecified = financialDetails.getMonthMaximumSpecified();
                 minimumGenerated = financialDetails.getYearMinimumSpecified();
                 maximumGenerated = financialDetails.getYearMaximumSpecified();
-                intervalPrefixGenerated = DurationUnit.YEAR.name().toLowerCase();
+                intervalPrefixGenerated = PrismDurationUnit.YEAR.name().toLowerCase();
             } else {
                 minimumSpecified = financialDetails.getYearMinimumSpecified();
                 maximumSpecified = financialDetails.getYearMaximumSpecified();
                 minimumGenerated = financialDetails.getMonthMinimumSpecified();
                 maximumGenerated = financialDetails.getMonthMaximumSpecified();
-                intervalPrefixGenerated = DurationUnit.MONTH.name().toLowerCase();
+                intervalPrefixGenerated = PrismDurationUnit.MONTH.name().toLowerCase();
             }
 
             setConvertedMonetaryValues(financialDetails, interval.name().toLowerCase(), minimumSpecified, maximumSpecified, intervalPrefixGenerated,
@@ -411,7 +411,7 @@ public class AdvertService {
 
     private void updateFinancialDetails(AdvertFinancialDetail financialDetails, FinancialDetailsDTO financialDetailsDTO, String currencyAtLocale,
             LocalDate baseline) throws Exception {
-        DurationUnit interval = financialDetailsDTO.getInterval();
+        PrismDurationUnit interval = financialDetailsDTO.getInterval();
         String currencySpecified = financialDetailsDTO.getCurrency();
 
         financialDetails.setInterval(interval);
@@ -426,12 +426,12 @@ public class AdvertService {
         BigDecimal minimumGenerated;
         BigDecimal maximumGenerated;
 
-        if (interval == DurationUnit.MONTH) {
-            intervalPrefixGenerated = DurationUnit.YEAR.name().toLowerCase();
+        if (interval == PrismDurationUnit.MONTH) {
+            intervalPrefixGenerated = PrismDurationUnit.YEAR.name().toLowerCase();
             minimumGenerated = minimumSpecified.multiply(new BigDecimal(12));
             maximumGenerated = maximumSpecified.multiply(new BigDecimal(12));
         } else {
-            intervalPrefixGenerated = DurationUnit.MONTH.name().toLowerCase();
+            intervalPrefixGenerated = PrismDurationUnit.MONTH.name().toLowerCase();
             minimumGenerated = minimumSpecified.divide(new BigDecimal(12), 2, RoundingMode.HALF_UP);
             maximumGenerated = maximumSpecified.divide(new BigDecimal(12), 2, RoundingMode.HALF_UP);
         }

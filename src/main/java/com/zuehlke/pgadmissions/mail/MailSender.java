@@ -32,8 +32,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplateProperty;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionProperty;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
@@ -155,10 +155,10 @@ public class MailSender {
 
     private Map<String, Object> createNotificationModel(NotificationDefinition notificationTemplate, NotificationDefinitionModelDTO modelDTO, boolean validationMode) {
         Map<String, Object> model = Maps.newHashMap();
-        List<PrismNotificationTemplatePropertyCategory> categories = notificationTemplate.getId().getPropertyCategories();
+        List<PrismNotificationDefinitionPropertyCategory> categories = notificationTemplate.getId().getPropertyCategories();
         NotificationTemplatePropertyLoader loader = applicationContext.getBean(NotificationTemplatePropertyLoader.class).localize(modelDTO, propertyLoader);
-        for (PrismNotificationTemplatePropertyCategory propertyCategory : categories) {
-            for (PrismNotificationTemplateProperty property : propertyCategory.getProperties()) {
+        for (PrismNotificationDefinitionPropertyCategory propertyCategory : categories) {
+            for (PrismNotificationDefinitionProperty property : propertyCategory.getProperties()) {
                 String value = validationMode ? "placeholder" : loader.load(property);
                 model.put(property.name(), property.isEscapeHtml() ? StringEscapeUtils.escapeHtml(value) : value);
             }

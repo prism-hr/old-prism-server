@@ -13,7 +13,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,9 +63,8 @@ public class CustomizationDAO {
                 .list();
     }
 
-    public <T extends WorkflowDefinition> List<Enum<?>> listDefinitions(Class<T> entityClass, PrismScope scope) {
-        return (List<Enum<?>>) sessionFactory.getCurrentSession().createCriteria(entityClass) //
-                .setProjection(Projections.property("id")) //
+    public <T extends WorkflowDefinition> List<WorkflowDefinition> listDefinitions(Class<T> entityClass, PrismScope scope) {
+        return (List<WorkflowDefinition>) sessionFactory.getCurrentSession().createCriteria(entityClass) //
                 .createAlias("scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.ge("scope.precedence", scope.getPrecedence())) //
                 .addOrder(Order.asc("scope.id")) //

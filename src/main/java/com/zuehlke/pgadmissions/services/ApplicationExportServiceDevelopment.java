@@ -35,6 +35,8 @@ public class ApplicationExportServiceDevelopment extends ApplicationExportServic
             exportRequests.put(application, exportRequest);
 
             executeExportAction(application, "TEST EXPORT", "TEST EXPORT USER ID", null);
+        } catch (Exception e) {
+            executeExportAction(application, null, null, e.getMessage());
         } finally {
             IOUtils.closeQuietly(outputStream);
         }

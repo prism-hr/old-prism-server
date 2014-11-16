@@ -6,11 +6,11 @@ public class PrismProgramTypeRecommendation {
 
     private Integer delayDuration;
 
-    private DurationUnit delayDurationUnit;
+    private PrismDurationUnit delayDurationUnit;
 
     private PrismProgramTypeRecommendationBaselineType delayBaselineType;
 
-    public PrismProgramTypeRecommendation(PrismProgramType programType, Integer delayDuration, DurationUnit delayDurationUnit, PrismProgramTypeRecommendationBaselineType delayBaselineType) {
+    public PrismProgramTypeRecommendation(PrismProgramType programType, Integer delayDuration, PrismDurationUnit delayDurationUnit, PrismProgramTypeRecommendationBaselineType delayBaselineType) {
         this.programType = programType;
         this.delayDuration = delayDuration;
         this.delayDurationUnit = delayDurationUnit;
@@ -25,7 +25,7 @@ public class PrismProgramTypeRecommendation {
         return delayDuration;
     }
 
-    public final DurationUnit getDelayDurationUnit() {
+    public final PrismDurationUnit getDelayDurationUnit() {
         return delayDurationUnit;
     }
 

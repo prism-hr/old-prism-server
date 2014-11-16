@@ -6,13 +6,13 @@ import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
-import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 
 @Embeddable
 public class AdvertFinancialDetail {
 
     @Enumerated(EnumType.STRING)
-    private DurationUnit interval;
+    private PrismDurationUnit interval;
 
     private String currencySpecified;
 
@@ -36,11 +36,11 @@ public class AdvertFinancialDetail {
     
     private Boolean converted;
 
-    public DurationUnit getInterval() {
+    public PrismDurationUnit getInterval() {
         return interval;
     }
 
-    public void setInterval(DurationUnit interval) {
+    public void setInterval(PrismDurationUnit interval) {
         this.interval = interval;
     }
 

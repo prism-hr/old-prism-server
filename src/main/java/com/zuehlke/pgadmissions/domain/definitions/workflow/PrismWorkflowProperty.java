@@ -83,5 +83,9 @@ public enum PrismWorkflowProperty {
     public final PrismScope getScope() {
         return scope;
     }
+    
+    public final boolean isRangeSpecification() {
+        return !(globalMinimum == null && globalMaximum == null);
+    }
 
 }

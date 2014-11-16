@@ -181,10 +181,9 @@ public class NotificationService {
                     && (lastExpectedReminder.isAfter(lastNotifiedDate) || lastExpectedReminder.equals(lastNotifiedDate))) {
                 sendNotification(notificationDefinition.getReminderDefinition(), new NotificationDefinitionModelDTO().withUser(user).withAuthor(author)
                         .withResource(resource).withTransitionAction(definition.getActionId()));
-                sent.put(notificationDefinition, user);
+                sent.put(notificationDefinition, user);       
+                userRole.setLastNotifiedDate(baseline);
             }
-
-            userRole.setLastNotifiedDate(baseline);
         }
 
         resource.setLastRemindedRequestIndividual(baseline);

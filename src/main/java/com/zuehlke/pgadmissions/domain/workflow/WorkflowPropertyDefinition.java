@@ -29,6 +29,9 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
     @Enumerated(EnumType.STRING)
     private PrismWorkflowPropertyCategory workflowPropertyCategory;
 
+    @Column(name = "range_specification", nullable = false)
+    private Boolean rangeSpecification;
+    
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
@@ -50,6 +53,14 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
         this.workflowPropertyCategory = workflowPropertyCategory;
     }
 
+    public final Boolean getRangeSpecification() {
+        return rangeSpecification;
+    }
+
+    public final void setRangeSpecification(Boolean rangeSpecification) {
+        this.rangeSpecification = rangeSpecification;
+    }
+
     @Override
     public Scope getScope() {
         return scope;
@@ -67,6 +78,11 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
 
     public WorkflowPropertyDefinition withWorkflowPropertyCategory(PrismWorkflowPropertyCategory workflowPropertyCategory) {
         this.workflowPropertyCategory = workflowPropertyCategory;
+        return this;
+    }
+    
+    public WorkflowPropertyDefinition withRangeSpecification(Boolean rangeSpecification) {
+        this.rangeSpecification = rangeSpecification;
         return this;
     }
 

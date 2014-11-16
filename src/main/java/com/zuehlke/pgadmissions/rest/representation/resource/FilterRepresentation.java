@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest.representation.workflow;
+package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import java.util.List;
 

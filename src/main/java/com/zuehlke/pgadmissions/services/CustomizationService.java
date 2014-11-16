@@ -6,10 +6,13 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.beanutils.PropertyUtils;
+import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +35,7 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.rest.representation.configuration.AbstractConfigurationRepresentation;
 
 @Service
 @Transactional
@@ -48,19 +52,25 @@ public class CustomizationService {
 
     @Autowired
     private SystemService systemService;
+    
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private Mapper dozerBeanMapper;
 
     public DisplayPropertyDefinition getDisplayPropertyDefinitionById(PrismDisplayProperty id) {
         return entityService.getById(DisplayPropertyDefinition.class, id);
     }
 
     public void updateDisplayPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
-                                                   DisplayPropertyDefinition displayProperty, String value) throws DeduplicationException, CustomizationException {
+            DisplayPropertyDefinition displayProperty, String value) throws DeduplicationException, CustomizationException {
         createOrUpdateDisplayPropertyConfiguration(resource, locale, programType, displayProperty, value);
         resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_DISPLAY_PROPERTY"));
     }
 
     public void createOrUpdateDisplayPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
-                                                           DisplayPropertyDefinition displayProperty, String value) throws DeduplicationException, CustomizationException {
+            DisplayPropertyDefinition displayProperty, String value) throws DeduplicationException, CustomizationException {
         validateConfiguration(resource, displayProperty, locale, programType);
         DisplayPropertyConfiguration transientConfiguration = new DisplayPropertyConfiguration().withResource(resource).withProgramType(programType)
                 .withLocale(locale).withDisplayPropertyDefinition(displayProperty).withValue(value)
@@ -69,12 +79,12 @@ public class CustomizationService {
     }
 
     public <T extends WorkflowConfiguration> T getConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale, PrismProgramType programType,
-                                                                String keyIndex, WorkflowDefinition keyValue) {
+            String keyIndex, WorkflowDefinition keyValue) {
         return customizationDAO.getConfiguration(entityClass, resource, locale, programType, keyIndex, keyValue);
     }
 
     public <T extends WorkflowConfiguration> T getConfiguration(Class<T> entityClass, Resource resource, User user, String definitionReference,
-                                                                WorkflowDefinition definition) {
+            WorkflowDefinition definition) {
         if (definition != null) {
             PrismScope resourceScope = resource.getResourceScope();
             PrismLocale locale = resourceScope == SYSTEM ? user.getLocale() : resource.getLocale();
@@ -85,49 +95,50 @@ public class CustomizationService {
         return null;
     }
 
-    public <T extends WorkflowDefinition> List<WorkflowDefinition> listDefinitions(Class<T> entityClass, PrismScope scope) {
-        return customizationDAO.listDefinitions(entityClass, scope);
-    }
-
-    public <T extends WorkflowConfiguration> List<T> listConfigurations(PrismWorkflowConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType) {
-        List<T> configurations = customizationDAO.listConfigurations(configurationType, resource, locale, programType);
-
-        if (configurations.isEmpty()) {
-            return configurations;
-        } else {
-            T stereotype = configurations.get(0);
-
-            Resource stereotypeResource = stereotype.getResource();
-            PrismLocale stereotypeLocale = stereotype.getLocale();
-            PrismProgramType stereotypeProgramType = stereotype.getProgramType();
-
-            List<T> filteredConfigurations = Lists.newLinkedList();
-
-            for (T configuration : configurations) {
-                if (Objects.equal(configuration.getResource(), stereotypeResource) && Objects.equal(configuration.getLocale(), stereotypeLocale)
-                        && Objects.equal(configuration.getProgramType(), stereotypeProgramType)) {
-                    filteredConfigurations.add(configuration);
-                }
-            }
-
-            return filteredConfigurations;
-        }
-    }
-
     public <T extends WorkflowConfiguration> void restoreDefaultConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale,
-                                                                              PrismProgramType programType) throws CustomizationException {
+            PrismProgramType programType) throws CustomizationException {
         validateRestoreDefaultConfiguration(resource, locale, programType);
         customizationDAO.restoreDefaultConfiguration(entityClass, resource, locale, programType);
     }
 
     public <T extends WorkflowConfiguration> void restoreGlobalConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale,
-                                                                             PrismProgramType programType) throws CustomizationException {
+            PrismProgramType programType) throws CustomizationException {
         validateRestoreGlobalConfiguration(resource, locale, programType);
         customizationDAO.restoreGlobalConfiguration(entityClass, resource, locale, programType);
     }
 
+    public <T extends WorkflowDefinition> List<WorkflowDefinition> listDefinitions(Class<T> entityClass, PrismScope scope) {
+        return customizationDAO.listDefinitions(entityClass, scope);
+    }
+
+    public List<AbstractConfigurationRepresentation> getConfigurationRepresentations(PrismWorkflowConfiguration configurationType, Resource resource)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        PrismScope resourceScope = resource.getResourceScope();
+        PrismLocale locale = resourceScope == SYSTEM ? userService.getCurrentUser().getLocale() : resource.getLocale();
+        PrismProgramType programType = resourceScope.getPrecedence() > INSTITUTION.getPrecedence() ? resource.getProgram().getProgramType()
+                .getPrismProgramType() : null;
+        return getConfigurationRepresentations(configurationType, resource, locale, programType);
+    }
+
+    public List<AbstractConfigurationRepresentation> getConfigurationRepresentations(PrismWorkflowConfiguration configurationType, Resource resource,
+            PrismLocale locale, PrismProgramType programType) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        resource = resource.getResourceScope().getPrecedence() > PrismScope.PROGRAM.getPrecedence() ? resource.getProgram() : resource;
+        List<WorkflowConfiguration> configurations = listConfigurations(configurationType, resource, locale, programType);
+
+        List<AbstractConfigurationRepresentation> representations = Lists.newArrayListWithCapacity(configurations.size());
+        String definitionPropertyName = configurationType.getDefinitionPropertyName();
+        for (WorkflowConfiguration configuration : configurations) {
+            WorkflowDefinition workflowDefinition = (WorkflowDefinition) PropertyUtils.getSimpleProperty(configuration, definitionPropertyName);
+            AbstractConfigurationRepresentation representation = dozerBeanMapper.map(configuration, configurationType.getRepresentationClass());
+            representation.setDefinitionId(workflowDefinition.getId());
+            representations.add(representation);
+        }
+
+        return representations;
+    }
+
     public HashMap<PrismDisplayProperty, String> getDisplayProperties(Resource resource, PrismLocale locale, PrismProgramType programType,
-                                                                      PrismDisplayPropertyCategory displayPropertyCategory, PrismScope propertyScope) {
+            PrismDisplayPropertyCategory displayPropertyCategory, PrismScope propertyScope) {
         List<DisplayPropertyConfiguration> displayValues = customizationDAO.getDisplayProperties(resource, locale, programType, displayPropertyCategory,
                 propertyScope);
         HashMap<PrismDisplayProperty, String> displayProperties = Maps.newHashMap();
@@ -185,6 +196,32 @@ public class CustomizationService {
 
     public List<DisplayPropertyConfiguration> getAllLocalizedProperties() {
         return entityService.list(DisplayPropertyConfiguration.class);
+    }
+
+    private <T extends WorkflowConfiguration> List<T> listConfigurations(PrismWorkflowConfiguration configurationType, Resource resource, PrismLocale locale,
+            PrismProgramType programType) {
+        List<T> configurations = customizationDAO.listConfigurations(configurationType, resource, locale, programType);
+
+        if (configurations.isEmpty()) {
+            return configurations;
+        } else {
+            T stereotype = configurations.get(0);
+
+            Resource stereotypeResource = stereotype.getResource();
+            PrismLocale stereotypeLocale = stereotype.getLocale();
+            PrismProgramType stereotypeProgramType = stereotype.getProgramType();
+
+            List<T> filteredConfigurations = Lists.newLinkedList();
+
+            for (T configuration : configurations) {
+                if (Objects.equal(configuration.getResource(), stereotypeResource) && Objects.equal(configuration.getLocale(), stereotypeLocale)
+                        && Objects.equal(configuration.getProgramType(), stereotypeProgramType)) {
+                    filteredConfigurations.add(configuration);
+                }
+            }
+
+            return filteredConfigurations;
+        }
     }
 
 }

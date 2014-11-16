@@ -77,14 +77,11 @@ public class CustomizationDAO {
         Criterion programTypeConstraint = programType == null ? Restrictions.isNull("programType") : Restrictions.in("programType",
                 Lists.newArrayList(programType, getSystemProgramType()));
 
-        Criterion localeConstraint = resource.getResourceScope() == PrismScope.SYSTEM ? Restrictions
-                .in("locale", Lists.newArrayList(locale, getSystemLocale())) : Restrictions.isNull("locale");
-
         return (List<T>) sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.eq("system", resource.getSystem())) //
-                                .add(localeConstraint) //
+                                .add(Restrictions.in("locale", Lists.newArrayList(locale, getSystemLocale()))) //
                                 .add(programTypeConstraint)) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.eq("institution", resource.getInstitution())) //

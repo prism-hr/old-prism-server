@@ -259,7 +259,7 @@ public class ResourceDAO {
                         + "select " + resourceReference + ", state, primaryState " //
                         + "from ResourceState " + //
                         "where " + resourceReference + " = :resource " //
-                                + "and primaryState is false") //
+                        + "and primaryState is false") //
                 .setParameter("resource", resource) //
                 .executeUpdate();
     }
@@ -275,7 +275,7 @@ public class ResourceDAO {
     public String getRecommendedNextStates(Resource resource) {
         return (String) sessionFactory.getCurrentSession().createCriteria(ResourceStateTransitionSummary.class) //
                 .setProjection(Projections.property("transitionStateSelection")) //
-                .add(Restrictions.eq("resource", resource.getParentResource())) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource.getParentResource())) //
                 .add(Restrictions.eq("stateGroup", resource.getState().getStateGroup())) //
                 .addOrder(Order.desc("frequency")) //
                 .addOrder(Order.desc("updatedTimestamp")) //

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -473,6 +474,22 @@ public class StateService {
 
     public List<PrismState> getAvailableNextStates(Resource resource, Set<ActionRepresentation> permittedActions) {
         return stateDAO.getAvailableNextStates(resource, permittedActions);
+    }
+    
+    public List<State> getCurrentStates(Resource resource) {
+        return stateDAO.getCurrentStates(resource);
+    }
+    
+    public List<PrismState> getRecommendedNextStates(Resource resource) {
+        List<PrismState> recommendations = Lists.newLinkedList();
+        String recommendationTokens =  stateDAO.getRecommendedNextStates(resource);
+        if (recommendationTokens != null) {
+            for (String recommendationToken : recommendationTokens.split("|")) {
+                recommendations.add(PrismState.valueOf(recommendationToken));
+            }
+            return recommendations;
+        }
+        return null;
     }
 
     private StateTransition getViewEditNextState(Resource resource, Comment comment) {

@@ -11,6 +11,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhanceme
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.rest.representation.configuration.AbstractConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 
 public class AbstractResourceRepresentation {
@@ -42,6 +43,8 @@ public class AbstractResourceRepresentation {
     private TimelineRepresentation timeline;
 
     private List<ResourceUserRolesRepresentation> users;
+    
+    private List<AbstractConfigurationRepresentation> workflowProperties;
 
     public Integer getId() {
         return id;
@@ -153,6 +156,14 @@ public class AbstractResourceRepresentation {
 
     public void setUsers(List<ResourceUserRolesRepresentation> users) {
         this.users = users;
+    }
+
+    public final List<AbstractConfigurationRepresentation> getWorkflowProperties() {
+        return workflowProperties;
+    }
+
+    public final void setWorkflowProperties(List<AbstractConfigurationRepresentation> workflowProperties) {
+        this.workflowProperties = workflowProperties;
     }
 
     public static class RoleRepresentation {

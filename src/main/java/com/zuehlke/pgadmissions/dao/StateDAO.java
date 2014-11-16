@@ -133,7 +133,7 @@ public class StateDAO {
     public List<State> getCurrentStates(Resource resource) {
         return (List<State>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("state")) //
-                .add(Restrictions.eq("resource", resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
                 .addOrder(Order.desc("primaryState")) //
                 .list();
     }

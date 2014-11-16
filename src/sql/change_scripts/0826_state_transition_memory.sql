@@ -1,4 +1,4 @@
-CREATE TABLE RESOURCE_STATE_SUMMARY (
+CREATE TABLE RESOURCE_STATE_TRANSITION_SUMMARY (
 	id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 	system_id INT(10) UNSIGNED,
 	institution_id INT(10) UNSIGNED,
@@ -7,7 +7,7 @@ CREATE TABLE RESOURCE_STATE_SUMMARY (
 	state_group_id VARCHAR(50) NOT NULL,
 	transition_state_selection VARCHAR(255) NOT NULL,
 	frequency INT(10) UNSIGNED NOT NULL,
-	created_timestamp DATETIME NOT NULL,
+	updated_timestamp DATETIME NOT NULL,
 	PRIMARY KEY (id),
 	UNIQUE INDEX (system_id, state_group_id, transition_state_selection),
 	UNIQUE INDEX (institution_id, state_group_id, transition_state_selection),

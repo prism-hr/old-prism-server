@@ -9,6 +9,7 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -25,6 +26,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -101,24 +104,23 @@ public class ResourceDAO {
     public void deleteResourceState(Resource resource, State state) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete ResourceState " //
-                    + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+                        + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
                         + "and state = :state") //
                 .setParameter("resource", resource) //
                 .setParameter("state", state) //
                 .executeUpdate();
     }
-    
+
     public void deleteSecondaryResourceState(Resource resource, State state) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete ResourceState " //
-                    + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
-                        + "and state = :state "
-                        + "and primaryState is false") //
+                        + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+                        + "and state = :state " + "and primaryState is false") //
                 .setParameter("resource", resource) //
                 .setParameter("state", state) //
                 .executeUpdate();
     }
-    
+
     public List<ResourceConsoleListRowDTO> getResourceConsoleList(User user, PrismScope scopeId, List<PrismScope> parentScopeIds,
             Set<Integer> assignedResources, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords) {
         if (assignedResources.isEmpty()) {
@@ -225,45 +227,60 @@ public class ResourceDAO {
                 .add(Restrictions.eq("role.id", roleId)) //
                 .list();
     }
-    
+
     public void deletePrimaryResourceState(Resource resource) {
         sessionFactory.getCurrentSession().createQuery( //
-                "delete ResourceState "
-                    + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+                "delete ResourceState " + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
                         + "and primaryState is true") //
                 .setParameter("resource", resource) //
                 .executeUpdate();
     }
-    
+
     public void deletePrimaryResourcePreviousState(Resource resource) {
         sessionFactory.getCurrentSession().createQuery( //
-                "delete ResourcePreviousState "
-                    + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+                "delete ResourcePreviousState " + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
                         + "and primaryState is true") //
                 .setParameter("resource", resource) //
                 .executeUpdate();
     }
-    
+
     public void deleteSecondaryResourcePreviousStates(Resource resource) {
         sessionFactory.getCurrentSession().createQuery( //
-                "delete ResourcePreviousState "
-                    + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+                "delete ResourcePreviousState " + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
                         + "and primaryState is false") //
                 .setParameter("resource", resource) //
                 .executeUpdate();
     }
-    
+
     public void insertSecondaryPreviousResourceStates(Resource resource) {
         String resourceReference = resource.getResourceScope().getLowerCaseName();
         sessionFactory.getCurrentSession().createQuery( //
                 "insert into ResourcePreviousState(" + resourceReference + ", previousState, primaryState) " //
-                    + "select " + resourceReference + ", state, primaryState " //
-                        + "from ResourceState "
-                        + "where resource = :resource") //
+                        + "select " + resourceReference + ", state, primaryState " //
+                        + "from ResourceState " + "where resource = :resource") //
                 .setParameter("resource", resource) //
                 .executeUpdate();
     }
-    
+
+    public List<State> getCurrentStates(Resource resource) {
+        return (List<State>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.property("state")) //
+                .add(Restrictions.eq("resource", resource)) //
+                .addOrder(Order.desc("primaryState")) //
+                .list();
+    }
+
+    public String getRecommendedNextStates(Resource resource) {
+        return (String) sessionFactory.getCurrentSession().createCriteria(ResourceStateTransitionSummary.class) //
+                .setProjection(Projections.property("nextStateSelection")) //
+                .add(Restrictions.eq("resource", resource.getParentResource())) //
+                .add(Restrictions.eq("stateGroup", resource.getState().getStateGroup())) //
+                .addOrder(Order.desc("frequency")) //
+                .addOrder(Order.desc("updatedTimestamp")) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
+
     private void addResourceListCustomColumns(PrismScope scopeId, ProjectionList projectionList) {
         HashMultimap<String, String> customColumns = scopeId.getConsoleListCustomColumns();
         for (String tableName : customColumns.keySet()) {

@@ -55,10 +55,12 @@ public class ResourcePreviousState extends WorkflowResourceExecution {
     @Column(name = "primary_state", nullable = false)
     private Boolean primaryState;
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }

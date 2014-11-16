@@ -126,6 +126,7 @@ public class ResourceResource {
         }
         representation.setActions(permittedActions);
         representation.setNextStates(stateService.getAvailableNextStates(resource, permittedActions));
+        representation.setRecommendedNextStates(resourceService.getRecommendedNextStates(resource));
 
         List<PrismActionEnhancement> permittedActionEnhancements = actionService.getPermittedActionEnhancements(resource, currentUser);
         representation.setActionEnhancements(permittedActionEnhancements);

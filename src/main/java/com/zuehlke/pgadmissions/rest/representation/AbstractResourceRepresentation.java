@@ -36,6 +36,8 @@ public class AbstractResourceRepresentation {
     private List<PrismActionEnhancement> actionEnhancements;
 
     private List<PrismState> nextStates;
+    
+    private List<PrismState> recommendedNextStates;
 
     private TimelineRepresentation timeline;
 
@@ -127,6 +129,14 @@ public class AbstractResourceRepresentation {
 
     public void setNextStates(List<PrismState> nextStates) {
         this.nextStates = nextStates;
+    }
+
+    public final List<PrismState> getRecommendedNextStates() {
+        return recommendedNextStates;
+    }
+
+    public final void setRecommendedNextStates(List<PrismState> recommendedNextStates) {
+        this.recommendedNextStates = recommendedNextStates;
     }
 
     public final TimelineRepresentation getTimeline() {

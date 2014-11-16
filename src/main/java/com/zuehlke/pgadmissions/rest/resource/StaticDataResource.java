@@ -1,16 +1,11 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory.SYSTEM_APPLICATION_SYNDICATED;
-import static com.zuehlke.pgadmissions.utils.WordUtils.*;
 import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.CaseFormat;
-import com.zuehlke.pgadmissions.domain.definitions.*;
-import com.zuehlke.pgadmissions.domain.workflow.*;
-import com.zuehlke.pgadmissions.services.*;
 import org.apache.commons.lang.WordUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +16,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.DurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.PrismWorkflowConfiguration;
+import com.zuehlke.pgadmissions.domain.definitions.YesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplateProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationTemplatePropertyCategory;
@@ -46,6 +52,12 @@ import com.zuehlke.pgadmissions.domain.imported.ResidenceState;
 import com.zuehlke.pgadmissions.domain.imported.Title;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.Role;
+import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.domain.workflow.StateAction;
+import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.rest.representation.InstitutionDomicileRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.StateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
@@ -55,6 +67,10 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.Languag
 import com.zuehlke.pgadmissions.rest.representation.workflow.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.FilterRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.StateActionRepresentation;
+import com.zuehlke.pgadmissions.services.CustomizationService;
+import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
+import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
 
 @RestController
@@ -143,7 +159,7 @@ public class StaticDataResource {
         staticData.put("filters", filters);
 
         Map<String, Object> configurationTypes = Maps.newHashMap();
-        for (WorkflowResourceConfigurationType configurationType : WorkflowResourceConfigurationType.values()) {
+        for (PrismWorkflowConfiguration configurationType : PrismWorkflowConfiguration.values()) {
             String name = pluralize(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, configurationType.name()));
             Map<PrismScope, List<Enum<?>>> configurationsPerScope = Maps.newHashMap();
             for (PrismScope prismScope : PrismScope.values()) {

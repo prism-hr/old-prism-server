@@ -26,8 +26,7 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
         @UniqueConstraint(columnNames = { "system_id", "state_group_id", "transition_state_selection" }),
         @UniqueConstraint(columnNames = { "institution_id", "state_group_id", "transition_state_selection" }),
         @UniqueConstraint(columnNames = { "program_id", "state_group_id", "transition_state_selection" }),
-        @UniqueConstraint(columnNames = { "project_id", "state_group_id", "transition_state_selection" }),
-        @UniqueConstraint(columnNames = { "application_id", "state_group_id", "transition_state_selection" }) })
+        @UniqueConstraint(columnNames = { "project_id", "state_group_id", "transition_state_selection" }) })
 public class ResourceStateTransitionSummary extends WorkflowResourceExecution {
 
     @Id
@@ -54,8 +53,8 @@ public class ResourceStateTransitionSummary extends WorkflowResourceExecution {
     @JoinColumn(name = "state_group_id", nullable = false)
     private StateGroup stateGroup;
 
-    @Column(name = "next_state_selection", nullable = false)
-    private String nextStateSelection;
+    @Column(name = "transition_state_selection", nullable = false)
+    private String transitionStateSelection;
 
     @Column(name = "frequency", nullable = false)
     private Integer frequency;
@@ -132,12 +131,12 @@ public class ResourceStateTransitionSummary extends WorkflowResourceExecution {
         this.stateGroup = stateGroup;
     }
 
-    public final String getNextStateSelection() {
-        return nextStateSelection;
+    public final String getTransitionStateSelection() {
+        return transitionStateSelection;
     }
 
-    public final void setNextStateSelection(String nextStateSelection) {
-        this.nextStateSelection = nextStateSelection;
+    public final void setTransitionStateSelection(String transitionStateSelection) {
+        this.transitionStateSelection = transitionStateSelection;
     }
 
     public final Integer getFrequency() {
@@ -166,8 +165,8 @@ public class ResourceStateTransitionSummary extends WorkflowResourceExecution {
         return this;
     }
 
-    public ResourceStateTransitionSummary withNextStateSelection(String nextStateSelection) {
-        this.nextStateSelection = nextStateSelection;
+    public ResourceStateTransitionSummary withTransitionStateSelection(String transitionStateSelection) {
+        this.transitionStateSelection = transitionStateSelection;
         return this;
     }
 
@@ -183,7 +182,7 @@ public class ResourceStateTransitionSummary extends WorkflowResourceExecution {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("stateGroup", stateGroup).addProperty("nextStateSelection", nextStateSelection);
+        return super.getResourceSignature().addProperty("stateGroup", stateGroup).addProperty("nextStateSelection", transitionStateSelection);
     }
 
 }

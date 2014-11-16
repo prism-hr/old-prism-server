@@ -82,7 +82,7 @@ public class CustomizationService {
         return customizationDAO.listDefinitions(entityClass, scope);
     }
 
-    public <T extends WorkflowConfiguration> List<T> listConfigurations(WorkflowResourceConfigurationType configurationType, Resource resource, PrismLocale locale, PrismProgramType programType) {
+    public <T extends WorkflowConfiguration> List<T> listConfigurations(PrismWorkflowConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType) {
         List<T> configurations = customizationDAO.listConfigurations(configurationType, resource, locale, programType);
 
         if (configurations.isEmpty()) {

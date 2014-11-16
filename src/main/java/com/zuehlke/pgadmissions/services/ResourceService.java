@@ -507,7 +507,7 @@ public class ResourceService {
         String nextStateSelection = Joiner.on("|").join(resourceDAO.getCurrentStates(resource));
 
         ResourceStateTransitionSummary transientTransitionSummary = new ResourceStateTransitionSummary().withResource(resource.getParentResource())
-                .withStateGroup(resource.getState().getStateGroup()).withNextStateSelection(nextStateSelection).withFrequency(1)
+                .withStateGroup(resource.getState().getStateGroup()).withTransitionStateSelection(nextStateSelection).withFrequency(1)
                 .withUpdatedTimestamp(baselineTime);
         ResourceStateTransitionSummary persistentTransitionSummary = entityService.getDuplicateEntity(transientTransitionSummary);
 

@@ -169,14 +169,14 @@ public class StaticDataResource {
                     WorkflowDefinitionRepresentation parameter = null;
                     switch (prismConfiguration) {
                     case CUSTOM_QUESTION:
-                        break;
                     case DISPLAY_PROPERTY:
+                        parameter = new WorkflowDefinitionRepresentation().withId(definition.getId());
                         break;
                     case NOTIFICATION:
                         PrismNotificationDefinition prismDefinition = (PrismNotificationDefinition) definition.getId();
                         NotificationDefinitionRepresentation notificationParameter = new NotificationDefinitionRepresentation().withId(prismDefinition)
-                                .withReminderId(prismDefinition.getReminderDefinition())
-                                .withMinimumPermitted(prismConfiguration.getMinimumPermitted()).withMaximumPermitted(prismConfiguration.getMaximumPermitted());
+                                .withReminderId(prismDefinition.getReminderDefinition()).withMinimumPermitted(prismConfiguration.getMinimumPermitted())
+                                .withMaximumPermitted(prismConfiguration.getMaximumPermitted());
                         for (PrismNotificationDefinitionPropertyCategory propertyCategory : prismDefinition.getPropertyCategories()) {
                             notificationParameter.addPropertyCategory(propertyCategory);
                         }
@@ -198,7 +198,9 @@ public class StaticDataResource {
                     }
                     parameters.add(parameter);
                 }
-                scopeConfigurations.put(prismScope, parameters);
+                if (!parameters.isEmpty()) {
+                    scopeConfigurations.put(prismScope, parameters);
+                }
             }
             workflowConfigurations.put(name, scopeConfigurations);
         }

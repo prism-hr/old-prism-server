@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -53,8 +54,9 @@ public class Action extends WorkflowDefinition {
     @Column(name = "emphasized_action", nullable = false)
     private Boolean emphasizedAction;
 
-    @Column(name = "customizable_action", nullable = false)
-    private Boolean customizableAction;
+    @OneToOne
+    @JoinColumn(name = "action_custom_question_definition_id")
+    private ActionCustomQuestionDefinition actionCustomQuestionDefinition;
 
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
@@ -139,12 +141,12 @@ public class Action extends WorkflowDefinition {
         this.emphasizedAction = emphasizedAction;
     }
 
-    public final Boolean getCustomizableAction() {
-        return customizableAction;
+    public final ActionCustomQuestionDefinition getActionCustomQuestionDefinition() {
+        return actionCustomQuestionDefinition;
     }
 
-    public final void setCustomizableAction(Boolean customizableAction) {
-        this.customizableAction = customizableAction;
+    public final void setActionCustomQuestionDefinition(ActionCustomQuestionDefinition actionCustomQuestionDefinition) {
+        this.actionCustomQuestionDefinition = actionCustomQuestionDefinition;
     }
 
     public final Action getFallbackAction() {
@@ -225,8 +227,8 @@ public class Action extends WorkflowDefinition {
         return this;
     }
 
-    public Action withCustomizableAction(Boolean customizableAction) {
-        this.customizableAction = customizableAction;
+    public Action withActionCustomQuestionDefinition(ActionCustomQuestionDefinition actionCustomQuestionDefinition) {
+        this.actionCustomQuestionDefinition = actionCustomQuestionDefinition;
         return this;
     }
 
@@ -243,6 +245,10 @@ public class Action extends WorkflowDefinition {
     public Action withCreationScope(Scope creationScope) {
         this.creationScope = creationScope;
         return this;
+    }
+    
+    public boolean isCustomizableAction() {
+        return actionCustomQuestionDefinition != null;
     }
 
 }

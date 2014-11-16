@@ -46,7 +46,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestion;
+import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -410,10 +410,10 @@ public class CommentService {
     public void appendPropertyAnswers(Comment comment, CommentDTO commentDTO) {
         Integer version = commentDTO.getCustomQuestionResponse().getVersion();
         comment.setActionCustomQuestionVersion(version);
-        List<ActionCustomQuestion> actionPropertyConfigurations = actionService.getActionPropertyConfigurationByVersion(version);
+        List<ActionCustomQuestionConfiguration> actionPropertyConfigurations = actionService.getActionPropertyConfigurationByVersion(version);
         List<Object> propertyAnswerValues = commentDTO.getCustomQuestionResponse().getValues();
         for (int i = 0; i < actionPropertyConfigurations.size(); i++) {
-            ActionCustomQuestion configuration = actionPropertyConfigurations.get(i);
+            ActionCustomQuestionConfiguration configuration = actionPropertyConfigurations.get(i);
             CommentCustomResponse property = new CommentCustomResponse().withCustomQuestionType(configuration.getCustomQuestionType())
                     .withPropertyLabel(configuration.getLabel()).withPropertyValue(propertyAnswerValues.get(i).toString())
                     .withPropertyWeight(configuration.getWeighting());

@@ -13,7 +13,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowProperty;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyCategory;
 
 @Entity
 @Table(name = "WORKFLOW_PROPERTY_DEFINITION")
@@ -24,10 +23,6 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
     @Column(name = "id", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismWorkflowProperty id;
-
-    @Column(name = "workflow_property_category", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PrismWorkflowPropertyCategory workflowPropertyCategory;
 
     @Column(name = "optional", nullable = false)
     private Boolean optional;
@@ -52,14 +47,6 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
 
     public final void setId(PrismWorkflowProperty id) {
         this.id = id;
-    }
-
-    public final PrismWorkflowPropertyCategory getWorkflowPropertyCategory() {
-        return workflowPropertyCategory;
-    }
-
-    public final void setWorkflowPropertyCategory(PrismWorkflowPropertyCategory workflowPropertyCategory) {
-        this.workflowPropertyCategory = workflowPropertyCategory;
     }
 
     public final Boolean getOptional() {
@@ -106,11 +93,6 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
 
     public WorkflowPropertyDefinition withId(PrismWorkflowProperty id) {
         this.id = id;
-        return this;
-    }
-
-    public WorkflowPropertyDefinition withWorkflowPropertyCategory(PrismWorkflowPropertyCategory workflowPropertyCategory) {
-        this.workflowPropertyCategory = workflowPropertyCategory;
         return this;
     }
 

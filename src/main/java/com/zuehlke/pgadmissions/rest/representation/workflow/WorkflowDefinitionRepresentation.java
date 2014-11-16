@@ -12,4 +12,9 @@ public class WorkflowDefinitionRepresentation {
         this.id = id;
     }
 
+    public WorkflowDefinitionRepresentation withId(Enum<?> id) {
+        this.id = id;
+        return this;
+    }
+
 }

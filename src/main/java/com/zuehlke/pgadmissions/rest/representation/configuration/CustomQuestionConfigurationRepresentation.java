@@ -1,10 +1,5 @@
 package com.zuehlke.pgadmissions.rest.representation.configuration;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
 

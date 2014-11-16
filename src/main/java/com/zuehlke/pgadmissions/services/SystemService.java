@@ -342,7 +342,8 @@ public class SystemService {
         for (PrismWorkflowProperty prismWorkflowProperty : PrismWorkflowProperty.values()) {
             Scope scope = scopeService.getById(prismWorkflowProperty.getScope());
             WorkflowPropertyDefinition transientWorkflowPropertyDefinition = new WorkflowPropertyDefinition().withId(prismWorkflowProperty)
-                    .withWorkflowPropertyCategory(prismWorkflowProperty.getWorkflowPropertyCategory()).withScope(scope);
+                    .withWorkflowPropertyCategory(prismWorkflowProperty.getWorkflowPropertyCategory())
+                    .withRangeSpecification(prismWorkflowProperty.isRangeSpecification()).withScope(scope);
             entityService.createOrUpdate(transientWorkflowPropertyDefinition);
         }
     }

@@ -60,12 +60,12 @@ import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.rest.representation.InstitutionDomicileRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.StateRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.FilterRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ImportedEntityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ImportedInstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.LanguageQualificationTypeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.ActionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.workflow.FilterRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.StateActionRepresentation;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.EntityService;
@@ -163,8 +163,8 @@ public class StaticDataResource {
             String name = pluralize(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, configurationType.name()));
             Map<PrismScope, List<Enum<?>>> configurationsPerScope = Maps.newHashMap();
             for (PrismScope prismScope : PrismScope.values()) {
-                List<Enum<?>> templates = customizationService.listDefinitions(configurationType.getDefinitionClass(), prismScope);
-                configurationsPerScope.put(prismScope, templates);
+                List<Enum<?>> definitions = customizationService.listDefinitions(configurationType.getDefinitionClass(), prismScope);
+                configurationsPerScope.put(prismScope, definitions);
             }
             configurationTypes.put(name, configurationsPerScope);
         }

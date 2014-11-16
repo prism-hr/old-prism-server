@@ -257,7 +257,9 @@ public class ResourceDAO {
         sessionFactory.getCurrentSession().createQuery( //
                 "insert into ResourcePreviousState(" + resourceReference + ", previousState, primaryState) " //
                         + "select " + resourceReference + ", state, primaryState " //
-                        + "from ResourceState " + "where resource = :resource") //
+                        + "from ResourceState " + //
+                        "where " + resourceReference + " = :resource " //
+                                + "and primaryState is false") //
                 .setParameter("resource", resource) //
                 .executeUpdate();
     }

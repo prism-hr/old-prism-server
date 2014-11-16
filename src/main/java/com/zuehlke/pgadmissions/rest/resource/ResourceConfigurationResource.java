@@ -4,7 +4,7 @@ import com.google.common.base.CaseFormat;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.WorkflowResourceConfigurationType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismWorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
@@ -46,7 +46,7 @@ public class ResourceConfigurationResource {
     public List<AbstractConfigurationRepresentation> getConfigurations(
             @ModelAttribute ResourceDescriptor resourceDescriptor,
             @PathVariable Integer resourceId,
-            @ModelAttribute WorkflowResourceConfigurationType configurationType,
+            @ModelAttribute PrismWorkflowConfiguration configurationType,
             @RequestParam(required = false) PrismLocale locale,
             @RequestParam(required = false) PrismProgramType programType) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
@@ -136,10 +136,10 @@ public class ResourceConfigurationResource {
     }
 
     @ModelAttribute
-    private WorkflowResourceConfigurationType getConfigurationType(@PathVariable String configurationType) {
+    private PrismWorkflowConfiguration getConfigurationType(@PathVariable String configurationType) {
         String singleForm = WordUtils.singularize(configurationType);
         String typeName = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, singleForm);
-        return WorkflowResourceConfigurationType.valueOf(typeName);
+        return PrismWorkflowConfiguration.valueOf(typeName);
     }
 
 }

@@ -23,7 +23,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.WorkflowResourceConfigurationType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismWorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -74,7 +74,7 @@ public class CustomizationDAO {
                 .list();
     }
 
-    public <T extends WorkflowResource> List<T> listConfigurations(WorkflowResourceConfigurationType configurationType, Resource resource, PrismLocale locale,
+    public <T extends WorkflowResource> List<T> listConfigurations(PrismWorkflowConfiguration configurationType, Resource resource, PrismLocale locale,
             PrismProgramType programType) {
         Criterion programTypeConstraint = programType == null ? Restrictions.isNull("programType") : Restrictions.in("programType",
                 Lists.newArrayList(programType, getSystemProgramType()));

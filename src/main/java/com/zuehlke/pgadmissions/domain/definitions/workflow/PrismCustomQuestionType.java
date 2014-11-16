@@ -12,7 +12,7 @@ import com.google.common.collect.Maps;
 public enum PrismCustomQuestionType {
 
     INPUT(String.class, "input", null), //
-    TEXTAREA(String.class, "textArea", null), //
+    TEXT_AREA(String.class, "textArea", null), //
     SELECT_SINGLE(String.class, "selectSingle", null), //
     SELECT_MULTIPLE(String.class, "selectMultiple", null), //
     RATING_NORMAL(Integer.class, "ratingNormal", Arrays.asList((Object) 1, 2, 3, 4, 5)), //
@@ -24,21 +24,21 @@ public enum PrismCustomQuestionType {
 
     private Class<?> propertyClass;
 
-    private String displayName;
-    
+    private String componentName;
+
     private List<Object> permittedValues;
-    
-    private static final HashMap<String, PrismCustomQuestionType> displayNameIndex = Maps.newHashMap();
-    
+
+    private static final HashMap<String, PrismCustomQuestionType> componentNameIndex = Maps.newHashMap();
+
     static {
         for (PrismCustomQuestionType value: values()) {
-            displayNameIndex.put(value.getDisplayName(), value);
+            componentNameIndex.put(value.getComponentName(), value);
         }
     }
 
-    private PrismCustomQuestionType(Class<?> propertyClass, String displayName, List<Object> permittedValues) {
+    private PrismCustomQuestionType(Class<?> propertyClass, String componentName, List<Object> permittedValues) {
         this.propertyClass = propertyClass;
-        this.displayName = displayName;
+        this.componentName = componentName;
         this.permittedValues = permittedValues;
     }
 
@@ -46,16 +46,16 @@ public enum PrismCustomQuestionType {
         return propertyClass;
     }
 
-    public final String getDisplayName() {
-        return displayName;
+    public final String getComponentName() {
+        return componentName;
     }
-    
+
     public final List<Object> getPermittedValues() {
         return permittedValues;
     }
 
-    public static final PrismCustomQuestionType getByDisplayName(String displayName) {
-        return displayNameIndex.get(displayName);
+    public static final PrismCustomQuestionType getByComponentName(String displayName) {
+        return componentNameIndex.get(displayName);
     }
 
 }

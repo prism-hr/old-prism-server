@@ -21,17 +21,17 @@ public class ActionCustomQuestionValidator extends LocalValidatorFactoryBean imp
     public boolean supports(Class<?> clazz) {
         return Application.class.isAssignableFrom(clazz);
     }
-    
+
     @Override
     public void validate(Object target, Errors errors) {
         ActionCustomQuestionsDTO configuration = (ActionCustomQuestionsDTO) target;
-        
+
         int cumulativeRatingCount = 0;
         BigDecimal cumulativeRatingWeight = new BigDecimal(0.00);
-        
+
         for (ActionCustomQuestionDTO property : configuration.getProperties()) {
-            PrismCustomQuestionType type = PrismCustomQuestionType.getByDisplayName(property.getName());
-            
+            PrismCustomQuestionType type = PrismCustomQuestionType.getByComponentName(property.getName());
+
             BigDecimal weighting = property.getWeighting();
             if (type.name().startsWith("RATING") && weighting == null) {
                 throw new Error();
@@ -42,10 +42,10 @@ public class ActionCustomQuestionValidator extends LocalValidatorFactoryBean imp
                 cumulativeRatingWeight = cumulativeRatingWeight.add(weighting).setScale(2, RoundingMode.HALF_UP);
             }
         }
-        
+
         if (cumulativeRatingCount > 0 && !cumulativeRatingWeight.equals(new BigDecimal(1.00))) {
             errors.reject(PrismDisplayProperty.SYSTEM_COMMENT_CUSTOM_FORM_WEIGHT_ERROR.name());
         }
     }
-    
+
 }

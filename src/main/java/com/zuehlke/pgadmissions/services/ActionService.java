@@ -86,7 +86,7 @@ public class ActionService {
             customizationService.validateConfiguration(resource, action, locale, programType);
             actionDAO.deleteActionConfiguration(resource, locale, programType, action);
 
-            Integer version = null;            
+            Integer version = null;
             for (ActionCustomQuestionDTO actionPropertyDTO : actionPropertyConfigurationDTO.getProperties()) {
                 String name = actionPropertyDTO.getName();
 
@@ -95,7 +95,7 @@ public class ActionService {
 
                 ActionCustomQuestion persistentActionPropertyConfiguration = entityService.createOrUpdate(new ActionCustomQuestion()
                         .withResource(resource).withLocale(locale).withProgramType(programType).withAction(action).withVersion(version)
-                        .withCustomQuestionType(PrismCustomQuestionType.getByDisplayName(name)).withName(name)
+                        .withCustomQuestionType(PrismCustomQuestionType.getByComponentName(name)).withName(name)
                         .withEditable(actionPropertyDTO.getEditable()).withIndex(actionPropertyDTO.getIndex())
                         .withLabel(actionPropertyDTO.getLabel()).withDescription(actionPropertyDTO.getDescription())
                         .withOptions(options == null ? null : Joiner.on("|").join(options)).withRequired(actionPropertyDTO.getRequired())

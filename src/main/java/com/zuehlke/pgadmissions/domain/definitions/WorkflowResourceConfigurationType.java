@@ -10,10 +10,10 @@ import java.util.Map;
 
 public enum WorkflowResourceConfigurationType {
 
-    CUSTOM_QUESTION(ActionCustomQuestion.class, null, "action"),
-    DISPLAY_PROPERTY(DisplayPropertyConfiguration.class, null, "displayPropertyDefinition"),
-    NOTIFICATION(NotificationConfiguration.class, NotificationConfigurationRepresentation.class, "notificationDefinition"),
-    STATE_DURATION(StateDurationConfiguration.class, null, "stateDurationDefinition"),
+    CUSTOM_QUESTION(ActionCustomQuestion.class, null, "action"), //
+    DISPLAY_PROPERTY(DisplayPropertyConfiguration.class, null, "displayPropertyDefinition"), //
+    NOTIFICATION(NotificationConfiguration.class, NotificationConfigurationRepresentation.class, "notificationDefinition"), //
+    STATE_DURATION(StateDurationConfiguration.class, null, "stateDurationDefinition"), //
     WORKFLOW_PROPERTY(WorkflowPropertyConfiguration.class, null, "workflowPropertyDefinition");
 
     private Class<? extends WorkflowConfiguration> configurationClass;
@@ -30,7 +30,8 @@ public enum WorkflowResourceConfigurationType {
         }
     }
 
-    WorkflowResourceConfigurationType(Class<? extends WorkflowConfiguration> configurationClass, Class<? extends AbstractConfigurationRepresentation> representationClass, String definitionPropertyName) {
+    private WorkflowResourceConfigurationType(Class<? extends WorkflowConfiguration> configurationClass,
+            Class<? extends AbstractConfigurationRepresentation> representationClass, String definitionPropertyName) {
         this.configurationClass = configurationClass;
         this.representationClass = representationClass;
         this.definitionPropertyName = definitionPropertyName;

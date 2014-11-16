@@ -35,10 +35,11 @@ import com.zuehlke.pgadmissions.domain.imported.ProgramType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
-import com.zuehlke.pgadmissions.domain.workflow.ResourceAction;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 
@@ -125,7 +126,7 @@ public class Program extends ResourceParent {
     @ManyToOne
     @JoinColumn(name = "previous_state_id")
     private State previousState;
-    
+
     @Column(name = "end_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate endDate;
@@ -141,21 +142,27 @@ public class Program extends ResourceParent {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
-    
+
     @Column(name = "last_reminded_request_individual")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastRemindedRequestIndividual;
-    
+
     @Column(name = "last_reminded_request_syndicated")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastRemindedRequestSyndicated;
-    
+
     @Column(name = "last_notified_update_syndicated")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedUpdateSyndicated;
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
+
+    @OneToMany(mappedBy = "program")
+    private Set<ResourceState> resourceStates = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "program")
+    private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "PROGRAM_RELATION", joinColumns = @JoinColumn(name = "program_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "program_relation_id", nullable = false))
@@ -175,9 +182,6 @@ public class Program extends ResourceParent {
 
     @OneToMany(mappedBy = "program")
     private Set<UserRole> userRoles = Sets.newHashSet();
-    
-    @OneToMany(mappedBy = "program")
-    private Set<ResourceAction> resourceActions = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -437,6 +441,7 @@ public class Program extends ResourceParent {
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
     }
+
     @Override
     public final LocalDate getLastRemindedRequestIndividual() {
         return lastRemindedRequestIndividual;
@@ -477,6 +482,16 @@ public class Program extends ResourceParent {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
+    @Override
+    public final Set<ResourceState> getResourceStates() {
+        return resourceStates;
+    }
+
+    @Override
+    public final Set<ResourcePreviousState> getResourcePreviousStates() {
+        return resourcePreviousStates;
+    }
+
     public final Set<Program> getProgramRelations() {
         return programRelations;
     }
@@ -496,11 +511,6 @@ public class Program extends ResourceParent {
     @Override
     public final Set<UserRole> getUserRoles() {
         return userRoles;
-    }
-    
-    @Override
-    public final Set<ResourceAction> getResourceActions() {
-        return resourceActions;
     }
 
     public Program withId(Integer id) {

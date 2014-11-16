@@ -323,29 +323,29 @@ public class ActionDAO {
         Query query;
         if (resourceScope == SYSTEM) {
             query = sessionFactory.getCurrentSession().createQuery( //
-                "update ActionPropertyConfiguration " //
-                + "set active = false " //
-                + "where action = :action " //
-                    + "and (institution in (" //
-                        + "from Institution " //
-                        + "where system = :system) " //
-                    + programTypeConstraint //
-                    + localeConstraint + " "//
-                    + "or program in (" //
-                        + "from Program " //
-                        + "where system = :system) " //
-                    + programTypeConstraint //
-                    + localeConstraint + ")");
+                    "update ActionPropertyConfiguration " //
+                            + "set active = false " //
+                            + "where action = :action " //
+                            + "and (institution in (" //
+                            + "from Institution " //
+                            + "where system = :system) " //
+                            + programTypeConstraint //
+                            + localeConstraint + " "//
+                            + "or program in (" //
+                            + "from Program " //
+                            + "where system = :system) " //
+                            + programTypeConstraint //
+                            + localeConstraint + ")");
         } else if (resourceScope == INSTITUTION) {
             query = sessionFactory.getCurrentSession().createQuery( //
-                "update ActionPropertyConfiguration " //
-                + "set active = false " //
-                + "where action = :action " //
-                    + "and (program in (" //
-                        + "from Program " //
-                        + "where institution = :institution) " //
-                    + programTypeConstraint //
-                    + localeConstraint + ")");
+                    "update ActionPropertyConfiguration " //
+                            + "set active = false " //
+                            + "where action = :action " //
+                            + "and (program in (" //
+                            + "from Program " //
+                            + "where institution = :institution) " //
+                            + programTypeConstraint //
+                            + localeConstraint + ")");
         } else {
             throw new Error();
         }

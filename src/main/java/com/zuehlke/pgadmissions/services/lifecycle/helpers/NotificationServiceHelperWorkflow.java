@@ -74,9 +74,9 @@ public class NotificationServiceHelperWorkflow extends AbstractServiceHelper {
         Class<? extends Resource> resourceClass = scopeId.getResourceClass(); 
         List<Integer> resourceIds = resourceService.getResourcesRequiringSyndicatedUpdates(resourceClass, baseline, rangeStart, rangeClose);
         for (Integer resourceId : resourceIds) {
-            List<Comment> transitionComments = commentService.getRecentComments(resourceClass, resourceId, rangeStart, rangeClose);
-            for (Comment transitionComment : transitionComments) {
-                notificationService.sendSyndicatedUpdateNotifications(resourceClass, resourceId, transitionComment, baseline);
+            List<Comment> comments = commentService.getRecentComments(resourceClass, resourceId, rangeStart, rangeClose);
+            for (Comment comment : comments) {
+                notificationService.sendSyndicatedUpdateNotifications(resourceClass, resourceId, comment, baseline);
             }
         }
     }

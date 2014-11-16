@@ -36,6 +36,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
@@ -123,7 +125,7 @@ public class Project extends ResourceParent {
     @Column(name = "end_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate endDate;
-    
+
     @Column(name = "due_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate dueDate;
@@ -139,19 +141,25 @@ public class Project extends ResourceParent {
     @Column(name = "last_reminded_request_individual")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastRemindedRequestIndividual;
-    
+
     @Column(name = "last_reminded_request_syndicated")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastRemindedRequestSyndicated;
-    
+
     @Column(name = "last_notified_update_syndicated")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedUpdateSyndicated;
-    
+
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
+    @OneToMany(mappedBy = "project")
+    private Set<ResourceState> resourceStates = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "project")
+    private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "project")
     private Set<Application> applications = Sets.newHashSet();
 
     @OneToMany(mappedBy = "project")
@@ -162,7 +170,7 @@ public class Project extends ResourceParent {
 
     @OneToMany(mappedBy = "project")
     private Set<ResourceAction> resourceActions = Sets.newHashSet();
-    
+
     @Override
     public Integer getId() {
         return id;
@@ -316,11 +324,6 @@ public class Project extends ResourceParent {
     }
 
     @Override
-    public final Set<ResourceAction> getResourceActions() {
-        return resourceActions;
-    }
-
-    @Override
     public System getSystem() {
         return system;
     }
@@ -421,7 +424,7 @@ public class Project extends ResourceParent {
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
     }
-    
+
     @Override
     public final LocalDate getLastRemindedRequestIndividual() {
         return lastRemindedRequestIndividual;
@@ -460,6 +463,16 @@ public class Project extends ResourceParent {
     @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
+    }
+
+    @Override
+    public final Set<ResourceState> getResourceStates() {
+        return resourceStates;
+    }
+
+    @Override
+    public final Set<ResourcePreviousState> getResourcePreviousStates() {
+        return resourcePreviousStates;
     }
 
     public Project withUser(final User user) {

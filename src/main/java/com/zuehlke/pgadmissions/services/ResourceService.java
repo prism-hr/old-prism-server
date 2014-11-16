@@ -37,12 +37,14 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
+import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -188,16 +190,24 @@ public class ResourceService {
         return "PRiSM-" + PrismScope.getResourceScope(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId());
     }
 
-    public void recordStateTransition(Resource resource, State state, State transitionState, Comment comment) throws DeduplicationException {
+    public void recordStateTransition(Resource resource, Comment comment, State state, State transitionState, StateTransition stateTransition)
+            throws DeduplicationException {
         resource.setPreviousState(state);
         resource.setState(transitionState);
 
-        resourceDAO.deletePrimaryState(resource);
+        resourceDAO.deletePrimaryResourcePreviousState(resource);
+        resourceDAO.deletePrimaryResourceState(resource);
 
-        for (CommentTransitionState commentTransitionState : comment.getTransitionStates()) {
-            entityService.createOrUpdate(new ResourceState().withResource(resource).withState(commentTransitionState.getTransitionState())
-                    .withPrimaryState(false));
-        }
+        resource.getResourcePreviousStates().add(
+                entityService.createOrUpdate(new ResourcePreviousState().withResource(resource).withPreviousState(state)).withPrimaryState(true));
+        resource.getResourceStates().add(
+                entityService.createOrUpdate(new ResourceState().withResource(resource).withState(transitionState).withPrimaryState(true)));
+
+        resourceDAO.deleteSecondaryResourcePreviousStates(resource);
+        resourceDAO.insertSecondaryPreviousResourceStates(resource);
+
+        deleteSecondaryResourceStates(resource, stateTransition, transitionState);
+        insertSecondaryResourceStates(resource, comment);
     }
 
     public void processResource(Resource resource, Comment comment) throws DeduplicationException {
@@ -217,7 +227,9 @@ public class ResourceService {
             baseline = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
 
             StateDurationConfiguration stateDuration = stateService.getStateDurationConfiguration(resource, comment.getUser(), stateDurationDefinition);
-            resource.setDueDate(baseline.plusDays(stateDuration.getDuration()));
+            Integer duration = stateDuration == null ? 0 : stateDuration.getDuration();
+
+            resource.setDueDate(baseline.plusDays(duration));
         }
     }
 
@@ -449,6 +461,26 @@ public class ResourceService {
         }
         if (doAddCondition) {
             conditions.add(inCondition);
+        }
+    }
+
+    private void deleteSecondaryResourceStates(Resource resource, StateTransition stateTransition, State transitionState) {
+        if (transitionState.getParallelizable()) {
+            deleteSecondaryResourceState(resource, transitionState);
+        }
+
+        for (State terminationState : stateTransition.getStateTerminations()) {
+            deleteSecondaryResourceState(resource, terminationState);
+        }
+    }
+
+    private void insertSecondaryResourceStates(Resource resource, Comment comment) {
+        for (CommentTransitionState commentTransitionState : comment.getCommentTransitionStates()) {
+            if (!commentTransitionState.getPrimaryState()) {
+                resource.getResourceStates().add(
+                        entityService.createOrUpdate(new ResourceState().withResource(resource).withState(commentTransitionState.getTransitionState())
+                                .withPrimaryState(false)));
+            }
         }
     }
 

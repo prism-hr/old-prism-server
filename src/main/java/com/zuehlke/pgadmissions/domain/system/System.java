@@ -29,9 +29,10 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
-import com.zuehlke.pgadmissions.domain.workflow.ResourceAction;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
@@ -104,6 +105,12 @@ public class System extends Resource {
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
+    
+    @OneToMany(mappedBy = "system")
+    private Set<ResourceState> resourceStates = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "system")
+    private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "system")
     private Set<Institution> institutions = Sets.newHashSet();
@@ -122,9 +129,6 @@ public class System extends Resource {
 
     @OneToMany(mappedBy = "system")
     private Set<UserRole> userRoles = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "system")
-    private Set<ResourceAction> resourceActions = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -344,6 +348,16 @@ public class System extends Resource {
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
+    
+    @Override
+    public final Set<ResourceState> getResourceStates() {
+        return resourceStates;
+    }
+
+    @Override
+    public final Set<ResourcePreviousState> getResourcePreviousStates() {
+        return resourcePreviousStates;
+    }
 
     public final Set<Institution> getInstitutions() {
         return institutions;
@@ -365,11 +379,6 @@ public class System extends Resource {
     @Override
     public Set<UserRole> getUserRoles() {
         return userRoles;
-    }
-
-    @Override
-    public final Set<ResourceAction> getResourceActions() {
-        return resourceActions;
     }
     
     public Set<Project> getProjects() {

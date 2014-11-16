@@ -16,7 +16,6 @@ import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
-import com.zuehlke.pgadmissions.domain.workflow.ResourceAction;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
@@ -94,16 +93,18 @@ public abstract class Resource implements IUniqueEntity {
 
     public abstract void setSequenceIdentifier(String sequenceIdentifier);
 
+    public abstract Set<ResourceState> getResourceStates();
+
+    public abstract Set<ResourcePreviousState> getResourcePreviousStates();
+
     public abstract Set<Comment> getComments();
 
-    public abstract Set<ResourceAction> getResourceActions();
-
     public abstract Set<UserRole> getUserRoles();
-    
+
     public void addComment(Comment comment) {
         getComments().add(comment);
     }
-    
+
     public String getHelpdeskDisplay() {
         if (getResourceScope() == PrismScope.SYSTEM) {
             return getSystem().getHelpdesk();

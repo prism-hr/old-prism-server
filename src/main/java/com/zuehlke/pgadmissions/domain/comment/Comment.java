@@ -168,7 +168,7 @@ public class Comment {
 
     @Column(name = "application_use_custom_recruiter_questions")
     private Boolean useCustomRecruiterQuestions;
-    
+
     @Column(name = "action_custom_question_version")
     private Integer actionCustomQuestionVersion;
 
@@ -195,7 +195,11 @@ public class Comment {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
-    private Set<CommentTransitionState> transitionStates = Sets.newHashSet();
+    private Set<CommentState> commentStates = Sets.newHashSet();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "comment_id", nullable = false)
+    private Set<CommentTransitionState> commentTransitionStates = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
@@ -521,8 +525,12 @@ public class Comment {
         return assignedUsers;
     }
 
-    public final Set<CommentTransitionState> getTransitionStates() {
-        return transitionStates;
+    public final Set<CommentState> getCommentStates() {
+        return commentStates;
+    }
+
+    public final Set<CommentTransitionState> getCommentTransitionStates() {
+        return commentTransitionStates;
     }
 
     public Set<CommentAppointmentTimeslot> getAppointmentTimeslots() {
@@ -722,8 +730,13 @@ public class Comment {
         return this;
     }
 
-    public Comment addTransitionState(State transitionState, Boolean primaryState) {
-        transitionStates.add(new CommentTransitionState().withTransitionState(transitionState).withPrimaryState(primaryState));
+    public Comment addCommentState(State state, Boolean primaryState) {
+        commentStates.add(new CommentState().withState(state).withPrimaryState(primaryState));
+        return this;
+    }
+
+    public Comment addCommentTransitionState(State transitionState, Boolean primaryState) {
+        commentTransitionStates.add(new CommentTransitionState().withTransitionState(transitionState).withPrimaryState(primaryState));
         return this;
     }
 

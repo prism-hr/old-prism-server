@@ -23,6 +23,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
@@ -38,12 +40,20 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestion;
+import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
+import com.zuehlke.pgadmissions.rest.dto.CommentAssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.CommentTransitionStateDTO;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.representation.TimelineRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.TimelineRepresentation.TimelineCommentGroupRepresentation;
@@ -70,6 +80,9 @@ public class CommentService {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private StateService stateService;
 
     @Autowired
     private UserService userService;
@@ -259,7 +272,7 @@ public class CommentService {
         Set<CommentAssignedUser> persistentAssignees = Sets.newHashSet(transientAssignees);
         transientAssignees.clear();
 
-        Set<CommentTransitionState> transientTransitionStates = comment.getTransitionStates();
+        Set<CommentTransitionState> transientTransitionStates = comment.getCommentTransitionStates();
         Set<CommentTransitionState> persistentTransitionStates = Sets.newHashSet(transientTransitionStates);
         transientTransitionStates.clear();
 
@@ -278,7 +291,7 @@ public class CommentService {
         entityService.save(comment);
 
         addAssignedUsers(comment, persistentAssignees);
-        comment.getTransitionStates().addAll(persistentTransitionStates);
+        comment.getCommentTransitionStates().addAll(persistentTransitionStates);
         comment.getAppointmentTimeslots().addAll(persistentTimeslots);
         comment.getAppointmentPreferences().addAll(persistentPreferences);
         addPropertyAnswers(comment, persistentProperties);
@@ -305,7 +318,20 @@ public class CommentService {
     public void recordStateTransition(Comment comment, State state, State transitionState) {
         comment.setState(state);
         comment.setTransitionState(transitionState);
-        comment.addTransitionState(transitionState, true);
+
+        comment.addCommentState(state, true);
+        comment.addCommentTransitionState(transitionState, true);
+
+        boolean noTransition = comment.getCommentTransitionStates().isEmpty();
+        for (ResourceState resourceState : comment.getResource().getResourceStates()) {
+            if (!resourceState.getPrimaryState()) {
+                State secondaryState = resourceState.getState();
+                comment.addCommentState(secondaryState, false);
+                if (noTransition) {
+                    comment.addCommentTransitionState(secondaryState, false);
+                }
+            }
+        }
     }
 
     public void delete(Application application, Comment exclusion) {
@@ -332,6 +358,80 @@ public class CommentService {
         if (comment.isInterviewScheduledExpeditedComment()) {
             appendInterviewPreferenceComments(comment);
         }
+    }
+
+    public void appendAssignedUsers(Comment comment, CommentDTO commentDTO) throws DeduplicationException {
+        Application application = comment.getApplication();
+
+        if (comment.getAction().getId().equals(PrismAction.APPLICATION_COMPLETE)) {
+            Role refereeRole = entityService.getById(Role.class, PrismRole.APPLICATION_REFEREE);
+            for (ApplicationReferee referee : application.getReferees()) {
+                comment.getAssignedUsers().add(new CommentAssignedUser().withUser(referee.getUser()).withRole(refereeRole));
+            }
+            Role supervisorRole = entityService.getById(Role.class, PrismRole.APPLICATION_SUGGESTED_SUPERVISOR);
+            for (ApplicationSupervisor supervisor : application.getSupervisors()) {
+                comment.getAssignedUsers().add(new CommentAssignedUser().withUser(supervisor.getUser()).withRole(supervisorRole));
+            }
+        }
+
+        if (commentDTO.getAssignedUsers() != null) {
+            for (CommentAssignedUserDTO assignedUserDTO : commentDTO.getAssignedUsers()) {
+                AssignedUserDTO commentUserDTO = assignedUserDTO.getUser();
+                User commentUser = userService.getOrCreateUser(commentUserDTO.getFirstName(), commentUserDTO.getLastName(), commentUserDTO.getEmail(),
+                        application.getLocale());
+                comment.getAssignedUsers().add(
+                        new CommentAssignedUser().withUser(commentUser).withRole(entityService.getById(Role.class, assignedUserDTO.getRole())));
+            }
+        }
+    }
+
+    public void appendTransitionStates(Comment comment, CommentDTO commentDTO) {
+        for (CommentTransitionStateDTO commentTransitionStateDTO : commentDTO.getTransitionStates()) {
+            State transitionStateItem = stateService.getById(commentTransitionStateDTO.getTransitionState());
+            comment.getCommentTransitionStates().add(
+                    new CommentTransitionState().withTransitionState(transitionStateItem).withPrimaryState(commentTransitionStateDTO.getPrimaryState()));
+        }
+    }
+
+    public void appendAppointmentTimeslots(Comment comment, CommentDTO commentDTO) {
+        for (LocalDateTime dateTime : commentDTO.getAppointmentTimeslots()) {
+            CommentAppointmentTimeslot timeslot = new CommentAppointmentTimeslot().withDateTime(dateTime);
+            comment.getAppointmentTimeslots().add(timeslot);
+        }
+    }
+
+    public void appendAppointmentPreferences(Comment comment, CommentDTO commentDTO) {
+        for (Integer timeslotId : commentDTO.getAppointmentPreferences()) {
+            CommentAppointmentTimeslot timeslot = entityService.getById(CommentAppointmentTimeslot.class, timeslotId);
+            comment.getAppointmentPreferences().add(new CommentAppointmentPreference().withDateTime(timeslot.getDateTime()));
+        }
+    }
+
+    public void appendPropertyAnswers(Comment comment, CommentDTO commentDTO) {
+        Integer version = commentDTO.getCustomQuestionResponse().getVersion();
+        comment.setActionCustomQuestionVersion(version);
+        List<ActionCustomQuestion> actionPropertyConfigurations = actionService.getActionPropertyConfigurationByVersion(version);
+        List<Object> propertyAnswerValues = commentDTO.getCustomQuestionResponse().getValues();
+        for (int i = 0; i < actionPropertyConfigurations.size(); i++) {
+            ActionCustomQuestion configuration = actionPropertyConfigurations.get(i);
+            CommentCustomResponse property = new CommentCustomResponse().withCustomQuestionType(configuration.getCustomQuestionType())
+                    .withPropertyLabel(configuration.getLabel()).withPropertyValue(propertyAnswerValues.get(i).toString())
+                    .withPropertyWeight(configuration.getWeighting());
+            comment.getPropertyAnswers().add(property);
+        }
+    }
+
+    public void appendDocuments(Comment comment, CommentDTO commentDTO) {
+        for (FileDTO fileDTO : commentDTO.getDocuments()) {
+            Document document = entityService.getById(Document.class, fileDTO.getId());
+            comment.getDocuments().add(document);
+        }
+    }
+
+    public void appendRejectionReason(Comment comment, CommentDTO commentDTO) {
+        RejectionReason rejectionReason = entityService.getById(RejectionReason.class, commentDTO.getRejectionReason());
+        comment.setRejectionReason(rejectionReason);
+        comment.setContent(rejectionReason.getName());
     }
 
     private Comment getLatestAppointmentPreferenceComment(Application application, Comment schedulingComment, User user) {

@@ -1,5 +1,24 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+
+import java.util.List;
+
+import org.hibernate.Query;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
@@ -11,18 +30,6 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResource;
-import org.hibernate.Query;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.*;
-import org.hibernate.sql.JoinType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -32,7 +39,7 @@ public class CustomizationDAO {
     private SessionFactory sessionFactory;
 
     public <T extends WorkflowResource> T getConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale, PrismProgramType programType,
-                                                           String keyIndex, WorkflowDefinition keyValue) {
+            String keyIndex, WorkflowDefinition keyValue) {
         return (T) sessionFactory.getCurrentSession().createCriteria(entityClass) //
                 .add(getFilterCondition(resource, locale, programType, keyValue.getScope().getId())) //
                 .add(Restrictions.eq(keyIndex, keyValue)) //
@@ -45,7 +52,7 @@ public class CustomizationDAO {
     }
 
     public List<DisplayPropertyConfiguration> getDisplayProperties(Resource resource, PrismLocale locale, PrismProgramType programType,
-                                                                   PrismDisplayPropertyCategory displayPropertyCategory, PrismScope propertyScope) {
+            PrismDisplayPropertyCategory displayPropertyCategory, PrismScope propertyScope) {
         return (List<DisplayPropertyConfiguration>) sessionFactory.getCurrentSession().createCriteria(DisplayPropertyConfiguration.class) //
                 .createAlias("displayPropertyDefinition", "displayPropertyDefinition", JoinType.INNER_JOIN) //
                 .add(getFilterCondition(resource, locale, programType, propertyScope)) //
@@ -67,7 +74,8 @@ public class CustomizationDAO {
                 .list();
     }
 
-    public <T extends WorkflowResource> List<T> listConfigurations(WorkflowResourceConfigurationType configurationType, Resource resource, PrismLocale locale, PrismProgramType programType) {
+    public <T extends WorkflowResource> List<T> listConfigurations(WorkflowResourceConfigurationType configurationType, Resource resource, PrismLocale locale,
+            PrismProgramType programType) {
         Criterion programTypeConstraint = programType == null ? Restrictions.isNull("programType") : Restrictions.in("programType",
                 Lists.newArrayList(programType, getSystemProgramType()));
 
@@ -92,11 +100,12 @@ public class CustomizationDAO {
                 .list();
     }
 
-    public <T extends WorkflowConfiguration> void restoreDefaultConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale, PrismProgramType programType) {
+    public <T extends WorkflowConfiguration> void restoreDefaultConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale,
+            PrismProgramType programType) {
         String localeConstraint = locale == null ? "" : "and locale = " + locale.name() + " ";
         String programTypeConstraint = programType == null ? "" : "and programType = " + programType.name();
         sessionFactory.getCurrentSession().createQuery( //
-                "delete " + entityClass.getClass().getSimpleName() + " "  //
+                "delete " + entityClass.getClass().getSimpleName() + " " //
                         + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
                         + localeConstraint //
                         + programTypeConstraint) //
@@ -112,8 +121,8 @@ public class CustomizationDAO {
                 .uniqueResult();
     }
 
-    public <T extends WorkflowConfiguration> T getConfigurationStrict(Class<T> entityClass, Resource resource, PrismLocale locale, PrismProgramType programType,
-                                                                      String keyIndex, WorkflowDefinition keyValue) {
+    public <T extends WorkflowConfiguration> T getConfigurationStrict(Class<T> entityClass, Resource resource, PrismLocale locale,
+            PrismProgramType programType, String keyIndex, WorkflowDefinition keyValue) {
         return (T) sessionFactory.getCurrentSession().createCriteria(entityClass) //
                 .add(Restrictions.eq(keyIndex, keyValue)) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
@@ -123,7 +132,7 @@ public class CustomizationDAO {
     }
 
     public <T extends WorkflowConfiguration> void restoreGlobalConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale,
-                                                                             PrismProgramType programType) {
+            PrismProgramType programType) {
         PrismScope resourceScope = resource.getResourceScope();
 
         String programTypeConstraint = programType == null ? "and programType is null " : "and programType = :programType ";

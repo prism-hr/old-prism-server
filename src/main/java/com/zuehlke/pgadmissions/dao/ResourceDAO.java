@@ -226,16 +226,44 @@ public class ResourceDAO {
                 .list();
     }
     
-    public void deletePrimaryState(Resource resource) {
+    public void deletePrimaryResourceState(Resource resource) {
         sessionFactory.getCurrentSession().createQuery( //
-                "delete ResourceState " //
+                "delete ResourceState "
                     + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
-                        + "and primaryState = :primaryState") //
+                        + "and primaryState is true") //
                 .setParameter("resource", resource) //
-                .setParameter("primaryState", true) //
                 .executeUpdate();
     }
-
+    
+    public void deletePrimaryResourcePreviousState(Resource resource) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete ResourcePreviousState "
+                    + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+                        + "and primaryState is true") //
+                .setParameter("resource", resource) //
+                .executeUpdate();
+    }
+    
+    public void deleteSecondaryResourcePreviousStates(Resource resource) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete ResourcePreviousState "
+                    + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+                        + "and primaryState is false") //
+                .setParameter("resource", resource) //
+                .executeUpdate();
+    }
+    
+    public void insertSecondaryPreviousResourceStates(Resource resource) {
+        String resourceReference = resource.getResourceScope().getLowerCaseName();
+        sessionFactory.getCurrentSession().createQuery( //
+                "insert into ResourcePreviousState(" + resourceReference + ", previousState, primaryState) " //
+                    + "select " + resourceReference + ", state, primaryState " //
+                        + "from ResourceState "
+                        + "where resource = :resource") //
+                .setParameter("resource", resource) //
+                .executeUpdate();
+    }
+    
     private void addResourceListCustomColumns(PrismScope scopeId, ProjectionList projectionList) {
         HashMultimap<String, String> customColumns = scopeId.getConsoleListCustomColumns();
         for (String tableName : customColumns.keySet()) {

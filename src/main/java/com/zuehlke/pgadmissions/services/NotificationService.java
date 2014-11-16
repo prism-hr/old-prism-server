@@ -38,7 +38,6 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
-import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
@@ -226,13 +225,12 @@ public class NotificationService {
     }
 
     public <T extends Resource> void sendSyndicatedUpdateNotifications(Class<T> resourceClass, Integer resourceId, Comment transitionComment, LocalDate baseline) {
-        User author = transitionComment.getAuthor();
         Resource resource = resourceService.getById(resourceClass, resourceId);
 
-        State state = transitionComment.getState();
+        User author = transitionComment.getAuthor();
         Action action = transitionComment.getAction();
 
-        List<UserNotificationDefinitionDTO> updates = notificationDAO.getSyndicatedUpdateDefinitions(resource, state, action, author, baseline);
+        List<UserNotificationDefinitionDTO> updates = notificationDAO.getSyndicatedUpdateDefinitions(resource, action, author, baseline);
         HashMultimap<NotificationDefinition, User> sent = HashMultimap.create();
 
         if (updates.size() > 0) {
@@ -335,9 +333,7 @@ public class NotificationService {
     }
 
     private void sendIndividualUpdateNotifications(Resource resource, Comment comment, User author, LocalDate baseline) {
-        State state = resource.getPreviousState();
-
-        List<UserNotificationDefinitionDTO> updates = notificationDAO.getIndividualUpdateDefinitions(resource, state, comment.getAction(), author, baseline);
+        List<UserNotificationDefinitionDTO> updates = notificationDAO.getIndividualUpdateDefinitions(resource, comment.getAction(), author, baseline);
         HashMultimap<NotificationDefinition, User> sent = HashMultimap.create();
 
         if (updates.size() > 0) {

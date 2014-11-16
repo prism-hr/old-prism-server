@@ -43,10 +43,11 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
-import com.zuehlke.pgadmissions.domain.workflow.ResourceAction;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
@@ -203,15 +204,18 @@ public class Application extends Resource {
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
+    
+    @OneToMany(mappedBy = "application")
+    private Set<ResourceState> resourceStates = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "application")
+    private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
 
     @OneToMany(mappedBy = "application")
     private Set<Comment> comments = Sets.newHashSet();
 
     @OneToMany(mappedBy = "application")
     private Set<UserRole> userRoles = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "application")
-    private Set<ResourceAction> resourceActions = Sets.newHashSet();
 
     @Transient
     private Boolean acceptedTerms;
@@ -512,6 +516,16 @@ public class Application extends Resource {
         return referees;
     }
 
+    @Override
+    public final Set<ResourceState> getResourceStates() {
+        return resourceStates;
+    }
+
+    @Override
+    public final Set<ResourcePreviousState> getResourcePreviousStates() {
+        return resourcePreviousStates;
+    }
+
     public final Set<Comment> getComments() {
         return comments;
     }
@@ -519,11 +533,6 @@ public class Application extends Resource {
     @Override
     public final Set<UserRole> getUserRoles() {
         return userRoles;
-    }
-
-    @Override
-    public final Set<ResourceAction> getResourceActions() {
-        return resourceActions;
     }
 
     public Application withId(Integer id) {

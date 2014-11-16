@@ -50,6 +50,8 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
@@ -186,24 +188,30 @@ public class Institution extends ResourceParent {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
-    
+
     @Column(name = "last_reminded_request_individual")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastRemindedRequestIndividual;
-    
+
     @Column(name = "last_reminded_request_syndicated")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastRemindedRequestSyndicated;
-    
+
     @Column(name = "last_notified_update_syndicated")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedUpdateSyndicated;
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
-    
+
     @Transient
     private Integer importErrorCount;
+
+    @OneToMany(mappedBy = "institution")
+    private Set<ResourceState> resourceStates = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "institution")
+    private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
 
     @OneToMany(mappedBy = "institution")
     private Set<ImportedEntityFeed> importedEntityFeeds = Sets.newHashSet();
@@ -219,7 +227,7 @@ public class Institution extends ResourceParent {
 
     @OneToMany(mappedBy = "institution")
     private Set<Comment> comments = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "institution")
     private Set<UserRole> userRoles = Sets.newHashSet();
 
@@ -461,6 +469,16 @@ public class Institution extends ResourceParent {
         this.applicationRatingAverage = applicationRatingAverage;
     }
 
+    @Override
+    public final Set<ResourceState> getResourceStates() {
+        return resourceStates;
+    }
+
+    @Override
+    public final Set<ResourcePreviousState> getResourcePreviousStates() {
+        return resourcePreviousStates;
+    }
+
     public Set<ImportedEntityFeed> getImportedEntityFeeds() {
         return importedEntityFeeds;
     }
@@ -469,15 +487,10 @@ public class Institution extends ResourceParent {
     public Set<Comment> getComments() {
         return comments;
     }
-    
+
     @Override
     public Set<UserRole> getUserRoles() {
         return userRoles;
-    }
-    
-    @Override
-    public final Set<ResourceAction> getResourceActions() {
-        return resourceActions;
     }
 
     public Institution withId(Integer id) {
@@ -702,7 +715,7 @@ public class Institution extends ResourceParent {
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
     }
-    
+
     @Override
     public final LocalDate getLastRemindedRequestIndividual() {
         return lastRemindedRequestIndividual;

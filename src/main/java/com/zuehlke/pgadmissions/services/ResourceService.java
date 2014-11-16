@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
@@ -364,18 +363,6 @@ public class ResourceService {
         return resource.getProgram().getEndDate();
     }
 
-    public List<PrismState> getRecommendedNextStates(Resource resource) {
-        List<PrismState> recommendations = Lists.newLinkedList();
-        String recommendationTokens =  resourceDAO.getRecommendedNextStates(resource);
-        if (recommendationTokens != null) {
-            for (String recommendationToken : recommendationTokens.split("|")) {
-                recommendations.add(PrismState.valueOf(recommendationToken));
-            }
-            return recommendations;
-        }
-        return null;
-    }
-
     private Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter,
             String lastSequenceIdentifier, Integer maxRecords) {
         Set<Integer> assigned = Sets.newHashSet();
@@ -508,7 +495,7 @@ public class ResourceService {
     }
 
     private void createOrUpdateStateTransitionSummary(Resource resource, DateTime baselineTime) {
-        String transitionStateSelection = Joiner.on("|").join(resourceDAO.getCurrentStates(resource));
+        String transitionStateSelection = Joiner.on("|").join(stateService.getCurrentStates(resource));
 
         ResourceStateTransitionSummary transientTransitionSummary = new ResourceStateTransitionSummary().withResource(resource.getParentResource())
                 .withStateGroup(resource.getState().getStateGroup()).withTransitionStateSelection(transitionStateSelection).withFrequency(1)

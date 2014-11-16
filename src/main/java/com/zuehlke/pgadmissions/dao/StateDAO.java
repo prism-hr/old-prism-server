@@ -19,6 +19,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
@@ -145,6 +147,26 @@ public class StateDAO {
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.eq("stateGroup.id", stateGroupId)) //
                 .list();
+    }
+    
+    public List<State> getCurrentStates(Resource resource) {
+        return (List<State>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.property("state")) //
+                .add(Restrictions.eq("resource", resource)) //
+                .addOrder(Order.desc("primaryState")) //
+                .list();
+    }
+    
+    public String getRecommendedNextStates(Resource resource) {
+        Resource parentResource = resource.getParentResource();
+        return (String) sessionFactory.getCurrentSession().createCriteria(ResourceStateTransitionSummary.class) //
+                .setProjection(Projections.property("transitionStateSelection")) //
+                .add(Restrictions.eq(parentResource.getResourceScope().getLowerCaseName(), parentResource)) //
+                .add(Restrictions.eq("stateGroup", resource.getState().getStateGroup())) //
+                .addOrder(Order.desc("frequency")) //
+                .addOrder(Order.desc("updatedTimestamp")) //
+                .setMaxResults(1) //
+                .uniqueResult();
     }
 
 }

@@ -366,10 +366,14 @@ public class ResourceService {
 
     public List<PrismState> getRecommendedNextStates(Resource resource) {
         List<PrismState> recommendations = Lists.newLinkedList();
-        for (String recommendation : resourceDAO.getRecommendedNextStates(resource).split("|")) {
-            recommendations.add(PrismState.valueOf(recommendation));
+        String recommendationTokens =  resourceDAO.getRecommendedNextStates(resource);
+        if (recommendationTokens != null) {
+            for (String recommendationToken : recommendationTokens.split("|")) {
+                recommendations.add(PrismState.valueOf(recommendationToken));
+            }
+            return recommendations;
         }
-        return recommendations;
+        return null;
     }
 
     private Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter,

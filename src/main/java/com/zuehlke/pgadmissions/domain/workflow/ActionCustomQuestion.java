@@ -54,15 +54,14 @@ public class ActionCustomQuestion extends WorkflowConfiguration {
     @ManyToOne
     @JoinColumn(name = "action_id", nullable = false)
     private Action action;
-    
+
     @Column(name = "version")
     private Integer version;
-    
+
     @Column(name = "custom_question_type")
     @Enumerated(EnumType.STRING)
     private PrismCustomQuestionType customQuestionType;
 
-    @Lob
     @Column(name = "display_name", nullable = false)
     private String name;
 
@@ -72,26 +71,21 @@ public class ActionCustomQuestion extends WorkflowConfiguration {
     @Column(name = "display_index", nullable = false)
     private Integer index;
 
-    @Lob
     @Column(name = "display_label", nullable = false)
     private String label;
 
-    @Lob
     @Column(name = "display_description")
     private String description;
 
-    @Lob
     @Column(name = "display_placeholder")
     private String placeholder;
 
-    @Lob
     @Column(name = "display_options")
     private String options;
 
     @Column(name = "display_required", nullable = false)
     private Boolean required;
 
-    @Lob
     @Column(name = "display_validation")
     private String validation;
 
@@ -171,7 +165,7 @@ public class ActionCustomQuestion extends WorkflowConfiguration {
     public void setAction(Action action) {
         this.action = action;
     }
-    
+
     public final Integer getVersion() {
         return version;
     }
@@ -315,7 +309,7 @@ public class ActionCustomQuestion extends WorkflowConfiguration {
         this.action = action;
         return this;
     }
-    
+
     public ActionCustomQuestion withCustomQuestionType(PrismCustomQuestionType customQuestionType) {
         this.customQuestionType = customQuestionType;
         return this;

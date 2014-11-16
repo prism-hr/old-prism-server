@@ -32,5 +32,10 @@ public abstract class WorkflowDefinition implements IUniqueEntity {
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addProperty("id", getId());
     }
+    
+    @Override
+    public String toString() {
+        return getId().name();
+    }
 
 }

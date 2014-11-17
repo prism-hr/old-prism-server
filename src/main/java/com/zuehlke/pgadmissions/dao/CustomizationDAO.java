@@ -95,7 +95,7 @@ public class CustomizationDAO {
 
     public <T extends WorkflowConfiguration, U extends WorkflowDefinition> void restoreDefaultConfiguration(Resource resource, PrismLocale locale,
             PrismProgramType programType, Class<T> configurationClass, Class<U> definitionClass, PrismScope definitionScope) {
-        String localeConstraint = locale == null ? "" : "and locale = :locale";
+        String localeConstraint = locale == null ? "" : "and locale = :locale ";
         String programTypeConstraint = programType == null ? "" : "and programType = :programType ";
 
         Query query = sessionFactory.getCurrentSession().createQuery( //
@@ -113,7 +113,7 @@ public class CustomizationDAO {
 
     public <T extends WorkflowConfiguration, U extends WorkflowDefinition> void restoreDefaultConfiguration(Resource resource, PrismLocale locale,
             PrismProgramType programType, Class<T> configurationClass, U definition) {
-        String localeConstraint = locale == null ? "" : "and locale = :locale";
+        String localeConstraint = locale == null ? "" : "and locale = :locale ";
         String programTypeConstraint = programType == null ? "" : "and programType = :programType ";
         String definitionReference = getLowerCaseClassReference(definition);
 
@@ -132,14 +132,14 @@ public class CustomizationDAO {
 
     public <T extends WorkflowConfiguration, U extends WorkflowDefinition> void restoreDefaultConfigurationVersion(Resource resource, PrismLocale locale,
             PrismProgramType programType, Class<T> configurationClass, Class<U> definitionClass, PrismScope definitionScope) {
-        String localeConstraint = locale == null ? "" : "and locale = :locale";
+        String localeConstraint = locale == null ? "" : "and locale = :locale ";
         String programTypeConstraint = programType == null ? "" : "and programType = :programType ";
 
         Query query = sessionFactory.getCurrentSession().createQuery( //
                 "update " + getUpperCaseClassReference(configurationClass) + " " //
                         + "set active = false " //
                         + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
-                        +  "and " + getDefinitionScopeConstraint(definitionClass) //
+                        + "and " + getDefinitionScopeConstraint(definitionClass) //
                         + localeConstraint //
                         + programTypeConstraint) //
                 .setParameter("resource", resource) //
@@ -151,7 +151,7 @@ public class CustomizationDAO {
 
     public <T extends WorkflowConfiguration, U extends WorkflowDefinition> void restoreDefaultConfigurationVersion(Resource resource, PrismLocale locale,
             PrismProgramType programType, Class<T> configurationClass, U definition) {
-        String localeConstraint = locale == null ? "" : "and locale = :locale";
+        String localeConstraint = locale == null ? "" : "and locale = :locale ";
         String programTypeConstraint = programType == null ? "" : "and programType = :programType ";
 
         Query query = sessionFactory.getCurrentSession().createQuery( //
@@ -173,33 +173,20 @@ public class CustomizationDAO {
         String configurationReference = getUpperCaseClassReference(configurationClass);
 
         String definitionConstraint = "where " + getDefinitionScopeConstraint(definitionClass);
-        String programTypeCriterion = programType == null ? "and programType is null " : "and programType = :programType ";
         String localeCriterion = locale == null ? "and locale is null " : " and locale = :locale ";
+        String programTypeCriterion = programType == null ? "and programType is null " : "and programType = :programType ";
 
         Query query;
         if (resourceScope == SYSTEM) {
             query = sessionFactory.getCurrentSession().createQuery( //
                     "delete " + configurationReference + " " //
                             + definitionConstraint //
-                            + "and (institution in (" //
-                            + "from Institution " //
-                            + "where system = :system) " //
-                            + programTypeCriterion //
-                            + localeCriterion + " "//
-                            + "or program in (" //
-                            + "from Program " //
-                            + "where system = :system) " //
-                            + programTypeCriterion //
-                            + localeCriterion + ")");
+                            + getSystemInheritanceCriterion(localeCriterion, programTypeCriterion));
         } else if (resourceScope == INSTITUTION) {
             query = sessionFactory.getCurrentSession().createQuery( //
                     "delete " + configurationReference + " " //
                             + definitionConstraint //
-                            + "and (program in (" //
-                            + "from Program " //
-                            + "where institution = :institution) " //
-                            + programTypeCriterion //
-                            + localeCriterion + ")");
+                            + getInstitionInheritanceCriterion(localeCriterion, programTypeCriterion));
         } else {
             throw new Error();
         }
@@ -217,33 +204,20 @@ public class CustomizationDAO {
         String configurationReference = getUpperCaseClassReference(configurationClass);
 
         String definitionConstraint = "where " + getLowerCaseClassReference(definition) + " = :definition ";
-        String programTypeCriterion = programType == null ? "and programType is null " : "and programType = :programType ";
         String localeCriterion = locale == null ? "and locale is null " : " and locale = :locale ";
+        String programTypeCriterion = programType == null ? "and programType is null " : "and programType = :programType ";
 
         Query query;
         if (resourceScope == SYSTEM) {
             query = sessionFactory.getCurrentSession().createQuery( //
                     "delete " + configurationReference + " " //
                             + definitionConstraint //
-                            + "and (institution in (" //
-                            + "from Institution " //
-                            + "where system = :system) " //
-                            + programTypeCriterion //
-                            + localeCriterion + " "//
-                            + "or program in (" //
-                            + "from Program " //
-                            + "where system = :system) " //
-                            + programTypeCriterion //
-                            + localeCriterion + ")");
+                            + getSystemInheritanceCriterion(localeCriterion, programTypeCriterion));
         } else if (resourceScope == INSTITUTION) {
             query = sessionFactory.getCurrentSession().createQuery( //
                     "delete " + configurationReference + " " //
                             + definitionConstraint //
-                            + "and (program in (" //
-                            + "from Program " //
-                            + "where institution = :institution) " //
-                            + programTypeCriterion //
-                            + localeCriterion + ")");
+                            + getInstitionInheritanceCriterion(localeCriterion, programTypeCriterion));
         } else {
             throw new Error();
         }
@@ -261,8 +235,8 @@ public class CustomizationDAO {
         String configurationReference = getUpperCaseClassReference(configurationClass);
 
         String definitionConstraint = "where " + getDefinitionScopeConstraint(definitionClass);
-        String programTypeCriterion = programType == null ? "and programType is null " : "and programType = :programType ";
         String localeCriterion = locale == null ? "and locale is null " : " and locale = :locale ";
+        String programTypeCriterion = programType == null ? "and programType is null " : "and programType = :programType ";
 
         Query query;
         if (resourceScope == SYSTEM) {
@@ -270,26 +244,13 @@ public class CustomizationDAO {
                     "update " + configurationReference + " " //
                             + "set active = false " //
                             + definitionConstraint //
-                            + "and (institution in (" //
-                            + "from Institution " //
-                            + "where system = :system) " //
-                            + programTypeCriterion //
-                            + localeCriterion + " "//
-                            + "or program in (" //
-                            + "from Program " //
-                            + "where system = :system) " //
-                            + programTypeCriterion //
-                            + localeCriterion + ")");
+                            + getSystemInheritanceCriterion(localeCriterion, programTypeCriterion));
         } else if (resourceScope == INSTITUTION) {
             query = sessionFactory.getCurrentSession().createQuery( //
                     "update " + configurationReference + " " //
                             + "set active = false " //
                             + definitionConstraint //
-                            + "and (program in (" //
-                            + "from Program " //
-                            + "where institution = :institution) " //
-                            + programTypeCriterion //
-                            + localeCriterion + ")");
+                            + getInstitionInheritanceCriterion(localeCriterion, programTypeCriterion));
         } else {
             throw new Error();
         }
@@ -307,8 +268,8 @@ public class CustomizationDAO {
         String configurationReference = getUpperCaseClassReference(configurationClass);
 
         String definitionConstraint = "where " + getLowerCaseClassReference(definition) + " = :definition ";
-        String programTypeCriterion = programType == null ? "and programType is null " : "and programType = :programType ";
         String localeCriterion = locale == null ? "and locale is null " : " and locale = :locale ";
+        String programTypeCriterion = programType == null ? "and programType is null " : "and programType = :programType ";
 
         Query query;
         if (resourceScope == SYSTEM) {
@@ -316,26 +277,13 @@ public class CustomizationDAO {
                     "update " + configurationReference + " " //
                             + "set active = false " //
                             + definitionConstraint //
-                            + "and (institution in (" //
-                            + "from Institution " //
-                            + "where system = :system) " //
-                            + programTypeCriterion //
-                            + localeCriterion + " "//
-                            + "or program in (" //
-                            + "from Program " //
-                            + "where system = :system) " //
-                            + programTypeCriterion //
-                            + localeCriterion + ")");
+                            + getSystemInheritanceCriterion(localeCriterion, programTypeCriterion));
         } else if (resourceScope == INSTITUTION) {
             query = sessionFactory.getCurrentSession().createQuery( //
                     "update " + configurationReference + " " //
                             + "set active = false " //
                             + definitionConstraint //
-                            + "and (program in (" //
-                            + "from Program " //
-                            + "where institution = :institution) " //
-                            + programTypeCriterion //
-                            + localeCriterion + ")");
+                            + getInstitionInheritanceCriterion(localeCriterion, programTypeCriterion));
         } else {
             throw new Error();
         }
@@ -397,7 +345,7 @@ public class CustomizationDAO {
     private <U extends WorkflowDefinition> String getDefinitionScopeConstraint(Class<U> definitionClass) {
         return getLowerCaseClassReference(definitionClass) + " in (" //
                 + "from " + getUpperCaseClassReference(definitionClass) + " " //
-                + "where scope.id =: definitionScope) ";
+                + "where scope.id = :definitionScope) ";
     }
 
     private static String getUpperCaseClassReference(Class<?> objectClass) {
@@ -410,6 +358,27 @@ public class CustomizationDAO {
 
     private static String getLowerCaseClassReference(Class<?> objectClass) {
         return WordUtils.uncapitalize(objectClass.getSimpleName());
+    }
+
+    private static String getSystemInheritanceCriterion(String localeCriterion, String programTypeCriterion) {
+        return "and (institution in (" //
+                + "from Institution " //
+                + "where system = :system) " //
+                + localeCriterion + " "//
+                + programTypeCriterion //
+                + "or program in (" //
+                + "from Program " //
+                + "where system = :system) " //
+                + localeCriterion //
+                + programTypeCriterion + ")";
+    }
+
+    private static String getInstitionInheritanceCriterion(String localeCriterion, String programTypeCriterion) {
+        return "and (program in (" //
+                + "from Program " //
+                + "where institution = :institution) " //
+                + localeCriterion //
+                + programTypeCriterion + ")";
     }
 
 }

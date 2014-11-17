@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Lists;
@@ -20,8 +21,12 @@ public class ApplicationProgramDetailDTO {
     @NotNull
     private Integer referralSource;
 
-    private List<String> themes = Lists.newArrayList();
-    
+    @NotEmpty
+    private List<String> primaryThemes = Lists.newArrayList();
+
+    @NotEmpty
+    private List<String> secondaryThemes = Lists.newArrayList();
+
     public PrismStudyOption getStudyOption() {
         return studyOption;
     }
@@ -45,13 +50,21 @@ public class ApplicationProgramDetailDTO {
     public void setReferralSource(Integer referralSource) {
         this.referralSource = referralSource;
     }
-    
-    public final List<String> getThemes() {
-        return themes;
+
+    public final List<String> getPrimaryThemes() {
+        return primaryThemes;
     }
 
-    public final void setAdvertThemes(List<String> themes) {
-        this.themes = themes;
+    public final void setPrimaryThemes(List<String> primaryThemes) {
+        this.primaryThemes = primaryThemes;
+    }
+
+    public final List<String> getSecondaryThemes() {
+        return secondaryThemes;
+    }
+
+    public final void setSecondaryThemes(List<String> secondaryThemes) {
+        this.secondaryThemes = secondaryThemes;
     }
 
 }

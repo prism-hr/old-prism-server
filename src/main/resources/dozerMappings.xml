@@ -98,8 +98,12 @@
         <class-a>com.zuehlke.pgadmissions.domain.application.Application</class-a>
         <class-b>com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation</class-b>
         <field custom-converter="com.zuehlke.pgadmissions.rest.converter.SeparatedStringToListConverter">
-            <a>theme</a>
-            <b>themes</b>
+            <a>primaryTheme</a>
+            <b>primaryThemes</b>
+        </field>
+        <field custom-converter="com.zuehlke.pgadmissions.rest.converter.SeparatedStringToListConverter">
+            <a>secondaryTheme</a>
+            <b>secondaryThemes</b>
         </field>
     </mapping>
 

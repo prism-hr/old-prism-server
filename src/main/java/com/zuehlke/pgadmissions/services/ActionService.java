@@ -169,42 +169,8 @@ public class ActionService {
     }
 
     public Set<ActionRepresentation> getPermittedActions(Resource resource, User user) {
-        PrismAction lastActionId = null;
-        ActionRepresentation thisActionRepresentation = null;
-
-        PrismState lastTransitionStateId = null;
-        StateTransitionRepresentation thisStateTransitionRepresentation = null;
-
-        Set<ActionRepresentation> representations = Sets.newLinkedHashSet();
-        List<ActionDTO> actions = actionDAO.getPermittedActions(resource, user);
-        for (ActionDTO action : actions) {
-            PrismAction thisActionId = action.getActionId();
-            boolean newAction = thisActionId != lastActionId;
-
-            if (newAction) {
-                thisActionRepresentation = new ActionRepresentation().withName(thisActionId).withRaisesUrgentFlag(action.getRaisesUrgentFlag());
-                representations.add(thisActionRepresentation);
-            }
-
-            PrismState thisTransitionStateId = action.getTransitionStateId();
-
-            if (newAction || (thisTransitionStateId != null && thisTransitionStateId != lastTransitionStateId)) {
-                thisStateTransitionRepresentation = new StateTransitionRepresentation().withTransitionStateId(thisTransitionStateId);
-                thisActionRepresentation.addStateTransition(thisStateTransitionRepresentation);
-            }
-
-            PrismRole thisTransitionRoleId = action.getTransitionRoleId();
-
-            if (thisTransitionRoleId != null) {
-                thisStateTransitionRepresentation.addRoleTransition(new RoleTransitionRepresentation().withRoleId(thisTransitionRoleId)
-                        .withRoleTransitionType(action.getRoleTransitionType()).withMinimumPermitted(action.getMinimumPermitted())
-                        .withMaximumPermitted(action.getMaximumPermitted()));
-            }
-
-            lastActionId = thisActionId;
-            lastTransitionStateId = thisTransitionStateId;
-        }
-
+        Set<ActionRepresentation> representations = parseActionRepresentations(actionDAO.getPermittedActions(resource, user));
+        representations.addAll(parseActionRepresentations(actionDAO.getCreateResourceActions(resource.getResourceScope())));
         return representations;
     }
 
@@ -357,6 +323,45 @@ public class ActionService {
             return;
         }
         throw new Error();
+    }
+    
+    private Set<ActionRepresentation> parseActionRepresentations(List<ActionDTO> actions) {
+        PrismAction lastActionId = null;
+        ActionRepresentation thisActionRepresentation = null;
+
+        PrismState lastTransitionStateId = null;
+        StateTransitionRepresentation thisStateTransitionRepresentation = null;
+
+        Set<ActionRepresentation> representations = Sets.newLinkedHashSet();
+
+        for (ActionDTO action : actions) {
+            PrismAction thisActionId = action.getActionId();
+            boolean newAction = thisActionId != lastActionId;
+
+            if (newAction) {
+                thisActionRepresentation = new ActionRepresentation().withName(thisActionId).withRaisesUrgentFlag(action.getRaisesUrgentFlag());
+                representations.add(thisActionRepresentation);
+            }
+
+            PrismState thisTransitionStateId = action.getTransitionStateId();
+
+            if (newAction || (thisTransitionStateId != null && thisTransitionStateId != lastTransitionStateId)) {
+                thisStateTransitionRepresentation = new StateTransitionRepresentation().withTransitionStateId(thisTransitionStateId);
+                thisActionRepresentation.addStateTransition(thisStateTransitionRepresentation);
+            }
+
+            PrismRole thisTransitionRoleId = action.getTransitionRoleId();
+
+            if (thisTransitionRoleId != null) {
+                thisStateTransitionRepresentation.addRoleTransition(new RoleTransitionRepresentation().withRoleId(thisTransitionRoleId)
+                        .withRoleTransitionType(action.getRoleTransitionType()).withMinimumPermitted(action.getMinimumPermitted())
+                        .withMaximumPermitted(action.getMaximumPermitted()));
+            }
+
+            lastActionId = thisActionId;
+            lastTransitionStateId = thisTransitionStateId;
+        }
+        return representations;
     }
 
 }

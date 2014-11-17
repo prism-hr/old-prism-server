@@ -147,9 +147,34 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
-                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
-                        .add(Restrictions.conjunction())) //
+                        .add(Restrictions.eq("userRole.application", resource.getApplication()))) //
                 .add(Restrictions.eq("userRole.user", user)) //
+                .addOrder(Order.desc("raisesUrgentFlag")) //
+                .addOrder(Order.asc("action.id")) //
+                .addOrder(Order.asc("stateTransition.transitionState.id")) //
+                .addOrder(Order.asc("roleTransition.transitionRole.id")) //
+                .addOrder(Order.asc("roleTransition.roleTransitionType")) //
+                .setResultTransformer(Transformers.aliasToBean(ActionDTO.class)) //
+                .list();
+    }
+
+    public List<ActionDTO> getCreateResourceActions(PrismScope resourceScope) {
+        return (List<ActionDTO>) sessionFactory.getCurrentSession().createCriteria(StateAction.class, "stateAction") //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("action.id"), "actionId") //
+                        .add(Projections.property("raisesUrgentFlag"), "raisesUrgentFlag") //
+                        .add(Projections.groupProperty("stateTransition.transitionState.id"), "transitionStateId") //
+                        .add(Projections.groupProperty("roleTransition.transitionRole.id"), "transitionRoleId") //
+                        .add(Projections.groupProperty("roleTransition.roleTransitionType"), "roleTransitionType") //
+                        .add(Projections.property("roleTransition.minimumPermitted"), "minimumPermitted") //
+                        .add(Projections.property("roleTransition.maximumPermitted"), "maximumPermitted")) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.stateTransitions", "stateTransition", JoinType.INNER_JOIN) //
+                .createAlias("stateTransition.roleTransitions", "roleTransition", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
+                .add(Restrictions.eq("action.actionCategory", PrismActionCategory.CREATE_RESOURCE)) //
+                .add(Restrictions.eq("action.scope.id", resourceScope)) //
+                .add(Restrictions.ne("action.creationScope.id", PrismScope.APPLICATION)) //
                 .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.asc("action.id")) //
                 .addOrder(Order.asc("stateTransition.transitionState.id")) //
@@ -356,7 +381,7 @@ public class ActionDAO {
                 .addOrder(Order.asc("index")) //
                 .list();
     }
-    
+
     public List<StateActionDTO> getCreateResourceActionsByState(PrismScope resourceScope) {
         return (List<StateActionDTO>) sessionFactory.getCurrentSession().createCriteria(StateAction.class, "stateAction")
                 .setProjection(Projections.projectionList() //

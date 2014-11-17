@@ -161,4 +161,10 @@ public class ResourceListRowRepresentation {
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
+    
+    public ResourceListRowRepresentation addAction(ActionRepresentation action) {
+        actions.add(action);
+        return this;
+    }
+    
 }

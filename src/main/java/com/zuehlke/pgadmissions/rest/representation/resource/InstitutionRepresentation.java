@@ -13,6 +13,8 @@ public class InstitutionRepresentation {
 
     private String title;
 
+    private String domicile;
+
     private PrismLocale locale;
 
     private InstitutionAddressRepresentation address;
@@ -57,6 +59,14 @@ public class InstitutionRepresentation {
 
     public void setLocale(PrismLocale locale) {
         this.locale = locale;
+    }
+
+    public String getDomicile() {
+        return domicile;
+    }
+
+    public void setDomicile(String domicile) {
+        this.domicile = domicile;
     }
 
     public InstitutionAddressRepresentation getAddress() {

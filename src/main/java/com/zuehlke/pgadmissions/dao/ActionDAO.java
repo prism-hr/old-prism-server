@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
+import com.zuehlke.pgadmissions.dto.StateActionDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 
 @Repository
@@ -133,13 +134,12 @@ public class ActionDAO {
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("stateAction.stateTransitions", "stateTransition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("stateTransition.roleTransitions", "roleTransition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("stateActionAssignment.role", "role", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("role.userRoles", "userRole", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("userRole.user", "user", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.stateTransitions", "stateTransition", JoinType.INNER_JOIN) //
+                .createAlias("stateTransition.roleTransitions", "roleTransition", JoinType.INNER_JOIN) //
+                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
                 .add(Restrictions.disjunction() //
@@ -148,14 +148,8 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq("action.actionCategory", PrismActionCategory.CREATE_RESOURCE)) //
-                                .add(Restrictions.ne("action.creationScope.id", PrismScope.APPLICATION)))) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("stateActionAssignment.id")) //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq("userRole.user", user)) //
-                                .add(Restrictions.eq("userAccount.enabled", true)))) //
+                        .add(Restrictions.conjunction())) //
+                .add(Restrictions.eq("userRole.user", user)) //
                 .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.asc("action.id")) //
                 .addOrder(Order.asc("stateTransition.transitionState.id")) //
@@ -174,11 +168,10 @@ public class ActionDAO {
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("stateActionAssignment.role", "role", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("role.userRoles", "userRole", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("userRole.user", "user", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
                 .add(Restrictions.eq(resourceScope.getLowerCaseName() + ".id", resourceId)) //
                 .add(Restrictions.disjunction() //
@@ -186,15 +179,8 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.institution.id", institutionId)) //
                         .add(Restrictions.eq("userRole.program.id", programId)) //
                         .add(Restrictions.eq("userRole.project.id", projectId)) //
-                        .add(Restrictions.eq("userRole.application.id", applicationId)) //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq("action.actionCategory", PrismActionCategory.CREATE_RESOURCE)) //
-                                .add(Restrictions.ne("action.creationScope.id", PrismScope.APPLICATION)))) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("stateActionAssignment.id")) //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq("userRole.user", user)) //
-                                .add(Restrictions.eq("userAccount.enabled", true)))) //
+                        .add(Restrictions.eq("userRole.application.id", applicationId))) //
+                .add(Restrictions.eq("userRole.user", user)) //
                 .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.asc("action.id")) //
                 .setResultTransformer(Transformers.aliasToBean(ActionRepresentation.class)) //
@@ -368,6 +354,20 @@ public class ActionDAO {
         return (List<ActionCustomQuestionConfiguration>) sessionFactory.getCurrentSession().createCriteria(ActionCustomQuestionConfiguration.class) //
                 .add(Restrictions.eq("version", version)) //
                 .addOrder(Order.asc("index")) //
+                .list();
+    }
+    
+    public List<StateActionDTO> getCreateResourceActionsByState(PrismScope resourceScope) {
+        return (List<StateActionDTO>) sessionFactory.getCurrentSession().createCriteria(StateAction.class, "stateAction")
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("state.id"), "stateId") //
+                        .add(Projections.property("action.id"), "actionId")) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("action.scope.id", resourceScope)) //
+                .add(Restrictions.ne("action.scope.id", PrismScope.APPLICATION)) //
+                .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
+                .add(Restrictions.eq("action.actionCategory", PrismActionCategory.CREATE_RESOURCE)) //
+                .setResultTransformer(Transformers.aliasToBean(StateActionDTO.class)) //
                 .list();
     }
 

@@ -16,6 +16,7 @@ import com.google.common.base.CaseFormat;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismWorkflowConfiguration;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestApiUtils;
@@ -46,10 +47,10 @@ public class ResourceConfigurationResource {
 
     @RequestMapping(method = RequestMethod.GET)
     public List<AbstractConfigurationRepresentation> getConfigurations(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-            @ModelAttribute PrismWorkflowConfiguration configurationType, @RequestParam(required = false) PrismLocale locale,
-            @RequestParam(required = false) PrismProgramType programType) throws Exception {
+            @ModelAttribute PrismWorkflowConfiguration configurationType, @RequestParam PrismScope definitionScope,
+            @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        return customizationService.getConfigurationRepresentations(configurationType, resource, locale, programType);
+        return customizationService.getConfigurationRepresentations(configurationType, resource, definitionScope, locale, programType);
     }
 
     // @RequestMapping(method = RequestMethod.PUT)

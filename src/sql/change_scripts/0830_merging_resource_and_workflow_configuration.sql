@@ -56,3 +56,7 @@ ALTER TABLE WORKFLOW_PROPERTY_DEFINITION
 	DROP COLUMN optional
 ;
 
+ALTER TABLE APPLICATION
+	CHANGE COLUMN theme primary_theme TEXT,
+	ADD COLUMN secondary_theme TEXT after primary_theme
+;

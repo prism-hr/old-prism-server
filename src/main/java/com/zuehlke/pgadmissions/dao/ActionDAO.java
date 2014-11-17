@@ -129,8 +129,8 @@ public class ActionDAO {
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.stateTransitions", "stateTransition", JoinType.INNER_JOIN) //
-                .createAlias("stateTransition.roleTransitions", "roleTransition", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.stateTransitions", "stateTransition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("stateTransition.roleTransitions", "roleTransition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //

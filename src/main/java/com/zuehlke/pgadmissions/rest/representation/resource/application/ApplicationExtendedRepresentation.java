@@ -58,7 +58,9 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
 
     private List<PrismStudyOption> availableStudyOptions;
 
-    private List<String> themes;
+    private List<String> primaryThemes;
+    
+    private List<String> secondaryThemes;
 
     public ProgramRepresentation getProgram() {
         return program;
@@ -236,11 +238,20 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
         this.availableStudyOptions = availableStudyOptions;
     }
 
-    public List<String> getThemes() {
-        return themes;
+    public final List<String> getPrimaryThemes() {
+        return primaryThemes;
     }
 
-    public void setThemes(List<String> themes) {
-        this.themes = themes;
+    public final void setPrimaryThemes(List<String> primaryThemes) {
+        this.primaryThemes = primaryThemes;
     }
+
+    public final List<String> getSecondaryThemes() {
+        return secondaryThemes;
+    }
+
+    public final void setSecondaryThemes(List<String> secondaryThemes) {
+        this.secondaryThemes = secondaryThemes;
+    }
+
 }

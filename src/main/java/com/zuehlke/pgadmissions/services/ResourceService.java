@@ -440,7 +440,8 @@ public class ResourceService {
                                 PrismRole.APPLICATION_SECONDARY_SUPERVISOR), negated);
                         break;
                     case THEME:
-                        ResourceListConstraintBuilder.appendStringFilterCriterion(conditions, propertyName, constraint.getValueString(), negated);
+                        ResourceListConstraintBuilder.appendStringFilterCriterion(conditions, "primaryTheme", constraint.getValueString(), negated);
+                        ResourceListConstraintBuilder.appendStringFilterCriterion(conditions, "secondaryTheme", constraint.getValueString(), negated);
                     }
                 } else {
                     ResourceListConstraintBuilder.throwResourceFilterListMissingPropertyError(scopeId, property);

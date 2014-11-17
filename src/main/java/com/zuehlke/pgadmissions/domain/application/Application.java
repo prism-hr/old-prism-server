@@ -134,8 +134,11 @@ public class Application extends Resource {
     @JoinColumn(name = "application_additional_information_id", unique = true)
     private ApplicationAdditionalInformation additionalInformation;
 
-    @Column(name = "theme")
-    private String theme;
+    @Column(name = "primary_theme")
+    private String primaryTheme;
+    
+    @Column(name = "secondary_theme")
+    private String secondaryTheme;    
 
     @Column(name = "application_rating_count")
     private Integer applicationRatingCount;
@@ -431,12 +434,20 @@ public class Application extends Resource {
         this.additionalInformation = additionalInformation;
     }
 
-    public final String getTheme() {
-        return theme;
+    public final String getPrimaryTheme() {
+        return primaryTheme;
     }
 
-    public final void setTheme(String theme) {
-        this.theme = theme;
+    public final void setPrimaryTheme(String primaryTheme) {
+        this.primaryTheme = primaryTheme;
+    }
+
+    public final String getSecondaryTheme() {
+        return secondaryTheme;
+    }
+
+    public final void setSecondaryTheme(String secondaryTheme) {
+        this.secondaryTheme = secondaryTheme;
     }
 
     public final Integer getApplicationRatingCount() {

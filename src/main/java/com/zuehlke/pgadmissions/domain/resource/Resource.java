@@ -88,6 +88,10 @@ public abstract class Resource implements IUniqueEntity {
     public abstract LocalDate getLastNotifiedUpdateSyndicated();
 
     public abstract void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated);
+    
+    public abstract Integer getWorkflowPropertyConfigurationVersion();
+    
+    public abstract void setWorkflowPropertyConfigurationVersion(Integer workflowResourceConfigurationVersion);
 
     public abstract String getSequenceIdentifier();
 

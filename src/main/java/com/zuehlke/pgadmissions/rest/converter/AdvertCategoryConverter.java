@@ -29,4 +29,5 @@ public class AdvertCategoryConverter extends DozerConverter<AdvertFilterCategory
     public AdvertFilterCategory convertFrom(Object source, AdvertFilterCategory destination) {
         throw new UnsupportedOperationException();
     }
+    
 }

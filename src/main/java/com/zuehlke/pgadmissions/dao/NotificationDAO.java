@@ -1,11 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-
 import java.util.List;
 
-import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -16,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.comment.CommentState;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -214,69 +207,6 @@ public class NotificationDAO {
                         .add(Restrictions.isNull("userAccount.sendApplicationRecommendationNotification")) //
                         .add(Restrictions.lt("userAccount.lastNotifiedDateApplicationRecommendation", lastSentBaseline))) //
                 .list();
-    }
-
-    public void restoreDefaultNotificationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
-            NotificationDefinition notificationDefinition) {
-        String localeConstraint = locale == null ? "" : "and locale = " + locale.name() + " ";
-        String programTypeConstraint = programType == null ? "" : "and programType = " + programType.name();
-        sessionFactory.getCurrentSession().createQuery( //
-                "delete NotificationConfiguration " //
-                        + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
-                        + "and notificationDefinition = :notificationDefinition " //
-                        + localeConstraint //
-                        + programTypeConstraint) //
-                .setParameter("resource", resource) //
-                .setParameter("notificationDefinition", notificationDefinition) //
-                .executeUpdate();
-    }
-
-    public void restoreGlobalConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationDefinition notificationDefinition) {
-        PrismScope resourceScope = resource.getResourceScope();
-
-        String programTypeConstraint = programType == null ? "and programType is null " : "and programType = :programType ";
-        String localeConstraint = locale == null ? "and locale is null " : " and locale = :locale ";
-
-        Query query;
-        if (resourceScope == SYSTEM) {
-            query = sessionFactory.getCurrentSession().createQuery( //
-                    "delete NotificationConfiguration " //
-                            + "where notificationDefinition = :notificationDefinition " //
-                            + "and (institution in (" //
-                            + "from Institution " //
-                            + "where system = :system) " //
-                            + programTypeConstraint //
-                            + localeConstraint + " "//
-                            + "or program in (" //
-                            + "from Program " //
-                            + "where system = :system) " //
-                            + programTypeConstraint //
-                            + localeConstraint + ")");
-        } else if (resourceScope == INSTITUTION) {
-            query = sessionFactory.getCurrentSession().createQuery( //
-                    "delete NotificationConfiguration " //
-                            + "where notificationDefinition = :notificationDefinition " //
-                            + "and (program in (" //
-                            + "from Program " //
-                            + "where institution = :institution) " //
-                            + programTypeConstraint //
-                            + localeConstraint + ")");
-        } else {
-            throw new Error();
-        }
-
-        query.setParameter(resourceScope.getLowerCaseName(), resource) //
-                .setParameter("notificationDefinition", notificationDefinition);
-
-        if (programType != null) {
-            query.setParameter("programType", programType);
-        }
-
-        if (locale != null) {
-            query.setParameter("locale", locale);
-        }
-
-        query.executeUpdate();
     }
 
 }

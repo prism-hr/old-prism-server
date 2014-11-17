@@ -11,19 +11,19 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.google.common.collect.Lists;
 
-public class ActionCustomQuestionsDTO {
+public class ActionCustomQuestionConfigurationDTO {
 
-    private List<ActionCustomQuestionDTO> properties = Lists.newLinkedList();
+    private List<ActionCustomQuestionConfigurationValueDTO> values = Lists.newArrayList();
 
-    public final List<ActionCustomQuestionDTO> getProperties() {
-        return properties;
+    public final List<ActionCustomQuestionConfigurationValueDTO> getValues() {
+        return values;
     }
 
-    public final void setProperties(List<ActionCustomQuestionDTO> properties) {
-        this.properties = properties;
+    public final void setValues(List<ActionCustomQuestionConfigurationValueDTO> values) {
+        this.values = values;
     }
 
-    public static class ActionCustomQuestionDTO {
+    public static class ActionCustomQuestionConfigurationValueDTO {
 
         @NotNull
         private String name;

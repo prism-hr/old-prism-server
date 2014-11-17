@@ -202,6 +202,9 @@ public class Application extends Resource {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedUpdateSyndicated;
 
+    @Column(name = "workflow_property_configuration_version")
+    private Integer workflowPropertyConfigurationVersion;
+    
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
     
@@ -668,6 +671,16 @@ public class Application extends Resource {
     @Override
     public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
+    }
+    
+    @Override
+    public final Integer getWorkflowPropertyConfigurationVersion() {
+        return workflowPropertyConfigurationVersion;
+    }
+
+    @Override
+    public final void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
+        this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
     }
 
     @Override

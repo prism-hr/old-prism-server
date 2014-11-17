@@ -8,7 +8,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
-public class InstitutionDTO {
+public class InstitutionDTO extends ResourceDTO {
 
     @NotEmpty
     private String domicile;

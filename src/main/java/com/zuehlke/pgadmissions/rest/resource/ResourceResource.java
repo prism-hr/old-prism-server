@@ -27,7 +27,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.PrismWorkflowConfiguration;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
@@ -44,6 +44,7 @@ import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestApiUtils;
 import com.zuehlke.pgadmissions.rest.dto.ActionDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
@@ -107,7 +108,7 @@ public class ResourceResource {
         }
 
         User user = userService.getCurrentUser();
-        Object newResourceDTO = actionDTO.getOperativeResourceDTO();
+        ResourceDTO newResourceDTO = actionDTO.getOperativeResourceDTO();
         Action action = actionService.getById(actionDTO.getActionId());
 
         ActionOutcomeDTO actionOutcome = resourceService.createResource(user, action, newResourceDTO, referrer);
@@ -148,7 +149,9 @@ public class ResourceResource {
         }
         representation.setUsers(userRolesRepresentations);
 
-        representation.setWorkflowProperties(customizationService.getConfigurationRepresentations(PrismWorkflowConfiguration.WORKFLOW_PROPERTY, resource));
+        PrismConfiguration workflow = PrismConfiguration.WORKFLOW_PROPERTY;
+        representation.setWorkflowProperties(customizationService.getConfigurationRepresentations(resource, workflow.getConfigurationClass(),
+                workflow.getDefinitionClass(), workflow.getRepresentationClass()));
 
         switch (resource.getResourceScope()) {
         case APPLICATION:

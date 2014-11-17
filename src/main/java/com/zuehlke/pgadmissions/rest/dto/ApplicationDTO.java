@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-
 import javax.validation.constraints.NotNull;
 
-public class ApplicationDTO {
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+public class ApplicationDTO extends ResourceDTO {
 
     @NotNull
     private PrismScope resourceScope;

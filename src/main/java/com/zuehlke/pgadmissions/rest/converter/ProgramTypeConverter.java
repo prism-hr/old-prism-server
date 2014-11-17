@@ -20,4 +20,5 @@ public class ProgramTypeConverter extends DozerConverter<ProgramType, PrismProgr
     public ProgramType convertFrom(PrismProgramType source, ProgramType destination) {
         throw new UnsupportedOperationException();
     }
+    
 }

@@ -19,8 +19,8 @@ public enum PrismWorkflowProperty {
     APPLICATION_CRIMINAL_CONVICTION(null, null, true, null, null, APPLICATION), //
     APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR(null, 999, true, null, 5, APPLICATION), //
     APPLICATION_ASSIGN_REFEREE(null, 999, true, 3, 3, APPLICATION), //
-    APPLICATION_ASSIGN_REVIEWER(1, 999, true, 1, 0, APPLICATION), //
-    APPLICATION_ASSIGN_INTERVIEWER(1, 999, true, 1, 0, APPLICATION), //
+    APPLICATION_ASSIGN_REVIEWER(1, 999, true, 1, 999, APPLICATION), //
+    APPLICATION_ASSIGN_INTERVIEWER(1, 999, true, 1, 999, APPLICATION), //
     APPLICATION_ASSIGN_PRIMARY_SUPERVISOR(1, 999, true, 1, 1, APPLICATION), //
     APPLICATION_ASSIGN_SECONDARY_SUPERVISOR(null, 999, true, 1, 1, APPLICATION), //
     APPLICATION_POSITION_DETAIL(null, null, true, null, null, APPLICATION), //
@@ -72,10 +72,6 @@ public enum PrismWorkflowProperty {
 
     public final PrismScope getScope() {
         return scope;
-    }
-
-    public final boolean isOptional() {
-        return minimumPermitted == null;
     }
     
     public final boolean isRangeSpecification() {

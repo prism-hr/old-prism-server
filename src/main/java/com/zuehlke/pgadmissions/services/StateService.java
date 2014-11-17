@@ -115,13 +115,12 @@ public class StateService {
     }
 
     public StateDurationConfiguration getStateDurationConfiguration(Resource resource, User user, StateDurationDefinition stateDurationDefinition) {
-        return customizationService.getConfiguration(StateDurationConfiguration.class, resource, user, "stateDurationDefinition", stateDurationDefinition);
+        return customizationService.getConfiguration(resource, user, StateDurationConfiguration.class, stateDurationDefinition);
     }
 
     public StateDurationConfiguration getStateDurationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
             StateDurationDefinition statedurationDefinition) {
-        return customizationService.getConfiguration(StateDurationConfiguration.class, resource, locale, programType, "stateDurationDefinition",
-                statedurationDefinition);
+        return customizationService.getConfiguration(resource, locale, programType, StateDurationConfiguration.class, statedurationDefinition);
     }
 
     // TODO: make this work with a list of representations
@@ -475,14 +474,14 @@ public class StateService {
     public List<PrismState> getAvailableNextStates(Resource resource, Set<ActionRepresentation> permittedActions) {
         return stateDAO.getAvailableNextStates(resource, permittedActions);
     }
-    
+
     public List<State> getCurrentStates(Resource resource) {
         return stateDAO.getCurrentStates(resource);
     }
-    
+
     public List<PrismState> getRecommendedNextStates(Resource resource) {
         List<PrismState> recommendations = Lists.newLinkedList();
-        String recommendationTokens =  stateDAO.getRecommendedNextStates(resource);
+        String recommendationTokens = stateDAO.getRecommendedNextStates(resource);
         if (recommendationTokens != null) {
             for (String recommendationToken : recommendationTokens.split("|")) {
                 recommendations.add(PrismState.valueOf(recommendationToken));

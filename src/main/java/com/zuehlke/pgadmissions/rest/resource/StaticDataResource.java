@@ -24,11 +24,11 @@ import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.PrismWorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory;
@@ -159,16 +159,16 @@ public class StaticDataResource {
         staticData.put("filters", filters);
 
         Map<String, Object> workflowConfigurations = Maps.newHashMap();
-        for (PrismWorkflowConfiguration prismConfiguration : PrismWorkflowConfiguration.values()) {
+        for (PrismConfiguration prismConfiguration : PrismConfiguration.values()) {
             String name = pluralize(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, prismConfiguration.name()));
             Map<PrismScope, List<WorkflowDefinitionRepresentation>> scopeConfigurations = Maps.newHashMap();
             for (PrismScope prismScope : PrismScope.values()) {
-                List<WorkflowDefinition> definitions = customizationService.listDefinitions(prismConfiguration.getDefinitionClass(), prismScope);
+                List<? extends WorkflowDefinition> definitions = customizationService.listDefinitions(prismConfiguration.getDefinitionClass(), prismScope);
                 List<WorkflowDefinitionRepresentation> parameters = Lists.newArrayList();
                 for (WorkflowDefinition definition : definitions) {
                     WorkflowDefinitionRepresentation parameter = null;
                     switch (prismConfiguration) {
-                    case CUSTOM_QUESTION:
+                    case ACTION_CUSTOM_QUESTION:
                     case DISPLAY_PROPERTY:
                         parameter = new WorkflowDefinitionRepresentation().withId(definition.getId());
                         break;
@@ -189,7 +189,6 @@ public class StaticDataResource {
                         break;
                     case WORKFLOW_PROPERTY:
                         WorkflowPropertyDefinitionRepresentation workflowParameter = new WorkflowPropertyDefinitionRepresentation().withId(definition.getId())
-                                .withOptional((Boolean) ReflectionUtils.getProperty(definition, "optional"))
                                 .withRangeSpecification((Boolean) ReflectionUtils.getProperty(definition, "rangeSpecification"))
                                 .withMinimumPermitted((Integer) ReflectionUtils.getProperty(definition, "minimumPermitted"))
                                 .withMaximumPermitted((Integer) ReflectionUtils.getProperty(definition, "maximumPermitted"));

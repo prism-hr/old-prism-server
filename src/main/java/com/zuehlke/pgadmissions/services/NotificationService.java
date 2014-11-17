@@ -92,12 +92,12 @@ public class NotificationService {
     }
 
     public NotificationConfiguration getNotificationConfiguration(Resource resource, User user, NotificationDefinition definition) {
-        return customizationService.getConfiguration(NotificationConfiguration.class, resource, user, "notificationDefinition", definition);
+        return customizationService.getConfiguration(resource, user, NotificationConfiguration.class, definition);
     }
 
     public NotificationConfiguration getNotificationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
             NotificationDefinition definition) {
-        return customizationService.getConfiguration(NotificationConfiguration.class, resource, locale, programType, "notificationDefinition", definition);
+        return customizationService.getConfiguration(resource, locale, programType, NotificationConfiguration.class, definition);
     }
 
     public void updateNotificatonConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationDefinition definition,
@@ -116,17 +116,17 @@ public class NotificationService {
         entityService.createOrUpdate(transientConfiguration);
     }
 
-    public void restoreDefaultNotificationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
-            NotificationDefinition notificationDefinition) throws DeduplicationException, CustomizationException {
-        customizationService.validateConfiguration(resource, notificationDefinition, locale, programType);
-        notificationDAO.restoreDefaultNotificationConfiguration(resource, locale, programType, notificationDefinition);
+    public void restoreDefaultNotificationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationDefinition definition)
+            throws DeduplicationException, CustomizationException {
+        customizationService.validateConfiguration(resource, definition, locale, programType);
+        customizationService.restoreDefaultConfiguration(resource, locale, programType, NotificationConfiguration.class, definition);
         resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_NOTIFICATION_DEFAULT"));
     }
 
-    public void restoreGlobalNotificationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
-            NotificationDefinition notificationDefinition) throws DeduplicationException, CustomizationException {
+    public void restoreGlobalNotificationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationDefinition definition)
+            throws DeduplicationException, CustomizationException {
         customizationService.validateRestoreGlobalConfiguration(resource, locale, programType);
-        notificationDAO.restoreGlobalConfiguration(resource, locale, programType, notificationDefinition);
+        customizationService.restoreGlobalConfiguration(resource, locale, programType, NotificationConfiguration.class, definition);
         resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_NOTIFICATION_GLOBAL"));
     }
 
@@ -181,7 +181,7 @@ public class NotificationService {
                     && (lastExpectedReminder.isAfter(lastNotifiedDate) || lastExpectedReminder.equals(lastNotifiedDate))) {
                 sendNotification(notificationDefinition.getReminderDefinition(), new NotificationDefinitionModelDTO().withUser(user).withAuthor(author)
                         .withResource(resource).withTransitionAction(definition.getActionId()));
-                sent.put(notificationDefinition, user);       
+                sent.put(notificationDefinition, user);
                 userRole.setLastNotifiedDate(baseline);
             }
         }

@@ -1,20 +1,31 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
 
 @Entity
-@Table(name = "WORKFLOW_PROPERTY_CONFIGURATION", uniqueConstraints = {@UniqueConstraint(columnNames = {"system_id", "locale", "program_type", "workflow_property_definition_id"}),
-        @UniqueConstraint(columnNames = {"institution_id", "program_type", "workflow_property_definition_id"}),
-        @UniqueConstraint(columnNames = {"program_id", "workflow_property_definition_id"})})
+@Table(name = "WORKFLOW_PROPERTY_CONFIGURATION", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "workflow_property_definition_id", "version" }),
+        @UniqueConstraint(columnNames = { "institution_id", "program_type", "workflow_property_definition_id", "version" }),
+        @UniqueConstraint(columnNames = { "program_id", "workflow_property_definition_id", "version" }) })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class WorkflowPropertyConfiguration extends WorkflowConfiguration {
 
@@ -46,6 +57,9 @@ public class WorkflowPropertyConfiguration extends WorkflowConfiguration {
     @JoinColumn(name = "workflow_property_definition_id", nullable = false)
     private WorkflowPropertyDefinition workflowPropertyDefinition;
 
+    @Column(name = "version")
+    private Integer version;
+
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
@@ -54,6 +68,9 @@ public class WorkflowPropertyConfiguration extends WorkflowConfiguration {
 
     @Column(name = "maximum")
     private Integer maximum;
+
+    @Column(name = "active", nullable = false)
+    private Boolean active;
 
     @Column(name = "system_default", nullable = false)
     private Boolean systemDefault;
@@ -124,6 +141,14 @@ public class WorkflowPropertyConfiguration extends WorkflowConfiguration {
         this.workflowPropertyDefinition = workflowPropertyDefinition;
     }
 
+    public final Integer getVersion() {
+        return version;
+    }
+
+    public final void setVersion(Integer version) {
+        this.version = version;
+    }
+
     public final Boolean getEnabled() {
         return enabled;
     }
@@ -146,6 +171,14 @@ public class WorkflowPropertyConfiguration extends WorkflowConfiguration {
 
     public final void setMaximum(Integer maximum) {
         this.maximum = maximum;
+    }
+
+    public final Boolean getActive() {
+        return active;
+    }
+
+    public final void setActive(Boolean active) {
+        this.active = active;
     }
 
     @Override
@@ -177,6 +210,11 @@ public class WorkflowPropertyConfiguration extends WorkflowConfiguration {
         this.workflowPropertyDefinition = workflowPropertyDefinition;
         return this;
     }
+    
+    public WorkflowPropertyConfiguration withVersion(Integer version) {
+        this.version = version;
+        return this;
+    }
 
     public WorkflowPropertyConfiguration withEnabled(Boolean enabled) {
         this.enabled = enabled;
@@ -193,6 +231,11 @@ public class WorkflowPropertyConfiguration extends WorkflowConfiguration {
         return this;
     }
 
+    public WorkflowPropertyConfiguration withActive(Boolean active) {
+        this.active = active;
+        return this;
+    }
+
     public WorkflowPropertyConfiguration withSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
         return this;
@@ -204,7 +247,7 @@ public class WorkflowPropertyConfiguration extends WorkflowConfiguration {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("workflowPropertyDefinition", workflowPropertyDefinition);
+        return super.getResourceSignature().addProperty("workflowPropertyDefinition", workflowPropertyDefinition).addProperty("version", version);
     }
 
 }

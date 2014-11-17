@@ -11,8 +11,8 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismCustomQuestionType;
-import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionsDTO;
-import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionsDTO.ActionCustomQuestionDTO;
+import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionConfigurationDTO;
+import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionConfigurationDTO.ActionCustomQuestionConfigurationValueDTO;
 
 @Component
 public class ActionCustomQuestionValidator extends LocalValidatorFactoryBean implements Validator {
@@ -24,12 +24,12 @@ public class ActionCustomQuestionValidator extends LocalValidatorFactoryBean imp
 
     @Override
     public void validate(Object target, Errors errors) {
-        ActionCustomQuestionsDTO configuration = (ActionCustomQuestionsDTO) target;
+        ActionCustomQuestionConfigurationDTO configuration = (ActionCustomQuestionConfigurationDTO) target;
 
         int cumulativeRatingCount = 0;
         BigDecimal cumulativeRatingWeight = new BigDecimal(0.00);
 
-        for (ActionCustomQuestionDTO property : configuration.getProperties()) {
+        for (ActionCustomQuestionConfigurationValueDTO property : configuration.getValues()) {
             PrismCustomQuestionType type = PrismCustomQuestionType.getByComponentName(property.getName());
 
             BigDecimal weighting = property.getWeighting();

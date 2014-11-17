@@ -11,7 +11,7 @@ import org.joda.time.LocalDate;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
-public class ProgramDTO {
+public class ProgramDTO extends ResourceDTO {
 
     private Integer institutionId;
 

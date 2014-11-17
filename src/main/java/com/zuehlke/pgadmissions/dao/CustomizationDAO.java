@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SY
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.WordUtils;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
@@ -23,13 +24,11 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismWorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowResource;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -38,17 +37,314 @@ public class CustomizationDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public <T extends WorkflowResource> T getConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale, PrismProgramType programType,
-            String keyIndex, WorkflowDefinition keyValue) {
-        return (T) sessionFactory.getCurrentSession().createCriteria(entityClass) //
-                .add(getFilterCondition(resource, locale, programType, keyValue.getScope().getId())) //
-                .add(Restrictions.eq(keyIndex, keyValue)) //
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> T getConfiguration(Resource resource, PrismLocale locale,
+            PrismProgramType programType, Class<T> configurationClass, U definition) {
+        return (T) sessionFactory.getCurrentSession().createCriteria(configurationClass) //
+                .add(getFilterCondition(resource, locale, programType, definition.getScope().getId())) //
+                .add(Restrictions.eq(getLowerCaseClassReference(definition), definition)) //
                 .addOrder(Order.desc("program")) //
                 .addOrder(Order.desc("institution")) //
                 .addOrder(Order.desc("system")) //
                 .addOrder(Order.asc("systemDefault")) //
                 .setMaxResults(1) //
                 .uniqueResult();
+    }
+
+    public <T extends WorkflowConfiguration> List<T> getConfigurationVersion(Class<T> configurationClass, Integer version) {
+        return (List<T>) sessionFactory.getCurrentSession().createCriteria(configurationClass) //
+                .add(Restrictions.eq("version", version)) //
+                .addOrder(Order.asc("id")) //
+                .list();
+    }
+
+    public <T extends WorkflowDefinition> List<T> listDefinitions(Class<T> configurationClass, PrismScope definitionScope) {
+        return (List<T>) sessionFactory.getCurrentSession().createCriteria(configurationClass) //
+                .createAlias("scope", "scope", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("scope.id", definitionScope)) //
+                .addOrder(Order.asc("scope.id")) //
+                .addOrder(Order.asc("id")) //
+                .list();
+    }
+
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> List<T> listConfigurations(Resource resource, PrismScope definitionScope,
+            PrismLocale locale, PrismProgramType programType, Class<T> configurationClass, Class<U> definitionClass) {
+        String definitionReference = getLowerCaseClassReference(definitionClass);
+
+        Criterion localeCriterion = getLocaleCriterion(locale);
+        Criterion programTypeCriterion = getProgramTypeCriterion(programType, definitionScope);
+
+        return (List<T>) sessionFactory.getCurrentSession().createCriteria(configurationClass) //
+                .createAlias(definitionReference, definitionReference, JoinType.INNER_JOIN) //
+                .createAlias(definitionReference + ".scope", "definitionScope", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("definitionScope.id", definitionScope)).add(Restrictions.disjunction() //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.eq("system", resource.getSystem())) //
+                                .add(localeCriterion) //
+                                .add(programTypeCriterion)) //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.eq("system", resource.getInstitution())) //
+                                .add(programTypeCriterion)) //
+                        .add(Restrictions.eq("program", resource.getProgram()))) //
+                .addOrder(Order.asc(definitionReference)) //
+                .addOrder(Order.desc("program")) //
+                .addOrder(Order.desc("institution")) //
+                .addOrder(Order.desc("system")) //
+                .addOrder(Order.asc("systemDefault")) //
+                .list();
+    }
+
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> void restoreDefaultConfiguration(Resource resource, PrismLocale locale,
+            PrismProgramType programType, Class<T> configurationClass, Class<U> definitionClass, PrismScope definitionScope) {
+        String localeConstraint = locale == null ? "" : "and locale = :locale";
+        String programTypeConstraint = programType == null ? "" : "and programType = :programType ";
+
+        Query query = sessionFactory.getCurrentSession().createQuery( //
+                "delete " + getUpperCaseClassReference(configurationClass) + " " //
+                        + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+                        + "and " + getDefinitionScopeConstraint(definitionClass) //
+                        + localeConstraint + " " //
+                        + programTypeConstraint) //
+                .setParameter("resource", resource) //
+                .setParameter("definitionScope", definitionScope);
+
+        applyLocalizationConstraints(locale, programType, query);
+        query.executeUpdate();
+    }
+
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> void restoreDefaultConfiguration(Resource resource, PrismLocale locale,
+            PrismProgramType programType, Class<T> configurationClass, U definition) {
+        String localeConstraint = locale == null ? "" : "and locale = :locale";
+        String programTypeConstraint = programType == null ? "" : "and programType = :programType ";
+        String definitionReference = getLowerCaseClassReference(definition);
+
+        Query query = sessionFactory.getCurrentSession().createQuery( //
+                "delete " + configurationClass.getSimpleName() + " " //
+                        + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+                        + "and " + definitionReference + " = :definition " //
+                        + localeConstraint + " " //
+                        + programTypeConstraint) //
+                .setParameter("resource", resource) //
+                .setParameter("definition", definition);
+
+        applyLocalizationConstraints(locale, programType, query);
+        query.executeUpdate();
+    }
+
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> void restoreDefaultConfigurationVersion(Resource resource, PrismLocale locale,
+            PrismProgramType programType, Class<T> configurationClass, Class<U> definitionClass, PrismScope definitionScope) {
+        String localeConstraint = locale == null ? "" : "and locale = :locale";
+        String programTypeConstraint = programType == null ? "" : "and programType = :programType ";
+
+        Query query = sessionFactory.getCurrentSession().createQuery( //
+                "update " + getUpperCaseClassReference(configurationClass) + " " //
+                        + "set active = false " //
+                        + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+                        +  "and " + getDefinitionScopeConstraint(definitionClass) //
+                        + localeConstraint //
+                        + programTypeConstraint) //
+                .setParameter("resource", resource) //
+                .setParameter("definitionScope", definitionScope);
+
+        applyLocalizationConstraints(locale, programType, query);
+        query.executeUpdate();
+    }
+
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> void restoreDefaultConfigurationVersion(Resource resource, PrismLocale locale,
+            PrismProgramType programType, Class<T> configurationClass, U definition) {
+        String localeConstraint = locale == null ? "" : "and locale = :locale";
+        String programTypeConstraint = programType == null ? "" : "and programType = :programType ";
+
+        Query query = sessionFactory.getCurrentSession().createQuery( //
+                "update " + getUpperCaseClassReference(configurationClass) + " " //
+                        + "set active = false " + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+                        + "and " + getLowerCaseClassReference(definition) + " = :definition " //
+                        + localeConstraint //
+                        + programTypeConstraint) //
+                .setParameter("resource", resource) //
+                .setParameter("definition", definition);
+
+        applyLocalizationConstraints(locale, programType, query);
+        query.executeUpdate();
+    }
+
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> void restoreGlobalConfiguration(Resource resource, PrismLocale locale,
+            PrismProgramType programType, Class<T> configurationClass, Class<U> definitionClass, PrismScope definitionScope) {
+        PrismScope resourceScope = resource.getResourceScope();
+        String configurationReference = getUpperCaseClassReference(configurationClass);
+
+        String definitionConstraint = "where " + getDefinitionScopeConstraint(definitionClass);
+        String programTypeCriterion = programType == null ? "and programType is null " : "and programType = :programType ";
+        String localeCriterion = locale == null ? "and locale is null " : " and locale = :locale ";
+
+        Query query;
+        if (resourceScope == SYSTEM) {
+            query = sessionFactory.getCurrentSession().createQuery( //
+                    "delete " + configurationReference + " " //
+                            + definitionConstraint //
+                            + "and (institution in (" //
+                            + "from Institution " //
+                            + "where system = :system) " //
+                            + programTypeCriterion //
+                            + localeCriterion + " "//
+                            + "or program in (" //
+                            + "from Program " //
+                            + "where system = :system) " //
+                            + programTypeCriterion //
+                            + localeCriterion + ")");
+        } else if (resourceScope == INSTITUTION) {
+            query = sessionFactory.getCurrentSession().createQuery( //
+                    "delete " + configurationReference + " " //
+                            + definitionConstraint //
+                            + "and (program in (" //
+                            + "from Program " //
+                            + "where institution = :institution) " //
+                            + programTypeCriterion //
+                            + localeCriterion + ")");
+        } else {
+            throw new Error();
+        }
+
+        query.setParameter(resourceScope.getLowerCaseName(), resource) //
+                .setParameter("definitionScope", definitionScope) //
+                .setParameter("locale", locale) //
+                .setParameter("programType", programType) //
+                .executeUpdate();
+    }
+
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> void restoreGlobalConfiguration(Resource resource, PrismLocale locale,
+            PrismProgramType programType, Class<T> configurationClass, U definition) {
+        PrismScope resourceScope = resource.getResourceScope();
+        String configurationReference = getUpperCaseClassReference(configurationClass);
+
+        String definitionConstraint = "where " + getLowerCaseClassReference(definition) + " = :definition ";
+        String programTypeCriterion = programType == null ? "and programType is null " : "and programType = :programType ";
+        String localeCriterion = locale == null ? "and locale is null " : " and locale = :locale ";
+
+        Query query;
+        if (resourceScope == SYSTEM) {
+            query = sessionFactory.getCurrentSession().createQuery( //
+                    "delete " + configurationReference + " " //
+                            + definitionConstraint //
+                            + "and (institution in (" //
+                            + "from Institution " //
+                            + "where system = :system) " //
+                            + programTypeCriterion //
+                            + localeCriterion + " "//
+                            + "or program in (" //
+                            + "from Program " //
+                            + "where system = :system) " //
+                            + programTypeCriterion //
+                            + localeCriterion + ")");
+        } else if (resourceScope == INSTITUTION) {
+            query = sessionFactory.getCurrentSession().createQuery( //
+                    "delete " + configurationReference + " " //
+                            + definitionConstraint //
+                            + "and (program in (" //
+                            + "from Program " //
+                            + "where institution = :institution) " //
+                            + programTypeCriterion //
+                            + localeCriterion + ")");
+        } else {
+            throw new Error();
+        }
+
+        query.setParameter(resourceScope.getLowerCaseName(), resource) //
+                .setParameter("definition", definition) //
+                .setParameter("locale", locale) //
+                .setParameter("programType", programType) //
+                .executeUpdate();
+    }
+
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> void restoreGlobalConfigurationVersion(Resource resource, PrismLocale locale,
+            PrismProgramType programType, Class<T> configurationClass, Class<U> definitionClass, PrismScope definitionScope) {
+        PrismScope resourceScope = resource.getResourceScope();
+        String configurationReference = getUpperCaseClassReference(configurationClass);
+
+        String definitionConstraint = "where " + getDefinitionScopeConstraint(definitionClass);
+        String programTypeCriterion = programType == null ? "and programType is null " : "and programType = :programType ";
+        String localeCriterion = locale == null ? "and locale is null " : " and locale = :locale ";
+
+        Query query;
+        if (resourceScope == SYSTEM) {
+            query = sessionFactory.getCurrentSession().createQuery( //
+                    "update " + configurationReference + " " //
+                            + "set active = false " //
+                            + definitionConstraint //
+                            + "and (institution in (" //
+                            + "from Institution " //
+                            + "where system = :system) " //
+                            + programTypeCriterion //
+                            + localeCriterion + " "//
+                            + "or program in (" //
+                            + "from Program " //
+                            + "where system = :system) " //
+                            + programTypeCriterion //
+                            + localeCriterion + ")");
+        } else if (resourceScope == INSTITUTION) {
+            query = sessionFactory.getCurrentSession().createQuery( //
+                    "update " + configurationReference + " " //
+                            + "set active = false " //
+                            + definitionConstraint //
+                            + "and (program in (" //
+                            + "from Program " //
+                            + "where institution = :institution) " //
+                            + programTypeCriterion //
+                            + localeCriterion + ")");
+        } else {
+            throw new Error();
+        }
+
+        query.setParameter(resourceScope.getLowerCaseName(), resource) //
+                .setParameter("definitionScope", definitionScope) //
+                .setParameter("locale", locale) //
+                .setParameter("programType", programType) //
+                .executeUpdate();
+    }
+
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> void restoreGlobalConfigurationVersion(Resource resource, PrismLocale locale,
+            PrismProgramType programType, Class<T> configurationClass, U definition) {
+        PrismScope resourceScope = resource.getResourceScope();
+        String configurationReference = getUpperCaseClassReference(configurationClass);
+
+        String definitionConstraint = "where " + getLowerCaseClassReference(definition) + " = :definition ";
+        String programTypeCriterion = programType == null ? "and programType is null " : "and programType = :programType ";
+        String localeCriterion = locale == null ? "and locale is null " : " and locale = :locale ";
+
+        Query query;
+        if (resourceScope == SYSTEM) {
+            query = sessionFactory.getCurrentSession().createQuery( //
+                    "update " + configurationReference + " " //
+                            + "set active = false " //
+                            + definitionConstraint //
+                            + "and (institution in (" //
+                            + "from Institution " //
+                            + "where system = :system) " //
+                            + programTypeCriterion //
+                            + localeCriterion + " "//
+                            + "or program in (" //
+                            + "from Program " //
+                            + "where system = :system) " //
+                            + programTypeCriterion //
+                            + localeCriterion + ")");
+        } else if (resourceScope == INSTITUTION) {
+            query = sessionFactory.getCurrentSession().createQuery( //
+                    "update " + configurationReference + " " //
+                            + "set active = false " //
+                            + definitionConstraint //
+                            + "and (program in (" //
+                            + "from Program " //
+                            + "where institution = :institution) " //
+                            + programTypeCriterion //
+                            + localeCriterion + ")");
+        } else {
+            throw new Error();
+        }
+
+        query.setParameter(resourceScope.getLowerCaseName(), resource) //
+                .setParameter("definition", definition) //
+                .setParameter("locale", locale) //
+                .setParameter("programType", programType) //
+                .executeUpdate();
     }
 
     public List<DisplayPropertyConfiguration> getDisplayProperties(Resource resource, PrismLocale locale, PrismProgramType programType,
@@ -62,119 +358,6 @@ public class CustomizationDAO {
                 .addOrder(Order.desc("system")) //
                 .addOrder(Order.asc("systemDefault")) //
                 .list();
-    }
-
-    public <T extends WorkflowDefinition> List<WorkflowDefinition> listDefinitions(Class<T> entityClass, PrismScope scope) {
-        return (List<WorkflowDefinition>) sessionFactory.getCurrentSession().createCriteria(entityClass) //
-                .createAlias("scope", "scope", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("scope.id", scope)) //
-                .addOrder(Order.asc("scope.id")) //
-                .addOrder(Order.asc("id")) //
-                .list();
-    }
-
-    public <T extends WorkflowResource> List<T> listConfigurations(PrismWorkflowConfiguration configurationType, Resource resource, PrismScope definitionScope,
-            PrismLocale locale, PrismProgramType programType) {
-        String definitionReference = configurationType.getDefinitionPropertyName();
-
-        Criterion localeCriterion = getLocaleCriterion(locale);
-        Criterion programTypeCriterion = getProgramTypeCriterion(programType, definitionScope);
-
-        return (List<T>) sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
-                .createAlias(definitionReference, definitionReference, JoinType.INNER_JOIN) //
-                .createAlias(definitionReference + ".scope", "definitionScope", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("definitionScope.id", definitionScope)).add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq("system", resource.getSystem())) //
-                                .add(localeCriterion) //
-                                .add(programTypeCriterion)) //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq("institution", resource.getInstitution())) //
-                                .add(programTypeCriterion)) //
-                        .add(Restrictions.eq("program", resource.getProgram()))) //
-                .addOrder(Order.asc(configurationType.getDefinitionPropertyName())) //
-                .addOrder(Order.desc("program")) //
-                .addOrder(Order.desc("institution")) //
-                .addOrder(Order.desc("system")) //
-                .addOrder(Order.asc("systemDefault")) //
-                .list();
-    }
-
-    public <T extends WorkflowConfiguration> void restoreDefaultConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale,
-            PrismProgramType programType) {
-        String localeConstraint = locale == null ? "" : "and locale = " + locale.name() + " ";
-        String programTypeConstraint = programType == null ? "" : "and programType = " + programType.name();
-        sessionFactory.getCurrentSession().createQuery( //
-                "delete " + entityClass.getClass().getSimpleName() + " " //
-                        + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
-                        + localeConstraint //
-                        + programTypeConstraint) //
-                .setParameter("resource", resource) //
-                .executeUpdate();
-    }
-
-    public <T extends WorkflowConfiguration> T getConfigurationStrict(Class<T> entityClass, Resource resource, PrismLocale locale, PrismProgramType programType) {
-        return (T) sessionFactory.getCurrentSession().createCriteria(entityClass) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
-                .add(Restrictions.eq("locale", locale)) //
-                .add(Restrictions.eqOrIsNull("programType", programType)) //
-                .uniqueResult();
-    }
-
-    public <T extends WorkflowConfiguration> T getConfigurationStrict(Class<T> entityClass, Resource resource, PrismLocale locale,
-            PrismProgramType programType, String keyIndex, WorkflowDefinition keyValue) {
-        return (T) sessionFactory.getCurrentSession().createCriteria(entityClass) //
-                .add(Restrictions.eq(keyIndex, keyValue)) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
-                .add(Restrictions.eq("locale", locale)) //
-                .add(Restrictions.eqOrIsNull("programType", programType)) //
-                .uniqueResult();
-    }
-
-    public <T extends WorkflowConfiguration> void restoreGlobalConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale,
-            PrismProgramType programType) {
-        PrismScope resourceScope = resource.getResourceScope();
-
-        String programTypeConstraint = programType == null ? "and programType is null " : "and programType = :programType ";
-        String localeConstraint = locale == null ? "and locale is null " : " and locale = :locale ";
-
-        Query query;
-        if (resourceScope == SYSTEM) {
-            query = sessionFactory.getCurrentSession().createQuery( //
-                    "delete " + entityClass.getSimpleName() + " " //
-                            + "and (institution in (" //
-                            + "from Institution " //
-                            + "where system = :system) " //
-                            + programTypeConstraint //
-                            + localeConstraint + " "//
-                            + "or program in (" //
-                            + "from Program " //
-                            + "where system = :system) " //
-                            + programTypeConstraint //
-                            + localeConstraint + ")");
-        } else if (resourceScope == INSTITUTION) {
-            query = sessionFactory.getCurrentSession().createQuery( //
-                    "delete " + entityClass.getSimpleName() + " " //
-                            + "and (program in (" //
-                            + "from Program " //
-                            + "where institution = :institution) " //
-                            + programTypeConstraint //
-                            + localeConstraint + ")");
-        } else {
-            throw new Error();
-        }
-
-        query.setParameter(resourceScope.getLowerCaseName(), resource);
-
-        if (programType != null) {
-            query.setParameter("programType", programType);
-        }
-
-        if (locale != null) {
-            query.setParameter("locale", locale);
-        }
-
-        query.executeUpdate();
     }
 
     private Junction getFilterCondition(Resource resource, PrismLocale locale, PrismProgramType programType, PrismScope definitionScope) {
@@ -199,6 +382,34 @@ public class CustomizationDAO {
     private Criterion getProgramTypeCriterion(PrismProgramType programType, PrismScope definitionScope) {
         return definitionScope.getPrecedence() < PROGRAM.getPrecedence() ? Restrictions.isNull("programType") : programType == null ? Restrictions.eq(
                 "programType", getSystemProgramType()) : Restrictions.in("programType", Arrays.asList(programType, getSystemProgramType()));
+    }
+
+    private void applyLocalizationConstraints(PrismLocale locale, PrismProgramType programType, Query query) {
+        if (locale != null) {
+            query.setParameter("locale", locale);
+        }
+
+        if (programType != null) {
+            query.setParameter("programType", programType);
+        }
+    }
+
+    private <U extends WorkflowDefinition> String getDefinitionScopeConstraint(Class<U> definitionClass) {
+        return getLowerCaseClassReference(definitionClass) + " in (" //
+                + "from " + getUpperCaseClassReference(definitionClass) + " " //
+                + "where scope.id =: definitionScope) ";
+    }
+
+    private static String getUpperCaseClassReference(Class<?> objectClass) {
+        return objectClass.getSimpleName();
+    }
+
+    private static String getLowerCaseClassReference(Object object) {
+        return WordUtils.uncapitalize(getLowerCaseClassReference(object.getClass()));
+    }
+
+    private static String getLowerCaseClassReference(Class<?> objectClass) {
+        return WordUtils.uncapitalize(objectClass.getSimpleName());
     }
 
 }

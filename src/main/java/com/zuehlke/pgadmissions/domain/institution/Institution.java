@@ -201,6 +201,9 @@ public class Institution extends ResourceParent {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedUpdateSyndicated;
 
+    @Column(name = "workflow_property_configuration_version")
+    private Integer workflowPropertyConfigurationVersion;
+    
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
 
@@ -754,6 +757,16 @@ public class Institution extends ResourceParent {
     @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
+    }
+
+    @Override
+    public final Integer getWorkflowPropertyConfigurationVersion() {
+        return workflowPropertyConfigurationVersion;
+    }
+
+    @Override
+    public final void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
+        this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
     }
 
     public Set<Program> getPrograms() {

@@ -24,9 +24,6 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
     @Enumerated(EnumType.STRING)
     private PrismWorkflowProperty id;
 
-    @Column(name = "optional", nullable = false)
-    private Boolean optional;
-
     @Column(name = "range_specification", nullable = false)
     private Boolean rangeSpecification;
 
@@ -47,14 +44,6 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
 
     public final void setId(PrismWorkflowProperty id) {
         this.id = id;
-    }
-
-    public final Boolean getOptional() {
-        return optional;
-    }
-
-    public final void setOptional(Boolean optional) {
-        this.optional = optional;
     }
 
     public final Boolean getRangeSpecification() {
@@ -93,11 +82,6 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
 
     public WorkflowPropertyDefinition withId(PrismWorkflowProperty id) {
         this.id = id;
-        return this;
-    }
-
-    public WorkflowPropertyDefinition withOptional(Boolean optional) {
-        this.optional = optional;
         return this;
     }
 

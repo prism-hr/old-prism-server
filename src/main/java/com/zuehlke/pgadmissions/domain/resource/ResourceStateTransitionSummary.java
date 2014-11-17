@@ -182,7 +182,7 @@ public class ResourceStateTransitionSummary extends WorkflowResourceExecution {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("stateGroup", stateGroup).addProperty("nextStateSelection", transitionStateSelection);
+        return super.getResourceSignature().addProperty("stateGroup", stateGroup).addProperty("transitionStateSelection", transitionStateSelection);
     }
 
 }

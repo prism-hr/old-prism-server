@@ -73,24 +73,19 @@ public class CommentDTO {
     private ProjectDTO project;
 
     @Valid
-    @NotEmpty
     private Set<CommentAssignedUserDTO> assignedUsers;
 
     @Valid
-    @NotEmpty
     private Set<CommentTransitionStateDTO> transitionStates;
 
-    @NotEmpty
     private Set<LocalDateTime> appointmentTimeslots;
 
-    @NotEmpty
     private Set<Integer> appointmentPreferences;
 
     @Valid
     private CustomQuestionResponseDTO customQuestionResponse;
 
     @Valid
-    @NotEmpty
     private Set<FileDTO> documents = Sets.newLinkedHashSet();
 
     public Integer getUser() {

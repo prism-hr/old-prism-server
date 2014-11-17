@@ -364,7 +364,7 @@ public class ActionDAO {
                         .add(Projections.property("action.id"), "actionId")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("action.scope.id", resourceScope)) //
-                .add(Restrictions.ne("action.scope.id", PrismScope.APPLICATION)) //
+                .add(Restrictions.ne("action.creationScope.id", PrismScope.APPLICATION)) //
                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
                 .add(Restrictions.eq("action.actionCategory", PrismActionCategory.CREATE_RESOURCE)) //
                 .setResultTransformer(Transformers.aliasToBean(StateActionDTO.class)) //

@@ -52,7 +52,7 @@ public class CustomizationService {
 
     @Autowired
     private SystemService systemService;
-    
+
     @Autowired
     private UserService userService;
 
@@ -117,13 +117,13 @@ public class CustomizationService {
         PrismLocale locale = resourceScope == SYSTEM ? userService.getCurrentUser().getLocale() : resource.getLocale();
         PrismProgramType programType = resourceScope.getPrecedence() > INSTITUTION.getPrecedence() ? resource.getProgram().getProgramType()
                 .getPrismProgramType() : null;
-        return getConfigurationRepresentations(configurationType, resource, locale, programType);
+        return getConfigurationRepresentations(configurationType, resource, resource.getResourceScope(), locale, programType);
     }
 
     public List<AbstractConfigurationRepresentation> getConfigurationRepresentations(PrismWorkflowConfiguration configurationType, Resource resource,
-            PrismLocale locale, PrismProgramType programType) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+            PrismScope scope, PrismLocale locale, PrismProgramType programType) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         resource = resource.getResourceScope().getPrecedence() > PrismScope.PROGRAM.getPrecedence() ? resource.getProgram() : resource;
-        List<WorkflowConfiguration> configurations = listConfigurations(configurationType, resource, locale, programType);
+        List<WorkflowConfiguration> configurations = listConfigurations(configurationType, resource, scope, locale, programType);
 
         List<AbstractConfigurationRepresentation> representations = Lists.newArrayListWithCapacity(configurations.size());
         String definitionPropertyName = configurationType.getDefinitionPropertyName();
@@ -198,9 +198,9 @@ public class CustomizationService {
         return entityService.list(DisplayPropertyConfiguration.class);
     }
 
-    private <T extends WorkflowConfiguration> List<T> listConfigurations(PrismWorkflowConfiguration configurationType, Resource resource, PrismLocale locale,
-            PrismProgramType programType) {
-        List<T> configurations = customizationDAO.listConfigurations(configurationType, resource, locale, programType);
+    private <T extends WorkflowConfiguration> List<T> listConfigurations(PrismWorkflowConfiguration configurationType, Resource resource,
+            PrismScope definitionScope, PrismLocale locale, PrismProgramType programType) {
+        List<T> configurations = customizationDAO.listConfigurations(configurationType, resource, definitionScope, locale, programType);
 
         if (configurations.isEmpty()) {
             return configurations;

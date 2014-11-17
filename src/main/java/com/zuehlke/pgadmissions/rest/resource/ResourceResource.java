@@ -13,7 +13,6 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,15 +23,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismWorkflowConfiguration;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -84,7 +86,7 @@ public class ResourceResource {
 
     @Autowired
     private StateService stateService;
-    
+
     @Autowired
     private CustomizationService customizationService;
 
@@ -145,7 +147,7 @@ public class ResourceResource {
             userRolesRepresentations.add(new ResourceUserRolesRepresentation(userRepresentation, roles));
         }
         representation.setUsers(userRolesRepresentations);
-        
+
         representation.setWorkflowProperties(customizationService.getConfigurationRepresentations(PrismWorkflowConfiguration.WORKFLOW_PROPERTY, resource));
 
         switch (resource.getResourceScope()) {
@@ -167,13 +169,16 @@ public class ResourceResource {
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
         DateTime baseline = new DateTime().minusDays(1);
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
+        HashMultimap<PrismState, PrismAction> creationActions = actionService.getCreateResourceActionsByState(resourceScope);
+
         List<ResourceConsoleListRowDTO> rowDTOs = resourceService.getResourceConsoleList(resourceScope, filterDTO, lastSequenceIdentifier);
         for (ResourceConsoleListRowDTO rowDTO : rowDTOs) {
             ResourceListRowRepresentation representation = dozerBeanMapper.map(rowDTO, ResourceListRowRepresentation.class);
             representation.setResourceScope(resourceScope);
-            representation.setActions(actionService.getPermittedActions(resourceScope, rowDTO.getSystemId(), rowDTO.getInstitutionId(), rowDTO.getProgramId(),
-                    rowDTO.getProjectId(), rowDTO.getApplicationId(), currentUser));
             representation.setId((Integer) PropertyUtils.getSimpleProperty(rowDTO, resourceScope.getLowerCaseName() + "Id"));
+
+            addActions(currentUser, resourceScope, creationActions, rowDTO, representation);
+
             for (String scopeName : new String[] { "institution", "program", "project" }) {
                 Integer id = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Id");
                 if (id != null) {
@@ -237,6 +242,15 @@ public class ResourceResource {
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
         return RestApiUtils.getResourceDescriptor(resourceScope);
+    }
+
+    private void addActions(User currentUser, PrismScope resourceScope, HashMultimap<PrismState, PrismAction> creationActions,
+            ResourceConsoleListRowDTO rowDTO, ResourceListRowRepresentation representation) {
+        representation.setActions(actionService.getPermittedActions(resourceScope, rowDTO.getSystemId(), rowDTO.getInstitutionId(), rowDTO.getProgramId(),
+                rowDTO.getProjectId(), rowDTO.getApplicationId(), currentUser));
+        for (PrismAction creationAction : creationActions.get(rowDTO.getStateId())) {
+            representation.addAction(new ActionRepresentation().withName(creationAction).withRaisesUrgentFlag(false));
+        }
     }
 
 }

@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
+import com.zuehlke.pgadmissions.dto.StateActionDTO;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
@@ -326,6 +327,14 @@ public class ActionService {
             return;
         }
         throwWorkflowPermissionException(resource, action);
+    }
+    
+    public HashMultimap<PrismState, PrismAction> getCreateResourceActionsByState(PrismScope resourceScope) {
+        HashMultimap<PrismState, PrismAction> creationActions = HashMultimap.create();
+        for (StateActionDTO stateActionDTO : actionDAO.getCreateResourceActionsByState(resourceScope)) {
+            creationActions.put(stateActionDTO.getStateId(), stateActionDTO.getActionId());
+        }
+        return creationActions;
     }
 
     private boolean checkActionAvailable(Resource resource, Action action, User invoker) {

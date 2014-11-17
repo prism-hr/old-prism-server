@@ -6,6 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -72,20 +73,24 @@ public class CustomizationDAO {
                 .list();
     }
 
-    public <T extends WorkflowResource> List<T> listConfigurations(PrismWorkflowConfiguration configurationType, Resource resource, PrismLocale locale,
-            PrismProgramType programType) {
-        Criterion programTypeConstraint = programType == null ? Restrictions.isNull("programType") : Restrictions.in("programType",
-                Lists.newArrayList(programType, getSystemProgramType()));
+    public <T extends WorkflowResource> List<T> listConfigurations(PrismWorkflowConfiguration configurationType, Resource resource, PrismScope definitionScope,
+            PrismLocale locale, PrismProgramType programType) {
+        String definitionReference = configurationType.getDefinitionPropertyName();
+
+        Criterion localeCriterion = getLocaleCriterion(locale);
+        Criterion programTypeCriterion = getProgramTypeCriterion(programType, definitionScope);
 
         return (List<T>) sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
-                .add(Restrictions.disjunction() //
+                .createAlias(definitionReference, definitionReference, JoinType.INNER_JOIN) //
+                .createAlias(definitionReference + ".scope", "definitionScope", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("definitionScope.id", definitionScope)).add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.eq("system", resource.getSystem())) //
-                                .add(Restrictions.in("locale", Lists.newArrayList(locale, getSystemLocale()))) //
-                                .add(programTypeConstraint)) //
+                                .add(localeCriterion) //
+                                .add(programTypeCriterion)) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.eq("institution", resource.getInstitution())) //
-                                .add(programTypeConstraint)) //
+                                .add(programTypeCriterion)) //
                         .add(Restrictions.eq("program", resource.getProgram()))) //
                 .addOrder(Order.asc(configurationType.getDefinitionPropertyName())) //
                 .addOrder(Order.desc("program")) //
@@ -173,22 +178,27 @@ public class CustomizationDAO {
     }
 
     private Junction getFilterCondition(Resource resource, PrismLocale locale, PrismProgramType programType, PrismScope definitionScope) {
-        Criterion programTypeRestriction;
-        if (programType == null || definitionScope.getPrecedence() < PROGRAM.getPrecedence()) {
-            programTypeRestriction = Restrictions.isNull("programType");
-        } else {
-            programTypeRestriction = Restrictions.in("programType", Lists.newArrayList(programType, getSystemProgramType()));
-        }
+        Criterion localeCriterion = getLocaleCriterion(locale);
+        Criterion programTypeCriterion = getProgramTypeCriterion(programType, definitionScope);
 
         return Restrictions.disjunction() //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.eq("system", resource.getSystem())) //
-                        .add(Restrictions.in("locale", Lists.newArrayList(locale, getSystemLocale()))) //
-                        .add(programTypeRestriction)) //
+                        .add(localeCriterion) //
+                        .add(programTypeCriterion)) //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.eq("institution", resource.getInstitution())) //
-                        .add(programTypeRestriction)) //
+                        .add(programTypeCriterion)) //
                 .add(Restrictions.eq("program", resource.getProgram()));
+    }
+
+    private Criterion getLocaleCriterion(PrismLocale locale) {
+        return locale == null ? Restrictions.eq("locale", getSystemLocale()) : Restrictions.in("locale", Lists.newArrayList(locale, getSystemLocale()));
+    }
+
+    private Criterion getProgramTypeCriterion(PrismProgramType programType, PrismScope definitionScope) {
+        return definitionScope.getPrecedence() < PROGRAM.getPrecedence() ? Restrictions.isNull("programType") : programType == null ? Restrictions.eq(
+                "programType", getSystemProgramType()) : Restrictions.in("programType", Arrays.asList(programType, getSystemProgramType()));
     }
 
 }

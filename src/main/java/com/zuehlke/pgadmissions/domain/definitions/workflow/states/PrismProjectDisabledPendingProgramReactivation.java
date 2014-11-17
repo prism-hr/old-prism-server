@@ -44,6 +44,17 @@ public class PrismProjectDisabledPendingProgramReactivation extends PrismWorkflo
                         .withRole(PrismRole.PROGRAM_ADMINISTRATOR)))); //
         
         stateActions.add(new PrismStateAction() //
+            .withAction(PrismAction.PROJECT_ESCALATE) //
+            .withRaisesUrgentFlag(false) //
+            .withDefaultAction(false) //
+                .withTransitions(Arrays.asList( // 
+                    new PrismStateTransition() // 
+                        .withTransitionState(PrismState.PROJECT_DISABLED_COMPLETED) // 
+                        .withTransitionAction(PrismAction.PROJECT_ESCALATE)// 
+                        .withPropagatedActions(Arrays.asList( //
+                                PrismAction.APPLICATION_TERMINATE))))); //
+        
+        stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_RESTORE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //

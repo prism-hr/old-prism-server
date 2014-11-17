@@ -14,6 +14,7 @@ import com.zuehlke.pgadmissions.integration.helpers.SystemDataImportHelper;
 import com.zuehlke.pgadmissions.integration.helpers.SystemInitialisationHelper;
 import com.zuehlke.pgadmissions.integration.helpers.WorkflowConfigurationHelper;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
+import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -24,6 +25,9 @@ public class LifecycleTest {
     @Autowired
     private SystemService systemService;
 
+    @Autowired
+    private EntityService entityService;
+    
     @Autowired
     private MailSenderMock mailSenderMock;
     
@@ -66,6 +70,7 @@ public class LifecycleTest {
             }
 
             mailSenderMock.verify();
+            entityService.flush();
         }
         
         systemDataImportHelper.verifyImport();

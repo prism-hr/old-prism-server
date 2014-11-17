@@ -365,7 +365,24 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE);
     }
 
-    public void updateAdditionalInformation(Integer applicationId, ApplicationAdditionalInformationDTO additionalInformationDTO) throws DeduplicationException {
+    public void updateDocument(Integer applicationId, ApplicationDocumentDTO documentDTO) {
+        Application application = applicationService.getById(applicationId);
+
+        ApplicationDocument document = application.getDocument();
+        if (document == null) {
+            document = new ApplicationDocument();
+            application.setDocument(document);
+        }
+
+        Document cv = entityService.getById(Document.class, document.getCv().getId());
+        Document personalStatement = entityService.getById(Document.class, document.getPersonalStatement().getId());
+        // TODO save covering letter
+        document.setCv(cv);
+        document.setPersonalStatement(personalStatement);
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_DOCUMENT);
+    }
+
+    public void updateAdditionalInformation(Integer applicationId, ApplicationAdditionalInformationDTO additionalInformationDTO) {
         Application application = applicationService.getById(applicationId);
 
         ApplicationAdditionalInformation additionalInformation = application.getAdditionalInformation();
@@ -464,5 +481,6 @@ public class ApplicationSectionService {
             resourceService.executeUpdate(application, messageIndex, assignee);
         }
     }
+
 
 }

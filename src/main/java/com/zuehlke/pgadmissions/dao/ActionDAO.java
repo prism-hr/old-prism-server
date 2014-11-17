@@ -2,13 +2,10 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PURGE_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -19,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
@@ -31,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
@@ -312,73 +306,6 @@ public class ActionDAO {
     public List<Action> getConfigurableActions() {
         return (List<Action>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
                 .add(Restrictions.eq("configurableAction", true)) //
-                .list();
-    }
-
-    public void deleteActionConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action) {
-        String localeConstraint = locale == null ? "" : "and locale = " + locale.name() + " ";
-        String programTypeConstraint = programType == null ? "" : "and programType = " + programType.name();
-        sessionFactory.getCurrentSession().createQuery( //
-                "update ActionPropertyConfiguration " //
-                        + "set active = false " //
-                        + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
-                        + localeConstraint //
-                        + programTypeConstraint).setParameter("resource", resource).executeUpdate();
-    }
-
-    public void restoreGlobalActionConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action) {
-        PrismScope resourceScope = resource.getResourceScope();
-        String programTypeConstraint = programType == null ? "and programType is null " : "and programType = :programType ";
-        String localeConstraint = locale == null ? "and locale is null " : " and locale = :locale ";
-
-        Query query;
-        if (resourceScope == SYSTEM) {
-            query = sessionFactory.getCurrentSession().createQuery( //
-                    "update ActionPropertyConfiguration " //
-                            + "set active = false " //
-                            + "where action = :action " //
-                            + "and (institution in (" //
-                            + "from Institution " //
-                            + "where system = :system) " //
-                            + programTypeConstraint //
-                            + localeConstraint + " "//
-                            + "or program in (" //
-                            + "from Program " //
-                            + "where system = :system) " //
-                            + programTypeConstraint //
-                            + localeConstraint + ")");
-        } else if (resourceScope == INSTITUTION) {
-            query = sessionFactory.getCurrentSession().createQuery( //
-                    "update ActionPropertyConfiguration " //
-                            + "set active = false " //
-                            + "where action = :action " //
-                            + "and (program in (" //
-                            + "from Program " //
-                            + "where institution = :institution) " //
-                            + programTypeConstraint //
-                            + localeConstraint + ")");
-        } else {
-            throw new Error();
-        }
-
-        query.setParameter(resourceScope.getLowerCaseName(), resource) //
-                .setParameter("action", action);
-
-        if (programType != null) {
-            query.setParameter("programType", programType);
-        }
-
-        if (locale != null) {
-            query.setParameter("locale", locale);
-        }
-
-        query.executeUpdate();
-    }
-
-    public List<ActionCustomQuestionConfiguration> getActionPropertyConfigurationByVersion(Integer version) {
-        return (List<ActionCustomQuestionConfiguration>) sessionFactory.getCurrentSession().createCriteria(ActionCustomQuestionConfiguration.class) //
-                .add(Restrictions.eq("version", version)) //
-                .addOrder(Order.asc("index")) //
                 .list();
     }
 

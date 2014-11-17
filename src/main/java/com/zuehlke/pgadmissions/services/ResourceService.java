@@ -56,6 +56,7 @@ import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
@@ -129,33 +130,34 @@ public class ResourceService {
         }
     }
 
-    public ActionOutcomeDTO createResource(User user, Action action, Object newResourceDTO, String referrer) throws Exception {
+    public ActionOutcomeDTO createResource(User user, Action action, ResourceDTO resourceDTO, String referrer) throws Exception {
         Resource resource = null;
         PrismScope resourceScope = action.getCreationScope().getId();
 
         switch (resourceScope) {
         case INSTITUTION:
-            resource = institutionService.create(user, (InstitutionDTO) newResourceDTO);
+            resource = institutionService.create(user, (InstitutionDTO) resourceDTO);
             break;
         case PROGRAM:
-            resource = programService.create(user, (ProgramDTO) newResourceDTO);
+            resource = programService.create(user, (ProgramDTO) resourceDTO);
             break;
         case PROJECT:
-            resource = projectService.create(user, (ProjectDTO) newResourceDTO);
+            resource = projectService.create(user, (ProjectDTO) resourceDTO);
             break;
         case APPLICATION:
-            resource = applicationService.create(user, (ApplicationDTO) newResourceDTO);
+            resource = applicationService.create(user, (ApplicationDTO) resourceDTO);
             break;
         default:
             actionService.throwWorkflowEngineException(resource, action, "Attempted to create a resource of invalid type");
         }
 
         if (entityService.getDuplicateEntity(resource) != null && !user.isEnabled()) {
-            // TODO throw PrismValidationException
             actionService.throwWorkflowPermissionException(resource, action);
         }
 
         resource.setReferrer(referrer);
+        resource.setWorkflowPropertyConfigurationVersion(resourceDTO.getWorkflowDisplayConfigurationVersion());
+
         user.setLatestCreationScope(scopeService.getById(resourceScope));
         Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                 .addAssignedUser(user, roleService.getCreatorRole(resource), PrismRoleTransitionType.CREATE);

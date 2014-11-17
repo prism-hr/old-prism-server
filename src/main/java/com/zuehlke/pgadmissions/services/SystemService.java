@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
+
 import java.util.HashMap;
 import java.util.Set;
 
@@ -62,6 +65,8 @@ import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
+import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO;
+import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.FileUtils;
@@ -359,9 +364,8 @@ public class SystemService {
         for (PrismWorkflowProperty prismWorkflowProperty : PrismWorkflowProperty.values()) {
             Scope scope = scopeService.getById(prismWorkflowProperty.getScope());
             WorkflowPropertyDefinition transientWorkflowPropertyDefinition = new WorkflowPropertyDefinition().withId(prismWorkflowProperty)
-                    .withOptional(prismWorkflowProperty.isOptional()).withRangeSpecification(prismWorkflowProperty.isRangeSpecification())
-                    .withMinimumPermitted(prismWorkflowProperty.getMinimumPermitted()).withMaximumPermitted(prismWorkflowProperty.getMaximumPermitted())
-                    .withScope(scope);
+                    .withRangeSpecification(prismWorkflowProperty.isRangeSpecification()).withMinimumPermitted(prismWorkflowProperty.getMinimumPermitted())
+                    .withMaximumPermitted(prismWorkflowProperty.getMaximumPermitted()).withScope(scope);
             entityService.createOrUpdate(transientWorkflowPropertyDefinition);
         }
     }
@@ -403,12 +407,22 @@ public class SystemService {
     }
 
     private void initializeWorkflowPropertyConfigurations(System system) throws DeduplicationException, CustomizationException {
-        for (PrismWorkflowProperty prismWorkflowProperty : PrismWorkflowProperty.values()) {
-            Scope scope = scopeService.getById(prismWorkflowProperty.getScope());
-            WorkflowPropertyDefinition workflowPropertyDefinition = workflowService.getWorkflowPropertyDefinitionById(prismWorkflowProperty);
-            PrismProgramType programType = scope.getPrecedence() > PrismScope.INSTITUTION.getPrecedence() ? PrismProgramType.getSystemProgramType() : null;
-            workflowService.createOrUpdateWorkflowPropertyConfiguration(system, PrismLocale.getSystemLocale(), programType, workflowPropertyDefinition,
-                    prismWorkflowProperty.isDefaultEnabled(), prismWorkflowProperty.getDefaultMinimum(), prismWorkflowProperty.getDefaultMaximum());
+        for (PrismScope prismScope : scopeService.getScopesDescending()) {
+            WorkflowPropertyConfigurationDTO configurationDTO = new WorkflowPropertyConfigurationDTO();
+            for (PrismWorkflowProperty prismWorkflowProperty : PrismWorkflowProperty.values()) {
+                if (prismScope == prismWorkflowProperty.getScope()) {
+                    configurationDTO.addValue(new WorkflowPropertyConfigurationValueDTO().withDefinition(prismWorkflowProperty)
+                            .withEnabled(prismWorkflowProperty.isDefaultEnabled()).withMinimum(prismWorkflowProperty.getDefaultMinimum())
+                            .withMaximum(prismWorkflowProperty.getDefaultMaximum()));
+                }
+            }
+
+            int valueCount = configurationDTO.getValues().size();
+            if (prismScope.getPrecedence() > PrismScope.INSTITUTION.getPrecedence() && valueCount > 0) {
+                workflowService.createOrUpdateWorkflowPropertyConfiguration(system, getSystemLocale(), getSystemProgramType(), prismScope, configurationDTO);
+            } else if (valueCount > 0) {
+                workflowService.createOrUpdateWorkflowPropertyConfiguration(system, getSystemLocale(), null, prismScope, configurationDTO);
+            }
         }
     }
 

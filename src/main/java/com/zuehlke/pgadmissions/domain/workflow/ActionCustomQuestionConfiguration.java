@@ -22,9 +22,9 @@ import com.zuehlke.pgadmissions.domain.system.System;
 
 @Entity
 @Table(name = "ACTION_CUSTOM_QUESTION_CONFIGURATION", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "system_id", "program_type", "locale", "action_custom_question_definition_id", "display_index" }),
-        @UniqueConstraint(columnNames = { "institution_id", "program_type", "action_custom_question_definition_id", "display_index" }),
-        @UniqueConstraint(columnNames = { "program_id", "action_custom_question_definition_id", "display_index" }) })
+        @UniqueConstraint(columnNames = { "system_id", "program_type", "locale", "action_custom_question_definition_id", "version", "display_index" }),
+        @UniqueConstraint(columnNames = { "institution_id", "program_type", "action_custom_question_definition_id", "version", "display_index" }),
+        @UniqueConstraint(columnNames = { "program_id", "action_custom_question_definition_id", "version", "display_index" }) })
 public class ActionCustomQuestionConfiguration extends WorkflowConfiguration {
 
     @Id
@@ -381,7 +381,8 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfiguration {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("actionCustomQuestionDefinition", actionCustomQuestionDefinition).addProperty("version", version).addProperty("index", index);
+        return super.getResourceSignature().addProperty("actionCustomQuestionDefinition", actionCustomQuestionDefinition).addProperty("version", version)
+                .addProperty("index", index);
     }
 
 }

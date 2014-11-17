@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.base.CaseFormat;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismWorkflowConfiguration;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
@@ -47,10 +47,11 @@ public class ResourceConfigurationResource {
 
     @RequestMapping(method = RequestMethod.GET)
     public List<AbstractConfigurationRepresentation> getConfigurations(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-            @ModelAttribute PrismWorkflowConfiguration configurationType, @RequestParam PrismScope definitionScope,
-            @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType) throws Exception {
+            @ModelAttribute PrismConfiguration configurationType, @RequestParam PrismScope definitionScope, @RequestParam(required = false) PrismLocale locale,
+            @RequestParam(required = false) PrismProgramType programType) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        return customizationService.getConfigurationRepresentations(configurationType, resource, definitionScope, locale, programType);
+        return customizationService.getConfigurationRepresentations(resource, definitionScope, locale, programType, configurationType.getConfigurationClass(),
+                configurationType.getDefinitionClass(), configurationType.getRepresentationClass());
     }
 
     // @RequestMapping(method = RequestMethod.PUT)
@@ -81,10 +82,10 @@ public class ResourceConfigurationResource {
     }
 
     @ModelAttribute
-    private PrismWorkflowConfiguration getConfigurationType(@PathVariable String configurationType) {
+    private PrismConfiguration getConfigurationType(@PathVariable String configurationType) {
         String singleForm = WordUtils.singularize(configurationType);
         String typeName = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, singleForm);
-        return PrismWorkflowConfiguration.valueOf(typeName);
+        return PrismConfiguration.valueOf(typeName);
     }
 
 }

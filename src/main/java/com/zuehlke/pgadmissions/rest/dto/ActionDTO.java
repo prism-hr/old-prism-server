@@ -93,10 +93,10 @@ public class ActionDTO {
         return this;
     }
 
-    public Object getOperativeResourceDTO() {
-        List<Object> resourceDTOs = Lists.newArrayList(getNewInstitution(), getNewProgram(), getNewProject(), getNewApplication());
+    public ResourceDTO getOperativeResourceDTO() {
+        List<ResourceDTO> resourceDTOs = Lists.newArrayList(getNewInstitution(), getNewProgram(), getNewProject(), getNewApplication());
 
-        Collection<Object> notNullResourceDTOs = Collections2.filter(resourceDTOs, Predicates.notNull());
+        Collection<ResourceDTO> notNullResourceDTOs = Collections2.filter(resourceDTOs, Predicates.notNull());
 
         if (notNullResourceDTOs.size() != 1) {
             throw new Error();

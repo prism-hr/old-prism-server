@@ -350,6 +350,16 @@ public class System extends Resource {
     }
     
     @Override
+    public Integer getWorkflowPropertyConfigurationVersion() {
+        return null;
+    }
+
+    @Override
+    public void setWorkflowPropertyConfigurationVersion(Integer workflowResourceConfigurationVersion) {
+        return;
+    }
+    
+    @Override
     public final Set<ResourceState> getResourceStates() {
         return resourceStates;
     }

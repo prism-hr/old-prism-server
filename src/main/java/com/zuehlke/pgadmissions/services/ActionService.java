@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
@@ -41,8 +42,9 @@ import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
-import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionsDTO;
-import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionsDTO.ActionCustomQuestionDTO;
+import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionConfigurationDTO;
+import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionConfigurationDTO.ActionCustomQuestionConfigurationValueDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.StateTransitionRepresentation;
@@ -78,49 +80,46 @@ public class ActionService {
     }
 
     public List<ActionCustomQuestionConfiguration> getActionPropertyConfigurationByVersion(Integer version) {
-        return actionDAO.getActionPropertyConfigurationByVersion(version);
+        return customizationService.getConfigurationVersion(ActionCustomQuestionConfiguration.class, version);
     }
 
-    public void createOrUpdateActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action,
-            ActionCustomQuestionsDTO actionPropertyConfigurationDTO) throws CustomizationException, DeduplicationException {
-        if (action.isCustomizableAction()) {
-            customizationService.validateConfiguration(resource, action, locale, programType);
-            actionDAO.deleteActionConfiguration(resource, locale, programType, action);
+    public void createOrUpdateActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
+            ActionCustomQuestionDefinition definition, ActionCustomQuestionConfigurationDTO actionPropertyConfigurationDTO) throws CustomizationException,
+            DeduplicationException {
+        customizationService.validateConfiguration(resource, definition, locale, programType);
+        customizationService.restoreDefaultConfigurationVersion(resource, locale, programType, ActionCustomQuestionConfiguration.class, definition);
 
-            Integer version = null;
-            for (ActionCustomQuestionDTO actionPropertyDTO : actionPropertyConfigurationDTO.getProperties()) {
-                String name = actionPropertyDTO.getName();
+        Integer version = null;
+        for (ActionCustomQuestionConfigurationValueDTO actionPropertyDTO : actionPropertyConfigurationDTO.getValues()) {
+            String name = actionPropertyDTO.getName();
 
-                List<String> options = actionPropertyDTO.getOptions();
-                List<String> validationRules = actionPropertyDTO.getValidationRules();
+            List<String> options = actionPropertyDTO.getOptions();
+            List<String> validationRules = actionPropertyDTO.getValidationRules();
 
-                ActionCustomQuestionConfiguration persistentActionPropertyConfiguration = entityService.createOrUpdate(new ActionCustomQuestionConfiguration()
-                        .withResource(resource).withLocale(locale).withProgramType(programType)
-                        .withActionCustomQuestionDefinition(action.getActionCustomQuestionDefinition()).withVersion(version)
-                        .withCustomQuestionType(PrismCustomQuestionType.getByComponentName(name)).withName(name).withEditable(actionPropertyDTO.getEditable())
-                        .withIndex(actionPropertyDTO.getIndex()).withLabel(actionPropertyDTO.getLabel()).withDescription(actionPropertyDTO.getDescription())
-                        .withOptions(options == null ? null : Joiner.on("|").join(options)).withRequired(actionPropertyDTO.getRequired())
-                        .withValidation(validationRules == null ? null : Joiner.on("|").join(validationRules)).withWeighting(actionPropertyDTO.getWeighting()));
+            ActionCustomQuestionConfiguration persistentActionPropertyConfiguration = entityService.createOrUpdate(new ActionCustomQuestionConfiguration()
+                    .withResource(resource).withLocale(locale).withProgramType(programType).withActionCustomQuestionDefinition(definition).withVersion(version)
+                    .withCustomQuestionType(PrismCustomQuestionType.getByComponentName(name)).withName(name).withEditable(actionPropertyDTO.getEditable())
+                    .withIndex(actionPropertyDTO.getIndex()).withLabel(actionPropertyDTO.getLabel()).withDescription(actionPropertyDTO.getDescription())
+                    .withOptions(options == null ? null : Joiner.on("|").join(options)).withRequired(actionPropertyDTO.getRequired())
+                    .withValidation(validationRules == null ? null : Joiner.on("|").join(validationRules)).withWeighting(actionPropertyDTO.getWeighting()));
 
-                if (persistentActionPropertyConfiguration.getVersion() == null) {
-                    version = persistentActionPropertyConfiguration.getId();
-                    persistentActionPropertyConfiguration.setVersion(version);
-                }
-            }
+            version = version == null ? persistentActionPropertyConfiguration.getId() : version;
+            persistentActionPropertyConfiguration.setVersion(version);
         }
 
         resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_ACTION_PROPERTY"));
     }
 
-    public void restoreDefaultActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action)
-            throws DeduplicationException {
-        actionDAO.deleteActionConfiguration(resource, locale, programType, action);
+    public void restoreDefaultActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
+            ActionCustomQuestionDefinition definition) throws DeduplicationException, CustomizationException {
+        customizationService.validateRestoreDefaultConfiguration(resource, locale, programType);
+        customizationService.restoreDefaultConfigurationVersion(resource, locale, programType, ActionCustomQuestionConfiguration.class, definition);
         resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_ACTION_PROPERTY_DEFAULT"));
     }
 
-    public void restoreGlobalActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, Action action)
-            throws DeduplicationException {
-        actionDAO.restoreGlobalActionConfiguration(resource, locale, programType, action);
+    public void restoreGlobalActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
+            ActionCustomQuestionDefinition definition) throws DeduplicationException {
+        customizationService.restoreGlobalConfigurationVersion(resource, locale, programType, ActionCustomQuestionConfiguration.class, definition);
         resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_ACTION_PROPERTY_GLOBAL"));
     }
 
@@ -221,7 +220,7 @@ public class ActionService {
     public ActionOutcomeDTO getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO, String referrer) throws Exception {
         Action action = getById(registrationDTO.getAction().getActionId());
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
-            Object operativeResourceDTO = registrationDTO.getAction().getOperativeResourceDTO();
+            ResourceDTO operativeResourceDTO = registrationDTO.getAction().getOperativeResourceDTO();
             return resourceService.createResource(user, action, operativeResourceDTO, referrer);
         } else {
             Resource resource = entityService.getById(action.getScope().getId().getResourceClass(), registrationDTO.getResourceId());
@@ -294,7 +293,7 @@ public class ActionService {
         }
         throwWorkflowPermissionException(resource, action);
     }
-    
+
     public HashMultimap<PrismState, PrismAction> getCreateResourceActionsByState(PrismScope resourceScope) {
         HashMultimap<PrismState, PrismAction> creationActions = HashMultimap.create();
         for (StateActionDTO stateActionDTO : actionDAO.getCreateResourceActionsByState(resourceScope)) {
@@ -324,7 +323,7 @@ public class ActionService {
         }
         throw new Error();
     }
-    
+
     private Set<ActionRepresentation> parseActionRepresentations(List<ActionDTO> actions) {
         PrismAction lastActionId = null;
         ActionRepresentation thisActionRepresentation = null;

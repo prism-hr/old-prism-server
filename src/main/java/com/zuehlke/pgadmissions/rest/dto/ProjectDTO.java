@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 import org.joda.time.LocalDate;
 
-public class ProjectDTO {
+public class ProjectDTO extends ResourceDTO {
 
     @NotNull
     private Integer programId;

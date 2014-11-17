@@ -1,18 +1,8 @@
 package com.zuehlke.pgadmissions.rest.representation.workflow;
 
 public class WorkflowPropertyDefinitionRepresentation extends StateDurationDefinitionRepresentation {
-
-    private Boolean optional;
     
     private Boolean rangeSpecification;
-    
-    public final Boolean getOptional() {
-        return optional;
-    }
-
-    public final void setOptional(Boolean optional) {
-        this.optional = optional;
-    }
 
     public final Boolean getRangeSpecification() {
         return rangeSpecification;
@@ -29,11 +19,6 @@ public class WorkflowPropertyDefinitionRepresentation extends StateDurationDefin
     
     public WorkflowPropertyDefinitionRepresentation withRangeSpecification(Boolean rangeSpecification) {
         this.rangeSpecification = rangeSpecification;
-        return this;
-    }
-    
-    public WorkflowPropertyDefinitionRepresentation withOptional(Boolean optional) {
-        this.optional = optional;
         return this;
     }
     

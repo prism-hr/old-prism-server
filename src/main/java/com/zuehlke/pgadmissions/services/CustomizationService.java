@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismWorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
@@ -63,6 +63,100 @@ public class CustomizationService {
         return entityService.getById(DisplayPropertyDefinition.class, id);
     }
 
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> T getConfiguration(Resource resource, PrismLocale locale,
+            PrismProgramType programType, Class<T> configurationClass, U definition) {
+        return customizationDAO.getConfiguration(resource, locale, programType, configurationClass, definition);
+    }
+
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> T getConfiguration(Resource resource, User user, Class<T> configurationClass,
+            U definition) {
+        if (definition != null) {
+            PrismScope resourceScope = resource.getResourceScope();
+            PrismLocale locale = resourceScope == SYSTEM ? user.getLocale() : resource.getLocale();
+            PrismProgramType programType = resourceScope.getPrecedence() > INSTITUTION.getPrecedence() ? resource.getProgram().getProgramType()
+                    .getPrismProgramType() : null;
+            return customizationDAO.getConfiguration(resource, locale, programType, configurationClass, definition);
+        }
+        return null;
+    }
+
+    public <T extends WorkflowConfiguration> List<T> getConfigurationVersion(Class<T> configurationClass, Integer version) {
+        return customizationDAO.getConfigurationVersion(configurationClass, version);
+    }
+
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> void restoreDefaultConfiguration(Resource resource, PrismLocale locale,
+            PrismProgramType programType, Class<T> configurationClass, Class<U> definitionClass, PrismScope definitionScope) {
+        customizationDAO.restoreDefaultConfiguration(resource, locale, programType, configurationClass, definitionClass, definitionScope);
+    }
+
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> void restoreDefaultConfiguration(Resource resource, PrismLocale locale,
+            PrismProgramType programType, Class<T> configurationClass, U definition) {
+        customizationDAO.restoreDefaultConfiguration(resource, locale, programType, configurationClass, definition);
+    }
+
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> void restoreDefaultConfigurationVersion(Resource resource, PrismLocale locale,
+            PrismProgramType programType, Class<T> configurationClass, Class<U> definitionClass, PrismScope definitionScope) {
+        customizationDAO.restoreDefaultConfigurationVersion(resource, locale, programType, configurationClass, definitionClass, definitionScope);
+    }
+
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> void restoreDefaultConfigurationVersion(Resource resource, PrismLocale locale,
+            PrismProgramType programType, Class<T> entityClass, U definition) {
+        customizationDAO.restoreDefaultConfigurationVersion(resource, locale, programType, entityClass, definition);
+    }
+
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> void restoreGlobalConfiguration(Resource resource, PrismLocale locale,
+            PrismProgramType programType, Class<T> configurationClass, Class<U> definitionClass, PrismScope definitionScope) {
+        customizationDAO.restoreGlobalConfiguration(resource, locale, programType, configurationClass, definitionClass, definitionScope);
+    }
+
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> void restoreGlobalConfiguration(Resource resource, PrismLocale locale,
+            PrismProgramType programType, Class<T> configurationClass, U definition) {
+        customizationDAO.restoreGlobalConfiguration(resource, locale, programType, configurationClass, definition);
+    }
+
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> void restoreGlobalConfigurationVersion(Resource resource, PrismLocale locale,
+            PrismProgramType programType, Class<T> configurationClass, Class<U> definitionClass, PrismScope definitionScope) {
+        customizationDAO.restoreGlobalConfigurationVersion(resource, locale, programType, configurationClass, definitionClass, definitionScope);
+    }
+
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> void restoreGlobalConfigurationVersion(Resource resource, PrismLocale locale,
+            PrismProgramType programType, Class<T> configurationClass, U definition) {
+        customizationDAO.restoreGlobalConfigurationVersion(resource, locale, programType, configurationClass, definition);
+    }
+
+    public <T extends WorkflowDefinition> List<T> listDefinitions(Class<T> entityClass, PrismScope scope) {
+        return (List<T>) customizationDAO.listDefinitions(entityClass, scope);
+    }
+
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition, V extends AbstractConfigurationRepresentation> List<AbstractConfigurationRepresentation> getConfigurationRepresentations(
+            Resource resource, Class<T> configurationClass, Class<U> definitionClass, Class<V> representationClass) throws IllegalAccessException,
+            InvocationTargetException, NoSuchMethodException {
+        PrismScope resourceScope = resource.getResourceScope();
+        PrismLocale locale = resourceScope == SYSTEM ? userService.getCurrentUser().getLocale() : resource.getLocale();
+        PrismProgramType programType = resourceScope.getPrecedence() > INSTITUTION.getPrecedence() ? resource.getProgram().getProgramType()
+                .getPrismProgramType() : null;
+        return getConfigurationRepresentations(resource, resource.getResourceScope(), locale, programType, configurationClass, definitionClass,
+                representationClass);
+    }
+
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition, V extends AbstractConfigurationRepresentation> List<AbstractConfigurationRepresentation> getConfigurationRepresentations(
+            Resource resource, PrismScope scope, PrismLocale locale, PrismProgramType programType, Class<T> configurationClass, Class<U> definitionClass,
+            Class<V> representationClass) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        resource = resource.getResourceScope().getPrecedence() > PrismScope.PROGRAM.getPrecedence() ? resource.getProgram() : resource;
+        List<T> configurations = listConfigurations(resource, scope, locale, programType, configurationClass, definitionClass);
+
+        List<AbstractConfigurationRepresentation> representations = Lists.newArrayListWithCapacity(configurations.size());
+        String definitionPropertyName = WordUtils.uncapitalize(definitionClass.getSimpleName());
+        for (WorkflowConfiguration configuration : configurations) {
+            WorkflowDefinition workflowDefinition = (WorkflowDefinition) PropertyUtils.getSimpleProperty(configuration, definitionPropertyName);
+            AbstractConfigurationRepresentation representation = dozerBeanMapper.map(configuration, representationClass);
+            representation.setDefinitionId(workflowDefinition.getId());
+            representations.add(representation);
+        }
+
+        return representations;
+    }
+
     public void updateDisplayPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
             DisplayPropertyDefinition displayProperty, String value) throws DeduplicationException, CustomizationException {
         createOrUpdateDisplayPropertyConfiguration(resource, locale, programType, displayProperty, value);
@@ -76,65 +170,6 @@ public class CustomizationService {
                 .withLocale(locale).withDisplayPropertyDefinition(displayProperty).withValue(value)
                 .withSystemDefault(isSystemDefault(displayProperty, locale, programType));
         entityService.createOrUpdate(transientConfiguration);
-    }
-
-    public <T extends WorkflowConfiguration> T getConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale, PrismProgramType programType,
-            String keyIndex, WorkflowDefinition keyValue) {
-        return customizationDAO.getConfiguration(entityClass, resource, locale, programType, keyIndex, keyValue);
-    }
-
-    public <T extends WorkflowConfiguration> T getConfiguration(Class<T> entityClass, Resource resource, User user, String definitionReference,
-            WorkflowDefinition definition) {
-        if (definition != null) {
-            PrismScope resourceScope = resource.getResourceScope();
-            PrismLocale locale = resourceScope == SYSTEM ? user.getLocale() : resource.getLocale();
-            PrismProgramType programType = resourceScope.getPrecedence() > INSTITUTION.getPrecedence() ? resource.getProgram().getProgramType()
-                    .getPrismProgramType() : null;
-            return customizationDAO.getConfiguration(entityClass, resource, locale, programType, definitionReference, definition);
-        }
-        return null;
-    }
-
-    public <T extends WorkflowConfiguration> void restoreDefaultConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale,
-            PrismProgramType programType) throws CustomizationException {
-        validateRestoreDefaultConfiguration(resource, locale, programType);
-        customizationDAO.restoreDefaultConfiguration(entityClass, resource, locale, programType);
-    }
-
-    public <T extends WorkflowConfiguration> void restoreGlobalConfiguration(Class<T> entityClass, Resource resource, PrismLocale locale,
-            PrismProgramType programType) throws CustomizationException {
-        validateRestoreGlobalConfiguration(resource, locale, programType);
-        customizationDAO.restoreGlobalConfiguration(entityClass, resource, locale, programType);
-    }
-
-    public <T extends WorkflowDefinition> List<WorkflowDefinition> listDefinitions(Class<T> entityClass, PrismScope scope) {
-        return customizationDAO.listDefinitions(entityClass, scope);
-    }
-
-    public List<AbstractConfigurationRepresentation> getConfigurationRepresentations(PrismWorkflowConfiguration configurationType, Resource resource)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        PrismScope resourceScope = resource.getResourceScope();
-        PrismLocale locale = resourceScope == SYSTEM ? userService.getCurrentUser().getLocale() : resource.getLocale();
-        PrismProgramType programType = resourceScope.getPrecedence() > INSTITUTION.getPrecedence() ? resource.getProgram().getProgramType()
-                .getPrismProgramType() : null;
-        return getConfigurationRepresentations(configurationType, resource, resource.getResourceScope(), locale, programType);
-    }
-
-    public List<AbstractConfigurationRepresentation> getConfigurationRepresentations(PrismWorkflowConfiguration configurationType, Resource resource,
-            PrismScope scope, PrismLocale locale, PrismProgramType programType) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        resource = resource.getResourceScope().getPrecedence() > PrismScope.PROGRAM.getPrecedence() ? resource.getProgram() : resource;
-        List<WorkflowConfiguration> configurations = listConfigurations(configurationType, resource, scope, locale, programType);
-
-        List<AbstractConfigurationRepresentation> representations = Lists.newArrayListWithCapacity(configurations.size());
-        String definitionPropertyName = configurationType.getDefinitionPropertyName();
-        for (WorkflowConfiguration configuration : configurations) {
-            WorkflowDefinition workflowDefinition = (WorkflowDefinition) PropertyUtils.getSimpleProperty(configuration, definitionPropertyName);
-            AbstractConfigurationRepresentation representation = dozerBeanMapper.map(configuration, configurationType.getRepresentationClass());
-            representation.setDefinitionId(workflowDefinition.getId());
-            representations.add(representation);
-        }
-
-        return representations;
     }
 
     public HashMap<PrismDisplayProperty, String> getDisplayProperties(Resource resource, PrismLocale locale, PrismProgramType programType,
@@ -198,9 +233,9 @@ public class CustomizationService {
         return entityService.list(DisplayPropertyConfiguration.class);
     }
 
-    private <T extends WorkflowConfiguration> List<T> listConfigurations(PrismWorkflowConfiguration configurationType, Resource resource,
-            PrismScope definitionScope, PrismLocale locale, PrismProgramType programType) {
-        List<T> configurations = customizationDAO.listConfigurations(configurationType, resource, definitionScope, locale, programType);
+    private <T extends WorkflowConfiguration, U extends WorkflowDefinition> List<T> listConfigurations(Resource resource, PrismScope definitionScope,
+            PrismLocale locale, PrismProgramType programType, Class<T> configurationClass, Class<U> definitionClass) {
+        List<T> configurations = customizationDAO.listConfigurations(resource, definitionScope, locale, programType, configurationClass, definitionClass);
 
         if (configurations.isEmpty()) {
             return configurations;

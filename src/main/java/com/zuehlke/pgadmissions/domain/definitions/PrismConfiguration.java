@@ -23,9 +23,9 @@ import com.zuehlke.pgadmissions.rest.representation.configuration.NotificationCo
 import com.zuehlke.pgadmissions.rest.representation.configuration.StateDurationConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 
-public enum PrismWorkflowConfiguration {
+public enum PrismConfiguration {
 
-    CUSTOM_QUESTION(ActionCustomQuestionConfiguration.class, ActionCustomQuestionDefinition.class, null, null, null), //
+    ACTION_CUSTOM_QUESTION(ActionCustomQuestionConfiguration.class, ActionCustomQuestionDefinition.class, null, null, null), //
     DISPLAY_PROPERTY(DisplayPropertyConfiguration.class, DisplayPropertyDefinition.class, null, null, null), //
     NOTIFICATION(NotificationConfiguration.class, NotificationDefinition.class, NotificationConfigurationRepresentation.class, 1, 28), //
     STATE_DURATION(StateDurationConfiguration.class, StateDurationDefinition.class, StateDurationConfigurationRepresentation.class, 1, 168), //
@@ -41,15 +41,15 @@ public enum PrismWorkflowConfiguration {
 
     private Integer maximumPermitted;
 
-    private static final Map<Class<? extends WorkflowConfiguration>, PrismWorkflowConfiguration> reverseMap = Maps.newHashMap();
+    private static final Map<Class<? extends WorkflowConfiguration>, PrismConfiguration> reverseMap = Maps.newHashMap();
 
     static {
-        for (PrismWorkflowConfiguration type : values()) {
+        for (PrismConfiguration type : values()) {
             reverseMap.put(type.getConfigurationClass(), type);
         }
     }
 
-    private PrismWorkflowConfiguration(Class<? extends WorkflowConfiguration> configurationClass, Class<? extends WorkflowDefinition> definitionClass,
+    private PrismConfiguration(Class<? extends WorkflowConfiguration> configurationClass, Class<? extends WorkflowDefinition> definitionClass,
             Class<? extends AbstractConfigurationRepresentation> representationClass, Integer minimumPermitted, Integer maximumPermitted) {
         this.configurationClass = configurationClass;
         this.definitionClass = definitionClass;

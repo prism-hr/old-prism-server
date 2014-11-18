@@ -35,4 +35,5 @@ public class RestApiUtils {
         logger.error(msg);
         throw new ResourceNotFoundException(msg);
     }
+    
 }

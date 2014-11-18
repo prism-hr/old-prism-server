@@ -234,7 +234,7 @@ public class CommentService {
                 OfferRepresentation offerRepresentation = buildOfferRepresentation(sourceComment);
 
                 User primarySupervisor = commentDAO.getAssignedUsers(sourceComment, PrismRole.APPLICATION_PRIMARY_SUPERVISOR).get(0);
-                sourceComment = getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS, primarySupervisor,
+                sourceComment = getLatestComment(application, PrismAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION, primarySupervisor,
                         sourceComment.getCreatedTimestamp());
 
                 if (sourceComment != null) {

@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @RestController
 @RequestMapping("api/{resourceScope:programs|institutions|systems}/{resourceId}/configuration/notifications/{notificationTemplateId}")
-public class NotificationTemplateResource {
+public class NotificationResource {
 
     @Autowired
     private EntityService entityService;
@@ -75,7 +75,7 @@ public class NotificationTemplateResource {
             throw new PrismValidationException("Invalid notification configuration", validationErrors);
         }
 
-        notificationService.updateNotificatonConfiguration(resource, locale, programType, template, notificationConfigurationDTO);
+        notificationService.updateNotificationConfiguration(resource, locale, programType, template, notificationConfigurationDTO);
     }
 
     @RequestMapping(method = RequestMethod.DELETE)

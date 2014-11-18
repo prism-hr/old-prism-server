@@ -157,7 +157,7 @@ public class StaticDataResource {
             String name = pluralize(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, prismConfiguration.name()));
             Map<PrismScope, List<WorkflowDefinitionRepresentation>> scopeConfigurations = Maps.newHashMap();
             for (PrismScope prismScope : PrismScope.values()) {
-                List<? extends WorkflowDefinition> definitions = customizationService.listDefinitions(prismConfiguration.getDefinitionClass(), prismScope);
+                List<? extends WorkflowDefinition> definitions = customizationService.getDefinitions(prismConfiguration, prismScope);
                 List<WorkflowDefinitionRepresentation> parameters = Lists.newArrayList();
                 for (WorkflowDefinition definition : definitions) {
                     parameters.add(mapper.map(definition, prismConfiguration.getDefinitionRepresentationClass()));

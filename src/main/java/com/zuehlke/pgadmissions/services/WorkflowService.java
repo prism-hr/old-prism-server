@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
@@ -24,6 +25,7 @@ import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO.Workfl
 
 @Service
 @Transactional
+@SuppressWarnings("unchecked")
 public class WorkflowService {
 
     @Autowired
@@ -39,8 +41,8 @@ public class WorkflowService {
         return entityService.getById(WorkflowPropertyDefinition.class, id);
     }
 
-    public WorkflowPropertyConfiguration getWorkflowPropertyConfiguration(Resource resource, User user, WorkflowPropertyDefinition workflowPropertyDefinition) {
-        return customizationService.getConfiguration(resource, user, WorkflowPropertyConfiguration.class, workflowPropertyDefinition);
+    public WorkflowPropertyConfiguration getWorkflowPropertyConfiguration(Resource resource, User user, WorkflowPropertyDefinition definition) {
+        return (WorkflowPropertyConfiguration) customizationService.getConfiguration(PrismConfiguration.WORKFLOW_PROPERTY, resource, user, definition);
     }
 
     public void updateWorkflowPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, PrismScope definitionScope,
@@ -49,13 +51,12 @@ public class WorkflowService {
         resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_WORKFLOW_PROPERTY"));
     }
 
-    public void createOrUpdateWorkflowPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, PrismScope definitionScope,
+    public void createOrUpdateWorkflowPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, PrismScope scope,
             WorkflowPropertyConfigurationDTO configurationDTO) throws CustomizationException, DeduplicationException {
-        validateWorkflowPropertyConfiguration(resource, definitionScope, configurationDTO);
+        validateWorkflowPropertyConfiguration(resource, scope, configurationDTO);
 
         Integer version = null;
-        customizationService.restoreDefaultConfigurationVersion(resource, locale, programType, WorkflowPropertyConfiguration.class,
-                WorkflowPropertyDefinition.class, definitionScope);
+        customizationService.restoreDefaultConfiguration(PrismConfiguration.WORKFLOW_PROPERTY, resource, scope, locale, programType);
         for (WorkflowPropertyConfigurationValueDTO valueDTO : configurationDTO.getValues()) {
             WorkflowPropertyDefinition definition = getWorkflowPropertyDefinitionById(valueDTO.getDefinition());
             WorkflowPropertyConfiguration configuration = createOrUpdateWorkflowPropertyConfiguration(resource, locale, programType, definition, version,
@@ -84,9 +85,10 @@ public class WorkflowService {
         return persistentConfiguration;
     }
 
-    private void validateWorkflowPropertyConfiguration(Resource resource, PrismScope definitionScope, WorkflowPropertyConfigurationDTO configurationDTO)
+    private void validateWorkflowPropertyConfiguration(Resource resource, PrismScope scope, WorkflowPropertyConfigurationDTO configurationDTO)
             throws CustomizationException {
-        List<WorkflowPropertyDefinition> definitions = customizationService.listDefinitions(WorkflowPropertyDefinition.class, definitionScope);
+        List<WorkflowPropertyDefinition> definitions = (List<WorkflowPropertyDefinition>) (List<?>) customizationService.getDefinitions(
+                PrismConfiguration.WORKFLOW_PROPERTY, scope);
         List<WorkflowPropertyConfigurationValueDTO> valueDTOs = configurationDTO.getValues();
 
         if (valueDTOs.size() != definitions.size()) {

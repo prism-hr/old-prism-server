@@ -42,7 +42,7 @@ import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
-import com.zuehlke.pgadmissions.services.helpers.NotificationTemplatePropertyLoader;
+import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 import freemarker.template.Template;
@@ -156,7 +156,7 @@ public class MailSender {
     private Map<String, Object> createNotificationModel(NotificationDefinition notificationTemplate, NotificationDefinitionModelDTO modelDTO, boolean validationMode) {
         Map<String, Object> model = Maps.newHashMap();
         List<PrismNotificationDefinitionPropertyCategory> categories = notificationTemplate.getId().getPropertyCategories();
-        NotificationTemplatePropertyLoader loader = applicationContext.getBean(NotificationTemplatePropertyLoader.class).localize(modelDTO, propertyLoader);
+        NotificationPropertyLoader loader = applicationContext.getBean(NotificationPropertyLoader.class).localize(modelDTO, propertyLoader);
         for (PrismNotificationDefinitionPropertyCategory propertyCategory : categories) {
             for (PrismNotificationDefinitionProperty property : propertyCategory.getProperties()) {
                 String value = validationMode ? "placeholder" : loader.load(property);

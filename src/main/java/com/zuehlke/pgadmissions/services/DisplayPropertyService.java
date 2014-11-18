@@ -35,7 +35,7 @@ public class DisplayPropertyService {
     public DisplayPropertyDefinition getDefinitionById(PrismDisplayProperty id) {
         return entityService.getById(DisplayPropertyDefinition.class, id);
     }
-    
+
     public void updateDisplayPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
             DisplayPropertyDefinition displayProperty, String value) throws DeduplicationException, CustomizationException {
         createOrUpdateDisplayPropertyConfiguration(resource, locale, programType, displayProperty, value);
@@ -51,10 +51,9 @@ public class DisplayPropertyService {
         entityService.createOrUpdate(transientConfiguration);
     }
 
-    public HashMap<PrismDisplayProperty, String> getDisplayProperties(Resource resource, PrismLocale locale, PrismProgramType programType,
-            PrismDisplayPropertyCategory displayPropertyCategory, PrismScope propertyScope) {
-        List<DisplayPropertyConfiguration> displayValues = customizationService.getConfiguration(resource, locale, programType, displayPropertyCategory,
-                propertyScope);
+    public HashMap<PrismDisplayProperty, String> getDisplayProperties(Resource resource, PrismScope scope, PrismDisplayPropertyCategory category,
+            PrismLocale locale, PrismProgramType programType) {
+        List<DisplayPropertyConfiguration> displayValues = customizationService.getDisplayPropertyConfiguration(resource, scope, category, locale, programType);
         HashMap<PrismDisplayProperty, String> displayProperties = Maps.newHashMap();
         for (DisplayPropertyConfiguration displayValue : displayValues) {
             PrismDisplayProperty displayPropertyId = (PrismDisplayProperty) displayValue.getDisplayPropertyDefinition().getId();

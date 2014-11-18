@@ -1,3 +1,6 @@
+SET FOREIGN_KEY_CHECKS = 0
+;
+
 ALTER TABLE ACTION_CUSTOM_QUESTION_CONFIGURATION
 	DROP INDEX system_id,
 	DROP INDEX institution_id,
@@ -19,6 +22,9 @@ ALTER TABLE WORKFLOW_PROPERTY_CONFIGURATION
 	ADD UNIQUE INDEX (system_id, program_type, locale, workflow_property_definition_id, version),
 	ADD UNIQUE INDEX (institution_id, program_type, workflow_property_definition_id, version),
 	ADD UNIQUE INDEX (program_id, workflow_property_definition_id, version)
+;
+
+SET FOREIGN_KEY_CHECKS = 1
 ;
 
 ALTER TABLE APPLICATION

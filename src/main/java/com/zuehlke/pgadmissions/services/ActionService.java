@@ -16,6 +16,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
@@ -52,6 +53,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentatio
 
 @Service
 @Transactional
+@SuppressWarnings("unchecked")
 public class ActionService {
 
     @Autowired
@@ -80,14 +82,15 @@ public class ActionService {
     }
 
     public List<ActionCustomQuestionConfiguration> getActionPropertyConfigurationByVersion(Integer version) {
-        return customizationService.getConfigurationVersion(ActionCustomQuestionConfiguration.class, version);
+        return (List<ActionCustomQuestionConfiguration>) (List<?>) customizationService.getConfigurationsWithVersion(PrismConfiguration.ACTION_CUSTOM_QUESTION,
+                version);
     }
 
     public void createOrUpdateActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
             ActionCustomQuestionDefinition definition, ActionCustomQuestionConfigurationDTO actionPropertyConfigurationDTO) throws CustomizationException,
             DeduplicationException {
         customizationService.validateConfiguration(resource, definition, locale, programType);
-        customizationService.restoreDefaultConfigurationVersion(resource, locale, programType, ActionCustomQuestionConfiguration.class, definition);
+        customizationService.restoreDefaultConfiguration(PrismConfiguration.ACTION_CUSTOM_QUESTION, resource, locale, programType, definition);
 
         Integer version = null;
         for (ActionCustomQuestionConfigurationValueDTO actionPropertyDTO : actionPropertyConfigurationDTO.getValues()) {
@@ -113,13 +116,13 @@ public class ActionService {
     public void restoreDefaultActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
             ActionCustomQuestionDefinition definition) throws DeduplicationException, CustomizationException {
         customizationService.validateRestoreDefaultConfiguration(resource, locale, programType);
-        customizationService.restoreDefaultConfigurationVersion(resource, locale, programType, ActionCustomQuestionConfiguration.class, definition);
+        customizationService.restoreDefaultConfiguration(PrismConfiguration.ACTION_CUSTOM_QUESTION, resource, locale, programType, definition);
         resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_ACTION_PROPERTY_DEFAULT"));
     }
 
     public void restoreGlobalActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
             ActionCustomQuestionDefinition definition) throws DeduplicationException {
-        customizationService.restoreGlobalConfigurationVersion(resource, locale, programType, ActionCustomQuestionConfiguration.class, definition);
+        customizationService.restoreGlobalConfiguration(PrismConfiguration.ACTION_CUSTOM_QUESTION, resource, locale, programType, definition);
         resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_ACTION_PROPERTY_GLOBAL"));
     }
 

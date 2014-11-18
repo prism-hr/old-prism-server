@@ -43,7 +43,7 @@ public class PropertyLoader {
         String value = properties.get(property);
         if (value == null) {
             PrismDisplayPropertyCategory category = property.getDisplayCategory();
-            properties.putAll(displayPropertyService.getDisplayProperties(resource, locale, programType, category, property.getScope()));
+            properties.putAll(displayPropertyService.getDisplayProperties(resource, property.getScope(), category, locale, programType));
             value = properties.get(property);
         }
         return value;

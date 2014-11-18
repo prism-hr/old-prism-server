@@ -70,7 +70,7 @@ import freemarker.template.TemplateException;
 @Service
 @Transactional
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class NotificationTemplatePropertyLoader {
+public class NotificationPropertyLoader {
 
     private PropertyLoader propertyLoader;
 
@@ -322,7 +322,7 @@ public class NotificationTemplatePropertyLoader {
         return buildRedirectionControl(SYSTEM_ACTIVATE_ACCOUNT);
     }
 
-    public NotificationTemplatePropertyLoader localize(NotificationDefinitionModelDTO templateModelDTO, PropertyLoader propertyLoader) {
+    public NotificationPropertyLoader localize(NotificationDefinitionModelDTO templateModelDTO, PropertyLoader propertyLoader) {
         this.templateModelDTO = templateModelDTO;
         Comment comment = this.templateModelDTO.getComment();
         if (comment == null) {

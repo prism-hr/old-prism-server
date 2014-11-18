@@ -149,9 +149,14 @@ public class ResourceResource {
         }
         representation.setUsers(userRolesRepresentations);
 
-        PrismConfiguration workflow = PrismConfiguration.WORKFLOW_PROPERTY;
-        representation.setWorkflowProperties(customizationService.getConfigurationRepresentations(resource, workflow.getConfigurationClass(),
-                workflow.getDefinitionClass(), workflow.getConfigurationRepresentationClass()));
+        Integer workflowPropertyConfigurationVersion = resource.getWorkflowPropertyConfigurationVersion();
+        if (workflowPropertyConfigurationVersion == null) {
+            representation.setWorkflowProperties(customizationService.getConfigurationRepresentations(PrismConfiguration.WORKFLOW_PROPERTY, resource,
+                    userService.getCurrentUser()));
+        } else {
+            representation.setWorkflowProperties(customizationService.getConfigurationRepresentationsWithVersion(PrismConfiguration.WORKFLOW_PROPERTY,
+                    workflowPropertyConfigurationVersion));
+        }
 
         switch (resource.getResourceScope()) {
         case APPLICATION:

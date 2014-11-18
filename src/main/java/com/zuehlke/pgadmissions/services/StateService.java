@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
@@ -114,13 +115,13 @@ public class StateService {
         return entityService.list(StateTransitionEvaluation.class);
     }
 
-    public StateDurationConfiguration getStateDurationConfiguration(Resource resource, User user, StateDurationDefinition stateDurationDefinition) {
-        return customizationService.getConfiguration(resource, user, StateDurationConfiguration.class, stateDurationDefinition);
+    public StateDurationConfiguration getStateDurationConfiguration(Resource resource, User user, StateDurationDefinition definition) {
+        return (StateDurationConfiguration) customizationService.getConfiguration(PrismConfiguration.STATE_DURATION, resource, user, definition);
     }
 
     public StateDurationConfiguration getStateDurationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
-            StateDurationDefinition statedurationDefinition) {
-        return customizationService.getConfiguration(resource, locale, programType, StateDurationConfiguration.class, statedurationDefinition);
+            StateDurationDefinition definition) {
+        return (StateDurationConfiguration) customizationService.getConfiguration(PrismConfiguration.STATE_DURATION, resource, definition, locale, programType);
     }
 
     // TODO: make this work with a list of representations

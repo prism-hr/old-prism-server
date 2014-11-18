@@ -23,6 +23,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.NotificationDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
@@ -92,15 +93,15 @@ public class NotificationService {
     }
 
     public NotificationConfiguration getNotificationConfiguration(Resource resource, User user, NotificationDefinition definition) {
-        return customizationService.getConfiguration(resource, user, NotificationConfiguration.class, definition);
+        return (NotificationConfiguration) customizationService.getConfiguration(PrismConfiguration.NOTIFICATION, resource, user, definition);
     }
 
     public NotificationConfiguration getNotificationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
             NotificationDefinition definition) {
-        return customizationService.getConfiguration(resource, locale, programType, NotificationConfiguration.class, definition);
+        return (NotificationConfiguration) customizationService.getConfiguration(PrismConfiguration.NOTIFICATION, resource, definition, locale, programType);
     }
 
-    public void updateNotificatonConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationDefinition definition,
+    public void updateNotificationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationDefinition definition,
             NotificationConfigurationDTO notificationConfigurationDTO) throws DeduplicationException, CustomizationException {
         createOrUpdateNotificationConfiguration(resource, locale, programType, definition, notificationConfigurationDTO.getSubject(),
                 notificationConfigurationDTO.getContent(), notificationConfigurationDTO.getReminderInterval());
@@ -119,14 +120,14 @@ public class NotificationService {
     public void restoreDefaultNotificationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationDefinition definition)
             throws DeduplicationException, CustomizationException {
         customizationService.validateConfiguration(resource, definition, locale, programType);
-        customizationService.restoreDefaultConfiguration(resource, locale, programType, NotificationConfiguration.class, definition);
+        customizationService.restoreDefaultConfiguration(PrismConfiguration.NOTIFICATION, resource, locale, programType, definition);
         resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_NOTIFICATION_DEFAULT"));
     }
 
     public void restoreGlobalNotificationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, NotificationDefinition definition)
             throws DeduplicationException, CustomizationException {
         customizationService.validateRestoreGlobalConfiguration(resource, locale, programType);
-        customizationService.restoreGlobalConfiguration(resource, locale, programType, NotificationConfiguration.class, definition);
+        customizationService.restoreGlobalConfiguration(PrismConfiguration.NOTIFICATION, resource, locale, programType, definition);
         resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_NOTIFICATION_GLOBAL"));
     }
 
@@ -308,7 +309,7 @@ public class NotificationService {
     }
 
     public List<PrismNotificationDefinition> getEditableTemplates(PrismScope scope) {
-        return (List<PrismNotificationDefinition>) (List<?>) customizationService.listDefinitions(NotificationDefinition.class, scope);
+        return (List<PrismNotificationDefinition>) (List<?>) customizationService.getDefinitions(PrismConfiguration.NOTIFICATION, scope);
     }
 
     private void sendIndividualRequestNotifications(Resource resource, Comment comment, User author, LocalDate baseline) {

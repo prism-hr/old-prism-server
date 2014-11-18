@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.configuration;
 
-public class StateDurationConfigurationRepresentation extends AbstractConfigurationRepresentation {
+public class StateDurationConfigurationRepresentation extends WorkflowConfigurationRepresentation {
 
     private Integer duration;
 

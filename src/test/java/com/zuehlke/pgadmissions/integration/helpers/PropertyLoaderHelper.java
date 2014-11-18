@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
-import com.zuehlke.pgadmissions.services.CustomizationService;
+import com.zuehlke.pgadmissions.services.DisplayPropertyService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 public class PropertyLoaderHelper {
 
     @Autowired
-    private CustomizationService customizationService;
+    private DisplayPropertyService displayPropertyService;
 
     @Autowired
     private SystemService systemService;
@@ -44,8 +44,8 @@ public class PropertyLoaderHelper {
         assertEquals(propertyLoader.load(SYSTEM_YES), SYSTEM_YES.getDefaultValue());
 
         User herman = userService.getOrCreateUser("herman", "ze german", "hermanzegerman@germany.com", DE_DE);
-        DisplayPropertyDefinition displayProperty = customizationService.getDisplayPropertyDefinitionById(SYSTEM_YES);
-        customizationService.createOrUpdateDisplayPropertyConfiguration(systemService.getSystem(), DE_DE, null, displayProperty, "Ja");
+        DisplayPropertyDefinition displayProperty = displayPropertyService.getDefinitionById(SYSTEM_YES);
+        displayPropertyService.createOrUpdateDisplayPropertyConfiguration(systemService.getSystem(), DE_DE, null, displayProperty, "Ja");
         PropertyLoader propertyLoaderDe = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem(), herman);
         
         assertEquals(propertyLoaderDe.load(SYSTEM_YES), "Ja");

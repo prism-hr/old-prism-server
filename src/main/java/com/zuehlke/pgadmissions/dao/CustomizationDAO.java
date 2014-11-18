@@ -40,7 +40,7 @@ public class CustomizationDAO {
     public <T extends WorkflowConfiguration, U extends WorkflowDefinition> T getConfiguration(Resource resource, PrismLocale locale,
             PrismProgramType programType, Class<T> configurationClass, U definition) {
         return (T) sessionFactory.getCurrentSession().createCriteria(configurationClass) //
-                .add(getFilterCondition(resource, locale, programType, definition.getScope().getId())) //
+                .add(getResourceLocalizationCriterion(resource, locale, programType, definition.getScope().getId())) //
                 .add(Restrictions.eq(getLowerCaseClassReference(definition), definition)) //
                 .addOrder(Order.desc("program")) //
                 .addOrder(Order.desc("institution")) //
@@ -48,6 +48,19 @@ public class CustomizationDAO {
                 .addOrder(Order.asc("systemDefault")) //
                 .setMaxResults(1) //
                 .uniqueResult();
+    }
+
+    public List<DisplayPropertyConfiguration> getConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
+            PrismDisplayPropertyCategory displayPropertyCategory, PrismScope propertyScope) {
+        return (List<DisplayPropertyConfiguration>) sessionFactory.getCurrentSession().createCriteria(DisplayPropertyConfiguration.class) //
+                .createAlias("displayPropertyDefinition", "displayPropertyDefinition", JoinType.INNER_JOIN) //
+                .add(getResourceLocalizationCriterion(resource, locale, programType, propertyScope)) //
+                .add(Restrictions.eq("displayPropertyDefinition.displayPropertyCategory", displayPropertyCategory)) //
+                .addOrder(Order.desc("program")) //
+                .addOrder(Order.desc("institution")) //
+                .addOrder(Order.desc("system")) //
+                .addOrder(Order.asc("systemDefault")) //
+                .list();
     }
 
     public <T extends WorkflowConfiguration> List<T> getConfigurationVersion(Class<T> configurationClass, Integer version) {
@@ -66,25 +79,31 @@ public class CustomizationDAO {
                 .list();
     }
 
-    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> List<T> listConfigurations(Resource resource, PrismScope definitionScope,
-            PrismLocale locale, PrismProgramType programType, Class<T> configurationClass, Class<U> definitionClass) {
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> List<T> listConfigurations(Resource resource, PrismLocale locale,
+            PrismProgramType programType, Class<T> configurationClass, Class<U> definitionClass, PrismScope definitionScope) {
         String definitionReference = getLowerCaseClassReference(definitionClass);
-
-        Criterion localeCriterion = getLocaleCriterion(locale);
-        Criterion programTypeCriterion = getProgramTypeCriterion(programType, definitionScope);
-
         return (List<T>) sessionFactory.getCurrentSession().createCriteria(configurationClass) //
                 .createAlias(definitionReference, definitionReference, JoinType.INNER_JOIN) //
                 .createAlias(definitionReference + ".scope", "definitionScope", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("definitionScope.id", definitionScope)).add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq("system", resource.getSystem())) //
-                                .add(localeCriterion) //
-                                .add(programTypeCriterion)) //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq("system", resource.getInstitution())) //
-                                .add(programTypeCriterion)) //
-                        .add(Restrictions.eq("program", resource.getProgram()))) //
+                .add(Restrictions.eq("definitionScope.id", definitionScope)) //
+                .add(getResourceLocalizationCriterion(resource, locale, programType, definitionScope)) //
+                .addOrder(Order.asc(definitionReference)) //
+                .addOrder(Order.desc("program")) //
+                .addOrder(Order.desc("institution")) //
+                .addOrder(Order.desc("system")) //
+                .addOrder(Order.asc("systemDefault")) //
+                .list();
+    }
+
+    public <T extends WorkflowConfiguration, U extends WorkflowDefinition> List<T> listVersionedConfigurations(Resource resource, PrismLocale locale,
+            PrismProgramType programType, Class<T> configurationClass, Class<U> definitionClass, PrismScope definitionScope) {
+        String definitionReference = getLowerCaseClassReference(definitionClass);
+        return (List<T>) sessionFactory.getCurrentSession().createCriteria(configurationClass) //
+                .createAlias(definitionReference, definitionReference, JoinType.INNER_JOIN) //
+                .createAlias(definitionReference + ".scope", "definitionScope", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("definitionScope.id", definitionScope)) //
+                .add(getResourceLocalizationCriterion(resource, locale, programType, definitionScope)) //
+                .add(Restrictions.eq("active", true)) //
                 .addOrder(Order.asc(definitionReference)) //
                 .addOrder(Order.desc("program")) //
                 .addOrder(Order.desc("institution")) //
@@ -295,20 +314,16 @@ public class CustomizationDAO {
                 .executeUpdate();
     }
 
-    public List<DisplayPropertyConfiguration> getDisplayProperties(Resource resource, PrismLocale locale, PrismProgramType programType,
-            PrismDisplayPropertyCategory displayPropertyCategory, PrismScope propertyScope) {
-        return (List<DisplayPropertyConfiguration>) sessionFactory.getCurrentSession().createCriteria(DisplayPropertyConfiguration.class) //
-                .createAlias("displayPropertyDefinition", "displayPropertyDefinition", JoinType.INNER_JOIN) //
-                .add(getFilterCondition(resource, locale, programType, propertyScope)) //
-                .add(Restrictions.eq("displayPropertyDefinition.displayPropertyCategory", displayPropertyCategory)) //
-                .addOrder(Order.desc("program")) //
-                .addOrder(Order.desc("institution")) //
-                .addOrder(Order.desc("system")) //
-                .addOrder(Order.asc("systemDefault")) //
-                .list();
+    private Criterion getLocaleCriterion(PrismLocale locale) {
+        return locale == null ? Restrictions.eq("locale", getSystemLocale()) : Restrictions.in("locale", Lists.newArrayList(locale, getSystemLocale()));
     }
 
-    private Junction getFilterCondition(Resource resource, PrismLocale locale, PrismProgramType programType, PrismScope definitionScope) {
+    private Criterion getProgramTypeCriterion(PrismProgramType programType, PrismScope definitionScope) {
+        return definitionScope.getPrecedence() < PROGRAM.getPrecedence() ? Restrictions.isNull("programType") : programType == null ? Restrictions.eq(
+                "programType", getSystemProgramType()) : Restrictions.in("programType", Arrays.asList(programType, getSystemProgramType()));
+    }
+
+    private Junction getResourceLocalizationCriterion(Resource resource, PrismLocale locale, PrismProgramType programType, PrismScope definitionScope) {
         Criterion localeCriterion = getLocaleCriterion(locale);
         Criterion programTypeCriterion = getProgramTypeCriterion(programType, definitionScope);
 
@@ -318,18 +333,9 @@ public class CustomizationDAO {
                         .add(localeCriterion) //
                         .add(programTypeCriterion)) //
                 .add(Restrictions.conjunction() //
-                        .add(Restrictions.eq("institution", resource.getInstitution())) //
+                        .add(Restrictions.eq("system", resource.getInstitution())) //
                         .add(programTypeCriterion)) //
                 .add(Restrictions.eq("program", resource.getProgram()));
-    }
-
-    private Criterion getLocaleCriterion(PrismLocale locale) {
-        return locale == null ? Restrictions.eq("locale", getSystemLocale()) : Restrictions.in("locale", Lists.newArrayList(locale, getSystemLocale()));
-    }
-
-    private Criterion getProgramTypeCriterion(PrismProgramType programType, PrismScope definitionScope) {
-        return definitionScope.getPrecedence() < PROGRAM.getPrecedence() ? Restrictions.isNull("programType") : programType == null ? Restrictions.eq(
-                "programType", getSystemProgramType()) : Restrictions.in("programType", Arrays.asList(programType, getSystemProgramType()));
     }
 
     private void applyLocalizationConstraints(PrismLocale locale, PrismProgramType programType, Query query) {

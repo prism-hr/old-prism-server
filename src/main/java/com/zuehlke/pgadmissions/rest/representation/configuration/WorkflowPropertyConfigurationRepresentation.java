@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.configuration;
 
-public class WorkflowPropertyConfigurationRepresentation extends AbstractConfigurationRepresentation {
+public class WorkflowPropertyConfigurationRepresentation extends WorkflowConfigurationRepresentation {
 
     private Boolean enabled;
 

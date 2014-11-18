@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.configuration;
 
-public class NotificationConfigurationRepresentation extends AbstractConfigurationRepresentation {
+public class NotificationConfigurationRepresentation extends WorkflowConfigurationRepresentation {
 
     private String subject;
 

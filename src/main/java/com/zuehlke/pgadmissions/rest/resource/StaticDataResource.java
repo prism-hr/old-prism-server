@@ -30,8 +30,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.imported.Country;
 import com.zuehlke.pgadmissions.domain.imported.Disability;
@@ -64,16 +62,12 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.Importe
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ImportedInstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.LanguageQualificationTypeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.ActionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.workflow.NotificationDefinitionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.StateActionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.workflow.StateDurationDefinitionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowPropertyDefinitionRepresentation;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
 
 @RestController
@@ -93,7 +87,7 @@ public class StaticDataResource {
     private CustomizationService customizationService;
 
     @Autowired
-    private Mapper dozerBeanMapper;
+    private Mapper mapper;
 
     @Value("${integration.google.api.key}")
     private String googleApiKey;
@@ -135,7 +129,7 @@ public class StaticDataResource {
         List<InstitutionDomicile> institutionDomiciles = institutionService.getDomiciles();
         List<InstitutionDomicileRepresentation> institutionDomicileRepresentations = Lists.newArrayListWithExpectedSize(institutionDomiciles.size());
         for (InstitutionDomicile institutionDomicile : institutionDomiciles) {
-            institutionDomicileRepresentations.add(dozerBeanMapper.map(institutionDomicile, InstitutionDomicileRepresentation.class));
+            institutionDomicileRepresentations.add(mapper.map(institutionDomicile, InstitutionDomicileRepresentation.class));
         }
         staticData.put("institutionDomiciles", institutionDomicileRepresentations);
 
@@ -166,36 +160,7 @@ public class StaticDataResource {
                 List<? extends WorkflowDefinition> definitions = customizationService.listDefinitions(prismConfiguration.getDefinitionClass(), prismScope);
                 List<WorkflowDefinitionRepresentation> parameters = Lists.newArrayList();
                 for (WorkflowDefinition definition : definitions) {
-                    WorkflowDefinitionRepresentation parameter = null;
-                    switch (prismConfiguration) {
-                    case ACTION_CUSTOM_QUESTION:
-                    case DISPLAY_PROPERTY:
-                        parameter = new WorkflowDefinitionRepresentation().withId(definition.getId());
-                        break;
-                    case NOTIFICATION:
-                        PrismNotificationDefinition prismDefinition = (PrismNotificationDefinition) definition.getId();
-                        NotificationDefinitionRepresentation notificationParameter = new NotificationDefinitionRepresentation().withId(prismDefinition)
-                                .withReminderId(prismDefinition.getReminderDefinition()).withMinimumPermitted(prismConfiguration.getMinimumPermitted())
-                                .withMaximumPermitted(prismConfiguration.getMaximumPermitted());
-                        for (PrismNotificationDefinitionPropertyCategory propertyCategory : prismDefinition.getPropertyCategories()) {
-                            notificationParameter.addPropertyCategory(propertyCategory);
-                        }
-                        parameter = notificationParameter;
-                        break;
-                    case STATE_DURATION:
-                        StateDurationDefinitionRepresentation stateDurationParameter = new StateDurationDefinitionRepresentation().withId(definition.getId())
-                                .withMinimumPermitted(prismConfiguration.getMinimumPermitted()).withMaximumPermitted(prismConfiguration.getMaximumPermitted());
-                        parameter = stateDurationParameter;
-                        break;
-                    case WORKFLOW_PROPERTY:
-                        WorkflowPropertyDefinitionRepresentation workflowParameter = new WorkflowPropertyDefinitionRepresentation().withId(definition.getId())
-                                .withRangeSpecification((Boolean) ReflectionUtils.getProperty(definition, "rangeSpecification"))
-                                .withMinimumPermitted((Integer) ReflectionUtils.getProperty(definition, "minimumPermitted"))
-                                .withMaximumPermitted((Integer) ReflectionUtils.getProperty(definition, "maximumPermitted"));
-                        parameter = workflowParameter;
-                        break;
-                    }
-                    parameters.add(parameter);
+                    parameters.add(mapper.map(definition, prismConfiguration.getDefinitionRepresentationClass()));
                 }
                 if (!parameters.isEmpty()) {
                     scopeConfigurations.put(prismScope, parameters);
@@ -227,7 +192,7 @@ public class StaticDataResource {
             List<? extends ImportedEntity> entities = importedEntityService.getEnabledImportedEntities(institution, entityClass);
             List<ImportedEntityRepresentation> entityRepresentations = Lists.newArrayListWithCapacity(entities.size());
             for (Object entity : entities) {
-                entityRepresentations.add(dozerBeanMapper.map(entity, ImportedEntityRepresentation.class));
+                entityRepresentations.add(mapper.map(entity, ImportedEntityRepresentation.class));
             }
             staticData.put(pluralize(simpleName), entityRepresentations);
         }
@@ -238,11 +203,11 @@ public class StaticDataResource {
         List<LanguageQualificationTypeRepresentation> languageQualificationTypeRepresentations = Lists.newArrayListWithCapacity(languageQualificationTypes
                 .size());
         for (ImportedLanguageQualificationType languageQualificationType : languageQualificationTypes) {
-            languageQualificationTypeRepresentations.add(dozerBeanMapper.map(languageQualificationType, LanguageQualificationTypeRepresentation.class));
+            languageQualificationTypeRepresentations.add(mapper.map(languageQualificationType, LanguageQualificationTypeRepresentation.class));
         }
         staticData.put("languageQualificationTypes", languageQualificationTypeRepresentations);
 
-        staticData.put("institution", dozerBeanMapper.map(institution, InstitutionRepresentation.class));
+        staticData.put("institution", mapper.map(institution, InstitutionRepresentation.class));
         return staticData;
     }
 
@@ -256,7 +221,7 @@ public class StaticDataResource {
 
         List<ImportedInstitutionRepresentation> institutionRepresentations = Lists.newArrayListWithCapacity(institutions.size());
         for (ImportedInstitution institution : institutions) {
-            institutionRepresentations.add(dozerBeanMapper.map(institution, ImportedInstitutionRepresentation.class));
+            institutionRepresentations.add(mapper.map(institution, ImportedInstitutionRepresentation.class));
         }
 
         return institutionRepresentations;

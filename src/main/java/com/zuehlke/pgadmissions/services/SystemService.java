@@ -113,6 +113,9 @@ public class SystemService {
     private NotificationService notificationService;
 
     @Autowired
+    private DisplayPropertyService displayPropertyService;
+
+    @Autowired
     private ActionService actionService;
 
     @Autowired
@@ -129,9 +132,6 @@ public class SystemService {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private CustomizationService customizationService;
 
     @Autowired
     private WorkflowService workflowService;
@@ -399,9 +399,9 @@ public class SystemService {
     private void initializeDisplayPropertyConfigurations(System system) throws DeduplicationException, CustomizationException {
         for (PrismDisplayProperty prismDisplayProperty : PrismDisplayProperty.values()) {
             Scope scope = scopeService.getById(prismDisplayProperty.getScope());
-            DisplayPropertyDefinition displayPropertyDefinition = customizationService.getDisplayPropertyDefinitionById(prismDisplayProperty);
+            DisplayPropertyDefinition displayPropertyDefinition = displayPropertyService.getDefinitionById(prismDisplayProperty);
             PrismProgramType programType = scope.getPrecedence() > PrismScope.INSTITUTION.getPrecedence() ? PrismProgramType.getSystemProgramType() : null;
-            customizationService.createOrUpdateDisplayPropertyConfiguration(system, PrismLocale.getSystemLocale(), programType, displayPropertyDefinition,
+            displayPropertyService.createOrUpdateDisplayPropertyConfiguration(system, PrismLocale.getSystemLocale(), programType, displayPropertyDefinition,
                     prismDisplayProperty.getDefaultValue());
         }
     }

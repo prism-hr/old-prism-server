@@ -51,6 +51,26 @@
                 <class-a>com.zuehlke.pgadmissions.domain.advert.AdvertProgramType</class-a>
                 <class-b>com.zuehlke.pgadmissions.domain.definitions.PrismProgramType</class-b>
             </converter>
+            <converter type="com.zuehlke.pgadmissions.rest.converter.WorkflowDefinitionConverter">
+                <class-a>com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionDefinition</class-a>
+                <class-b>com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation</class-b>
+            </converter>
+            <converter type="com.zuehlke.pgadmissions.rest.converter.WorkflowDefinitionConverter">
+                <class-a>com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition</class-a>
+                <class-b>com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation</class-b>
+            </converter>
+            <converter type="com.zuehlke.pgadmissions.rest.converter.StateDurationDefinitionConverter">
+                <class-a>com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition</class-a>
+                <class-b>com.zuehlke.pgadmissions.rest.representation.workflow.StateDurationDefinitionRepresentation</class-b>
+            </converter>
+            <converter type="com.zuehlke.pgadmissions.rest.converter.NotificationDefinitionConverter">
+                <class-a>com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition</class-a>
+                <class-b>com.zuehlke.pgadmissions.rest.representation.workflow.NotificationDefinitionRepresentation</class-b>
+            </converter>
+            <converter type="com.zuehlke.pgadmissions.rest.converter.WorkflowPropertyDefinitionConverter">
+                <class-a>com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition</class-a>
+                <class-b>com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowPropertyDefinitionRepresentation</class-b>
+            </converter>
         </custom-converters>
         <copy-by-references>
             <copy-by-reference>java.util.TimeZone</copy-by-reference>

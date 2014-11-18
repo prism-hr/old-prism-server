@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.configuration;
 
-public class AbstractConfigurationRepresentation {
+public class WorkflowConfigurationRepresentation {
 
     private Enum<?> definitionId;
 

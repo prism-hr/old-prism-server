@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.rest.representation.configuration;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class CustomQuestionConfigurationRepresentation extends AbstractConfigurationRepresentation {
+public class CustomQuestionConfigurationRepresentation extends WorkflowConfigurationRepresentation {
 
     private String component;
 

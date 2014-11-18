@@ -151,7 +151,7 @@ public class ResourceResource {
 
         PrismConfiguration workflow = PrismConfiguration.WORKFLOW_PROPERTY;
         representation.setWorkflowProperties(customizationService.getConfigurationRepresentations(resource, workflow.getConfigurationClass(),
-                workflow.getDefinitionClass(), workflow.getRepresentationClass()));
+                workflow.getDefinitionClass(), workflow.getConfigurationRepresentationClass()));
 
         switch (resource.getResourceScope()) {
         case APPLICATION:

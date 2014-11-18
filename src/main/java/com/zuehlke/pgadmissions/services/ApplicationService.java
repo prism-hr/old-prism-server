@@ -126,7 +126,8 @@ public class ApplicationService {
         StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, application.getInstitution(), studyOptionId.name());
         ProgramStudyOption programStudyOption = programService.getEnabledProgramStudyOption(application.getProgram(), studyOption);
         return new ApplicationStartDateRepresentation().withEarliestDate(getEarliestStartDate(programStudyOption.getId(), baseline))
-                .withRecommendedDate(getRecommendedStartDate(application, programStudyOption, baseline)).withLatestDate(getLatestStartDate(programStudyOption.getId()));
+                .withRecommendedDate(getRecommendedStartDate(application, programStudyOption, baseline))
+                .withLatestDate(getLatestStartDate(programStudyOption.getId()));
     }
 
     public LocalDate getEarliestStartDate(Integer studyOptionId, LocalDate baseline) {
@@ -257,8 +258,8 @@ public class ApplicationService {
         State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
         LocalDate positionProvisionalStartDate = commentDTO.getPositionProvisionalStartDate();
 
-        Comment comment = new Comment().withContent(commentDTO.getContent()).withUser(user).withDelegateUser(delegateUser).withAction(action)
-                .withTransitionState(transitionState).withCreatedTimestamp(new DateTime())
+        Comment comment = new Comment().withResource(application).withContent(commentDTO.getContent()).withUser(user).withDelegateUser(delegateUser)
+                .withAction(action).withTransitionState(transitionState).withCreatedTimestamp(new DateTime())
                 .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse())).withApplicationEligible(commentDTO.getEligible())
                 .withApplicationInterested(commentDTO.getInterested()).withInterviewDateTime(commentDTO.getInterviewDateTime())
                 .withInterviewTimeZone(commentDTO.getInterviewTimeZone()).withInterviewDuration(commentDTO.getInterviewDuration())

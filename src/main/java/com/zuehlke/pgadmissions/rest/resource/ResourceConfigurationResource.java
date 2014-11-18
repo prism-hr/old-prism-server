@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.CaseFormat;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestApiUtils;
-import com.zuehlke.pgadmissions.rest.representation.configuration.AbstractConfigurationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -46,35 +46,25 @@ public class ResourceConfigurationResource {
     private ApplicationContext applicationContext;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<AbstractConfigurationRepresentation> getConfigurations(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
+    public List<WorkflowConfigurationRepresentation> getConfigurations(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @ModelAttribute PrismConfiguration configurationType, @RequestParam PrismScope definitionScope, @RequestParam(required = false) PrismLocale locale,
             @RequestParam(required = false) PrismProgramType programType) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        return customizationService.getConfigurationRepresentations(resource, definitionScope, locale, programType, configurationType.getConfigurationClass(),
-                configurationType.getDefinitionClass(), configurationType.getRepresentationClass());
+        if (configurationType.isVersioned()) {
+            return customizationService.getVersionedConfigurationRepresentations(resource, locale, programType, configurationType.getConfigurationClass(),
+                    configurationType.getDefinitionClass(), configurationType.getConfigurationRepresentationClass(), definitionScope);
+        } else {
+            return customizationService.getConfigurationRepresentations(resource, locale, programType, configurationType.getConfigurationClass(),
+                    configurationType.getDefinitionClass(), configurationType.getConfigurationRepresentationClass(), definitionScope);
+        }
     }
 
-    // @RequestMapping(method = RequestMethod.PUT)
-    // public List<AbstractConfigurationRepresentation> updateConfigurations(
-    // @ModelAttribute ResourceDescriptor resourceDescriptor,
-    // @PathVariable Integer resourceId,
-    // @ModelAttribute PrismWorkflowConfiguration configurationType,
-    // @RequestParam(required = false) PrismLocale locale,
-    // @RequestParam(required = false) PrismProgramType programType) throws Exception {
-    // Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-    //
-    // List<WorkflowConfiguration> configurations = customizationService.listConfigurations(configurationType, resource, locale, programType);
-    //
-    // List<AbstractConfigurationRepresentation> representations = Lists.newArrayListWithCapacity(configurations.size());
-    // String definitionPropertyName = configurationType.getDefinitionPropertyName();
-    // for (WorkflowConfiguration configuration : configurations) {
-    // WorkflowDefinition workflowDefinition = (WorkflowDefinition) PropertyUtils.getSimpleProperty(configuration, definitionPropertyName);
-    // AbstractConfigurationRepresentation representation = dozerBeanMapper.map(configuration, configurationType.getRepresentationClass());
-    // representation.setDefinitionId(workflowDefinition.getId());
-    // representations.add(representation);
-    // }
-    // return representations;
-    // }
+    @RequestMapping(method = RequestMethod.PUT)
+    public void putConfigurations(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
+            @ModelAttribute PrismConfiguration configurationType, @RequestParam PrismScope definitionScope, @RequestParam(required = false) PrismLocale locale,
+            @RequestParam(required = false) PrismProgramType programType) throws Exception {
+        // TODO: build the generic DTO objects
+    }
 
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {

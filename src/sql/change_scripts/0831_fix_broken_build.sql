@@ -5,6 +5,7 @@ ALTER TABLE ACTION_CUSTOM_QUESTION_CONFIGURATION
 	DROP INDEX system_id,
 	DROP INDEX institution_id,
 	DROP INDEX program_id
+;
 
 ALTER TABLE ACTION_CUSTOM_QUESTION_CONFIGURATION
 	ADD UNIQUE INDEX (system_id, program_type, locale, action_custom_question_definition_id, version, display_index),

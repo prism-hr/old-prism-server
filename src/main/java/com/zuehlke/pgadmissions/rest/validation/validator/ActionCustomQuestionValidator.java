@@ -9,7 +9,7 @@ import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismCustomQuestionType;
 import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionConfigurationDTO.ActionCustomQuestionConfigurationValueDTO;
@@ -44,7 +44,7 @@ public class ActionCustomQuestionValidator extends LocalValidatorFactoryBean imp
         }
 
         if (cumulativeRatingCount > 0 && !cumulativeRatingWeight.equals(new BigDecimal(1.00))) {
-            errors.reject(PrismDisplayProperty.SYSTEM_COMMENT_CUSTOM_FORM_WEIGHT_ERROR.name());
+            errors.reject(PrismDisplayPropertyDefinition.SYSTEM_COMMENT_CUSTOM_FORM_WEIGHT_ERROR.name());
         }
     }
 

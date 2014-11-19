@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_STUDY_OPTION_FULL_TIME;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_STUDY_OPTION_MODULAR_FLEXIBLE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_STUDY_OPTION_PART_TIME;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_STUDY_OPTION_FULL_TIME;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_STUDY_OPTION_MODULAR_FLEXIBLE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_STUDY_OPTION_PART_TIME;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ public enum PrismStudyOption {
     PART_TIME(PROGRAM_STUDY_OPTION_PART_TIME,new String[] { "p+++++" }), //
     MODULAR_FLEXIBLE(PROGRAM_STUDY_OPTION_MODULAR_FLEXIBLE, new String[] { "b+++++" });
 
-    private PrismDisplayProperty displayProperty;
+    private PrismDisplayPropertyDefinition displayProperty;
 
     private String[] externalCodes;
 
@@ -26,12 +26,12 @@ public enum PrismStudyOption {
         }
     }
 
-    private PrismStudyOption(PrismDisplayProperty displayProperty, String[] externalCodes) {
+    private PrismStudyOption(PrismDisplayPropertyDefinition displayProperty, String[] externalCodes) {
         this.displayProperty = displayProperty;
         this.externalCodes = externalCodes;
     }
 
-    public final PrismDisplayProperty getDisplayProperty() {
+    public final PrismDisplayPropertyDefinition getDisplayProperty() {
         return displayProperty;
     }
 

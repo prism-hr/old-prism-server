@@ -33,7 +33,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
@@ -351,7 +351,7 @@ public class CommentService {
     public void processComment(Comment comment) {
         if (comment.isApplicationAutomatedRejectionComment()) {
             PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(comment.getApplication(), comment.getUser());
-            comment.setRejectionReasonSystem(propertyLoader.load(PrismDisplayProperty.APPLICATION_COMMENT_REJECTION_SYSTEM));
+            comment.setRejectionReasonSystem(propertyLoader.load(PrismDisplayPropertyDefinition.APPLICATION_COMMENT_REJECTION_SYSTEM));
         }
 
     }

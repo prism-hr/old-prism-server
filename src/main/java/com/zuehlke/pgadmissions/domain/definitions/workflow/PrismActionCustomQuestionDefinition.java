@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 
-public enum PrismActionCustomQuestion {
+public enum PrismActionCustomQuestionDefinition {
 
     APPLICATION_COMPLETE_CUSTOM(APPLICATION), //
     APPLICATION_PROVIDE_REVIEW_CUSTOM(APPLICATION), //
@@ -11,7 +11,7 @@ public enum PrismActionCustomQuestion {
 
     private PrismScope scope;
 
-    private PrismActionCustomQuestion(PrismScope scope) {
+    private PrismActionCustomQuestionDefinition(PrismScope scope) {
         this.scope = scope;
     }
 

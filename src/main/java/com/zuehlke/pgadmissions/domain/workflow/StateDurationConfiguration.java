@@ -143,6 +143,11 @@ public class StateDurationConfiguration extends WorkflowConfiguration {
         this.systemDefault = systemDefault;
     }
 
+    @Override
+    public WorkflowDefinition getDefinition() {
+        return getStateDurationDefinition();
+    }
+
     public StateDurationConfiguration withResource(Resource resource) {
         setResource(resource);
         return this;

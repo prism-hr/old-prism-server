@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowPropertyDef
 
 public enum PrismConfiguration {
 
-    ACTION_CUSTOM_QUESTION(ActionCustomQuestionConfiguration.class, ActionCustomQuestionDefinition.class, null, WorkflowDefinitionRepresentation.class, true,
+    CUSTOM_QUESTION(ActionCustomQuestionConfiguration.class, ActionCustomQuestionDefinition.class, null, WorkflowDefinitionRepresentation.class, true,
             true, null, null, "_COMMENT_UPDATED_ACTION_PROPERTY"), //
     DISPLAY_PROPERTY(DisplayPropertyConfiguration.class, DisplayPropertyDefinition.class, null, WorkflowDefinitionRepresentation.class, true, false, null,
             null, "_COMMENT_UPDATED_DISPLAY_PROPERTY"), //

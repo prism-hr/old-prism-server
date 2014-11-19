@@ -21,6 +21,8 @@ public abstract class WorkflowConfiguration extends WorkflowResource {
 
     public abstract void setSystemDefault(Boolean systemDefault);
 
+    public abstract WorkflowDefinition getDefinition();
+
     @Override
     public ResourceSignature getResourceSignature() {
         ResourceSignature resourceSignature = super.getResourceSignature();

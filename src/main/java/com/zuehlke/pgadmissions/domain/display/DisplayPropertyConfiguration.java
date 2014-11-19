@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -146,6 +147,11 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
     @Override
     public final void setSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
+    }
+
+    @Override
+    public WorkflowDefinition getDefinition() {
+        return getDisplayPropertyDefinition();
     }
 
     public DisplayPropertyConfiguration withResource(Resource resource) {

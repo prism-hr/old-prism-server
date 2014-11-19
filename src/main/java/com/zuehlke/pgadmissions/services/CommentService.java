@@ -1,44 +1,17 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
-import org.dozer.Mapper;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
-import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
-import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
-import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
+import com.zuehlke.pgadmissions.domain.comment.*;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -50,11 +23,7 @@ import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguratio
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
-import com.zuehlke.pgadmissions.rest.dto.CommentAssignedUserDTO;
-import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
-import com.zuehlke.pgadmissions.rest.dto.CommentTransitionStateDTO;
-import com.zuehlke.pgadmissions.rest.dto.FileDTO;
+import com.zuehlke.pgadmissions.rest.dto.*;
 import com.zuehlke.pgadmissions.rest.representation.TimelineRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.TimelineRepresentation.TimelineCommentGroupRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
@@ -64,6 +33,22 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.Applica
 import com.zuehlke.pgadmissions.rest.representation.resource.application.OfferRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.UserAppointmentPreferencesRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import org.dozer.Mapper;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
 
 @Service
 @Transactional
@@ -227,31 +212,32 @@ public class CommentService {
 
         if (sourceComment != null) {
             return buildOfferRepresentation(sourceComment);
-        } else {
-            sourceComment = getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
+        }
 
-            if (sourceComment != null) {
-                OfferRepresentation offerRepresentation = buildOfferRepresentation(sourceComment);
+        sourceComment = getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
+        if (sourceComment != null) {
+            OfferRepresentation offerRepresentation = buildOfferRepresentation(sourceComment);
 
-                User primarySupervisor = commentDAO.getAssignedUsers(sourceComment, PrismRole.APPLICATION_PRIMARY_SUPERVISOR).get(0);
+            User primarySupervisor = Iterables.getFirst(commentDAO.getAssignedUsers(sourceComment, PrismRole.APPLICATION_PRIMARY_SUPERVISOR), null);
+            if (primarySupervisor != null) {
                 sourceComment = getLatestComment(application, PrismAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION, primarySupervisor,
                         sourceComment.getCreatedTimestamp());
-
-                if (sourceComment != null) {
-                    String positionTitle = sourceComment.getPositionTitle();
-                    String positionDescription = sourceComment.getPositionDescription();
-                    LocalDate positionProvisionalStartDate = sourceComment.getPositionProvisionalStartDate();
-                    String appointmentConditions = sourceComment.getAppointmentConditions();
-
-                    offerRepresentation.setPositionTitle(positionTitle == null ? positionTitle : positionTitle);
-                    offerRepresentation.setPositionDescription(positionDescription == null ? positionDescription : positionDescription);
-                    offerRepresentation.setPositionProvisionalStartDate(positionProvisionalStartDate == null ? positionProvisionalStartDate
-                            : positionProvisionalStartDate);
-                    offerRepresentation.setAppointmentConditions(appointmentConditions == null ? appointmentConditions : appointmentConditions);
-                }
-
-                return offerRepresentation;
             }
+
+            if (sourceComment != null) {
+                String positionTitle = sourceComment.getPositionTitle();
+                String positionDescription = sourceComment.getPositionDescription();
+                LocalDate positionProvisionalStartDate = sourceComment.getPositionProvisionalStartDate();
+                String appointmentConditions = sourceComment.getAppointmentConditions();
+
+                offerRepresentation.setPositionTitle(positionTitle == null ? positionTitle : positionTitle);
+                offerRepresentation.setPositionDescription(positionDescription == null ? positionDescription : positionDescription);
+                offerRepresentation.setPositionProvisionalStartDate(positionProvisionalStartDate == null ? positionProvisionalStartDate
+                        : positionProvisionalStartDate);
+                offerRepresentation.setAppointmentConditions(appointmentConditions == null ? appointmentConditions : appointmentConditions);
+            }
+
+            return offerRepresentation;
         }
 
         return new OfferRepresentation();
@@ -525,14 +511,14 @@ public class CommentService {
         BigDecimal aggregatedRating = new BigDecimal(0.00);
         for (CommentCustomResponse property : comment.getPropertyAnswers()) {
             switch (property.getCustomQuestionType()) {
-            case RATING_NORMAL:
-                aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(property, 5));
-                break;
-            case RATING_WEIGHTED:
-                aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(property, 8));
-                break;
-            default:
-                continue;
+                case RATING_NORMAL:
+                    aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(property, 5));
+                    break;
+                case RATING_WEIGHTED:
+                    aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(property, 8));
+                    break;
+                default:
+                    continue;
             }
         }
         comment.setApplicationRating(aggregatedRating);

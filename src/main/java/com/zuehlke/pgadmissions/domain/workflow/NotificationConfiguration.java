@@ -169,6 +169,11 @@ public class NotificationConfiguration extends WorkflowConfiguration {
         this.systemDefault = systemDefault;
     }
 
+    @Override
+    public WorkflowDefinition getDefinition() {
+        return getNotificationDefinition();
+    }
+
     public NotificationConfiguration withResource(Resource resource) {
         setResource(resource);
         return this;

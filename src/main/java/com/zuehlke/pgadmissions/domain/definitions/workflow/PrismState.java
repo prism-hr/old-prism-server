@@ -5,17 +5,17 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.APPLICATION_CONFIRM_ELIGIBILITY_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.APPLICATION_CONFIRM_SUPERVISION_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.APPLICATION_ESCALATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.APPLICATION_PROVIDE_REFERENCE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.APPLICATION_PROVIDE_REVIEW_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.APPLICATION_PURGE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.INSTITUTION_ESCALATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.PROGRAM_ESCALATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration.PROJECT_ESCALATE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_CONFIRM_ELIGIBILITY_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_CONFIRM_SUPERVISION_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_REFERENCE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_REVIEW_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PURGE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.INSTITUTION_ESCALATE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.PROGRAM_ESCALATE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.PROJECT_ESCALATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation.APPLICATION_CLOSING_DATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation.APPLICATION_INTERVIEW_DATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation.PROGRAM_END_DATE;
@@ -190,7 +190,7 @@ public enum PrismState {
 
     private PrismStateGroup stateGroup;
 
-    private PrismStateDuration defaultDuration;
+    private PrismStateDurationDefinition defaultDuration;
 
     private PrismStateDurationEvaluation stateDurationEvaluation;
 
@@ -211,7 +211,7 @@ public enum PrismState {
         }
     }
 
-    private PrismState(PrismStateGroup stateGroup, PrismStateDuration defaultDuration, PrismStateDurationEvaluation stateDurationEvaluation,
+    private PrismState(PrismStateGroup stateGroup, PrismStateDurationDefinition defaultDuration, PrismStateDurationEvaluation stateDurationEvaluation,
             boolean parallelizable, PrismScope scope, Class<? extends PrismWorkflowState> workflowStateClass) {
         this.stateGroup = stateGroup;
         this.defaultDuration = defaultDuration;
@@ -225,7 +225,7 @@ public enum PrismState {
         return stateGroup;
     }
 
-    public final PrismStateDuration getDefaultDuration() {
+    public final PrismStateDurationDefinition getDefaultDuration() {
         return defaultDuration;
     }
 

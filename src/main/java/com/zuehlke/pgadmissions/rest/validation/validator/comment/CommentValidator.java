@@ -55,16 +55,16 @@ public class CommentValidator extends LocalValidatorFactoryBean implements Valid
         if (propertyAnswerDTO != null) {
             errors.pushNestedPath("propertyAnswer");
 
-            List<ActionCustomQuestionConfiguration> properties = (List<ActionCustomQuestionConfiguration>) (List<?>) customizationService
+            List<ActionCustomQuestionConfiguration> configurations = (List<ActionCustomQuestionConfiguration>) (List<?>) customizationService
                     .getConfigurationsWithVersion(PrismConfiguration.CUSTOM_QUESTION, propertyAnswerDTO.getVersion());
             List<Object> propertyValues = propertyAnswerDTO.getValues();
 
-            if (properties.size() != propertyValues.size()) {
+            if (configurations.size() != propertyValues.size()) {
                 throw new Error();
             }
 
-            for (int i = 0; i < properties.size(); i++) {
-                ActionCustomQuestionConfiguration property = properties.get(i);
+            for (int i = 0; i < configurations.size(); i++) {
+                ActionCustomQuestionConfiguration property = configurations.get(i);
                 Object propertyValue = propertyValues.get(i);
 
                 PrismCustomQuestionType propertyType = property.getCustomQuestionType();

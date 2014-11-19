@@ -1,13 +1,17 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
+import java.util.ArrayList;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 
-public class WorkflowPropertyConfigurationDTO extends ArrayList<WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO> {
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
+import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO;
+
+public class WorkflowPropertyConfigurationDTO extends ArrayList<WorkflowPropertyConfigurationValueDTO> {
+
+    private static final long serialVersionUID = 444009817902242462L;
 
     public static class WorkflowPropertyConfigurationValueDTO extends WorkflowConfigurationDTO {
 
@@ -57,22 +61,22 @@ public class WorkflowPropertyConfigurationDTO extends ArrayList<WorkflowProperty
             this.maximum = maximum;
         }
 
-        public WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO withId(PrismWorkflowPropertyDefinition id) {
-            setDefinitionId(id);
+        public WorkflowPropertyConfigurationValueDTO withDefinition(PrismWorkflowPropertyDefinition definitionId) {
+            setDefinitionId(definitionId);
             return this;
         }
 
-        public WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO withEnabled(Boolean enabled) {
+        public WorkflowPropertyConfigurationValueDTO withEnabled(Boolean enabled) {
             this.enabled = enabled;
             return this;
         }
 
-        public WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO withMinimum(Integer minimum) {
+        public WorkflowPropertyConfigurationValueDTO withMinimum(Integer minimum) {
             this.minimum = minimum;
             return this;
         }
 
-        public WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO withMaximum(Integer maximum) {
+        public WorkflowPropertyConfigurationValueDTO withMaximum(Integer maximum) {
             this.maximum = maximum;
             return this;
         }

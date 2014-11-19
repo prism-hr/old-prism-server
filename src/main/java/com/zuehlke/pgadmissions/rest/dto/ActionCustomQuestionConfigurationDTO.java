@@ -8,17 +8,19 @@ import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestion;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
+import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionConfigurationDTO.ActionCustomQuestionConfigurationValueDTO;
 
-public class ActionCustomQuestionConfigurationDTO extends ArrayList<ActionCustomQuestionConfigurationDTO.ActionCustomQuestionConfigurationValueDTO> {
+public class ActionCustomQuestionConfigurationDTO extends ArrayList<ActionCustomQuestionConfigurationValueDTO> {
+
+    private static final long serialVersionUID = 3104422819748158358L;
 
     public static class ActionCustomQuestionConfigurationValueDTO extends WorkflowConfigurationDTO {
 
         @NotNull
-        private PrismActionCustomQuestion definitionId;
+        private PrismActionCustomQuestionDefinition definitionId;
 
         @NotNull
         private String name;
@@ -51,11 +53,11 @@ public class ActionCustomQuestionConfigurationDTO extends ArrayList<ActionCustom
         @DecimalMax("1.00")
         private BigDecimal weighting;
 
-        public PrismActionCustomQuestion getDefinitionId() {
+        public PrismActionCustomQuestionDefinition getDefinitionId() {
             return definitionId;
         }
 
-        public void setDefinitionId(PrismActionCustomQuestion definitionId) {
+        public void setDefinitionId(PrismActionCustomQuestionDefinition definitionId) {
             this.definitionId = definitionId;
         }
 

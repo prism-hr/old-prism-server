@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
 
 public class ApplicationSupervisorDTO {
 

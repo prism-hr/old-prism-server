@@ -6,12 +6,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 
-import com.google.common.io.Resources;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.google.common.io.Resources;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;

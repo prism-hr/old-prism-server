@@ -22,11 +22,11 @@ import com.zuehlke.pgadmissions.dao.SystemDAO;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestion;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PrismReminderDefinition;
@@ -261,7 +261,7 @@ public class SystemService {
     }
 
     private void initializeActionCustomQuestionDefinitions() {
-        for (PrismActionCustomQuestion prismActionCustomQuestion : PrismActionCustomQuestion.values()) {
+        for (PrismActionCustomQuestionDefinition prismActionCustomQuestion : PrismActionCustomQuestionDefinition.values()) {
             Scope scope = entityService.getById(Scope.class, prismActionCustomQuestion.getScope());
             ActionCustomQuestionDefinition transientActionCustomQuestionDefinition = new ActionCustomQuestionDefinition().withId(prismActionCustomQuestion)
                     .withScope(scope);
@@ -357,7 +357,7 @@ public class SystemService {
     }
 
     private void initializeDisplayPropertyDefinitions() throws DeduplicationException {
-        for (PrismDisplayProperty prismDisplayProperty : PrismDisplayProperty.values()) {
+        for (PrismDisplayPropertyDefinition prismDisplayProperty : PrismDisplayPropertyDefinition.values()) {
             Scope scope = scopeService.getById(prismDisplayProperty.getScope());
             DisplayPropertyDefinition transientDisplayProperty = new DisplayPropertyDefinition().withId(prismDisplayProperty)
                     .withDisplayPropertyCategory(prismDisplayProperty.getDisplayCategory()).withScope(scope);
@@ -402,7 +402,7 @@ public class SystemService {
     }
 
     private void initializeDisplayPropertyConfigurations(System system) throws DeduplicationException, CustomizationException {
-        for (PrismDisplayProperty prismDisplayProperty : PrismDisplayProperty.values()) {
+        for (PrismDisplayPropertyDefinition prismDisplayProperty : PrismDisplayPropertyDefinition.values()) {
             Scope scope = scopeService.getById(prismDisplayProperty.getScope());
             DisplayPropertyDefinition displayPropertyDefinition = displayPropertyService.getDefinitionById(prismDisplayProperty);
             PrismProgramType programType = scope.getPrecedence() > PrismScope.INSTITUTION.getPrecedence() ? PrismProgramType.getSystemProgramType() : null;
@@ -539,11 +539,9 @@ public class SystemService {
         User user = system.getUser();
         if (user.getUserAccount() == null) {
             Action action = actionService.getById(PrismAction.SYSTEM_STARTUP);
-            Comment comment = new Comment()
-                    .withAction(action)
-                    .withContent(
-                            applicationContext.getBean(PropertyLoader.class).localize(system, user)
-                                    .load(PrismDisplayProperty.SYSTEM_COMMENT_INITIALIZED_SYSTEM)).withDeclinedResponse(false).withUser(user)
+            String content = applicationContext.getBean(PropertyLoader.class).localize(system, user)
+                    .load(PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_SYSTEM);
+            Comment comment = new Comment().withAction(action).withContent(content).withDeclinedResponse(false).withUser(user)
                     .withCreatedTimestamp(new DateTime()).addAssignedUser(user, roleService.getCreatorRole(system), PrismRoleTransitionType.CREATE);
             ActionOutcomeDTO outcome = actionService.executeAction(system, action, comment);
             notificationService.sendRegistrationNotification(user, outcome, comment);

@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.services.builders.download;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.SYSTEM_VALUE_NOT_PROVIDED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_PROVIDED;
 
 import java.io.IOException;
 import java.io.OutputStream;

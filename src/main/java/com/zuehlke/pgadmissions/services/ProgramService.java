@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.imported.ProgramType;
@@ -152,7 +152,7 @@ public class ProgramService {
         boolean viewEditAction = actionId == PrismAction.PROGRAM_VIEW_EDIT;
 
         String commentContent = viewEditAction ? applicationContext.getBean(PropertyLoader.class).localize(program, user)
-                .load(PrismDisplayProperty.PROGRAM_COMMENT_UPDATED) : commentDTO.getContent();
+                .load(PrismDisplayPropertyDefinition.PROGRAM_COMMENT_UPDATED) : commentDTO.getContent();
 
         ProgramDTO programDTO = (ProgramDTO) commentDTO.fetchResouceDTO();
         LocalDate dueDate = programDTO.getEndDate();

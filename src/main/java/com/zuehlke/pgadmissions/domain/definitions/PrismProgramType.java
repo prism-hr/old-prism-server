@@ -1,15 +1,15 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_TYPE_EMPLOYMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_TYPE_EMPLOYMENT_SECONDMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_RESEARCH;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_TAUGHT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_TYPE_SCHOLARSHIP_UNDERGRADUATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_TYPE_STUDY_POSTGRADUATE_RESEARCH;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_TYPE_STUDY_POSTGRADUATE_TAUGHT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_TYPE_STUDY_UNDERGRADUATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_TYPE_TRAINING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_TYPE_WORK_EXPERIENCE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_TYPE_EMPLOYMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_TYPE_EMPLOYMENT_SECONDMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_RESEARCH;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_TAUGHT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_TYPE_SCHOLARSHIP_UNDERGRADUATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_TYPE_STUDY_POSTGRADUATE_RESEARCH;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_TYPE_STUDY_POSTGRADUATE_TAUGHT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_TYPE_STUDY_UNDERGRADUATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_TYPE_TRAINING;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_TYPE_WORK_EXPERIENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.EXPERIENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.FUNDING;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.LEARNING;
@@ -69,7 +69,7 @@ public enum PrismProgramType {
 
     private Integer defaultStartBuffer;
 
-    private PrismDisplayProperty displayProperty;
+    private PrismDisplayPropertyDefinition displayProperty;
 
     private String[] prefixes;
 
@@ -137,7 +137,7 @@ public enum PrismProgramType {
 
     private PrismProgramType(PrismProgramCategory programClass, Integer defaultMinimumDurationMonth, Integer defaultMaximumDurationMonth,
             PrismProgramTypeVisibility defaultVisibility, PrismProgramStartType defaultStartType, Integer defaultStartMonth, Integer defaultStartWeek,
-            Integer defaultStartDay, Integer defaultStartDelay, Integer defaultStartBuffer, PrismDisplayProperty displayProperty, String[] prefixes) {
+            Integer defaultStartDay, Integer defaultStartDelay, Integer defaultStartBuffer, PrismDisplayPropertyDefinition displayProperty, String[] prefixes) {
         this.programCategory = programClass;
         this.defaultMinimumDurationMonth = defaultMinimumDurationMonth;
         this.defaultMaximumDurationMonth = defaultMaximumDurationMonth;
@@ -192,7 +192,7 @@ public enum PrismProgramType {
         return defaultStartBuffer;
     }
 
-    public final PrismDisplayProperty getDisplayProperty() {
+    public final PrismDisplayPropertyDefinition getDisplayProperty() {
         return displayProperty;
     }
 

@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestion;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
 
 @Entity
 @Table(name = "ACTION_CUSTOM_QUESTION_DEFINITION")
@@ -22,17 +22,17 @@ public class ActionCustomQuestionDefinition extends WorkflowDefinition {
     @Id
     @Column(name = "id", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PrismActionCustomQuestion id;
+    private PrismActionCustomQuestionDefinition id;
 
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
 
-    public final PrismActionCustomQuestion getId() {
+    public final PrismActionCustomQuestionDefinition getId() {
         return id;
     }
 
-    public final void setId(PrismActionCustomQuestion id) {
+    public final void setId(PrismActionCustomQuestionDefinition id) {
         this.id = id;
     }
 
@@ -46,7 +46,7 @@ public class ActionCustomQuestionDefinition extends WorkflowDefinition {
         this.scope = scope;
     }
 
-    public ActionCustomQuestionDefinition withId(PrismActionCustomQuestion id) {
+    public ActionCustomQuestionDefinition withId(PrismActionCustomQuestionDefinition id) {
         this.id = id;
         return this;
     }

@@ -105,7 +105,7 @@ public class ResourceConfigurationResource {
             @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType,
             @Valid @RequestBody ActionCustomQuestionConfigurationDTO actionCustomQuestionConfigurationDTO) throws CustomizationException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        customizationService.updateConfiguration(configurationType, resource, scope, locale, programType, actionCustomQuestionConfigurationDTO);
+        customizationService.createOrUpdateConfigurationGroup(configurationType, resource, scope, locale, programType, actionCustomQuestionConfigurationDTO);
     }
 
     @RequestMapping(value = "{configurationType:stateDurations}", method = RequestMethod.PUT)
@@ -114,7 +114,7 @@ public class ResourceConfigurationResource {
             @RequestParam(required = false) PrismProgramType programType, @Valid @RequestBody StateDurationConfigurationDTO stateDurationConfigurationDTO)
             throws CustomizationException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        customizationService.updateConfiguration(configurationType, resource, scope, locale, programType, stateDurationConfigurationDTO);
+        customizationService.createOrUpdateConfigurationGroup(configurationType, resource, scope, locale, programType, stateDurationConfigurationDTO);
     }
 
     @RequestMapping(value = "{configurationType:displayProperties}", method = RequestMethod.PUT)
@@ -123,7 +123,7 @@ public class ResourceConfigurationResource {
             @RequestParam(required = false) PrismProgramType programType, @Valid @RequestBody DisplayPropertyConfigurationDTO displayPropertyConfigurationDTO)
             throws CustomizationException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        customizationService.updateConfiguration(configurationType, resource, scope, locale, programType, displayPropertyConfigurationDTO);
+        customizationService.createOrUpdateConfigurationGroup(configurationType, resource, scope, locale, programType, displayPropertyConfigurationDTO);
     }
 
     @RequestMapping(value = "{configurationType:workflowProperties}", method = RequestMethod.PUT)
@@ -132,7 +132,7 @@ public class ResourceConfigurationResource {
             @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType,
             @Valid @RequestBody WorkflowPropertyConfigurationDTO workflowPropertyConfigurationDTO) throws CustomizationException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        customizationService.updateConfiguration(configurationType, resource, scope, locale, programType, workflowPropertyConfigurationDTO);
+        customizationService.createOrUpdateConfigurationGroup(configurationType, resource, scope, locale, programType, workflowPropertyConfigurationDTO);
     }
 
     @ModelAttribute

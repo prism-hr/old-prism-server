@@ -1,25 +1,26 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition;
+import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO.StateDurationConfigurationValueDTO;
 
-public class StateDurationConfigurationDTO extends ArrayList<StateDurationConfigurationDTO.StateDurationConfigurationValueDTO> {
+public class StateDurationConfigurationDTO extends ArrayList<StateDurationConfigurationValueDTO> {
+
+    private static final long serialVersionUID = -6908980030567163970L;
 
     public static class StateDurationConfigurationValueDTO extends WorkflowConfigurationDTO {
 
-        private PrismStateDuration definitionId;
+        private PrismStateDurationDefinition definitionId;
 
         private Integer duration;
 
         @Override
-        public PrismStateDuration getDefinitionId() {
+        public PrismStateDurationDefinition getDefinitionId() {
             return definitionId;
         }
 
-        public void setDefinitionId(PrismStateDuration definitionId) {
+        public void setDefinitionId(PrismStateDurationDefinition definitionId) {
             this.definitionId = definitionId;
         }
 
@@ -29,6 +30,16 @@ public class StateDurationConfigurationDTO extends ArrayList<StateDurationConfig
 
         public final void setDuration(Integer duration) {
             this.duration = duration;
+        }
+
+        public StateDurationConfigurationValueDTO withDefinitionId(PrismStateDurationDefinition definitionId) {
+            this.definitionId = definitionId;
+            return this;
+        }
+        
+        public StateDurationConfigurationDTO.StateDurationConfigurationValueDTO withDuration(Integer duration) {
+            this.duration = duration;
+            return this;
         }
 
     }

@@ -6,7 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
-public enum PrismStateDuration {
+public enum PrismStateDurationDefinition {
 
     APPLICATION_CONFIRM_ELIGIBILITY_DURATION(3, APPLICATION), //
     APPLICATION_PROVIDE_REFERENCE_DURATION(7, APPLICATION), //
@@ -28,7 +28,7 @@ public enum PrismStateDuration {
 
     private PrismScope scope;
 
-    private PrismStateDuration(Integer defaultDuration, PrismScope scope) {
+    private PrismStateDurationDefinition(Integer defaultDuration, PrismScope scope) {
         this.defaultDuration = defaultDuration;
         this.scope = scope;
     }

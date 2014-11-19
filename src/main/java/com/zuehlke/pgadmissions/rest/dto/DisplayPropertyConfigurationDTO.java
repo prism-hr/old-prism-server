@@ -1,25 +1,26 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO.DisplayPropertyConfigurationValueDTO;
 
-public class DisplayPropertyConfigurationDTO extends ArrayList<DisplayPropertyConfigurationDTO.DisplayPropertyConfigurationValueDTO> {
+public class DisplayPropertyConfigurationDTO extends ArrayList<DisplayPropertyConfigurationValueDTO> {
+
+    private static final long serialVersionUID = 5008263877226224685L;
 
     public static class DisplayPropertyConfigurationValueDTO extends WorkflowConfigurationDTO {
 
-        private PrismDisplayProperty definitionId;
+        private PrismDisplayPropertyDefinition definitionId;
 
         private String value;
 
         @Override
-        public PrismDisplayProperty getDefinitionId() {
+        public PrismDisplayPropertyDefinition getDefinitionId() {
             return definitionId;
         }
 
-        public void setDefinitionId(PrismDisplayProperty definitionId) {
+        public void setDefinitionId(PrismDisplayPropertyDefinition definitionId) {
             this.definitionId = definitionId;
         }
 
@@ -30,6 +31,17 @@ public class DisplayPropertyConfigurationDTO extends ArrayList<DisplayPropertyCo
         public final void setValue(String value) {
             this.value = value;
         }
+        
+        public DisplayPropertyConfigurationDTO.DisplayPropertyConfigurationValueDTO withDefinitionId(PrismDisplayPropertyDefinition definitionId) {
+            this.definitionId = definitionId;
+            return this;
+        }
+        
+        public DisplayPropertyConfigurationDTO.DisplayPropertyConfigurationValueDTO withValue(String value) {
+            this.value = value;
+            return this;
+        }
 
     }
+    
 }

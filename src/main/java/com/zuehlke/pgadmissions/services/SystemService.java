@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemL
 import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import org.joda.time.DateTime;
@@ -38,7 +39,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
@@ -66,7 +67,12 @@ import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
+import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO;
+import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO.DisplayPropertyConfigurationValueDTO;
 import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
+import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO;
+import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO.StateDurationConfigurationValueDTO;
+import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -331,7 +337,7 @@ public class SystemService {
     }
 
     private void initializeStateDurationDefinitions() throws DeduplicationException {
-        for (PrismStateDuration prismStateDuration : PrismStateDuration.values()) {
+        for (PrismStateDurationDefinition prismStateDuration : PrismStateDurationDefinition.values()) {
             Scope scope = scopeService.getById(prismStateDuration.getScope());
             StateDurationDefinition transientStateDurationDefinition = new StateDurationDefinition().withId(prismStateDuration).withScope(scope);
             entityService.createOrUpdate(transientStateDurationDefinition);
@@ -388,26 +394,28 @@ public class SystemService {
     }
 
     private void initializeStateDurationConfigurations(System system) throws DeduplicationException, CustomizationException {
-        for (PrismState prismState : PrismState.values()) {
-            PrismStateDuration prismStateDuration = prismState.getDefaultDuration();
-            Integer defaultDuration = prismStateDuration == null ? null : prismStateDuration.getDefaultDuration();
-            if (defaultDuration != null) {
-                StateDurationDefinition stateDurationDefinition = stateService.getStateDurationDefinitionById(prismStateDuration);
-                PrismProgramType programType = prismState.getScope().getPrecedence() > PrismScope.INSTITUTION.getPrecedence() ? PrismProgramType
-                        .getSystemProgramType() : null;
-                stateService.createOrUpdateStateDurationConfiguration(system, PrismLocale.getSystemLocale(), programType, stateDurationDefinition,
-                        defaultDuration);
+        for (PrismScope prismScope : scopeService.getScopesDescending()) {
+            StateDurationConfigurationDTO configurationDTO = new StateDurationConfigurationDTO();
+            for (PrismStateDurationDefinition prismStateDuration : PrismStateDurationDefinition.values()) {
+                if (prismScope == prismStateDuration.getScope()) {
+                    configurationDTO.add(new StateDurationConfigurationValueDTO().withDefinitionId(prismStateDuration).withDuration(
+                            prismStateDuration.getDefaultDuration()));
+                }
             }
+            persistConfigurations(PrismConfiguration.STATE_DURATION, system, prismScope, configurationDTO);
         }
     }
 
     private void initializeDisplayPropertyConfigurations(System system) throws DeduplicationException, CustomizationException {
-        for (PrismDisplayPropertyDefinition prismDisplayProperty : PrismDisplayPropertyDefinition.values()) {
-            Scope scope = scopeService.getById(prismDisplayProperty.getScope());
-            DisplayPropertyDefinition displayPropertyDefinition = displayPropertyService.getDefinitionById(prismDisplayProperty);
-            PrismProgramType programType = scope.getPrecedence() > PrismScope.INSTITUTION.getPrecedence() ? PrismProgramType.getSystemProgramType() : null;
-            displayPropertyService.createOrUpdateDisplayPropertyConfiguration(system, PrismLocale.getSystemLocale(), programType, displayPropertyDefinition,
-                    prismDisplayProperty.getDefaultValue());
+        for (PrismScope prismScope : scopeService.getScopesDescending()) {
+            DisplayPropertyConfigurationDTO configurationDTO = new DisplayPropertyConfigurationDTO();
+            for (PrismDisplayPropertyDefinition prismDisplayPropertyDefinition : PrismDisplayPropertyDefinition.values()) {
+                if (prismScope == prismDisplayPropertyDefinition.getScope()) {
+                    configurationDTO.add(new DisplayPropertyConfigurationValueDTO().withDefinitionId(prismDisplayPropertyDefinition).withValue(
+                            prismDisplayPropertyDefinition.getDefaultValue()));
+                }
+            }
+            persistConfigurations(PrismConfiguration.DISPLAY_PROPERTY, system, prismScope, configurationDTO);
         }
     }
 
@@ -416,18 +424,12 @@ public class SystemService {
             WorkflowPropertyConfigurationDTO configurationDTO = new WorkflowPropertyConfigurationDTO();
             for (PrismWorkflowPropertyDefinition prismWorkflowProperty : PrismWorkflowPropertyDefinition.values()) {
                 if (prismScope == prismWorkflowProperty.getScope()) {
-                    configurationDTO.add(new WorkflowPropertyConfigurationValueDTO().withId(prismWorkflowProperty)
+                    configurationDTO.add(new WorkflowPropertyConfigurationValueDTO().withDefinition(prismWorkflowProperty)
                             .withEnabled(prismWorkflowProperty.isDefaultEnabled()).withMinimum(prismWorkflowProperty.getDefaultMinimum())
                             .withMaximum(prismWorkflowProperty.getDefaultMaximum()));
                 }
             }
-
-            int valueCount = configurationDTO.size();
-            if (prismScope.getPrecedence() > PrismScope.INSTITUTION.getPrecedence() && valueCount > 0) {
-                workflowService.createOrUpdateWorkflowPropertyConfiguration(system, getSystemLocale(), getSystemProgramType(), prismScope, configurationDTO);
-            } else if (valueCount > 0) {
-                workflowService.createOrUpdateWorkflowPropertyConfiguration(system, getSystemLocale(), null, prismScope, configurationDTO);
-            }
+            persistConfigurations(PrismConfiguration.WORKFLOW_PROPERTY, system, prismScope, configurationDTO);
         }
     }
 
@@ -545,6 +547,14 @@ public class SystemService {
                     .withCreatedTimestamp(new DateTime()).addAssignedUser(user, roleService.getCreatorRole(system), PrismRoleTransitionType.CREATE);
             ActionOutcomeDTO outcome = actionService.executeAction(system, action, comment);
             notificationService.sendRegistrationNotification(user, outcome, comment);
+        }
+    }
+
+    private void persistConfigurations(PrismConfiguration configurationType, System system, PrismScope prismScope,
+            List<? extends WorkflowConfigurationDTO> configurationDTO) throws CustomizationException {
+        if (configurationDTO.size() > 0) {
+            customizationService.createConfigurationGroup(configurationType, system, prismScope, getSystemLocale(),
+                    prismScope.getPrecedence() > PrismScope.INSTITUTION.getPrecedence() ? getSystemProgramType() : null, configurationDTO);
         }
     }
 

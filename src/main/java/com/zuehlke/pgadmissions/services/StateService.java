@@ -19,15 +19,13 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -46,7 +44,6 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
-import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
@@ -90,7 +87,7 @@ public class StateService {
         return entityService.getById(StateGroup.class, stateGroupId);
     }
 
-    public StateDurationDefinition getStateDurationDefinitionById(PrismStateDuration stateDurationDefinitionId) {
+    public StateDurationDefinition getStateDurationDefinitionById(PrismStateDurationDefinition stateDurationDefinitionId) {
         return entityService.getById(StateDurationDefinition.class, stateDurationDefinitionId);
     }
 
@@ -116,15 +113,6 @@ public class StateService {
 
     public StateDurationConfiguration getStateDurationConfiguration(Resource resource, User user, StateDurationDefinition definition) {
         return (StateDurationConfiguration) customizationService.getConfiguration(PrismConfiguration.STATE_DURATION, resource, user, definition);
-    }
-
-    public void createOrUpdateStateDurationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
-            StateDurationDefinition stateDurationDefinition, Integer duration) throws DeduplicationException, CustomizationException {
-        customizationService.validateConfiguration(resource, stateDurationDefinition, locale, programType);
-        StateDurationConfiguration transientStateDuration = new StateDurationConfiguration().withResource(resource).withLocale(locale)
-                .withProgramType(programType).withStateDurationDefinition(stateDurationDefinition).withDuration(duration)
-                .withSystemDefault(customizationService.isSystemDefault(stateDurationDefinition, locale, programType));
-        entityService.createOrUpdate(transientStateDuration);
     }
 
     public void deleteStateActions() {

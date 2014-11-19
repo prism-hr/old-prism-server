@@ -65,7 +65,7 @@ public class WorkflowPropertyConfigurationDTO extends WorkflowConfigurationGroup
         }
 
         public WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO withId(PrismWorkflowPropertyDefinition id) {
-            setId(id);
+            setDefinitionId(id);
             return this;
         }
 

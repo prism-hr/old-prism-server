@@ -5,14 +5,14 @@ import javax.validation.constraints.NotNull;
 public class WorkflowConfigurationDTO {
 
     @NotNull
-    private Enum<?> id;
+    private Enum<?> definitionId;
 
-    public final Enum<?> getId() {
-        return id;
+    public final Enum<?> getDefinitionId() {
+        return definitionId;
     }
 
-    public final void setId(Enum<?> id) {
-        this.id = id;
+    public final void setDefinitionId(Enum<?> definitionId) {
+        this.definitionId = definitionId;
     }
-    
+
 }

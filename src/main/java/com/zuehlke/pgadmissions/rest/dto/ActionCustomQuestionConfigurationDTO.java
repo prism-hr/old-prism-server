@@ -11,10 +11,11 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.google.common.collect.Lists;
 
-public class ActionCustomQuestionConfigurationDTO {
+public class ActionCustomQuestionConfigurationDTO extends WorkflowConfigurationGroupDTO {
 
     private List<ActionCustomQuestionConfigurationValueDTO> values = Lists.newArrayList();
 
+    @Override
     public final List<ActionCustomQuestionConfigurationValueDTO> getValues() {
         return values;
     }

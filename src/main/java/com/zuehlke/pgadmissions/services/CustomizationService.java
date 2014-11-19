@@ -53,11 +53,11 @@ public class CustomizationService {
         PrismLocale locale = resourceScope == SYSTEM ? user.getLocale() : resource.getLocale();
         PrismProgramType programType = resourceScope.getPrecedence() > INSTITUTION.getPrecedence() ? resource.getProgram().getProgramType()
                 .getPrismProgramType() : null;
-        return getConfiguration(configurationType, resource, definition, locale, programType);
+        return getConfiguration(configurationType, resource, locale, programType, definition);
     }
 
-    public WorkflowConfiguration getConfiguration(PrismConfiguration configurationType, Resource resource, WorkflowDefinition definition, PrismLocale locale,
-                                                  PrismProgramType programType) {
+    public WorkflowConfiguration getConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
+            WorkflowDefinition definition) {
         return customizationDAO.getConfiguration(configurationType, resource, definition, locale, programType);
     }
 
@@ -73,7 +73,7 @@ public class CustomizationService {
     public WorkflowConfigurationRepresentation getConfigurationRepresentation(PrismConfiguration configurationType, Resource resource,
                                                                               WorkflowDefinition definition, PrismLocale locale, PrismProgramType programType) {
         resource = getConfiguredResource(resource);
-        WorkflowConfiguration configuration = getConfiguration(configurationType, resource, definition, locale, programType);
+        WorkflowConfiguration configuration = getConfiguration(configurationType, resource, locale, programType, definition);
         return mapper.map(configuration, configurationType.getConfigurationRepresentationClass());
     }
 
@@ -127,8 +127,7 @@ public class CustomizationService {
 
     public void updateConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
                                     WorkflowDefinition definition, WorkflowConfigurationDTO workflowConfigurationDTO) throws CustomizationException {
-        WorkflowConfiguration configuration = createConfiguration(configurationType, resource, locale, programType, workflowConfigurationDTO);
-        entityService.createOrUpdate(configuration);
+        createOrUpdateConfiguration(configurationType, resource, locale, programType, workflowConfigurationDTO);
         resourceService
                 .executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
     }
@@ -200,6 +199,25 @@ public class CustomizationService {
         return entityService.list(DisplayPropertyConfiguration.class);
     }
 
+    public WorkflowConfiguration createOrUpdateConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale,
+            PrismProgramType programType, WorkflowConfigurationDTO workflowConfigurationDTO) throws CustomizationException {
+        WorkflowConfiguration configuration = createConfiguration(configurationType, resource, locale, programType, workflowConfigurationDTO);
+        return entityService.createOrUpdate(configuration);
+    }
+
+    private WorkflowConfiguration createConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale,
+            PrismProgramType programType, WorkflowConfigurationDTO workflowConfigurationDTO) throws CustomizationException {
+        WorkflowDefinition definition = entityService.getById(configurationType.getDefinitionClass(), workflowConfigurationDTO.getDefinitionId());
+        validateConfiguration(resource, definition, locale, programType);
+        WorkflowConfiguration configuration = mapper.map(workflowConfigurationDTO, configurationType.getConfigurationClass());
+        configuration.setResource(resource);
+        configuration.setLocale(locale);
+        configuration.setProgramType(programType);
+        ReflectionUtils.setProperty(configuration, configurationType.getDefinitionPropertyName(), definition);
+        configuration.setSystemDefault(isSystemDefault(definition, locale, programType));
+        return configuration;
+    }
+
     private Resource getConfiguredResource(Resource resource) {
         return resource.getResourceScope().getPrecedence() > PrismScope.PROGRAM.getPrecedence() ? resource.getProgram() : resource;
     }
@@ -230,7 +248,7 @@ public class CustomizationService {
     private void createConfigurationGroup(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
                                           List<? extends WorkflowConfigurationDTO> valueDTOs) throws CustomizationException {
         for (WorkflowConfigurationDTO valueDTO : valueDTOs) {
-            createConfiguration(configurationType, resource, locale, programType, valueDTO);
+            createOrUpdateConfiguration(configurationType, resource, locale, programType, valueDTO);
         }
     }
 
@@ -239,7 +257,7 @@ public class CustomizationService {
         Integer version = null;
         restoreDefaultConfiguration(configurationType, resource, scope, locale, programType);
         for (WorkflowConfigurationDTO valueDTO : valueDTOs) {
-            WorkflowConfiguration transientConfiguration = createConfiguration(configurationType, resource, locale, programType, valueDTO);
+            WorkflowConfiguration transientConfiguration = createOrUpdateConfiguration(configurationType, resource, locale, programType, valueDTO);
 
             WorkflowConfiguration persistentConfiguration;
             if (version == null) {
@@ -252,18 +270,6 @@ public class CustomizationService {
             version = version == null ? persistentConfiguration.getId() : version;
             ReflectionUtils.setProperty(persistentConfiguration, "version", version);
         }
-    }
-
-    private WorkflowConfiguration createConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale,
-                                                      PrismProgramType programType, WorkflowConfigurationDTO workflowConfigurationDTO) throws CustomizationException {
-        WorkflowDefinition definition = entityService.getById(configurationType.getDefinitionClass(), workflowConfigurationDTO.getDefinitionId());
-        validateConfiguration(resource, definition, locale, programType);
-        WorkflowConfiguration configuration = mapper.map(workflowConfigurationDTO, configurationType.getConfigurationClass());
-        configuration.setResource(resource);
-        configuration.setLocale(locale);
-        configuration.setProgramType(programType);
-        configuration.setSystemDefault(isSystemDefault(definition, locale, programType));
-        return configuration;
     }
 
 }

@@ -9,42 +9,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismCustomQuestionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
 import com.zuehlke.pgadmissions.dto.StateActionDTO;
-import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
-import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionConfigurationDTO;
-import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionConfigurationDTO.ActionCustomQuestionConfigurationValueDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
@@ -53,7 +42,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentatio
 
 @Service
 @Transactional
-@SuppressWarnings("unchecked")
 public class ActionService {
 
     @Autowired
@@ -79,51 +67,6 @@ public class ActionService {
 
     public Action getById(PrismAction id) {
         return entityService.getById(Action.class, id);
-    }
-
-    public List<ActionCustomQuestionConfiguration> getActionPropertyConfigurationByVersion(Integer version) {
-        return (List<ActionCustomQuestionConfiguration>) (List<?>) customizationService.getConfigurationsWithVersion(PrismConfiguration.CUSTOM_QUESTION,
-                version);
-    }
-
-    public void createOrUpdateActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
-            ActionCustomQuestionDefinition definition, ActionCustomQuestionConfigurationDTO actionPropertyConfigurationDTO) throws CustomizationException,
-            DeduplicationException {
-        customizationService.validateConfiguration(resource, definition, locale, programType);
-        customizationService.restoreDefaultConfiguration(PrismConfiguration.CUSTOM_QUESTION, resource, locale, programType, definition);
-
-        Integer version = null;
-        for (ActionCustomQuestionConfigurationValueDTO actionPropertyDTO : actionPropertyConfigurationDTO) {
-            String name = actionPropertyDTO.getName();
-
-            List<String> options = actionPropertyDTO.getOptions();
-            List<String> validationRules = actionPropertyDTO.getValidationRules();
-
-            ActionCustomQuestionConfiguration persistentActionPropertyConfiguration = entityService.createOrUpdate(new ActionCustomQuestionConfiguration()
-                    .withResource(resource).withLocale(locale).withProgramType(programType).withActionCustomQuestionDefinition(definition).withVersion(version)
-                    .withCustomQuestionType(PrismCustomQuestionType.getByComponentName(name)).withName(name).withEditable(actionPropertyDTO.getEditable())
-                    .withIndex(actionPropertyDTO.getIndex()).withLabel(actionPropertyDTO.getLabel()).withDescription(actionPropertyDTO.getDescription())
-                    .withOptions(options == null ? null : Joiner.on("|").join(options)).withRequired(actionPropertyDTO.getRequired())
-                    .withValidation(validationRules == null ? null : Joiner.on("|").join(validationRules)).withWeighting(actionPropertyDTO.getWeighting()));
-
-            version = version == null ? persistentActionPropertyConfiguration.getId() : version;
-            persistentActionPropertyConfiguration.setVersion(version);
-        }
-
-        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_ACTION_PROPERTY"));
-    }
-
-    public void restoreDefaultActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
-            ActionCustomQuestionDefinition definition) throws DeduplicationException, CustomizationException {
-        customizationService.validateRestoreDefaultConfiguration(resource, locale, programType);
-        customizationService.restoreDefaultConfiguration(PrismConfiguration.CUSTOM_QUESTION, resource, locale, programType, definition);
-        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_ACTION_PROPERTY_DEFAULT"));
-    }
-
-    public void restoreGlobalActionPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
-            ActionCustomQuestionDefinition definition) throws DeduplicationException {
-        customizationService.restoreGlobalConfiguration(PrismConfiguration.CUSTOM_QUESTION, resource, locale, programType, definition);
-        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_RESTORED_ACTION_PROPERTY_GLOBAL"));
     }
 
     public void validateInvokeAction(Resource resource, Action action, Comment comment) {

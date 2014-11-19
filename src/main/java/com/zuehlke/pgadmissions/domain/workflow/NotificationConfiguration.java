@@ -131,7 +131,7 @@ public class NotificationConfiguration extends WorkflowConfiguration {
         return notificationDefinition;
     }
 
-    public void setNotificationTemplate(NotificationDefinition notificationDefinition) {
+    public void setNotificationDefinition(NotificationDefinition notificationDefinition) {
         this.notificationDefinition = notificationDefinition;
     }
 

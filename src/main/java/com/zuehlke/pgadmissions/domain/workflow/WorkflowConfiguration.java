@@ -9,13 +9,13 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public abstract class WorkflowConfiguration extends WorkflowResource {
 
-    public abstract PrismProgramType getProgramType();
-
-    public abstract void setProgramType(PrismProgramType programType);
-
     public abstract PrismLocale getLocale();
 
     public abstract void setLocale(PrismLocale locale);
+    
+    public abstract PrismProgramType getProgramType();
+
+    public abstract void setProgramType(PrismProgramType programType);
 
     public abstract Boolean getSystemDefault();
 

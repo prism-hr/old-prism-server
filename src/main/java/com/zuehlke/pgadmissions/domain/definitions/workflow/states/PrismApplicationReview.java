@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssi
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowProperty;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 
 public class PrismApplicationReview extends PrismWorkflowState {
 
@@ -75,7 +75,7 @@ public class PrismApplicationReview extends PrismWorkflowState {
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_REVIEWER) //
                                 .withRestrictToOwner(false)
-                                .withPropertyDefinition(PrismWorkflowProperty.APPLICATION_ASSIGN_REVIEWER)))))); //
+                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REVIEWER)))))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_COMMENT) //

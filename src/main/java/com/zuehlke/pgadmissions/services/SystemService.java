@@ -41,7 +41,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDuration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowProperty;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -361,7 +361,7 @@ public class SystemService {
     }
 
     private void initializeWorkflowPropertyDefinitions() {
-        for (PrismWorkflowProperty prismWorkflowProperty : PrismWorkflowProperty.values()) {
+        for (PrismWorkflowPropertyDefinition prismWorkflowProperty : PrismWorkflowPropertyDefinition.values()) {
             Scope scope = scopeService.getById(prismWorkflowProperty.getScope());
             WorkflowPropertyDefinition transientWorkflowPropertyDefinition = new WorkflowPropertyDefinition().withId(prismWorkflowProperty)
                     .withRangeSpecification(prismWorkflowProperty.isRangeSpecification()).withMinimumPermitted(prismWorkflowProperty.getMinimumPermitted())
@@ -409,9 +409,9 @@ public class SystemService {
     private void initializeWorkflowPropertyConfigurations(System system) throws DeduplicationException, CustomizationException {
         for (PrismScope prismScope : scopeService.getScopesDescending()) {
             WorkflowPropertyConfigurationDTO configurationDTO = new WorkflowPropertyConfigurationDTO();
-            for (PrismWorkflowProperty prismWorkflowProperty : PrismWorkflowProperty.values()) {
+            for (PrismWorkflowPropertyDefinition prismWorkflowProperty : PrismWorkflowPropertyDefinition.values()) {
                 if (prismScope == prismWorkflowProperty.getScope()) {
-                    configurationDTO.addValue(new WorkflowPropertyConfigurationValueDTO().withDefinition(prismWorkflowProperty)
+                    configurationDTO.addValue(new WorkflowPropertyConfigurationValueDTO().withId(prismWorkflowProperty)
                             .withEnabled(prismWorkflowProperty.isDefaultEnabled()).withMinimum(prismWorkflowProperty.getDefaultMinimum())
                             .withMaximum(prismWorkflowProperty.getDefaultMaximum()));
                 }

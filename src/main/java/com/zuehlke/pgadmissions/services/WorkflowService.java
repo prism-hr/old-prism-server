@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowProperty;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
@@ -37,12 +37,17 @@ public class WorkflowService {
     @Autowired
     private EntityService entityService;
 
-    public WorkflowPropertyDefinition getWorkflowPropertyDefinitionById(PrismWorkflowProperty id) {
+    public WorkflowPropertyDefinition getWorkflowPropertyDefinitionById(PrismWorkflowPropertyDefinition id) {
         return entityService.getById(WorkflowPropertyDefinition.class, id);
     }
 
     public WorkflowPropertyConfiguration getWorkflowPropertyConfiguration(Resource resource, User user, WorkflowPropertyDefinition definition) {
-        return (WorkflowPropertyConfiguration) customizationService.getConfiguration(PrismConfiguration.WORKFLOW_PROPERTY, resource, user, definition);
+        Integer workflowPropertyConfigurationVersion = resource.getWorkflowPropertyConfigurationVersion();
+        if (workflowPropertyConfigurationVersion == null) {
+            return (WorkflowPropertyConfiguration) customizationService.getConfiguration(PrismConfiguration.WORKFLOW_PROPERTY, resource, user, definition);
+        }
+        return (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(PrismConfiguration.WORKFLOW_PROPERTY, definition,
+                workflowPropertyConfigurationVersion);
     }
 
     public void updateWorkflowPropertyConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType, PrismScope definitionScope,
@@ -58,7 +63,7 @@ public class WorkflowService {
         Integer version = null;
         customizationService.restoreDefaultConfiguration(PrismConfiguration.WORKFLOW_PROPERTY, resource, scope, locale, programType);
         for (WorkflowPropertyConfigurationValueDTO valueDTO : configurationDTO.getValues()) {
-            WorkflowPropertyDefinition definition = getWorkflowPropertyDefinitionById(valueDTO.getDefinition());
+            WorkflowPropertyDefinition definition = getWorkflowPropertyDefinitionById((PrismWorkflowPropertyDefinition) valueDTO.getId());
             WorkflowPropertyConfiguration configuration = createOrUpdateWorkflowPropertyConfiguration(resource, locale, programType, definition, version,
                     valueDTO.getEnabled(), valueDTO.getMinimum(), valueDTO.getMaximum());
             version = configuration.getVersion();
@@ -94,13 +99,13 @@ public class WorkflowService {
         if (valueDTOs.size() != definitions.size()) {
             throw new CustomizationException("Incomplete workflow configuration passed for " + resource.getCode());
         } else {
-            HashMap<PrismWorkflowProperty, WorkflowPropertyDefinition> constraints = Maps.newHashMap();
+            HashMap<PrismWorkflowPropertyDefinition, WorkflowPropertyDefinition> constraints = Maps.newHashMap();
             for (WorkflowPropertyDefinition definition : definitions) {
-                constraints.put((PrismWorkflowProperty) definition.getId(), definition);
+                constraints.put((PrismWorkflowPropertyDefinition) definition.getId(), definition);
             }
 
             for (WorkflowPropertyConfigurationValueDTO valueDTO : valueDTOs) {
-                PrismWorkflowProperty definitionId = valueDTO.getDefinition();
+                PrismWorkflowPropertyDefinition definitionId = (PrismWorkflowPropertyDefinition) valueDTO.getId();
 
                 if (valueDTO.getEnabled() == null) {
                     throw new CustomizationException("Enabled value not set for " + definitionId.name() + " in workflow configuration for "

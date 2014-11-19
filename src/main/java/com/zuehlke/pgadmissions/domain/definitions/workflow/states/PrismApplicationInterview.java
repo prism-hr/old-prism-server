@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssi
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowProperty;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 
 public class PrismApplicationInterview extends PrismWorkflowState {
 
@@ -80,7 +80,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_POTENTIAL_INTERVIEWER) //
                                 .withRestrictToOwner(false) //
-                                .withPropertyDefinition(PrismWorkflowProperty.APPLICATION_ASSIGN_INTERVIEWER))), // 
+                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_INTERVIEWER))), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK) // 
                         .withTransitionAction(PrismAction.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK) // 
@@ -91,7 +91,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_INTERVIEWER) //
                                 .withRestrictToOwner(false) //
-                                .withPropertyDefinition(PrismWorkflowProperty.APPLICATION_ASSIGN_INTERVIEWER))), // 
+                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_INTERVIEWER))), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) // 
@@ -107,7 +107,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_INTERVIEWER) //
                                 .withRestrictToOwner(false) //
-                                .withPropertyDefinition(PrismWorkflowProperty.APPLICATION_ASSIGN_INTERVIEWER)))))); //
+                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_INTERVIEWER)))))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_COMMENT) //

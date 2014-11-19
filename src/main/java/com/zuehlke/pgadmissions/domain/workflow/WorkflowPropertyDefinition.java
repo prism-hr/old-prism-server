@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowProperty;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 
 @Entity
 @Table(name = "WORKFLOW_PROPERTY_DEFINITION")
@@ -22,7 +22,7 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
     @Id
     @Column(name = "id", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PrismWorkflowProperty id;
+    private PrismWorkflowPropertyDefinition id;
 
     @Column(name = "range_specification", nullable = false)
     private Boolean rangeSpecification;
@@ -38,11 +38,11 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
     private Scope scope;
 
     @Override
-    public final PrismWorkflowProperty getId() {
+    public final PrismWorkflowPropertyDefinition getId() {
         return id;
     }
 
-    public final void setId(PrismWorkflowProperty id) {
+    public final void setId(PrismWorkflowPropertyDefinition id) {
         this.id = id;
     }
 
@@ -80,7 +80,7 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
         this.scope = scope;
     }
 
-    public WorkflowPropertyDefinition withId(PrismWorkflowProperty id) {
+    public WorkflowPropertyDefinition withId(PrismWorkflowPropertyDefinition id) {
         this.id = id;
         return this;
     }

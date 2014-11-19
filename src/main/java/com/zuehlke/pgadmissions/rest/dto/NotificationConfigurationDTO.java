@@ -5,7 +5,7 @@ import javax.validation.constraints.Min;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class NotificationConfigurationDTO {
+public class NotificationConfigurationDTO extends WorkflowConfigurationDTO {
 
     @NotEmpty
     private String subject;
@@ -40,4 +40,5 @@ public class NotificationConfigurationDTO {
     public void setReminderInterval(Integer reminderInterval) {
         this.reminderInterval = reminderInterval;
     }
+
 }

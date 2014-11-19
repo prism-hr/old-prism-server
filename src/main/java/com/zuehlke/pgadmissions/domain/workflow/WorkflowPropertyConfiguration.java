@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.domain.system.System;
         @UniqueConstraint(columnNames = { "institution_id", "program_type", "workflow_property_definition_id", "version" }),
         @UniqueConstraint(columnNames = { "program_id", "workflow_property_definition_id", "version" }) })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class WorkflowPropertyConfiguration extends WorkflowConfiguration {
+public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersioned {
 
     @Id
     @GeneratedValue
@@ -141,10 +141,12 @@ public class WorkflowPropertyConfiguration extends WorkflowConfiguration {
         this.workflowPropertyDefinition = workflowPropertyDefinition;
     }
 
+    @Override
     public final Integer getVersion() {
         return version;
     }
 
+    @Override
     public final void setVersion(Integer version) {
         this.version = version;
     }
@@ -173,10 +175,12 @@ public class WorkflowPropertyConfiguration extends WorkflowConfiguration {
         this.maximum = maximum;
     }
 
+    @Override
     public final Boolean getActive() {
         return active;
     }
 
+    @Override
     public final void setActive(Boolean active) {
         this.active = active;
     }

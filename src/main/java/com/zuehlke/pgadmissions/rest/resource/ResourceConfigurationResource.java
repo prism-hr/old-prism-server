@@ -98,13 +98,6 @@ public class ResourceConfigurationResource {
         customizationService.updateConfiguration(configurationType, resource, locale, programType, definition, workflowConfigurationDTO);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public void updateConfiguration(@ModelAttribute PrismConfiguration configurationType, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @PathVariable Integer resourceId, @RequestParam PrismScope scope, @RequestParam(required = false) PrismLocale locale,
-            @RequestParam(required = false) PrismProgramType programType, @RequestBody WorkflowConfigurationGroupDTO workflowConfigurationGroupDTO) {
-        // TODO: build the generic DTO objects
-    }
-
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
         return RestApiUtils.getResourceDescriptor(resourceScope);

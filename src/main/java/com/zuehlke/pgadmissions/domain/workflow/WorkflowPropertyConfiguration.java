@@ -195,6 +195,11 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
         this.systemDefault = systemDefault;
     }
 
+    @Override
+    public WorkflowDefinition getDefinition() {
+        return getWorkflowPropertyDefinition();
+    }
+
     public WorkflowPropertyConfiguration withResource(Resource resource) {
         setResource(resource);
         return this;
@@ -214,7 +219,7 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
         this.workflowPropertyDefinition = workflowPropertyDefinition;
         return this;
     }
-    
+
     public WorkflowPropertyConfiguration withVersion(Integer version) {
         this.version = version;
         return this;

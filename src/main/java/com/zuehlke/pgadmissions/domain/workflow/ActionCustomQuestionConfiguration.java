@@ -262,7 +262,7 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
     public final void setWeighting(BigDecimal weighting) {
         this.weighting = weighting;
     }
-    
+
     @Override
     public final Boolean getActive() {
         return active;
@@ -281,6 +281,11 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
     @Override
     public final void setSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
+    }
+
+    @Override
+    public WorkflowDefinition getDefinition() {
+        return getActionCustomQuestionDefinition();
     }
 
     public ActionCustomQuestionConfiguration withResource(Resource resource) {

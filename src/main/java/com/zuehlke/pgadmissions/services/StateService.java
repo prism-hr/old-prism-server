@@ -484,7 +484,7 @@ public class StateService {
         List<PrismState> recommendations = Lists.newLinkedList();
         String recommendationTokens = stateDAO.getRecommendedNextStates(resource);
         if (recommendationTokens != null) {
-            for (String recommendationToken : recommendationTokens.split("|")) {
+            for (String recommendationToken : recommendationTokens.split("\\|")) {
                 recommendations.add(PrismState.valueOf(recommendationToken));
             }
             return recommendations;

@@ -1,18 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -40,6 +27,19 @@ import com.zuehlke.pgadmissions.rest.dto.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
 
 @Service
 @Transactional
@@ -64,19 +64,10 @@ public class UserService {
     private CommentService commentService;
 
     @Autowired
-    private ProgramService programService;
-
-    @Autowired
-    private ProjectService projectService;
-
-    @Autowired
     private ResourceService resourceService;
 
-    @Autowired
-    private SystemService systemService;
-
-    @Autowired
-    private SocialPresenceService socialPresenceService;
+    @Value("${system.user.email}")
+    private String systemUserEmail;
 
     public User getById(Integer id) {
         return entityService.getById(User.class, id);
@@ -183,8 +174,15 @@ public class UserService {
             String newPassword = EncryptionUtils.getTemporaryPassword();
             notificationService.sendResetPasswordNotification(user, newPassword);
             // TODO cover situation when account is not created yet
-            user.getUserAccount().setTemporaryPassword(EncryptionUtils.getMD5(newPassword));
-            user.getUserAccount().setTemporaryPasswordExpiryTimestamp(new DateTime().plusHours(1));
+
+            UserAccount account = user.getUserAccount();
+            if (account == null) {
+                User superAdmin = getUserByEmail("systemUserEmail");
+                notificationService.sendInvitationNotifications(superAdmin, user);
+            } else {
+                account.setTemporaryPassword(EncryptionUtils.getMD5(newPassword));
+                account.setTemporaryPasswordExpiryTimestamp(new DateTime().plusHours(1));
+            }
         }
     }
 
@@ -270,7 +268,7 @@ public class UserService {
     public List<Integer> getMatchingUsers(String searchTerm) {
         return userDAO.getMatchingUsers(searchTerm);
     }
-    
+
     public void createOrUpdateUserInstitutionIdentity(Application application, String exportUserId) {
         UserInstitutionIdentity transientUserInstitutionIdentity = new UserInstitutionIdentity().withUser(application.getUser())
                 .withInstitution(application.getInstitution()).withIdentityType(PrismUserIdentity.STUDY_APPLICANT).withIdentitier(exportUserId);

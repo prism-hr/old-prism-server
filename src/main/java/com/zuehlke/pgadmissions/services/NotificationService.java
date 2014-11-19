@@ -278,15 +278,18 @@ public class NotificationService {
         persistentUser.getUserAccount().setLastNotifiedDateApplicationRecommendation(baseline);
     }
 
-    public void sendInvitationNotifications(Comment comment) {
-        NotificationDefinition definition = getById(SYSTEM_INVITATION_NOTIFICATION);
+    public void sendInvitationNotifications(User user, User invitee) {
         System system = systemService.getSystem();
+        NotificationDefinition definition = getById(SYSTEM_INVITATION_NOTIFICATION);
+        sendNotification(definition, new NotificationDefinitionModelDTO().withUser(invitee).withAuthor(system.getUser()).withInvoker(user)
+                .withResource(system).withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST));
+    }
 
+    public void sendInvitationNotifications(Comment comment) {
         for (CommentAssignedUser assignee : comment.getAssignedUsers()) {
             User invitee = assignee.getUser();
             if (assignee.getRoleTransitionType() == CREATE && invitee.getUserAccount() == null) {
-                sendNotification(definition, new NotificationDefinitionModelDTO().withUser(invitee).withAuthor(system.getUser()).withInvoker(comment.getUser())
-                        .withResource(system).withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST));
+                sendInvitationNotifications(comment.getUser(), invitee);
             }
         }
     }

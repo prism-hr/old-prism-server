@@ -77,14 +77,14 @@
             </converter>
             <converter type="com.zuehlke.pgadmissions.rest.converter.DisplayPropertyConfigurationConverter">
                 <class-a>com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO.DisplayPropertyConfigurationValueDTO</class-a>
-                <class-b>com.zuehlke.pgadmissions.domain.workflow.DisplayPropertyConfiguration</class-b>
+                <class-b>com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration</class-b>
             </converter>
             <converter type="com.zuehlke.pgadmissions.rest.converter.NotificationConfigurationConverter">
                 <class-a>com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO</class-a>
                 <class-b>com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration</class-b>
             </converter>
             <converter type="com.zuehlke.pgadmissions.rest.converter.WorkflowPropertyConfigurationConverter">
-                <class-a>com.zuehlke.pgadmissions.rest.dto.WorflowPropertyConfigurationDTO</class-a>
+                <class-a>com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO</class-a>
                 <class-b>com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration</class-b>
             </converter>
         </custom-converters>
@@ -242,10 +242,19 @@
 
     <mapping>
         <class-a>com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration</class-a>
-        <class-b>com.zuehlke.pgadmissions.rest.representation.configuration.CustomQuestionConfigurationRepresentation</class-b>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.configuration.ActionCustomQuestionConfigurationRepresentation</class-b>
         <field type="one-way">
             <a>customQuestionType.componentName</a>
             <b>component</b>
+        </field>
+    </mapping>
+
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation</class-b>
+        <field type="one-way" copy-by-reference="true">
+            <a>definition.id</a>
+            <b>definitionId</b>
         </field>
     </mapping>
 

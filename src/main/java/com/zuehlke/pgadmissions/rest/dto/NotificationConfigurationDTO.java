@@ -3,11 +3,15 @@ package com.zuehlke.pgadmissions.rest.dto;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 
 public class NotificationConfigurationDTO extends WorkflowConfigurationDTO {
+
+    @NotEmpty
+    private PrismNotificationDefinition definitionId;
 
     @NotEmpty
     private String subject;
@@ -18,6 +22,15 @@ public class NotificationConfigurationDTO extends WorkflowConfigurationDTO {
     @Min(1)
     @Max(999)
     private Integer reminderInterval;
+
+    @Override
+    public PrismNotificationDefinition getDefinitionId() {
+        return definitionId;
+    }
+
+    public void setDefinitionId(PrismNotificationDefinition definitionId) {
+        this.definitionId = definitionId;
+    }
 
     public String getSubject() {
         return subject;

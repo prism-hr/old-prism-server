@@ -29,7 +29,7 @@ public class ActionCustomQuestionValidator extends LocalValidatorFactoryBean imp
         int cumulativeRatingCount = 0;
         BigDecimal cumulativeRatingWeight = new BigDecimal(0.00);
 
-        for (ActionCustomQuestionConfigurationValueDTO property : configuration.getValues()) {
+        for (ActionCustomQuestionConfigurationValueDTO property : configuration) {
             PrismCustomQuestionType type = PrismCustomQuestionType.getByComponentName(property.getName());
 
             BigDecimal weighting = property.getWeighting();

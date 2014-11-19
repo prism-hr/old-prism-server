@@ -186,20 +186,14 @@ public class RoleService {
         Integer minimumPermitted;
         Integer maximumPermitted;
 
-        WorkflowPropertyDefinition workflowPropertyDefinition = roleTransition.getWorkflowPropertyDefinition();
-        if (workflowPropertyDefinition == null) {
+        WorkflowPropertyDefinition definition = roleTransition.getWorkflowPropertyDefinition();
+        if (definition == null) {
             minimumPermitted = roleTransition.getMinimumPermitted();
             maximumPermitted = roleTransition.getMaximumPermitted();
         } else {
-            WorkflowPropertyConfiguration workflowPropertyConfiguration = workflowService.getWorkflowPropertyConfiguration(resource, actionOwner,
-                    workflowPropertyDefinition);
-            if (workflowPropertyConfiguration.isRangeSpecification()) {
-                minimumPermitted = workflowPropertyConfiguration.getMinimum();
-                maximumPermitted = workflowPropertyConfiguration.getMaximum();
-            } else {
-                minimumPermitted = roleTransition.getMinimumPermitted();
-                maximumPermitted = roleTransition.getMaximumPermitted();
-            }
+            WorkflowPropertyConfiguration workflowPropertyConfiguration = workflowService.getWorkflowPropertyConfiguration(resource, actionOwner, definition);
+            minimumPermitted = workflowPropertyConfiguration.getMinimum();
+            maximumPermitted = workflowPropertyConfiguration.getMaximum();
         }
 
         if (!(minimumPermitted == null || users.size() >= minimumPermitted) && !(maximumPermitted == null || users.size() <= maximumPermitted)) {

@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.system.System;
         @UniqueConstraint(columnNames = { "system_id", "program_type", "locale", "action_custom_question_definition_id", "version", "display_index" }),
         @UniqueConstraint(columnNames = { "institution_id", "program_type", "action_custom_question_definition_id", "version", "display_index" }),
         @UniqueConstraint(columnNames = { "program_id", "action_custom_question_definition_id", "version", "display_index" }) })
-public class ActionCustomQuestionConfiguration extends WorkflowConfiguration {
+public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVersioned {
 
     @Id
     private Integer id;
@@ -165,10 +165,12 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfiguration {
         this.actionCustomQuestionDefinition = actionCustomQuestionDefinition;
     }
 
+    @Override
     public final Integer getVersion() {
         return version;
     }
 
+    @Override
     public final void setVersion(Integer version) {
         this.version = version;
     }
@@ -260,11 +262,13 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfiguration {
     public final void setWeighting(BigDecimal weighting) {
         this.weighting = weighting;
     }
-
+    
+    @Override
     public final Boolean getActive() {
         return active;
     }
 
+    @Override
     public final void setActive(Boolean active) {
         this.active = active;
     }

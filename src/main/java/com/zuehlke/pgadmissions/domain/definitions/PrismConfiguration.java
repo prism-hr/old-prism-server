@@ -30,14 +30,15 @@ import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowPropertyDef
 public enum PrismConfiguration {
 
     ACTION_CUSTOM_QUESTION(ActionCustomQuestionConfiguration.class, ActionCustomQuestionDefinition.class, null, WorkflowDefinitionRepresentation.class, true,
-            null, null), //
-    DISPLAY_PROPERTY(DisplayPropertyConfiguration.class, DisplayPropertyDefinition.class, null, WorkflowDefinitionRepresentation.class, false, null, null), //
+            true, null, null, "_COMMENT_UPDATED_ACTION_PROPERTY"), //
+    DISPLAY_PROPERTY(DisplayPropertyConfiguration.class, DisplayPropertyDefinition.class, null, WorkflowDefinitionRepresentation.class, true, false, null,
+            null, "_COMMENT_UPDATED_DISPLAY_PROPERTY"), //
     NOTIFICATION(NotificationConfiguration.class, NotificationDefinition.class, NotificationConfigurationRepresentation.class,
-            NotificationDefinitionRepresentation.class, false, 1, 28), //
+            NotificationDefinitionRepresentation.class, false, false, 1, 28, "_COMMENT_UPDATED_NOTIFICATION"), //
     STATE_DURATION(StateDurationConfiguration.class, StateDurationDefinition.class, StateDurationConfigurationRepresentation.class,
-            StateDurationDefinitionRepresentation.class, false, 1, 168), //
+            StateDurationDefinitionRepresentation.class, true, false, 1, 168, "_COMMENT_UPDATED_STATE_DURATION"), //
     WORKFLOW_PROPERTY(WorkflowPropertyConfiguration.class, WorkflowPropertyDefinition.class, WorkflowPropertyConfigurationRepresentation.class,
-            WorkflowPropertyDefinitionRepresentation.class, true, null, null);
+            WorkflowPropertyDefinitionRepresentation.class, true, true, null, null, "_COMMENT_UPDATED_WORKFLOW_PROPERTY");
 
     private Class<? extends WorkflowConfiguration> configurationClass;
 
@@ -47,11 +48,15 @@ public enum PrismConfiguration {
 
     private Class<? extends WorkflowDefinitionRepresentation> definitionRepresentationClass;
 
+    private boolean grouped;
+
     private boolean versioned;
 
     private Integer minimumPermitted;
 
     private Integer maximumPermitted;
+
+    private String updateCommentProperty;
 
     private static final Map<Class<? extends WorkflowConfiguration>, PrismConfiguration> reverseMap = Maps.newHashMap();
 
@@ -63,15 +68,17 @@ public enum PrismConfiguration {
 
     private PrismConfiguration(Class<? extends WorkflowConfiguration> configurationClass, Class<? extends WorkflowDefinition> definitionClass,
             Class<? extends WorkflowConfigurationRepresentation> configurationRepresentationClass,
-            Class<? extends WorkflowDefinitionRepresentation> definitionRepresentationClass, Boolean versioned, Integer minimumPermitted,
-            Integer maximumPermitted) {
+            Class<? extends WorkflowDefinitionRepresentation> definitionRepresentationClass, boolean grouped, boolean versioned, Integer minimumPermitted,
+            Integer maximumPermitted, String updateCommentProperty) {
         this.configurationClass = configurationClass;
+        this.grouped = grouped;
         this.versioned = versioned;
         this.definitionClass = definitionClass;
         this.configurationRepresentationClass = configurationRepresentationClass;
         this.definitionRepresentationClass = definitionRepresentationClass;
         this.minimumPermitted = minimumPermitted;
         this.maximumPermitted = maximumPermitted;
+        this.updateCommentProperty = updateCommentProperty;
     }
 
     public Class<? extends WorkflowConfiguration> getConfigurationClass() {
@@ -90,6 +97,10 @@ public enum PrismConfiguration {
         return definitionRepresentationClass;
     }
 
+    public final boolean isGrouped() {
+        return grouped;
+    }
+
     public final boolean isVersioned() {
         return versioned;
     }
@@ -100,6 +111,10 @@ public enum PrismConfiguration {
 
     public final Integer getMaximumPermitted() {
         return maximumPermitted;
+    }
+
+    public final String getUpdateCommentProperty() {
+        return updateCommentProperty;
     }
 
     public String getDefinitionPropertyName() {

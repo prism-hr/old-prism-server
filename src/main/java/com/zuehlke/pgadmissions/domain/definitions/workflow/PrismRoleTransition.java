@@ -16,7 +16,7 @@ public class PrismRoleTransition {
 
     private Integer maximumPermitted;
 
-    private PrismWorkflowProperty propertyDefinition;
+    private PrismWorkflowPropertyDefinition propertyDefinition;
 
     public PrismRole getRole() {
         return role;
@@ -42,7 +42,7 @@ public class PrismRoleTransition {
         return maximumPermitted;
     }
 
-    public final PrismWorkflowProperty getPropertyDefinition() {
+    public final PrismWorkflowPropertyDefinition getPropertyDefinition() {
         return propertyDefinition;
     }
 
@@ -76,7 +76,7 @@ public class PrismRoleTransition {
         return this;
     }
     
-    public PrismRoleTransition withPropertyDefinition(PrismWorkflowProperty propertyDefinition) {
+    public PrismRoleTransition withPropertyDefinition(PrismWorkflowPropertyDefinition propertyDefinition) {
         this.propertyDefinition = propertyDefinition;
         return this;
     }

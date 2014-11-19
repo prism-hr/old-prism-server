@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssi
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowProperty;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 
 public class PrismApplicationApproval extends PrismWorkflowState {
 
@@ -75,13 +75,13 @@ public class PrismApplicationApproval extends PrismWorkflowState {
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_PRIMARY_SUPERVISOR) //
                                 .withRestrictToOwner(false) //
-                                .withPropertyDefinition(PrismWorkflowProperty.APPLICATION_ASSIGN_PRIMARY_SUPERVISOR), // 
+                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_PRIMARY_SUPERVISOR), // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_SECONDARY_SUPERVISOR) //
                                 .withTransitionType(PrismRoleTransitionType.CREATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_SECONDARY_SUPERVISOR) //
                                 .withRestrictToOwner(false) //
-                                .withPropertyDefinition(PrismWorkflowProperty.APPLICATION_ASSIGN_SECONDARY_SUPERVISOR)))))); //
+                                .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_SECONDARY_SUPERVISOR)))))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_COMMENT) //

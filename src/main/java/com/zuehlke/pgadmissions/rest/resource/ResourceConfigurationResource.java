@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +22,8 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestApiUtils;
+import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
+import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationGroupDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.EntityService;
@@ -48,8 +51,8 @@ public class ResourceConfigurationResource {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public WorkflowConfigurationRepresentation getConfiguration(@ModelAttribute PrismConfiguration configurationType,
-            @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @PathVariable String id,
-            @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType) throws Exception {
+            @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam(required = false) PrismLocale locale,
+            @RequestParam(required = false) PrismProgramType programType, @PathVariable String id) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         WorkflowDefinition definition = entityService.getById(configurationType.getDefinitionClass(), id);
         return customizationService.getConfigurationRepresentation(configurationType, resource, definition, locale, programType);
@@ -69,10 +72,10 @@ public class ResourceConfigurationResource {
         return customizationService.getConfigurationRepresentationsWithVersion(configurationType, version);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public void restoreDefaultConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, PrismConfiguration configurationType,
-            @PathVariable Integer resourceId, @PathVariable String id, @RequestParam(required = false) PrismLocale locale,
-            @RequestParam(required = false) PrismProgramType programType) throws Exception {
+            @PathVariable Integer resourceId, @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType,
+            @PathVariable String id) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         WorkflowDefinition definition = entityService.getById(configurationType.getDefinitionClass(), id);
         customizationService.restoreDefaultConfiguration(configurationType, resource, locale, programType, definition);
@@ -86,10 +89,19 @@ public class ResourceConfigurationResource {
         customizationService.restoreDefaultConfiguration(configurationType, resource, scope, locale, programType);
     }
 
-    @RequestMapping(method = RequestMethod.PUT)
-    public void putConfigurations(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-            @ModelAttribute PrismConfiguration configurationType, @RequestParam PrismScope definitionScope, @RequestParam(required = false) PrismLocale locale,
-            @RequestParam(required = false) PrismProgramType programType) throws Exception {
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public void updateConfiguration(@ModelAttribute PrismConfiguration configurationType, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @PathVariable Integer resourceId, @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType,
+            @PathVariable String id, @RequestBody WorkflowConfigurationDTO workflowConfigurationDTO) throws Exception {
+        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        WorkflowDefinition definition = entityService.getById(configurationType.getDefinitionClass(), id);
+        customizationService.updateConfiguration(configurationType, resource, locale, programType, definition, workflowConfigurationDTO);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public void updateConfiguration(@ModelAttribute PrismConfiguration configurationType, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @PathVariable Integer resourceId, @RequestParam PrismScope scope, @RequestParam(required = false) PrismLocale locale,
+            @RequestParam(required = false) PrismProgramType programType, @RequestBody WorkflowConfigurationGroupDTO workflowConfigurationGroupDTO) {
         // TODO: build the generic DTO objects
     }
 

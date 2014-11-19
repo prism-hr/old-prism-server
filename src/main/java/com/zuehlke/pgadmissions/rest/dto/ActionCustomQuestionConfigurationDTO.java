@@ -23,7 +23,7 @@ public class ActionCustomQuestionConfigurationDTO {
         this.values = values;
     }
 
-    public static class ActionCustomQuestionConfigurationValueDTO {
+    public static class ActionCustomQuestionConfigurationValueDTO extends WorkflowConfigurationDTO {
 
         @NotNull
         private String name;

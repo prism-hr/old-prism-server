@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 
-public enum PrismWorkflowProperty {
+public enum PrismWorkflowPropertyDefinition {
 
     APPLICATION_THEME_PRIMARY(null, 10, true, 1, 1, APPLICATION), //
     APPLICATION_THEME_SECONDARY(null, 10, true, null, 2, APPLICATION), //
@@ -40,7 +40,7 @@ public enum PrismWorkflowProperty {
 
     private PrismScope scope;
 
-    private PrismWorkflowProperty(Integer minimumPermitted, Integer maximumPermitted,
+    private PrismWorkflowPropertyDefinition(Integer minimumPermitted, Integer maximumPermitted,
             boolean defaultEnabled, Integer defaultMinimum, Integer defaultMaximum, PrismScope scope) {
         this.minimumPermitted = minimumPermitted;
         this.maximumPermitted = maximumPermitted;

@@ -18,6 +18,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.CustomizationDAO;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
@@ -28,7 +29,10 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
+import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
+import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationGroupDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Service
 @Transactional
@@ -53,14 +57,11 @@ public class CustomizationService {
     private Mapper mapper;
 
     public WorkflowConfiguration getConfiguration(PrismConfiguration configurationType, Resource resource, User user, WorkflowDefinition definition) {
-        if (definition != null) {
-            PrismScope resourceScope = resource.getResourceScope();
-            PrismLocale locale = resourceScope == SYSTEM ? user.getLocale() : resource.getLocale();
-            PrismProgramType programType = resourceScope.getPrecedence() > INSTITUTION.getPrecedence() ? resource.getProgram().getProgramType()
-                    .getPrismProgramType() : null;
-            return getConfiguration(configurationType, resource, definition, locale, programType);
-        }
-        return null;
+        PrismScope resourceScope = resource.getResourceScope();
+        PrismLocale locale = resourceScope == SYSTEM ? user.getLocale() : resource.getLocale();
+        PrismProgramType programType = resourceScope.getPrecedence() > INSTITUTION.getPrecedence() ? resource.getProgram().getProgramType()
+                .getPrismProgramType() : null;
+        return getConfiguration(configurationType, resource, definition, locale, programType);
     }
 
     public WorkflowConfiguration getConfiguration(PrismConfiguration configurationType, Resource resource, WorkflowDefinition definition, PrismLocale locale,
@@ -71,6 +72,10 @@ public class CustomizationService {
     public List<DisplayPropertyConfiguration> getDisplayPropertyConfiguration(Resource resource, PrismScope scope,
             PrismDisplayPropertyCategory displayPropertyCategory, PrismLocale locale, PrismProgramType programType) {
         return customizationDAO.getDisplayPropertyConfiguration(resource, scope, displayPropertyCategory, locale, programType);
+    }
+
+    public WorkflowConfiguration getConfigurationWithVersion(PrismConfiguration configurationType, WorkflowDefinition definition, Integer version) {
+        return customizationDAO.getConfigurationWithVersion(configurationType, definition, version);
     }
 
     public WorkflowConfigurationRepresentation getConfigurationRepresentation(PrismConfiguration configurationType, Resource resource,
@@ -114,19 +119,46 @@ public class CustomizationService {
         customizationDAO.restoreDefaultConfiguration(configurationType, resource, scope, locale, programType);
     }
 
-
     public List<WorkflowDefinition> getDefinitions(PrismConfiguration configurationType, PrismScope scope) {
         return (List<WorkflowDefinition>) customizationDAO.listDefinitions(configurationType, scope);
     }
-    
+
     public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
             WorkflowDefinition definition) {
         customizationDAO.restoreGlobalConfiguration(configurationType, resource, locale, programType, definition);
     }
-    
+
     public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
             PrismProgramType programType) {
         customizationDAO.restoreGlobalConfiguration(configurationType, resource, scope, locale, programType);
+    }
+
+    public void updateConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
+            WorkflowDefinition definition, WorkflowConfigurationDTO workflowConfigurationDTO) throws CustomizationException {
+        WorkflowConfiguration configuration = createConfiguration(configurationType, resource, locale, programType, workflowConfigurationDTO);
+        entityService.createOrUpdate(configuration);
+        resourceService
+                .executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
+    }
+
+    @SuppressWarnings("unchecked")
+    public void updateConfiguration(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
+            PrismProgramType programType, WorkflowConfigurationGroupDTO workflowConfigurationGroupDTO) throws CustomizationException {
+        List<WorkflowDefinition> definitions = getDefinitions(configurationType, scope);
+        List<WorkflowConfigurationDTO> valueDTOs = (List<WorkflowConfigurationDTO>) workflowConfigurationGroupDTO.getValues();
+
+        if (valueDTOs.isEmpty() || valueDTOs.size() != definitions.size()) {
+            throw new Error();
+        } else {
+            if (configurationType.isVersioned()) {
+                createConfigurationGroupVersion(configurationType, resource, scope, locale, programType, valueDTOs);
+            } else {
+                createConfigurationGroup(configurationType, resource, locale, programType, valueDTOs);
+            }
+
+            resourceService.executeUpdate(resource,
+                    PrismDisplayProperty.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
+        }
     }
 
     public boolean isSystemDefault(WorkflowDefinition definition, PrismLocale locale, PrismProgramType programType) {
@@ -201,6 +233,45 @@ public class CustomizationService {
 
             return representations;
         }
+    }
+
+    private void createConfigurationGroup(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
+            List<WorkflowConfigurationDTO> valueDTOs) throws CustomizationException {
+        for (WorkflowConfigurationDTO valueDTO : valueDTOs) {
+            createConfiguration(configurationType, resource, locale, programType, valueDTO);
+        }
+    }
+
+    private void createConfigurationGroupVersion(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
+            PrismProgramType programType, List<WorkflowConfigurationDTO> valueDTOs) throws CustomizationException {
+        Integer version = null;
+        restoreDefaultConfiguration(configurationType, resource, scope, locale, programType);
+        for (WorkflowConfigurationDTO valueDTO : valueDTOs) {
+            WorkflowConfiguration transientConfiguration = createConfiguration(configurationType, resource, locale, programType, valueDTO);
+
+            WorkflowConfiguration persistentConfiguration;
+            if (version == null) {
+                entityService.save(transientConfiguration);
+                persistentConfiguration = transientConfiguration;
+            } else {
+                persistentConfiguration = entityService.createOrUpdate(transientConfiguration);
+            }
+
+            version = version == null ? persistentConfiguration.getId() : version;
+            ReflectionUtils.setProperty(persistentConfiguration, "version", version);
+        }
+    }
+
+    private WorkflowConfiguration createConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale,
+            PrismProgramType programType, WorkflowConfigurationDTO workflowConfigurationDTO) throws CustomizationException {
+        WorkflowDefinition definition = entityService.getById(configurationType.getDefinitionClass(), workflowConfigurationDTO.getId());
+        validateConfiguration(resource, definition, locale, programType);
+        WorkflowConfiguration configuration = mapper.map(workflowConfigurationDTO, configurationType.getConfigurationClass());
+        configuration.setResource(resource);
+        configuration.setLocale(locale);
+        configuration.setProgramType(programType);
+        configuration.setSystemDefault(isSystemDefault(definition, locale, programType));
+        return configuration;
     }
 
 }

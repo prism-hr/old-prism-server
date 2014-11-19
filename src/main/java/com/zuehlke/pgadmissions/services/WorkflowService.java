@@ -63,7 +63,7 @@ public class WorkflowService {
         Integer version = null;
         customizationService.restoreDefaultConfiguration(PrismConfiguration.WORKFLOW_PROPERTY, resource, scope, locale, programType);
         for (WorkflowPropertyConfigurationValueDTO valueDTO : configurationDTO.getValues()) {
-            WorkflowPropertyDefinition definition = getWorkflowPropertyDefinitionById((PrismWorkflowPropertyDefinition) valueDTO.getId());
+            WorkflowPropertyDefinition definition = getWorkflowPropertyDefinitionById((PrismWorkflowPropertyDefinition) valueDTO.getDefinitionId());
             WorkflowPropertyConfiguration configuration = createOrUpdateWorkflowPropertyConfiguration(resource, locale, programType, definition, version,
                     valueDTO.getEnabled(), valueDTO.getMinimum(), valueDTO.getMaximum());
             version = configuration.getVersion();
@@ -105,7 +105,7 @@ public class WorkflowService {
             }
 
             for (WorkflowPropertyConfigurationValueDTO valueDTO : valueDTOs) {
-                PrismWorkflowPropertyDefinition definitionId = (PrismWorkflowPropertyDefinition) valueDTO.getId();
+                PrismWorkflowPropertyDefinition definitionId = (PrismWorkflowPropertyDefinition) valueDTO.getDefinitionId();
 
                 if (valueDTO.getEnabled() == null) {
                     throw new CustomizationException("Enabled value not set for " + definitionId.name() + " in workflow configuration for "

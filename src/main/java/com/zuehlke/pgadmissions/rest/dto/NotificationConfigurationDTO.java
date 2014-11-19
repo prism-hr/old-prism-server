@@ -44,7 +44,7 @@ public class NotificationConfigurationDTO extends WorkflowConfigurationDTO {
     }
 
     public NotificationConfigurationDTO withId(PrismNotificationDefinition id) {
-        setId(id);
+        setDefinitionId(id);
         return this;
     }
     

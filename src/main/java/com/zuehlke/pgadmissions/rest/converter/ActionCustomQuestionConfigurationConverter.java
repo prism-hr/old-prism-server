@@ -17,7 +17,7 @@ public class ActionCustomQuestionConfigurationConverter extends DozerConverter<A
 
     @Override
     public ActionCustomQuestionConfiguration convertTo(ActionCustomQuestionConfigurationValueDTO source, ActionCustomQuestionConfiguration destination) {
-        String name = source.getName();
+        String name = source.getComponent();
         List<String> options = source.getOptions();
         List<String> validationRules = source.getValidationRules();
         return new ActionCustomQuestionConfiguration().withCustomQuestionType(PrismCustomQuestionType.getByComponentName(name)).withName(name)

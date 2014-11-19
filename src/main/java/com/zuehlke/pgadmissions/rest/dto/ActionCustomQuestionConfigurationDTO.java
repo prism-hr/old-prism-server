@@ -1,17 +1,13 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
+import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionConfigurationDTO.ActionCustomQuestionConfigurationValueDTO;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.NotEmpty;
-
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
-import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionConfigurationDTO.ActionCustomQuestionConfigurationValueDTO;
 
 public class ActionCustomQuestionConfigurationDTO extends ArrayList<ActionCustomQuestionConfigurationValueDTO> {
 
@@ -22,8 +18,8 @@ public class ActionCustomQuestionConfigurationDTO extends ArrayList<ActionCustom
         @NotNull
         private PrismActionCustomQuestionDefinition definitionId;
 
-        @NotNull
-        private String name;
+        @NotEmpty
+        private String component;
 
         @NotNull
         private Boolean editable;
@@ -31,22 +27,21 @@ public class ActionCustomQuestionConfigurationDTO extends ArrayList<ActionCustom
         @NotNull
         private Integer index;
 
-        @NotNull
+        @NotEmpty
         private String label;
 
-        @NotNull
+        @NotEmpty
         private String description;
 
-        @NotEmpty
+        @Size(min = 1)
         private String placeholder;
 
-        @NotEmpty
+        @Min(2)
         private List<String> options;
 
         @NotNull
         private Boolean required;
 
-        @NotEmpty
         private List<String> validationRules;
 
         @DecimalMin("0.01")
@@ -61,83 +56,83 @@ public class ActionCustomQuestionConfigurationDTO extends ArrayList<ActionCustom
             this.definitionId = definitionId;
         }
 
-        public final String getName() {
-            return name;
+        public String getComponent() {
+            return component;
         }
 
-        public final void setName(String name) {
-            this.name = name;
+        public void setComponent(String component) {
+            this.component = component;
         }
 
-        public final Boolean getEditable() {
+        public Boolean getEditable() {
             return editable;
         }
 
-        public final void setEditable(Boolean editable) {
+        public void setEditable(Boolean editable) {
             this.editable = editable;
         }
 
-        public final Integer getIndex() {
+        public Integer getIndex() {
             return index;
         }
 
-        public final void setIndex(Integer index) {
+        public void setIndex(Integer index) {
             this.index = index;
         }
 
-        public final String getLabel() {
+        public String getLabel() {
             return label;
         }
 
-        public final void setLabel(String label) {
+        public void setLabel(String label) {
             this.label = label;
         }
 
-        public final String getDescription() {
+        public String getDescription() {
             return description;
         }
 
-        public final void setDescription(String description) {
+        public void setDescription(String description) {
             this.description = description;
         }
 
-        public final String getPlaceholder() {
+        public String getPlaceholder() {
             return placeholder;
         }
 
-        public final void setPlaceholder(String placeholder) {
+        public void setPlaceholder(String placeholder) {
             this.placeholder = placeholder;
         }
 
-        public final List<String> getOptions() {
+        public List<String> getOptions() {
             return options;
         }
 
-        public final void setOptions(List<String> options) {
+        public void setOptions(List<String> options) {
             this.options = options;
         }
 
-        public final Boolean getRequired() {
+        public Boolean getRequired() {
             return required;
         }
 
-        public final void setRequired(Boolean required) {
+        public void setRequired(Boolean required) {
             this.required = required;
         }
 
-        public final List<String> getValidationRules() {
+        public List<String> getValidationRules() {
             return validationRules;
         }
 
-        public final void setValidationRules(List<String> validationRules) {
+        public void setValidationRules(List<String> validationRules) {
             this.validationRules = validationRules;
         }
 
-        public final BigDecimal getWeighting() {
+        public BigDecimal getWeighting() {
             return weighting;
         }
 
-        public final void setWeighting(BigDecimal weighting) {
+        public void setWeighting(BigDecimal weighting) {
             this.weighting = weighting;
         }
 

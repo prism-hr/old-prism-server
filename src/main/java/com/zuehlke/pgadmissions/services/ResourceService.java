@@ -235,9 +235,6 @@ public class ResourceService {
 
             resource.setDueDate(baseline.plusDays(duration));
         }
-        
-        Integer workflowPropertyConfigurationVersion = resource.getWorkflowPropertyConfigurationVersion();
-        // TODO pick up the active version if it was not set before.
     }
 
     public void postProcessResource(Resource resource, Comment comment) throws DeduplicationException {

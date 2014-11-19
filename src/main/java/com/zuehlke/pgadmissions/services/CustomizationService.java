@@ -257,7 +257,8 @@ public class CustomizationService {
         Integer version = null;
         restoreDefaultConfiguration(configurationType, resource, scope, locale, programType);
         for (WorkflowConfigurationDTO valueDTO : valueDTOs) {
-            WorkflowConfiguration transientConfiguration = createOrUpdateConfiguration(configurationType, resource, locale, programType, valueDTO);
+            WorkflowConfiguration transientConfiguration = createConfiguration(configurationType, resource, locale, programType, valueDTO);
+            ReflectionUtils.setProperty(transientConfiguration, "active", true);
 
             WorkflowConfiguration persistentConfiguration;
             if (version == null) {

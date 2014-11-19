@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_CATEGORY_EXPERIENCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_CATEGORY_FUNDING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_CATEGORY_LEARNING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_CATEGORY_STUDY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_CATEGORY_WORK;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_CATEGORY_EXPERIENCE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_CATEGORY_FUNDING;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_CATEGORY_LEARNING;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_CATEGORY_STUDY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_CATEGORY_WORK;
 
 public enum PrismProgramCategory {
 
@@ -20,9 +20,9 @@ public enum PrismProgramCategory {
 
     private boolean requireDuration;
 
-    private PrismDisplayProperty displayProperty;
+    private PrismDisplayPropertyDefinition displayProperty;
 
-    private PrismProgramCategory(boolean hasFee, boolean hasPay, boolean requireDuration, PrismDisplayProperty displayProperty) {
+    private PrismProgramCategory(boolean hasFee, boolean hasPay, boolean requireDuration, PrismDisplayPropertyDefinition displayProperty) {
         this.hasFee = hasFee;
         this.hasPay = hasPay;
         this.requireDuration = requireDuration;
@@ -41,7 +41,7 @@ public enum PrismProgramCategory {
         return requireDuration;
     }
 
-    public final PrismDisplayProperty getDisplayProperty() {
+    public final PrismDisplayPropertyDefinition getDisplayProperty() {
         return displayProperty;
     }
 

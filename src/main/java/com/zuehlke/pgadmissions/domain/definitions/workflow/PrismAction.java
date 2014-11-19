@@ -37,10 +37,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCo
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.SUITABLE_FOR_INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.SUITABLE_FOR_OPPORTUNITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.TRANSITION_STATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestion.APPLICATION_COMPLETE_CUSTOM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestion.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_CUSTOM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestion.APPLICATION_PROVIDE_REFERENCE_CUSTOM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestion.APPLICATION_PROVIDE_REVIEW_CUSTOM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition.APPLICATION_COMPLETE_CUSTOM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_CUSTOM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition.APPLICATION_PROVIDE_REFERENCE_CUSTOM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition.APPLICATION_PROVIDE_REVIEW_CUSTOM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_CONTENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.SYSTEM_INVOCATION;
@@ -232,7 +232,7 @@ public enum PrismAction {
 
     private boolean emphasizedAction;
 
-    private PrismActionCustomQuestion actionCustomQuestion;
+    private PrismActionCustomQuestionDefinition actionCustomQuestion;
 
     private PrismScope scope;
 
@@ -275,7 +275,7 @@ public enum PrismAction {
     }
 
     private PrismAction(PrismActionType actionType, PrismActionCategory actionCategory, boolean ratingAction, boolean transitionAction,
-            boolean declinableAction, boolean visibleAction, boolean emphasizedAction, PrismActionCustomQuestion actionCustomQuestion, PrismScope scope,
+            boolean declinableAction, boolean visibleAction, boolean emphasizedAction, PrismActionCustomQuestionDefinition actionCustomQuestion, PrismScope scope,
             PrismScope creationScope, List<PrismActionRedaction> redactions, PrismActionValidationDefinition validationDefinition) {
         this.actionType = actionType;
         this.actionCategory = actionCategory;
@@ -319,7 +319,7 @@ public enum PrismAction {
         return emphasizedAction;
     }
 
-    public final PrismActionCustomQuestion getActionCustomQuestion() {
+    public final PrismActionCustomQuestionDefinition getActionCustomQuestion() {
         return actionCustomQuestion;
     }
 

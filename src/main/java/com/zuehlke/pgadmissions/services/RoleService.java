@@ -14,7 +14,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -95,7 +95,7 @@ public class RoleService {
             PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource, invoker);
 
             Comment comment = new Comment().withAction(action).withUser(invoker)
-                    .withContent(loader.load(PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE")))
+                    .withContent(loader.load(PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE")))
                     .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
             for (PrismRole role : roles) {
                 comment.addAssignedUser(user, getById(role), transitionType);

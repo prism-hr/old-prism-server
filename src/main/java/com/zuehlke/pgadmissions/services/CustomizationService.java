@@ -18,8 +18,8 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.CustomizationDAO;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -137,7 +137,7 @@ public class CustomizationService {
             WorkflowDefinition definition, WorkflowConfigurationDTO workflowConfigurationDTO) throws CustomizationException {
         createOrUpdateConfiguration(configurationType, resource, locale, programType, workflowConfigurationDTO);
         resourceService
-                .executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
+                .executeUpdate(resource, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
     }
 
     @SuppressWarnings("unchecked")
@@ -156,7 +156,7 @@ public class CustomizationService {
             }
 
             resourceService.executeUpdate(resource,
-                    PrismDisplayProperty.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
+                    PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
         }
     }
 
@@ -265,7 +265,8 @@ public class CustomizationService {
         Integer version = null;
         restoreDefaultConfiguration(configurationType, resource, scope, locale, programType);
         for (WorkflowConfigurationDTO valueDTO : valueDTOs) {
-            WorkflowConfiguration transientConfiguration = createOrUpdateConfiguration(configurationType, resource, locale, programType, valueDTO);
+            WorkflowConfiguration transientConfiguration = createConfiguration(configurationType, resource, locale, programType, valueDTO);
+            ReflectionUtils.setProperty(transientConfiguration, "active", true);
 
             WorkflowConfiguration persistentConfiguration;
             if (version == null) {
@@ -275,8 +276,8 @@ public class CustomizationService {
                 persistentConfiguration = entityService.createOrUpdate(transientConfiguration);
             }
 
-            version = version == null ? persistentConfiguration.getId() : version;
             ReflectionUtils.setProperty(persistentConfiguration, "version", version);
+            version = version == null ? persistentConfiguration.getId() : version;
         }
     }
 

@@ -13,6 +13,7 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationDefinition;
@@ -21,17 +22,18 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismCustomQuestionT
 import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.CustomQuestionResponseDTO;
-import com.zuehlke.pgadmissions.services.ActionService;
+import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Component
+@SuppressWarnings("unchecked")
 public class CommentValidator extends LocalValidatorFactoryBean implements Validator {
 
     private boolean validateRating = true;
-    
+
     @Autowired
-    private ActionService actionService;
-    
+    private CustomizationService customizationService;
+
     @Override
     public boolean supports(Class<?> clazz) {
         return CommentDTO.class.isAssignableFrom(clazz);
@@ -52,42 +54,43 @@ public class CommentValidator extends LocalValidatorFactoryBean implements Valid
         CustomQuestionResponseDTO propertyAnswerDTO = comment.getCustomQuestionResponse();
         if (propertyAnswerDTO != null) {
             errors.pushNestedPath("propertyAnswer");
-            
-            List<ActionCustomQuestionConfiguration> properties = actionService.getActionPropertyConfigurationByVersion(propertyAnswerDTO.getVersion());
+
+            List<ActionCustomQuestionConfiguration> properties = (List<ActionCustomQuestionConfiguration>) (List<?>) customizationService
+                    .getConfigurationsWithVersion(PrismConfiguration.CUSTOM_QUESTION, propertyAnswerDTO.getVersion());
             List<Object> propertyValues = propertyAnswerDTO.getValues();
-            
+
             if (properties.size() != propertyValues.size()) {
                 throw new Error();
             }
-           
+
             for (int i = 0; i < properties.size(); i++) {
                 ActionCustomQuestionConfiguration property = properties.get(i);
                 Object propertyValue = propertyValues.get(i);
-                
+
                 PrismCustomQuestionType propertyType = property.getCustomQuestionType();
-                
+
                 if (!propertyValue.getClass().equals(propertyType.getPropertyClass())) {
                     throw new Error();
                 }
-                
+
                 if (propertyType.getPermittedValues() != null) {
-                   if (!propertyType.getPermittedValues().contains(propertyValue)) {
-                       throw new Error();
-                   }
+                    if (!propertyType.getPermittedValues().contains(propertyValue)) {
+                        throw new Error();
+                    }
                 }
-                
+
                 if (property.getRequired()) {
                     ValidationUtils.rejectIfEmptyOrWhitespace(errors, "values[" + i + "]", "notEmpty");
                 }
-                
+
                 if (propertyType.name().startsWith("RATING")) {
                     validateRating = false;
                 }
             }
-            
+
             errors.popNestedPath();
         }
-        
+
         for (PrismActionCommentField field : PrismActionCommentField.values()) {
             if (field != RATING || (field == RATING && validateRating)) {
                 List<PrismActionValidationFieldResolution> resolutions = fieldDefinitions.get(field);
@@ -96,21 +99,21 @@ public class CommentValidator extends LocalValidatorFactoryBean implements Valid
                 if (resolutions != null) {
                     for (PrismActionValidationFieldResolution fieldResolution : resolutions) {
                         switch (fieldResolution.getRestriction()) {
-                            case NOT_NULL:
-                                ValidationUtils.rejectIfEmpty(errors, fieldName, "notNull");
-                                break;
-                            case NOT_EMPTY:
-                                ValidationUtils.rejectIfEmptyOrWhitespace(errors, fieldName, "notEmpty");
-                                break;
-                            case SIZE:
-                                Collection<?> collection = (Collection<?>) fieldValue;
-                                Integer min = (Integer) fieldResolution.getArguments().get("min");
-                                Integer max = (Integer) fieldResolution.getArguments().get("max");
-                                if (min != null && min > 0 && (collection == null || collection.size() < min)) {
-                                    errors.rejectValue(fieldName, "min", new Object[]{min}, null);
-                                } else if (max != null && collection != null && collection.size() > max) {
-                                    errors.rejectValue(fieldName, "max", new Object[]{max}, null);
-                                }
+                        case NOT_NULL:
+                            ValidationUtils.rejectIfEmpty(errors, fieldName, "notNull");
+                            break;
+                        case NOT_EMPTY:
+                            ValidationUtils.rejectIfEmptyOrWhitespace(errors, fieldName, "notEmpty");
+                            break;
+                        case SIZE:
+                            Collection<?> collection = (Collection<?>) fieldValue;
+                            Integer min = (Integer) fieldResolution.getArguments().get("min");
+                            Integer max = (Integer) fieldResolution.getArguments().get("max");
+                            if (min != null && min > 0 && (collection == null || collection.size() < min)) {
+                                errors.rejectValue(fieldName, "min", new Object[] { min }, null);
+                            } else if (max != null && collection != null && collection.size() > max) {
+                                errors.rejectValue(fieldName, "max", new Object[] { max }, null);
+                            }
                         }
                     }
                 } else {
@@ -119,12 +122,12 @@ public class CommentValidator extends LocalValidatorFactoryBean implements Valid
                     }
                 }
             }
-    
+
             Validator customValidator = validationDefinition.getCustomValidator();
             if (customValidator != null) {
                 ValidationUtils.invokeValidator(customValidator, comment, errors);
             }
         }
     }
-    
+
 }

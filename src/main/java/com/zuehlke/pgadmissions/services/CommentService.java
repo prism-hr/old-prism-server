@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
@@ -75,6 +76,9 @@ public class CommentService {
 
     @Autowired
     private ActionService actionService;
+
+    @Autowired
+    private CustomizationService customizationService;
 
     @Autowired
     private EntityService entityService;
@@ -409,10 +413,12 @@ public class CommentService {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void appendPropertyAnswers(Comment comment, CommentDTO commentDTO) {
         Integer version = commentDTO.getCustomQuestionResponse().getVersion();
         comment.setActionCustomQuestionVersion(version);
-        List<ActionCustomQuestionConfiguration> actionPropertyConfigurations = actionService.getActionPropertyConfigurationByVersion(version);
+        List<ActionCustomQuestionConfiguration> actionPropertyConfigurations = (List<ActionCustomQuestionConfiguration>) (List<?>) customizationService
+                .getConfigurationsWithVersion(PrismConfiguration.CUSTOM_QUESTION, version);
         List<Object> propertyAnswerValues = commentDTO.getCustomQuestionResponse().getValues();
         for (int i = 0; i < actionPropertyConfigurations.size(); i++) {
             ActionCustomQuestionConfiguration configuration = actionPropertyConfigurations.get(i);
@@ -527,14 +533,14 @@ public class CommentService {
         BigDecimal aggregatedRating = new BigDecimal(0.00);
         for (CommentCustomResponse property : comment.getPropertyAnswers()) {
             switch (property.getCustomQuestionType()) {
-                case RATING_NORMAL:
-                    aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(property, 5));
-                    break;
-                case RATING_WEIGHTED:
-                    aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(property, 8));
-                    break;
-                default:
-                    continue;
+            case RATING_NORMAL:
+                aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(property, 5));
+                break;
+            case RATING_WEIGHTED:
+                aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(property, 8));
+                break;
+            default:
+                continue;
             }
         }
         comment.setApplicationRating(aggregatedRating);

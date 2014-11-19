@@ -19,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -117,18 +116,6 @@ public class StateService {
 
     public StateDurationConfiguration getStateDurationConfiguration(Resource resource, User user, StateDurationDefinition definition) {
         return (StateDurationConfiguration) customizationService.getConfiguration(PrismConfiguration.STATE_DURATION, resource, user, definition);
-    }
-
-    public StateDurationConfiguration getStateDurationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
-            StateDurationDefinition definition) {
-        return (StateDurationConfiguration) customizationService.getConfiguration(PrismConfiguration.STATE_DURATION, resource, definition, locale, programType);
-    }
-
-    // TODO: make this work with a list of representations
-    public void updateStateDurationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,
-            StateDurationDefinition stateDurationDefinition, Integer duration) throws DeduplicationException, CustomizationException {
-        createOrUpdateStateDurationConfiguration(resource, locale, programType, stateDurationDefinition, duration);
-        resourceService.executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_STATE_DURATION"));
     }
 
     public void createOrUpdateStateDurationConfiguration(Resource resource, PrismLocale locale, PrismProgramType programType,

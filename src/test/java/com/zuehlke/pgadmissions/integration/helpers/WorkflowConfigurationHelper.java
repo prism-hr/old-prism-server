@@ -40,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
+import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -179,8 +180,12 @@ public class WorkflowConfigurationHelper {
         assertTrue(actionsEmpty || viewEditActions.size() >= 1);
 
         System system = systemService.getSystem();
-        if (stateService.getStateDurationConfiguration(system, system.getUser(), state.getStateDurationDefinition()) != null) {
-            assertFalse(escalationActions.isEmpty());
+        StateDurationDefinition definition = state.getStateDurationDefinition();
+        
+        if (definition != null) {
+            if (stateService.getStateDurationConfiguration(system, system.getUser(), state.getStateDurationDefinition()) != null) {
+                assertFalse(escalationActions.isEmpty());
+            }   
         }
     }
 

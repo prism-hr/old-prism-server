@@ -16,9 +16,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
@@ -93,6 +93,9 @@ public class SystemInitialisationHelper {
 
     @Autowired
     private ActionService actionService;
+
+    @Autowired
+    private CustomizationService customizationService;
 
     @Autowired
     private EntityService entityService;
@@ -239,35 +242,36 @@ public class SystemInitialisationHelper {
 
     public void verifyNotificationTemplateCreation() {
         System system = systemService.getSystem();
-        for (NotificationDefinition template : notificationService.getDefinitions()) {
-            PrismNotificationDefinition prismNotificationTemplate = template.getId();
+        for (NotificationDefinition definition : notificationService.getDefinitions()) {
+            PrismNotificationDefinition prismNotificationDefinition = definition.getId();
 
-            assertEquals(prismNotificationTemplate.getNotificationType(), template.getNotificationType());
-            assertEquals(prismNotificationTemplate.getNotificationPurpose(), template.getNotificationPurpose());
-            assertEquals(prismNotificationTemplate.getScope(), template.getScope().getId());
-            assertEquals(prismNotificationTemplate.getReminderDefinition(), (template.getReminderDefinition()) == null ? null : template
+            assertEquals(prismNotificationDefinition.getNotificationType(), definition.getNotificationType());
+            assertEquals(prismNotificationDefinition.getNotificationPurpose(), definition.getNotificationPurpose());
+            assertEquals(prismNotificationDefinition.getScope(), definition.getScope().getId());
+            assertEquals(prismNotificationDefinition.getReminderDefinition(), (definition.getReminderDefinition()) == null ? null : definition
                     .getReminderDefinition().getId());
 
-            PrismProgramType programType = template.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null;
+            NotificationConfiguration configuration = (NotificationConfiguration) customizationService.getConfiguration(PrismConfiguration.NOTIFICATION,
+                    system, system.getUser(), definition);
 
-            NotificationConfiguration configuration = notificationService.getNotificationConfiguration(system, system.getLocale(), programType, template);
             assertEquals(configuration.getLocale(), getSystemLocale());
-            assertEquals(configuration.getProgramType(), programType);
-            assertEquals(configuration.getNotificationDefinition(), template);
-            assertEquals(prismNotificationTemplate.getDefaultReminderDuration(), configuration.getReminderInterval());
+            assertEquals(configuration.getProgramType(), definition.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null);
+            assertEquals(configuration.getNotificationDefinition(), definition);
+            assertEquals(prismNotificationDefinition.getDefaultReminderDuration(), configuration.getReminderInterval());
             assertTrue(configuration.getSystemDefault());
 
-            assertEquals(FileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationTemplate.getInitialTemplateSubject()), configuration.getSubject());
-            assertEquals(FileUtils.getContent(defaultEmailContentDirectory + prismNotificationTemplate.getInitialTemplateContent()), configuration.getContent());
+            assertEquals(FileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationDefinition.getInitialTemplateSubject()),
+                    configuration.getSubject());
+            assertEquals(FileUtils.getContent(defaultEmailContentDirectory + prismNotificationDefinition.getInitialTemplateContent()),
+                    configuration.getContent());
         }
     }
 
     public void verifyStateDurationCreation() {
         System system = systemService.getSystem();
         for (State state : stateService.getConfigurableStates()) {
-            StateDurationConfiguration stateDurationConfiguration = stateService.getStateDurationConfiguration(system, system.getUser().getLocale(), state
-                    .getScope().getPrecedence() > PrismScope.INSTITUTION.getPrecedence() ? PrismProgramType.getSystemProgramType() : null, state
-                    .getStateDurationDefinition());
+            StateDurationConfiguration stateDurationConfiguration = (StateDurationConfiguration) customizationService.getConfiguration(
+                    PrismConfiguration.STATE_DURATION, system, system.getUser(), state.getStateDurationDefinition());
 
             assertEquals(stateDurationConfiguration.getLocale(), getSystemLocale());
             assertEquals(stateDurationConfiguration.getProgramType(), state.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType()

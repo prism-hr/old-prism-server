@@ -36,7 +36,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.WordUtils;
 
 @RestController
-@RequestMapping("api/{resourceScope:programs|institutions|systems}/{resourceId}/configuration/{configurationType:customQuestions|displayProperties|stateDurations|workflowProperties}")
+@RequestMapping("api/{resourceScope:programs|institutions|systems}/{resourceId}/configuration/{configurationType:customQuestions|displayProperties|notifications|stateDurations|workflowProperties}")
 public class ResourceConfigurationResource {
 
     @Autowired
@@ -78,7 +78,7 @@ public class ResourceConfigurationResource {
     }
 
     @RequestMapping(value = "restoreDefault/{id}", method = RequestMethod.DELETE)
-    public void restoreDefaultConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, PrismConfiguration configurationType,
+    public void restoreDefaultNotificationConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, PrismConfiguration configurationType,
             @PathVariable Integer resourceId, @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType,
             @PathVariable String id) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
@@ -95,7 +95,7 @@ public class ResourceConfigurationResource {
     }
 
     @RequestMapping(value = "restoreGlobal/{id}", method = RequestMethod.DELETE)
-    public void restoreGlobalConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, PrismConfiguration configurationType,
+    public void restoreGlobalNotificationConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, PrismConfiguration configurationType,
             @PathVariable Integer resourceId, @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType,
             @PathVariable String id) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);

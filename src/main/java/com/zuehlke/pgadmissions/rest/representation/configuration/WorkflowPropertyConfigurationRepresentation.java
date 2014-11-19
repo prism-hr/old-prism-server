@@ -31,4 +31,5 @@ public class WorkflowPropertyConfigurationRepresentation extends WorkflowConfigu
     public void setMaximum(Integer maximum) {
         this.maximum = maximum;
     }
+    
 }

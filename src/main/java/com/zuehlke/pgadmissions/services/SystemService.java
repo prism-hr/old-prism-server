@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.SystemDAO;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
@@ -65,6 +66,7 @@ import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
+import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -107,19 +109,22 @@ public class SystemService {
     private SystemDAO systemDAO;
 
     @Autowired
+    private ActionService actionService;
+
+    @Autowired
     private EntityService entityService;
 
     @Autowired
-    private NotificationService notificationService;
+    private CustomizationService customizationService;
 
     @Autowired
     private DisplayPropertyService displayPropertyService;
 
     @Autowired
-    private ActionService actionService;
+    private ResourceService resourceService;
 
     @Autowired
-    private ResourceService resourceService;
+    private NotificationService notificationService;
 
     @Autowired
     private RoleService roleService;
@@ -428,16 +433,15 @@ public class SystemService {
 
     private void initializeNotificationConfigurations(System system) throws DeduplicationException, CustomizationException {
         for (PrismNotificationDefinition prismNotificationDefinition : PrismNotificationDefinition.values()) {
-            NotificationDefinition notificationDefinition = notificationService.getById(prismNotificationDefinition);
-
             String subject = FileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationDefinition.getInitialTemplateSubject());
             String content = FileUtils.getContent(defaultEmailContentDirectory + prismNotificationDefinition.getInitialTemplateContent());
 
             PrismProgramType programType = prismNotificationDefinition.getScope().getPrecedence() > PrismScope.INSTITUTION.getPrecedence() ? PrismProgramType
                     .getSystemProgramType() : null;
 
-            notificationService.createOrUpdateNotificationConfiguration(system, PrismLocale.getSystemLocale(), programType, notificationDefinition, subject,
-                    content, prismNotificationDefinition.getDefaultReminderDuration());
+            NotificationConfigurationDTO configurationDTO = new NotificationConfigurationDTO().withId(prismNotificationDefinition).withSubject(subject)
+                    .withContent(content).withReminderInterval(prismNotificationDefinition.getDefaultReminderDuration());
+            customizationService.createOrUpdateConfiguration(PrismConfiguration.NOTIFICATION, system, getSystemLocale(), programType, configurationDTO);
         }
     }
 

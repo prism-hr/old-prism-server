@@ -18,10 +18,7 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
-import com.zuehlke.pgadmissions.rest.representation.configuration.NotificationConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.configuration.StateDurationConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.configuration.*;
 import com.zuehlke.pgadmissions.rest.representation.workflow.NotificationDefinitionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.StateDurationDefinitionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
@@ -29,16 +26,16 @@ import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowPropertyDef
 
 public enum PrismConfiguration {
 
-    CUSTOM_QUESTION(ActionCustomQuestionConfiguration.class, ActionCustomQuestionDefinition.class, null, WorkflowDefinitionRepresentation.class, true,
-            true, null, null, "_COMMENT_UPDATED_ACTION_PROPERTY"), //
+    CUSTOM_QUESTION(ActionCustomQuestionConfiguration.class, ActionCustomQuestionDefinition.class, ActionCustomQuestionConfigurationRepresentation.class, WorkflowDefinitionRepresentation.class, true,
+            true, null, null, "_COMMENT_UPDATED_ACTION_PROPERTY", false), //
     DISPLAY_PROPERTY(DisplayPropertyConfiguration.class, DisplayPropertyDefinition.class, null, WorkflowDefinitionRepresentation.class, true, false, null,
-            null, "_COMMENT_UPDATED_DISPLAY_PROPERTY"), //
+            null, "_COMMENT_UPDATED_DISPLAY_PROPERTY", true), //
     NOTIFICATION(NotificationConfiguration.class, NotificationDefinition.class, NotificationConfigurationRepresentation.class,
-            NotificationDefinitionRepresentation.class, false, false, 1, 28, "_COMMENT_UPDATED_NOTIFICATION"), //
+            NotificationDefinitionRepresentation.class, false, false, 1, 28, "_COMMENT_UPDATED_NOTIFICATION", true), //
     STATE_DURATION(StateDurationConfiguration.class, StateDurationDefinition.class, StateDurationConfigurationRepresentation.class,
-            StateDurationDefinitionRepresentation.class, true, false, 1, 168, "_COMMENT_UPDATED_STATE_DURATION"), //
+            StateDurationDefinitionRepresentation.class, true, false, 1, 168, "_COMMENT_UPDATED_STATE_DURATION", true), //
     WORKFLOW_PROPERTY(WorkflowPropertyConfiguration.class, WorkflowPropertyDefinition.class, WorkflowPropertyConfigurationRepresentation.class,
-            WorkflowPropertyDefinitionRepresentation.class, true, true, null, null, "_COMMENT_UPDATED_WORKFLOW_PROPERTY");
+            WorkflowPropertyDefinitionRepresentation.class, true, true, null, null, "_COMMENT_UPDATED_WORKFLOW_PROPERTY", true);
 
     private Class<? extends WorkflowConfiguration> configurationClass;
 
@@ -58,6 +55,8 @@ public enum PrismConfiguration {
 
     private String updateCommentProperty;
 
+    private boolean validateResponseSize;
+
     private static final Map<Class<? extends WorkflowConfiguration>, PrismConfiguration> reverseMap = Maps.newHashMap();
 
     static {
@@ -67,9 +66,9 @@ public enum PrismConfiguration {
     }
 
     private PrismConfiguration(Class<? extends WorkflowConfiguration> configurationClass, Class<? extends WorkflowDefinition> definitionClass,
-            Class<? extends WorkflowConfigurationRepresentation> configurationRepresentationClass,
-            Class<? extends WorkflowDefinitionRepresentation> definitionRepresentationClass, boolean grouped, boolean versioned, Integer minimumPermitted,
-            Integer maximumPermitted, String updateCommentProperty) {
+                               Class<? extends WorkflowConfigurationRepresentation> configurationRepresentationClass,
+                               Class<? extends WorkflowDefinitionRepresentation> definitionRepresentationClass, boolean grouped, boolean versioned, Integer minimumPermitted,
+                               Integer maximumPermitted, String updateCommentProperty, boolean validateResponseSize) {
         this.configurationClass = configurationClass;
         this.grouped = grouped;
         this.versioned = versioned;
@@ -79,6 +78,7 @@ public enum PrismConfiguration {
         this.minimumPermitted = minimumPermitted;
         this.maximumPermitted = maximumPermitted;
         this.updateCommentProperty = updateCommentProperty;
+        this.validateResponseSize = validateResponseSize;
     }
 
     public Class<? extends WorkflowConfiguration> getConfigurationClass() {
@@ -119,5 +119,9 @@ public enum PrismConfiguration {
 
     public String getDefinitionPropertyName() {
         return UPPER_CAMEL.to(LOWER_CAMEL, definitionClass.getSimpleName());
+    }
+
+    public boolean isValidateResponseSize() {
+        return validateResponseSize;
     }
 }

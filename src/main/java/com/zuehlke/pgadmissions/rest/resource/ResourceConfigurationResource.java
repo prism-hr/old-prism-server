@@ -99,7 +99,7 @@ public class ResourceConfigurationResource {
         customizationService.restoreDefaultConfiguration(configurationType, resource, scope, locale, programType);
     }
 
-    @RequestMapping(value = "{configurationType:customQuestions", method = RequestMethod.PUT)
+    @RequestMapping(value = "{configurationType:customQuestions}", method = RequestMethod.PUT)
     public void updateActionCustomQuestionConfiguration(@ModelAttribute PrismConfiguration configurationType,
             @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam PrismScope scope,
             @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType,

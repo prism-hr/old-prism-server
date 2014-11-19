@@ -1,17 +1,5 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-import java.math.BigDecimal;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismCustomQuestionType;
@@ -20,14 +8,18 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 
+import javax.persistence.*;
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "ACTION_CUSTOM_QUESTION_CONFIGURATION", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "system_id", "program_type", "locale", "action_custom_question_definition_id", "version", "display_index" }),
-        @UniqueConstraint(columnNames = { "institution_id", "program_type", "action_custom_question_definition_id", "version", "display_index" }),
-        @UniqueConstraint(columnNames = { "program_id", "action_custom_question_definition_id", "version", "display_index" }) })
+        @UniqueConstraint(columnNames = {"system_id", "program_type", "locale", "action_custom_question_definition_id", "version", "display_index"}),
+        @UniqueConstraint(columnNames = {"institution_id", "program_type", "action_custom_question_definition_id", "version", "display_index"}),
+        @UniqueConstraint(columnNames = {"program_id", "action_custom_question_definition_id", "version", "display_index"})})
 public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVersioned {
 
     @Id
+    @GeneratedValue
     private Integer id;
 
     @ManyToOne
@@ -62,7 +54,7 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
     private PrismCustomQuestionType customQuestionType;
 
     @Column(name = "display_name", nullable = false)
-    private String name;
+    private String component;
 
     @Column(name = "display_editable", nullable = false)
     private Boolean editable;
@@ -108,22 +100,22 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
     }
 
     @Override
-    public final System getSystem() {
+    public System getSystem() {
         return system;
     }
 
     @Override
-    public final void setSystem(System system) {
+    public void setSystem(System system) {
         this.system = system;
     }
 
     @Override
-    public final Institution getInstitution() {
+    public Institution getInstitution() {
         return institution;
     }
 
     @Override
-    public final void setInstitution(Institution institution) {
+    public void setInstitution(Institution institution) {
         this.institution = institution;
     }
 
@@ -138,148 +130,148 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
     }
 
     @Override
-    public final PrismLocale getLocale() {
+    public PrismLocale getLocale() {
         return locale;
     }
 
     @Override
-    public final void setLocale(PrismLocale locale) {
+    public void setLocale(PrismLocale locale) {
         this.locale = locale;
     }
 
     @Override
-    public final PrismProgramType getProgramType() {
+    public PrismProgramType getProgramType() {
         return programType;
     }
 
     @Override
-    public final void setProgramType(PrismProgramType programType) {
+    public void setProgramType(PrismProgramType programType) {
         this.programType = programType;
     }
 
-    public final ActionCustomQuestionDefinition getActionCustomQuestionDefinition() {
+    public ActionCustomQuestionDefinition getActionCustomQuestionDefinition() {
         return actionCustomQuestionDefinition;
     }
 
-    public final void setActionCustomQuestionDefinition(ActionCustomQuestionDefinition actionCustomQuestionDefinition) {
+    public void setActionCustomQuestionDefinition(ActionCustomQuestionDefinition actionCustomQuestionDefinition) {
         this.actionCustomQuestionDefinition = actionCustomQuestionDefinition;
     }
 
     @Override
-    public final Integer getVersion() {
+    public Integer getVersion() {
         return version;
     }
 
     @Override
-    public final void setVersion(Integer version) {
+    public void setVersion(Integer version) {
         this.version = version;
     }
 
-    public final PrismCustomQuestionType getCustomQuestionType() {
+    public PrismCustomQuestionType getCustomQuestionType() {
         return customQuestionType;
     }
 
-    public final void setCustomQuestionType(PrismCustomQuestionType customQuestionType) {
+    public void setCustomQuestionType(PrismCustomQuestionType customQuestionType) {
         this.customQuestionType = customQuestionType;
     }
 
-    public final String getName() {
-        return name;
+    public String getComponent() {
+        return component;
     }
 
-    public final void setName(String name) {
-        this.name = name;
+    public void setComponent(String component) {
+        this.component = component;
     }
 
-    public final Boolean getEditable() {
+    public Boolean getEditable() {
         return editable;
     }
 
-    public final void setEditable(Boolean editable) {
+    public void setEditable(Boolean editable) {
         this.editable = editable;
     }
 
-    public final Integer getIndex() {
+    public Integer getIndex() {
         return index;
     }
 
-    public final void setIndex(Integer index) {
+    public void setIndex(Integer index) {
         this.index = index;
     }
 
-    public final String getLabel() {
+    public String getLabel() {
         return label;
     }
 
-    public final void setLabel(String label) {
+    public void setLabel(String label) {
         this.label = label;
     }
 
-    public final String getDescription() {
+    public String getDescription() {
         return description;
     }
 
-    public final void setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public final String getPlaceholder() {
+    public String getPlaceholder() {
         return placeholder;
     }
 
-    public final void setPlaceholder(String placeholder) {
+    public void setPlaceholder(String placeholder) {
         this.placeholder = placeholder;
     }
 
-    public final String getOptions() {
+    public String getOptions() {
         return options;
     }
 
-    public final void setOptions(String options) {
+    public void setOptions(String options) {
         this.options = options;
     }
 
-    public final Boolean getRequired() {
+    public Boolean getRequired() {
         return required;
     }
 
-    public final void setRequired(Boolean required) {
+    public void setRequired(Boolean required) {
         this.required = required;
     }
 
-    public final String getValidation() {
+    public String getValidation() {
         return validation;
     }
 
-    public final void setValidation(String validation) {
+    public void setValidation(String validation) {
         this.validation = validation;
     }
 
-    public final BigDecimal getWeighting() {
+    public BigDecimal getWeighting() {
         return weighting;
     }
 
-    public final void setWeighting(BigDecimal weighting) {
+    public void setWeighting(BigDecimal weighting) {
         this.weighting = weighting;
     }
 
     @Override
-    public final Boolean getActive() {
+    public Boolean getActive() {
         return active;
     }
 
     @Override
-    public final void setActive(Boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 
     @Override
-    public final Boolean getSystemDefault() {
+    public Boolean getSystemDefault() {
         return systemDefault;
     }
 
     @Override
-    public final void setSystemDefault(Boolean systemDefault) {
+    public void setSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
     }
 
@@ -329,7 +321,7 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
     }
 
     public ActionCustomQuestionConfiguration withName(String name) {
-        this.name = name;
+        this.component = name;
         return this;
     }
 

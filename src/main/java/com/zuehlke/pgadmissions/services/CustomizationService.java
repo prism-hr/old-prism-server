@@ -153,7 +153,7 @@ public class CustomizationService {
         List<WorkflowDefinition> definitions = getDefinitions(configurationType, scope);
         List<? extends WorkflowConfigurationDTO> valueDTOs = workflowConfigurationGroupDTO;
 
-        if (valueDTOs.isEmpty() || valueDTOs.size() != definitions.size()) {
+        if (configurationType.isValidateResponseSize() && (valueDTOs.isEmpty() || valueDTOs.size() != definitions.size())) {
             throw new Error();
         } else {
             createConfigurationGroup(configurationType, resource, scope, locale, programType, valueDTOs);
@@ -178,7 +178,7 @@ public class CustomizationService {
             throws CustomizationException {
         Integer resourcePrecedence = resource.getResourceScope().getPrecedence();
         Integer definitionPrecedence = definition.getScope().getPrecedence();
-        if (resourcePrecedence == SYSTEM.getPrecedence() && locale == null) {
+        if (resourcePrecedence.equals(SYSTEM.getPrecedence()) && locale == null) {
             throw new CustomizationException("Tried to configure " + definition.getClass().getSimpleName() + ": " + definition.getId().toString()
                     + " with no locale. System scope configurations must specify locale.");
         } else if (resourcePrecedence > SYSTEM.getPrecedence() && locale != null) {

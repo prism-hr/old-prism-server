@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -265,11 +265,11 @@ public class ResourceService {
         }
     }
 
-    public void executeUpdate(Resource resource, PrismDisplayProperty messageIndex) throws DeduplicationException {
+    public void executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex) throws DeduplicationException {
         executeUpdate(resource, messageIndex, null);
     }
 
-    public void executeUpdate(Resource resource, PrismDisplayProperty messageIndex, CommentAssignedUser assignee) throws DeduplicationException {
+    public void executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser assignee) throws DeduplicationException {
         User user = userService.getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
 

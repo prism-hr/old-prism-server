@@ -4,6 +4,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.CustomizationDAO;
 import com.zuehlke.pgadmissions.domain.definitions.*;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -129,7 +130,7 @@ public class CustomizationService {
                                     WorkflowDefinition definition, WorkflowConfigurationDTO workflowConfigurationDTO) throws CustomizationException {
         createOrUpdateConfiguration(configurationType, resource, locale, programType, workflowConfigurationDTO);
         resourceService
-                .executeUpdate(resource, PrismDisplayProperty.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
+                .executeUpdate(resource, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
     }
 
     @SuppressWarnings("unchecked")
@@ -148,7 +149,7 @@ public class CustomizationService {
             }
 
             resourceService.executeUpdate(resource,
-                    PrismDisplayProperty.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
+                    PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
         }
     }
 
@@ -268,8 +269,8 @@ public class CustomizationService {
                 persistentConfiguration = entityService.createOrUpdate(transientConfiguration);
             }
 
-            version = version == null ? persistentConfiguration.getId() : version;
             ReflectionUtils.setProperty(persistentConfiguration, "version", version);
+            version = version == null ? persistentConfiguration.getId() : version;
         }
     }
 

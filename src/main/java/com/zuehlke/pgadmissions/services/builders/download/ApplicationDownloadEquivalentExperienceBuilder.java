@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.services.builders.download;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_QUALIFICATION_EQUIVALENT_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.APPLICATION_QUALIFICATION_EXPERIENCE_MESSAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_QUALIFICATION_EQUIVALENT_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_QUALIFICATION_EXPERIENCE_MESSAGE;
 
 import java.io.ByteArrayOutputStream;
 

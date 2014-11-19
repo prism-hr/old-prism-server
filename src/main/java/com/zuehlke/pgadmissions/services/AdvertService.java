@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_COMMENT_UPDATED_ADVERT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_COMMENT_UPDATED_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_COMMENT_UPDATED_CLOSING_DATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty.PROGRAM_COMMENT_UPDATED_FEE_AND_PAYMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_COMMENT_UPDATED_ADVERT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_COMMENT_UPDATED_CATEGORY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_COMMENT_UPDATED_CLOSING_DATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_COMMENT_UPDATED_FEE_AND_PAYMENT;
 import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 import java.io.IOException;

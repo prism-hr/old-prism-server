@@ -33,7 +33,7 @@ import java.util.Set;
 import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
-public enum PrismDisplayProperty {
+public enum PrismDisplayPropertyDefinition {
 
     SYSTEM_DATE_FORMAT(SYSTEM_GLOBAL, "dd MMM yyyy", SYSTEM), //
     SYSTEM_DATE_TIME_FORMAT(SYSTEM_GLOBAL, "dd MMM yyyy HH:mm", SYSTEM), //
@@ -283,15 +283,15 @@ public enum PrismDisplayProperty {
 
     private PrismScope scope;
 
-    private static final HashMultimap<PrismDisplayPropertyCategory, PrismDisplayProperty> categoryProperties = HashMultimap.create();
+    private static final HashMultimap<PrismDisplayPropertyCategory, PrismDisplayPropertyDefinition> categoryProperties = HashMultimap.create();
 
     static {
-        for (PrismDisplayProperty property : values()) {
+        for (PrismDisplayPropertyDefinition property : values()) {
             categoryProperties.put(property.displayCategory, property);
         }
     }
 
-    private PrismDisplayProperty(PrismDisplayPropertyCategory category, String defaultValue, PrismScope scope) {
+    private PrismDisplayPropertyDefinition(PrismDisplayPropertyCategory category, String defaultValue, PrismScope scope) {
         this.displayCategory = category;
         this.defaultValue = defaultValue;
         this.scope = scope;
@@ -309,7 +309,7 @@ public enum PrismDisplayProperty {
         return scope;
     }
 
-    public static final Set<PrismDisplayProperty> getByCategory(PrismDisplayPropertyCategory category) {
+    public static final Set<PrismDisplayPropertyDefinition> getByCategory(PrismDisplayPropertyCategory category) {
         return categoryProperties.get(category);
     }
 

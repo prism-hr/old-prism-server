@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
@@ -34,12 +34,12 @@ public class PropertyLoader {
 
     private PrismProgramType programType;
 
-    private final HashMap<PrismDisplayProperty, String> properties = Maps.newHashMap();
+    private final HashMap<PrismDisplayPropertyDefinition, String> properties = Maps.newHashMap();
 
     @Autowired
     private DisplayPropertyService displayPropertyService;
 
-    public String load(PrismDisplayProperty property) {
+    public String load(PrismDisplayPropertyDefinition property) {
         String value = properties.get(property);
         if (value == null) {
             PrismDisplayPropertyCategory category = property.getDisplayCategory();
@@ -49,7 +49,7 @@ public class PropertyLoader {
         return value;
     }
 
-    public String load(PrismDisplayProperty trueIndex, PrismDisplayProperty falseIndex, boolean evaluation) {
+    public String load(PrismDisplayPropertyDefinition trueIndex, PrismDisplayPropertyDefinition falseIndex, boolean evaluation) {
         return evaluation ? load(trueIndex) : load(falseIndex);
     }
 

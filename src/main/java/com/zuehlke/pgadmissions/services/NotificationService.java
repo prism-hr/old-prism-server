@@ -86,13 +86,13 @@ public class NotificationService {
         return entityService.getByProperty(NotificationDefinition.class, "id", id);
     }
 
-    public NotificationConfiguration getNotificationConfiguration(Resource resource, User user, NotificationDefinition definition) {
-        return (NotificationConfiguration) customizationService.getConfiguration(PrismConfiguration.NOTIFICATION, resource, user, definition);
-    }
-
     public Integer getReminderInterval(Resource resource, User user, NotificationDefinition definition) {
         NotificationConfiguration configuration = getNotificationConfiguration(resource, user, definition);
         return configuration == null ? 1 : configuration.getReminderInterval();
+    }
+
+    public NotificationConfiguration getNotificationConfiguration(Resource resource, User user, NotificationDefinition definition) {
+        return (NotificationConfiguration) customizationService.getConfiguration(PrismConfiguration.NOTIFICATION, resource, user, definition);
     }
 
     public List<NotificationDefinition> getDefinitions() {

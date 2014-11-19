@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
@@ -231,7 +231,7 @@ public class SystemInitialisationHelper {
             assertEquals(value.getLocale(), system.getLocale());
 
             DisplayPropertyDefinition displayProperty = value.getDisplayPropertyDefinition();
-            PrismDisplayProperty prismDisplayProperty = (PrismDisplayProperty) displayProperty.getId();
+            PrismDisplayPropertyDefinition prismDisplayProperty = (PrismDisplayPropertyDefinition) displayProperty.getId();
 
             assertEquals(value.getProgramType(), displayProperty.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null);
             assertEquals(displayProperty.getDisplayPropertyCategory(), prismDisplayProperty.getDisplayCategory());

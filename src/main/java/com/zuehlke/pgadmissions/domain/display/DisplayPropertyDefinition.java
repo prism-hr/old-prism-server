@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayProperty;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
@@ -25,7 +25,7 @@ public class DisplayPropertyDefinition extends WorkflowDefinition {
     @Id
     @Column(name = "id", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PrismDisplayProperty id;
+    private PrismDisplayPropertyDefinition id;
 
     @Column(name = "display_property_category", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -36,11 +36,11 @@ public class DisplayPropertyDefinition extends WorkflowDefinition {
     private Scope scope;
 
     @Override
-    public PrismDisplayProperty getId() {
+    public PrismDisplayPropertyDefinition getId() {
         return id;
     }
 
-    public void setId(PrismDisplayProperty id) {
+    public void setId(PrismDisplayPropertyDefinition id) {
         this.id = id;
     }
 
@@ -62,7 +62,7 @@ public class DisplayPropertyDefinition extends WorkflowDefinition {
         this.scope = scope;
     }
 
-    public DisplayPropertyDefinition withId(PrismDisplayProperty id) {
+    public DisplayPropertyDefinition withId(PrismDisplayPropertyDefinition id) {
         this.id = id;
         return this;
     }

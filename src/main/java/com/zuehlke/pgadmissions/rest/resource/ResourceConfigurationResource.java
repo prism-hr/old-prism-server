@@ -4,9 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,7 +30,6 @@ import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.WordUtils;
 
 @RestController
@@ -45,7 +42,7 @@ public class ResourceConfigurationResource {
     @Autowired
     private CustomizationService customizationService;
 
-    @RequestMapping(value = "{configurationType:customQuestions|displayProperties|stateDurations|workflowProperties}/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "{configurationType:notifications/{id}", method = RequestMethod.GET)
     public WorkflowConfigurationRepresentation getConfiguration(@ModelAttribute PrismConfiguration configurationType,
             @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam(required = false) PrismLocale locale,
             @RequestParam(required = false) PrismProgramType programType, @PathVariable String id) throws Exception {
@@ -54,7 +51,7 @@ public class ResourceConfigurationResource {
         return customizationService.getConfigurationRepresentation(configurationType, resource, definition, locale, programType);
     }
 
-    @RequestMapping(value="{configurationType:customQuestions|displayProperties|stateDurations|workflowProperties}", method = RequestMethod.GET)
+    @RequestMapping(value = "{configurationType:customQuestions|displayProperties|stateDurations|workflowProperties}", method = RequestMethod.GET)
     public List<WorkflowConfigurationRepresentation> getConfigurations(@ModelAttribute PrismConfiguration configurationType,
             @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam PrismScope scope,
             @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType) throws Exception {
@@ -62,13 +59,13 @@ public class ResourceConfigurationResource {
         return customizationService.getConfigurationRepresentations(configurationType, resource, scope, locale, programType);
     }
 
-    @RequestMapping(value = "{configurationType:customQuestions|displayProperties|stateDurations|workflowProperties}/{version}", method = RequestMethod.GET)
+    @RequestMapping(value = "{configurationType:customQuestions|workflowProperties}/{version}", method = RequestMethod.GET)
     public List<WorkflowConfigurationRepresentation> getConfigurationsWithVersion(@ModelAttribute PrismConfiguration configurationType,
             @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @PathVariable Integer version) throws Exception {
         return customizationService.getConfigurationRepresentationsWithVersion(configurationType, version);
     }
 
-    @RequestMapping(value = "{configurationType:customQuestions|displayProperties|stateDurations|workflowProperties}/restoreDefault/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "{configurationType:notifications/restoreDefault/{id}", method = RequestMethod.DELETE)
     public void restoreDefaultConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, PrismConfiguration configurationType,
             @PathVariable Integer resourceId, @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType,
             @PathVariable String id) throws Exception {
@@ -85,7 +82,7 @@ public class ResourceConfigurationResource {
         customizationService.restoreGlobalConfiguration(configurationType, resource, scope, locale, programType);
     }
 
-    @RequestMapping(value = "{configurationType:customQuestions|displayProperties|stateDurations|workflowProperties}/restoreGlobal/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "{configurationType:notifications/restoreGlobal/{id}", method = RequestMethod.DELETE)
     public void restoreGlobalConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, PrismConfiguration configurationType,
             @PathVariable Integer resourceId, @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType,
             @PathVariable String id) throws Exception {
@@ -102,7 +99,7 @@ public class ResourceConfigurationResource {
         customizationService.restoreDefaultConfiguration(configurationType, resource, scope, locale, programType);
     }
 
-    @RequestMapping(value = "{configurationType:customQuestions|displayProperties|stateDurations|workflowProperties}/customQuestions", method = RequestMethod.PUT)
+    @RequestMapping(value = "{configurationType:customQuestions", method = RequestMethod.PUT)
     public void updateActionCustomQuestionConfiguration(@ModelAttribute PrismConfiguration configurationType,
             @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam PrismScope scope,
             @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType,

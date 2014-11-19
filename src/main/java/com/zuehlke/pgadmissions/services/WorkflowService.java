@@ -62,7 +62,7 @@ public class WorkflowService {
 
         Integer version = null;
         customizationService.restoreDefaultConfiguration(PrismConfiguration.WORKFLOW_PROPERTY, resource, scope, locale, programType);
-        for (WorkflowPropertyConfigurationValueDTO valueDTO : configurationDTO.getValues()) {
+        for (WorkflowPropertyConfigurationValueDTO valueDTO : configurationDTO) {
             WorkflowPropertyDefinition definition = getWorkflowPropertyDefinitionById((PrismWorkflowPropertyDefinition) valueDTO.getDefinitionId());
             WorkflowPropertyConfiguration configuration = createOrUpdateWorkflowPropertyConfiguration(resource, locale, programType, definition, version,
                     valueDTO.getEnabled(), valueDTO.getMinimum(), valueDTO.getMaximum());
@@ -94,7 +94,7 @@ public class WorkflowService {
             throws CustomizationException {
         List<WorkflowPropertyDefinition> definitions = (List<WorkflowPropertyDefinition>) (List<?>) customizationService.getDefinitions(
                 PrismConfiguration.WORKFLOW_PROPERTY, scope);
-        List<WorkflowPropertyConfigurationValueDTO> valueDTOs = configurationDTO.getValues();
+        List<WorkflowPropertyConfigurationValueDTO> valueDTOs = configurationDTO;
 
         if (valueDTOs.size() != definitions.size()) {
             throw new CustomizationException("Incomplete workflow configuration passed for " + resource.getCode());

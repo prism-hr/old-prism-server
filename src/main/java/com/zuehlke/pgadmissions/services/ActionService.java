@@ -93,7 +93,7 @@ public class ActionService {
         customizationService.restoreDefaultConfiguration(PrismConfiguration.CUSTOM_QUESTION, resource, locale, programType, definition);
 
         Integer version = null;
-        for (ActionCustomQuestionConfigurationValueDTO actionPropertyDTO : actionPropertyConfigurationDTO.getValues()) {
+        for (ActionCustomQuestionConfigurationValueDTO actionPropertyDTO : actionPropertyConfigurationDTO) {
             String name = actionPropertyDTO.getName();
 
             List<String> options = actionPropertyDTO.getOptions();

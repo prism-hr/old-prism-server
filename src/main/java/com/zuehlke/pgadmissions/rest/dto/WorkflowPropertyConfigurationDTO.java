@@ -1,33 +1,18 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.util.List;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
-
-public class WorkflowPropertyConfigurationDTO extends WorkflowConfigurationGroupDTO {
-
-    private List<WorkflowPropertyConfigurationValueDTO> values = Lists.newArrayList();
-
-    @Override
-    public final List<WorkflowPropertyConfigurationValueDTO> getValues() {
-        return values;
-    }
-
-    public final void setValues(List<WorkflowPropertyConfigurationValueDTO> values) {
-        this.values = values;
-    }
-
-    public WorkflowPropertyConfigurationDTO addValue(WorkflowPropertyConfigurationValueDTO value) {
-        values.add(value);
-        return this;
-    }
+public class WorkflowPropertyConfigurationDTO extends ArrayList<WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO> {
 
     public static class WorkflowPropertyConfigurationValueDTO extends WorkflowConfigurationDTO {
+
+        @NotNull
+        private PrismWorkflowPropertyDefinition definitionId;
 
         @NotNull
         private Boolean enabled;
@@ -40,27 +25,35 @@ public class WorkflowPropertyConfigurationDTO extends WorkflowConfigurationGroup
         @Max(999)
         private Integer maximum;
 
-        public final Boolean getEnabled() {
+        public PrismWorkflowPropertyDefinition getDefinitionId() {
+            return definitionId;
+        }
+
+        public void setDefinitionId(PrismWorkflowPropertyDefinition definitionId) {
+            this.definitionId = definitionId;
+        }
+
+        public Boolean getEnabled() {
             return enabled;
         }
 
-        public final void setEnabled(Boolean enabled) {
+        public void setEnabled(Boolean enabled) {
             this.enabled = enabled;
         }
 
-        public final Integer getMinimum() {
+        public Integer getMinimum() {
             return minimum;
         }
 
-        public final void setMinimum(Integer minimum) {
+        public void setMinimum(Integer minimum) {
             this.minimum = minimum;
         }
 
-        public final Integer getMaximum() {
+        public Integer getMaximum() {
             return maximum;
         }
 
-        public final void setMaximum(Integer maximum) {
+        public void setMaximum(Integer maximum) {
             this.maximum = maximum;
         }
 

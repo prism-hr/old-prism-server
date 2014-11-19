@@ -1,30 +1,24 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestion;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.google.common.collect.Lists;
 
-public class ActionCustomQuestionConfigurationDTO extends WorkflowConfigurationGroupDTO {
-
-    private List<ActionCustomQuestionConfigurationValueDTO> values = Lists.newArrayList();
-
-    @Override
-    public final List<ActionCustomQuestionConfigurationValueDTO> getValues() {
-        return values;
-    }
-
-    public final void setValues(List<ActionCustomQuestionConfigurationValueDTO> values) {
-        this.values = values;
-    }
+public class ActionCustomQuestionConfigurationDTO extends ArrayList<ActionCustomQuestionConfigurationDTO.ActionCustomQuestionConfigurationValueDTO> {
 
     public static class ActionCustomQuestionConfigurationValueDTO extends WorkflowConfigurationDTO {
+
+        @NotNull
+        private PrismActionCustomQuestion definitionId;
 
         @NotNull
         private String name;
@@ -56,6 +50,14 @@ public class ActionCustomQuestionConfigurationDTO extends WorkflowConfigurationG
         @DecimalMin("0.01")
         @DecimalMax("1.00")
         private BigDecimal weighting;
+
+        public PrismActionCustomQuestion getDefinitionId() {
+            return definitionId;
+        }
+
+        public void setDefinitionId(PrismActionCustomQuestion definitionId) {
+            this.definitionId = definitionId;
+        }
 
         public final String getName() {
             return name;

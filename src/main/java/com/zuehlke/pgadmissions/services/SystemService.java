@@ -411,13 +411,13 @@ public class SystemService {
             WorkflowPropertyConfigurationDTO configurationDTO = new WorkflowPropertyConfigurationDTO();
             for (PrismWorkflowPropertyDefinition prismWorkflowProperty : PrismWorkflowPropertyDefinition.values()) {
                 if (prismScope == prismWorkflowProperty.getScope()) {
-                    configurationDTO.addValue(new WorkflowPropertyConfigurationValueDTO().withId(prismWorkflowProperty)
+                    configurationDTO.add(new WorkflowPropertyConfigurationValueDTO().withId(prismWorkflowProperty)
                             .withEnabled(prismWorkflowProperty.isDefaultEnabled()).withMinimum(prismWorkflowProperty.getDefaultMinimum())
                             .withMaximum(prismWorkflowProperty.getDefaultMaximum()));
                 }
             }
 
-            int valueCount = configurationDTO.getValues().size();
+            int valueCount = configurationDTO.size();
             if (prismScope.getPrecedence() > PrismScope.INSTITUTION.getPrecedence() && valueCount > 0) {
                 workflowService.createOrUpdateWorkflowPropertyConfiguration(system, getSystemLocale(), getSystemProgramType(), prismScope, configurationDTO);
             } else if (valueCount > 0) {

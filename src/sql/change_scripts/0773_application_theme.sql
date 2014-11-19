@@ -1,0 +1,10 @@
+CREATE TABLE APPLICATION_THEME (
+	id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	application_id INT(10) UNSIGNED NOT NULL,
+	theme VARCHAR(50) NOT NULL,
+	PRIMARY KEY(id),
+	UNIQUE INDEX (application_id, theme),
+	UNIQUE INDEX (theme, application_id),
+	FOREIGN KEY (application_id) REFERENCES APPLICATION (id)
+) ENGINE = INNODB
+;

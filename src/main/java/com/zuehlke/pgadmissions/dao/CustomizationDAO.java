@@ -169,10 +169,10 @@ public class CustomizationDAO {
         }
 
         query.setParameter(resourceScope.getLowerCaseName(), resource) //
-                .setParameter("definition", definition) //
-                .setParameter("locale", locale) //
-                .setParameter("programType", programType) //
-                .executeUpdate();
+                .setParameter("definition", definition);
+
+        applyLocalizationConstraints(locale, programType, query);
+        query.executeUpdate();
     }
 
     public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismScope definitionScope, PrismLocale locale,
@@ -201,10 +201,10 @@ public class CustomizationDAO {
         }
 
         query.setParameter(resourceScope.getLowerCaseName(), resource) //
-                .setParameter("definitionScope", definitionScope) //
-                .setParameter("locale", locale) //
-                .setParameter("programType", programType) //
-                .executeUpdate();
+                .setParameter("definitionScope", definitionScope);
+
+        applyLocalizationConstraints(locale, programType, query);
+        query.executeUpdate();
     }
 
     public <T extends WorkflowDefinition> List<T> listDefinitions(PrismConfiguration configurationType, PrismScope scope) {

@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.configuration;
 
-public class WorkflowPropertyConfigurationRepresentation extends WorkflowConfigurationRepresentation {
-
+public class WorkflowPropertyConfigurationRepresentation extends WorkflowConfigurationVersionedRepresentation {
+    
     private Boolean enabled;
 
     private Integer minimum;
@@ -31,5 +31,5 @@ public class WorkflowPropertyConfigurationRepresentation extends WorkflowConfigu
     public void setMaximum(Integer maximum) {
         this.maximum = maximum;
     }
-    
+
 }

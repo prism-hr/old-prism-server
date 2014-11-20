@@ -37,14 +37,14 @@ public class AbstractResourceRepresentation {
     private List<PrismActionEnhancement> actionEnhancements;
 
     private List<PrismState> nextStates;
-    
+
     private List<PrismState> recommendedNextStates;
 
     private TimelineRepresentation timeline;
 
     private List<ResourceUserRolesRepresentation> users;
-    
-    private List<WorkflowConfigurationRepresentation> workflowProperties;
+
+    private List<WorkflowConfigurationRepresentation> workflowPropertyConfigurations;
 
     public Integer getId() {
         return id;
@@ -109,7 +109,7 @@ public class AbstractResourceRepresentation {
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
     }
-    
+
     public final Set<ActionRepresentation> getActions() {
         return actions;
     }
@@ -158,12 +158,12 @@ public class AbstractResourceRepresentation {
         this.users = users;
     }
 
-    public final List<WorkflowConfigurationRepresentation> getWorkflowProperties() {
-        return workflowProperties;
+    public final List<WorkflowConfigurationRepresentation> getWorkflowPropertyConfigurations() {
+        return workflowPropertyConfigurations;
     }
 
-    public final void setWorkflowProperties(List<WorkflowConfigurationRepresentation> workflowProperties) {
-        this.workflowProperties = workflowProperties;
+    public final void setWorkflowPropertyConfigurations(List<WorkflowConfigurationRepresentation> workflowPropertyConfigurations) {
+        this.workflowPropertyConfigurations = workflowPropertyConfigurations;
     }
 
     public static class RoleRepresentation {

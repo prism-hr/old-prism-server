@@ -118,11 +118,12 @@ public class ActionDAO {
     public List<ActionDTO> getPermittedActions(Resource resource, User user) {
         return (List<ActionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class, "resourceState") //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("stateAction.action.id"), "actionId") //
+                        .add(Projections.property("action.id"), "actionId") //
                         .add(Projections.property("stateAction.raisesUrgentFlag"), "raisesUrgentFlag") //
-                        .add(Projections.groupProperty("stateTransition.transitionState.id"), "transitionStateId") //
-                        .add(Projections.groupProperty("roleTransition.transitionRole.id"), "transitionRoleId") //
-                        .add(Projections.groupProperty("roleTransition.roleTransitionType"), "roleTransitionType") //
+                        .add(Projections.property("primaryState"), "primaryState") //
+                        .add(Projections.property("stateTransition.transitionState.id"), "transitionStateId") //
+                        .add(Projections.property("roleTransition.transitionRole.id"), "transitionRoleId") //
+                        .add(Projections.property("roleTransition.roleTransitionType"), "roleTransitionType") //
                         .add(Projections.property("roleTransition.minimumPermitted"), "minimumPermitted") //
                         .add(Projections.property("roleTransition.maximumPermitted"), "maximumPermitted")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //

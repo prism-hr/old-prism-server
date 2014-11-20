@@ -36,7 +36,7 @@ public class ActionCustomQuestionConfigurationDTO extends ArrayList<ActionCustom
         @Size(min = 1)
         private String placeholder;
 
-        @Min(2)
+        @Size(min = 1)
         private List<String> options;
 
         @NotNull

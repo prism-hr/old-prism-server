@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -271,26 +273,34 @@ public class ActionService {
     }
 
     private Set<ActionRepresentation> parseActionRepresentations(List<ActionDTO> actions) {
-        PrismAction lastActionId = null;
         ActionRepresentation thisActionRepresentation = null;
 
         PrismState lastTransitionStateId = null;
         StateTransitionRepresentation thisStateTransitionRepresentation = null;
 
-        Set<ActionRepresentation> representations = Sets.newLinkedHashSet();
-
+        HashMap<PrismAction, ActionRepresentation> representations = Maps.newHashMap();
         for (ActionDTO action : actions) {
             PrismAction thisActionId = action.getActionId();
-            boolean newAction = thisActionId != lastActionId;
 
-            if (newAction) {
-                thisActionRepresentation = new ActionRepresentation().withName(thisActionId).withRaisesUrgentFlag(action.getRaisesUrgentFlag());
-                representations.add(thisActionRepresentation);
+            if (!representations.containsKey(thisActionId)) {
+                thisActionRepresentation = new ActionRepresentation().withName(thisActionId).withRaisesUrgentFlag(action.getRaisesUrgentFlag())
+                        .withPrimaryState(action.getPrimaryState());
+                representations.put(thisActionId, thisActionRepresentation);
+            } else {
+                boolean raisesUrgentFlag = action.getRaisesUrgentFlag();
+                if (raisesUrgentFlag) {
+                    representations.get(thisActionId).setRaisesUrgentFlag(raisesUrgentFlag);
+                }
+                
+                boolean primaryState = action.getPrimaryState();
+                if (primaryState) {
+                    representations.get(thisActionId).setPrimaryState(primaryState);
+                }
             }
 
             PrismState thisTransitionStateId = action.getTransitionStateId();
 
-            if (newAction || (thisTransitionStateId != null && thisTransitionStateId != lastTransitionStateId)) {
+            if (!representations.containsKey(thisTransitionStateId) || (thisTransitionStateId != null && thisTransitionStateId != lastTransitionStateId)) {
                 thisStateTransitionRepresentation = new StateTransitionRepresentation().withTransitionStateId(thisTransitionStateId);
                 thisActionRepresentation.addStateTransition(thisStateTransitionRepresentation);
             }
@@ -303,10 +313,10 @@ public class ActionService {
                         .withMaximumPermitted(action.getMaximumPermitted()));
             }
 
-            lastActionId = thisActionId;
             lastTransitionStateId = thisTransitionStateId;
         }
-        return representations;
+        
+        return Sets.newLinkedHashSet(representations.values());
     }
 
 }

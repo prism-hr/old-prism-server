@@ -7,9 +7,13 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 public class ActionDTO {
 
+    private PrismAction stateId;
+
     private PrismAction actionId;
 
     private Boolean raisesUrgentFlag;
+    
+    private Boolean primaryState;
     
     private PrismState transitionStateId;
 
@@ -20,6 +24,14 @@ public class ActionDTO {
     private Integer minimumPermitted;
 
     private Integer maximumPermitted;
+
+    public final PrismAction getStateId() {
+        return stateId;
+    }
+
+    public final void setStateId(PrismAction stateId) {
+        this.stateId = stateId;
+    }
 
     public final PrismAction getActionId() {
         return actionId;
@@ -36,7 +48,15 @@ public class ActionDTO {
     public final void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
     }
-    
+
+    public final Boolean getPrimaryState() {
+        return primaryState;
+    }
+
+    public final void setPrimaryState(Boolean primaryState) {
+        this.primaryState = primaryState;
+    }
+
     public final PrismState getTransitionStateId() {
         return transitionStateId;
     }

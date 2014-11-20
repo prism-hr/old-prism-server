@@ -15,14 +15,32 @@ public class ActionRepresentation {
 
     private Boolean raisesUrgentFlag;
 
+    private Boolean primaryState;
+
     private Set<StateTransitionRepresentation> stateTransitions = Sets.newLinkedHashSet();
 
     public PrismAction getName() {
         return name;
     }
 
+    public final void setName(PrismAction name) {
+        this.name = name;
+    }
+
     public Boolean getRaisesUrgentFlag() {
         return raisesUrgentFlag;
+    }
+
+    public final void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
+        this.raisesUrgentFlag = raisesUrgentFlag;
+    }
+
+    public final Boolean getPrimaryState() {
+        return primaryState;
+    }
+
+    public final void setPrimaryState(Boolean primaryState) {
+        this.primaryState = primaryState;
     }
 
     public ActionRepresentation withName(PrismAction name) {
@@ -32,6 +50,11 @@ public class ActionRepresentation {
 
     public ActionRepresentation withRaisesUrgentFlag(Boolean raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
+        return this;
+    }
+
+    public ActionRepresentation withPrimaryState(Boolean primaryState) {
+        this.primaryState = primaryState;
         return this;
     }
 
@@ -57,7 +80,7 @@ public class ActionRepresentation {
             return false;
         }
         final ActionRepresentation other = (ActionRepresentation) object;
-        return Objects.equal(name, other.getName()) && stateTransitions.containsAll(other.getStateTransitions());
+        return Objects.equal(name, other.getName());
     }
 
     public static class StateTransitionRepresentation {
@@ -78,7 +101,7 @@ public class ActionRepresentation {
             this.transitionStateId = transitionStateId;
             return this;
         }
-        
+
         public void addRoleTransition(RoleTransitionRepresentation roleTransition) {
             roleTransitions.add(roleTransition);
         }

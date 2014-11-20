@@ -282,8 +282,8 @@ public class ApplicationService {
             commentService.appendAppointmentPreferences(comment, commentDTO);
         }
 
-        if (commentDTO.getCustomQuestionResponse() != null) {
-            commentService.appendPropertyAnswers(comment, commentDTO);
+        if (commentDTO.getCustomResponses() != null) {
+            commentService.appendCustomResponses(comment, commentDTO);
         }
 
         if (commentDTO.getDocuments() != null) {

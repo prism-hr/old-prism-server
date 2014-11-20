@@ -169,9 +169,6 @@ public class Comment {
     @Column(name = "application_use_custom_recruiter_questions")
     private Boolean useCustomRecruiterQuestions;
 
-    @Column(name = "action_custom_question_version")
-    private Integer actionCustomQuestionVersion;
-
     @Column(name = "application_export_reference")
     private String exportReference;
 
@@ -211,7 +208,7 @@ public class Comment {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
-    private Set<CommentCustomResponse> propertyAnswers = Sets.newHashSet();
+    private Set<CommentCustomResponse> customResponses = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id")
@@ -481,14 +478,6 @@ public class Comment {
         this.useCustomRecruiterQuestions = useCustomRecruiterQuestions;
     }
 
-    public final Integer getActionCustomQuestionVersion() {
-        return actionCustomQuestionVersion;
-    }
-
-    public final void setActionCustomQuestionVersion(Integer actionCustomQuestionVersion) {
-        this.actionCustomQuestionVersion = actionCustomQuestionVersion;
-    }
-
     public String getExportReference() {
         return exportReference;
     }
@@ -545,8 +534,8 @@ public class Comment {
         return documents;
     }
 
-    public final Set<CommentCustomResponse> getPropertyAnswers() {
-        return propertyAnswers;
+    public final Set<CommentCustomResponse> getCustomResponses() {
+        return customResponses;
     }
 
     public DateTime getCreatedTimestamp() {

@@ -208,7 +208,7 @@ public class CustomizationDAO {
                         .add(localeCriterion) //
                         .add(programTypeCriterion)) //
                 .add(Restrictions.conjunction() //
-                        .add(Restrictions.eq("system", resource.getInstitution())) //
+                        .add(Restrictions.eq("institution", resource.getInstitution())) //
                         .add(programTypeCriterion)) //
                 .add(Restrictions.eq("program", resource.getProgram()));
     }

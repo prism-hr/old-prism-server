@@ -191,7 +191,7 @@ public class CustomizationService {
         } else if (resourcePrecedence > SYSTEM.getPrecedence() && locale != null) {
             throw new CustomizationException("Tried to configure " + definition.getClass().getSimpleName() + ": " + definition.getId().toString()
                     + " with locale. Only system scope configurations may specify locale.");
-        } else if (definitionPrecedence > INSTITUTION.getPrecedence() && programType == null) {
+        } else if (resourcePrecedence < PROGRAM.getPrecedence() && definitionPrecedence > INSTITUTION.getPrecedence() && programType == null) {
             throw new CustomizationException("Tried to configure " + definition.getClass().getSimpleName() + ": " + definition.getId().toString()
                     + " with no program type. Scopes within program must specify program type.");
         } else if (definitionPrecedence < PROGRAM.getPrecedence() && programType != null) {

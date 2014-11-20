@@ -27,6 +27,10 @@ public class ApplicationDocument {
     @JoinColumn(name = "cv_id", nullable = false)
     private Document cv;
 
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "covering_letter_id", nullable = false)
+    private Document coveringLetter;
+
     @OneToOne(mappedBy = "document")
     private Application application;
 
@@ -57,6 +61,14 @@ public class ApplicationDocument {
         this.cv = cv;
     }
 
+    public final Document getCoveringLetter() {
+        return coveringLetter;
+    }
+
+    public final void setCoveringLetter(Document coveringLetter) {
+        this.coveringLetter = coveringLetter;
+    }
+
     public Application getApplication() {
         return application;
     }
@@ -80,6 +92,11 @@ public class ApplicationDocument {
 
     public ApplicationDocument withCv(Document document) {
         this.cv = document;
+        return this;
+    }
+
+    public ApplicationDocument withCoveringLetter(Document coveringLetter) {
+        this.coveringLetter = coveringLetter;
         return this;
     }
 

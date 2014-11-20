@@ -5,6 +5,8 @@ import java.util.List;
 
 public class ActionCustomQuestionConfigurationRepresentation extends WorkflowConfigurationVersionedRepresentation {
 
+    private Integer id;
+    
     private String component;
 
     private Boolean editable;
@@ -24,6 +26,14 @@ public class ActionCustomQuestionConfigurationRepresentation extends WorkflowCon
     private List<String> validation;
 
     private BigDecimal weighting;
+    
+    public final Integer getId() {
+        return id;
+    }
+
+    public final void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getComponent() {
         return component;

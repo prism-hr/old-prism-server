@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCo
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,9 +21,10 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidatio
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldResolution;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismCustomQuestionType;
 import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration;
+import com.zuehlke.pgadmissions.rest.dto.CommentCustomResponseDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
-import com.zuehlke.pgadmissions.rest.dto.CustomQuestionResponseDTO;
 import com.zuehlke.pgadmissions.services.CustomizationService;
+import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Component
@@ -33,6 +35,9 @@ public class CommentValidator extends LocalValidatorFactoryBean implements Valid
 
     @Autowired
     private CustomizationService customizationService;
+
+    @Autowired
+    private EntityService entityService;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -51,23 +56,18 @@ public class CommentValidator extends LocalValidatorFactoryBean implements Valid
         }
         Map<PrismActionCommentField, List<PrismActionValidationFieldResolution>> fieldDefinitions = validationDefinition.getFieldResolutions();
 
-        CustomQuestionResponseDTO propertyAnswerDTO = comment.getCustomQuestionResponse();
-        if (propertyAnswerDTO != null) {
+        Set<CommentCustomResponseDTO> customResonseDTOs = comment.getCustomResponses();
+        if (customResonseDTOs != null) {
             errors.pushNestedPath("propertyAnswer");
 
-            List<ActionCustomQuestionConfiguration> configurations = (List<ActionCustomQuestionConfiguration>) (List<?>) customizationService
-                    .getConfigurationsWithVersion(PrismConfiguration.CUSTOM_QUESTION, propertyAnswerDTO.getVersion());
-            List<Object> propertyValues = propertyAnswerDTO.getValues();
+            int i = 0;
+            Integer version = null;
+            for (CommentCustomResponseDTO customResponseDTO : customResonseDTOs) {
+                ActionCustomQuestionConfiguration configuration = entityService.getById(ActionCustomQuestionConfiguration.class, customResponseDTO.getId());
+                version = version == null ? version = configuration.getVersion() : version;
 
-            if (configurations.size() != propertyValues.size()) {
-                throw new Error();
-            }
-
-            for (int i = 0; i < configurations.size(); i++) {
-                ActionCustomQuestionConfiguration property = configurations.get(i);
-                Object propertyValue = propertyValues.get(i);
-
-                PrismCustomQuestionType propertyType = property.getCustomQuestionType();
+                Object propertyValue = customResponseDTO.getValue();
+                PrismCustomQuestionType propertyType = configuration.getCustomQuestionType();
 
                 if (!propertyValue.getClass().equals(propertyType.getPropertyClass())) {
                     throw new Error();
@@ -79,13 +79,22 @@ public class CommentValidator extends LocalValidatorFactoryBean implements Valid
                     }
                 }
 
-                if (property.getRequired()) {
+                if (configuration.getRequired()) {
                     ValidationUtils.rejectIfEmptyOrWhitespace(errors, "values[" + i + "]", "notEmpty");
                 }
 
                 if (propertyType.name().startsWith("RATING")) {
                     validateRating = false;
                 }
+
+                i++;
+            }
+
+            List<ActionCustomQuestionConfiguration> configurations = (List<ActionCustomQuestionConfiguration>) (List<?>) customizationService
+                    .getConfigurationsWithVersion(PrismConfiguration.CUSTOM_QUESTION, version);
+
+            if (configurations.size() != (i - 1)) {
+                throw new Error();
             }
 
             errors.popNestedPath();

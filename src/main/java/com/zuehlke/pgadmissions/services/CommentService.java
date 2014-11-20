@@ -32,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
@@ -54,6 +53,7 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentAssignedUserDTO;
+import com.zuehlke.pgadmissions.rest.dto.CommentCustomResponseDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentTransitionStateDTO;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
@@ -290,9 +290,9 @@ public class CommentService {
         Set<CommentAppointmentPreference> persistentPreferences = Sets.newHashSet(transientPreferences);
         transientPreferences.clear();
 
-        Set<CommentCustomResponse> transientProperties = comment.getPropertyAnswers();
-        Set<CommentCustomResponse> persistentProperties = Sets.newHashSet(transientProperties);
-        transientProperties.clear();
+        Set<CommentCustomResponse> transientResponses = comment.getCustomResponses();
+        Set<CommentCustomResponse> persistentResponses = Sets.newHashSet(transientResponses);
+        transientResponses.clear();
 
         entityService.save(comment);
 
@@ -300,7 +300,7 @@ public class CommentService {
         comment.getCommentTransitionStates().addAll(persistentTransitionStates);
         comment.getAppointmentTimeslots().addAll(persistentTimeslots);
         comment.getAppointmentPreferences().addAll(persistentPreferences);
-        addPropertyAnswers(comment, persistentProperties);
+        comment.getCustomResponses().addAll(persistentResponses);
     }
 
     public void update(Integer commentId, CommentDTO commentDTO) {
@@ -413,19 +413,11 @@ public class CommentService {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public void appendPropertyAnswers(Comment comment, CommentDTO commentDTO) {
-        Integer version = commentDTO.getCustomQuestionResponse().getVersion();
-        comment.setActionCustomQuestionVersion(version);
-        List<ActionCustomQuestionConfiguration> actionPropertyConfigurations = (List<ActionCustomQuestionConfiguration>) (List<?>) customizationService
-                .getConfigurationsWithVersion(PrismConfiguration.CUSTOM_QUESTION, version);
-        List<Object> propertyAnswerValues = commentDTO.getCustomQuestionResponse().getValues();
-        for (int i = 0; i < actionPropertyConfigurations.size(); i++) {
-            ActionCustomQuestionConfiguration configuration = actionPropertyConfigurations.get(i);
-            CommentCustomResponse property = new CommentCustomResponse().withCustomQuestionType(configuration.getCustomQuestionType())
-                    .withPropertyLabel(configuration.getLabel()).withPropertyValue(propertyAnswerValues.get(i).toString())
-                    .withPropertyWeight(configuration.getWeighting());
-            comment.getPropertyAnswers().add(property);
+    public void appendCustomResponses(Comment comment, CommentDTO commentDTO) {
+        for (CommentCustomResponseDTO response : commentDTO.getCustomResponses()) {
+            ActionCustomQuestionConfiguration configuration = entityService.getById(ActionCustomQuestionConfiguration.class, response.getId());
+            comment.getCustomResponses().add(
+                    new CommentCustomResponse().withActionCustomQuestionConfiguration(configuration).withPropertyValue(response.getValue()));
         }
     }
 
@@ -531,13 +523,13 @@ public class CommentService {
 
     private void buildAggregatedRating(Comment comment) {
         BigDecimal aggregatedRating = new BigDecimal(0.00);
-        for (CommentCustomResponse property : comment.getPropertyAnswers()) {
-            switch (property.getCustomQuestionType()) {
+        for (CommentCustomResponse customResponse : comment.getCustomResponses()) {
+            switch (customResponse.getActionCustomQuestionConfiguration().getCustomQuestionType()) {
             case RATING_NORMAL:
-                aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(property, 5));
+                aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(customResponse, 5));
                 break;
             case RATING_WEIGHTED:
-                aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(property, 8));
+                aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(customResponse, 8));
                 break;
             default:
                 continue;
@@ -546,9 +538,9 @@ public class CommentService {
         comment.setApplicationRating(aggregatedRating);
     }
 
-    private BigDecimal getWeightedRatingComponent(CommentCustomResponse property, Integer denominator) {
-        return new BigDecimal(property.getPropertyValue()).divide(new BigDecimal(denominator)).multiply(new BigDecimal(5))
-                .multiply(property.getPropertyWeight()).setScale(2, RoundingMode.HALF_UP);
+    private BigDecimal getWeightedRatingComponent(CommentCustomResponse customResponse, Integer denominator) {
+        return new BigDecimal(customResponse.getPropertyValue()).divide(new BigDecimal(denominator)).multiply(new BigDecimal(5))
+                .multiply(customResponse.getActionCustomQuestionConfiguration().getWeighting()).setScale(2, RoundingMode.HALF_UP);
     }
 
     private void appendInterviewPreferenceComments(Comment comment) {
@@ -569,10 +561,6 @@ public class CommentService {
                 resource.addComment(preference);
             }
         }
-    }
-
-    private void addPropertyAnswers(Comment comment, Set<CommentCustomResponse> persistentProperties) {
-        comment.getPropertyAnswers().addAll(persistentProperties);
     }
 
 }

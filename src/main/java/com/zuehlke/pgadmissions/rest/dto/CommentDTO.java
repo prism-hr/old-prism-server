@@ -70,7 +70,7 @@ public class CommentDTO {
     private ProgramDTO program;
 
     private ProjectDTO project;
-
+    
     @Valid
     private Set<CommentAssignedUserDTO> assignedUsers;
 
@@ -82,7 +82,7 @@ public class CommentDTO {
     private Set<Integer> appointmentPreferences;
 
     @Valid
-    private CustomQuestionResponseDTO customQuestionResponse;
+    private Set<CommentCustomResponseDTO> customResponse;
 
     @Valid
     private Set<FileDTO> documents = Sets.newLinkedHashSet();
@@ -311,12 +311,12 @@ public class CommentDTO {
         this.appointmentPreferences = appointmentPreferences;
     }
 
-    public final CustomQuestionResponseDTO getCustomQuestionResponse() {
-        return customQuestionResponse;
+    public Set<CommentCustomResponseDTO> getCustomResponses() {
+        return customResponse;
     }
 
-    public final void setCustomQuestionResponse(CustomQuestionResponseDTO customQuestionResponse) {
-        this.customQuestionResponse = customQuestionResponse;
+    public void setCustomResponses(Set<CommentCustomResponseDTO> customResponses) {
+        this.customResponse = customResponses;
     }
 
     public Set<FileDTO> getDocuments() {

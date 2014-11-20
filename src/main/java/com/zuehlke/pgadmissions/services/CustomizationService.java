@@ -65,7 +65,7 @@ public class CustomizationService {
 
     public WorkflowConfiguration getConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
             WorkflowDefinition definition) {
-        return customizationDAO.getConfiguration(configurationType, resource, definition, locale, programType);
+        return customizationDAO.getConfiguration(configurationType, resource, locale, programType, definition);
     }
 
     public List<DisplayPropertyConfiguration> getDisplayPropertyConfiguration(Resource resource, PrismScope scope,
@@ -77,8 +77,8 @@ public class CustomizationService {
         return customizationDAO.getConfigurationWithVersion(configurationType, definition, version);
     }
 
-    public WorkflowConfigurationRepresentation getConfigurationRepresentation(PrismConfiguration configurationType, Resource resource,
-            WorkflowDefinition definition, PrismLocale locale, PrismProgramType programType) {
+    public WorkflowConfigurationRepresentation getConfigurationRepresentation(PrismConfiguration configurationType, Resource resource, PrismLocale locale,
+            PrismProgramType programType, WorkflowDefinition definition) {
         resource = getConfiguredResource(resource);
         WorkflowConfiguration configuration = getConfiguration(configurationType, resource, locale, programType, definition);
         return mapper.map(configuration, configurationType.getConfigurationRepresentationClass());
@@ -90,6 +90,13 @@ public class CustomizationService {
         PrismProgramType programType = resourceScope.getPrecedence() > INSTITUTION.getPrecedence() ? resource.getProgram().getProgramType()
                 .getPrismProgramType() : null;
         return getConfigurationRepresentations(configurationType, resource, resource.getResourceScope(), locale, programType);
+    }
+
+    public List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource resource,
+            PrismLocale locale, PrismProgramType programType, WorkflowDefinition definition) {
+        resource = getConfiguredResource(resource);
+        List<WorkflowConfiguration> configurations = customizationDAO.getConfigurations(configurationType, resource, locale, programType, definition);
+        return parseRepresentations(configurationType, configurations);
     }
 
     public List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource resource, PrismScope scope,

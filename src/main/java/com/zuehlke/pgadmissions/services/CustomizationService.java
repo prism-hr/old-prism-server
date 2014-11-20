@@ -280,6 +280,7 @@ public class CustomizationService {
             }
 
             version = version == null ? persistentConfiguration.getId() : version;
+            ReflectionUtils.setProperty(persistentConfiguration, "version", version);
         }
     }
 

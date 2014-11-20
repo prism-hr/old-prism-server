@@ -38,8 +38,8 @@ public class CustomizationDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public WorkflowConfiguration getConfiguration(PrismConfiguration configurationType, Resource resource, WorkflowDefinition definition, PrismLocale locale,
-            PrismProgramType programType) {
+    public WorkflowConfiguration getConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
+            WorkflowDefinition definition) {
         PrismScope scope = definition.getScope().getId();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
                 .add(getResourceLocalizationCriterion(resource, scope, locale, programType)) //
@@ -53,6 +53,22 @@ public class CustomizationDAO {
                 .addOrder(Order.asc("systemDefault")) //
                 .setMaxResults(1) //
                 .uniqueResult();
+    }
+
+    public List<WorkflowConfiguration> getConfigurations(PrismConfiguration configurationType, Resource resource, PrismLocale locale,
+            PrismProgramType programType, WorkflowDefinition definition) {
+        PrismScope scope = definition.getScope().getId();
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
+                .add(getResourceLocalizationCriterion(resource, scope, locale, programType)) //
+                .add(Restrictions.eq(configurationType.getDefinitionPropertyName(), definition));
+
+        addActiveVersionCriterion(configurationType, criteria);
+
+        return (List<WorkflowConfiguration>) criteria.addOrder(Order.desc("program")) //
+                .addOrder(Order.desc("institution")) //
+                .addOrder(Order.desc("system")) //
+                .addOrder(Order.asc("systemDefault")) //
+                .list();
     }
 
     public WorkflowConfiguration getConfigurationWithVersion(PrismConfiguration configurationType, WorkflowDefinition definition, Integer version) {

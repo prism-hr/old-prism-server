@@ -247,6 +247,10 @@
             <a>customQuestionType.componentName</a>
             <b>component</b>
         </field>
+        <field type="one-way" custom-converter="com.zuehlke.pgadmissions.rest.converter.SeparatedStringToListConverter">
+            <a>options</a>
+            <b>options</b>
+        </field>
     </mapping>
 
     <mapping>

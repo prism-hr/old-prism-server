@@ -9,9 +9,12 @@ CREATE TABLE PROGRAM_LOCATION (
 ;
 
 ALTER TABLE APPLICATION
-	ADD COLUMN study_location TEXT AFTER application_program_detail_id,
-	ADD COLUMN study_division TEXT AFTER study_location,
-	ADD COLUMN study_area TEXT AFTER study_division
+	ADD COLUMN study_location VARCHAR(255) AFTER application_program_detail_id,
+	ADD COLUMN study_division VARCHAR(255) AFTER study_location,
+	ADD COLUMN study_area VARCHAR(255) AFTER study_division,
+	ADD INDEX (study_location, sequence_identifier),
+	ADD INDEX (study_division, sequence_identifier),
+	ADD INDEX (study_area, sequence_identifier)
 ;
 
 ALTER TABLE APPLICATION_DOCUMENT

@@ -23,7 +23,7 @@ public class ActionCustomQuestionConfigurationRepresentation extends WorkflowCon
 
     private Boolean required;
 
-    private List<String> validation;
+    private String validation;
 
     private BigDecimal weighting;
 
@@ -99,11 +99,11 @@ public class ActionCustomQuestionConfigurationRepresentation extends WorkflowCon
         this.required = required;
     }
 
-    public List<String> getValidation() {
+    public String getValidation() {
         return validation;
     }
 
-    public void setValidation(List<String> validation) {
+    public void setValidation(String validation) {
         this.validation = validation;
     }
 

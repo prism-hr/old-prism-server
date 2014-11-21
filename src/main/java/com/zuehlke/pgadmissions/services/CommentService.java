@@ -128,6 +128,7 @@ public class CommentService {
             List<Comment> previousStateComments = Lists.newArrayList();
 
             HashMultimap<PrismAction, PrismActionRedactionType> redactions = actionService.getRedactions(resource, user);
+            PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource, user);
 
             for (int i = 0; i < transitionCommentCount; i++) {
                 Comment start = transitionComments.get(i);
@@ -139,7 +140,7 @@ public class CommentService {
                 TimelineCommentGroupRepresentation commentGroup = new TimelineCommentGroupRepresentation().withStateGroup(stateGroupId);
 
                 for (Comment comment : stateComments) {
-                    CommentRepresentation representation = getCommentRepresentation(user, comment, redactions.get(comment.getAction().getId()));
+                    CommentRepresentation representation = getCommentRepresentation(user, comment, redactions.get(comment.getAction().getId()), loader);
                     commentGroup.addComment(representation);
                 }
 
@@ -484,7 +485,7 @@ public class CommentService {
         }
     }
 
-    private CommentRepresentation getCommentRepresentation(User user, Comment comment, Set<PrismActionRedactionType> redactions) {
+    private CommentRepresentation getCommentRepresentation(User user, Comment comment, Set<PrismActionRedactionType> redactions, PropertyLoader loader) {
         Action action = comment.getAction();
         Integer userId = user.getId();
 
@@ -517,7 +518,10 @@ public class CommentService {
             }
         }
 
+        representation.setInterviewDurationEndDateTimeDisplay(comment.getInterviewEndDateTimeDisplay(loader.load(PrismDisplayPropertyDefinition.SYSTEM_DATE_TIME_FORMAT),
+                loader.load(PrismDisplayPropertyDefinition.SYSTEM_TIME_FORMAT)));
         representation.setEmphasizedAction(action.getEmphasizedAction());
+        
         return representation;
     }
 

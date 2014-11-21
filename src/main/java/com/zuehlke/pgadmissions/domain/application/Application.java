@@ -15,7 +15,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -99,15 +98,12 @@ public class Application extends Resource {
     @JoinColumn(name = "application_program_detail_id", unique = true)
     private ApplicationProgramDetail programDetail;
 
-    @Lob
     @Column(name = "study_location")
     private String studyLocation;
 
-    @Lob
     @Column(name = "study_division")
     private String studyDivision;
 
-    @Lob
     @Column(name = "study_area")
     private String studyArea;
 

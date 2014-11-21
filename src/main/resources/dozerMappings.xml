@@ -214,6 +214,15 @@
     </mapping>
 
     <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.comment.CommentCustomResponseRepresentation</class-b>
+        <field>
+            <a>actionCustomQuestionConfiguration.label</a>
+            <b>label</b>
+        </field>
+    </mapping>
+
+    <mapping>
         <class-a>com.zuehlke.pgadmissions.domain.comment.CommentTransitionState</class-a>
         <class-b>com.zuehlke.pgadmissions.rest.representation.comment.CommentTransitionStateRepresentation</class-b>
         <field>

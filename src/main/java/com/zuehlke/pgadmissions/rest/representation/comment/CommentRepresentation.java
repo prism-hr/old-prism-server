@@ -1,18 +1,17 @@
 package com.zuehlke.pgadmissions.rest.representation.comment;
 
-import java.util.Set;
-import java.util.TimeZone;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+
+import java.util.List;
+import java.util.Set;
+import java.util.TimeZone;
 
 public class CommentRepresentation {
 
@@ -35,7 +34,7 @@ public class CommentRepresentation {
     private LocalDate userSpecifiedDueDate;
 
     private PrismYesNoUnsureResponse eligible;
-    
+
     private Boolean interested;
 
     private String residenceState;
@@ -92,17 +91,19 @@ public class CommentRepresentation {
 
     private DateTime createdTimestamp;
 
-    private Set<CommentAssignedUserRepresentation> assignedUsers = Sets.newLinkedHashSet();
-    
-    private Set<CommentTransitionStateRepresentation> transitionStates = Sets.newLinkedHashSet();
+    private Set<CommentAssignedUserRepresentation> assignedUsers;
 
-    private Set<AppointmentTimeslotRepresentation> appointmentTimeslots = Sets.newLinkedHashSet();
+    private Set<CommentTransitionStateRepresentation> transitionStates;
 
-    private Set<AppointmentPreferenceRepresentation> appointmentPreferences = Sets.newLinkedHashSet();
+    private Set<AppointmentTimeslotRepresentation> appointmentTimeslots;
 
-    private Set<CommentPropertyRepresentation> properties = Sets.newLinkedHashSet();
+    private Set<AppointmentPreferenceRepresentation> appointmentPreferences;
 
-    private Set<FileRepresentation> documents = Sets.newLinkedHashSet();
+    private Set<CommentPropertyRepresentation> properties;
+
+    private Set<FileRepresentation> documents;
+
+    private List<CommentCustomResponseRepresentation> customResponses;
 
     public Integer getId() {
         return id;
@@ -136,11 +137,11 @@ public class CommentRepresentation {
         this.action = action;
     }
 
-    public final Boolean getEmphasizedAction() {
+    public Boolean getEmphasizedAction() {
         return emphasizedAction;
     }
 
-    public final void setEmphasizedAction(Boolean emphasizedAction) {
+    public void setEmphasizedAction(Boolean emphasizedAction) {
         this.emphasizedAction = emphasizedAction;
     }
 
@@ -176,27 +177,27 @@ public class CommentRepresentation {
         this.userSpecifiedDueDate = userSpecifiedDueDate;
     }
 
-    public final PrismYesNoUnsureResponse getEligible() {
+    public PrismYesNoUnsureResponse getEligible() {
         return eligible;
     }
 
-    public final void setEligible(PrismYesNoUnsureResponse eligible) {
+    public void setEligible(PrismYesNoUnsureResponse eligible) {
         this.eligible = eligible;
     }
 
-    public final Boolean getInterested() {
+    public Boolean getInterested() {
         return interested;
     }
 
-    public final void setInterested(Boolean interested) {
+    public void setInterested(Boolean interested) {
         this.interested = interested;
     }
 
-    public final String getResidenceState() {
+    public String getResidenceState() {
         return residenceState;
     }
 
-    public final void setResidenceState(String residenceState) {
+    public void setResidenceState(String residenceState) {
         this.residenceState = residenceState;
     }
 
@@ -416,11 +417,11 @@ public class CommentRepresentation {
         this.assignedUsers = assignedUsers;
     }
 
-    public final Set<CommentTransitionStateRepresentation> getTransitionStates() {
+    public Set<CommentTransitionStateRepresentation> getTransitionStates() {
         return transitionStates;
     }
 
-    public final void setTransitionStates(Set<CommentTransitionStateRepresentation> transitionStates) {
+    public void setTransitionStates(Set<CommentTransitionStateRepresentation> transitionStates) {
         this.transitionStates = transitionStates;
     }
 
@@ -439,7 +440,7 @@ public class CommentRepresentation {
     public void setAppointmentPreferences(Set<AppointmentPreferenceRepresentation> appointmentPreferences) {
         this.appointmentPreferences = appointmentPreferences;
     }
-    
+
     public Set<FileRepresentation> getDocuments() {
         return documents;
     }
@@ -447,13 +448,21 @@ public class CommentRepresentation {
     public void setDocuments(Set<FileRepresentation> documents) {
         this.documents = documents;
     }
-    
-    public final Set<CommentPropertyRepresentation> getProperties() {
+
+    public Set<CommentPropertyRepresentation> getProperties() {
         return properties;
     }
 
-    public final void setProperties(Set<CommentPropertyRepresentation> properties) {
+    public void setProperties(Set<CommentPropertyRepresentation> properties) {
         this.properties = properties;
+    }
+
+    public List<CommentCustomResponseRepresentation> getCustomResponses() {
+        return customResponses;
+    }
+
+    public void setCustomResponses(List<CommentCustomResponseRepresentation> customResponses) {
+        this.customResponses = customResponses;
     }
 
     public CommentRepresentation addId(Integer id) {

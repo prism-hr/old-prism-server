@@ -507,7 +507,7 @@ public class CommentService {
 
             if (redactions.contains(ALL_ASSESSMENT_CONTENT)) {
                 representation.addInterviewTimeZone(comment.getInterviewTimeZone()).addInterviewDateTime(comment.getInterviewDateTime())
-                        .addInterviewDuration(comment.getInterviewDuration()).addIntervieweeInstructions(comment.getIntervieweeInstructions())
+                        .addInterviewDuration(comment.getInterviewDuration().toString()).addIntervieweeInstructions(comment.getIntervieweeInstructions())
                         .addInterviewLocation(comment.getInterviewLocation());
 
                 for (CommentAppointmentTimeslot timeslot : comment.getAppointmentTimeslots()) {

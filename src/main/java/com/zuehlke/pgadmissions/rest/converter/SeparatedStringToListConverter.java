@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.rest.converter;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.base.Joiner;
 import org.dozer.DozerConverter;
 
 import com.google.common.base.Splitter;
@@ -25,7 +26,10 @@ public class SeparatedStringToListConverter extends DozerConverter<String, List>
 
     @Override
     public String convertFrom(List source, String destination) {
-        throw new UnsupportedOperationException();
+        if(source == null){
+            return null;
+        };
+        return Joiner.on("|").join(source);
     }
-    
+
 }

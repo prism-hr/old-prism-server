@@ -48,8 +48,11 @@ public class ResourceConfigurationResource {
 
     @RequestMapping(value = "{configurationType:notifications}/{id}", method = RequestMethod.GET)
     public WorkflowConfigurationRepresentation getConfiguration(@ModelAttribute PrismConfiguration configurationType,
-            @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam(required = false) PrismLocale locale,
-            @RequestParam(required = false) PrismProgramType programType, @PathVariable PrismNotificationDefinition id) throws Exception {
+                                                                @ModelAttribute ResourceDescriptor resourceDescriptor,
+                                                                @PathVariable Integer resourceId,
+                                                                @RequestParam(required = false) PrismLocale locale,
+                                                                @RequestParam(required = false) PrismProgramType programType,
+                                                                @PathVariable PrismNotificationDefinition id) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         WorkflowDefinition definition = entityService.getById(configurationType.getDefinitionClass(), id);
         return customizationService.getConfigurationRepresentation(configurationType, resource, locale, programType, definition);
@@ -57,8 +60,11 @@ public class ResourceConfigurationResource {
 
     @RequestMapping(value = "{configurationType:customQuestions}/{id}", method = RequestMethod.GET)
     public List<WorkflowConfigurationRepresentation> getConfiguration(@ModelAttribute PrismConfiguration configurationType,
-            @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam(required = false) PrismLocale locale,
-            @RequestParam(required = false) PrismProgramType programType, @PathVariable PrismActionCustomQuestionDefinition id) throws Exception {
+                                                                       @ModelAttribute ResourceDescriptor resourceDescriptor,
+                                                                       @PathVariable Integer resourceId,
+                                                                       @RequestParam(required = false) PrismLocale locale,
+                                                                       @RequestParam(required = false) PrismProgramType programType,
+                                                                       @PathVariable PrismActionCustomQuestionDefinition id) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         WorkflowDefinition definition = entityService.getById(configurationType.getDefinitionClass(), id);
         return customizationService.getConfigurationRepresentations(configurationType, resource, locale, programType, definition);
@@ -66,22 +72,31 @@ public class ResourceConfigurationResource {
 
     @RequestMapping(value = "{configurationType:displayProperties|stateDurations|workflowProperties}", method = RequestMethod.GET)
     public List<WorkflowConfigurationRepresentation> getConfigurations(@ModelAttribute PrismConfiguration configurationType,
-            @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam PrismScope scope,
-            @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType) throws Exception {
+                                                                       @ModelAttribute ResourceDescriptor resourceDescriptor,
+                                                                       @PathVariable Integer resourceId,
+                                                                       @RequestParam PrismScope scope,
+                                                                       @RequestParam(required = false) PrismLocale locale,
+                                                                       @RequestParam(required = false) PrismProgramType programType) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         return customizationService.getConfigurationRepresentations(configurationType, resource, scope, locale, programType);
     }
 
     @RequestMapping(value = "{configurationType:customQuestions|workflowProperties}", params = "version", method = RequestMethod.GET)
     public List<WorkflowConfigurationRepresentation> getConfigurationsWithVersion(@ModelAttribute PrismConfiguration configurationType,
-            @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam Integer version) throws Exception {
+                                                                                  @ModelAttribute ResourceDescriptor resourceDescriptor,
+                                                                                  @PathVariable Integer resourceId,
+                                                                                  @RequestParam Integer version) throws Exception {
         return customizationService.getConfigurationRepresentationsWithVersion(configurationType, version);
     }
 
     @RequestMapping(value = "{configurationType:notifications}/{id}", method = RequestMethod.DELETE, headers = "Restore-Type")
-    public void restoreConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @ModelAttribute PrismConfiguration configurationType,
-            @PathVariable Integer resourceId, @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType,
-            @RequestHeader(value = "Restore-Type") String restoreType, @PathVariable PrismNotificationDefinition id) throws Exception {
+    public void restoreConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor,
+                                     @ModelAttribute PrismConfiguration configurationType,
+                                     @PathVariable Integer resourceId,
+                                     @RequestParam(required = false) PrismLocale locale,
+                                     @RequestParam(required = false) PrismProgramType programType,
+                                     @RequestHeader(value = "Restore-Type") String restoreType,
+                                     @PathVariable PrismNotificationDefinition id) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         WorkflowDefinition definition = entityService.getById(configurationType.getDefinitionClass(), id);
         if (restoreType.equals("global")) {
@@ -92,9 +107,13 @@ public class ResourceConfigurationResource {
     }
 
     @RequestMapping(value = "{configurationType:customQuestions}/{id}", method = RequestMethod.DELETE, headers = "Restore-Type")
-    public void restoreConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @ModelAttribute PrismConfiguration configurationType,
-            @PathVariable Integer resourceId, @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType,
-            @RequestHeader(value = "Restore-Type") String restoreType, @PathVariable PrismActionCustomQuestionDefinition id) throws Exception {
+    public void restoreConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor,
+                                     @ModelAttribute PrismConfiguration configurationType,
+                                     @PathVariable Integer resourceId,
+                                     @RequestParam(required = false) PrismLocale locale,
+                                     @RequestParam(required = false) PrismProgramType programType,
+                                     @RequestHeader(value = "Restore-Type") String restoreType,
+                                     @PathVariable PrismActionCustomQuestionDefinition id) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         WorkflowDefinition definition = entityService.getById(configurationType.getDefinitionClass(), id);
         if (restoreType.equals("global")) {
@@ -105,9 +124,13 @@ public class ResourceConfigurationResource {
     }
 
     @RequestMapping(value = "{configurationType:displayProperties|stateDurations|workflowProperties}", method = RequestMethod.DELETE, headers = "Restore-Type")
-    public void restoreConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @ModelAttribute PrismConfiguration configurationType,
-            @PathVariable Integer resourceId, @RequestParam PrismScope scope, @RequestParam(required = false) PrismLocale locale,
-            @RequestParam(required = false) PrismProgramType programType, @RequestHeader(value = "Restore-Type") String restoreType) throws Exception {
+    public void restoreConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor,
+                                     @ModelAttribute PrismConfiguration configurationType,
+                                     @PathVariable Integer resourceId,
+                                     @RequestParam PrismScope scope,
+                                     @RequestParam(required = false) PrismLocale locale,
+                                     @RequestParam(required = false) PrismProgramType programType,
+                                     @RequestHeader(value = "Restore-Type") String restoreType) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         if (restoreType.equals("global")) {
             customizationService.restoreGlobalConfiguration(configurationType, resource, scope, locale, programType);
@@ -117,20 +140,27 @@ public class ResourceConfigurationResource {
     }
 
     @RequestMapping(value = "{configurationType:notifications}/{id}", method = RequestMethod.PUT)
-    public void updateNotificationConfiguration(@ModelAttribute PrismConfiguration configurationType, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @PathVariable Integer resourceId, @RequestParam PrismScope scope, @RequestParam(required = false) PrismLocale locale,
-            @RequestParam(required = false) PrismProgramType programType, @PathVariable PrismNotificationDefinition id,
-            @Valid @RequestBody NotificationConfigurationDTO notificationConfigurationDTO) throws CustomizationException {
+    public void updateNotificationConfiguration(@ModelAttribute PrismConfiguration configurationType,
+                                                        @ModelAttribute ResourceDescriptor resourceDescriptor,
+                                                        @PathVariable Integer resourceId,
+                                                        @RequestParam PrismScope scope,
+                                                        @RequestParam(required = false) PrismLocale locale,
+                                                        @RequestParam(required = false) PrismProgramType programType,
+                                                        @PathVariable PrismNotificationDefinition id,
+                                                        @Valid @RequestBody NotificationConfigurationDTO notificationConfigurationDTO) throws CustomizationException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         customizationService.createOrUpdateConfiguration(configurationType, resource, locale, programType, notificationConfigurationDTO);
     }
 
     @RequestMapping(value = "{configurationType:customQuestions}/{id}", method = RequestMethod.PUT)
     public void updateActionCustomQuestionConfiguration(@ModelAttribute PrismConfiguration configurationType,
-            @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam PrismScope scope,
-            @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType,
-            @PathVariable PrismActionCustomQuestionDefinition id, @Valid @RequestBody ActionCustomQuestionConfigurationDTO actionCustomQuestionConfigurationDTO)
-            throws CustomizationException {
+                                                        @ModelAttribute ResourceDescriptor resourceDescriptor,
+                                                        @PathVariable Integer resourceId,
+                                                        @RequestParam PrismScope scope,
+                                                        @RequestParam(required = false) PrismLocale locale,
+                                                        @RequestParam(required = false) PrismProgramType programType,
+                                                        @PathVariable PrismActionCustomQuestionDefinition id,
+                                                        @Valid @RequestBody ActionCustomQuestionConfigurationDTO actionCustomQuestionConfigurationDTO) throws CustomizationException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         customizationService.createOrUpdateConfigurationGroup(configurationType, resource, scope, locale, programType, actionCustomQuestionConfigurationDTO);
     }

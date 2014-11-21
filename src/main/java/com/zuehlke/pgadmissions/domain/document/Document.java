@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 
 @Entity
@@ -63,11 +64,23 @@ public class Document {
     @OneToOne(mappedBy = "document")
     private ApplicationFunding applicationFunding;
     
+    @OneToOne(mappedBy = "personalStatement")
+    private ApplicationDocument applicationPersonalStatement;
+    
+    @OneToOne(mappedBy = "researchStatement")
+    private ApplicationDocument applicationResearchStatement;
+
+    @OneToOne(mappedBy = "coveringLetter")
+    private ApplicationDocument applicationCoveringLetter;
+    
     @OneToOne(mappedBy = "cv")
     private ApplicationDocument applicationCv;
     
-    @OneToOne(mappedBy = "personalStatement")
-    private ApplicationDocument applicationPersonalStatement;
+    @OneToOne(mappedBy = "logoDocument")
+    private User userLogo;
+    
+    @OneToOne(mappedBy = "logoDocument")
+    private Institution institutionLogo;
 
     @Transient
     private MultipartFile fileData;
@@ -138,12 +151,20 @@ public class Document {
         return applicationFunding;
     }
 
+    public final ApplicationDocument getApplicationPersonalStatement() {
+        return applicationPersonalStatement;
+    }
+    
+    public final ApplicationDocument getApplicationResearchStatement() {
+        return applicationResearchStatement;
+    }
+    
     public final ApplicationDocument getApplicationCv() {
         return applicationCv;
     }
 
-    public final ApplicationDocument getApplicationPersonalStatement() {
-        return applicationPersonalStatement;
+    public final ApplicationDocument getApplicationCoveringLetter() {
+        return applicationCoveringLetter;
     }
 
     public MultipartFile getFileData() {

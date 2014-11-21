@@ -2,19 +2,15 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
-
-public class FundingRepresentation {
+public class PrizeRepresentation {
 
     private Integer id;
 
-    private Integer fundingSource;
+    private String provider;
 
-    private FileRepresentation document;
+    private String title;
 
     private String description;
-
-    private String value;
 
     private LocalDate awardDate;
 
@@ -26,20 +22,20 @@ public class FundingRepresentation {
         this.id = id;
     }
 
-    public Integer getFundingSource() {
-        return fundingSource;
+    public final String getProvider() {
+        return provider;
     }
 
-    public void setFundingSource(Integer fundingSource) {
-        this.fundingSource = fundingSource;
+    public final void setProvider(String provider) {
+        this.provider = provider;
     }
 
-    public FileRepresentation getDocument() {
-        return document;
+    public final String getTitle() {
+        return title;
     }
 
-    public void setDocument(FileRepresentation document) {
-        this.document = document;
+    public final void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDescription() {
@@ -50,14 +46,6 @@ public class FundingRepresentation {
         this.description = description;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
     public LocalDate getAwardDate() {
         return awardDate;
     }
@@ -65,5 +53,5 @@ public class FundingRepresentation {
     public void setAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
     }
-    
+
 }

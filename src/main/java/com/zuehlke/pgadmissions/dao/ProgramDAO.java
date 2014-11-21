@@ -11,19 +11,23 @@ import java.util.List;
 
 import org.hibernate.FetchMode;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.program.ProgramLocation;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -128,7 +132,7 @@ public class ProgramDAO {
                 .setEntity("program", program) //
                 .executeUpdate();
     }
-    
+
     public void deleteProgramStudyOptions(Program program) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete ProgramStudyOption " + //
@@ -149,7 +153,7 @@ public class ProgramDAO {
                 .addOrder(Order.desc("title")) //
                 .list();
     }
-    
+
     public State getPreviousState(Program program) {
         return (State) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.property("state")) //
@@ -163,4 +167,37 @@ public class ProgramDAO {
                 .uniqueResult();
     }
 
+    public List<String> getPossibleLocations(Program program) {
+        return (List<String>) sessionFactory.getCurrentSession().createCriteria(ProgramLocation.class) //
+                .setProjection(Projections.property("location")) //
+                .add(Restrictions.eq("program", program)) //
+                .addOrder(Order.asc("location")) //
+                .list();
+    }
+
+    public List<String> getSuggestedDivisions(Program program, String location) {
+        return (List<String>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .setProjection(Projections.groupProperty("programDetail.studyDivision")) //
+                .createAlias("programDetail", "programDetail", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("program", program)) //
+                .add(Restrictions.eq("programDetail.studyLocation", location)) //
+                .add(Subqueries.propertyIn("location", DetachedCriteria.forClass(ProgramLocation.class) //
+                        .setProjection(Projections.property("location")) //
+                        .add(Restrictions.eq("program", program)))) //
+                .list();
+    }
+   
+    public List<String> getSuggestedStudyAreas(Program program, String location, String division) {
+        return (List<String>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .setProjection(Projections.groupProperty("programDetail.studyArea")) //
+                .createAlias("programDetail", "programDetail", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("program", program)) //
+                .add(Restrictions.eq("programDetail.studyLocation", location)) //
+                .add(Restrictions.eq("programDetail.studyDivision", division)) //
+                .add(Subqueries.propertyIn(location, DetachedCriteria.forClass(ProgramLocation.class) //
+                        .setProjection(Projections.property("location")) //
+                        .add(Restrictions.eq("program", program)))) //
+                .list();
+    }
+    
 }

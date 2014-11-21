@@ -46,10 +46,8 @@ public class CompleteApplicationValidator extends LocalValidatorFactoryBean impl
         ValidationUtils.rejectIfEmpty(errors, "programDetail", "notNull");
         ValidationUtils.rejectIfEmpty(errors, "personalDetail", "notNull");
         ValidationUtils.rejectIfEmpty(errors, "address", "notNull");
-        // FIXME uncomment when documents are implemented
-//        ValidationUtils.rejectIfEmpty(errors, "document", "notNull");
-        ValidationUtils.rejectIfEmpty(errors, "additionalInformation", "notNull");
-
+        
+        // TODO integrate with the configured validation
 
         ApplicationProgramDetail programDetail = application.getProgramDetail();
         if (programDetail != null) {

@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.rest.representation.workflow;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionDefinition;
 
 public class ActionRepresentation {
 

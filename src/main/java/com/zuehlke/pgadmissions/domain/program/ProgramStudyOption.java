@@ -12,8 +12,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
@@ -23,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 
 @Entity
 @Table(name = "PROGRAM_STUDY_OPTION", uniqueConstraints = @UniqueConstraint(columnNames = { "program_id", "study_option_id" }))
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ProgramStudyOption implements IUniqueEntity {
 
     @Id

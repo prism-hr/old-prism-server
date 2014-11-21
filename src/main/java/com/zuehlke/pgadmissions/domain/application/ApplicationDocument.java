@@ -24,6 +24,10 @@ public class ApplicationDocument {
     private Document personalStatement;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "research_statement_id")
+    private Document researchStatement;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "cv_id", nullable = false)
     private Document cv;
 
@@ -53,6 +57,14 @@ public class ApplicationDocument {
         this.personalStatement = personalStatement;
     }
 
+    public final Document getResearchStatement() {
+        return researchStatement;
+    }
+
+    public final void setResearchStatement(Document researchStatement) {
+        this.researchStatement = researchStatement;
+    }
+
     public Document getCv() {
         return cv;
     }
@@ -77,16 +89,13 @@ public class ApplicationDocument {
         this.application = application;
     }
 
-    public boolean isAcceptedTerms() {
-        return acceptedTerms;
-    }
-
-    public void setAcceptedTerms(boolean acceptedTerms) {
-        this.acceptedTerms = acceptedTerms;
-    }
-
     public ApplicationDocument withPersonalStatement(Document document) {
         this.personalStatement = document;
+        return this;
+    }
+    
+    public ApplicationDocument withResearchStatement(Document researchStatement) {
+        this.researchStatement = researchStatement;
         return this;
     }
 

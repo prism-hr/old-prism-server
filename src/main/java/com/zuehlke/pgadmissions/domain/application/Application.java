@@ -15,6 +15,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -98,6 +99,18 @@ public class Application extends Resource {
     @JoinColumn(name = "application_program_detail_id", unique = true)
     private ApplicationProgramDetail programDetail;
 
+    @Lob
+    @Column(name = "study_location")
+    private String studyLocation;
+
+    @Lob
+    @Column(name = "study_division")
+    private String studyDivision;
+
+    @Lob
+    @Column(name = "study_area")
+    private String studyArea;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     private Set<ApplicationSupervisor> supervisors = Sets.newHashSet();
@@ -124,6 +137,10 @@ public class Application extends Resource {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
+    private Set<ApplicationPrize> prizes = Sets.newHashSet();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_id", nullable = false)
     private Set<ApplicationReferee> referees = Sets.newHashSet();
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -136,9 +153,9 @@ public class Application extends Resource {
 
     @Column(name = "primary_theme")
     private String primaryTheme;
-    
+
     @Column(name = "secondary_theme")
-    private String secondaryTheme;    
+    private String secondaryTheme;
 
     @Column(name = "application_rating_count")
     private Integer applicationRatingCount;
@@ -207,13 +224,13 @@ public class Application extends Resource {
 
     @Column(name = "workflow_property_configuration_version")
     private Integer workflowPropertyConfigurationVersion;
-    
+
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
-    
+
     @OneToMany(mappedBy = "application")
     private Set<ResourceState> resourceStates = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "application")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
 
@@ -422,6 +439,30 @@ public class Application extends Resource {
         this.programDetail = programDetail;
     }
 
+    public final String getStudyLocation() {
+        return studyLocation;
+    }
+
+    public final void setStudyLocation(String studyLocation) {
+        this.studyLocation = studyLocation;
+    }
+
+    public final String getStudyDivision() {
+        return studyDivision;
+    }
+
+    public final void setStudyDivision(String studyDivision) {
+        this.studyDivision = studyDivision;
+    }
+
+    public final String getStudyArea() {
+        return studyArea;
+    }
+
+    public final void setStudyArea(String studyArea) {
+        this.studyArea = studyArea;
+    }
+
     public final Set<ApplicationSupervisor> getSupervisors() {
         return supervisors;
     }
@@ -520,6 +561,10 @@ public class Application extends Resource {
 
     public Set<ApplicationFunding> getFundings() {
         return fundings;
+    }
+
+    public final Set<ApplicationPrize> getPrizes() {
+        return prizes;
     }
 
     public Set<ApplicationEmploymentPosition> getEmploymentPositions() {
@@ -683,7 +728,7 @@ public class Application extends Resource {
     public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
     }
-    
+
     @Override
     public final Integer getWorkflowPropertyConfigurationVersion() {
         return workflowPropertyConfigurationVersion;
@@ -742,6 +787,14 @@ public class Application extends Resource {
         return applicationRatingAverage == null ? null : applicationRatingAverage.toPlainString();
     }
 
+    public String getPrimaryThemeDisplay() {
+        return primaryTheme == null ? null : primaryTheme.replace("\\|", ", ");
+    }
+
+    public String getSecondaryThemeDisplay() {
+        return secondaryTheme == null ? null : secondaryTheme.replace("\\|", ", ");
+    }
+
     public boolean isApproved() {
         return state.getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED && state.getId() != PrismState.APPLICATION_APPROVED;
     }
@@ -769,7 +822,7 @@ public class Application extends Resource {
     public boolean isProgramApplication() {
         return project == null;
     }
-    
+
     public Advert getAdvert() {
         return isProgramApplication() ? program.getAdvert() : project.getAdvert();
     }

@@ -35,6 +35,9 @@ public enum FilterProperty {
     UPDATED_TIMESTAMP("updatedTimestamp", Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER), DATE, Arrays.asList(APPLICATION, PROJECT, PROGRAM, INSTITUTION)), //
     DUE_DATE("dueDate", Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER), DATE, Arrays.asList(APPLICATION)), //
     CLOSING_DATE("closingDate", Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER), DATE, Arrays.asList(APPLICATION)), //
+    STUDY_LOCATION("studyLocation", Arrays.asList(CONTAIN), STRING, Arrays.asList(APPLICATION)), //
+    STUDY_DIVISION("studyDivision", Arrays.asList(CONTAIN), STRING, Arrays.asList(APPLICATION)), //
+    STUDY_AREA("studyAreao", Arrays.asList(CONTAIN), STRING, Arrays.asList(APPLICATION)), //
     CONFIRMED_START_DATE("confirmed_start_date", Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER), DATE, Arrays.asList(APPLICATION)), //
     RATING("applicationRatingAverage", Arrays.asList(BETWEEN, GREATER, LESSER), NUMBER, Arrays.asList(APPLICATION, PROJECT, PROGRAM, INSTITUTION)), //
     REFERRER("referrer", Arrays.asList(CONTAIN), STRING, Arrays.asList(APPLICATION, PROJECT, PROGRAM, INSTITUTION)), //

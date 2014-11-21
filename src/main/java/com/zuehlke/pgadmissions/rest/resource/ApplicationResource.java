@@ -24,6 +24,7 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
+import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
@@ -38,6 +39,7 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDocumentDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationEmploymentPositionDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationFundingDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPrizeDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
@@ -55,7 +57,7 @@ import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
-@RequestMapping(value = {"api/applications"})
+@RequestMapping(value = { "api/applications" })
 public class ApplicationResource {
 
     @Autowired
@@ -93,15 +95,15 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/supervisors", method = RequestMethod.POST)
-    public Map<String, Object> createSupervisor(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationSupervisorDTO supervisorDTO) throws Exception {
+    public Map<String, Object> createSupervisor(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationSupervisorDTO supervisorDTO)
+            throws Exception {
         ApplicationSupervisor supervisor = applicationSectionService.updateSupervisor(applicationId, null, supervisorDTO);
         return ImmutableMap.of("id", (Object) supervisor.getId());
     }
 
     @RequestMapping(value = "/{applicationId}/supervisors/{supervisorId}", method = RequestMethod.PUT)
-    public void deleteSupervisor(@PathVariable Integer applicationId,
-                                 @PathVariable Integer supervisorId,
-                                 @Valid @RequestBody ApplicationSupervisorDTO supervisorDTO) throws Exception {
+    public void deleteSupervisor(@PathVariable Integer applicationId, @PathVariable Integer supervisorId,
+            @Valid @RequestBody ApplicationSupervisorDTO supervisorDTO) throws Exception {
         applicationSectionService.updateSupervisor(applicationId, supervisorId, supervisorDTO);
     }
 
@@ -121,15 +123,15 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/qualifications", method = RequestMethod.POST)
-    public Map<String, Object> createQualification(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationQualificationDTO qualificationDTO) throws Exception {
+    public Map<String, Object> createQualification(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationQualificationDTO qualificationDTO)
+            throws Exception {
         ApplicationQualification qualification = applicationSectionService.updateQualification(applicationId, null, qualificationDTO);
         return ImmutableMap.of("id", (Object) qualification.getId());
     }
 
     @RequestMapping(value = "/{applicationId}/qualifications/{qualificationId}", method = RequestMethod.PUT)
-    public void updateQualification(@PathVariable Integer applicationId,
-                                    @PathVariable Integer qualificationId,
-                                    @Valid @RequestBody ApplicationQualificationDTO qualificationDTO) throws Exception {
+    public void updateQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId,
+            @Valid @RequestBody ApplicationQualificationDTO qualificationDTO) throws Exception {
         applicationSectionService.updateQualification(applicationId, qualificationId, qualificationDTO);
     }
 
@@ -140,14 +142,14 @@ public class ApplicationResource {
 
     @RequestMapping(value = "/{applicationId}/employmentPositions", method = RequestMethod.POST)
     public Map<String, Object> createEmploymentPosition(@PathVariable Integer applicationId,
-                                                        @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) throws Exception {
+            @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) throws Exception {
         ApplicationEmploymentPosition employmentPosition = applicationSectionService.updateEmploymentPosition(applicationId, null, employmentPositionDTO);
         return ImmutableMap.of("id", (Object) employmentPosition.getId());
     }
 
     @RequestMapping(value = "/{applicationId}/employmentPositions/{employmentPositionId}", method = RequestMethod.PUT)
     public void updateEmploymentPosition(@PathVariable Integer applicationId, @PathVariable Integer employmentPositionId,
-                                         @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) throws Exception {
+            @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) throws Exception {
         applicationSectionService.updateEmploymentPosition(applicationId, employmentPositionId, employmentPositionDTO);
     }
 
@@ -163,13 +165,31 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/fundings/{fundingId}", method = RequestMethod.PUT)
-    public void updateFunding(@PathVariable Integer applicationId, @PathVariable Integer fundingId, @Valid @RequestBody ApplicationFundingDTO fundingDTO) throws Exception {
+    public void updateFunding(@PathVariable Integer applicationId, @PathVariable Integer fundingId, @Valid @RequestBody ApplicationFundingDTO fundingDTO)
+            throws Exception {
         applicationSectionService.updateFunding(applicationId, fundingId, fundingDTO);
     }
 
     @RequestMapping(value = "/{applicationId}/fundings/{fundingId}", method = RequestMethod.DELETE)
     public void deleteFunding(@PathVariable Integer applicationId, @PathVariable Integer fundingId) throws Exception {
         applicationSectionService.deleteFunding(applicationId, fundingId);
+    }
+
+    @RequestMapping(value = "/{applicationId}/prizes", method = RequestMethod.POST)
+    public Map<String, Object> createPrize(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationPrizeDTO prizeDTO) throws Exception {
+        ApplicationPrize prize = applicationSectionService.updatePrize(applicationId, null, prizeDTO);
+        return ImmutableMap.of("id", (Object) prize.getId());
+    }
+
+    @RequestMapping(value = "/{applicationId}/prizes/{prizeId}", method = RequestMethod.PUT)
+    public void updatePrize(@PathVariable Integer applicationId, @PathVariable Integer prizeId, @Valid @RequestBody ApplicationPrizeDTO prizeDTO)
+            throws Exception {
+        applicationSectionService.updatePrize(applicationId, prizeId, prizeDTO);
+    }
+
+    @RequestMapping(value = "/{applicationId}/prizes/{prizeId}", method = RequestMethod.DELETE)
+    public void deletePrize(@PathVariable Integer applicationId, @PathVariable Integer prizeId) throws Exception {
+        applicationSectionService.deletePrize(applicationId, prizeId);
     }
 
     @RequestMapping(value = "/{applicationId}/referees", method = RequestMethod.POST)
@@ -179,7 +199,8 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/referees/{refereeId}", method = RequestMethod.PUT)
-    public void deleteReferee(@PathVariable Integer applicationId, @PathVariable Integer refereeId, @Valid @RequestBody ApplicationRefereeDTO refereeDTO) throws Exception {
+    public void deleteReferee(@PathVariable Integer applicationId, @PathVariable Integer refereeId, @Valid @RequestBody ApplicationRefereeDTO refereeDTO)
+            throws Exception {
         applicationSectionService.updateReferee(applicationId, refereeId, refereeDTO);
     }
 
@@ -194,7 +215,8 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/additionalInformation", method = RequestMethod.PUT)
-    public void saveAdditionalInformation(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationAdditionalInformationDTO additionalInformationDTO) throws Exception {
+    public void saveAdditionalInformation(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationAdditionalInformationDTO additionalInformationDTO)
+            throws Exception {
         applicationSectionService.updateAdditionalInformation(applicationId, additionalInformationDTO);
     }
 
@@ -242,7 +264,9 @@ public class ApplicationResource {
 
         representation.setOfferRecommendation(commentService.getOfferRecommendation(application));
         representation.setAssignedSupervisors(commentService.getApplicationSupervisors(application));
+
         representation.setPossibleThemes(advertService.getLocalizedThemes(application));
+        representation.setPossibleLocations(programService.getPossibleLocations(application.getProgram()));
 
         List<ProgramStudyOption> enabledProgramStudyOptions = programService.getEnabledProgramStudyOptions(application.getProgram());
         List<PrismStudyOption> availableStudyOptions = Lists.newArrayListWithCapacity(enabledProgramStudyOptions.size());

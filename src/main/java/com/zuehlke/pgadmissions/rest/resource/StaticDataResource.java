@@ -1,17 +1,60 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
+import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.WordUtils;
+import org.dozer.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.*;
+import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.imported.*;
+import com.zuehlke.pgadmissions.domain.imported.Country;
+import com.zuehlke.pgadmissions.domain.imported.Disability;
+import com.zuehlke.pgadmissions.domain.imported.Domicile;
+import com.zuehlke.pgadmissions.domain.imported.Ethnicity;
+import com.zuehlke.pgadmissions.domain.imported.FundingSource;
+import com.zuehlke.pgadmissions.domain.imported.Gender;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
+import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
+import com.zuehlke.pgadmissions.domain.imported.Language;
+import com.zuehlke.pgadmissions.domain.imported.QualificationType;
+import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
+import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
+import com.zuehlke.pgadmissions.domain.imported.ResidenceState;
+import com.zuehlke.pgadmissions.domain.imported.Title;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.workflow.*;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.Role;
+import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.domain.workflow.StateAction;
+import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.rest.representation.InstitutionDomicileRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.StateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.FilterRepresentation;
@@ -27,16 +70,6 @@ import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
-import org.apache.commons.lang.WordUtils;
-import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
-
-import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 @RestController
 @RequestMapping("/api/static")

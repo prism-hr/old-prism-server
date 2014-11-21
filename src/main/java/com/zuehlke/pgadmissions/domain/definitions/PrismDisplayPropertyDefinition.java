@@ -10,6 +10,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCa
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_LANGUAGE_QUALIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PASSPORT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PERSONAL_DETAIL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PRIZE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_QUALIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REFEREE;
@@ -182,6 +183,11 @@ public enum PrismDisplayPropertyDefinition {
     APPLICATION_PREFERRED_START_DATE(APPLICATION_GLOBAL, "Preferred Start Date", APPLICATION), //
     APPLICATION_END_DATE(APPLICATION_GLOBAL, "End Date", APPLICATION), //
     APPLICATION_REFERRAL_SOURCE(APPLICATION_GLOBAL, "How did you find us?", APPLICATION), //
+    APPLICATION_PRIMARY_THEME(APPLICATION_GLOBAL, "Primary Themes", APPLICATION), //
+    APPLICATION_SECONDARY_THEME(APPLICATION_GLOBAL, "Secondary Themes", APPLICATION), //
+    APPLICATION_STUDY_LOCATION(APPLICATION_PROGRAM_DETAIL, "Preferred Study Location", APPLICATION), //
+    APPLICATION_STUDY_DIVISION(APPLICATION_PROGRAM_DETAIL, "Preferred Study Department", APPLICATION), //
+    APPLICATION_STUDY_AREA(APPLICATION_PROGRAM_DETAIL, "Preferred Study Area", APPLICATION), //
     APPLICATION_SUBMISSION_DATE(APPLICATION_GLOBAL, "Submission Date", APPLICATION), //
     APPLICATION_EMPLOYER_NAME(APPLICATION_GLOBAL, "Employer Name", APPLICATION), //
     APPLICATION_POSITION_TITLE(APPLICATION_GLOBAL, "Position Title", APPLICATION), //
@@ -247,7 +253,14 @@ public enum PrismDisplayPropertyDefinition {
     APPLICATION_FUNDING_TYPE(APPLICATION_FUNDING, "Award Type", APPLICATION), //
     APPLICATION_FUNDING_DESCRIPTION(APPLICATION_FUNDING, "Award Description", APPLICATION), //
     APPLICATION_FUNDING_VALUE(APPLICATION_FUNDING, "Award Value", APPLICATION), //
+    APPLICATION_FUNDING_AWARD_DATE(APPLICATION_FUNDING, "Award Date", APPLICATION), //
     APPLICATION_FUNDING_APPENDIX(APPLICATION_FUNDING, "Proof of Funding", APPLICATION), //
+    APPLICATION_PRIZE_HEADER(APPLICATION_PRIZE, "Prizes", APPLICATION), //
+    APPLICATION_PRIZE_SUBHEADER(APPLICATION_PRIZE, "Prize", APPLICATION), //
+    APPLICATION_PRIZE_PROVIDER(APPLICATION_PRIZE, "Awarding Body", APPLICATION), //
+    APPLICATION_PRIZE_TITLE(APPLICATION_PRIZE, "Title", APPLICATION), //
+    APPLICATION_PRIZE_DESCRIPTION(APPLICATION_PRIZE, "Description", APPLICATION), //
+    APPLICATION_PRIZE_AWARD_DATE(APPLICATION_PRIZE, "Award Dateo", APPLICATION), //
     APPLICATION_REFEREE_HEADER(APPLICATION_REFEREE, "Referees", APPLICATION), //
     APPLICATION_REFEREE_SUBHEADER(APPLICATION_REFEREE, "Referee", APPLICATION), //
     APPLICATION_REFEREE_REFERENCE_APPENDIX(APPLICATION_REFEREE, "Reference", APPLICATION), //

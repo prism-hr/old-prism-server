@@ -157,9 +157,13 @@ public class Program extends ResourceParent {
 
     @Column(name = "workflow_property_configuration_version")
     private Integer workflowPropertyConfigurationVersion;
-    
+
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "program_id", nullable = false)
+    private Set<ProgramLocation> locations = Sets.newHashSet();
 
     @OneToMany(mappedBy = "program")
     private Set<ResourceState> resourceStates = Sets.newHashSet();
@@ -476,6 +480,16 @@ public class Program extends ResourceParent {
     }
 
     @Override
+    public final Integer getWorkflowPropertyConfigurationVersion() {
+        return workflowPropertyConfigurationVersion;
+    }
+
+    @Override
+    public final void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
+        this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
+    }
+
+    @Override
     public String getSequenceIdentifier() {
         return sequenceIdentifier;
     }
@@ -485,14 +499,12 @@ public class Program extends ResourceParent {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    @Override
-    public final Integer getWorkflowPropertyConfigurationVersion() {
-        return workflowPropertyConfigurationVersion;
+    public final Set<ProgramLocation> getLocations() {
+        return locations;
     }
 
-    @Override
-    public final void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
-        this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
+    public final void setLocations(Set<ProgramLocation> locations) {
+        this.locations = locations;
     }
 
     @Override
@@ -594,6 +606,10 @@ public class Program extends ResourceParent {
     public Program withUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
         return this;
+    }
+
+    public void addLocation(String location) {
+        locations.add(new ProgramLocation().withLocation(location));
     }
 
     @Override

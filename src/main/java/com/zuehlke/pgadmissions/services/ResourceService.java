@@ -434,6 +434,11 @@ public class ResourceService {
                         List<Integer> userIds = userService.getMatchingUsers(constraint.getValueString());
                         ResourceListConstraintBuilder.appendPropertyInFilterCriterion(conditions, propertyName, userIds, negated);
                         break;
+                    case STUDY_AREA:
+                    case STUDY_DIVISION:
+                    case STUDY_LOCATION:
+                        ResourceListConstraintBuilder.appendStringFilterCriterion(conditions, propertyName, constraint.getValueString(), negated);
+                        break;
                     case SUPERVISOR:
                         appendUserRoleFilterCriteria(scopeId, conditions, constraint, propertyName, Arrays.asList(PrismRole.PROJECT_PRIMARY_SUPERVISOR,
                                 PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.APPLICATION_SUGGESTED_SUPERVISOR, PrismRole.APPLICATION_PRIMARY_SUPERVISOR,

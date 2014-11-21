@@ -134,8 +134,8 @@ public class ImportedEntityService {
         for (ProgrammeOccurrence occurrence : programInstanceDefinitions) {
             StudyOption studyOption = mergeStudyOption(institution, occurrence.getModeOfAttendance());
 
-            LocalDate transientStartDate = dateFormatter.parseLocalDate(occurrence.getStartDate());
-            LocalDate transientCloseDate = dateFormatter.parseLocalDate(occurrence.getEndDate());
+            LocalDate transientStartDate = dateFormatter.parseLocalDate(occurrence.getStartDate()).minusYears(1);
+            LocalDate transientCloseDate = dateFormatter.parseLocalDate(occurrence.getEndDate()).minusYears(1);
 
             ProgramStudyOption transientProgramStudyOption = new ProgramStudyOption().withProgram(persistentProgram).withStudyOption(studyOption)
                     .withApplicationStartDate(transientStartDate).withApplicationCloseDate(transientCloseDate)

@@ -12,6 +12,12 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
 public class ApplicationProgramDetailDTO {
 
+    private String studyLocation;
+
+    private String studyDivision;
+
+    private String studyArea;
+
     @NotNull
     private PrismStudyOption studyOption;
 
@@ -65,6 +71,30 @@ public class ApplicationProgramDetailDTO {
 
     public final void setSecondaryThemes(List<String> secondaryThemes) {
         this.secondaryThemes = secondaryThemes;
+    }
+
+    public final String getStudyLocation() {
+        return studyLocation;
+    }
+
+    public final void setStudyLocation(String studyLocation) {
+        this.studyLocation = studyLocation;
+    }
+
+    public final String getStudyDivision() {
+        return studyDivision;
+    }
+
+    public final void setStudyDivision(String studyDivision) {
+        this.studyDivision = studyDivision;
+    }
+
+    public final String getStudyArea() {
+        return studyArea;
+    }
+
+    public final void setStudyArea(String studyArea) {
+        this.studyArea = studyArea;
     }
 
 }

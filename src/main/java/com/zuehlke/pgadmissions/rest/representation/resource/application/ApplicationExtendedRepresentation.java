@@ -25,6 +25,8 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
     private ProgramDetailRepresentation programDetail;
 
     private List<String> possibleThemes;
+    
+    private List<String> possibleLocations;
 
     private List<ApplicationSuggestedSupervisorRepresentation> supervisors;
 
@@ -38,6 +40,8 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
 
     private List<FundingRepresentation> fundings;
 
+    private List<PrizeRepresentation> prizes;
+    
     private List<RefereeRepresentation> referees;
 
     private ApplicationDocumentRepresentation document;
@@ -109,6 +113,14 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
     public final void setPossibleThemes(List<String> possibleThemes) {
         this.possibleThemes = possibleThemes;
     }
+    
+    public final List<String> getPossibleLocations() {
+        return possibleLocations;
+    }
+
+    public final void setPossibleLocations(List<String> possibleLocations) {
+        this.possibleLocations = possibleLocations;
+    }
 
     public List<ApplicationSuggestedSupervisorRepresentation> getSupervisors() {
         return supervisors;
@@ -156,6 +168,14 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
 
     public void setFundings(List<FundingRepresentation> fundings) {
         this.fundings = fundings;
+    }
+
+    public final List<PrizeRepresentation> getPrizes() {
+        return prizes;
+    }
+
+    public final void setPrizes(List<PrizeRepresentation> prizes) {
+        this.prizes = prizes;
     }
 
     public List<RefereeRepresentation> getReferees() {

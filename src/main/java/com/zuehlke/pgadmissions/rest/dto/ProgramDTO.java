@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import java.util.List;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -8,6 +10,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 import org.joda.time.LocalDate;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
@@ -41,6 +44,8 @@ public class ProgramDTO extends ResourceDTO {
 
     @Min(1)
     private Integer studyDurationMaximum;
+    
+    private List<String> locations = Lists.newArrayList();
 
     public Integer getInstitutionId() {
         return institutionId;
@@ -113,4 +118,13 @@ public class ProgramDTO extends ResourceDTO {
     public void setStudyDurationMaximum(Integer studyDurationMaximum) {
         this.studyDurationMaximum = studyDurationMaximum;
     }
+
+    public final List<String> getLocations() {
+        return locations;
+    }
+
+    public final void setLocations(List<String> locations) {
+        this.locations = locations;
+    }
+    
 }

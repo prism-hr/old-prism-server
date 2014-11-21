@@ -14,12 +14,16 @@ public class DocumentDAO {
     public void deleteOrphanDocuments() {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete Document " //
-                    + "where comment is null "
-                        + "and applicationLanguageQualification is null "
-                        + "and applicationQualification is null "
-                        + "and applicationFunding is null "
-                        + "and applicationCv is null "
+                        + "where comment is null " //
+                        + "and applicationLanguageQualification is null " //
+                        + "and applicationQualification is null " //
+                        + "and applicationFunding is null " //
                         + "and applicationPersonalStatement is null " //
+                        + "and applicationResearchStatement is null " //
+                        + "and applicationCv is null " //
+                        + "and applicationCoveringLetter is null " //
+                        + "and userLogo is null " //
+                        + "and institutionLogo is null " //
                         + "and createdTimestamp <= :createdTimestamp") //
                 .setParameter("createdTimestamp", new DateTime().minusDays(1)) //
                 .executeUpdate();

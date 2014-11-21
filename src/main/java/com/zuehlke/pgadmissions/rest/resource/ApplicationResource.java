@@ -88,6 +88,8 @@ public class ApplicationResource {
     public ApplicationStartDateRepresentation getStartDateRepresentation(@PathVariable Integer applicationId, @RequestParam PrismStudyOption studyOptionId) {
         return applicationService.getStartDateRepresentation(applicationId, studyOptionId);
     }
+    
+    //TODO get possible study divisions and areas, see program service for lookup methods 
 
     @RequestMapping(value = "/{applicationId}/programDetail", method = RequestMethod.PUT)
     public void saveProgramDetail(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationProgramDetailDTO programDetailDTO) throws Exception {

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dto;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -11,9 +12,11 @@ public class ActionDTO {
 
     private PrismAction actionId;
 
+    private PrismActionCategory actionCategory;
+
     private Boolean raisesUrgentFlag;
 
-    private Boolean primaryState = true;
+    private Boolean primaryState;
 
     private PrismState transitionStateId;
 
@@ -39,6 +42,14 @@ public class ActionDTO {
 
     public final void setActionId(PrismAction actionId) {
         this.actionId = actionId;
+    }
+
+    public final PrismActionCategory getActionCategory() {
+        return actionCategory;
+    }
+
+    public final void setActionCategory(PrismActionCategory actionCategory) {
+        this.actionCategory = actionCategory;
     }
 
     public final Boolean getRaisesUrgentFlag() {
@@ -95,6 +106,10 @@ public class ActionDTO {
 
     public final void setMaximumPermitted(Integer maximumPermitted) {
         this.maximumPermitted = maximumPermitted;
+    }
+
+    public boolean isCreateResourceAction() {
+        return actionCategory == PrismActionCategory.CREATE_RESOURCE;
     }
 
 }

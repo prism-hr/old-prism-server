@@ -1,17 +1,18 @@
 package com.zuehlke.pgadmissions.rest.representation.comment;
 
+import java.util.List;
+import java.util.Set;
+import java.util.TimeZone;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-
-import java.util.List;
-import java.util.Set;
-import java.util.TimeZone;
 
 public class CommentRepresentation {
 

@@ -76,8 +76,8 @@ public class Document {
     @OneToOne(mappedBy = "cv")
     private ApplicationDocument applicationCv;
     
-    @OneToOne(mappedBy = "logoDocument")
-    private User userLogo;
+    @OneToOne(mappedBy = "portraitDocument")
+    private User userPortrait;
     
     @OneToOne(mappedBy = "logoDocument")
     private Institution institutionLogo;

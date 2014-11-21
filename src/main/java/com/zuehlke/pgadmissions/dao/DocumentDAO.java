@@ -22,7 +22,7 @@ public class DocumentDAO {
                         + "and applicationResearchStatement is null " //
                         + "and applicationCv is null " //
                         + "and applicationCoveringLetter is null " //
-                        + "and userLogo is null " //
+                        + "and userPortrait is null " //
                         + "and institutionLogo is null " //
                         + "and createdTimestamp <= :createdTimestamp") //
                 .setParameter("createdTimestamp", new DateTime().minusDays(1)) //

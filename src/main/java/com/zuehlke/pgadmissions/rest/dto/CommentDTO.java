@@ -1,19 +1,17 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.math.BigDecimal;
-import java.util.Set;
-import java.util.TimeZone;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
-
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.util.Set;
+import java.util.TimeZone;
 
 public class CommentDTO {
 
@@ -70,7 +68,7 @@ public class CommentDTO {
     private ProgramDTO program;
 
     private ProjectDTO project;
-    
+
     @Valid
     private Set<CommentAssignedUserDTO> assignedUsers;
 
@@ -135,11 +133,11 @@ public class CommentDTO {
         this.eligible = eligible;
     }
 
-    public final Boolean getInterested() {
+    public Boolean getInterested() {
         return interested;
     }
 
-    public final void setInterested(Boolean interested) {
+    public void setInterested(Boolean interested) {
         this.interested = interested;
     }
 
@@ -287,11 +285,11 @@ public class CommentDTO {
         this.assignedUsers = assignedUsers;
     }
 
-    public final Set<CommentTransitionStateDTO> getTransitionStates() {
+    public Set<CommentTransitionStateDTO> getTransitionStates() {
         return transitionStates;
     }
 
-    public final void setTransitionStates(Set<CommentTransitionStateDTO> transitionStates) {
+    public void setTransitionStates(Set<CommentTransitionStateDTO> transitionStates) {
         this.transitionStates = transitionStates;
     }
 
@@ -329,14 +327,14 @@ public class CommentDTO {
 
     public Object fetchResouceDTO() {
         switch (action.getScope()) {
-        case INSTITUTION:
-            return institution;
-        case PROGRAM:
-            return program;
-        case PROJECT:
-            return project;
-        default:
-            throw new Error();
+            case INSTITUTION:
+                return institution;
+            case PROGRAM:
+                return program;
+            case PROJECT:
+                return project;
+            default:
+                throw new Error();
         }
     }
 

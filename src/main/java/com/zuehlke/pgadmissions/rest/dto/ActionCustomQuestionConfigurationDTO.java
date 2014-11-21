@@ -42,7 +42,7 @@ public class ActionCustomQuestionConfigurationDTO extends ArrayList<ActionCustom
         @NotNull
         private Boolean required;
 
-        private List<String> validation;
+        private String validation;
 
         @DecimalMin("0.01")
         @DecimalMax("1.00")
@@ -120,11 +120,11 @@ public class ActionCustomQuestionConfigurationDTO extends ArrayList<ActionCustom
             this.required = required;
         }
 
-        public List<String> getValidation() {
+        public String getValidation() {
             return validation;
         }
 
-        public void setValidation(List<String> validation) {
+        public void setValidation(String validation) {
             this.validation = validation;
         }
 

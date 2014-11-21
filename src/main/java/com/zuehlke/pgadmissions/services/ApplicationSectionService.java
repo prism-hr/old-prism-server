@@ -1,88 +1,38 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDRESS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_DOCUMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_EMPLOYMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_FUNDING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_QUALIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_ADMITTER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_RECRUITER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SUGGESTED_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
-
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.commons.lang3.BooleanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
-import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPassport;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
+import com.zuehlke.pgadmissions.domain.application.*;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.Country;
-import com.zuehlke.pgadmissions.domain.imported.Disability;
-import com.zuehlke.pgadmissions.domain.imported.Domicile;
-import com.zuehlke.pgadmissions.domain.imported.Ethnicity;
-import com.zuehlke.pgadmissions.domain.imported.FundingSource;
-import com.zuehlke.pgadmissions.domain.imported.Gender;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.imported.Language;
-import com.zuehlke.pgadmissions.domain.imported.QualificationType;
-import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
-import com.zuehlke.pgadmissions.domain.imported.Title;
+import com.zuehlke.pgadmissions.domain.imported.*;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.Address;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.AddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDocumentDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationEmploymentPositionDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationFundingDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationLanguageQualificationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPassportDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailUserDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ImportedInstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.*;
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SUGGESTED_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 
 @Service
 @Transactional
@@ -193,7 +143,7 @@ public class ApplicationSectionService {
         Gender gender = importedEntityService.getById(Gender.class, institution, personalDetailDTO.getGender());
         Country country = importedEntityService.getById(Country.class, institution, personalDetailDTO.getCountry());
         Language firstNationality = importedEntityService.getById(Language.class, institution, personalDetailDTO.getFirstNationality());
-        Language secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.<Language> getById(Language.class, institution,
+        Language secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.<Language>getById(Language.class, institution,
                 personalDetailDTO.getSecondNationality()) : null;
         Domicile residenceCountry = importedEntityService.getById(Domicile.class, institution, personalDetailDTO.getDomicile());
         Ethnicity ethnicity = importedEntityService.getById(Ethnicity.class, institution, personalDetailDTO.getEthnicity());
@@ -301,7 +251,7 @@ public class ApplicationSectionService {
     }
 
     public ApplicationEmploymentPosition updateEmploymentPosition(Integer applicationId, Integer employmentPositionId,
-            ApplicationEmploymentPositionDTO employmentPositionDTO) throws DeduplicationException {
+                                                                  ApplicationEmploymentPositionDTO employmentPositionDTO) throws DeduplicationException {
         Application application = applicationService.getById(applicationId);
 
         ApplicationEmploymentPosition employmentPosition;
@@ -426,11 +376,12 @@ public class ApplicationSectionService {
             application.setDocument(document);
         }
 
-        Document cv = entityService.getById(Document.class, document.getCv().getId());
-        Document personalStatement = entityService.getById(Document.class, document.getPersonalStatement().getId());
-        // TODO save covering letter
+        Document cv = documentDTO.getCv() != null ? entityService.getById(Document.class, documentDTO.getCv().getId()) : null;
+        Document personalStatement = documentDTO.getPersonalStatement() != null ? entityService.getById(Document.class, documentDTO.getPersonalStatement().getId()) : null;
+        Document coveringLetter = documentDTO.getCoveringLetter() != null ? entityService.getById(Document.class, documentDTO.getCoveringLetter().getId()) : null;
         document.setCv(cv);
         document.setPersonalStatement(personalStatement);
+        document.setCoveringLetter(coveringLetter);
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_DOCUMENT);
     }
 

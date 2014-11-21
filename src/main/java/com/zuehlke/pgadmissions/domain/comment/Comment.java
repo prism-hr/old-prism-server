@@ -874,6 +874,23 @@ public class Comment {
         return interviewDateTime == null ? null : interviewDateTime.toString(dateTimeFormat, LocaleUtils.toLocale(getResource().getLocale().toString()));
     }
 
+    public String getInterviewEndDateTimeDisplay(String dateTimeFormat, String timeFormat) {
+        if (interviewDateTime == null) {
+            return null;
+        } else {
+            LocalDateTime interviewEndDateTime = interviewDateTime.plusMinutes(interviewDuration);
+
+            LocalDate interviewDate = interviewDateTime.toLocalDate();
+            LocalDate interviewEndDate = interviewEndDateTime.toLocalDate();
+
+            if (interviewDate.isAfter(interviewEndDate)) {
+                return interviewEndDateTime.toString(dateTimeFormat);
+            }
+
+            return interviewEndDateTime.toString(timeFormat);
+        }
+    }
+
     public String getPositionProvisionalStartDateDisplay(String dateFormat) {
         return positionProvisionalStartDate == null ? null : positionProvisionalStartDate.toString(dateFormat,
                 LocaleUtils.toLocale(getResource().getLocale().toString()));

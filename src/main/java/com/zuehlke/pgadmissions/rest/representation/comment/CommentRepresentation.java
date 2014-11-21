@@ -252,8 +252,8 @@ public class CommentRepresentation {
         return interviewDurationDisplay;
     }
 
-    public final void setInterviewDurationDisplay(String interviewDuration) {
-        this.interviewDurationDisplay = interviewDuration;
+    public final void setInterviewDurationEndDateTimeDisplay(String interviewDurationDisplay) {
+        this.interviewDurationDisplay = interviewDurationDisplay;
     }
 
     public String getIntervieweeInstructions() {

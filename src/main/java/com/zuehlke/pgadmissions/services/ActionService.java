@@ -292,7 +292,7 @@ public class ActionService {
                     representations.get(thisActionId).setRaisesUrgentFlag(raisesUrgentFlag);
                 }
 
-                Boolean primaryState = action.getPrimaryState();
+                boolean primaryState = action.isCreateResourceAction() || action.getPrimaryState();
                 if (primaryState) {
                     representations.get(thisActionId).setPrimaryState(primaryState);
                 }

@@ -119,6 +119,7 @@ public class ActionDAO {
         return (List<ActionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class, "resourceState") //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("action.id"), "actionId") //
+                        .add(Projections.property("action.actionCategory"), "actionCategory") //
                         .add(Projections.property("stateAction.raisesUrgentFlag"), "raisesUrgentFlag") //
                         .add(Projections.property("primaryState"), "primaryState") //
                         .add(Projections.property("stateTransition.transitionState.id"), "transitionStateId") //
@@ -157,6 +158,7 @@ public class ActionDAO {
         return (List<ActionDTO>) sessionFactory.getCurrentSession().createCriteria(StateAction.class, "stateAction") //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("action.id"), "actionId") //
+                        .add(Projections.property("action.actionCategory"), "actionCategory") //
                         .add(Projections.property("raisesUrgentFlag"), "raisesUrgentFlag") //
                         .add(Projections.groupProperty("stateTransition.transitionState.id"), "transitionStateId") //
                         .add(Projections.groupProperty("roleTransition.transitionRole.id"), "transitionRoleId") //

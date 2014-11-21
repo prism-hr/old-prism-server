@@ -8,8 +8,8 @@ CREATE TABLE PROGRAM_LOCATION (
 ) ENGINE = INNODB
 ;
 
-ALTER TABLE APPLICATION_PROGRAM_DETAIL
-	ADD COLUMN study_location TEXT AFTER id,
+ALTER TABLE APPLICATION
+	ADD COLUMN study_location TEXT AFTER application_program_detail_id,
 	ADD COLUMN study_division TEXT AFTER study_location,
 	ADD COLUMN study_area TEXT AFTER study_division
 ;

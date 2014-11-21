@@ -22,13 +22,11 @@ public class ApplicationPersonalDetailDTO {
     @Size(max = 50)
     private String phone;
 
-    @NotNull
     private Boolean firstLanguageLocale;
 
     @Valid
     private ApplicationLanguageQualificationDTO languageQualification;
 
-    @NotNull
     private Boolean visaRequired;
 
     @Valid
@@ -51,10 +49,8 @@ public class ApplicationPersonalDetailDTO {
     @NotNull
     private Integer country;
 
-    @NotNull
     private Integer ethnicity;
 
-    @NotNull
     private Integer disability;
 
     @NotNull

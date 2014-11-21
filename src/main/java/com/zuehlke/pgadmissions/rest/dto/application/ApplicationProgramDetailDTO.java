@@ -21,10 +21,8 @@ public class ApplicationProgramDetailDTO {
     @NotNull
     private Integer referralSource;
 
-    @NotEmpty
     private List<String> primaryThemes = Lists.newArrayList();
 
-    @NotEmpty
     private List<String> secondaryThemes = Lists.newArrayList();
 
     public PrismStudyOption getStudyOption() {

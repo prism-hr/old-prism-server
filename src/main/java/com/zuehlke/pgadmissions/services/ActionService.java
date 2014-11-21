@@ -291,8 +291,8 @@ public class ActionService {
                 if (raisesUrgentFlag) {
                     representations.get(thisActionId).setRaisesUrgentFlag(raisesUrgentFlag);
                 }
-                
-                boolean primaryState = action.getPrimaryState();
+
+                Boolean primaryState = action.getPrimaryState();
                 if (primaryState) {
                     representations.get(thisActionId).setPrimaryState(primaryState);
                 }
@@ -315,7 +315,7 @@ public class ActionService {
 
             lastTransitionStateId = thisTransitionStateId;
         }
-        
+
         return Sets.newLinkedHashSet(representations.values());
     }
 

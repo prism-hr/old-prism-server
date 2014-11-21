@@ -50,8 +50,8 @@ public class CommentRepresentation {
     private LocalDateTime interviewDateTime;
 
     private TimeZone interviewTimeZone;
-
-    private Integer interviewDuration;
+    
+    private String interviewDurationDisplay;
 
     private String intervieweeInstructions;
 
@@ -249,12 +249,12 @@ public class CommentRepresentation {
         this.interviewTimeZone = interviewTimeZone;
     }
 
-    public Integer getInterviewDuration() {
-        return interviewDuration;
+    public final String getInterviewDurationDisplay() {
+        return interviewDurationDisplay;
     }
 
-    public void setInterviewDuration(Integer interviewDuration) {
-        this.interviewDuration = interviewDuration;
+    public final void setInterviewDurationEndDateTimeDisplay(String interviewDurationDisplay) {
+        this.interviewDurationDisplay = interviewDurationDisplay;
     }
 
     public String getIntervieweeInstructions() {
@@ -505,8 +505,8 @@ public class CommentRepresentation {
         return this;
     }
 
-    public CommentRepresentation addInterviewDuration(Integer interviewDuration) {
-        this.interviewDuration = interviewDuration;
+    public CommentRepresentation addInterviewDuration(String interviewDuration) {
+        this.interviewDurationDisplay = interviewDuration;
         return this;
     }
 

@@ -12,9 +12,9 @@ public class ActionDTO {
     private PrismAction actionId;
 
     private Boolean raisesUrgentFlag;
-    
-    private Boolean primaryState;
-    
+
+    private Boolean primaryState = true;
+
     private PrismState transitionStateId;
 
     private PrismRole transitionRoleId;

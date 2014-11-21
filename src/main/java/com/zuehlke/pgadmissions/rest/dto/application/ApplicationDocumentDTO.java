@@ -8,6 +8,8 @@ public class ApplicationDocumentDTO {
 
     private FileDTO cv;
 
+    private FileDTO coveringLetter;
+
     public FileDTO getPersonalStatement() {
         return personalStatement;
     }
@@ -22,5 +24,13 @@ public class ApplicationDocumentDTO {
 
     public void setCv(FileDTO cv) {
         this.cv = cv;
+    }
+
+    public FileDTO getCoveringLetter() {
+        return coveringLetter;
+    }
+
+    public void setCoveringLetter(FileDTO coveringLetter) {
+        this.coveringLetter = coveringLetter;
     }
 }

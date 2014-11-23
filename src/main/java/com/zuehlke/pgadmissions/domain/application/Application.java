@@ -1,35 +1,5 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.IMMEDIATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import org.apache.commons.lang3.LocaleUtils;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -49,6 +19,22 @@ import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import org.apache.commons.lang3.LocaleUtils;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.*;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.IMMEDIATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
 
 @Entity
 @Table(name = "APPLICATION")
@@ -374,32 +360,32 @@ public class Application extends Resource {
     }
 
     @Override
-    public final LocalDate getLastRemindedRequestIndividual() {
+    public LocalDate getLastRemindedRequestIndividual() {
         return lastRemindedRequestIndividual;
     }
 
     @Override
-    public final void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual) {
+    public void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual) {
         this.lastRemindedRequestIndividual = lastRemindedRequestIndividual;
     }
 
     @Override
-    public final LocalDate getLastRemindedRequestSyndicated() {
+    public LocalDate getLastRemindedRequestSyndicated() {
         return lastRemindedRequestSyndicated;
     }
 
     @Override
-    public final void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated) {
+    public void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated) {
         this.lastRemindedRequestSyndicated = lastRemindedRequestSyndicated;
     }
 
     @Override
-    public final LocalDate getLastNotifiedUpdateSyndicated() {
+    public LocalDate getLastNotifiedUpdateSyndicated() {
         return lastNotifiedUpdateSyndicated;
     }
 
     @Override
-    public final void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
+    public void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
         this.lastNotifiedUpdateSyndicated = lastNotifiedUpdateSyndicated;
     }
 
@@ -435,31 +421,31 @@ public class Application extends Resource {
         this.programDetail = programDetail;
     }
 
-    public final String getStudyLocation() {
+    public String getStudyLocation() {
         return studyLocation;
     }
 
-    public final void setStudyLocation(String studyLocation) {
+    public void setStudyLocation(String studyLocation) {
         this.studyLocation = studyLocation;
     }
 
-    public final String getStudyDivision() {
+    public String getStudyDivision() {
         return studyDivision;
     }
 
-    public final void setStudyDivision(String studyDivision) {
+    public void setStudyDivision(String studyDivision) {
         this.studyDivision = studyDivision;
     }
 
-    public final String getStudyArea() {
+    public String getStudyArea() {
         return studyArea;
     }
 
-    public final void setStudyArea(String studyArea) {
+    public void setStudyArea(String studyArea) {
         this.studyArea = studyArea;
     }
 
-    public final Set<ApplicationSupervisor> getSupervisors() {
+    public Set<ApplicationSupervisor> getSupervisors() {
         return supervisors;
     }
 
@@ -471,83 +457,83 @@ public class Application extends Resource {
         this.additionalInformation = additionalInformation;
     }
 
-    public final String getPrimaryTheme() {
+    public String getPrimaryTheme() {
         return primaryTheme;
     }
 
-    public final void setPrimaryTheme(String primaryTheme) {
+    public void setPrimaryTheme(String primaryTheme) {
         this.primaryTheme = primaryTheme;
     }
 
-    public final String getSecondaryTheme() {
+    public String getSecondaryTheme() {
         return secondaryTheme;
     }
 
-    public final void setSecondaryTheme(String secondaryTheme) {
+    public void setSecondaryTheme(String secondaryTheme) {
         this.secondaryTheme = secondaryTheme;
     }
 
-    public final Integer getApplicationRatingCount() {
+    public Integer getApplicationRatingCount() {
         return applicationRatingCount;
     }
 
-    public final void setApplicationRatingCount(Integer applicationRatingCount) {
+    public void setApplicationRatingCount(Integer applicationRatingCount) {
         this.applicationRatingCount = applicationRatingCount;
     }
 
-    public final BigDecimal getApplicationRatingAverage() {
+    public BigDecimal getApplicationRatingAverage() {
         return applicationRatingAverage;
     }
 
-    public final void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
     }
 
-    public final LocalDate getCompletionDate() {
+    public LocalDate getCompletionDate() {
         return completionDate;
     }
 
-    public final void setCompletionDate(LocalDate completionDate) {
+    public void setCompletionDate(LocalDate completionDate) {
         this.completionDate = completionDate;
     }
 
-    public final LocalDate getConfirmedStartDate() {
+    public LocalDate getConfirmedStartDate() {
         return confirmedStartDate;
     }
 
-    public final void setConfirmedStartDate(LocalDate confirmedStartDate) {
+    public void setConfirmedStartDate(LocalDate confirmedStartDate) {
         this.confirmedStartDate = confirmedStartDate;
     }
 
-    public final User getConfirmedPrimarySupervisor() {
+    public User getConfirmedPrimarySupervisor() {
         return confirmedPrimarySupervisor;
     }
 
-    public final void setConfirmedPrimarySupervisor(User confirmedPrimarySupervisor) {
+    public void setConfirmedPrimarySupervisor(User confirmedPrimarySupervisor) {
         this.confirmedPrimarySupervisor = confirmedPrimarySupervisor;
     }
 
-    public final User getConfirmedSecondarySupervisor() {
+    public User getConfirmedSecondarySupervisor() {
         return confirmedSecondarySupervisor;
     }
 
-    public final void setConfirmedSecondarySupervisor(User confirmedSecondarySupervisor) {
+    public void setConfirmedSecondarySupervisor(User confirmedSecondarySupervisor) {
         this.confirmedSecondarySupervisor = confirmedSecondarySupervisor;
     }
 
-    public final PrismOfferType getConfirmedOfferType() {
+    public PrismOfferType getConfirmedOfferType() {
         return confirmedOfferType;
     }
 
-    public final void setConfirmedOfferType(PrismOfferType confirmedOfferType) {
+    public void setConfirmedOfferType(PrismOfferType confirmedOfferType) {
         this.confirmedOfferType = confirmedOfferType;
     }
 
-    public final Boolean getRetain() {
+    public Boolean getRetain() {
         return retain;
     }
 
-    public final void setRetain(Boolean retain) {
+    public void setRetain(Boolean retain) {
         this.retain = retain;
     }
 
@@ -559,7 +545,7 @@ public class Application extends Resource {
         return fundings;
     }
 
-    public final Set<ApplicationPrize> getPrizes() {
+    public Set<ApplicationPrize> getPrizes() {
         return prizes;
     }
 
@@ -572,21 +558,21 @@ public class Application extends Resource {
     }
 
     @Override
-    public final Set<ResourceState> getResourceStates() {
+    public Set<ResourceState> getResourceStates() {
         return resourceStates;
     }
 
     @Override
-    public final Set<ResourcePreviousState> getResourcePreviousStates() {
+    public Set<ResourcePreviousState> getResourcePreviousStates() {
         return resourcePreviousStates;
     }
 
-    public final Set<Comment> getComments() {
+    public Set<Comment> getComments() {
         return comments;
     }
 
     @Override
-    public final Set<UserRole> getUserRoles() {
+    public Set<UserRole> getUserRoles() {
         return userRoles;
     }
 
@@ -595,7 +581,7 @@ public class Application extends Resource {
         return this;
     }
 
-    public Application withCode(final String code) {
+    public Application withCode(String code) {
         this.code = code;
         return this;
     }
@@ -615,7 +601,7 @@ public class Application extends Resource {
         return this;
     }
 
-    public Application withProject(final Project project) {
+    public Application withProject(Project project) {
         this.project = project;
         return this;
     }
@@ -726,12 +712,12 @@ public class Application extends Resource {
     }
 
     @Override
-    public final Integer getWorkflowPropertyConfigurationVersion() {
+    public Integer getWorkflowPropertyConfigurationVersion() {
         return workflowPropertyConfigurationVersion;
     }
 
     @Override
-    public final void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
+    public void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
         this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
     }
 

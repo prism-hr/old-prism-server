@@ -25,7 +25,7 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
     private ProgramDetailRepresentation programDetail;
 
     private List<String> possibleThemes;
-    
+
     private List<String> possibleLocations;
 
     private List<ApplicationSuggestedSupervisorRepresentation> supervisors;
@@ -41,7 +41,7 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
     private List<FundingRepresentation> fundings;
 
     private List<PrizeRepresentation> prizes;
-    
+
     private List<RefereeRepresentation> referees;
 
     private ApplicationDocumentRepresentation document;
@@ -63,8 +63,14 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
     private List<PrismStudyOption> availableStudyOptions;
 
     private List<String> primaryThemes;
-    
+
     private List<String> secondaryThemes;
+
+    private String studyLocation;
+
+    private String studyDivision;
+
+    private String studyArea;
 
     public ProgramRepresentation getProgram() {
         return program;
@@ -113,7 +119,7 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
     public final void setPossibleThemes(List<String> possibleThemes) {
         this.possibleThemes = possibleThemes;
     }
-    
+
     public final List<String> getPossibleLocations() {
         return possibleLocations;
     }
@@ -274,4 +280,27 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
         this.secondaryThemes = secondaryThemes;
     }
 
+    public String getStudyLocation() {
+        return studyLocation;
+    }
+
+    public void setStudyLocation(String studyLocation) {
+        this.studyLocation = studyLocation;
+    }
+
+    public String getStudyDivision() {
+        return studyDivision;
+    }
+
+    public void setStudyDivision(String studyDivision) {
+        this.studyDivision = studyDivision;
+    }
+
+    public String getStudyArea() {
+        return studyArea;
+    }
+
+    public void setStudyArea(String studyArea) {
+        this.studyArea = studyArea;
+    }
 }

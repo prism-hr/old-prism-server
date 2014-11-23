@@ -139,6 +139,9 @@ public class ApplicationSectionService {
 
         List<String> secondaryThemes = programDetailDTO.getSecondaryThemes();
         application.setSecondaryTheme(secondaryThemes.isEmpty() ? null : Joiner.on("|").join(secondaryThemes));
+        application.setStudyLocation(programDetailDTO.getStudyLocation());
+        application.setStudyDivision(programDetailDTO.getStudyDivision());
+        application.setStudyArea(programDetailDTO.getStudyArea());
 
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL);
     }

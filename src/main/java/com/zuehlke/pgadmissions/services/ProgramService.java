@@ -168,15 +168,15 @@ public class ProgramService {
 
         return actionService.executeUserAction(program, action, comment);
     }
-    
+
     public List<String> getPossibleLocations(Program program) {
         return programDAO.getPossibleLocations(program);
     }
-    
+
     public List<String> getSuggestedDivisions(Program program, String location) {
         return programDAO.getSuggestedDivisions(program, location);
     }
-    
+
     public List<String> getSuggestedStudyAreas(Program program, String location, String division) {
         return programDAO.getSuggestedStudyAreas(program, location, division);
     }
@@ -214,9 +214,12 @@ public class ProgramService {
 
             program.setEndDate(programDTO.getEndDate());
         }
-        
-        for (String location : programDTO.getLocations()) {
-            program.addLocation(location);
+
+        program.getLocations().clear();
+        if(programDTO.getLocations() != null) {
+            for (String location : programDTO.getLocations()) {
+                program.addLocation(location);
+            }
         }
 
         advert.setSummary(programDTO.getSummary());

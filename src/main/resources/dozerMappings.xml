@@ -21,6 +21,10 @@
                 <class-a>com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail</class-a>
                 <class-b>com.zuehlke.pgadmissions.rest.representation.resource.advert.FinancialDetailsRepresentation</class-b>
             </converter>
+            <converter type="com.zuehlke.pgadmissions.rest.converter.ProgramLocationConverter">
+                <class-a>com.zuehlke.pgadmissions.domain.program.ProgramLocation</class-a>
+                <class-b>java.lang.String</class-b>
+            </converter>
 
             <!-- Advert category converter definitions -->
             <converter type="com.zuehlke.pgadmissions.rest.converter.AdvertCategoryConverter">
@@ -51,6 +55,7 @@
                 <class-a>com.zuehlke.pgadmissions.domain.advert.AdvertProgramType</class-a>
                 <class-b>com.zuehlke.pgadmissions.domain.definitions.PrismProgramType</class-b>
             </converter>
+
             <converter type="com.zuehlke.pgadmissions.rest.converter.WorkflowDefinitionConverter">
                 <class-a>com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionDefinition</class-a>
                 <class-b>com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation</class-b>

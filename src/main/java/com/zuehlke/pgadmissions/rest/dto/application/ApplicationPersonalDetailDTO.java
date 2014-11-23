@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
+import javax.persistence.Column;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -55,6 +56,15 @@ public class ApplicationPersonalDetailDTO {
 
     @NotNull
     private Integer domicile;
+
+    @Size(min = 1)
+    private String studyLocation;
+
+    @Size(min = 1)
+    private String studyDivision;
+
+    @Size(min = 1)
+    private String studyArea;
 
     public ApplicationPersonalDetailUserDTO getUser() {
         return user;
@@ -182,5 +192,29 @@ public class ApplicationPersonalDetailDTO {
 
     public void setDomicile(Integer domicile) {
         this.domicile = domicile;
+    }
+
+    public String getStudyLocation() {
+        return studyLocation;
+    }
+
+    public void setStudyLocation(String studyLocation) {
+        this.studyLocation = studyLocation;
+    }
+
+    public String getStudyDivision() {
+        return studyDivision;
+    }
+
+    public void setStudyDivision(String studyDivision) {
+        this.studyDivision = studyDivision;
+    }
+
+    public String getStudyArea() {
+        return studyArea;
+    }
+
+    public void setStudyArea(String studyArea) {
+        this.studyArea = studyArea;
     }
 }

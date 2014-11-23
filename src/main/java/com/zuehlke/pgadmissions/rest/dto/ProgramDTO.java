@@ -44,8 +44,8 @@ public class ProgramDTO extends ResourceDTO {
 
     @Min(1)
     private Integer studyDurationMaximum;
-    
-    private List<String> locations = Lists.newArrayList();
+
+    private List<String> locations;
 
     public Integer getInstitutionId() {
         return institutionId;
@@ -126,5 +126,5 @@ public class ProgramDTO extends ResourceDTO {
     public final void setLocations(List<String> locations) {
         this.locations = locations;
     }
-    
+
 }

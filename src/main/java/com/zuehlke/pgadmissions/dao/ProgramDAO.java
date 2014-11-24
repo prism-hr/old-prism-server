@@ -175,29 +175,27 @@ public class ProgramDAO {
                 .list();
     }
 
-    public List<String> getSuggestedDivisions(Program program, String location) {
+    public List<String> listSuggestedDivisions(Program program, String location) {
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
-                .setProjection(Projections.groupProperty("programDetail.studyDivision")) //
-                .createAlias("programDetail", "programDetail", JoinType.INNER_JOIN) //
+                .setProjection(Projections.groupProperty("studyDivision")) //
                 .add(Restrictions.eq("program", program)) //
-                .add(Restrictions.eq("programDetail.studyLocation", location)) //
-                .add(Subqueries.propertyIn("location", DetachedCriteria.forClass(ProgramLocation.class) //
+                .add(Restrictions.eq("studyLocation", location)) //
+                .add(Subqueries.in(location, DetachedCriteria.forClass(ProgramLocation.class) //
                         .setProjection(Projections.property("location")) //
                         .add(Restrictions.eq("program", program)))) //
                 .list();
     }
-   
-    public List<String> getSuggestedStudyAreas(Program program, String location, String division) {
+
+    public List<String> listSuggestedStudyAreas(Program program, String location, String division) {
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
-                .setProjection(Projections.groupProperty("programDetail.studyArea")) //
-                .createAlias("programDetail", "programDetail", JoinType.INNER_JOIN) //
+                .setProjection(Projections.groupProperty("studyArea")) //
                 .add(Restrictions.eq("program", program)) //
-                .add(Restrictions.eq("programDetail.studyLocation", location)) //
-                .add(Restrictions.eq("programDetail.studyDivision", division)) //
-                .add(Subqueries.propertyIn(location, DetachedCriteria.forClass(ProgramLocation.class) //
+                .add(Restrictions.eq("studyLocation", location)) //
+                .add(Restrictions.eq("studyDivision", division)) //
+                .add(Subqueries.in(location, DetachedCriteria.forClass(ProgramLocation.class) //
                         .setProjection(Projections.property("location")) //
                         .add(Restrictions.eq("program", program)))) //
                 .list();
     }
-    
+
 }

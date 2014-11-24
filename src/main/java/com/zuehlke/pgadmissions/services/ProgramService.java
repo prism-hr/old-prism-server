@@ -161,7 +161,7 @@ public class ProgramService {
         if (viewEditAction && !program.getImported() && transitionState == null && dueDate.isAfter(new LocalDate())) {
             transitionState = programDAO.getPreviousState(program);
         }
-        
+
         Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
                 .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
 
@@ -176,12 +176,14 @@ public class ProgramService {
         return programDAO.getPossibleLocations(program);
     }
 
-    public List<String> getSuggestedDivisions(Program program, String location) {
-        return programDAO.getSuggestedDivisions(program, location);
+    public List<String> listSuggestedDivisions(Integer programId, String location) {
+        Program program = getById(programId);
+        return programDAO.listSuggestedDivisions(program, location);
     }
 
-    public List<String> getSuggestedStudyAreas(Program program, String location, String division) {
-        return programDAO.getSuggestedStudyAreas(program, location, division);
+    public List<String> listSuggestedStudyAreas(Integer programId, String location, String division) {
+        Program program = getById(programId);
+        return programDAO.listSuggestedStudyAreas(program, location, division);
     }
 
     private void update(Integer programId, ProgramDTO programDTO) {

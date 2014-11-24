@@ -55,7 +55,7 @@ public class ApplicationQualification {
     private String grade;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "document_id", nullable = false, unique = true)
+    @JoinColumn(name = "document_id", unique = true)
     private Document document;
 
     @ManyToOne

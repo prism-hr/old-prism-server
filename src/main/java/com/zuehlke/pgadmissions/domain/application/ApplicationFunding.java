@@ -1,20 +1,11 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.imported.FundingSource;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.FundingSource;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "APPLICATION_FUNDING")
@@ -29,7 +20,7 @@ public class ApplicationFunding {
     private Application application;
 
     @ManyToOne
-    @JoinColumn(name = "funding_source_id")
+    @JoinColumn(name = "funding_source_id", nullable = false)
     private FundingSource fundingSource;
 
     @Column(name = "description", nullable = false)
@@ -43,7 +34,7 @@ public class ApplicationFunding {
     private LocalDate awardDate;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "document_id", nullable = false, unique = true)
+    @JoinColumn(name = "document_id", unique = true)
     private Document document;
 
     public void setId(Integer id) {

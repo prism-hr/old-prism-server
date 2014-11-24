@@ -20,19 +20,19 @@ public class ApplicationDocument {
     private Integer id;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "personal_statement_id")
+    @JoinColumn(name = "personal_statement_id", unique = true)
     private Document personalStatement;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "research_statement_id")
+    @JoinColumn(name = "research_statement_id", unique = true)
     private Document researchStatement;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "cv_id", nullable = false)
+    @JoinColumn(name = "cv_id", unique = true)
     private Document cv;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "covering_letter_id", nullable = false)
+    @JoinColumn(name = "covering_letter_id", unique = true)
     private Document coveringLetter;
 
     @OneToOne(mappedBy = "document")
@@ -93,7 +93,7 @@ public class ApplicationDocument {
         this.personalStatement = document;
         return this;
     }
-    
+
     public ApplicationDocument withResearchStatement(Document researchStatement) {
         this.researchStatement = researchStatement;
         return this;

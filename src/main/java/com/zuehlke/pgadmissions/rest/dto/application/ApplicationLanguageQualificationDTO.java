@@ -32,7 +32,6 @@ public class ApplicationLanguageQualificationDTO {
     @NotEmpty
     private String listeningScore;
 
-    @NotNull
     private FileDTO proofOfAward;
 
     public Integer getType() {

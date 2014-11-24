@@ -215,9 +215,11 @@ public class ProgramService {
             program.setEndDate(programDTO.getEndDate());
         }
 
-        program.getStudyOptions().clear();
-        for (String location : programDTO.getLocations()) {
-            program.addLocation(location);
+        program.getLocations().clear();
+        if(programDTO.getLocations() != null) {
+            for (String location : programDTO.getLocations()) {
+                program.addLocation(location);
+            }
         }
 
         advert.setSummary(programDTO.getSummary());

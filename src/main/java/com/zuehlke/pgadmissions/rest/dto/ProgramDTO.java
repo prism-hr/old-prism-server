@@ -45,7 +45,7 @@ public class ProgramDTO extends ResourceDTO {
     @Min(1)
     private Integer studyDurationMaximum;
 
-    private List<String> locations;
+    private List<String> locations = Lists.newArrayList();
 
     public Integer getInstitutionId() {
         return institutionId;

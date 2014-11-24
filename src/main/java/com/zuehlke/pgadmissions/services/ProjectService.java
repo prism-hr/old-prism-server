@@ -84,8 +84,11 @@ public class ProjectService {
         ProjectDTO projectDTO = (ProjectDTO) commentDTO.fetchResouceDTO();
         LocalDate dueDate = projectDTO.getEndDate();
 
-        State transitionState = viewEditAction && !dueDate.isBefore(new LocalDate()) ? projectDAO.getPreviousState(project) : stateService.getById(commentDTO
-                .getTransitionState());
+        State transitionState = stateService.getById(commentDTO.getTransitionState());
+        if (viewEditAction && !project.getProgram().getImported() && transitionState == null && dueDate.isAfter(new LocalDate())) {
+            transitionState = projectDAO.getPreviousState(project);
+        }
+
         Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
                 .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
 

@@ -1,13 +1,8 @@
 package com.zuehlke.pgadmissions.rest.converter;
 
-import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.domain.program.ProgramLocation;
-import com.zuehlke.pgadmissions.rest.representation.resource.advert.FinancialDetailsRepresentation;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.dozer.DozerConverter;
 
-import java.math.BigDecimal;
+import com.zuehlke.pgadmissions.domain.program.ProgramLocation;
 
 public class ProgramLocationConverter extends DozerConverter<ProgramLocation, String> {
 

@@ -16,7 +16,6 @@ public class ApplicationFundingDTO {
     @NotNull
     private Integer fundingSource;
 
-    @NotNull
     private FileDTO document;
 
     @NotEmpty

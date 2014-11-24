@@ -48,7 +48,7 @@ public class ApplicationLanguageQualification {
     private String listeningScore;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "document_id", nullable = false)
+    @JoinColumn(name = "document_id", unique = true)
     private Document document;
 
     public Integer getId() {

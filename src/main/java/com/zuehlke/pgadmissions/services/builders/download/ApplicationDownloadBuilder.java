@@ -107,10 +107,7 @@ public class ApplicationDownloadBuilder {
 
     private void addCoverPage(Application application, Document pdfDocument, PdfWriter writer) throws MalformedURLException, IOException, DocumentException {
         pdfDocument.newPage();
-
-        Image logoImage = applicationDownloadBuilderHelper.newLogoImage();
-        logoImage.setAbsolutePosition(pdfDocument.right() - logoImage.getScaledWidth(), pdfDocument.top() + 20f);
-        pdfDocument.add(logoImage);
+        addLogoImage(pdfDocument);
 
         LineSeparator lineSeparator = new LineSeparator();
         lineSeparator.drawLine(writer.getDirectContent(), pdfDocument.left(), pdfDocument.right(), pdfDocument.top() + 10f);
@@ -631,9 +628,7 @@ public class ApplicationDownloadBuilder {
         }
 
         private void addHeader(PdfWriter writer, Document pdfDocument) throws DocumentException, BadElementException, IOException {
-            Image logoImage = applicationDownloadBuilderHelper.newLogoImage();
-            logoImage.setAbsolutePosition(pdfDocument.right() - logoImage.getScaledWidth(), pdfDocument.top() + 20f);
-            pdfDocument.add(logoImage);
+            addLogoImage(pdfDocument);
 
             LineSeparator lineSeparator = new LineSeparator();
             lineSeparator.drawLine(writer.getDirectContent(), pdfDocument.left(), pdfDocument.right(), pdfDocument.top() + 10f);
@@ -656,6 +651,12 @@ public class ApplicationDownloadBuilder {
             return this;
         }
 
+    }
+    
+    private void addLogoImage(Document pdfDocument) throws BadElementException, MalformedURLException, IOException, DocumentException {
+        Image logoImage = applicationDownloadBuilderHelper.newLogoImage();
+        logoImage.setAbsolutePosition(pdfDocument.right() - logoImage.getScaledWidth(), pdfDocument.top() + 20f);
+        pdfDocument.add(logoImage);
     }
 
 }

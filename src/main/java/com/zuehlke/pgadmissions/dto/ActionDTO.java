@@ -2,13 +2,10 @@ package com.zuehlke.pgadmissions.dto;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 public class ActionDTO {
-
-    private PrismAction stateId;
 
     private PrismAction actionId;
 
@@ -16,25 +13,15 @@ public class ActionDTO {
 
     private Boolean raisesUrgentFlag;
 
+    private PrismActionEnhancement globalActionEnhancement;
+
+    private PrismActionEnhancement customActionEnhancement;
+
     private Boolean primaryState;
 
     private PrismState transitionStateId;
 
-    private PrismRole transitionRoleId;
-
-    private PrismRoleTransitionType roleTransitionType;
-
-    private Integer minimumPermitted;
-
-    private Integer maximumPermitted;
-
-    public final PrismAction getStateId() {
-        return stateId;
-    }
-
-    public final void setStateId(PrismAction stateId) {
-        this.stateId = stateId;
-    }
+    private Boolean parallelizable;
 
     public final PrismAction getActionId() {
         return actionId;
@@ -60,6 +47,22 @@ public class ActionDTO {
         this.raisesUrgentFlag = raisesUrgentFlag;
     }
 
+    public final PrismActionEnhancement getGlobalActionEnhancement() {
+        return globalActionEnhancement;
+    }
+
+    public final void setGlobalActionEnhancement(PrismActionEnhancement globalActionEnhancement) {
+        this.globalActionEnhancement = globalActionEnhancement;
+    }
+
+    public final PrismActionEnhancement getCustomActionEnhancement() {
+        return customActionEnhancement;
+    }
+
+    public final void setCustomActionEnhancement(PrismActionEnhancement customActionEnhancement) {
+        this.customActionEnhancement = customActionEnhancement;
+    }
+
     public final Boolean getPrimaryState() {
         return primaryState;
     }
@@ -76,36 +79,12 @@ public class ActionDTO {
         this.transitionStateId = transitionStateId;
     }
 
-    public final PrismRole getTransitionRoleId() {
-        return transitionRoleId;
+    public final Boolean getParallelizable() {
+        return parallelizable;
     }
 
-    public final void setTransitionRoleId(PrismRole transitionRoleId) {
-        this.transitionRoleId = transitionRoleId;
-    }
-
-    public final PrismRoleTransitionType getRoleTransitionType() {
-        return roleTransitionType;
-    }
-
-    public final void setRoleTransitionType(PrismRoleTransitionType roleTransitionType) {
-        this.roleTransitionType = roleTransitionType;
-    }
-
-    public final Integer getMinimumPermitted() {
-        return minimumPermitted;
-    }
-
-    public final void setMinimumPermitted(Integer minimumPermitted) {
-        this.minimumPermitted = minimumPermitted;
-    }
-
-    public final Integer getMaximumPermitted() {
-        return maximumPermitted;
-    }
-
-    public final void setMaximumPermitted(Integer maximumPermitted) {
-        this.maximumPermitted = maximumPermitted;
+    public final void setParallelizable(Boolean parallelizable) {
+        this.parallelizable = parallelizable;
     }
 
     public boolean isCreateResourceAction() {

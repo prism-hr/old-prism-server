@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
@@ -45,7 +44,6 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Service
@@ -446,10 +444,7 @@ public class StateService {
     public List<PrismState> getActiveProjectStates() {
         return stateDAO.getActiveProjectStates();
     }
-
-    public List<PrismState> getAvailableNextStates(Resource resource, Set<ActionRepresentation> permittedActions) {
-        return stateDAO.getAvailableNextStates(resource, permittedActions);
-    }
+    
 
     public List<State> getCurrentStates(Resource resource) {
         return stateDAO.getCurrentStates(resource);

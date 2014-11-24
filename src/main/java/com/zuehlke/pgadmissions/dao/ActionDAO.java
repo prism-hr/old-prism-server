@@ -90,7 +90,6 @@ public class ActionDAO {
     public Action getPermittedAction(Resource resource, Action action, User user) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("stateAction.action")) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.LEFT_OUTER_JOIN) //
@@ -121,18 +120,18 @@ public class ActionDAO {
                         .add(Projections.property("action.id"), "actionId") //
                         .add(Projections.property("action.actionCategory"), "actionCategory") //
                         .add(Projections.property("stateAction.raisesUrgentFlag"), "raisesUrgentFlag") //
+                        .add(Projections.property("stateAction.actionEnhancement"), "globalActionEnhancement") //
+                        .add(Projections.property("stateActionAssignment.actionEnhancement"), "customActionEnhancement") //
                         .add(Projections.property("primaryState"), "primaryState") //
                         .add(Projections.property("stateTransition.transitionState.id"), "transitionStateId") //
-                        .add(Projections.property("roleTransition.transitionRole.id"), "transitionRoleId") //
-                        .add(Projections.property("roleTransition.roleTransitionType"), "roleTransitionType") //
-                        .add(Projections.property("roleTransition.minimumPermitted"), "minimumPermitted") //
-                        .add(Projections.property("roleTransition.maximumPermitted"), "maximumPermitted")) //
+                        .add(Projections.property("transitionState.parallelizable"), "parallelizable")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateTransitions", "stateTransition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("stateTransition.roleTransitions", "roleTransition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("stateTransition.transitionState", "transitionState", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("stateTransition.stateTransitionEvaluation", "stateTransitionEvaluation", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
@@ -144,12 +143,13 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.application", resource.getApplication()))) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("stateTransition.stateTransitionEvaluation")) //
+                        .add(Restrictions.eq("stateTransitionEvaluation.nextStateSelection", true))) //
                 .add(Restrictions.eq("userRole.user", user)) //
                 .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.asc("action.id")) //
                 .addOrder(Order.asc("stateTransition.transitionState.id")) //
-                .addOrder(Order.asc("roleTransition.transitionRole.id")) //
-                .addOrder(Order.asc("roleTransition.roleTransitionType")) //
                 .setResultTransformer(Transformers.aliasToBean(ActionDTO.class)) //
                 .list();
     }
@@ -157,26 +157,15 @@ public class ActionDAO {
     public List<ActionDTO> getCreateResourceActions(PrismScope resourceScope) {
         return (List<ActionDTO>) sessionFactory.getCurrentSession().createCriteria(StateAction.class, "stateAction") //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("action.id"), "actionId") //
+                        .add(Projections.property("action.id"), "actionId") //
                         .add(Projections.property("action.actionCategory"), "actionCategory") //
-                        .add(Projections.property("raisesUrgentFlag"), "raisesUrgentFlag") //
-                        .add(Projections.groupProperty("stateTransition.transitionState.id"), "transitionStateId") //
-                        .add(Projections.groupProperty("roleTransition.transitionRole.id"), "transitionRoleId") //
-                        .add(Projections.groupProperty("roleTransition.roleTransitionType"), "roleTransitionType") //
-                        .add(Projections.property("roleTransition.minimumPermitted"), "minimumPermitted") //
-                        .add(Projections.property("roleTransition.maximumPermitted"), "maximumPermitted")) //
+                        .add(Projections.property("raisesUrgentFlag"), "raisesUrgentFlag")) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.stateTransitions", "stateTransition", JoinType.INNER_JOIN) //
-                .createAlias("stateTransition.roleTransitions", "roleTransition", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
                 .add(Restrictions.eq("action.actionCategory", PrismActionCategory.CREATE_RESOURCE)) //
                 .add(Restrictions.eq("action.scope.id", resourceScope)) //
                 .add(Restrictions.ne("action.creationScope.id", PrismScope.APPLICATION)) //
-                .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.asc("action.id")) //
-                .addOrder(Order.asc("stateTransition.transitionState.id")) //
-                .addOrder(Order.asc("roleTransition.transitionRole.id")) //
-                .addOrder(Order.asc("roleTransition.roleTransitionType")) //
                 .setResultTransformer(Transformers.aliasToBean(ActionDTO.class)) //
                 .list();
     }

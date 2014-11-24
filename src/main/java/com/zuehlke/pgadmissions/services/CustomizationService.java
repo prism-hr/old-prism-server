@@ -270,7 +270,9 @@ public class CustomizationService {
                 if (Objects.equal(configuration.getResource(), stereotypeResource) && Objects.equal(configuration.getLocale(), stereotypeLocale)
                         && Objects.equal(configuration.getProgramType(), stereotypeProgramType)) {
                     WorkflowConfigurationRepresentation representation = mapper.map(configuration, configurationType.getConfigurationRepresentationClass());
-                    localizeConfiguration(representation, configuration.getDefinition(), loader);
+                    if (configurationType.isLocalizable()) {
+                        localizeConfiguration(representation, configuration.getDefinition(), loader);
+                    }
                     representations.add(representation);
                 }
             }

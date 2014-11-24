@@ -110,7 +110,9 @@ public class ApplicationDownloadBuilder {
         pdfDocument.newPage();
 
         Image logoImage = applicationDownloadBuilderHelper.newLogoImage();
-        logoImage.setAbsolutePosition(pdfDocument.right() - logoImage.getWidth() * 0.5f, pdfDocument.top() + 20f);
+        logoImage.scaleToFit(logoImage.getWidth() * 0.5f, logoImage.getHeight() * 0.5f);
+
+        logoImage.setAbsolutePosition(pdfDocument.right() - logoImage.getScaledWidth(), pdfDocument.top() + 20f);
         pdfDocument.add(logoImage);
 
         LineSeparator lineSeparator = new LineSeparator();

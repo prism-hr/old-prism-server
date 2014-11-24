@@ -79,7 +79,7 @@ public class ApplicationDownloadBuilderHelper {
 
     public Image newLogoImage() throws BadElementException, MalformedURLException, IOException {
         Image image = Image.getInstance(Resources.getResource(logoFileLocation));
-        image.setWidthPercentage(logoFileWidthPercentage);
+        image.scaleToFit(logoFileWidthPercentage * image.getWidth(), logoFileWidthPercentage * image.getHeight());
         return image;
     }
 

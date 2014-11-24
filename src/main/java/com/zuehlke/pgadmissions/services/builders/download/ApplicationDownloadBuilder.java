@@ -31,7 +31,6 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfImportedPage;
-import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfReader;
@@ -110,8 +109,6 @@ public class ApplicationDownloadBuilder {
         pdfDocument.newPage();
 
         Image logoImage = applicationDownloadBuilderHelper.newLogoImage();
-        logoImage.scaleToFit(logoImage.getWidth() * 0.5f, logoImage.getHeight() * 0.5f);
-
         logoImage.setAbsolutePosition(pdfDocument.right() - logoImage.getScaledWidth(), pdfDocument.top() + 20f);
         pdfDocument.add(logoImage);
 
@@ -628,32 +625,15 @@ public class ApplicationDownloadBuilder {
                     addHeader(writer, document);
                     addFooter(writer, document);
                 } catch (Exception e) {
-                    LOGGER.error("Error applying header/footer to download", e);
                     throw new RuntimeException(e);
                 }
             }
         }
 
         private void addHeader(PdfWriter writer, Document pdfDocument) throws DocumentException, BadElementException, IOException {
-            float textCellWidth = 65f;
-
-            PdfPTable body = new PdfPTable(2);
-            body.setTotalWidth(pdfDocument.getPageSize().getWidth());
-            body.setWidths(new float[] { textCellWidth, logoFileWidthPercentage });
-
-            PdfPTable subBody = new PdfPTable(2);
-            body.setTotalWidth(textCellWidth * ApplicationDownloadBuilderConfiguration.PAGE_WIDTH);
-            subBody.setWidths(new float[] { 25f, 75f });
-            addApplicationSummaryExtended(application, subBody, ApplicationDownloadBuilderFontSize.SMALL);
-
-            body.addCell(subBody);
-
-            PdfPCell logoCell = new PdfPCell(applicationDownloadBuilderHelper.newLogoImage());
-            logoCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            logoCell.setVerticalAlignment(Element.ALIGN_TOP);
-            body.addCell(logoCell);
-
-            body.writeSelectedRows(0, -1, pdfDocument.left(), pdfDocument.top() + 55f, writer.getDirectContent());
+            Image logoImage = applicationDownloadBuilderHelper.newLogoImage();
+            logoImage.setAbsolutePosition(pdfDocument.right() - logoImage.getScaledWidth(), pdfDocument.top() + 20f);
+            pdfDocument.add(logoImage);
 
             LineSeparator lineSeparator = new LineSeparator();
             lineSeparator.drawLine(writer.getDirectContent(), pdfDocument.left(), pdfDocument.right(), pdfDocument.top() + 10f);

@@ -376,8 +376,9 @@ public class SystemService {
             Scope scope = scopeService.getById(prismWorkflowProperty.getScope());
             WorkflowPropertyDefinition transientWorkflowPropertyDefinition = new WorkflowPropertyDefinition().withId(prismWorkflowProperty)
                     .withCategory(prismWorkflowProperty.getCategory()).withDefineRange(prismWorkflowProperty.isDefineRange())
-                    .withCanBeDisabled(prismWorkflowProperty.isCanBeDisabled()).withMinimumPermitted(prismWorkflowProperty.getMinimumPermitted())
-                    .withMaximumPermitted(prismWorkflowProperty.getMaximumPermitted()).withScope(scope);
+                    .withCanBeDisabled(prismWorkflowProperty.isCanBeDisabled()).withCanBeOptional(prismWorkflowProperty.isCanBeOptional())
+                    .withMinimumPermitted(prismWorkflowProperty.getMinimumPermitted()).withMaximumPermitted(prismWorkflowProperty.getMaximumPermitted())
+                    .withScope(scope);
             entityService.createOrUpdate(transientWorkflowPropertyDefinition);
         }
     }

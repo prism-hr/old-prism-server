@@ -34,6 +34,9 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
 
     @Column(name = "can_be_disabled", nullable = false)
     private Boolean canBeDisabled;
+    
+    @Column(name = "can_be_optional", nullable = false)
+    private Boolean canBeOptional;
 
     @Column(name = "minimum_permitted")
     private Integer minimumPermitted;
@@ -76,6 +79,14 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
 
     public final void setCanBeDisabled(Boolean canBeDisabled) {
         this.canBeDisabled = canBeDisabled;
+    }
+
+    public final Boolean getCanBeOptional() {
+        return canBeOptional;
+    }
+
+    public final void setCanBeOptional(Boolean canBeOptional) {
+        this.canBeOptional = canBeOptional;
     }
 
     public final Integer getMinimumPermitted() {
@@ -123,6 +134,11 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
         this.canBeDisabled = canBeDisabled;
         return this;
     }
+    
+    public WorkflowPropertyDefinition withCanBeOptional(Boolean canBeOptional) {
+        this.canBeOptional = canBeOptional;
+        return this;
+    }
 
     public WorkflowPropertyDefinition withMinimumPermitted(Integer minimumPermitted) {
         this.minimumPermitted = minimumPermitted;
@@ -137,10 +153,6 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
     public WorkflowPropertyDefinition withScope(Scope scope) {
         this.scope = scope;
         return this;
-    }
-
-    public final Boolean getDefineOnOrOff() {
-        return !defineRange;
     }
 
 }

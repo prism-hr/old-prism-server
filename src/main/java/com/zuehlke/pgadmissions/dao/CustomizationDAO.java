@@ -88,8 +88,11 @@ public class CustomizationDAO {
 
         addActiveVersionCriterion(configurationType, criteria);
 
-        return (List<WorkflowConfiguration>) criteria.addOrder(Order.asc(definitionReference)) //
-                .addOrder(Order.desc("program")) //
+        for (String orderColumn : configurationType.getOrderColumns()) {
+            criteria.addOrder(Order.asc(definitionReference + "." + orderColumn));
+        }
+
+        return (List<WorkflowConfiguration>) criteria.addOrder(Order.desc("program")) //
                 .addOrder(Order.desc("institution")) //
                 .addOrder(Order.desc("system")) //
                 .addOrder(Order.asc("systemDefault")) //
@@ -107,7 +110,7 @@ public class CustomizationDAO {
         return (List<DisplayPropertyConfiguration>) sessionFactory.getCurrentSession().createCriteria(DisplayPropertyConfiguration.class) //
                 .createAlias("displayPropertyDefinition", "displayPropertyDefinition", JoinType.INNER_JOIN) //
                 .add(getResourceLocalizationCriterion(resource, scope, locale, programType)) //
-                .add(Restrictions.eq("displayPropertyDefinition.displayPropertyCategory", displayPropertyCategory)) //
+                .add(Restrictions.eq("displayPropertyDefinition.category", displayPropertyCategory)) //
                 .addOrder(Order.desc("program")) //
                 .addOrder(Order.desc("institution")) //
                 .addOrder(Order.desc("system")) //

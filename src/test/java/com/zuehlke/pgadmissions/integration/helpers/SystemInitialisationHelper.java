@@ -234,7 +234,7 @@ public class SystemInitialisationHelper {
             PrismDisplayPropertyDefinition prismDisplayProperty = (PrismDisplayPropertyDefinition) displayProperty.getId();
 
             assertEquals(value.getProgramType(), displayProperty.getScope().getPrecedence() > INSTITUTION.getPrecedence() ? getSystemProgramType() : null);
-            assertEquals(displayProperty.getDisplayPropertyCategory(), prismDisplayProperty.getDisplayCategory());
+            assertEquals(displayProperty.getCategory(), prismDisplayProperty.getDisplayCategory());
             assertEquals(value.getValue(), prismDisplayProperty.getDefaultValue());
             assertTrue(value.getSystemDefault());
         }

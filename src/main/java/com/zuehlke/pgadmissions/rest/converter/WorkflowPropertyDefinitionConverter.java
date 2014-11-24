@@ -14,7 +14,7 @@ public class WorkflowPropertyDefinitionConverter extends DozerConverter<Workflow
     @Override
     public WorkflowPropertyDefinitionRepresentation convertTo(WorkflowPropertyDefinition source, WorkflowPropertyDefinitionRepresentation destination) {
         return source == null ? null : new WorkflowPropertyDefinitionRepresentation().withId(source.getId())
-                .withRangeSpecification(source.getRangeSpecification()).withMinimumPermitted(source.getMinimumPermitted())
+                .withDefineRange(source.getDefineRange()).withMinimumPermitted(source.getMinimumPermitted())
                 .withMaximumPermitted(source.getMaximumPermitted());
     }
 

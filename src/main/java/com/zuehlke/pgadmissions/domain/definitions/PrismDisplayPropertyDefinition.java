@@ -8,21 +8,32 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCa
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FUNDING;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_LANGUAGE_QUALIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PASSPORT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PERSONAL_DETAIL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PRIZE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_QUALIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_STATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_WORKFLOW;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_STATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_STATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_STATE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_WORKFLOW;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -289,7 +300,197 @@ public enum PrismDisplayPropertyDefinition {
     APPLICATION_COMMENT_UPDATED_FUNDING(APPLICATION_COMMENT, "Updated the funding section", APPLICATION), //
     APPLICATION_COMMENT_UPDATED_REFEREE(APPLICATION_COMMENT, "Updated the referee section", APPLICATION), //
     APPLICATION_COMMENT_UPDATED_DOCUMENT(APPLICATION_COMMENT, "Updated the document section", APPLICATION), //
-    APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION(APPLICATION_COMMENT, "Updated the additional information section", APPLICATION);
+    APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION(APPLICATION_COMMENT, "Updated the additional information section", APPLICATION), APPLICATION_CONFIRM_ELIGIBILITY_DURATION_LABEL(
+            APPLICATION_STATE_DURATION, "Eligibility Confirmation Duration", APPLICATION), //
+    APPLICATION_CONFIRM_ELIGIBILITY_DURATION_TOOLTIP(APPLICATION_STATE_DURATION,
+            "The length of time you expect it to take to confirm the elibility of an applicant", APPLICATION), //
+    APPLICATION_PROVIDE_REFERENCE_DURATION_LABEL(APPLICATION_STATE_DURATION, "Reference Duration", APPLICATION), //
+    APPLICATION_PROVIDE_REFERENCE_DURATION_TOOLTIP(APPLICATION_STATE_DURATION, "The length of time you expect it to take to collect applicant references",
+            APPLICATION), //
+    APPLICATION_PROVIDE_REVIEW_DURATION_LABEL(APPLICATION_STATE_DURATION, "Review Duration", APPLICATION), //
+    APPLICATION_PROVIDE_REVIEW_DURATION_TOOLTIP(APPLICATION_STATE_DURATION, "The length of time you expect it to take to collect applicant reviews",
+            APPLICATION), //
+    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION_LABEL(APPLICATION_STATE_DURATION, "Interview Scheduling Duration", APPLICATION), //
+    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION_TOOLTIP(APPLICATION_STATE_DURATION,
+            "The length of time you expect it to take to schedule an interview", APPLICATION), APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION_LABEL(
+            APPLICATION_STATE_DURATION, "Interview Feedback Duration", APPLICATION), //
+    APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION_TOOLTIP(APPLICATION_STATE_DURATION,
+            "The length of time you expect it to take to collect feedback on an interview", APPLICATION), //
+    APPLICATION_CONFIRM_SUPERVISION_DURATION_LABEL(APPLICATION_STATE_DURATION, "Supervision Confirmation Duration", APPLICATION), //
+    APPLICATION_CONFIRM_SUPERVISION_DURATION_TOOLTIP(APPLICATION_STATE_DURATION,
+            "The length of time you expect it to take for a supervisor to confirm that they are willing to supervise an applicant", APPLICATION), //
+    APPLICATION_ESCALATE_DURATION_LABEL(APPLICATION_STATE_DURATION, "Escalation Duration", APPLICATION), //
+    APPLICATION_ESCALATE_DURATION_TOOLTIP(APPLICATION_STATE_DURATION,
+            "The length of time you wish to allow an application that is being processed to remain dormant, before it is automatically rejected or withdrawn",
+            APPLICATION), //
+    APPLICATION_PURGE_DURATION_LABEL(APPLICATION_STATE_DURATION, "Expiry Duration", APPLICATION), //
+    APPLICATION_PURGE_DURATION_TOOLTIP(APPLICATION_STATE_DURATION,
+            "The length of time you wish to keep information about a rejected or widthrawn application on record", APPLICATION), //
+    PROJECT_ESCALATE_DURATION_LABEL(PROJECT_STATE_DURATION, "Escalation Duration", APPLICATION), //
+    PROJECT_ESCALATE_DURATION_TOOLTIP(
+            PROJECT_STATE_DURATION,
+            "The length of time you wish to allow a new project request that is being processed to remain dormant, before it is automatically rejected or withdrawn",
+            APPLICATION), //
+    PROGRAM_ESCALATE_DURATION_LABEL(PROGRAM_STATE_DURATION, "Escalation Duration", APPLICATION), //
+    PROGRAM_ESCALATE_DURATION_TOOLTIP(
+            PROGRAM_STATE_DURATION,
+            "The length of time you wish to allow a new program request that is being processed to remain dormant, before it is automatically rejected or withdrawn",
+            APPLICATION), //
+    INSTITUTION_ESCALATE_DURATION_LABEL(INSTITUTION_STATE_DURATION, "Escalation Duration", APPLICATION), //
+    INSTITUTION_ESCALATE_DURATION_TOOLTIP(
+            INSTITUTION_STATE_DURATION,
+            "The length of time you wish to allow a new institution request that is being processed to remain dormant, before it is automatically rejected or withdrawn",
+            APPLICATION), //
+    APPLICATION_STUDY_DETAIL_LABEL(APPLICATION_WORKFLOW, "Advanced Study Preferences", APPLICATION), //
+    APPLICATION_STUDY_DETAIL_TOOLTIP(APPLICATION_WORKFLOW, "Enable collection of advanced study preferences", APPLICATION), //
+    APPLICATION_THEME_PRIMARY_LABEL(APPLICATION_WORKFLOW, "Primary Themes", APPLICATION), //
+    APPLICATION_THEME_PRIMARY_TOOLTIP(APPLICATION_WORKFLOW, "Enable selection of primary study themes", APPLICATION), //
+    APPLICATION_THEME_SECONDARY_LABEL(APPLICATION_WORKFLOW, "Secondary Themes", APPLICATION), //
+    APPLICATION_THEME_SECONDARY_TOOLTIP(APPLICATION_WORKFLOW, "Enable selection of secondary study themes", APPLICATION), //
+    APPLICATION_CREATOR_DEMOGRAPHIC_LABEL(APPLICATION_WORKFLOW, "Equal Opportunities Information", APPLICATION), //
+    APPLICATION_CREATOR_DEMOGRAPHIC_TOOLTIP(APPLICATION_WORKFLOW, "Enable collection of applicant equal opportunities information", APPLICATION), //
+    APPLICATION_LANGUAGE_LABEL(APPLICATION_WORKFLOW, "Language Competence", APPLICATION), //
+    APPLICATION_LANGUAGE_TOOLTIP(APPLICATION_WORKFLOW, "Enable collection of language competence information", APPLICATION), //
+    APPLICATION_LANGUAGE_PROOF_OF_AWARD_LABEL(APPLICATION_WORKFLOW, "Proof of Language Competence", APPLICATION), //
+    APPLICATION_LANGUAGE_PROOF_OF_AWARD_TOOLTIP(APPLICATION_WORKFLOW, "Enable collection of documentary proof of language competence", APPLICATION), //
+    APPLICATION_RESIDENCE_LABEL(APPLICATION_WORKFLOW, "Right of Residence", APPLICATION), //
+    APPLICATION_RESIDENCE_TOOLTIP(APPLICATION_WORKFLOW, "Enable collection of right of residence information", APPLICATION), //
+    APPLICATION_QUALIFICATION_LABEL(APPLICATION_WORKFLOW, "Qualifications", APPLICATION), //
+    APPLICATION_QUALIFICATION_TOOLTIP(APPLICATION_WORKFLOW, "Enable collection of qualification information", APPLICATION), //
+    APPLICATION_QUALIFICATION_PROOF_OF_AWARD_LABEL(APPLICATION_WORKFLOW, "Proof of Qualification", APPLICATION), //
+    APPLICATION_QUALIFICATION_PROOF_OF_AWARD_TOOLTIP(APPLICATION_WORKFLOW, "Enable collection of documentary proof of qualification", APPLICATION), //
+    APPLICATION_EMPLOYMENT_POSITION_LABEL(APPLICATION_WORKFLOW, "Employment History", APPLICATION), //
+    APPLICATION_EMPLOYMENT_POSITION_TOOLTIP(APPLICATION_WORKFLOW, "Enable collection of employment history information", APPLICATION), //
+    APPLICATION_FUNDING_LABEL(APPLICATION_WORKFLOW, "Funding", APPLICATION), //
+    APPLICATION_FUNDING_TOOLTIP(APPLICATION_WORKFLOW, "Enable collection of funding information", APPLICATION), //
+    APPLICATION_FUNDING_PROOF_OF_AWARD_LABEL(APPLICATION_WORKFLOW, "Proof of Funding", APPLICATION), //
+    APPLICATION_FUNDING_PROOF_OF_AWARD_TOOLTIP(APPLICATION_WORKFLOW, "Enable collection of documentary proof of funding", APPLICATION), //
+    APPLICATION_PRIZE_LABEL(APPLICATION_WORKFLOW, "Prizes", APPLICATION), //
+    APPLICATION_PRIZE_TOOLTIP(APPLICATION_WORKFLOW, "Enable collection of information about prizes and achievements", APPLICATION), //
+    APPLICATION_DOCUMENT_PERSONAL_STATEMENT_LABEL(APPLICATION_WORKFLOW, "Personal Statement", APPLICATION), //
+    APPLICATION_DOCUMENT_PERSONAL_STATEMENT_TOOLTIP(APPLICATION_WORKFLOW, "Enable upload of a personal statement", APPLICATION), //
+    APPLICATION_DOCUMENT_RESEARCH_STATEMENT_LABEL(APPLICATION_WORKFLOW, "Research Statement", APPLICATION), //
+    APPLICATION_DOCUMENT_RESEARCH_STATEMENT_TOOLTIP(APPLICATION_WORKFLOW, "Enable upload of a research statement", APPLICATION), //
+    APPLICATION_DOCUMENT_CV_LABEL(APPLICATION_WORKFLOW, "CV/Resume", APPLICATION), //
+    APPLICATION_DOCUMENT_CV_TOOLTIP(APPLICATION_WORKFLOW, "Enable upload of a cv/resume", APPLICATION), //
+    APPLICATION_DOCUMENT_COVERING_LETTER_LABEL(APPLICATION_WORKFLOW, "Covering Letter", APPLICATION), //
+    APPLICATION_DOCUMENT_COVERING_LETTER_TOOLTIP(APPLICATION_WORKFLOW, "Enable upload of a covering letter", APPLICATION), //
+    APPLICATION_CRIMINAL_CONVICTION_LABEL(APPLICATION_WORKFLOW, "Criminal Convictions", APPLICATION), //
+    APPLICATION_CRIMINAL_CONVICTION_TOOLTIP(APPLICATION_WORKFLOW, "Enable collection of criminal conviction information", APPLICATION), //
+    APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR_LABEL(APPLICATION_WORKFLOW, "Provisional Supervisor Assignment", APPLICATION), //
+    APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR_TOOLTIP(APPLICATION_WORKFLOW, "Specify how many provisional supervisors may be assigned during application",
+            APPLICATION), //
+    APPLICATION_ASSIGN_REFEREE_LABEL(APPLICATION_WORKFLOW, "Referee Assignment", APPLICATION), //
+    APPLICATION_ASSIGN_REFEREE_TOOLTIP(APPLICATION_WORKFLOW, "Specify how many referees may be assigned during application", APPLICATION), //
+    APPLICATION_ASSIGN_REVIEWER_LABEL(APPLICATION_WORKFLOW, "Reviewer Assignment", APPLICATION), //
+    APPLICATION_ASSIGN_REVIEWER_TOOLTIP(APPLICATION_WORKFLOW, "Specify how many reviewers may be assigned during any application processing action",
+            APPLICATION), //
+    APPLICATION_ASSIGN_INTERVIEWER_LABEL(APPLICATION_WORKFLOW, "Interviewer Assignment", APPLICATION), //
+    APPLICATION_ASSIGN_INTERVIEWER_TOOLTIP(APPLICATION_WORKFLOW, "Specify how many interviewers may be assigned during any application processing action",
+            APPLICATION), //
+    APPLICATION_ASSIGN_PRIMARY_SUPERVISOR_LABEL(APPLICATION_WORKFLOW, "Primary Supervisor Assignment", APPLICATION), //
+    APPLICATION_ASSIGN_PRIMARY_SUPERVISOR_TOOLTIP(APPLICATION_WORKFLOW,
+            "Specify how many primary supervisors may be assigned during any application processing action", APPLICATION), //
+    APPLICATION_ASSIGN_SECONDARY_SUPERVISOR_LABEL(APPLICATION_WORKFLOW, "Secondary Supervisor Assignment", APPLICATION), //
+    APPLICATION_ASSIGN_SECONDARY_SUPERVISOR_TOOLTIP(APPLICATION_WORKFLOW,
+            "Specify how many secondary supervisors may be assigned during any application processing action", APPLICATION), //
+    APPLICATION_POSITION_DETAIL_LABEL(APPLICATION_WORKFLOW, "Project Detail", APPLICATION), //
+    APPLICATION_POSITION_DETAIL_TOOLTIP(APPLICATION_WORKFLOW, "Enable collection of advanced project information", APPLICATION), //
+    APPLICATION_OFFER_DETAIL_LABEL(APPLICATION_WORKFLOW, "Offer Detail", APPLICATION), //
+    APPLICATION_OFFER_DETAIL_TOOLTIP(APPLICATION_WORKFLOW, "Enable collection of advanced terms of offer information", APPLICATION), //
+    PROJECT_PRIMARY_SUPERVISOR_LABEL(PROJECT_WORKFLOW, "Primary Supervisors", APPLICATION), //
+    PROJECT_PRIMARY_SUPERVISOR_TOOLTIP(PROJECT_WORKFLOW, "Specify how many primary supervisors a project must have", APPLICATION), //
+    PROJECT_SECONDARY_SUPERVISOR_LABEL(PROJECT_WORKFLOW, "Secondary Supervisors", APPLICATION), //
+    PROJECT_SECONDARY_SUPERVISOR_TOOLTIP(PROJECT_WORKFLOW, "Specify how many secondary supervisors a project must have", APPLICATION), //
+    APPLICATION_COMPLETE_NOTIFICATION_LABEL(APPLICATION_NOTIFICATION, "Application Complete Notification", APPLICATION), //
+    APPLICATION_COMPLETE_NOTIFICATION_TOOLTIP(APPLICATION_NOTIFICATION, "Confirmation of submission of an application", APPLICATION), //
+    APPLICATION_COMPLETE_REQUEST_LABEL(APPLICATION_NOTIFICATION, "Application Complete Request", APPLICATION), //
+    APPLICATION_COMPLETE_REQUEST_TOOLTIP(APPLICATION_NOTIFICATION, "First reminder to complete a saved application", APPLICATION), //
+    APPLICATION_COMPLETE_REQUEST_REMINDER_LABEL(APPLICATION_NOTIFICATION, "Application Complete Reminder", APPLICATION), //
+    APPLICATION_COMPLETE_REQUEST_REMINDER_TOOLTIP(APPLICATION_NOTIFICATION, "Follow up reminders to complete a saved application", APPLICATION), //
+    APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION_LABEL(APPLICATION_NOTIFICATION, "Application Confirm Interview Notification", APPLICATION), //
+    APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION_TOOLTIP(APPLICATION_NOTIFICATION, "Confirmation of arrangements for an interview", APPLICATION), //
+    APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION_LABEL(APPLICATION_NOTIFICATION, "Application Confirm Offer Notification", APPLICATION), //
+    APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION_TOOLTIP(APPLICATION_NOTIFICATION, "Confirmation of an offer recommendation", APPLICATION), //
+    APPLICATION_CONFIRM_REJECTION_NOTIFICATION_LABEL(APPLICATION_NOTIFICATION, "Application Confirm Rejection Notification", APPLICATION), //
+    APPLICATION_CONFIRM_REJECTION_NOTIFICATION_TOOLTIP(APPLICATION_NOTIFICATION, "Confirmation of a rejection", APPLICATION), //
+    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION_LABEL(APPLICATION_NOTIFICATION, "Application Interview Availability Notification", APPLICATION), //
+    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION_TOOLTIP(APPLICATION_NOTIFICATION, "Notification of submission of preferences for an interview",
+            APPLICATION), //
+    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_LABEL(APPLICATION_NOTIFICATION, "Application Interview Availability Request", APPLICATION), //
+    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_TOOLTIP(APPLICATION_NOTIFICATION, "First notification to provide preferences for an interview",
+            APPLICATION), //
+    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_REMINDER_LABEL(APPLICATION_NOTIFICATION, "Application Interview Availability Reminder", APPLICATION), //
+    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_REMINDER_TOOLTIP(APPLICATION_NOTIFICATION, "Follow up reminder to provide preferences for an interview",
+            APPLICATION), //
+    APPLICATION_PROVIDE_REFERENCE_REQUEST_LABEL(APPLICATION_NOTIFICATION, "Application Reference Request", APPLICATION), //
+    APPLICATION_PROVIDE_REFERENCE_REQUEST_TOOLTIP(APPLICATION_NOTIFICATION, "First request to provide a references for an applicant", APPLICATION), //
+    APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER_LABEL(APPLICATION_NOTIFICATION, "Application Reference Reminder", APPLICATION), //
+    APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER_TOOLTIP(APPLICATION_NOTIFICATION, "Follow up reminder to provide references for an applicant", APPLICATION), //
+    APPLICATION_TERMINATE_NOTIFICATION_LABEL(APPLICATION_NOTIFICATION, "Application Terminate Notification", APPLICATION), //
+    APPLICATION_TERMINATE_NOTIFICATION_TOOLTIP(APPLICATION_NOTIFICATION, "Notification of an application having been terminated by the system", APPLICATION), //
+    APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION_LABEL(APPLICATION_NOTIFICATION, "Application Update Interview Availability Notification",
+            APPLICATION), //
+    APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION_TOOLTIP(APPLICATION_NOTIFICATION, "Notification of revision of preferences for an interview",
+            APPLICATION), //
+    INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION_LABEL(INSTITUTION_NOTIFICATION, "Institution Complete Approval Notification", INSTITUTION), //
+    INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION_TOOLTIP(INSTITUTION_NOTIFICATION, "Notification that a new institution request has been moderated",
+            INSTITUTION), //
+    INSTITUTION_CORRECT_REQUEST_LABEL(INSTITUTION_NOTIFICATION, "Institution Correct Request", INSTITUTION), //
+    INSTITUTION_CORRECT_REQUEST_TOOLTIP(INSTITUTION_NOTIFICATION, "First request to provide clarifications/corrections to a new institution request",
+            INSTITUTION), //
+    INSTITUTION_CORRECT_REQUEST_REMINDER_LABEL(INSTITUTION_NOTIFICATION, "Institution Correct Reminder", INSTITUTION), //
+    INSTITUTION_CORRECT_REQUEST_REMINDER_TOOLTIP(INSTITUTION_NOTIFICATION,
+            "Follup reminder to provide clarifications/corrections to a new institution request", INSTITUTION), //
+    INSTITUTION_IMPORT_ERROR_NOTIFICATION_LABEL(INSTITUTION_NOTIFICATION, "Institution Import Error Notification", INSTITUTION), //
+    INSTITUTION_IMPORT_ERROR_NOTIFICATION_TOOLTIP(INSTITUTION_NOTIFICATION, "Notification of failure to import institution reference data", INSTITUTION), //
+    INSTITUTION_STARTUP_NOTIFICATION_LABEL(INSTITUTION_NOTIFICATION, "Institution Startup Notification", INSTITUTION), //
+    INSTITUTION_STARTUP_NOTIFICATION_TOOLTIP(INSTITUTION_NOTIFICATION, "Notification that an institution has been initialised and is ready to use", INSTITUTION), //
+    PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION_LABEL(PROGRAM_NOTIFICATION, "Program Complete Approval Notification", PROGRAM), //
+    PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION_TOOLTIP(PROGRAM_NOTIFICATION, "Notification that a new program request has been moderated", PROGRAM), //
+    PROGRAM_CORRECT_REQUEST_LABEL(PROGRAM_NOTIFICATION, "Program Correct Request", PROGRAM), //
+    PROGRAM_CORRECT_REQUEST_TOOLTIP(PROGRAM_NOTIFICATION, "First request to provide clarifications/corrections to a new program request", PROGRAM), //
+    PROGRAM_CORRECT_REQUEST_REMINDER_LABEL(PROGRAM_NOTIFICATION, "Program Correct Reminder", PROGRAM), //
+    PROGRAM_CORRECT_REQUEST_REMINDER_TOOLTIP(PROGRAM_NOTIFICATION, "Follow up reminder to provide clarifications/corrections to a new program request", PROGRAM), //
+    PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION_LABEL(PROJECT_NOTIFICATION, "Project Complete Approval Notification", PROJECT), //
+    PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION_TOOLTIP(PROJECT_NOTIFICATION, "Notification that a new project request has been moderated", PROJECT), //
+    PROJECT_CORRECT_REQUEST_LABEL(PROJECT_NOTIFICATION, "Project Correct Request", PROJECT), //
+    PROJECT_CORRECT_REQUEST_TOOLTIP(PROJECT_NOTIFICATION, "First request to provide clarifications/corrections to a new project request", PROJECT), //
+    PROJECT_CORRECT_REQUEST_REMINDER_LABEL(PROJECT_NOTIFICATION, "Project Correct Reminder", PROJECT), //
+    PROJECT_CORRECT_REQUEST_REMINDER_TOOLTIP(PROJECT_NOTIFICATION, "Follow up request to provide clarifications/corrections to a new project request", PROJECT), //
+    SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION_LABEL(SYSTEM_NOTIFICATION, "System Recommendation Notification", SYSTEM), //
+    SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION_TOOLTIP(SYSTEM_NOTIFICATION, "Notification of recommended programs/projects to a potential applicant",
+            SYSTEM), //
+    SYSTEM_APPLICATION_TASK_REQUEST_LABEL(SYSTEM_NOTIFICATION, "System Application Task Request", SYSTEM), //
+    SYSTEM_APPLICATION_TASK_REQUEST_TOOLTIP(SYSTEM_NOTIFICATION, "First request to perform tasks on applications", SYSTEM), //
+    SYSTEM_APPLICATION_TASK_REQUEST_REMINDER_LABEL(SYSTEM_NOTIFICATION, "System Application Task Reminder", SYSTEM), //
+    SYSTEM_APPLICATION_TASK_REQUEST_REMINDER_TOOLTIP(SYSTEM_NOTIFICATION, "Follow up reminder to perform tasks on applications", SYSTEM), //
+    SYSTEM_APPLICATION_UPDATE_NOTIFICATION_LABEL(SYSTEM_NOTIFICATION, "System Application Update Notification", SYSTEM), //
+    SYSTEM_APPLICATION_UPDATE_NOTIFICATION_TOOLTIP(SYSTEM_NOTIFICATION, "Notification of updates to a given user's applications", SYSTEM), //
+    SYSTEM_COMPLETE_REGISTRATION_REQUEST_LABEL(SYSTEM_NOTIFICATION, "System Complete Registration Request", SYSTEM), //
+    SYSTEM_COMPLETE_REGISTRATION_REQUEST_TOOLTIP(SYSTEM_NOTIFICATION, "Request to complete registration by confirming username/password", SYSTEM), //
+    SYSTEM_INSTITUTION_TASK_REQUEST_LABEL(SYSTEM_NOTIFICATION, "System Institution Task Request", SYSTEM), //
+    SYSTEM_INSTITUTION_TASK_REQUEST_TOOLTIP(SYSTEM_NOTIFICATION, "First request to perform tasks on institutions", SYSTEM), //
+    SYSTEM_INSTITUTION_TASK_REQUEST_REMINDER_LABEL(SYSTEM_NOTIFICATION, "System Institution Task Reminder", SYSTEM), //
+    SYSTEM_INSTITUTION_TASK_REQUEST_REMINDER_TOOLTIP(SYSTEM_NOTIFICATION, "Follow up reminder to perform tasks on institutions", SYSTEM), //
+    SYSTEM_INSTITUTION_UPDATE_NOTIFICATION_LABEL(SYSTEM_NOTIFICATION, "System Institution Update Notification", SYSTEM), //
+    SYSTEM_INSTITUTION_UPDATE_NOTIFICATION_TOOLTIP(SYSTEM_NOTIFICATION, "Notification of updates to a given user's institutions", SYSTEM), //
+    SYSTEM_INVITATION_NOTIFICATION_LABEL(SYSTEM_NOTIFICATION, "System Invitation Notification", SYSTEM), //
+    SYSTEM_INVITATION_NOTIFICATION_TOOLTIP(SYSTEM_NOTIFICATION, "Notification of invitation to register by another user", SYSTEM), //
+    SYSTEM_PASSWORD_NOTIFICATION_LABEL(SYSTEM_NOTIFICATION, "System Password Notification", SYSTEM), //
+    SYSTEM_PASSWORD_NOTIFICATION_TOOLTIP(SYSTEM_NOTIFICATION, "Notification of a temporary system access to allow a new password to be set", SYSTEM), //
+    SYSTEM_PROGRAM_TASK_REQUEST_LABEL(SYSTEM_NOTIFICATION, "System Program Task Request", SYSTEM), //
+    SYSTEM_PROGRAM_TASK_REQUEST_TOOLTIP(SYSTEM_NOTIFICATION, "First request to perform tasks on programs", SYSTEM), //
+    SYSTEM_PROGRAM_TASK_REQUEST_REMINDER_LABEL(SYSTEM_NOTIFICATION, "System Program Task Reminder", SYSTEM), //
+    SYSTEM_PROGRAM_TASK_REQUEST_REMINDER_TOOLTIP(SYSTEM_NOTIFICATION, "Follow up reminder to perform tasks on programs", SYSTEM), //
+    SYSTEM_PROGRAM_UPDATE_NOTIFICATION_LABEL(SYSTEM_NOTIFICATION, "System Program Update Notification", SYSTEM), //
+    SYSTEM_PROGRAM_UPDATE_NOTIFICATION_TOOLTIP(SYSTEM_NOTIFICATION, "Notification of updates to a given user's programs", SYSTEM), //
+    SYSTEM_PROJECT_TASK_REQUEST_LABEL(SYSTEM_NOTIFICATION, "System Project Task Request", SYSTEM), //
+    SYSTEM_PROJECT_TASK_REQUEST_TOOLTIP(SYSTEM_NOTIFICATION, "First request to perform tasks on projects", SYSTEM), //
+    SYSTEM_PROJECT_TASK_REQUEST_REMINDER_LABEL(SYSTEM_NOTIFICATION, "System Project Task Reminder", SYSTEM), //
+    SYSTEM_PROJECT_TASK_REQUEST_REMINDER_TOOLTIP(SYSTEM_NOTIFICATION, "Follow up request to perform tasks on projects", SYSTEM), //
+    SYSTEM_PROJECT_UPDATE_NOTIFICATION_LABEL(SYSTEM_NOTIFICATION, "System Project Update Notification", SYSTEM), //
+    SYSTEM_PROJECT_UPDATE_NOTIFICATION_TOOLTIP(SYSTEM_NOTIFICATION, "Notification of updates to a given user's projects", SYSTEM); //
 
     private PrismDisplayPropertyCategory displayCategory;
 

@@ -154,7 +154,7 @@ public class ResourceResource {
             representation.setWorkflowPropertyConfigurations(customizationService.getConfigurationRepresentations(PrismConfiguration.WORKFLOW_PROPERTY,
                     resource, userService.getCurrentUser()));
         } else {
-            representation.setWorkflowPropertyConfigurations(customizationService.getConfigurationRepresentationsWithVersion(
+            representation.setWorkflowPropertyConfigurations(customizationService.getConfigurationRepresentationsWithVersion(resource,
                     PrismConfiguration.WORKFLOW_PROPERTY, workflowPropertyConfigurationVersion));
         }
 

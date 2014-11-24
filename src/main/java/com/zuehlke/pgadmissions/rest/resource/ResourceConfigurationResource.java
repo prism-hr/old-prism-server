@@ -86,7 +86,8 @@ public class ResourceConfigurationResource {
                                                                                   @ModelAttribute ResourceDescriptor resourceDescriptor,
                                                                                   @PathVariable Integer resourceId,
                                                                                   @RequestParam Integer version) throws Exception {
-        return customizationService.getConfigurationRepresentationsWithVersion(configurationType, version);
+        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        return customizationService.getConfigurationRepresentationsWithVersion(resource, configurationType, version);
     }
 
     @RequestMapping(value = "{configurationType:notifications}/{id}", method = RequestMethod.DELETE, headers = "Restore-Type")

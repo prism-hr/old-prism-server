@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 
 @Entity
@@ -24,8 +25,15 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
     @Enumerated(EnumType.STRING)
     private PrismWorkflowPropertyDefinition id;
 
-    @Column(name = "range_specification", nullable = false)
-    private Boolean rangeSpecification;
+    @Column(name = "category", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismWorkflowPropertyCategory category;
+
+    @Column(name = "define_range", nullable = false)
+    private Boolean defineRange;
+
+    @Column(name = "can_be_disabled", nullable = false)
+    private Boolean canBeDisabled;
 
     @Column(name = "minimum_permitted")
     private Integer minimumPermitted;
@@ -46,12 +54,28 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
         this.id = id;
     }
 
-    public final Boolean getRangeSpecification() {
-        return rangeSpecification;
+    public final PrismWorkflowPropertyCategory getCategory() {
+        return category;
     }
 
-    public final void setRangeSpecification(Boolean rangeSpecification) {
-        this.rangeSpecification = rangeSpecification;
+    public final void setCategory(PrismWorkflowPropertyCategory category) {
+        this.category = category;
+    }
+
+    public final Boolean getDefineRange() {
+        return defineRange;
+    }
+
+    public final void setDefineRange(Boolean defineRange) {
+        this.defineRange = defineRange;
+    }
+
+    public final Boolean getCanBeDisabled() {
+        return canBeDisabled;
+    }
+
+    public final void setCanBeDisabled(Boolean canBeDisabled) {
+        this.canBeDisabled = canBeDisabled;
     }
 
     public final Integer getMinimumPermitted() {
@@ -85,8 +109,18 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
         return this;
     }
 
-    public WorkflowPropertyDefinition withRangeSpecification(Boolean rangeSpecification) {
-        this.rangeSpecification = rangeSpecification;
+    public WorkflowPropertyDefinition withCategory(PrismWorkflowPropertyCategory category) {
+        this.category = category;
+        return this;
+    }
+
+    public WorkflowPropertyDefinition withDefineRange(Boolean defineRange) {
+        this.defineRange = defineRange;
+        return this;
+    }
+
+    public WorkflowPropertyDefinition withCanBeDisabled(Boolean canBeDisabled) {
+        this.canBeDisabled = canBeDisabled;
         return this;
     }
 
@@ -103,6 +137,10 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
     public WorkflowPropertyDefinition withScope(Scope scope) {
         this.scope = scope;
         return this;
+    }
+
+    public final Boolean getDefineOnOrOff() {
+        return !defineRange;
     }
 
 }

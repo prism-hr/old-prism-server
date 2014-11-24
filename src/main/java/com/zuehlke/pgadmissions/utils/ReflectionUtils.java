@@ -6,17 +6,17 @@ import org.apache.commons.lang.WordUtils;
 
 public class ReflectionUtils {
 
-    public static Object getStaticProperty (Class<?> clazz, String property) {
+    public static Object getStaticProperty(Class<?> clazz, String property) {
         try {
             return clazz.getField(property).get(null);
         } catch (Exception e) {
             throw new Error(e);
         }
     }
-    
+
     public static Object getProperty(Object bean, String property) {
         try {
-            return  PropertyUtils.getSimpleProperty(bean, property);
+            return PropertyUtils.getSimpleProperty(bean, property);
         } catch (Exception e) {
             throw new Error(e);
         }
@@ -30,6 +30,10 @@ public class ReflectionUtils {
         }
     }
 
+    public static boolean hasProperty(Object bean, String property) {
+        return PropertyUtils.isReadable(bean, property);
+    }
+
     public static Object invokeMethod(Object bean, String methodName, Object... inputs) {
         try {
             return MethodUtils.invokeMethod(bean, methodName, inputs);
@@ -37,7 +41,7 @@ public class ReflectionUtils {
             throw new Error(e);
         }
     }
-    
+
     public static String getMethodName(Enum<?> definition) {
         String[] nameParts = definition.name().split("_");
         String methodName = "get";

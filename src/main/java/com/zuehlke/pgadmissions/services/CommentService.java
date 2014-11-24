@@ -418,7 +418,7 @@ public class CommentService {
         for (CommentCustomResponseDTO response : commentDTO.getCustomResponses()) {
             ActionCustomQuestionConfiguration configuration = entityService.getById(ActionCustomQuestionConfiguration.class, response.getId());
             comment.getCustomResponses().add(
-                    new CommentCustomResponse().withActionCustomQuestionConfiguration(configuration).withPropertyValue(response.getValue()));
+                    new CommentCustomResponse().withActionCustomQuestionConfiguration(configuration).withPropertyValue(response.getPropertyValue()));
         }
     }
 
@@ -521,7 +521,7 @@ public class CommentService {
         representation.setInterviewDurationEndDateTimeDisplay(comment.getInterviewEndDateTimeDisplay(loader.load(PrismDisplayPropertyDefinition.SYSTEM_DATE_TIME_FORMAT),
                 loader.load(PrismDisplayPropertyDefinition.SYSTEM_TIME_FORMAT)));
         representation.setEmphasizedAction(action.getEmphasizedAction());
-        
+
         return representation;
     }
 

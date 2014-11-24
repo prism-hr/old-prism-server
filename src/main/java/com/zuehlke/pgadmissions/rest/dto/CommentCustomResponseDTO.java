@@ -7,23 +7,21 @@ public class CommentCustomResponseDTO {
     @NotNull
     private Integer id;
 
-    @NotNull
-    private String value;
+    private String propertyValue;
 
-    public final Integer getId() {
+    public  Integer getId() {
         return id;
     }
 
-    public final void setId(Integer id) {
+    public  void setId(Integer id) {
         this.id = id;
     }
 
-    public final String getValue() {
-        return value;
+    public String getPropertyValue() {
+        return propertyValue;
     }
 
-    public final void setValue(String value) {
-        this.value = value;
+    public void setPropertyValue(String propertyValue) {
+        this.propertyValue = propertyValue;
     }
-
 }

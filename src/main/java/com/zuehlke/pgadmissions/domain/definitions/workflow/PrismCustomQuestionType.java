@@ -4,29 +4,25 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.google.common.collect.Maps;
 
 public enum PrismCustomQuestionType {
 
-    INPUT(String.class, "input", null), //
-    TEXT_AREA(String.class, "textArea", null), //
-    SELECT_SINGLE(String.class, "selectSingle", null), //
-    SELECT_MULTIPLE(String.class, "selectMultiple", null), //
-    RATING_NORMAL(Integer.class, "ratingNormal", Arrays.asList((Object) 1, 2, 3, 4, 5)), //
-    RATING_WEIGHTED(Integer.class, "ratingWeighted", Arrays.asList((Object) 1, 2, 3, 5, 8)), //
-    DATE(LocalDate.class, "date", null), //
-    DATE_RANGE(LocalDate.class, "dateRange", null), //
-    DATE_TIME(DateTime.class, "dateTime", null), //
-    DATE_TIME_RANGE(DateTime.class, "dateTimeRange", null);
-
-    private Class<?> propertyClass;
+    INPUT("textInput", null), //
+    TEXT_AREA("textArea", null), //
+    RADIO("radio", null), //
+    SELECT_SINGLE("selectSingle", null), //
+    SELECT_MULTIPLE("selectMultiple", null), //
+    RATING_NORMAL("ratingNormal", Arrays.asList("1", "2", "3", "4", "5")), //
+    RATING_WEIGHTED("ratingWeighted", Arrays.asList("1", "2", "3", "5", "8")), //
+    DATE("date", null), //
+    DATE_RANGE("dateRange", null), //
+    DATE_TIME("dateTime", null), //
+    DATE_TIME_RANGE("dateTimeRange", null);
 
     private String componentName;
 
-    private List<Object> permittedValues;
+    private List<String> permittedValues;
 
     private static final HashMap<String, PrismCustomQuestionType> componentNameIndex = Maps.newHashMap();
 
@@ -36,21 +32,16 @@ public enum PrismCustomQuestionType {
         }
     }
 
-    private PrismCustomQuestionType(Class<?> propertyClass, String componentName, List<Object> permittedValues) {
-        this.propertyClass = propertyClass;
+    private PrismCustomQuestionType(String componentName, List<String> permittedValues) {
         this.componentName = componentName;
         this.permittedValues = permittedValues;
-    }
-
-    public final Class<?> getPropertyClass() {
-        return propertyClass;
     }
 
     public final String getComponentName() {
         return componentName;
     }
 
-    public final List<Object> getPermittedValues() {
+    public final List<String> getPermittedValues() {
         return permittedValues;
     }
 

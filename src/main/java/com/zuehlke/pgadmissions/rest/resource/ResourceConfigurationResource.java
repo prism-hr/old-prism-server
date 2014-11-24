@@ -4,15 +4,10 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.zuehlke.pgadmissions.rest.validation.validator.ActionCustomQuestionValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 
 import com.google.common.base.CaseFormat;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
@@ -45,6 +40,9 @@ public class ResourceConfigurationResource {
 
     @Autowired
     private CustomizationService customizationService;
+
+    @Autowired
+    private ActionCustomQuestionValidator actionCustomQuestionValidator;
 
     @RequestMapping(value = "{configurationType:notifications}/{id}", method = RequestMethod.GET)
     public WorkflowConfigurationRepresentation getConfiguration(@ModelAttribute PrismConfiguration configurationType,
@@ -203,6 +201,11 @@ public class ResourceConfigurationResource {
         String singleForm = WordUtils.singularize(configurationType);
         String typeName = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, singleForm);
         return PrismConfiguration.valueOf(typeName);
+    }
+
+    @InitBinder(value = "actionCustomQuestionConfigurationDTO")
+    public void registerActionCustomQuestionConfigurationDTOValidator(WebDataBinder binder){
+        binder.setValidator(actionCustomQuestionValidator);
     }
 
 }

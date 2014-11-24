@@ -72,10 +72,6 @@
                 <class-a>com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition</class-a>
                 <class-b>com.zuehlke.pgadmissions.rest.representation.workflow.NotificationDefinitionRepresentation</class-b>
             </converter>
-            <converter type="com.zuehlke.pgadmissions.rest.converter.WorkflowPropertyDefinitionConverter">
-                <class-a>com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition</class-a>
-                <class-b>com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowPropertyDefinitionRepresentation</class-b>
-            </converter>
             <converter type="com.zuehlke.pgadmissions.rest.converter.ActionCustomQuestionConfigurationConverter">
                 <class-a>com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionConfigurationDTO.ActionCustomQuestionConfigurationValueDTO</class-a>
                 <class-b>com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration</class-b>
@@ -265,6 +261,15 @@
         <field type="one-way" copy-by-reference="true">
             <a>definition.id</a>
             <b>definitionId</b>
+        </field>
+    </mapping>
+
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowPropertyDefinitionRepresentation</class-b>
+        <field copy-by-reference="true">
+            <a>id</a>
+            <b>id</b>
         </field>
     </mapping>
 

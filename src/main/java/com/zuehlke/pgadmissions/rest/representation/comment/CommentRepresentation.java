@@ -34,9 +34,9 @@ public class CommentRepresentation {
 
     private LocalDate userSpecifiedDueDate;
 
-    private PrismYesNoUnsureResponse eligible;
+    private PrismYesNoUnsureResponse applicationEligible;
 
-    private Boolean interested;
+    private Boolean applicationInterested;
 
     private String residenceState;
 
@@ -51,7 +51,7 @@ public class CommentRepresentation {
     private LocalDateTime interviewDateTime;
 
     private TimeZone interviewTimeZone;
-    
+
     private String interviewDurationDisplay;
 
     private String intervieweeInstructions;
@@ -178,20 +178,20 @@ public class CommentRepresentation {
         this.userSpecifiedDueDate = userSpecifiedDueDate;
     }
 
-    public PrismYesNoUnsureResponse getEligible() {
-        return eligible;
+    public PrismYesNoUnsureResponse getApplicationEligible() {
+        return applicationEligible;
     }
 
-    public void setEligible(PrismYesNoUnsureResponse eligible) {
-        this.eligible = eligible;
+    public void setApplicationEligible(PrismYesNoUnsureResponse applicationEligible) {
+        this.applicationEligible = applicationEligible;
     }
 
-    public Boolean getInterested() {
-        return interested;
+    public Boolean getApplicationInterested() {
+        return applicationInterested;
     }
 
-    public void setInterested(Boolean interested) {
-        this.interested = interested;
+    public void setApplicationInterested(Boolean applicationInterested) {
+        this.applicationInterested = applicationInterested;
     }
 
     public String getResidenceState() {

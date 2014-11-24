@@ -1,19 +1,16 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.math.BigDecimal;
-import java.util.Set;
-import java.util.TimeZone;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
-
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.TimeZone;
 
 public class CommentDTO {
 
@@ -28,9 +25,9 @@ public class CommentDTO {
 
     private PrismState transitionState;
 
-    private PrismYesNoUnsureResponse eligible;
+    private PrismYesNoUnsureResponse applicationEligible;
 
-    private Boolean interested;
+    private Boolean applicationInterested;
 
     private BigDecimal applicationRating;
 
@@ -72,20 +69,20 @@ public class CommentDTO {
     private ProjectDTO project;
 
     @Valid
-    private Set<CommentAssignedUserDTO> assignedUsers;
+    private List<CommentAssignedUserDTO> assignedUsers;
 
     @Valid
-    private Set<CommentTransitionStateDTO> transitionStates;
+    private List<CommentTransitionStateDTO> transitionStates;
 
-    private Set<LocalDateTime> appointmentTimeslots;
+    private List<LocalDateTime> appointmentTimeslots;
 
-    private Set<Integer> appointmentPreferences;
-
-    @Valid
-    private Set<CommentCustomResponseDTO> customResponse;
+    private List<Integer> appointmentPreferences;
 
     @Valid
-    private Set<FileDTO> documents = Sets.newLinkedHashSet();
+    private List<CommentCustomResponseDTO> customResponses;
+
+    @Valid
+    private List<FileDTO> documents;
 
     public Integer getUser() {
         return user;
@@ -127,20 +124,20 @@ public class CommentDTO {
         this.transitionState = transitionState;
     }
 
-    public PrismYesNoUnsureResponse getEligible() {
-        return eligible;
+    public PrismYesNoUnsureResponse getApplicationEligible() {
+        return applicationEligible;
     }
 
-    public void setEligible(PrismYesNoUnsureResponse eligible) {
-        this.eligible = eligible;
+    public void setApplicationEligible(PrismYesNoUnsureResponse applicationEligible) {
+        this.applicationEligible = applicationEligible;
     }
 
-    public Boolean getInterested() {
-        return interested;
+    public Boolean getApplicationInterested() {
+        return applicationInterested;
     }
 
-    public void setInterested(Boolean interested) {
-        this.interested = interested;
+    public void setApplicationInterested(Boolean applicationInterested) {
+        this.applicationInterested = applicationInterested;
     }
 
     public BigDecimal getApplicationRating() {
@@ -279,51 +276,51 @@ public class CommentDTO {
         this.project = project;
     }
 
-    public Set<CommentAssignedUserDTO> getAssignedUsers() {
+    public List<CommentAssignedUserDTO> getAssignedUsers() {
         return assignedUsers;
     }
 
-    public void setAssignedUsers(Set<CommentAssignedUserDTO> assignedUsers) {
+    public void setAssignedUsers(List<CommentAssignedUserDTO> assignedUsers) {
         this.assignedUsers = assignedUsers;
     }
 
-    public Set<CommentTransitionStateDTO> getTransitionStates() {
+    public List<CommentTransitionStateDTO> getTransitionStates() {
         return transitionStates;
     }
 
-    public void setTransitionStates(Set<CommentTransitionStateDTO> transitionStates) {
+    public void setTransitionStates(List<CommentTransitionStateDTO> transitionStates) {
         this.transitionStates = transitionStates;
     }
 
-    public Set<LocalDateTime> getAppointmentTimeslots() {
+    public List<LocalDateTime> getAppointmentTimeslots() {
         return appointmentTimeslots;
     }
 
-    public void setAppointmentTimeslots(Set<LocalDateTime> appointmentTimeslots) {
+    public void setAppointmentTimeslots(List<LocalDateTime> appointmentTimeslots) {
         this.appointmentTimeslots = appointmentTimeslots;
     }
 
-    public Set<Integer> getAppointmentPreferences() {
+    public List<Integer> getAppointmentPreferences() {
         return appointmentPreferences;
     }
 
-    public void setAppointmentPreferences(Set<Integer> appointmentPreferences) {
+    public void setAppointmentPreferences(List<Integer> appointmentPreferences) {
         this.appointmentPreferences = appointmentPreferences;
     }
 
-    public Set<CommentCustomResponseDTO> getCustomResponses() {
-        return customResponse;
+    public List<CommentCustomResponseDTO> getCustomResponses() {
+        return customResponses;
     }
 
-    public void setCustomResponses(Set<CommentCustomResponseDTO> customResponses) {
-        this.customResponse = customResponses;
+    public void setCustomResponses(List<CommentCustomResponseDTO> customResponses) {
+        this.customResponses = customResponses;
     }
 
-    public Set<FileDTO> getDocuments() {
+    public List<FileDTO> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(Set<FileDTO> documents) {
+    public void setDocuments(List<FileDTO> documents) {
         this.documents = documents;
     }
 

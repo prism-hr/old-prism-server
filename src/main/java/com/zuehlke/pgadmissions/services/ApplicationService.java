@@ -260,8 +260,8 @@ public class ApplicationService {
 
         Comment comment = new Comment().withResource(application).withContent(commentDTO.getContent()).withUser(user).withDelegateUser(delegateUser)
                 .withAction(action).withTransitionState(transitionState).withCreatedTimestamp(new DateTime())
-                .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse())).withApplicationEligible(commentDTO.getEligible())
-                .withApplicationInterested(commentDTO.getInterested()).withInterviewDateTime(commentDTO.getInterviewDateTime())
+                .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse())).withApplicationEligible(commentDTO.getApplicationEligible())
+                .withApplicationInterested(commentDTO.getApplicationInterested()).withInterviewDateTime(commentDTO.getInterviewDateTime())
                 .withInterviewTimeZone(commentDTO.getInterviewTimeZone()).withInterviewDuration(commentDTO.getInterviewDuration())
                 .withInterviewerInstructions(commentDTO.getInterviewerInstructions()).withIntervieweeInstructions(commentDTO.getIntervieweeInstructions())
                 .withInterviewLocation(commentDTO.getInterviewLocation()).withPositionTitle(commentDTO.getPositionTitle())

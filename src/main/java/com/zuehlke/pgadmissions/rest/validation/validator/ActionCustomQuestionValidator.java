@@ -19,7 +19,7 @@ public class ActionCustomQuestionValidator extends LocalValidatorFactoryBean imp
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return Application.class.isAssignableFrom(clazz);
+        return ActionCustomQuestionConfigurationDTO.class.isAssignableFrom(clazz);
     }
 
     @Override

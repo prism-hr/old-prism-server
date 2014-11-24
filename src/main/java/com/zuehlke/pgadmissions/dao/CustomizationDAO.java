@@ -102,7 +102,7 @@ public class CustomizationDAO {
     public List<WorkflowConfiguration> getConfigurationsWithVersion(PrismConfiguration configurationType, Integer version) {
         return (List<WorkflowConfiguration>) sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
                 .add(Restrictions.eq("version", version)) //
-                .uniqueResult();
+                .list();
     }
 
     public List<DisplayPropertyConfiguration> getDisplayPropertyConfiguration(Resource resource, PrismScope scope,

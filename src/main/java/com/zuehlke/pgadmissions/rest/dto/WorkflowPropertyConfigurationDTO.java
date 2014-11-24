@@ -18,8 +18,9 @@ public class WorkflowPropertyConfigurationDTO extends ArrayList<WorkflowProperty
         @NotNull
         private PrismWorkflowPropertyDefinition definitionId;
 
-        @NotNull
         private Boolean enabled;
+
+        private Boolean required;
 
         @Min(0)
         @Max(999)
@@ -45,6 +46,14 @@ public class WorkflowPropertyConfigurationDTO extends ArrayList<WorkflowProperty
             this.enabled = enabled;
         }
 
+        public final Boolean getRequired() {
+            return required;
+        }
+
+        public final void setRequired(Boolean required) {
+            this.required = required;
+        }
+
         public Integer getMinimum() {
             return minimum;
         }
@@ -68,6 +77,11 @@ public class WorkflowPropertyConfigurationDTO extends ArrayList<WorkflowProperty
 
         public WorkflowPropertyConfigurationValueDTO withEnabled(Boolean enabled) {
             this.enabled = enabled;
+            return this;
+        }
+
+        public WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO withRequired(Boolean required) {
+            this.required = required;
             return this;
         }
 

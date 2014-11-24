@@ -366,7 +366,7 @@ public class SystemService {
         for (PrismDisplayPropertyDefinition prismDisplayProperty : PrismDisplayPropertyDefinition.values()) {
             Scope scope = scopeService.getById(prismDisplayProperty.getScope());
             DisplayPropertyDefinition transientDisplayProperty = new DisplayPropertyDefinition().withId(prismDisplayProperty)
-                    .withDisplayPropertyCategory(prismDisplayProperty.getDisplayCategory()).withScope(scope);
+                    .withCategory(prismDisplayProperty.getDisplayCategory()).withScope(scope);
             entityService.createOrUpdate(transientDisplayProperty);
         }
     }
@@ -375,7 +375,8 @@ public class SystemService {
         for (PrismWorkflowPropertyDefinition prismWorkflowProperty : PrismWorkflowPropertyDefinition.values()) {
             Scope scope = scopeService.getById(prismWorkflowProperty.getScope());
             WorkflowPropertyDefinition transientWorkflowPropertyDefinition = new WorkflowPropertyDefinition().withId(prismWorkflowProperty)
-                    .withRangeSpecification(prismWorkflowProperty.isRangeSpecification()).withMinimumPermitted(prismWorkflowProperty.getMinimumPermitted())
+                    .withCategory(prismWorkflowProperty.getCategory()).withDefineRange(prismWorkflowProperty.isDefineRange())
+                    .withCanBeDisabled(prismWorkflowProperty.isCanBeDisabled()).withMinimumPermitted(prismWorkflowProperty.getMinimumPermitted())
                     .withMaximumPermitted(prismWorkflowProperty.getMaximumPermitted()).withScope(scope);
             entityService.createOrUpdate(transientWorkflowPropertyDefinition);
         }
@@ -425,7 +426,7 @@ public class SystemService {
             for (PrismWorkflowPropertyDefinition prismWorkflowProperty : PrismWorkflowPropertyDefinition.values()) {
                 if (prismScope == prismWorkflowProperty.getScope()) {
                     configurationDTO.add(new WorkflowPropertyConfigurationValueDTO().withDefinition(prismWorkflowProperty)
-                            .withEnabled(prismWorkflowProperty.isDefaultEnabled()).withMinimum(prismWorkflowProperty.getDefaultMinimum())
+                            .withEnabled(prismWorkflowProperty.getDefaultEnabled()).withMinimum(prismWorkflowProperty.getDefaultMinimum())
                             .withMaximum(prismWorkflowProperty.getDefaultMaximum()));
                 }
             }

@@ -1,19 +1,11 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "WORKFLOW_PROPERTY_DEFINITION")
@@ -46,51 +38,51 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
     private Scope scope;
 
     @Override
-    public final PrismWorkflowPropertyDefinition getId() {
+    public PrismWorkflowPropertyDefinition getId() {
         return id;
     }
 
-    public final void setId(PrismWorkflowPropertyDefinition id) {
+    public void setId(PrismWorkflowPropertyDefinition id) {
         this.id = id;
     }
 
-    public final PrismWorkflowPropertyCategory getCategory() {
+    public PrismWorkflowPropertyCategory getCategory() {
         return category;
     }
 
-    public final void setCategory(PrismWorkflowPropertyCategory category) {
+    public void setCategory(PrismWorkflowPropertyCategory category) {
         this.category = category;
     }
 
-    public final Boolean getDefineRange() {
+    public Boolean getDefineRange() {
         return defineRange;
     }
 
-    public final void setDefineRange(Boolean defineRange) {
+    public void setDefineRange(Boolean defineRange) {
         this.defineRange = defineRange;
     }
 
-    public final Boolean getCanBeDisabled() {
+    public Boolean getCanBeDisabled() {
         return canBeDisabled;
     }
 
-    public final void setCanBeDisabled(Boolean canBeDisabled) {
+    public void setCanBeDisabled(Boolean canBeDisabled) {
         this.canBeDisabled = canBeDisabled;
     }
 
-    public final Integer getMinimumPermitted() {
+    public Integer getMinimumPermitted() {
         return minimumPermitted;
     }
 
-    public final void setMinimumPermitted(Integer minimumPermitted) {
+    public void setMinimumPermitted(Integer minimumPermitted) {
         this.minimumPermitted = minimumPermitted;
     }
 
-    public final Integer getMaximumPermitted() {
+    public Integer getMaximumPermitted() {
         return maximumPermitted;
     }
 
-    public final void setMaximumPermitted(Integer maximumPermitted) {
+    public void setMaximumPermitted(Integer maximumPermitted) {
         this.maximumPermitted = maximumPermitted;
     }
 
@@ -139,7 +131,7 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
         return this;
     }
 
-    public final Boolean getDefineOnOrOff() {
+    public Boolean getDefineOnOrOff() {
         return !defineRange;
     }
 

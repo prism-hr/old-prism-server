@@ -6,6 +6,8 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 
+import java.util.Set;
+
 public class ProgramExtendedRepresentation extends AbstractResourceRepresentation {
 
     private InstitutionRepresentation institution;
@@ -23,6 +25,8 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
     private Boolean requireProjectDefinition;
 
     private AdvertRepresentation advert;
+
+    private Set<String> locations;
 
     public InstitutionRepresentation getInstitution() {
         return institution;
@@ -86,5 +90,13 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
 
     public void setAdvert(AdvertRepresentation advert) {
         this.advert = advert;
+    }
+
+    public Set<String> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(Set<String> locations) {
+        this.locations = locations;
     }
 }

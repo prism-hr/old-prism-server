@@ -1,32 +1,47 @@
 package com.zuehlke.pgadmissions.rest.representation.workflow;
 
 public class WorkflowPropertyDefinitionRepresentation extends StateDurationDefinitionRepresentation {
-    
-    private Boolean rangeSpecification;
 
-    public final Boolean getRangeSpecification() {
-        return rangeSpecification;
+    private Boolean defineRange;
+
+    private Boolean canBeDisabled;
+
+    public final Boolean getDefineRange() {
+        return defineRange;
     }
 
-    public final void setRangeSpecification(Boolean rangeSpecification) {
-        this.rangeSpecification = rangeSpecification;
+    public final void setDefineRange(Boolean defineRange) {
+        this.defineRange = defineRange;
     }
-    
+
+    public final Boolean getCanBeDisabled() {
+        return canBeDisabled;
+    }
+
+    public final void setCanBeDisabled(Boolean canBeDisabled) {
+        this.canBeDisabled = canBeDisabled;
+    }
+
     public WorkflowPropertyDefinitionRepresentation withId(Enum<?> id) {
         setId(id);
         return this;
     }
-    
-    public WorkflowPropertyDefinitionRepresentation withRangeSpecification(Boolean rangeSpecification) {
-        this.rangeSpecification = rangeSpecification;
+
+    public WorkflowPropertyDefinitionRepresentation withDefineRange(Boolean defineRange) {
+        this.defineRange = defineRange;
         return this;
     }
-    
+
+    public WorkflowPropertyDefinitionRepresentation withCanBeDisabled(Boolean canBeDisabled) {
+        this.canBeDisabled = canBeDisabled;
+        return this;
+    }
+
     public WorkflowPropertyDefinitionRepresentation withMinimumPermitted(Integer minimumPermitted) {
         setMinimumPermitted(minimumPermitted);
         return this;
     }
-    
+
     public WorkflowPropertyDefinitionRepresentation withMaximumPermitted(Integer maximumPermitted) {
         setMaximumPermitted(maximumPermitted);
         return this;

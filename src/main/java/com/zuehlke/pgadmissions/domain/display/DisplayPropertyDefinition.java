@@ -7,6 +7,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -25,11 +26,13 @@ public class DisplayPropertyDefinition extends WorkflowDefinition {
     @Id
     @Column(name = "id", nullable = false)
     @Enumerated(EnumType.STRING)
+    @OrderColumn
     private PrismDisplayPropertyDefinition id;
 
-    @Column(name = "display_property_category", nullable = false)
+    @Column(name = "category", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PrismDisplayPropertyCategory displayPropertyCategory;
+    @OrderColumn
+    private PrismDisplayPropertyCategory category;
 
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
@@ -44,12 +47,12 @@ public class DisplayPropertyDefinition extends WorkflowDefinition {
         this.id = id;
     }
 
-    public final PrismDisplayPropertyCategory getDisplayPropertyCategory() {
-        return displayPropertyCategory;
+    public final PrismDisplayPropertyCategory getCategory() {
+        return category;
     }
 
-    public final void setDisplayPropertyCategory(PrismDisplayPropertyCategory displayPropertyCategory) {
-        this.displayPropertyCategory = displayPropertyCategory;
+    public final void setCategory(PrismDisplayPropertyCategory category) {
+        this.category = category;
     }
 
     @Override
@@ -67,8 +70,8 @@ public class DisplayPropertyDefinition extends WorkflowDefinition {
         return this;
     }
 
-    public DisplayPropertyDefinition withDisplayPropertyCategory(PrismDisplayPropertyCategory displayPropertyCategory) {
-        this.displayPropertyCategory = displayPropertyCategory;
+    public DisplayPropertyDefinition withCategory(PrismDisplayPropertyCategory displayPropertyCategory) {
+        this.category = displayPropertyCategory;
         return this;
     }
 

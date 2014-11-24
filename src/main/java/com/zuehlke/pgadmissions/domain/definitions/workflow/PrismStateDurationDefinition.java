@@ -1,36 +1,63 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_CONFIRM_ELIGIBILITY_DURATION_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_CONFIRM_ELIGIBILITY_DURATION_TOOLTIP;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_CONFIRM_SUPERVISION_DURATION_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_CONFIRM_SUPERVISION_DURATION_TOOLTIP;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_ESCALATE_DURATION_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_ESCALATE_DURATION_TOOLTIP;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION_TOOLTIP;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION_TOOLTIP;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROVIDE_REFERENCE_DURATION_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROVIDE_REFERENCE_DURATION_TOOLTIP;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROVIDE_REVIEW_DURATION_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROVIDE_REVIEW_DURATION_TOOLTIP;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PURGE_DURATION_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PURGE_DURATION_TOOLTIP;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.INSTITUTION_ESCALATE_DURATION_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.INSTITUTION_ESCALATE_DURATION_TOOLTIP;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_ESCALATE_DURATION_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_ESCALATE_DURATION_TOOLTIP;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROJECT_ESCALATE_DURATION_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROJECT_ESCALATE_DURATION_TOOLTIP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 
 public enum PrismStateDurationDefinition {
 
-    APPLICATION_CONFIRM_ELIGIBILITY_DURATION(3, APPLICATION), //
-    APPLICATION_PROVIDE_REFERENCE_DURATION(7, APPLICATION), //
-    APPLICATION_PROVIDE_REVIEW_DURATION(7, APPLICATION), //
-    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION(3, APPLICATION), //
-    APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION(7, APPLICATION), //
-    APPLICATION_CONFIRM_SUPERVISION_DURATION(3, APPLICATION), //
-    APPLICATION_ESCALATE_DURATION(28, APPLICATION), //
-    APPLICATION_PURGE_DURATION(168, APPLICATION), //
-    PROJECT_ESCALATE_DURATION(28, PROJECT), //
-    PROGRAM_ESCALATE_DURATION(28, PROGRAM), //
-    INSTITUTION_ESCALATE_DURATION(28, INSTITUTION), //
-    SYSTEM_APPLICATION_TASK_REMINDER_DURATION(3, SYSTEM), //
-    SYSTEM_PROJECT_TASK_REMINDER_DURATION(3, SYSTEM), //
-    SYSTEM_PROGRAM_TASK_REMINDER_DURATION(3, SYSTEM), //
-    SYSTEM_INSTITUTION_TASK_REMINDER_DURATION(3, SYSTEM);
+    APPLICATION_CONFIRM_ELIGIBILITY_DURATION(3, APPLICATION, APPLICATION_CONFIRM_ELIGIBILITY_DURATION_LABEL, APPLICATION_CONFIRM_ELIGIBILITY_DURATION_TOOLTIP), //
+    APPLICATION_PROVIDE_REFERENCE_DURATION(7, APPLICATION, APPLICATION_PROVIDE_REFERENCE_DURATION_LABEL, APPLICATION_PROVIDE_REFERENCE_DURATION_TOOLTIP), //
+    APPLICATION_PROVIDE_REVIEW_DURATION(7, APPLICATION, APPLICATION_PROVIDE_REVIEW_DURATION_LABEL, APPLICATION_PROVIDE_REVIEW_DURATION_TOOLTIP), //
+    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION(3, APPLICATION, APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION_LABEL,
+            APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION_TOOLTIP), //
+    APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION(7, APPLICATION, APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION_LABEL,
+            APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION_TOOLTIP), //
+    APPLICATION_CONFIRM_SUPERVISION_DURATION(3, APPLICATION, APPLICATION_CONFIRM_SUPERVISION_DURATION_LABEL, APPLICATION_CONFIRM_SUPERVISION_DURATION_TOOLTIP), //
+    APPLICATION_ESCALATE_DURATION(28, APPLICATION, APPLICATION_ESCALATE_DURATION_LABEL, APPLICATION_ESCALATE_DURATION_TOOLTIP), //
+    APPLICATION_PURGE_DURATION(168, APPLICATION, APPLICATION_PURGE_DURATION_LABEL, APPLICATION_PURGE_DURATION_TOOLTIP), //
+    PROJECT_ESCALATE_DURATION(28, PROJECT, PROJECT_ESCALATE_DURATION_LABEL, PROJECT_ESCALATE_DURATION_TOOLTIP), //
+    PROGRAM_ESCALATE_DURATION(28, PROGRAM, PROGRAM_ESCALATE_DURATION_LABEL, PROGRAM_ESCALATE_DURATION_TOOLTIP), //
+    INSTITUTION_ESCALATE_DURATION(28, INSTITUTION, INSTITUTION_ESCALATE_DURATION_LABEL, INSTITUTION_ESCALATE_DURATION_TOOLTIP);
 
     private Integer defaultDuration;
 
     private PrismScope scope;
 
-    private PrismStateDurationDefinition(Integer defaultDuration, PrismScope scope) {
+    private PrismDisplayPropertyDefinition label;
+
+    private PrismDisplayPropertyDefinition tooltip;
+
+    private PrismStateDurationDefinition(Integer defaultDuration, PrismScope scope, PrismDisplayPropertyDefinition label, PrismDisplayPropertyDefinition tooltip) {
         this.defaultDuration = defaultDuration;
         this.scope = scope;
+        this.label = label;
+        this.tooltip = tooltip;
     }
 
     public final Integer getDefaultDuration() {
@@ -39,6 +66,14 @@ public enum PrismStateDurationDefinition {
 
     public final PrismScope getScope() {
         return scope;
+    }
+
+    public final PrismDisplayPropertyDefinition getLabel() {
+        return label;
+    }
+
+    public final PrismDisplayPropertyDefinition getTooltip() {
+        return tooltip;
     }
 
 }

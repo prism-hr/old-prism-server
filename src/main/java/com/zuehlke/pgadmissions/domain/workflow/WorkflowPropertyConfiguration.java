@@ -60,8 +60,11 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
     @Column(name = "version")
     private Integer version;
 
-    @Column(name = "enabled", nullable = false)
+    @Column(name = "enabled")
     private Boolean enabled;
+
+    @Column(name = "required")
+    private Boolean required;
 
     @Column(name = "minimum")
     private Integer minimum;
@@ -159,6 +162,14 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
         this.enabled = enabled;
     }
 
+    public final Boolean getRequired() {
+        return required;
+    }
+
+    public final void setRequired(Boolean required) {
+        this.required = required;
+    }
+
     public final Integer getMinimum() {
         return minimum;
     }
@@ -230,6 +241,11 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
         return this;
     }
 
+    public WorkflowPropertyConfiguration withRequired(Boolean required) {
+        this.required = required;
+        return this;
+    }
+
     public WorkflowPropertyConfiguration withMinimum(Integer minimum) {
         this.minimum = minimum;
         return this;
@@ -248,10 +264,6 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
     public WorkflowPropertyConfiguration withSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
         return this;
-    }
-
-    public boolean isRangeSpecification() {
-        return !(minimum == null && maximum == null);
     }
 
     @Override

@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Service
@@ -51,6 +53,9 @@ public class CustomizationService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Autowired
     private Mapper mapper;
@@ -81,7 +86,14 @@ public class CustomizationService {
             PrismProgramType programType, WorkflowDefinition definition) {
         resource = getConfiguredResource(resource);
         WorkflowConfiguration configuration = getConfiguration(configurationType, resource, locale, programType, definition);
-        return mapper.map(configuration, configurationType.getConfigurationRepresentationClass());
+        WorkflowConfigurationRepresentation representation = mapper.map(configuration, configurationType.getConfigurationRepresentationClass());
+
+        if (configurationType.isLocalizable()) {
+            PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource, userService.getCurrentUser());
+            localizeConfiguration(representation, definition, loader);
+        }
+
+        return representation;
     }
 
     public List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource resource, User user) {
@@ -96,23 +108,24 @@ public class CustomizationService {
             PrismLocale locale, PrismProgramType programType, WorkflowDefinition definition) {
         resource = getConfiguredResource(resource);
         List<WorkflowConfiguration> configurations = customizationDAO.getConfigurations(configurationType, resource, locale, programType, definition);
-        return parseRepresentations(configurationType, configurations);
+        return parseRepresentations(resource, configurationType, configurations);
     }
 
     public List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource resource, PrismScope scope,
             PrismLocale locale, PrismProgramType programType) {
         resource = getConfiguredResource(resource);
         List<WorkflowConfiguration> configurations = customizationDAO.getConfigurations(configurationType, resource, scope, locale, programType);
-        return parseRepresentations(configurationType, configurations);
+        return parseRepresentations(resource, configurationType, configurations);
     }
 
     public List<WorkflowConfiguration> getConfigurationsWithVersion(PrismConfiguration configurationType, Integer version) {
         return customizationDAO.getConfigurationsWithVersion(configurationType, version);
     }
 
-    public List<WorkflowConfigurationRepresentation> getConfigurationRepresentationsWithVersion(PrismConfiguration configurationType, Integer version) {
+    public List<WorkflowConfigurationRepresentation> getConfigurationRepresentationsWithVersion(Resource resource, PrismConfiguration configurationType,
+            Integer version) {
         List<WorkflowConfiguration> configurations = getConfigurationsWithVersion(configurationType, version);
-        return parseRepresentations(configurationType, configurations);
+        return parseRepresentations(resource, configurationType, configurations);
     }
 
     public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
@@ -239,8 +252,10 @@ public class CustomizationService {
         return resource.getResourceScope().getPrecedence() > PrismScope.PROGRAM.getPrecedence() ? resource.getProgram() : resource;
     }
 
-    private List<WorkflowConfigurationRepresentation> parseRepresentations(PrismConfiguration configurationType, List<WorkflowConfiguration> configurations) {
+    private List<WorkflowConfigurationRepresentation> parseRepresentations(Resource resource, PrismConfiguration configurationType,
+            List<WorkflowConfiguration> configurations) {
         List<WorkflowConfigurationRepresentation> representations = Lists.newLinkedList();
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource, userService.getCurrentUser());
 
         if (configurations.isEmpty()) {
             return representations;
@@ -254,7 +269,9 @@ public class CustomizationService {
             for (WorkflowConfiguration configuration : configurations) {
                 if (Objects.equal(configuration.getResource(), stereotypeResource) && Objects.equal(configuration.getLocale(), stereotypeLocale)
                         && Objects.equal(configuration.getProgramType(), stereotypeProgramType)) {
-                    representations.add(mapper.map(configuration, configurationType.getConfigurationRepresentationClass()));
+                    WorkflowConfigurationRepresentation representation = mapper.map(configuration, configurationType.getConfigurationRepresentationClass());
+                    localizeConfiguration(representation, configuration.getDefinition(), loader);
+                    representations.add(representation);
                 }
             }
 
@@ -289,6 +306,17 @@ public class CustomizationService {
             version = version == null ? persistentConfiguration.getId() : version;
             ReflectionUtils.setProperty(persistentConfiguration, "version", version);
         }
+    }
+
+    private void localizeConfiguration(WorkflowConfigurationRepresentation representation, WorkflowDefinition definition, PropertyLoader loader) {
+        if (ReflectionUtils.hasProperty(representation, "category")) {
+            ReflectionUtils.setProperty(representation, "category", ReflectionUtils.getProperty(definition, "category"));
+        }
+
+        ReflectionUtils.setProperty(representation, "label",
+                loader.load((PrismDisplayPropertyDefinition) ReflectionUtils.getProperty(definition.getId(), "label")));
+        ReflectionUtils.setProperty(representation, "tooltip",
+                loader.load((PrismDisplayPropertyDefinition) ReflectionUtils.getProperty(definition.getId(), "tooltip")));
     }
 
 }

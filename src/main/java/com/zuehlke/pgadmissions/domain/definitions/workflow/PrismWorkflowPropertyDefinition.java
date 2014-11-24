@@ -178,7 +178,7 @@ public enum PrismWorkflowPropertyDefinition {
     }
 
     public final boolean isDefineRange() {
-        return defaultRequired == null;
+        return !(minimumPermitted == null);
     }
 
     public final boolean isCanBeDisabled() {

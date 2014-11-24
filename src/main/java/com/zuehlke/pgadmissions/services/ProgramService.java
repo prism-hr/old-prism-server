@@ -219,6 +219,7 @@ public class ProgramService {
         }
 
         program.getLocations().clear();
+        entityService.flush();
         for (String location : programDTO.getLocations()) {
             program.addLocation(location);
         }

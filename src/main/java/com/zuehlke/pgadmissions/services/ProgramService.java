@@ -157,8 +157,11 @@ public class ProgramService {
         ProgramDTO programDTO = (ProgramDTO) commentDTO.fetchResouceDTO();
         LocalDate dueDate = programDTO.getEndDate();
 
-        State transitionState = viewEditAction && (dueDate == null || !dueDate.isBefore(new LocalDate())) ? programDAO.getPreviousState(program) : stateService
-                .getById(commentDTO.getTransitionState());
+        State transitionState = stateService.getById(commentDTO.getTransitionState());
+        if (viewEditAction && !program.getImported() && transitionState == null && dueDate.isAfter(new LocalDate())) {
+            transitionState = programDAO.getPreviousState(program);
+        }
+        
         Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
                 .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
 
@@ -216,10 +219,8 @@ public class ProgramService {
         }
 
         program.getLocations().clear();
-        if(programDTO.getLocations() != null) {
-            for (String location : programDTO.getLocations()) {
-                program.addLocation(location);
-            }
+        for (String location : programDTO.getLocations()) {
+            program.addLocation(location);
         }
 
         advert.setSummary(programDTO.getSummary());

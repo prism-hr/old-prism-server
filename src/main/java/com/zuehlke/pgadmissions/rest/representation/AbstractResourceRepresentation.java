@@ -7,7 +7,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -33,10 +32,6 @@ public class AbstractResourceRepresentation {
     private DateTime updatedTimestamp;
 
     private Set<ActionRepresentation> actions = Sets.newLinkedHashSet();
-
-    private List<PrismActionEnhancement> actionEnhancements;
-
-    private List<PrismState> nextStates;
 
     private List<PrismState> recommendedNextStates;
 
@@ -116,22 +111,6 @@ public class AbstractResourceRepresentation {
 
     public final void setActions(Set<ActionRepresentation> actions) {
         this.actions = actions;
-    }
-
-    public List<PrismActionEnhancement> getActionEnhancements() {
-        return actionEnhancements;
-    }
-
-    public void setActionEnhancements(List<PrismActionEnhancement> actionEnhancements) {
-        this.actionEnhancements = actionEnhancements;
-    }
-
-    public List<PrismState> getNextStates() {
-        return nextStates;
-    }
-
-    public void setNextStates(List<PrismState> nextStates) {
-        this.nextStates = nextStates;
     }
 
     public final List<PrismState> getRecommendedNextStates() {

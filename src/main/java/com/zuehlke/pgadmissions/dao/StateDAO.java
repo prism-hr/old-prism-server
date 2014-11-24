@@ -1,11 +1,9 @@
 package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -27,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -80,7 +77,7 @@ public class StateDAO {
     public void deleteObseleteStateDurations() {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete StateDurationConfiguration " //
-                    + "where stateDurationDefinition not in ( " //
+                        + "where stateDurationDefinition not in ( " //
                         + "select stateDurationDefinition " //
                         + "from State " //
                         + "group by stateDurationDefinition)") //
@@ -129,7 +126,7 @@ public class StateDAO {
                 .add(Restrictions.eq("stateGroup.id", stateGroupId)) //
                 .list();
     }
-    
+
     public List<State> getCurrentStates(Resource resource) {
         return (List<State>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("state")) //
@@ -137,26 +134,7 @@ public class StateDAO {
                 .addOrder(Order.desc("primaryState")) //
                 .list();
     }
-    
-    public List<PrismState> getAvailableNextStates(Resource resource, Set<ActionRepresentation> permittedActions) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
-                .setProjection(Projections.property("transitionState.id")) //
-                .createAlias("stateAction", "stateAction") //
-                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
-                .createAlias("stateTransitionEvaluation", "stateTransitionEvaluation", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("stateAction.state", resource.getState())) //
-                .add(Restrictions.eq("stateTransitionEvaluation.nextStateSelection", true)); //
 
-        Junction disjunction = Restrictions.disjunction();
-        for (ActionRepresentation permittedAction : permittedActions) {
-            disjunction.add(Restrictions.eq("stateAction.action.id", permittedAction.getName()));
-        }
-
-        return criteria.add(disjunction) //
-                .addOrder(Order.asc("stateGroup.sequenceOrder")).list(); //
-    }
-    
     public String getRecommendedNextStates(Resource resource) {
         Resource parentResource = resource.getParentResource();
         return (String) sessionFactory.getCurrentSession().createCriteria(ResourceStateTransitionSummary.class) //

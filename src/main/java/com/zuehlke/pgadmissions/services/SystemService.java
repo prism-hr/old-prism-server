@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -426,9 +427,13 @@ public class SystemService {
             WorkflowPropertyConfigurationDTO configurationDTO = new WorkflowPropertyConfigurationDTO();
             for (PrismWorkflowPropertyDefinition prismWorkflowProperty : PrismWorkflowPropertyDefinition.values()) {
                 if (prismScope == prismWorkflowProperty.getScope()) {
+                    boolean canBeDisabled = prismWorkflowProperty.isCanBeDisabled();
+                    boolean canBeOptional = prismWorkflowProperty.isCanBeOptional();
+
                     configurationDTO.add(new WorkflowPropertyConfigurationValueDTO().withDefinition(prismWorkflowProperty)
-                            .withEnabled(prismWorkflowProperty.getDefaultEnabled()).withMinimum(prismWorkflowProperty.getDefaultMinimum())
-                            .withMaximum(prismWorkflowProperty.getDefaultMaximum()));
+                            .withEnabled(!canBeDisabled ? BooleanUtils.toBoolean(prismWorkflowProperty.getDefaultEnabled()) : canBeDisabled)
+                            .withRequired(!canBeOptional ? BooleanUtils.toBoolean(prismWorkflowProperty.getDefaultRequired()) : canBeOptional)
+                            .withMinimum(prismWorkflowProperty.getDefaultMinimum()).withMaximum(prismWorkflowProperty.getDefaultMaximum()));
                 }
             }
             persistConfigurations(PrismConfiguration.WORKFLOW_PROPERTY, system, prismScope, configurationDTO);

@@ -40,7 +40,6 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.StateTransitionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.StateTransitionRepresentation.RoleTransitionRepresentation;
 
 @Service
 @Transactional
@@ -281,39 +280,45 @@ public class ActionService {
         HashMap<PrismAction, ActionRepresentation> representations = Maps.newHashMap();
         for (ActionDTO action : actions) {
             PrismAction thisActionId = action.getActionId();
+            boolean primaryState = action.isCreateResourceAction() || action.getPrimaryState();
 
             if (!representations.containsKey(thisActionId)) {
                 thisActionRepresentation = new ActionRepresentation().withName(thisActionId).withRaisesUrgentFlag(action.getRaisesUrgentFlag())
                         .withPrimaryState(action.getPrimaryState());
                 representations.put(thisActionId, thisActionRepresentation);
             } else {
+                thisActionRepresentation = representations.get(thisActionId);
                 boolean raisesUrgentFlag = action.getRaisesUrgentFlag();
                 if (raisesUrgentFlag) {
-                    representations.get(thisActionId).setRaisesUrgentFlag(raisesUrgentFlag);
+                    thisActionRepresentation.setRaisesUrgentFlag(raisesUrgentFlag);
                 }
 
-                boolean primaryState = action.isCreateResourceAction() || action.getPrimaryState();
                 if (primaryState) {
-                    representations.get(thisActionId).setPrimaryState(primaryState);
+                    thisActionRepresentation.setPrimaryState(primaryState);
                 }
             }
 
-            PrismState thisTransitionStateId = action.getTransitionStateId();
-
-            if (!representations.containsKey(thisTransitionStateId) || (thisTransitionStateId != null && thisTransitionStateId != lastTransitionStateId)) {
-                thisStateTransitionRepresentation = new StateTransitionRepresentation().withTransitionStateId(thisTransitionStateId);
-                thisActionRepresentation.addStateTransition(thisStateTransitionRepresentation);
+            PrismActionEnhancement globalActionEnhancement = action.getGlobalActionEnhancement();
+            if (globalActionEnhancement != null) {
+                thisActionRepresentation.addActionEnhancement(globalActionEnhancement);
             }
 
-            PrismRole thisTransitionRoleId = action.getTransitionRoleId();
-
-            if (thisTransitionRoleId != null) {
-                thisStateTransitionRepresentation.addRoleTransition(new RoleTransitionRepresentation().withRoleId(thisTransitionRoleId)
-                        .withRoleTransitionType(action.getRoleTransitionType()).withMinimumPermitted(action.getMinimumPermitted())
-                        .withMaximumPermitted(action.getMaximumPermitted()));
+            PrismActionEnhancement customActionEnhancement = action.getCustomActionEnhancement();
+            if (customActionEnhancement != null) {
+                thisActionRepresentation.addActionEnhancement(customActionEnhancement);
             }
 
-            lastTransitionStateId = thisTransitionStateId;
+            if (primaryState) {
+                PrismState thisTransitionStateId = action.getTransitionStateId();
+
+                if (!representations.containsKey(thisTransitionStateId) || (thisTransitionStateId != null && thisTransitionStateId != lastTransitionStateId)) {
+                    thisStateTransitionRepresentation = new StateTransitionRepresentation().withTransitionStateId(thisTransitionStateId).withParallelizable(
+                            action.getParallelizable());
+                    thisActionRepresentation.addStateTransition(thisStateTransitionRepresentation);
+                }
+
+                lastTransitionStateId = thisTransitionStateId;
+            }
         }
 
         return Sets.newLinkedHashSet(representations.values());

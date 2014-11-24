@@ -5,8 +5,7 @@ import java.util.Set;
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 public class ActionRepresentation {
@@ -16,6 +15,8 @@ public class ActionRepresentation {
     private Boolean raisesUrgentFlag;
 
     private Boolean primaryState;
+
+    private Set<PrismActionEnhancement> actionEnhancements = Sets.newLinkedHashSet();
 
     private Set<StateTransitionRepresentation> stateTransitions = Sets.newLinkedHashSet();
 
@@ -37,6 +38,14 @@ public class ActionRepresentation {
 
     public final Boolean getPrimaryState() {
         return primaryState;
+    }
+
+    public final Set<PrismActionEnhancement> getActionEnhancements() {
+        return actionEnhancements;
+    }
+
+    public final void addActionEnhancement(PrismActionEnhancement actionEnhancement) {
+        actionEnhancements.add(actionEnhancement);
     }
 
     public final void setPrimaryState(Boolean primaryState) {
@@ -62,7 +71,7 @@ public class ActionRepresentation {
         return stateTransitions;
     }
 
-    public void addStateTransition(StateTransitionRepresentation stateTransition) {
+    public final void addStateTransition(StateTransitionRepresentation stateTransition) {
         stateTransitions.add(stateTransition);
     }
 
@@ -87,14 +96,14 @@ public class ActionRepresentation {
 
         private PrismState transitionStateId;
 
-        private Set<RoleTransitionRepresentation> roleTransitions = Sets.newLinkedHashSet();
+        private Boolean parallelizable;
 
         public final PrismState getTransitionStateId() {
             return transitionStateId;
         }
 
-        public final Set<RoleTransitionRepresentation> getRoleTransitions() {
-            return roleTransitions;
+        public final Boolean getParallelizable() {
+            return parallelizable;
         }
 
         public ActionRepresentation.StateTransitionRepresentation withTransitionStateId(PrismState transitionStateId) {
@@ -102,8 +111,9 @@ public class ActionRepresentation {
             return this;
         }
 
-        public void addRoleTransition(RoleTransitionRepresentation roleTransition) {
-            roleTransitions.add(roleTransition);
+        public ActionRepresentation.StateTransitionRepresentation withParallelizable(Boolean parallelizable) {
+            this.parallelizable = parallelizable;
+            return this;
         }
 
         @Override
@@ -120,72 +130,7 @@ public class ActionRepresentation {
                 return false;
             }
             final StateTransitionRepresentation other = (StateTransitionRepresentation) object;
-            return Objects.equal(transitionStateId, other.getTransitionStateId()) && roleTransitions.containsAll(other.getRoleTransitions());
-        }
-
-        public static class RoleTransitionRepresentation {
-
-            private PrismRole roleId;
-
-            private PrismRoleTransitionType roleTransitionType;
-
-            private Integer minimumPermitted;
-
-            private Integer maximumPermitted;
-
-            public final PrismRole getRoleId() {
-                return roleId;
-            }
-
-            public final PrismRoleTransitionType getRoleTransitionType() {
-                return roleTransitionType;
-            }
-
-            public final Integer getMinimumPermitted() {
-                return minimumPermitted;
-            }
-
-            public final Integer getMaximumPermitted() {
-                return maximumPermitted;
-            }
-
-            public RoleTransitionRepresentation withRoleId(PrismRole roleId) {
-                this.roleId = roleId;
-                return this;
-            }
-
-            public RoleTransitionRepresentation withRoleTransitionType(PrismRoleTransitionType roleTransitionType) {
-                this.roleTransitionType = roleTransitionType;
-                return this;
-            }
-
-            public RoleTransitionRepresentation withMinimumPermitted(Integer minimumPermitted) {
-                this.minimumPermitted = minimumPermitted;
-                return this;
-            }
-
-            public RoleTransitionRepresentation withMaximumPermitted(Integer maximumPermitted) {
-                this.maximumPermitted = maximumPermitted;
-                return this;
-            }
-
-            @Override
-            public int hashCode() {
-                return Objects.hashCode(roleId, roleTransitionType);
-            }
-
-            @Override
-            public boolean equals(Object object) {
-                if (object == null) {
-                    return false;
-                }
-                if (getClass() != object.getClass()) {
-                    return false;
-                }
-                final RoleTransitionRepresentation other = (RoleTransitionRepresentation) object;
-                return Objects.equal(roleId, other.getRoleId()) && Objects.equal(roleTransitionType, other.getRoleTransitionType());
-            }
-
+            return Objects.equal(transitionStateId, other.getTransitionStateId());
         }
 
     }

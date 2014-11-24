@@ -22,31 +22,30 @@ public class ApplicationDownloadBuilderConfiguration {
     public static final Font MEDIUM_FONT_GREY = new Font(FONT_FAMILY, ApplicationDownloadBuilderFontSize.MEDIUM.getSize(), Font.NORMAL,
             ApplicationDownloadBuilderColor.GREY.getColor());
 
-    public static final Font MEDIUM_FONT_BLUE_UNDERLINE = new Font(FONT_FAMILY, ApplicationDownloadBuilderFontSize.MEDIUM.getSize(), Font.UNDERLINE,
-            BaseColor.BLUE);
+    public static final Font MEDIUM_FONT_BLUE = new Font(FONT_FAMILY, ApplicationDownloadBuilderFontSize.MEDIUM.getSize(), Font.NORMAL, BaseColor.BLUE);
 
     public static final Font SMALL_FONT = new Font(FONT_FAMILY, ApplicationDownloadBuilderFontSize.SMALL.getSize(), Font.NORMAL);
 
     public static final Font SMALL_FONT_BOLD = new Font(FONT_FAMILY, ApplicationDownloadBuilderFontSize.SMALL.getSize(), Font.BOLD);
 
     public static final Font getFont(ApplicationDownloadBuilderFontSize size) {
-        return getFont(size, null, false, false);
+        return getFont(size, null, false);
     }
 
     public static final Font getEmptyFont(ApplicationDownloadBuilderFontSize size) {
-        return getFont(size, ApplicationDownloadBuilderColor.GREY, false, false);
+        return getFont(size, ApplicationDownloadBuilderColor.GREY, false);
     }
 
     public static final Font getBoldFont(ApplicationDownloadBuilderFontSize size) {
-        return getFont(size, null, true, false);
+        return getFont(size, null, true);
     }
 
     public static final Font getLinkFont(ApplicationDownloadBuilderFontSize size) {
-        return getFont(size, ApplicationDownloadBuilderColor.BLUE, false, true);
+        return getFont(size, ApplicationDownloadBuilderColor.BLUE, false);
     }
 
-    private static final Font getFont(ApplicationDownloadBuilderFontSize size, ApplicationDownloadBuilderColor color, boolean bold, boolean underline) {
-        String property = size.name() + "_FONT" + (color == null ? "" : "_" + color.name()) + (bold ? "_BOLD" : "") + (underline ? "_UNDERLINE" : "");
+    private static final Font getFont(ApplicationDownloadBuilderFontSize size, ApplicationDownloadBuilderColor color, boolean bold) {
+        String property = size.name() + "_FONT" + (color == null ? "" : "_" + color.name()) + (bold ? "_BOLD" : "");
         return (Font) ReflectionUtils.getStaticProperty(ApplicationDownloadBuilderConfiguration.class, property);
     }
 

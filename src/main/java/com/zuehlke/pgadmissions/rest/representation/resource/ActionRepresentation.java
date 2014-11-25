@@ -10,7 +10,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 public class ActionRepresentation {
 
-    private PrismAction name;
+    private PrismAction id;
 
     private Boolean raisesUrgentFlag;
 
@@ -20,12 +20,12 @@ public class ActionRepresentation {
 
     private Set<NextStateRepresentation> nextStates = Sets.newLinkedHashSet();
 
-    public PrismAction getName() {
-        return name;
+    public PrismAction getId() {
+        return id;
     }
 
-    public final void setName(PrismAction name) {
-        this.name = name;
+    public void setId(PrismAction id) {
+        this.id = id;
     }
 
     public Boolean getRaisesUrgentFlag() {
@@ -52,8 +52,8 @@ public class ActionRepresentation {
         this.primaryState = primaryState;
     }
 
-    public ActionRepresentation withName(PrismAction name) {
-        this.name = name;
+    public ActionRepresentation withId(final PrismAction id) {
+        this.id = id;
         return this;
     }
 
@@ -77,7 +77,7 @@ public class ActionRepresentation {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name);
+        return Objects.hashCode(id);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class ActionRepresentation {
             return false;
         }
         final ActionRepresentation other = (ActionRepresentation) object;
-        return Objects.equal(name, other.getName());
+        return Objects.equal(id, other.getId());
     }
 
     public static class NextStateRepresentation {

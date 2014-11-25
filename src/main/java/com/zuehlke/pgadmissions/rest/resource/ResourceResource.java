@@ -258,7 +258,7 @@ public class ResourceResource {
         representation.setActions(actionService.getPermittedActions(resourceScope, rowDTO.getSystemId(), rowDTO.getInstitutionId(), rowDTO.getProgramId(),
                 rowDTO.getProjectId(), rowDTO.getApplicationId(), currentUser));
         for (PrismAction creationAction : creationActions.get(rowDTO.getStateId())) {
-            representation.addAction(new ActionRepresentation().withName(creationAction).withRaisesUrgentFlag(false));
+            representation.addAction(new ActionRepresentation().withId(creationAction).withRaisesUrgentFlag(false));
         }
     }
 

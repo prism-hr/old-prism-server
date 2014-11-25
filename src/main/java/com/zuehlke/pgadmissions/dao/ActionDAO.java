@@ -174,7 +174,7 @@ public class ActionDAO {
             Integer programId, Integer projectId, Integer applicationId, User user) {
         return (List<ActionRepresentation>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class, "resourceState") //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("stateAction.action.id"), "name") //
+                        .add(Projections.groupProperty("stateAction.action.id"), "id") //
                         .add(Projections.max("stateAction.raisesUrgentFlag"), "raisesUrgentFlag")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //

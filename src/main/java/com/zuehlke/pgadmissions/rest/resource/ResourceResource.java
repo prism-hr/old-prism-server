@@ -11,6 +11,7 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
@@ -126,6 +127,13 @@ public class ResourceResource {
         }
         representation.setActions(permittedActions);
         representation.setRecommendedNextStates(stateService.getRecommendedNextStates(resource));
+        List<PrismState> secondaryStates = Lists.newArrayListWithCapacity(resource.getResourceStates().size());
+        for (ResourceState resourceState : resource.getResourceStates()) {
+            if(!resourceState.getPrimaryState()){
+                secondaryStates.add(resourceState.getState().getId());
+            }
+        }
+        representation.setSecondaryStates(secondaryStates);
 
         List<User> users = userService.getResourceUsers(resource);
         List<ResourceUserRolesRepresentation> userRolesRepresentations = Lists.newArrayListWithCapacity(users.size());

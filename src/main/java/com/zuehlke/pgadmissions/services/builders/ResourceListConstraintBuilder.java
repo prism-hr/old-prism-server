@@ -7,7 +7,7 @@ import org.hibernate.criterion.Restrictions;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
-import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
+import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -50,7 +50,7 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
         applyOrNegateFilterCriterion(conditions, restriction, negated);
     }
 
-    public static <T extends Resource> void throwResourceFilterListMissingPropertyError(PrismScope scopeId, FilterProperty property) {
+    public static <T extends Resource> void throwResourceFilterListMissingPropertyError(PrismScope scopeId, ResourceListFilterProperty property) {
         throw new Error(scopeId.name() + " does not have a " + property.name() + " property");
     }
 

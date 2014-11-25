@@ -33,6 +33,7 @@ public class AdvertDAO {
         return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("project", "project", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("project.program", "projectProgram", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("program")) //

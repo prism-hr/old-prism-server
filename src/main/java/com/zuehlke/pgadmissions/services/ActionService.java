@@ -308,7 +308,7 @@ public class ActionService {
                 thisActionRepresentation.addActionEnhancement(customActionEnhancement);
             }
 
-            if (primaryState) {
+            if (primaryState && action.isTransitionResourceAction()) {
                 PrismState thisTransitionStateId = action.getTransitionStateId();
 
                 if (!representations.containsKey(thisTransitionStateId) || (thisTransitionStateId != null && thisTransitionStateId != lastTransitionStateId)) {

@@ -49,9 +49,6 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 @SuppressWarnings("unchecked")
 public class NotificationService {
 
-    @Value("${application.host}")
-    private String host;
-
     @Autowired
     private NotificationDAO notificationDAO;
 

@@ -67,8 +67,8 @@ import com.zuehlke.pgadmissions.utils.FileUtils;
 @Transactional
 public class SystemInitialisationHelper {
 
-    @Value("${application.host}")
-    private String systemHomepage;
+    @Value("${application.url}")
+    private String applicationUrl;
 
     @Value("${system.name}")
     private String systemName;
@@ -205,7 +205,7 @@ public class SystemInitialisationHelper {
         System system = systemService.getSystem();
         assertEquals(system.getTitle(), systemName);
         assertEquals(system.getLocale(), PrismLocale.getSystemLocale());
-        assertEquals(system.getHomepage(), systemHomepage);
+        assertEquals(system.getHomepage(), applicationUrl);
         assertEquals(system.getHelpdesk(), systemHelpdesk);
         assertEquals(system.getCode(), resourceService.generateResourceCode(system));
         assertEquals(system.getState().getId(), PrismState.SYSTEM_RUNNING);

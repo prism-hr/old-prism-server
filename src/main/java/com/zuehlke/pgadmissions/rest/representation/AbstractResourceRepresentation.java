@@ -1,17 +1,15 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-import java.util.List;
-import java.util.Set;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import java.util.List;
+import java.util.Set;
 
 public class AbstractResourceRepresentation {
 
@@ -20,6 +18,8 @@ public class AbstractResourceRepresentation {
     private String code;
 
     private PrismState state;
+
+    private List<PrismState> secondaryStates;
 
     private PrismScope resourceScope;
 
@@ -31,7 +31,7 @@ public class AbstractResourceRepresentation {
 
     private DateTime updatedTimestamp;
 
-    private Set<ActionRepresentation> actions = Sets.newLinkedHashSet();
+    private Set<ActionRepresentation> actions;
 
     private List<PrismState> recommendedNextStates;
 
@@ -65,6 +65,14 @@ public class AbstractResourceRepresentation {
         this.state = state;
     }
 
+    public List<PrismState> getSecondaryStates() {
+        return secondaryStates;
+    }
+
+    public void setSecondaryStates(List<PrismState> secondaryStates) {
+        this.secondaryStates = secondaryStates;
+    }
+
     public PrismScope getResourceScope() {
         return resourceScope;
     }
@@ -81,11 +89,11 @@ public class AbstractResourceRepresentation {
         this.user = user;
     }
 
-    public final LocalDate getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public final void setEndDate(LocalDate endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 
@@ -105,27 +113,27 @@ public class AbstractResourceRepresentation {
         this.updatedTimestamp = updatedTimestamp;
     }
 
-    public final Set<ActionRepresentation> getActions() {
+    public Set<ActionRepresentation> getActions() {
         return actions;
     }
 
-    public final void setActions(Set<ActionRepresentation> actions) {
+    public void setActions(Set<ActionRepresentation> actions) {
         this.actions = actions;
     }
 
-    public final List<PrismState> getRecommendedNextStates() {
+    public List<PrismState> getRecommendedNextStates() {
         return recommendedNextStates;
     }
 
-    public final void setRecommendedNextStates(List<PrismState> recommendedNextStates) {
+    public void setRecommendedNextStates(List<PrismState> recommendedNextStates) {
         this.recommendedNextStates = recommendedNextStates;
     }
 
-    public final TimelineRepresentation getTimeline() {
+    public TimelineRepresentation getTimeline() {
         return timeline;
     }
 
-    public final void setTimeline(TimelineRepresentation timeline) {
+    public void setTimeline(TimelineRepresentation timeline) {
         this.timeline = timeline;
     }
 
@@ -137,11 +145,11 @@ public class AbstractResourceRepresentation {
         this.users = users;
     }
 
-    public final List<WorkflowConfigurationRepresentation> getWorkflowPropertyConfigurations() {
+    public List<WorkflowConfigurationRepresentation> getWorkflowPropertyConfigurations() {
         return workflowPropertyConfigurations;
     }
 
-    public final void setWorkflowPropertyConfigurations(List<WorkflowConfigurationRepresentation> workflowPropertyConfigurations) {
+    public void setWorkflowPropertyConfigurations(List<WorkflowConfigurationRepresentation> workflowPropertyConfigurations) {
         this.workflowPropertyConfigurations = workflowPropertyConfigurations;
     }
 
@@ -167,11 +175,11 @@ public class AbstractResourceRepresentation {
             this.id = id;
         }
 
-        public final Boolean getValue() {
+        public Boolean getValue() {
             return value;
         }
 
-        public final void setValue(Boolean value) {
+        public void setValue(Boolean value) {
             this.value = value;
         }
 

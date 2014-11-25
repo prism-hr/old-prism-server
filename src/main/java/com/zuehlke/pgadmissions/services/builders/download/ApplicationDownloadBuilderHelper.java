@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.google.common.io.Resources;
+import com.itextpdf.text.Anchor;
 import com.itextpdf.text.BadElementException;
-import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -142,9 +142,6 @@ public class ApplicationDownloadBuilderHelper {
     }
 
     public PdfPCell newTitleCell(String content, ApplicationDownloadBuilderFontSize fontSize) {
-        if (content == null) {
-            throw new Error("Title cell must have content");
-        }
         return newTableCell(content, fontSize, null);
     }
 
@@ -175,22 +172,20 @@ public class ApplicationDownloadBuilderHelper {
     }
 
     private PdfPCell newTableCell(String content, ApplicationDownloadBuilderFontSize fontSize, Integer bookmarkIndex) {
-        if (fontSize == null) {
-            throw new Error("Cell must have font size");
-        }
-
         Phrase phrase;
         if (StringUtils.isBlank(content)) {
             phrase = new Phrase(propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED), ApplicationDownloadBuilderConfiguration.getEmptyFont(fontSize));
         } else if (bookmarkIndex == null) {
             phrase = new Phrase(content, ApplicationDownloadBuilderConfiguration.getFont(fontSize));
         } else {
-            phrase = new Phrase(new Chunk(content, ApplicationDownloadBuilderConfiguration.getLinkFont(fontSize)).setLocalDestination(bookmarkIndex.toString()));
+            Anchor anchor = new Anchor(content, ApplicationDownloadBuilderConfiguration.getLinkFont(fontSize));
+            anchor.setReference("#" + bookmarkIndex.toString());
+            phrase = new Phrase();
+            phrase.add(anchor);
         }
 
         PdfPCell cell = new PdfPCell(phrase);
         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
         return cell;
     }
-
 }

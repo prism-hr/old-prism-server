@@ -487,7 +487,7 @@ public class ResourceService {
     }
 
     private void insertSecondaryResourceStates(Resource resource, Comment comment) {
-        for (CommentTransitionState commentTransitionState : comment.getSecondaryTransitionStates()) {
+        for (CommentTransitionState commentTransitionState : comment.getTransitionStates()) {
             if (!commentTransitionState.getPrimaryState()) {
                 resource.getResourceStates().add(
                         entityService.createOrUpdate(new ResourceState().withResource(resource).withState(commentTransitionState.getTransitionState())

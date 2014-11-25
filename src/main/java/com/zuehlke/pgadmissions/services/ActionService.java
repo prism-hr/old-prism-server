@@ -39,7 +39,7 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.StateTransitionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.NextStateRepresentation;
 
 @Service
 @Transactional
@@ -275,7 +275,7 @@ public class ActionService {
         ActionRepresentation thisActionRepresentation = null;
 
         PrismState lastTransitionStateId = null;
-        StateTransitionRepresentation thisStateTransitionRepresentation = null;
+        NextStateRepresentation thisStateTransitionRepresentation = null;
 
         HashMap<PrismAction, ActionRepresentation> representations = Maps.newHashMap();
         for (ActionDTO action : actions) {
@@ -312,9 +312,9 @@ public class ActionService {
                 PrismState thisTransitionStateId = action.getTransitionStateId();
 
                 if (!representations.containsKey(thisTransitionStateId) || (thisTransitionStateId != null && thisTransitionStateId != lastTransitionStateId)) {
-                    thisStateTransitionRepresentation = new StateTransitionRepresentation().withTransitionStateId(thisTransitionStateId).withParallelizable(
+                    thisStateTransitionRepresentation = new NextStateRepresentation().withState(thisTransitionStateId).withParallelizable(
                             action.getParallelizable());
-                    thisActionRepresentation.addStateTransition(thisStateTransitionRepresentation);
+                    thisActionRepresentation.addNextState(thisStateTransitionRepresentation);
                 }
 
                 lastTransitionStateId = thisTransitionStateId;

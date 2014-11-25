@@ -277,7 +277,7 @@ public class ActionService {
         PrismState lastTransitionStateId = null;
         NextStateRepresentation thisStateTransitionRepresentation = null;
 
-        HashMap<PrismAction, ActionRepresentation> representations = Maps.newHashMap();
+        HashMap<PrismAction, ActionRepresentation> representations = Maps.newLinkedHashMap();
         for (ActionDTO action : actions) {
             PrismAction thisActionId = action.getActionId();
             boolean primaryState = action.isCreateResourceAction() || action.getPrimaryState();

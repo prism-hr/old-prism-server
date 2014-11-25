@@ -145,9 +145,6 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.application", resource.getApplication()))) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("stateTransition.stateTransitionEvaluation")) //
-                        .add(Restrictions.eq("stateTransitionEvaluation.nextStateSelection", true))) //
                 .add(Restrictions.eq("userRole.user", user)) //
                 .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.asc("action.id")) //

@@ -1,0 +1,7 @@
+CREATE TABLE INTERVIEW_EVALUATION_COMMENT (
+  id INTEGER UNSIGNED NOT NULL,
+  interview_id INTEGER UNSIGNED,
+  CONSTRAINT interview_evaluation_comment_fk FOREIGN KEY (id) REFERENCES COMMENT(id),
+  CONSTRAINT interview_eval_com_interview_fk FOREIGN KEY (interview_id) REFERENCES INTERVIEW(id)
+)
+ENGINE = InnoDB;

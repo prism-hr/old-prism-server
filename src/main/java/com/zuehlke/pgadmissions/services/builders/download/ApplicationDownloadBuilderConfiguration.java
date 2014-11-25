@@ -67,7 +67,7 @@ public class ApplicationDownloadBuilderConfiguration {
 
     public static enum ApplicationDownloadBuilderColor {
 
-        WHITE(BaseColor.WHITE), GREY(new BaseColor(220, 220, 220)), BLUE(BaseColor.BLUE);
+        WHITE(BaseColor.WHITE), GREY(BaseColor.GRAY), BLUE(BaseColor.BLUE);
 
         private BaseColor color;
 

@@ -68,8 +68,7 @@ public class ApplicationDownloadBuilderHelper {
     public void addContentRow(String title, String content, ApplicationDownloadBuilderFontSize fontSize, PdfPTable table) {
         String fontSizePostfix = WordUtils.capitalizeFully(fontSize.name());
         table.addCell((PdfPCell) ReflectionUtils.invokeMethod(this, "newTitleCell" + fontSizePostfix, title));
-        table.addCell((PdfPCell) ReflectionUtils.invokeMethod(this, "newContentCell" + fontSizePostfix,
-                content == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : content));
+        table.addCell((PdfPCell) ReflectionUtils.invokeMethod(this, "newContentCell" + fontSizePostfix, content == null ? StringUtils.EMPTY : content));
     }
 
     public void closeSection(Document pdfDocument, PdfPTable body) throws DocumentException {
@@ -188,4 +187,5 @@ public class ApplicationDownloadBuilderHelper {
         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
         return cell;
     }
+
 }

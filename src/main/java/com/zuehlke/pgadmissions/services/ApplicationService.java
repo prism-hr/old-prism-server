@@ -270,7 +270,7 @@ public class ApplicationService {
 
         commentService.appendAssignedUsers(comment, commentDTO);
 
-        if (commentDTO.getTransitionStates() != null) {
+        if (commentDTO.getSecondaryTransitionStates() != null) {
             commentService.appendTransitionStates(comment, commentDTO);
         }
 

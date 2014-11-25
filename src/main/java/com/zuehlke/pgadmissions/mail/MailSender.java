@@ -146,7 +146,7 @@ public class MailSender {
         String imagesPath = applicationUrl + "/images/email";
         String logoUrl;
         if (logoDocument != null) {
-            logoUrl = applicationApiUrl + "/images" + logoDocument.getId();
+            logoUrl = applicationApiUrl + "/images/" + logoDocument.getId();
         } else {
             logoUrl = imagesPath + "/prism.png";
         }

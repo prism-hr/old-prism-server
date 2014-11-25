@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import java.util.Set;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
-
-import java.util.Set;
 
 public class ProgramExtendedRepresentation extends AbstractResourceRepresentation {
 

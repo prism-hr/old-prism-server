@@ -56,6 +56,7 @@ public class StateDAO {
         }
 
         return (StateTransition) criteria.addOrder(Order.desc("resourceState.primaryState")) //
+                .setMaxResults(1) //
                 .uniqueResult();
     }
 

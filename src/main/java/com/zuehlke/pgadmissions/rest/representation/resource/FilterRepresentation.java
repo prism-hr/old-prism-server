@@ -3,8 +3,8 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
-import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.FilterPropertyType;
+import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class FilterRepresentation {

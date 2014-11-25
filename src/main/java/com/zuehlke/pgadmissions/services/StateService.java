@@ -187,7 +187,7 @@ public class StateService {
     public StateTransition getStateTransition(Resource resource, Action action, Comment comment) {
         Resource operative = resourceService.getOperativeResource(resource, action);
 
-        Set<StateTransition> potentialStateTransitions = getPotentialStateTransitions(resource, action);
+        Set<StateTransition> potentialStateTransitions = getPotentialStateTransitions(operative, action);
 
         if (potentialStateTransitions.size() > 1) {
             PrismStateTransitionEvaluation transitionEvaluation = potentialStateTransitions.iterator().next().getStateTransitionEvaluation().getId();

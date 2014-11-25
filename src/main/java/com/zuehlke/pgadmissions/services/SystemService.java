@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -427,13 +426,17 @@ public class SystemService {
             WorkflowPropertyConfigurationDTO configurationDTO = new WorkflowPropertyConfigurationDTO();
             for (PrismWorkflowPropertyDefinition prismWorkflowProperty : PrismWorkflowPropertyDefinition.values()) {
                 if (prismScope == prismWorkflowProperty.getScope()) {
-                    boolean canBeDisabled = prismWorkflowProperty.isCanBeDisabled();
-                    boolean canBeOptional = prismWorkflowProperty.isCanBeOptional();
+                    boolean range = prismWorkflowProperty.isDefineRange();
 
-                    configurationDTO.add(new WorkflowPropertyConfigurationValueDTO().withDefinition(prismWorkflowProperty)
-                            .withEnabled(!canBeDisabled ? BooleanUtils.toBoolean(prismWorkflowProperty.getDefaultEnabled()) : canBeDisabled)
-                            .withRequired(!canBeOptional ? BooleanUtils.toBoolean(prismWorkflowProperty.getDefaultRequired()) : canBeOptional)
-                            .withMinimum(prismWorkflowProperty.getDefaultMinimum()).withMaximum(prismWorkflowProperty.getDefaultMaximum()));
+                    Boolean enabled = prismWorkflowProperty.getDefaultEnabled();
+                    enabled = enabled == null ? range && prismWorkflowProperty.getDefaultMaximum() > 0 : enabled;
+
+                    Boolean required = prismWorkflowProperty.getDefaultRequired();
+                    required = required == null ? range && prismWorkflowProperty.getDefaultMinimum() > 0 : required;
+
+                    configurationDTO.add(new WorkflowPropertyConfigurationValueDTO().withDefinition(prismWorkflowProperty).withEnabled(enabled)
+                            .withRequired(required).withMinimum(prismWorkflowProperty.getDefaultMinimum())
+                            .withMaximum(prismWorkflowProperty.getDefaultMaximum()));
                 }
             }
             persistConfigurations(PrismConfiguration.WORKFLOW_PROPERTY, system, prismScope, configurationDTO);

@@ -18,7 +18,7 @@ public class ActionRepresentation {
 
     private Set<PrismActionEnhancement> actionEnhancements = Sets.newLinkedHashSet();
 
-    private Set<StateTransitionRepresentation> stateTransitions = Sets.newLinkedHashSet();
+    private Set<NextStateRepresentation> nextStates = Sets.newLinkedHashSet();
 
     public PrismAction getName() {
         return name;
@@ -67,12 +67,12 @@ public class ActionRepresentation {
         return this;
     }
 
-    public final Set<StateTransitionRepresentation> getStateTransitions() {
-        return stateTransitions;
+    public final Set<NextStateRepresentation> getNextStates() {
+        return nextStates;
     }
 
-    public final void addStateTransition(StateTransitionRepresentation stateTransition) {
-        stateTransitions.add(stateTransition);
+    public final void addNextState(NextStateRepresentation nextState) {
+        nextStates.add(nextState);
     }
 
     @Override
@@ -92,33 +92,33 @@ public class ActionRepresentation {
         return Objects.equal(name, other.getName());
     }
 
-    public static class StateTransitionRepresentation {
+    public static class NextStateRepresentation {
 
-        private PrismState transitionStateId;
+        private PrismState state;
 
         private Boolean parallelizable;
 
-        public final PrismState getTransitionStateId() {
-            return transitionStateId;
+        public final PrismState getState() {
+            return state;
         }
 
         public final Boolean getParallelizable() {
             return parallelizable;
         }
 
-        public ActionRepresentation.StateTransitionRepresentation withTransitionStateId(PrismState transitionStateId) {
-            this.transitionStateId = transitionStateId;
+        public ActionRepresentation.NextStateRepresentation withState(PrismState state) {
+            this.state = state;
             return this;
         }
 
-        public ActionRepresentation.StateTransitionRepresentation withParallelizable(Boolean parallelizable) {
+        public ActionRepresentation.NextStateRepresentation withParallelizable(Boolean parallelizable) {
             this.parallelizable = parallelizable;
             return this;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hashCode(transitionStateId);
+            return Objects.hashCode(state);
         }
 
         @Override
@@ -129,8 +129,8 @@ public class ActionRepresentation {
             if (getClass() != object.getClass()) {
                 return false;
             }
-            final StateTransitionRepresentation other = (StateTransitionRepresentation) object;
-            return Objects.equal(transitionStateId, other.getTransitionStateId());
+            final NextStateRepresentation other = (NextStateRepresentation) object;
+            return Objects.equal(state, other.getState());
         }
 
     }

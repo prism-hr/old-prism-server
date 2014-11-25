@@ -134,12 +134,14 @@ public class ActionService {
         return Lists.newArrayList(enhancements);
     }
 
-    public ActionOutcomeDTO executeUserAction(Resource resource, Action action, Comment comment) throws DeduplicationException {
+    public ActionOutcomeDTO executeUserAction(Resource resource, Action action, Comment comment) throws DeduplicationException, InstantiationException,
+            IllegalAccessException {
         validateInvokeAction(resource, action, comment);
         return executeAction(resource, action, comment);
     }
 
-    public ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment) throws DeduplicationException {
+    public ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment) throws DeduplicationException, InstantiationException,
+            IllegalAccessException {
         User actionOwner = comment.getUser();
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE || action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE) {
@@ -311,7 +313,8 @@ public class ActionService {
             if (primaryState && BooleanUtils.isTrue(action.getNextStateSelection())) {
                 PrismState thisTransitionStateId = action.getTransitionStateId();
 
-                if (!representations.containsKey(thisTransitionStateId) || (thisTransitionStateId != null && thisTransitionStateId != lastTransitionStateId)) {
+                if (thisTransitionStateId != null && !representations.containsKey(thisTransitionStateId)
+                        || (thisTransitionStateId != null && thisTransitionStateId != lastTransitionStateId)) {
                     thisStateTransitionRepresentation = new NextStateRepresentation().withState(thisTransitionStateId).withParallelizable(
                             action.getParallelizable());
                     thisActionRepresentation.addNextState(thisStateTransitionRepresentation);

@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
-@RequestMapping(value = {"api/decline"})
+@RequestMapping(value = { "api/decline" })
 public class DeclineResource {
 
     @Autowired
@@ -30,9 +30,7 @@ public class DeclineResource {
     private Mapper dozerBeanMapper;
 
     @RequestMapping(method = RequestMethod.POST)
-    public void declineAction(@RequestParam Integer resourceId,
-                              @RequestParam PrismAction actionId,
-                              @RequestParam String activationCode) {
+    public void declineAction(@RequestParam Integer resourceId, @RequestParam PrismAction actionId, @RequestParam String activationCode) throws Exception {
         User user = userService.getUserByActivationCode(activationCode);
         CommentDTO commentDTO = new CommentDTO();
         commentDTO.setUser(user.getId());
@@ -42,9 +40,8 @@ public class DeclineResource {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ApplicationRepresentation getDeclineResource(@RequestParam Integer resourceId,
-                                                        @RequestParam PrismAction actionId,
-                                                        @RequestParam String activationCode) {
+    public ApplicationRepresentation getDeclineResource(@RequestParam Integer resourceId, @RequestParam PrismAction actionId,
+            @RequestParam String activationCode) {
         userService.getUserByActivationCode(activationCode);
         Resource resource = resourceService.getById(actionId.getScope().getResourceClass(), resourceId);
         if (actionId.getScope() != PrismScope.APPLICATION) {

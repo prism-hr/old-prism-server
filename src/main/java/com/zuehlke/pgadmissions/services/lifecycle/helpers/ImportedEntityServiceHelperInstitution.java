@@ -145,7 +145,7 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
     }
 
     private void mergeImportedPrograms(Institution institution, List<ProgrammeOccurrence> programDefinitions) throws DeduplicationException,
-            DataImportException {
+            DataImportException, InstantiationException, IllegalAccessException {
         LocalDate baseline = new LocalDate();
 
         importedEntityService.disableAllImportedPrograms(institution, baseline);

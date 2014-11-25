@@ -178,7 +178,7 @@ public class InstitutionService {
         return socialPresenceService.getPotentialInstitutionProfiles(institutionTitle);
     }
 
-    public void initializeInstitution(Integer institutionId) throws DeduplicationException {
+    public void initializeInstitution(Integer institutionId) throws DeduplicationException, InstantiationException, IllegalAccessException {
         Institution institution = getById(institutionId);
         User user = systemService.getSystem().getUser();
         Action action = actionService.getById(INSTITUTION_STARTUP);
@@ -221,7 +221,7 @@ public class InstitutionService {
         return entityService.getByProperty(Institution.class, "googleId", googleId);
     }
 
-    public ActionOutcomeDTO executeAction(Integer institutionId, CommentDTO commentDTO) throws DeduplicationException {
+    public ActionOutcomeDTO executeAction(Integer institutionId, CommentDTO commentDTO) throws DeduplicationException, InstantiationException, IllegalAccessException {
         User user = userService.getById(commentDTO.getUser());
         Institution institution = getById(institutionId);
 

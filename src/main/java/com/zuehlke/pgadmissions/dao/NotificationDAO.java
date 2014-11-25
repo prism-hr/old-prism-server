@@ -86,7 +86,7 @@ public class NotificationDAO {
                         .add(Projections.groupProperty("user.id"), "userId") //
                         .add(Projections.groupProperty("role.id"), "roleId") //
                         .add(Projections.groupProperty("notificationDefinition.id"), "notificationDefinitionId")) //
-                .createAlias("previousState", "state", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN) //
                 .createAlias("stateActionNotification.role", "role", JoinType.INNER_JOIN) //

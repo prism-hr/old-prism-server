@@ -26,7 +26,7 @@ public class StateServiceHelperEscalation extends AbstractServiceHelper {
     private StateService stateService;
 
     @Override
-    public void execute() throws DeduplicationException {
+    public void execute() throws DeduplicationException, InstantiationException, IllegalAccessException {
         LocalDate baseline = new LocalDate();
         List<PrismAction> actionIds = actionService.getEscalationActions();
         for (PrismAction actionId : actionIds) {

@@ -33,19 +33,21 @@ public class StateDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public List<StateTransition> getStateTransitions(Resource resource, Action action) {
+    public List<StateTransition> getStateTransitions(State state, Action action) {
         return (List<StateTransition>) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("stateAction.state", resource.getState())) //
+                .add(Restrictions.eq("stateAction.state", state)) //
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .list();
     }
 
-    public StateTransition getStateTransition(State state, Action action, PrismState transitionStateId) {
+    public StateTransition getStateTransition(Resource resource, Action action, PrismState transitionStateId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .createAlias("stateAction", "stateAction") //
-                .add(Restrictions.eq("stateAction.state", state)) //
-                .add(Restrictions.eq("stateAction.action", action));
+                .createAlias("stateAction.state", "state") //
+                .createAlias("state.resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("stateAction.action", action)) //
+                .add(Restrictions.eq("resourceState." + resource.getResourceScope().getLowerCaseName(), resource));
 
         if (transitionStateId == null) {
             criteria.add(Restrictions.isNull("transitionState"));
@@ -53,7 +55,8 @@ public class StateDAO {
             criteria.add(Restrictions.eq("transitionState.id", transitionStateId));
         }
 
-        return (StateTransition) criteria.uniqueResult();
+        return (StateTransition) criteria.addOrder(Order.desc("resourceState.primaryState")) //
+                .uniqueResult();
     }
 
     public List<StateTransitionPendingDTO> getStateTransitionsPending(PrismScope scopeId) {
@@ -146,6 +149,14 @@ public class StateDAO {
                 .addOrder(Order.desc("updatedTimestamp")) //
                 .setMaxResults(1) //
                 .uniqueResult();
+    }
+
+    public List<State> getResourceStates(Resource resource) {
+        return (List<State>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.property("state")) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+                .addOrder(Order.desc("primaryState")) //
+                .list();
     }
 
 }

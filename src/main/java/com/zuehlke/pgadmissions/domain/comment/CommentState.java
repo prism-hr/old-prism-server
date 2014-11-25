@@ -9,12 +9,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
 @Table(name = "COMMENT_STATE", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "state_id" }) })
-public class CommentState {
+public class CommentState extends CommentStateDefinition {
 
     @Id
     @GeneratedValue
@@ -31,34 +30,42 @@ public class CommentState {
     @Column(name = "primary_state", nullable = false)
     private Boolean primaryState;
 
+    @Override
     public final Integer getId() {
         return id;
     }
 
+    @Override
     public final void setId(Integer id) {
         this.id = id;
     }
 
+    @Override
     public final Comment getComment() {
         return comment;
     }
 
+    @Override
     public final void setComment(Comment comment) {
         this.comment = comment;
     }
 
+    @Override
     public final State getState() {
         return state;
     }
 
+    @Override
     public final void setState(State state) {
         this.state = state;
     }
 
+    @Override
     public final Boolean getPrimaryState() {
         return primaryState;
     }
 
+    @Override
     public final void setPrimaryState(Boolean primaryState) {
         this.primaryState = primaryState;
     }
@@ -71,23 +78,6 @@ public class CommentState {
     public CommentState withPrimaryState(Boolean primaryState) {
         this.primaryState = primaryState;
         return this;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(comment, state);
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == null) {
-            return false;
-        }
-        if (getClass() != object.getClass()) {
-            return false;
-        }
-        CommentState other = (CommentState) object;
-        return Objects.equal(comment, other.getComment()) && Objects.equal(state, other.getState());
     }
 
 }

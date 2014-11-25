@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
+import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
@@ -40,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStateDefinition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -115,7 +116,8 @@ public class ResourceService {
         return resource == null ? null : resource.getId();
     }
 
-    public ActionOutcomeDTO executeAction(Integer resourceId, CommentDTO commentDTO) {
+    public ActionOutcomeDTO executeAction(Integer resourceId, CommentDTO commentDTO) throws DeduplicationException, InstantiationException,
+            IllegalAccessException {
         switch (commentDTO.getAction().getScope()) {
         case APPLICATION:
             return applicationService.executeAction(resourceId, commentDTO);
@@ -195,23 +197,17 @@ public class ResourceService {
     }
 
     public void recordStateTransition(Resource resource, Comment comment, State state, State transitionState, StateTransition stateTransition)
-            throws DeduplicationException {
+            throws DeduplicationException, InstantiationException, IllegalAccessException {
         resource.setPreviousState(state);
         resource.setState(transitionState);
 
-        resourceDAO.deletePrimaryResourcePreviousState(resource);
-        resourceDAO.deletePrimaryResourceState(resource);
+        deleteResourceStates(resource.getResourcePreviousStates());
+        deleteResourceStates(resource.getResourceStates());
+        entityService.flush();
 
-        resource.getResourcePreviousStates().add(
-                entityService.createOrUpdate(new ResourcePreviousState().withResource(resource).withPreviousState(state).withPrimaryState(true)));
-        resource.getResourceStates().add(
-                entityService.createOrUpdate(new ResourceState().withResource(resource).withState(transitionState).withPrimaryState(true)));
-
-        resourceDAO.deleteSecondaryResourcePreviousStates(resource);
-        resourceDAO.insertSecondaryPreviousResourceStates(resource);
-
-        deleteSecondaryResourceStates(resource, stateTransition, transitionState);
-        insertSecondaryResourceStates(resource, comment);
+        insertResourceStates(resource, resource.getResourcePreviousStates(), comment.getCommentStates(), ResourcePreviousState.class);
+        insertResourceStates(resource, resource.getResourceStates(), comment.getCommentTransitionStates(), ResourceState.class);
+        entityService.flush();
     }
 
     public void processResource(Resource resource, Comment comment) throws DeduplicationException {
@@ -235,6 +231,8 @@ public class ResourceService {
 
             resource.setDueDate(baseline.plusDays(duration));
         }
+
+        entityService.flush();
     }
 
     public void postProcessResource(Resource resource, Comment comment) throws DeduplicationException {
@@ -265,11 +263,13 @@ public class ResourceService {
         }
     }
 
-    public void executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex) throws DeduplicationException {
+    public void executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex) throws DeduplicationException, InstantiationException,
+            IllegalAccessException {
         executeUpdate(resource, messageIndex, null);
     }
 
-    public void executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser assignee) throws DeduplicationException {
+    public void executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser assignee) throws DeduplicationException,
+            InstantiationException, IllegalAccessException {
         User user = userService.getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
 
@@ -476,26 +476,6 @@ public class ResourceService {
         }
     }
 
-    private void deleteSecondaryResourceStates(Resource resource, StateTransition stateTransition, State transitionState) {
-        if (transitionState.getParallelizable()) {
-            deleteSecondaryResourceState(resource, transitionState);
-        }
-
-        for (State terminationState : stateTransition.getStateTerminations()) {
-            deleteSecondaryResourceState(resource, terminationState);
-        }
-    }
-
-    private void insertSecondaryResourceStates(Resource resource, Comment comment) {
-        for (CommentTransitionState commentTransitionState : comment.getTransitionStates()) {
-            if (!commentTransitionState.getPrimaryState()) {
-                resource.getResourceStates().add(
-                        entityService.createOrUpdate(new ResourceState().withResource(resource).withState(commentTransitionState.getTransitionState())
-                                .withPrimaryState(false)));
-            }
-        }
-    }
-
     private void resetNotifications(Resource resource) {
         resource.setLastRemindedRequestIndividual(null);
         resource.setLastRemindedRequestSyndicated(null);
@@ -518,4 +498,23 @@ public class ResourceService {
         }
     }
 
+    private <T extends ResourceStateDefinition> void deleteResourceStates(Set<T> resourceStateDefinitions) {
+        for (T resourceState : resourceStateDefinitions) {
+            entityService.delete(resourceState);
+        }
+        resourceStateDefinitions.clear();
+    }
+
+    private <T extends ResourceStateDefinition, U extends CommentStateDefinition> void insertResourceStates(Resource resource, Set<T> resourceStateDefinitions,
+            Set<U> commentStateDefinitions, Class<T> resourceStateClass) throws InstantiationException, IllegalAccessException {
+        for (U commentState : commentStateDefinitions) {
+            T transientResourceStateDefinition = resourceStateClass.newInstance();
+            transientResourceStateDefinition.setResource(resource);
+            transientResourceStateDefinition.setState(commentState.getState());
+            transientResourceStateDefinition.setPrimaryState(commentState.getPrimaryState());
+            T persistentResourceStateDefinition = entityService.createOrUpdate(transientResourceStateDefinition);
+            resourceStateDefinitions.add(persistentResourceStateDefinition);
+        }
+    }
+    
 }

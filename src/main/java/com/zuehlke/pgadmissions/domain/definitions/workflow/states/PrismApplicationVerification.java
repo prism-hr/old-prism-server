@@ -144,7 +144,9 @@ public class PrismApplicationVerification extends PrismWorkflowState {
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_VERIFICATION_PENDING_COMPLETION) // 
-                        .withTransitionAction(PrismAction.APPLICATION_COMPLETE_VERIFICATION_STAGE)))); //
+                        .withTransitionAction(PrismAction.APPLICATION_COMPLETE_VERIFICATION_STAGE) //
+                        .withStateTerminations(Lists.newArrayList( //
+                                PrismState.APPLICATION_VERIFICATION))))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_EMAIL_CREATOR) //

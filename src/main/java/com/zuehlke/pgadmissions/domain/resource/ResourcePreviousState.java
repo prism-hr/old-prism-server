@@ -16,13 +16,12 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
 
 @Entity
-@Table(name = "RESOURCE_PREVIOUS_STATE", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "previous_state_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "previous_state_id" }), @UniqueConstraint(columnNames = { "program_id", "previous_state_id" }),
-        @UniqueConstraint(columnNames = { "project_id", "previous_state_id" }), @UniqueConstraint(columnNames = { "application_id", "previous_state_id" }) })
-public class ResourcePreviousState extends WorkflowResourceExecution {
+@Table(name = "RESOURCE_PREVIOUS_STATE", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "state_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "state_id" }), @UniqueConstraint(columnNames = { "program_id", "state_id" }),
+        @UniqueConstraint(columnNames = { "project_id", "state_id" }), @UniqueConstraint(columnNames = { "application_id", "state_id" }) })
+public class ResourcePreviousState extends ResourceStateDefinition {
 
     @Id
     @GeneratedValue
@@ -49,8 +48,8 @@ public class ResourcePreviousState extends WorkflowResourceExecution {
     private Application application;
 
     @ManyToOne
-    @JoinColumn(name = "previous_state_id", nullable = false)
-    private State previousState;
+    @JoinColumn(name = "state_id", nullable = false)
+    private State state;
 
     @Column(name = "primary_state", nullable = false)
     private Boolean primaryState;
@@ -115,18 +114,22 @@ public class ResourcePreviousState extends WorkflowResourceExecution {
         this.application = application;
     }
 
-    public final State getPreviousState() {
-        return previousState;
+    @Override
+    public final State getState() {
+        return state;
     }
 
-    public final void setPreviousState(State previousState) {
-        this.previousState = previousState;
+    @Override
+    public final void setState(State state) {
+        this.state = state;
     }
 
+    @Override
     public final Boolean getPrimaryState() {
         return primaryState;
     }
 
+    @Override
     public final void setPrimaryState(Boolean primaryState) {
         this.primaryState = primaryState;
     }
@@ -136,19 +139,14 @@ public class ResourcePreviousState extends WorkflowResourceExecution {
         return this;
     }
 
-    public ResourcePreviousState withPreviousState(State previousState) {
-        this.previousState = previousState;
+    public ResourcePreviousState withState(State state) {
+        this.state = state;
         return this;
     }
 
     public ResourcePreviousState withPrimaryState(Boolean primaryState) {
         this.primaryState = primaryState;
         return this;
-    }
-
-    @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("previousState", previousState);
     }
 
 }

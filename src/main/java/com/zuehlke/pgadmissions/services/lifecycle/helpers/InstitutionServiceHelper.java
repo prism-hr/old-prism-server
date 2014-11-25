@@ -19,7 +19,7 @@ public class InstitutionServiceHelper extends AbstractServiceHelper {
     private ImportedEntityService importedEntityService;
     
     @Override
-    public void execute() throws DeduplicationException {
+    public void execute() throws DeduplicationException, InstantiationException, IllegalAccessException {
         List<Integer> institutionIds = institutionService.getInstitutionsToActivate();
         for (Integer institutionId : institutionIds) {
             List<Integer> pendingImports = importedEntityService.getPendingImportEntityFeeds(institutionId);

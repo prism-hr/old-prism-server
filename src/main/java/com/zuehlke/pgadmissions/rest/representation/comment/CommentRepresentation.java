@@ -94,8 +94,6 @@ public class CommentRepresentation {
 
     private Set<CommentAssignedUserRepresentation> assignedUsers;
 
-    private Set<CommentTransitionStateRepresentation> transitionStates;
-
     private Set<AppointmentTimeslotRepresentation> appointmentTimeslots;
 
     private Set<AppointmentPreferenceRepresentation> appointmentPreferences;
@@ -416,14 +414,6 @@ public class CommentRepresentation {
 
     public void setAssignedUsers(Set<CommentAssignedUserRepresentation> assignedUsers) {
         this.assignedUsers = assignedUsers;
-    }
-
-    public Set<CommentTransitionStateRepresentation> getTransitionStates() {
-        return transitionStates;
-    }
-
-    public void setTransitionStates(Set<CommentTransitionStateRepresentation> transitionStates) {
-        this.transitionStates = transitionStates;
     }
 
     public Set<AppointmentTimeslotRepresentation> getAppointmentTimeslots() {

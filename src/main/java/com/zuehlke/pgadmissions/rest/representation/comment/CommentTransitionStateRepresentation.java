@@ -4,16 +4,16 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 
 public class CommentTransitionStateRepresentation {
 
-    private PrismState transitionState;
-    
+    private PrismState state;
+
     private Boolean primaryState;
 
-    public final PrismState getTransitionState() {
-        return transitionState;
+    public final PrismState getState() {
+        return state;
     }
 
-    public final void setTransitionState(PrismState transitionState) {
-        this.transitionState = transitionState;
+    public final void setState(PrismState state) {
+        this.state = state;
     }
 
     public final Boolean getPrimaryState() {
@@ -23,5 +23,5 @@ public class CommentTransitionStateRepresentation {
     public final void setPrimaryState(Boolean primaryState) {
         this.primaryState = primaryState;
     }
-    
+
 }

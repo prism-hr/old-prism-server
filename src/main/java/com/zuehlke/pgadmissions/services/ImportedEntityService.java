@@ -125,7 +125,7 @@ public class ImportedEntityService {
     }
 
     public void mergeImportedProgram(Institution institution, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline)
-            throws DeduplicationException, DataImportException {
+            throws DeduplicationException, DataImportException, InstantiationException, IllegalAccessException {
         Programme programDefinition = programInstanceDefinitions.iterator().next().getProgramme();
         Program persistentProgram = mergeProgram(institution, programDefinition);
 
@@ -357,7 +357,7 @@ public class ImportedEntityService {
         return entityService.createOrUpdate(studyOption);
     }
 
-    private void executeProgramImportAction(Program program) throws DeduplicationException {
+    private void executeProgramImportAction(Program program) throws DeduplicationException, InstantiationException, IllegalAccessException {
         Action action = actionService.getById(PrismAction.INSTITUTION_IMPORT_PROGRAM);
 
         User invoker = program.getUser();

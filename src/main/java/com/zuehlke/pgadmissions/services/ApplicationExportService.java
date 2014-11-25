@@ -168,7 +168,8 @@ public class ApplicationExportService {
         return outputStream;
     }
 
-    protected void executeExportAction(Application application, String exportId, String exportUserId, String exportException) throws DeduplicationException {
+    protected void executeExportAction(Application application, String exportId, String exportUserId, String exportException) throws DeduplicationException,
+            InstantiationException, IllegalAccessException {
         Action exportAction = actionService.getById(PrismAction.APPLICATION_EXPORT);
         Institution exportInstitution = application.getInstitution();
 

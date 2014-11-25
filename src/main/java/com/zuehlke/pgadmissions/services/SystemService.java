@@ -156,7 +156,8 @@ public class SystemService {
     }
 
     @Transactional(timeout = 600)
-    public void initializeSystem() throws WorkflowConfigurationException, DeduplicationException, CustomizationException {
+    public void initializeSystem() throws WorkflowConfigurationException, DeduplicationException, CustomizationException, InstantiationException,
+            IllegalAccessException {
         LOGGER.info("Initialising scope definitions");
         verifyBackwardCompatibility(Scope.class);
         initializeScopes();
@@ -547,7 +548,7 @@ public class SystemService {
         }
     }
 
-    private void initializeSystemUser(System system) throws DeduplicationException {
+    private void initializeSystemUser(System system) throws DeduplicationException, InstantiationException, IllegalAccessException {
         User user = system.getUser();
         if (user.getUserAccount() == null) {
             Action action = actionService.getById(PrismAction.SYSTEM_STARTUP);

@@ -1,9 +1,42 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.TimeZone;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -17,20 +50,6 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
-import org.apache.commons.lang3.LocaleUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-
-import javax.persistence.*;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.TimeZone;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
 @Entity
 @Table(name = "COMMENT")
@@ -177,7 +196,7 @@ public class Comment {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
-    private Set<CommentTransitionState> transitionStates = Sets.newHashSet();
+    private Set<CommentTransitionState> commentTransitionStates = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
@@ -499,8 +518,8 @@ public class Comment {
         return commentStates;
     }
 
-    public Set<CommentTransitionState> getTransitionStates() {
-        return transitionStates;
+    public Set<CommentTransitionState> getCommentTransitionStates() {
+        return commentTransitionStates;
     }
 
     public Set<CommentAppointmentTimeslot> getAppointmentTimeslots() {
@@ -706,7 +725,7 @@ public class Comment {
     }
 
     public Comment addCommentTransitionState(State transitionState, Boolean primaryState) {
-        transitionStates.add(new CommentTransitionState().withTransitionState(transitionState).withPrimaryState(primaryState));
+        commentTransitionStates.add(new CommentTransitionState().withState(transitionState).withPrimaryState(primaryState));
         return this;
     }
 

@@ -56,7 +56,7 @@ public class PrismApplicationValidationPendingCompletion extends PrismWorkflowSt
                         .withDefinition(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
-                        .withTransitionState(PrismState.APPLICATION_VALIDATION) // 
+                        .withTransitionState(PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION) // 
                         .withTransitionAction(PrismAction.APPLICATION_COMMENT)))); //
         
         stateActions.add(new PrismStateAction() //

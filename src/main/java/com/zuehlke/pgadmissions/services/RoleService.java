@@ -87,7 +87,8 @@ public class RoleService {
         return null;
     }
 
-    public void updateUserRole(Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) throws DeduplicationException {
+    public void updateUserRole(Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) throws DeduplicationException,
+            InstantiationException, IllegalAccessException {
         if (roles.length > 0) {
             User invoker = userService.getCurrentUser();
             Action action = actionService.getViewEditAction(resource);
@@ -164,9 +165,11 @@ public class RoleService {
                 }
             }
         }
+        
+        entityService.flush();
     }
 
-    public void deleteUserRoles(Resource resource, User user) throws DeduplicationException {
+    public void deleteUserRoles(Resource resource, User user) throws DeduplicationException, InstantiationException, IllegalAccessException {
         List<PrismRole> roles = roleDAO.getUserRoles(resource, user);
         updateUserRole(resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
     }

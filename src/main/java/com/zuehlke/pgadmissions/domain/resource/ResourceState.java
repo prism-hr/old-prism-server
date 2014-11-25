@@ -16,13 +16,12 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
 
 @Entity
 @Table(name = "RESOURCE_STATE", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "state_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "state_id" }), @UniqueConstraint(columnNames = { "program_id", "state_id" }),
         @UniqueConstraint(columnNames = { "project_id", "state_id" }), @UniqueConstraint(columnNames = { "application_id", "state_id" }) })
-public class ResourceState extends WorkflowResourceExecution {
+public class ResourceState extends ResourceStateDefinition {
 
     @Id
     @GeneratedValue
@@ -115,18 +114,22 @@ public class ResourceState extends WorkflowResourceExecution {
         this.application = application;
     }
 
+    @Override
     public final State getState() {
         return state;
     }
 
+    @Override
     public final void setState(State state) {
         this.state = state;
     }
 
+    @Override
     public final Boolean getPrimaryState() {
         return primaryState;
     }
 
+    @Override
     public final void setPrimaryState(Boolean primaryState) {
         this.primaryState = primaryState;
     }
@@ -144,11 +147,6 @@ public class ResourceState extends WorkflowResourceExecution {
     public ResourceState withPrimaryState(Boolean primaryState) {
         this.primaryState = primaryState;
         return this;
-    }
-
-    @Override
-    public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("state", state);
     }
 
 }

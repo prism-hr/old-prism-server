@@ -115,7 +115,9 @@ public class PrismApplicationReference extends PrismWorkflowState {
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME), //
                     new PrismStateTransition() //
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST)
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME)))); //
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME) //
+                        .withStateTerminations(Lists.newArrayList( //
+                                PrismState.APPLICATION_REFERENCE))))); //
         
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_EMAIL_CREATOR) //
@@ -205,7 +207,9 @@ public class PrismApplicationReference extends PrismWorkflowState {
                                 .withRole(PrismRole.APPLICATION_REFEREE) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_VIEWER_REFEREE) //
-                                .withRestrictToOwner(true)))))); //
+                                .withRestrictToOwner(true))) //
+                        .withStateTerminations(Lists.newArrayList( //
+                                PrismState.APPLICATION_REFERENCE))))); //
         
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_TERMINATE) //

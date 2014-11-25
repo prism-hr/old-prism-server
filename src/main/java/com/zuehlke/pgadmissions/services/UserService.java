@@ -121,7 +121,7 @@ public class UserService {
     }
 
     public User getOrCreateUserWithRoles(String firstName, String lastName, String email, PrismLocale locale, Resource resource, Set<PrismRole> roles)
-            throws DeduplicationException {
+            throws DeduplicationException, InstantiationException, IllegalAccessException {
         User user = getOrCreateUser(firstName, lastName, email, locale);
         roleService.updateUserRole(resource, user, PrismRoleTransitionType.CREATE, roles.toArray(new PrismRole[roles.size()]));
         return user;
@@ -174,7 +174,6 @@ public class UserService {
         if (user != null) {
             String newPassword = EncryptionUtils.getTemporaryPassword();
             notificationService.sendResetPasswordNotification(user, newPassword);
-            // TODO cover situation when account is not created yet
 
             UserAccount account = user.getUserAccount();
             if (account == null) {

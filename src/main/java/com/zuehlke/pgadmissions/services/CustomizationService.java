@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -153,7 +154,8 @@ public class CustomizationService {
     }
 
     public void updateConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
-            WorkflowDefinition definition, WorkflowConfigurationDTO workflowConfigurationDTO) throws CustomizationException {
+            WorkflowDefinition definition, WorkflowConfigurationDTO workflowConfigurationDTO) throws CustomizationException, DeduplicationException,
+            InstantiationException, IllegalAccessException {
         createOrUpdateConfiguration(configurationType, resource, locale, programType, workflowConfigurationDTO);
         resourceService.executeUpdate(resource,
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
@@ -169,7 +171,8 @@ public class CustomizationService {
     }
 
     public void createOrUpdateConfigurationGroup(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
-            PrismProgramType programType, List<? extends WorkflowConfigurationDTO> workflowConfigurationGroupDTO) throws CustomizationException {
+            PrismProgramType programType, List<? extends WorkflowConfigurationDTO> workflowConfigurationGroupDTO) throws CustomizationException,
+            DeduplicationException, InstantiationException, IllegalAccessException {
         List<WorkflowDefinition> definitions = getDefinitions(configurationType, scope);
         List<? extends WorkflowConfigurationDTO> valueDTOs = workflowConfigurationGroupDTO;
 

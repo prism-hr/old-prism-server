@@ -31,7 +31,7 @@ public class StateServiceHelperPropagation extends AbstractServiceHelper {
     private ResourceService resourceService;
     
     @Override
-    public void execute() throws DeduplicationException {
+    public void execute() throws DeduplicationException, InstantiationException, IllegalAccessException {
         List<PrismScope> scopeIds = scopeService.getScopesDescending();
         for (PrismScope scopeId : scopeIds) {
             List<StateTransitionPendingDTO> stateTransitionPendingDTOs = stateService.getStateTransitionsPending(scopeId);

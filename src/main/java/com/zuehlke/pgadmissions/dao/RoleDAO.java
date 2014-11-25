@@ -14,12 +14,12 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
-import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 
 @Repository
@@ -89,15 +89,17 @@ public class RoleDAO {
     }
 
     public List<PrismRole> getActionOwnerRoles(User user, Resource resource, Action action) {
-        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("role.id")) //
-                .createAlias("action", "action", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("state", resource.getState())) //
-                .add(Restrictions.eq("action", action)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //

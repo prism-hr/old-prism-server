@@ -164,7 +164,8 @@ public class AdvertService {
     }
 
     @SuppressWarnings("unchecked")
-    public void updateCategories(Class<? extends Resource> resourceClass, Integer resourceId, AdvertCategoriesDTO categoriesDTO) throws DeduplicationException {
+    public void updateCategories(Class<? extends Resource> resourceClass, Integer resourceId, AdvertCategoriesDTO categoriesDTO) throws DeduplicationException,
+            InstantiationException, IllegalAccessException {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
 
@@ -189,7 +190,7 @@ public class AdvertService {
     }
 
     public AdvertClosingDate addClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, AdvertClosingDateDTO advertClosingDateDTO)
-            throws DeduplicationException {
+            throws DeduplicationException, InstantiationException, IllegalAccessException {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
 
@@ -206,7 +207,7 @@ public class AdvertService {
     }
 
     public void updateClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, Integer closingDateId, AdvertClosingDateDTO advertClosingDateDTO)
-            throws DeduplicationException {
+            throws DeduplicationException, InstantiationException, IllegalAccessException {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
         AdvertClosingDate advertClosingDate = getClosingDateById(closingDateId);
@@ -221,7 +222,8 @@ public class AdvertService {
         }
     }
 
-    public void deleteClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, Integer closingDateId) throws DeduplicationException {
+    public void deleteClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, Integer closingDateId) throws DeduplicationException,
+            InstantiationException, IllegalAccessException {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
         AdvertClosingDate advertClosingDate = getClosingDateById(closingDateId);

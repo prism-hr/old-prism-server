@@ -69,7 +69,7 @@ public class ProjectService {
         return project;
     }
 
-    public ActionOutcomeDTO executeAction(Integer programId, CommentDTO commentDTO) throws DeduplicationException {
+    public ActionOutcomeDTO executeAction(Integer programId, CommentDTO commentDTO) throws DeduplicationException, InstantiationException, IllegalAccessException {
         User user = userService.getById(commentDTO.getUser());
         Project project = getById(programId);
 

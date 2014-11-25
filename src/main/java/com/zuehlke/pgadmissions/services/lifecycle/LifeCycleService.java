@@ -38,7 +38,7 @@ public class LifeCycleService implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws WorkflowConfigurationException, DeduplicationException, DataImportException, IOException, InterruptedException,
-            CustomizationException {
+            CustomizationException, InstantiationException, IllegalAccessException {
         if (BooleanUtils.isTrue(initializeWorkflow)) {
             systemService.initializeSystem();
         }

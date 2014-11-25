@@ -826,9 +826,12 @@ public class Application extends Resource {
     @Override
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addProperty("user", user).addProperty("program", program).addProperty("project", project)
-                .addExclusion("state.id", PrismState.APPLICATION_APPROVED_COMPLETED).addExclusion("state.id", PrismState.APPLICATION_REJECTED_COMPLETED)
+                .addExclusion("state.id", PrismState.APPLICATION_APPROVED_COMPLETED).addExclusion("state.id", PrismState.APPLICATION_APPROVED_COMPLETED_PURGED)
+                .addExclusion("state.id", PrismState.APPLICATION_REJECTED_COMPLETED).addExclusion("state.id", PrismState.APPLICATION_REJECTED_COMPLETED_PURGED)
                 .addExclusion("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED)
-                .addExclusion("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED);
+                .addExclusion("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED_PURGED)
+                .addExclusion("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED)
+                .addExclusion("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_PURGED);
     }
 
 }

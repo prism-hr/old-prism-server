@@ -177,7 +177,7 @@ public class Comment {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
-    private Set<CommentTransitionState> secondaryTransitionStates = Sets.newHashSet();
+    private Set<CommentTransitionState> transitionStates = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
@@ -499,8 +499,8 @@ public class Comment {
         return commentStates;
     }
 
-    public Set<CommentTransitionState> getSecondaryTransitionStates() {
-        return secondaryTransitionStates;
+    public Set<CommentTransitionState> getTransitionStates() {
+        return transitionStates;
     }
 
     public Set<CommentAppointmentTimeslot> getAppointmentTimeslots() {
@@ -706,7 +706,7 @@ public class Comment {
     }
 
     public Comment addCommentTransitionState(State transitionState, Boolean primaryState) {
-        secondaryTransitionStates.add(new CommentTransitionState().withTransitionState(transitionState).withPrimaryState(primaryState));
+        transitionStates.add(new CommentTransitionState().withTransitionState(transitionState).withPrimaryState(primaryState));
         return this;
     }
 

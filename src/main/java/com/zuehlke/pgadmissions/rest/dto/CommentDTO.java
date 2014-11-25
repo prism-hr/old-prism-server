@@ -72,7 +72,7 @@ public class CommentDTO {
     private List<CommentAssignedUserDTO> assignedUsers;
 
     @Valid
-    private List<CommentTransitionStateDTO> secondaryTransitionStates;
+    private List<PrismState> secondaryTransitionStates;
 
     private List<LocalDateTime> appointmentTimeslots;
 
@@ -284,11 +284,11 @@ public class CommentDTO {
         this.assignedUsers = assignedUsers;
     }
 
-    public List<CommentTransitionStateDTO> getSecondaryTransitionStates() {
+    public List<PrismState> getSecondaryTransitionStates() {
         return secondaryTransitionStates;
     }
 
-    public void setSecondaryTransitionStates(List<CommentTransitionStateDTO> secondaryTransitionStates) {
+    public void setSecondaryTransitionStates(List<PrismState> secondaryTransitionStates) {
         this.secondaryTransitionStates = secondaryTransitionStates;
     }
 

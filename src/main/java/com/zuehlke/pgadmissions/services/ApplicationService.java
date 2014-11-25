@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -18,6 +19,12 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.google.common.collect.Lists;
+import com.google.visualization.datasource.base.TypeMismatchException;
+import com.google.visualization.datasource.datatable.ColumnDescription;
+import com.google.visualization.datasource.datatable.DataTable;
+import com.google.visualization.datasource.datatable.TableRow;
+import com.google.visualization.datasource.datatable.value.ValueType;
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -43,6 +50,7 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationValidator;
@@ -303,6 +311,83 @@ public class ApplicationService {
 
     public List<Integer> getApplicationsForExport() {
         return applicationDAO.getApplicationsForExport();
+    }
+
+    public DataTable generateReport(ResourceListFilterDTO filterDTO) throws TypeMismatchException {
+        DataTable dataTable = new DataTable();
+
+        ArrayList<ColumnDescription> cd = Lists.newArrayList();
+        cd.add(new ColumnDescription("applicationId", ValueType.TEXT, "Application ID"));
+        cd.add(new ColumnDescription("firstNames", ValueType.TEXT, "First Name(s)"));
+        cd.add(new ColumnDescription("lastName", ValueType.TEXT, "Last Name"));
+        cd.add(new ColumnDescription("email", ValueType.TEXT, "E-mail"));
+        cd.add(new ColumnDescription("nationality1", ValueType.TEXT, "Nationality 1"));
+        cd.add(new ColumnDescription("nationality2", ValueType.TEXT, "Nationality 2"));
+        cd.add(new ColumnDescription("dateOfBirth", ValueType.DATE, "Date Of Birth"));
+        cd.add(new ColumnDescription("gender", ValueType.TEXT, "Gender"));
+        cd.add(new ColumnDescription("programmeId", ValueType.TEXT, "Programme ID"));
+        cd.add(new ColumnDescription("programmeName", ValueType.TEXT, "Programme Name"));
+        cd.add(new ColumnDescription("projectTitle", ValueType.TEXT, "Project Title"));
+        cd.add(new ColumnDescription("studyOption", ValueType.TEXT, "Study Option"));
+        cd.add(new ColumnDescription("sourcesOfInterest", ValueType.TEXT, "How did you find us"));
+        cd.add(new ColumnDescription("sourcesOfInterestText", ValueType.TEXT, "Additional Information"));
+        cd.add(new ColumnDescription("provisionalSupervisors", ValueType.TEXT, "Provisional Supervisors"));
+        cd.add(new ColumnDescription("academicYear", ValueType.TEXT, "Academic Year"));
+        cd.add(new ColumnDescription("submittedDate", ValueType.DATE, "Submitted"));
+        cd.add(new ColumnDescription("lastEditedDate", ValueType.DATE, "Last Edited"));
+        cd.add(new ColumnDescription("totalFunding", ValueType.TEXT, "Total Funding"));
+
+        // overall rating
+        cd.add(new ColumnDescription("averageOverallRating", ValueType.TEXT, "Average Overall Rating"));
+        cd.add(new ColumnDescription("overallPositiveEndorsements", ValueType.TEXT, "Overall Positive Endorsements"));
+
+        cd.add(new ColumnDescription("status", ValueType.TEXT, "Status"));
+        cd.add(new ColumnDescription("validationTime", ValueType.NUMBER, "Validation Time (hours)"));
+        cd.add(new ColumnDescription("feeStatus", ValueType.TEXT, "Fee status"));
+        cd.add(new ColumnDescription("academicallyQualified", ValueType.TEXT, "Academically Qualified?"));
+        cd.add(new ColumnDescription("adequateEnglish", ValueType.TEXT, "Adequate English?"));
+
+        // reference report
+        cd.add(new ColumnDescription("receivedReferences", ValueType.NUMBER, "Received References"));
+        cd.add(new ColumnDescription("declinedReferences", ValueType.NUMBER, "Declined References"));
+        cd.add(new ColumnDescription("positiveReferenceEndorsements", ValueType.TEXT, "Positive Reference Endorsements"));
+        cd.add(new ColumnDescription("negativeReferenceEndorsements", ValueType.TEXT, "Negative Reference Endorsements"));
+        cd.add(new ColumnDescription("averageReferenceRating", ValueType.TEXT, "Average Reference Rating"));
+
+        // review report
+        cd.add(new ColumnDescription("reviewStages", ValueType.NUMBER, "Review Stages"));
+        cd.add(new ColumnDescription("reviewTime", ValueType.NUMBER, "Review Time (hours)"));
+        cd.add(new ColumnDescription("positiveReviewEndorsements", ValueType.TEXT, "Positive Review Endorsements"));
+        cd.add(new ColumnDescription("negativeReviewEndorsements", ValueType.TEXT, "Negative Review Endorsements"));
+        cd.add(new ColumnDescription("averageReviewRating", ValueType.TEXT, "Average Review Rating"));
+
+        // interview report
+        cd.add(new ColumnDescription("interviewStages", ValueType.NUMBER, "Interview Stages"));
+        cd.add(new ColumnDescription("interviewTime", ValueType.NUMBER, "Interview Time (hours)"));
+        cd.add(new ColumnDescription("interviewReports", ValueType.NUMBER, "Interview Reports"));
+        cd.add(new ColumnDescription("positiveInterviewEndorsements", ValueType.TEXT, "Positive Interview Endorsements"));
+        cd.add(new ColumnDescription("negativeInterviewEndorsements", ValueType.TEXT, "Negative Interview Endorsements"));
+        cd.add(new ColumnDescription("averageInterviewRating", ValueType.TEXT, "Average Interview Rating"));
+
+        // approval report
+        cd.add(new ColumnDescription("approvalTime", ValueType.NUMBER, "Approval Time (hours)"));
+        cd.add(new ColumnDescription("approvalStages", ValueType.NUMBER, "Approval Stages"));
+        cd.add(new ColumnDescription("primarySupervisor", ValueType.TEXT, "Primary Supervisor"));
+        cd.add(new ColumnDescription("secondarySupervisor", ValueType.TEXT, "Secondary Supervisor"));
+        cd.add(new ColumnDescription("outcome", ValueType.TEXT, "Outcome"));
+        cd.add(new ColumnDescription("outcomedate", ValueType.DATE, "Outcome Date"));
+        cd.add(new ColumnDescription("outcomeType", ValueType.TEXT, "Outcome Type"));
+        cd.add(new ColumnDescription("outcomeNote", ValueType.TEXT, "Outcome Note"));
+
+        // link to application
+        cd.add(new ColumnDescription("applicationLink", ValueType.TEXT, "Link To Application"));
+
+        dataTable.addColumns(cd);
+
+        TableRow row = new TableRow();
+        // row.addCell("app1");
+        dataTable.addRow(row);
+        return dataTable;
     }
 
     private void purgeApplication(Application application, Comment comment) {

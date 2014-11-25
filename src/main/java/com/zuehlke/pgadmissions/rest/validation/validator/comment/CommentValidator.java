@@ -1,15 +1,11 @@
 package com.zuehlke.pgadmissions.rest.validation.validator.comment;
 
-import com.google.common.base.CaseFormat;
-import com.google.common.base.Preconditions;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
-import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration;
-import com.zuehlke.pgadmissions.rest.dto.CommentCustomResponseDTO;
-import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
-import com.zuehlke.pgadmissions.services.CustomizationService;
-import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.APPLICATION_RATING;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -17,11 +13,20 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.APPLICATION_RATING;
+import com.google.common.base.CaseFormat;
+import com.google.common.base.Preconditions;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldResolution;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismCustomQuestionType;
+import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration;
+import com.zuehlke.pgadmissions.rest.dto.CommentCustomResponseDTO;
+import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
+import com.zuehlke.pgadmissions.services.CustomizationService;
+import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Component
 @SuppressWarnings("unchecked")
@@ -75,7 +80,6 @@ public class CommentValidator extends LocalValidatorFactoryBean implements Valid
                     }
                 }
 
-
                 if (propertyType.name().startsWith("RATING")) {
                     validateRating = false;
                 }
@@ -97,21 +101,21 @@ public class CommentValidator extends LocalValidatorFactoryBean implements Valid
                 if (resolutions != null) {
                     for (PrismActionValidationFieldResolution fieldResolution : resolutions) {
                         switch (fieldResolution.getRestriction()) {
-                            case NOT_NULL:
-                                ValidationUtils.rejectIfEmpty(errors, fieldName, "notNull");
-                                break;
-                            case NOT_EMPTY:
-                                ValidationUtils.rejectIfEmptyOrWhitespace(errors, fieldName, "notEmpty");
-                                break;
-                            case SIZE:
-                                Collection<?> collection = (Collection<?>) fieldValue;
-                                Integer min = (Integer) fieldResolution.getArguments().get("min");
-                                Integer max = (Integer) fieldResolution.getArguments().get("max");
-                                if (min != null && min > 0 && (collection == null || collection.size() < min)) {
-                                    errors.rejectValue(fieldName, "min", new Object[]{min}, null);
-                                } else if (max != null && collection != null && collection.size() > max) {
-                                    errors.rejectValue(fieldName, "max", new Object[]{max}, null);
-                                }
+                        case NOT_NULL:
+                            ValidationUtils.rejectIfEmpty(errors, fieldName, "notNull");
+                            break;
+                        case NOT_EMPTY:
+                            ValidationUtils.rejectIfEmptyOrWhitespace(errors, fieldName, "notEmpty");
+                            break;
+                        case SIZE:
+                            Collection<?> collection = (Collection<?>) fieldValue;
+                            Integer min = (Integer) fieldResolution.getArguments().get("min");
+                            Integer max = (Integer) fieldResolution.getArguments().get("max");
+                            if (min != null && min > 0 && (collection == null || collection.size() < min)) {
+                                errors.rejectValue(fieldName, "min", new Object[] { min }, null);
+                            } else if (max != null && collection != null && collection.size() > max) {
+                                errors.rejectValue(fieldName, "max", new Object[] { max }, null);
+                            }
                         }
                     }
                 } else {

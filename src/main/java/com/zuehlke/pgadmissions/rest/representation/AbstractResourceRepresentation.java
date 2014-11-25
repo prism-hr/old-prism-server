@@ -1,15 +1,16 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
+import java.util.List;
+import java.util.Set;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
-import java.util.List;
-import java.util.Set;
 
 public class AbstractResourceRepresentation {
 

@@ -279,7 +279,7 @@ public class CommentService {
         Set<CommentAssignedUser> persistentAssignees = Sets.newHashSet(transientAssignees);
         transientAssignees.clear();
 
-        Set<CommentTransitionState> transientTransitionStates = comment.getCommentTransitionStates();
+        Set<CommentTransitionState> transientTransitionStates = comment.getSecondaryTransitionStates();
         Set<CommentTransitionState> persistentTransitionStates = Sets.newHashSet(transientTransitionStates);
         transientTransitionStates.clear();
 
@@ -298,7 +298,7 @@ public class CommentService {
         entityService.save(comment);
 
         addAssignedUsers(comment, persistentAssignees);
-        comment.getCommentTransitionStates().addAll(persistentTransitionStates);
+        comment.getSecondaryTransitionStates().addAll(persistentTransitionStates);
         comment.getAppointmentTimeslots().addAll(persistentTimeslots);
         comment.getAppointmentPreferences().addAll(persistentPreferences);
         comment.getCustomResponses().addAll(persistentResponses);
@@ -329,7 +329,7 @@ public class CommentService {
         comment.addCommentState(state, true);
         comment.addCommentTransitionState(transitionState, true);
 
-        boolean noTransition = comment.getCommentTransitionStates().isEmpty();
+        boolean noTransition = comment.getSecondaryTransitionStates().isEmpty();
         for (ResourceState resourceState : comment.getResource().getResourceStates()) {
             if (!resourceState.getPrimaryState()) {
                 State secondaryState = resourceState.getState();
@@ -393,9 +393,9 @@ public class CommentService {
     }
 
     public void appendTransitionStates(Comment comment, CommentDTO commentDTO) {
-        for (CommentTransitionStateDTO commentTransitionStateDTO : commentDTO.getTransitionStates()) {
+        for (CommentTransitionStateDTO commentTransitionStateDTO : commentDTO.getSecondaryTransitionStates()) {
             State transitionStateItem = stateService.getById(commentTransitionStateDTO.getTransitionState());
-            comment.getCommentTransitionStates().add(
+            comment.getSecondaryTransitionStates().add(
                     new CommentTransitionState().withTransitionState(transitionStateItem).withPrimaryState(commentTransitionStateDTO.getPrimaryState()));
         }
     }

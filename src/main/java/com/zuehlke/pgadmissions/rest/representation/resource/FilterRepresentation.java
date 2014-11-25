@@ -3,13 +3,13 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
-import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
+import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.FilterPropertyType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class FilterRepresentation {
 
-    private FilterProperty propertyName;
+    private ResourceListFilterProperty propertyName;
 
     private List<FilterExpression> permittedExpressions;
 
@@ -17,14 +17,14 @@ public class FilterRepresentation {
 
     private List<PrismScope> permittedScopes;
 
-    public FilterRepresentation(FilterProperty propertyName, List<FilterExpression> permittedExpressions, FilterPropertyType valueType, List<PrismScope> permittedScopes) {
+    public FilterRepresentation(ResourceListFilterProperty propertyName, List<FilterExpression> permittedExpressions, FilterPropertyType valueType, List<PrismScope> permittedScopes) {
         this.propertyName = propertyName;
         this.permittedExpressions = permittedExpressions;
         this.valueType = valueType;
         this.permittedScopes = permittedScopes;
     }
 
-    public FilterProperty getPropertyName() {
+    public ResourceListFilterProperty getPropertyName() {
         return propertyName;
     }
 

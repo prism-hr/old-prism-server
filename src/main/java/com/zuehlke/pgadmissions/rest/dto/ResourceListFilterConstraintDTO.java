@@ -6,12 +6,12 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
-import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
+import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 
 public class ResourceListFilterConstraintDTO {
 
-    private FilterProperty filterProperty;
+    private ResourceListFilterProperty filterProperty;
 
     private FilterExpression filterExpression;
 
@@ -31,11 +31,11 @@ public class ResourceListFilterConstraintDTO {
 
     private BigDecimal valueDecimalClose;
 
-    public final FilterProperty getFilterProperty() {
+    public final ResourceListFilterProperty getFilterProperty() {
         return filterProperty;
     }
 
-    public final void setFilterProperty(FilterProperty filterProperty) {
+    public final void setFilterProperty(ResourceListFilterProperty filterProperty) {
         this.filterProperty = filterProperty;
     }
 
@@ -119,7 +119,7 @@ public class ResourceListFilterConstraintDTO {
         this.valueDecimalClose = valueDecimalClose;
     }
 
-    public ResourceListFilterConstraintDTO withFilterProperty(FilterProperty filterProperty) {
+    public ResourceListFilterConstraintDTO withFilterProperty(ResourceListFilterProperty filterProperty) {
         this.filterProperty = filterProperty;
         return this;
     }

@@ -7,32 +7,14 @@ import org.apache.commons.lang.BooleanUtils;
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
 
-public class ResourceListFilterDTO {
+public class ResourceListFilterDTO extends ListFilterDTO {
 
     private Boolean urgentOnly;
-
-    private FilterMatchMode matchMode;
-
-    private FilterSortOrder sortOrder;
-
-    private String valueString;
 
     private List<ResourceListFilterConstraintDTO> constraints;
 
     public final Boolean getUrgentOnly() {
         return urgentOnly;
-    }
-
-    public final FilterMatchMode getMatchMode() {
-        return matchMode;
-    }
-
-    public final FilterSortOrder getSortOrder() {
-        return sortOrder;
-    }
-
-    public final String getValueString() {
-        return valueString;
     }
 
     public final List<ResourceListFilterConstraintDTO> getConstraints() {
@@ -52,19 +34,19 @@ public class ResourceListFilterDTO {
         this.urgentOnly = urgentOnly;
         return this;
     }
-
+    
     public ResourceListFilterDTO withMatchMode(FilterMatchMode matchMode) {
-        this.matchMode = matchMode;
+        setMatchMode(matchMode);
         return this;
     }
-
+    
     public ResourceListFilterDTO withSortOrder(FilterSortOrder sortOrder) {
-        this.sortOrder = sortOrder;
+        setSortOrder(sortOrder);
         return this;
     }
-
+    
     public ResourceListFilterDTO withValueString(String valueString) {
-        this.valueString = valueString;
+        setValueString(valueString);
         return this;
     }
 
@@ -79,9 +61,9 @@ public class ResourceListFilterDTO {
     public boolean hasConstraints() {
         return constraints != null && !constraints.isEmpty();
     }
-    
+
     public boolean hasBasicFilter() {
-        return hasConstraints() && valueString != null;
-    }    
+        return hasConstraints() && getValueString() != null;
+    }
 
 }

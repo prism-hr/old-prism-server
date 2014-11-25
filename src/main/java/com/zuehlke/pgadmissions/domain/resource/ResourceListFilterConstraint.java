@@ -17,7 +17,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
-import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
+import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 
 @Entity
@@ -38,7 +38,7 @@ public class ResourceListFilterConstraint {
 
     @Column(name = "filter_property", nullable = false)
     @Enumerated(EnumType.STRING)
-    private FilterProperty filterProperty;
+    private ResourceListFilterProperty filterProperty;
 
     @Column(name = "filter_expression", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -87,11 +87,11 @@ public class ResourceListFilterConstraint {
         this.filter = filter;
     }
 
-    public final FilterProperty getFilterProperty() {
+    public final ResourceListFilterProperty getFilterProperty() {
         return filterProperty;
     }
 
-    public final void setFilterProperty(FilterProperty filterProperty) {
+    public final void setFilterProperty(ResourceListFilterProperty filterProperty) {
         this.filterProperty = filterProperty;
     }
 
@@ -172,7 +172,7 @@ public class ResourceListFilterConstraint {
         return this;
     }
 
-    public ResourceListFilterConstraint withFilterProperty(FilterProperty filterProperty) {
+    public ResourceListFilterConstraint withFilterProperty(ResourceListFilterProperty filterProperty) {
         this.filterProperty = filterProperty;
         return this;
     }

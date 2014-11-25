@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
-import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
+import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
@@ -384,9 +384,9 @@ public class ResourceService {
             }
 
             for (ResourceListFilterConstraintDTO constraint : filter.getConstraints()) {
-                FilterProperty property = constraint.getFilterProperty();
+                ResourceListFilterProperty property = constraint.getFilterProperty();
 
-                if (FilterProperty.isPermittedFilterProperty(scopeId, property)) {
+                if (ResourceListFilterProperty.isPermittedFilterProperty(scopeId, property)) {
                     String propertyName = property.getPropertyName();
                     Boolean negated = BooleanUtils.toBoolean(constraint.getNegated());
                     switch (property) {

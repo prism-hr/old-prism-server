@@ -4,6 +4,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 
 public class ActionDTO {
 
@@ -20,6 +21,8 @@ public class ActionDTO {
     private Boolean primaryState;
 
     private PrismState transitionStateId;
+
+    private PrismStateTransitionEvaluation stateTransitionEvaluationId;
 
     private Boolean parallelizable;
 
@@ -79,6 +82,14 @@ public class ActionDTO {
         this.transitionStateId = transitionStateId;
     }
 
+    public final PrismStateTransitionEvaluation getStateTransitionEvaluationId() {
+        return stateTransitionEvaluationId;
+    }
+
+    public final void setStateTransitionEvaluationId(PrismStateTransitionEvaluation stateTransitionEvaluationId) {
+        this.stateTransitionEvaluationId = stateTransitionEvaluationId;
+    }
+
     public final Boolean getParallelizable() {
         return parallelizable;
     }
@@ -89,6 +100,10 @@ public class ActionDTO {
 
     public boolean isCreateResourceAction() {
         return actionCategory == PrismActionCategory.CREATE_RESOURCE;
+    }
+
+    public boolean isTransitionResourceAction() {
+        return !(stateTransitionEvaluationId == null);
     }
 
 }

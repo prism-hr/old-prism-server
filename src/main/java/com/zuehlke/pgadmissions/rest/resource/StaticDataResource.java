@@ -20,7 +20,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.FilterProperty;
+import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
@@ -147,8 +147,8 @@ public class StaticDataResource {
 
         staticData.put("timeZones", TimeZoneUtils.getInstance().getTimeZoneDefinitions());
 
-        List<FilterRepresentation> filters = Lists.newArrayListWithCapacity(FilterProperty.values().length);
-        for (FilterProperty filterProperty : FilterProperty.values()) {
+        List<FilterRepresentation> filters = Lists.newArrayListWithCapacity(ResourceListFilterProperty.values().length);
+        for (ResourceListFilterProperty filterProperty : ResourceListFilterProperty.values()) {
             filters.add(new FilterRepresentation(filterProperty, filterProperty.getPermittedExpressions(), filterProperty.getPropertyType(), filterProperty
                     .getPermittedScopes()));
         }

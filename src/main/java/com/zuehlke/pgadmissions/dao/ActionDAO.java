@@ -125,7 +125,7 @@ public class ActionDAO {
                         .add(Projections.property("stateActionAssignment.actionEnhancement"), "customActionEnhancement") //
                         .add(Projections.property("primaryState"), "primaryState") //
                         .add(Projections.property("stateTransition.transitionState.id"), "transitionStateId") //
-                        .add(Projections.property("stateTransitionEvaluation.id"), "stateTransitionEvaluationId") //
+                        .add(Projections.property("stateTransitionEvaluation.nextStateSelection"), "nextStateSelection") //
                         .add(Projections.property("transitionState.parallelizable"), "parallelizable")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //

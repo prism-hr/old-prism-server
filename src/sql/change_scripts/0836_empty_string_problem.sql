@@ -1,0 +1,4 @@
+UPDATE APPLICATION_ADDITIONAL_INFORMATION
+SET convictions_text = NULL
+WHERE LENGTH(convictions_text) = 0
+;

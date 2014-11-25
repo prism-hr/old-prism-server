@@ -1,17 +1,25 @@
 package com.zuehlke.pgadmissions.mail;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EMAIL_LINK_MESSAGE;
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
-
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-
+import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionProperty;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
+import com.zuehlke.pgadmissions.dto.MailMessageDTO;
+import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
+import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
+import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -27,26 +35,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionProperty;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
-import com.zuehlke.pgadmissions.dto.MailMessageDTO;
-import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
-import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
-import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
-import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
 
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EMAIL_LINK_MESSAGE;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
@@ -68,8 +66,11 @@ public class MailSender {
     @Value("${email.location}")
     private String emailTemplateLocation;
 
-    @Autowired
-    private SystemService systemService;
+    @Value("${application.url}")
+    private String applicationUrl;
+
+    @Value("${application.api.url}")
+    private String applicationApiUrl;
 
     @Autowired
     private JavaMailSender javaMailSender;
@@ -89,7 +90,9 @@ public class MailSender {
             Map<String, Object> model = createNotificationModel(message.getConfiguration().getNotificationDefinition(), message.getModelDTO());
             final String subject = processHeader(configuration.getNotificationDefinition().getId(), configuration.getSubject(), model);
 
-            final String htmlContent = processContent(configuration.getNotificationDefinition().getId(), configuration.getContent(), model, subject);
+            Institution institution = message.getModelDTO().getResource().getInstitution();
+            Document logoDocument = institution != null ? institution.getLogoDocument() : null;
+            final String htmlContent = processContent(configuration.getNotificationDefinition().getId(), configuration.getContent(), model, subject, logoDocument);
             final String plainTextContent = mailToPlainTextConverter.getPlainText(htmlContent) + "\n\n" + propertyLoader.load(SYSTEM_EMAIL_LINK_MESSAGE);
 
             if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat")) {
@@ -121,7 +124,7 @@ public class MailSender {
         }
 
     }
-    
+
     public MailSender localize(PropertyLoader propertyLoader) {
         this.propertyLoader = propertyLoader;
         return this;
@@ -132,7 +135,7 @@ public class MailSender {
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
     }
 
-    public String processContent(PrismNotificationDefinition templateId, String templateValue, Map<String, Object> model, String subject) throws IOException,
+    public String processContent(PrismNotificationDefinition templateId, String templateValue, Map<String, Object> model, String subject, Document logoDocument) throws IOException,
             TemplateException {
         Template template = new Template(templateId.name(), new StringReader(templateValue), freemarkerConfig.getConfiguration());
         String content = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
@@ -140,15 +143,22 @@ public class MailSender {
         String emailTemplate = Resources.toString(Resources.getResource(emailTemplateLocation), Charsets.UTF_8);
         template = new Template("Email template", emailTemplate, freemarkerConfig.getConfiguration());
 
-        model = ImmutableMap.<String, Object> of("IMAGES_PATH", systemService.getSystem().getHomepage() + "/images/email", "SUBJECT", subject, "CONTENT",
-                content);
+        String imagesPath = applicationUrl + "/images/email";
+        String logoUrl;
+        if (logoDocument != null) {
+            logoUrl = applicationApiUrl + "/images/" + logoDocument.getId();
+        } else {
+            logoUrl = imagesPath + "/prism.png";
+        }
+
+        model = ImmutableMap.<String, Object>of("LOGO_URL", logoUrl, "IMAGES_PATH", imagesPath, "SUBJECT", subject, "CONTENT", content);
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
     }
 
     public Map<String, Object> createNotificationModelForValidation(NotificationDefinition notificationTemplate) {
         return createNotificationModel(notificationTemplate, new NotificationDefinitionModelDTO(), true);
     }
-    
+
     public Map<String, Object> createNotificationModel(NotificationDefinition notificationTemplate, NotificationDefinitionModelDTO modelDTO) {
         return createNotificationModel(notificationTemplate, modelDTO, false);
     }

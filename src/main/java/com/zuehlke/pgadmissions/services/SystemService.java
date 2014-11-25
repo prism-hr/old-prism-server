@@ -84,8 +84,8 @@ public class SystemService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SystemService.class);
 
-    @Value("${application.host}")
-    private String systemHomepage;
+    @Value("${application.url}")
+    private String applicationUrl;
 
     @Value("${system.id}")
     private Integer systemId;
@@ -388,7 +388,7 @@ public class SystemService {
         User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail, PrismLocale.getSystemLocale());
         State systemRunning = stateService.getById(PrismState.SYSTEM_RUNNING);
         DateTime startupTimestamp = new DateTime();
-        System transientSystem = new System().withId(systemId).withTitle(systemName).withLocale(PrismLocale.getSystemLocale()).withHomepage(systemHomepage)
+        System transientSystem = new System().withId(systemId).withTitle(systemName).withLocale(PrismLocale.getSystemLocale()).withHomepage(applicationUrl)
                 .withHelpdesk(systemHelpdesk).withUser(systemUser).withState(systemRunning).withCipherSalt(EncryptionUtils.getUUID())
                 .withCreatedTimestamp(startupTimestamp).withUpdatedTimestamp(startupTimestamp);
         System system = entityService.createOrUpdate(transientSystem);

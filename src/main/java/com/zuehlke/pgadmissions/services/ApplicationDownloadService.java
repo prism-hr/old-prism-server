@@ -48,7 +48,7 @@ public class ApplicationDownloadService {
     private ApplicationContext applicationContext;
 
     public void build(ApplicationDownloadDTO applicationDownloadDTO, PropertyLoader propertyLoader,
-                      ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper, final OutputStream outputStream) {
+            ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper, final OutputStream outputStream) {
         try {
             Document pdfDocument = applicationDownloadBuilderHelper.startDocument();
             PdfWriter pdfWriter = applicationDownloadBuilderHelper.startDocumentWriter(outputStream, pdfDocument);
@@ -65,7 +65,8 @@ public class ApplicationDownloadService {
         User user = userService.getCurrentUser();
 
         PropertyLoader generalPropertyLoader = new PropertyLoader().localize(systemService.getSystem(), user);
-        ApplicationDownloadBuilderHelper generalApplicationDownloadBuilderHelper = applicationContext.getBean(ApplicationDownloadBuilderHelper.class).localize(generalPropertyLoader);
+        ApplicationDownloadBuilderHelper generalApplicationDownloadBuilderHelper = applicationContext.getBean(ApplicationDownloadBuilderHelper.class).localize(
+                generalPropertyLoader);
 
         try {
             Document pdfDocument = generalApplicationDownloadBuilderHelper.startDocument();
@@ -80,7 +81,7 @@ public class ApplicationDownloadService {
                 Program program = application.getProgram();
 
                 PropertyLoader propertyLoader = specificPropertyLoaders.get(program);
-                if(propertyLoader == null){
+                if (propertyLoader == null) {
                     propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(application, user);
                 }
                 specificPropertyLoaders.put(program, propertyLoader);
@@ -99,13 +100,13 @@ public class ApplicationDownloadService {
                                 || actionEnhancements.contains(PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR)
                                 || actionEnhancements.contains(PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_ADMITTER);
 
-                        boolean includeReferences = actionEnhancements.contains(PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER)
+                        boolean includeAttachments = actionEnhancements.contains(PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER)
                                 || actionEnhancements.contains(PrismActionEnhancement.APPLICATION_VIEW_AS_ADMITTER)
                                 || actionEnhancements.contains(PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_RECRUITER)
                                 || actionEnhancements.contains(PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_ADMITTER);
 
                         ApplicationDownloadDTO applicationDownloadDTO = new ApplicationDownloadDTO().withApplication(application)
-                                .withIncludeEqualOpportuntiesData(includeEqualOpportunitiesData).withIncludeReferences(includeReferences);
+                                .withIncludeEqualOpportuntiesData(includeEqualOpportunitiesData).withIncludeAttachments(includeAttachments);
 
                         applicationContext.getBean(ApplicationDownloadBuilder.class)
                                 .localize(specificPropertyLoaders.get(program), specificApplicationDownloadBuilderHelpers.get(program))

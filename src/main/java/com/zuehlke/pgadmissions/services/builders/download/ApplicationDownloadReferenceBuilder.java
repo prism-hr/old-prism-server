@@ -43,6 +43,7 @@ public class ApplicationDownloadReferenceBuilder {
             PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_REFEREE_REFERENCE_APPENDIX));
 
             addReferenceComment(pdfDocument, body, pdfWriter, application, referenceComment);
+            addReferenceDocument(pdfDocument, pdfWriter, referenceComment);
 
             pdfDocument.newPage();
             pdfDocument.close();
@@ -69,19 +70,21 @@ public class ApplicationDownloadReferenceBuilder {
             applicationDownloadBuilderHelper.addContentRowMedium(rowTitle, referenceComment.getContent(), body);
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_RATING), referenceComment.getApplicationRatingDisplay(), body);
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
+        }
+    }
 
-            PdfContentByte content = pdfWriter.getDirectContent();
-            for (com.zuehlke.pgadmissions.domain.document.Document input : referenceComment.getDocuments()) {
-                try {
-                    PdfReader reader = new PdfReader(input.getContent());
-                    for (int i = 1; i <= reader.getNumberOfPages(); i++) {
-                        pdfDocument.newPage();
-                        PdfImportedPage page = pdfWriter.getImportedPage(reader, i);
-                        content.addTemplate(page, 0, 0);
-                    }
-                } catch (IOException e) {
-                    throw new PdfDocumentBuilderException(e);
+    private void addReferenceDocument(Document pdfDocument, PdfWriter pdfWriter, Comment referenceComment) {
+        PdfContentByte content = pdfWriter.getDirectContent();
+        for (com.zuehlke.pgadmissions.domain.document.Document input : referenceComment.getDocuments()) {
+            try {
+                PdfReader reader = new PdfReader(input.getContent());
+                for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+                    pdfDocument.newPage();
+                    PdfImportedPage page = pdfWriter.getImportedPage(reader, i);
+                    content.addTemplate(page, 0, 0);
                 }
+            } catch (IOException e) {
+                throw new PdfDocumentBuilderException(e);
             }
         }
     }

@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -19,6 +17,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
+import com.itextpdf.text.Anchor;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -31,6 +30,7 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfImportedPage;
+import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfReader;
@@ -62,8 +62,6 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ApplicationDownloadBuilder {
-
-    private static Logger LOGGER = LoggerFactory.getLogger(ApplicationDownloadBuilder.class);
 
     private final List<Object> bookmarks = Lists.newLinkedList();
 
@@ -167,8 +165,6 @@ public class ApplicationDownloadBuilder {
             applicationDownloadBuilderHelper.addContentRowMedium(subheader, null, body);
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else {
-            applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
-
             int counter = 1;
             for (ApplicationSupervisor supervisor : supervisors) {
                 PdfPTable subBody = applicationDownloadBuilderHelper.startSubection(pdfDocument, subheader + "(" + counter++ + ")");
@@ -181,7 +177,7 @@ public class ApplicationDownloadBuilder {
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_SUPERVISOR_AWARE_OF_APPLICATION),
                         propertyLoader.load(SYSTEM_YES, SYSTEM_NO, supervisor.getAcceptedSupervision()), subBody);
 
-                applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
+                applicationDownloadBuilderHelper.closeSection(pdfDocument, subBody);
             }
         }
     }
@@ -310,8 +306,6 @@ public class ApplicationDownloadBuilder {
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_SUBHEADER), null, body);
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else {
-            applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
-
             int counter = 1;
             for (ApplicationQualification qualification : qualifications) {
                 PdfPTable subBody = applicationDownloadBuilderHelper.startSubection(pdfDocument, propertyLoader.load(APPLICATION_QUALIFICATION_SUBHEADER) + "("
@@ -363,8 +357,6 @@ public class ApplicationDownloadBuilder {
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_EMPLOYMENT_POSITION_SUBHEADER), null, body);
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else {
-            applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
-
             int counter = 1;
             for (ApplicationEmploymentPosition position : positions) {
                 PdfPTable subBody = applicationDownloadBuilderHelper.startSubection(pdfDocument, propertyLoader.load(APPLICATION_EMPLOYMENT_POSITION_SUBHEADER)
@@ -397,8 +389,6 @@ public class ApplicationDownloadBuilder {
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_FUNDING_SUBHEADER), null, body);
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else {
-            applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
-
             int counter = 1;
             for (ApplicationFunding funding : fundings) {
                 PdfPTable subBody = applicationDownloadBuilderHelper.startSubection(pdfDocument, propertyLoader.load(APPLICATION_FUNDING_SUBHEADER) + "("
@@ -423,8 +413,6 @@ public class ApplicationDownloadBuilder {
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PRIZE_SUBHEADER), null, body);
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else {
-            applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
-
             int counter = 1;
             for (ApplicationPrize prize : prizes) {
                 PdfPTable subBody = applicationDownloadBuilderHelper.startSubection(pdfDocument, propertyLoader.load(APPLICATION_PRIZE_SUBHEADER) + "("
@@ -448,8 +436,6 @@ public class ApplicationDownloadBuilder {
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_REFEREE_SUBHEADER), null, body);
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else {
-            applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
-
             int counter = 1;
             for (ApplicationReferee referee : referees) {
                 PdfPTable subBody = applicationDownloadBuilderHelper.startSubection(pdfDocument, propertyLoader.load(APPLICATION_REFEREE_SUBHEADER) + "("
@@ -506,13 +492,17 @@ public class ApplicationDownloadBuilder {
         }
     }
 
-    private void addSupportingDocuments(ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument, PdfWriter pdfWriter) throws DocumentException {
+    private void addSupportingDocuments(ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument, PdfWriter pdfWriter) throws DocumentException,
+            IOException {
         if (applicationDownloadDTO.isIncludeAttachments()) {
             for (int i = 0; i < bookmarks.size(); i++) {
                 pdfDocument.newPage();
 
                 NewPageEvent pageEvent = (NewPageEvent) pdfWriter.getPageEvent();
                 pageEvent.setApplyHeaderFooter(true);
+
+                Anchor anchor = new Anchor();
+                anchor.setName(String.valueOf(i));
 
                 Object object = bookmarks.get(i);
                 pdfDocument.add(new Chunk(propertyLoader.load(SYSTEM_APPENDIX) + "(" + (i + 1) + ")").setLocalDestination(new Integer(i).toString()));
@@ -521,26 +511,22 @@ public class ApplicationDownloadBuilder {
 
                     if (document != null) {
                         if (document.getApplicationLanguageQualification() != null) {
-                            pdfDocument.add(new Chunk(" - " + propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_APPENDIX)));
+                            pdfDocument.add(buildTarget(APPLICATION_LANGUAGE_QUALIFICATION_APPENDIX, anchor));
                         } else if (document.getApplicationQualification() != null) {
-                            pdfDocument.add(new Chunk(" - " + propertyLoader.load(APPLICATION_QUALIFICATION_APPENDIX)));
+                            pdfDocument.add(buildTarget(APPLICATION_QUALIFICATION_APPENDIX, anchor));
                         } else if (document.getApplicationFunding() != null) {
-                            pdfDocument.add(new Chunk(" - " + propertyLoader.load(APPLICATION_FUNDING_APPENDIX)));
+                            pdfDocument.add(buildTarget(APPLICATION_FUNDING_APPENDIX, anchor));
                         } else if (document.getApplicationPersonalStatement() != null) {
-                            pdfDocument.add(new Chunk(" - " + propertyLoader.load(APPLICATION_DOCUMENT_PERSONAL_STATEMENT_APPENDIX)));
+                            pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_PERSONAL_STATEMENT_APPENDIX, anchor));
                         } else if (document.getApplicationCv() != null) {
-                            pdfDocument.add(new Chunk(" - " + propertyLoader.load(APPLICATION_DOCUMENT_CV_APPENDIX)));
+                            pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_CV_APPENDIX, anchor));
                         }
 
-                        try {
-                            addDocument(pdfDocument, document, pdfWriter);
-                        } catch (Exception e) {
-                            LOGGER.warn("Error reading PDF document", e.getMessage());
-                        }
+                        addDocument(pdfDocument, document, pdfWriter);
                     }
                 } else if (object.getClass().equals(Comment.class)) {
                     Comment referenceComment = (Comment) object;
-                    pdfDocument.add(new Chunk(" - " + propertyLoader.load(APPLICATION_REFEREE_REFERENCE_APPENDIX)));
+                    pdfDocument.add(buildTarget(APPLICATION_REFEREE_REFERENCE_APPENDIX, anchor));
 
                     pdfDocument.add(applicationDownloadBuilderHelper.newSectionSeparator());
 
@@ -548,9 +534,19 @@ public class ApplicationDownloadBuilder {
                             .startSubection(pdfDocument, propertyLoader.load(APPLICATION_REFEREE_REFERENCE_COMMENT));
                     applicationContext.getBean(ApplicationDownloadReferenceBuilder.class).localize(propertyLoader, applicationDownloadBuilderHelper)
                             .addReferenceComment(pdfDocument, subBody, pdfWriter, applicationDownloadDTO.getApplication(), referenceComment);
+
+                    for (com.zuehlke.pgadmissions.domain.document.Document document : referenceComment.getDocuments()) {
+                        addDocument(pdfDocument, document, pdfWriter);
+                    }
                 }
             }
         }
+    }
+
+    private Phrase buildTarget(PrismDisplayPropertyDefinition title, Anchor anchor) {
+        Phrase phrase = new Phrase(" - " + propertyLoader.load(title));
+        phrase.add(anchor);
+        return phrase;
     }
 
     private void addDocument(Document pdfDocument, com.zuehlke.pgadmissions.domain.document.Document document, PdfWriter pdfWriter) throws IOException {
@@ -590,7 +586,7 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addDocument(PdfPTable table, String rowTitle, com.zuehlke.pgadmissions.domain.document.Document document, boolean includeAttachments) {
-        applicationDownloadBuilderHelper.newTitleCellLarge(rowTitle);
+        table.addCell(applicationDownloadBuilderHelper.newTitleCellMedium(rowTitle));
         if (includeAttachments) {
             if (document == null) {
                 table.addCell(applicationDownloadBuilderHelper.newContentCellMedium(null));
@@ -605,7 +601,7 @@ public class ApplicationDownloadBuilder {
     private void addBookmark(PdfPTable table, Object object) {
         int index = bookmarks.size();
         table.addCell(applicationDownloadBuilderHelper.newBookmarkCellMedium(propertyLoader.load(SYSTEM_SEE) + " " + propertyLoader.load(SYSTEM_APPENDIX)
-                + (index + 1) + ")", index));
+                + " (" + (index + 1) + ")", index));
         bookmarks.add(object);
     }
 
@@ -628,6 +624,17 @@ public class ApplicationDownloadBuilder {
         }
 
         private void addHeader(PdfWriter writer, Document pdfDocument) throws DocumentException, BadElementException, IOException {
+            float pageWidth = pdfDocument.getPageSize().getWidth();
+            PdfPTable body = new PdfPTable(1);
+            body.setTotalWidth(pageWidth * 0.5f);
+
+            PdfPCell content = applicationDownloadBuilderHelper.newContentCell(application.getUser().getFullName() + " (" + application.getCode() + ")",
+                    ApplicationDownloadBuilderFontSize.SMALL);
+            content.setPadding(0f);
+            content.setBorderWidth(0f);
+            body.addCell(content);
+
+            body.writeSelectedRows(0, 1, pdfDocument.left(), pdfDocument.top() + 27f, writer.getDirectContent());
             addLogoImage(pdfDocument);
 
             LineSeparator lineSeparator = new LineSeparator();
@@ -652,7 +659,7 @@ public class ApplicationDownloadBuilder {
         }
 
     }
-    
+
     private void addLogoImage(Document pdfDocument) throws BadElementException, MalformedURLException, IOException, DocumentException {
         Image logoImage = applicationDownloadBuilderHelper.newLogoImage();
         logoImage.setAbsolutePosition(pdfDocument.right() - logoImage.getScaledWidth(), pdfDocument.top() + 20f);

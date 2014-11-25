@@ -283,7 +283,7 @@ public class ActionService {
             boolean primaryState = action.isCreateResourceAction() || action.getPrimaryState();
 
             if (!representations.containsKey(thisActionId)) {
-                thisActionRepresentation = new ActionRepresentation().withName(thisActionId).withRaisesUrgentFlag(action.getRaisesUrgentFlag())
+                thisActionRepresentation = new ActionRepresentation().withId(thisActionId).withRaisesUrgentFlag(action.getRaisesUrgentFlag())
                         .withPrimaryState(action.getPrimaryState());
                 representations.put(thisActionId, thisActionRepresentation);
             } else {

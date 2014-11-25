@@ -1,42 +1,9 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.TimeZone;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import org.apache.commons.lang3.LocaleUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -50,6 +17,20 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.TimeZone;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
 @Entity
 @Table(name = "COMMENT")
@@ -196,7 +177,7 @@ public class Comment {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
-    private Set<CommentTransitionState> commentTransitionStates = Sets.newHashSet();
+    private Set<CommentTransitionState> secondaryTransitionStates = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
@@ -318,11 +299,11 @@ public class Comment {
         this.content = content;
     }
 
-    public final State getState() {
+    public State getState() {
         return state;
     }
 
-    public final void setState(State state) {
+    public void setState(State state) {
         this.state = state;
     }
 
@@ -338,11 +319,11 @@ public class Comment {
         return applicationEligible;
     }
 
-    public final Boolean getApplicationInterested() {
+    public Boolean getApplicationInterested() {
         return applicationInterested;
     }
 
-    public final void setApplicationInterested(Boolean applicationInterested) {
+    public void setApplicationInterested(Boolean applicationInterested) {
         this.applicationInterested = applicationInterested;
     }
 
@@ -438,27 +419,27 @@ public class Comment {
         this.recruiterAcceptAppointment = recruiterAcceptAppointment;
     }
 
-    public final RejectionReason getRejectionReason() {
+    public RejectionReason getRejectionReason() {
         return rejectionReason;
     }
 
-    public final void setRejectionReason(RejectionReason rejectionReason) {
+    public void setRejectionReason(RejectionReason rejectionReason) {
         this.rejectionReason = rejectionReason;
     }
 
-    public final String getRejectionReasonSystem() {
+    public String getRejectionReasonSystem() {
         return rejectionReasonSystem;
     }
 
-    public final void setRejectionReasonSystem(String rejectionReasonSystem) {
+    public void setRejectionReasonSystem(String rejectionReasonSystem) {
         this.rejectionReasonSystem = rejectionReasonSystem;
     }
 
-    public final BigDecimal getApplicationRating() {
+    public BigDecimal getApplicationRating() {
         return applicationRating;
     }
 
-    public final void setApplicationRating(BigDecimal applicationRating) {
+    public void setApplicationRating(BigDecimal applicationRating) {
         this.applicationRating = applicationRating;
     }
 
@@ -502,11 +483,11 @@ public class Comment {
         this.creatorIpAddress = creatorIpAddress;
     }
 
-    public final State getParentResourceTransitionState() {
+    public State getParentResourceTransitionState() {
         return parentResourceTransitionState;
     }
 
-    public final void setParentResourceTransitionState(State parentResourceTransitionState) {
+    public void setParentResourceTransitionState(State parentResourceTransitionState) {
         this.parentResourceTransitionState = parentResourceTransitionState;
     }
 
@@ -514,12 +495,12 @@ public class Comment {
         return assignedUsers;
     }
 
-    public final Set<CommentState> getCommentStates() {
+    public Set<CommentState> getCommentStates() {
         return commentStates;
     }
 
-    public final Set<CommentTransitionState> getCommentTransitionStates() {
-        return commentTransitionStates;
+    public Set<CommentTransitionState> getSecondaryTransitionStates() {
+        return secondaryTransitionStates;
     }
 
     public Set<CommentAppointmentTimeslot> getAppointmentTimeslots() {
@@ -534,7 +515,7 @@ public class Comment {
         return documents;
     }
 
-    public final Set<CommentCustomResponse> getCustomResponses() {
+    public Set<CommentCustomResponse> getCustomResponses() {
         return customResponses;
     }
 
@@ -599,7 +580,7 @@ public class Comment {
         return this;
     }
 
-    public Comment withDelegateUser(final User delegateUser) {
+    public Comment withDelegateUser(User delegateUser) {
         this.delegateUser = delegateUser;
         return this;
     }
@@ -629,7 +610,7 @@ public class Comment {
         return this;
     }
 
-    public Comment withTransitionState(final State transitionState) {
+    public Comment withTransitionState(State transitionState) {
         this.transitionState = transitionState;
         return this;
     }
@@ -664,7 +645,7 @@ public class Comment {
         return this;
     }
 
-    public Comment withApplicationEligible(final PrismYesNoUnsureResponse eligible) {
+    public Comment withApplicationEligible(PrismYesNoUnsureResponse eligible) {
         this.applicationEligible = eligible;
         return this;
     }
@@ -674,42 +655,42 @@ public class Comment {
         return this;
     }
 
-    public Comment withInterviewDateTime(final LocalDateTime interviewDateTime) {
+    public Comment withInterviewDateTime(LocalDateTime interviewDateTime) {
         this.interviewDateTime = interviewDateTime;
         return this;
     }
 
-    public Comment withInterviewTimeZone(final TimeZone interviewTimeZone) {
+    public Comment withInterviewTimeZone(TimeZone interviewTimeZone) {
         this.interviewTimeZone = interviewTimeZone;
         return this;
     }
 
-    public Comment withInterviewDuration(final Integer interviewDuration) {
+    public Comment withInterviewDuration(Integer interviewDuration) {
         this.interviewDuration = interviewDuration;
         return this;
     }
 
-    public Comment withIntervieweeInstructions(final String intervieweeInstructions) {
+    public Comment withIntervieweeInstructions(String intervieweeInstructions) {
         this.intervieweeInstructions = intervieweeInstructions;
         return this;
     }
 
-    public Comment withInterviewerInstructions(final String interviewerInstructions) {
+    public Comment withInterviewerInstructions(String interviewerInstructions) {
         this.interviewerInstructions = interviewerInstructions;
         return this;
     }
 
-    public Comment withInterviewLocation(final String interviewLocation) {
+    public Comment withInterviewLocation(String interviewLocation) {
         this.interviewLocation = interviewLocation;
         return this;
     }
 
-    public Comment withAppointmentConditions(final String appointmentConditions) {
+    public Comment withAppointmentConditions(String appointmentConditions) {
         this.appointmentConditions = appointmentConditions;
         return this;
     }
 
-    public Comment withPositionProvisionalStartDate(final LocalDate positionProvisionalStartDate) {
+    public Comment withPositionProvisionalStartDate(LocalDate positionProvisionalStartDate) {
         this.positionProvisionalStartDate = positionProvisionalStartDate;
         return this;
     }
@@ -725,7 +706,7 @@ public class Comment {
     }
 
     public Comment addCommentTransitionState(State transitionState, Boolean primaryState) {
-        commentTransitionStates.add(new CommentTransitionState().withTransitionState(transitionState).withPrimaryState(primaryState));
+        secondaryTransitionStates.add(new CommentTransitionState().withTransitionState(transitionState).withPrimaryState(primaryState));
         return this;
     }
 
@@ -817,7 +798,7 @@ public class Comment {
     public boolean isInterviewScheduledExpeditedComment() {
         return action.getId() == PrismAction.APPLICATION_ASSIGN_INTERVIEWERS
                 && Arrays.asList(PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW, PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK).contains(
-                        transitionState.getId());
+                transitionState.getId());
     }
 
     public boolean isStateGroupTransitionComment() {

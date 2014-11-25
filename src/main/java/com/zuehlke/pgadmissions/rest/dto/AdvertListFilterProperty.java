@@ -7,7 +7,14 @@ import com.zuehlke.pgadmissions.domain.definitions.FilterPropertyType;
 
 public enum AdvertListFilterProperty implements FilterProperty {
 
-    ;
+//    INSTITUTION(),
+//    PROGRAM(),
+//    PROJECT(),
+//    STUDY_OPTION(),
+//    FEE(),
+//    PAY(),
+//    DURATION();
+;
 
     private AdvertListFilterProperty(String propertyName, List<FilterExpression> permittedExpressions, FilterPropertyType propertyType) {
         this.propertyName = propertyName;

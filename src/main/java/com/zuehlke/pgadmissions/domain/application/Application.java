@@ -770,11 +770,11 @@ public class Application extends Resource {
     }
 
     public String getPrimaryThemeDisplay() {
-        return primaryTheme == null ? null : primaryTheme.replace("\\|", ", ");
+        return primaryTheme == null ? null : primaryTheme.replace("|", ", ");
     }
 
     public String getSecondaryThemeDisplay() {
-        return secondaryTheme == null ? null : secondaryTheme.replace("\\|", ", ");
+        return secondaryTheme == null ? null : secondaryTheme.replace("|", ", ");
     }
 
     public boolean isApproved() {

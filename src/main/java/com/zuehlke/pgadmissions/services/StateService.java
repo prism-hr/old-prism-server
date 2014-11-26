@@ -250,21 +250,7 @@ public class StateService {
         } else if (Arrays.asList(PrismState.APPLICATION_REVIEW, PrismState.APPLICATION_APPROVAL).contains(stateId)) {
             transitionStateId = PrismState.valueOf(stateId.name() + "_PENDING_FEEDBACK");
         } else {
-            LocalDateTime interviewDateTime = comment.getInterviewDateTime();
-            if (interviewDateTime != null) {
-                DateTime interviewZonedDateTime = interviewDateTime.toDateTime(DateTimeZone.forTimeZone(comment.getInterviewTimeZone()));
-                if (new DateTime().isAfter(interviewZonedDateTime)) {
-                    transitionStateId = PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
-                } else {
-                    transitionStateId = PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
-                }
-            } else {
-                if (resource.getState().getId() == PrismState.APPLICATION_INTERVIEW) {
-                    transitionStateId = PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY;
-                } else {
-                    transitionStateId = PrismState.APPLICATION_INTERVIEW;
-                }
-            }
+            transitionStateId = getInterviewerAssignedOutcome(resource, comment);
         }
         return stateDAO.getStateTransition(resource, comment.getAction(), transitionStateId);
     }
@@ -300,19 +286,12 @@ public class StateService {
     public StateTransition getApplicationProcessedOutcome(Resource resource, Comment comment) {
         PrismState transitionStateId;
         PrismAction actionId = comment.getAction().getId();
-        if (Arrays.asList(PrismAction.APPLICATION_TERMINATE, PrismAction.APPLICATION_WITHDRAW, PrismAction.APPLICATION_ESCALATE).contains(actionId)) {
-            if (BooleanUtils.isTrue(resource.getInstitution().getUclInstitution())) {
-                transitionStateId = PrismState.APPLICATION_REJECTED_PENDING_EXPORT;
-            } else {
-                transitionStateId = PrismState.APPLICATION_REJECTED_COMPLETED;
-            }
+        if (Arrays.asList(PrismAction.APPLICATION_TERMINATE, PrismAction.APPLICATION_ESCALATE).contains(actionId)) {
+            transitionStateId = getApplicationRejectedOutcome(resource);
+        } else if (actionId == PrismAction.APPLICATION_WITHDRAW) {
+            transitionStateId = getApplicationWithdrawnOutcome(resource);
         } else {
-            PrismState stateId = resource.getState().getId();
-            if (BooleanUtils.isTrue(resource.getInstitution().getUclInstitution())) {
-                transitionStateId = PrismState.valueOf(stateId.name() + "_PENDING_EXPORT");
-            } else {
-                transitionStateId = PrismState.valueOf(stateId.name() + "_COMPLETED");
-            }
+            transitionStateId = getApplicationProcessedOutcome(resource);
         }
         return stateDAO.getStateTransition(resource, comment.getAction(), transitionStateId);
     }
@@ -485,6 +464,50 @@ public class StateService {
             potentialStateTransitions.addAll(stateDAO.getStateTransitions(state, action));
         }
         return Lists.newLinkedList(potentialStateTransitions);
+    }
+
+    private PrismState getApplicationRejectedOutcome(Resource resource) {
+        if (BooleanUtils.isTrue(resource.getInstitution().getUclInstitution())) {
+            return PrismState.APPLICATION_REJECTED_PENDING_EXPORT;
+        } else {
+            return PrismState.APPLICATION_REJECTED_COMPLETED;
+        }
+    }
+
+    private PrismState getApplicationWithdrawnOutcome(Resource resource) {
+        if (BooleanUtils.isTrue(resource.getInstitution().getUclInstitution())) {
+            return PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT;
+        } else {
+            return PrismState.APPLICATION_WITHDRAWN_COMPLETED;
+        }
+    }
+
+    private PrismState getApplicationProcessedOutcome(Resource resource) {
+        if (BooleanUtils.isTrue(resource.getInstitution().getUclInstitution())) {
+            return PrismState.valueOf(resource.getState().getId().name() + "_PENDING_EXPORT");
+        } else {
+            return PrismState.valueOf(resource.getState().getId().name() + "_COMPLETED");
+        }
+    }
+
+    private PrismState getInterviewerAssignedOutcome(Resource resource, Comment comment) {
+        PrismState transitionStateId;
+        LocalDateTime interviewDateTime = comment.getInterviewDateTime();
+        if (interviewDateTime != null) {
+            DateTime interviewZonedDateTime = interviewDateTime.toDateTime(DateTimeZone.forTimeZone(comment.getInterviewTimeZone()));
+            if (new DateTime().isAfter(interviewZonedDateTime)) {
+                transitionStateId = PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
+            } else {
+                transitionStateId = PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
+            }
+        } else {
+            if (resource.getState().getId() == PrismState.APPLICATION_INTERVIEW) {
+                transitionStateId = PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY;
+            } else {
+                transitionStateId = PrismState.APPLICATION_INTERVIEW;
+            }
+        }
+        return transitionStateId;
     }
 
 }

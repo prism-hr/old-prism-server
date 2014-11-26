@@ -368,9 +368,8 @@ public class NotificationPropertyLoader {
 
     private String buildRedirectionUri(Resource resource, PrismAction actionId, User user) {
         Resource operative = (Resource) ReflectionUtils.getProperty(resource, actionId.getScope().getLowerCaseName());
-        String uri = operative.getSystem().getHomepage() + "/#/activate?resourceId=" + operative.getId() + "&actionId=" + actionId.name() + "&activationCode="
+        return operative.getSystem().getHomepage() + "/#/activate?resourceId=" + operative.getId() + "&actionId=" + actionId.name() + "&activationCode="
                 + user.getActivationCode();
-        return uri;
     }
 
     private String getCommentAssigneesAsString(PrismRole roleId) {

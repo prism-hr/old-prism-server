@@ -47,7 +47,6 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -196,8 +195,8 @@ public class ResourceService {
         return "PRiSM-" + PrismScope.getResourceScope(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId());
     }
 
-    public void recordStateTransition(Resource resource, Comment comment, State state, State transitionState, StateTransition stateTransition)
-            throws DeduplicationException, InstantiationException, IllegalAccessException {
+    public void recordStateTransition(Resource resource, Comment comment, State state, State transitionState) throws DeduplicationException,
+            InstantiationException, IllegalAccessException {
         resource.setPreviousState(state);
         resource.setState(transitionState);
 
@@ -207,6 +206,7 @@ public class ResourceService {
 
         insertResourceStates(resource, resource.getResourcePreviousStates(), comment.getCommentStates(), ResourcePreviousState.class);
         insertResourceStates(resource, resource.getResourceStates(), comment.getCommentTransitionStates(), ResourceState.class);
+
         entityService.flush();
     }
 

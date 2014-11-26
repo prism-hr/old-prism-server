@@ -168,7 +168,7 @@ public class ProgramService {
 
         Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
                 .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
-        commentService.appendCommentProperties(commentDTO, comment);
+        commentService.appendCommentProperties(comment, commentDTO);
 
         if (programDTO != null) {
             update(programId, programDTO);

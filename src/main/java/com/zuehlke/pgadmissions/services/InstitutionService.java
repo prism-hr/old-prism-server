@@ -233,7 +233,7 @@ public class InstitutionService {
         State transitionState = stateService.getById(commentDTO.getTransitionState());
         Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
                 .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
-        commentService.appendCommentProperties(commentDTO, comment);
+        commentService.appendCommentProperties(comment, commentDTO);
 
         InstitutionDTO institutionDTO = (InstitutionDTO) commentDTO.fetchResouceDTO();
         if (institutionDTO != null) {

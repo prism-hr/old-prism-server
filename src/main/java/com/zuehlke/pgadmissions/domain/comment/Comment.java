@@ -20,6 +20,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -213,6 +214,9 @@ public class Comment {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id")
     private Set<Document> documents = Sets.newHashSet();
+
+    @Transient
+    private Set<State> secondaryTransitionStates = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -546,6 +550,14 @@ public class Comment {
         this.createdTimestamp = createdTimestamp;
     }
 
+    public final Set<State> getSecondaryTransitionStates() {
+        return secondaryTransitionStates;
+    }
+    
+    public void addSecondaryTransitionState(State state) {
+        secondaryTransitionStates.add(state);
+    }
+
     public Resource getResource() {
         return ObjectUtils.firstNonNull(system, institution, program, project, application);
     }
@@ -817,7 +829,7 @@ public class Comment {
     public boolean isInterviewScheduledExpeditedComment() {
         return action.getId() == PrismAction.APPLICATION_ASSIGN_INTERVIEWERS
                 && Arrays.asList(PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW, PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK).contains(
-                transitionState.getId());
+                        transitionState.getId());
     }
 
     public boolean isStateGroupTransitionComment() {
@@ -852,6 +864,10 @@ public class Comment {
             }
         }
         return false;
+    }
+    
+    public boolean isSecondaryTransitionComment() {
+        return !secondaryTransitionStates.isEmpty();
     }
 
     public String getApplicationRatingDisplay() {

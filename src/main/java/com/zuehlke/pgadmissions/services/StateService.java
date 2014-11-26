@@ -162,8 +162,9 @@ public class StateService {
             transitionState = transitionState == null ? state : transitionState;
             state = state == null ? transitionState : state;
 
-            commentService.recordStateTransition(comment, state, transitionState, stateTransition);
-            resourceService.recordStateTransition(resource, comment, state, transitionState, stateTransition);
+            Set<State> stateTerminations = stateTransition.getStateTerminations();
+            commentService.recordStateTransition(comment, state, transitionState, stateTerminations);
+            resourceService.recordStateTransition(resource, comment, state, transitionState);
 
             commentService.processComment(comment);
             resourceService.processResource(resource, comment);

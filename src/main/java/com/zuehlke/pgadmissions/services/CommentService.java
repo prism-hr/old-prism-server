@@ -49,7 +49,6 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentAssignedUserDTO;
@@ -327,17 +326,18 @@ public class CommentService {
         recordStateTransition(comment, state, transitionState, null);
     }
 
-    public void recordStateTransition(Comment comment, State state, State transitionState, StateTransition stateTransition) {
+    public void recordStateTransition(Comment comment, State state, State transitionState, Set<State> stateTerminations) {
         comment.setState(state);
         comment.setTransitionState(transitionState);
 
-        for (ResourceState resourceState : comment.getResource().getResourceStates()) {
-            comment.addCommentState(resourceState.getState(), resourceState.getPrimaryState());
+        updateCommentStates(comment);
+
+        if (comment.isSecondaryTransitionComment()) {
+            createCommentTransitionStates(comment, transitionState, stateTerminations);
+        } else {
+            updateCommentTransitionStates(comment, stateTerminations);
         }
 
-        comment.addCommentTransitionState(transitionState, true);
-
-        executeStateTerminations(comment, stateTransition);
         entityService.flush();
     }
 
@@ -380,15 +380,11 @@ public class CommentService {
     }
 
     public void appendTransitionStates(Comment comment, CommentDTO commentDTO) {
-        State primaryTransitionState = entityService.getById(State.class, commentDTO.getTransitionState());
-        primaryTransitionState = primaryTransitionState == null ? comment.getResource().getState() : primaryTransitionState;
-        comment.getCommentTransitionStates().add(new CommentTransitionState().withState(primaryTransitionState).withPrimaryState(true));
-        
-        List<PrismState> transitionStates = commentDTO.getSecondaryTransitionStates();
-        if (transitionStates != null) {
-            for (PrismState transitionState : commentDTO.getSecondaryTransitionStates()) {
-                State transitionStateItem = stateService.getById(transitionState);
-                comment.getCommentTransitionStates().add(new CommentTransitionState().withState(transitionStateItem).withPrimaryState(false));
+        comment.setTransitionState(stateService.getById(commentDTO.getTransitionState()));
+        List<PrismState> secondaryTransitionStates = commentDTO.getSecondaryTransitionStates();
+        if (secondaryTransitionStates != null) {
+            for (PrismState secondaryTransitionState : secondaryTransitionStates) {
+                comment.addSecondaryTransitionState(stateService.getById(secondaryTransitionState));
             }
         }
     }
@@ -572,20 +568,28 @@ public class CommentService {
             }
         }
     }
-
-    private void executeStateTerminations(Comment comment, StateTransition stateTransition) {
-        if (stateTransition != null && !stateTransition.getStateTerminations().isEmpty()) {
-            Set<CommentTransitionState> persistentTransitionStates = comment.getCommentTransitionStates();
-            Set<CommentTransitionState> transientTransitionStates = Sets.newHashSet(comment.getCommentTransitionStates());
-
-            persistentTransitionStates.clear();
-
-            for (State stateTermination : stateTransition.getStateTerminations()) {
-                for (CommentTransitionState transientTransitionState : transientTransitionStates) {
-                    if (!transientTransitionState.getState().getId().equals(stateTermination.getId())) {
-                        persistentTransitionStates.add(transientTransitionState);
-                    }
-                }
+    
+    private void updateCommentStates(Comment comment) {
+        for (ResourceState resourceState : comment.getResource().getResourceStates()) {
+            comment.addCommentState(resourceState.getState(), resourceState.getPrimaryState());
+        }
+    }
+    
+    private void createCommentTransitionStates(Comment comment, State transitionState, Set<State> stateTerminations) {
+        comment.addCommentTransitionState(transitionState, true);
+        for (State secondaryTransitionState : comment.getSecondaryTransitionStates()) {
+            if (!stateTerminations.contains(secondaryTransitionState)) {
+                comment.addCommentTransitionState(transitionState, false);
+            }
+        }
+    }
+    
+    private void updateCommentTransitionStates(Comment comment, Set<State> stateTerminations) {
+        for (ResourceState resourceState : comment.getResource().getResourceStates()) {
+            State thisState = resourceState.getState();
+            if (!stateTerminations.contains(thisState)) {
+                comment.addCommentTransitionState(resourceState.getState(), resourceState.getPrimaryState());
+        
             }
         }
     }

@@ -95,7 +95,7 @@ public class ProjectService {
 
         Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
                 .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
-        commentService.appendCommentProperties(commentDTO, comment);
+        commentService.appendCommentProperties(comment, commentDTO);
 
         if (projectDTO != null) {
             update(programId, projectDTO);

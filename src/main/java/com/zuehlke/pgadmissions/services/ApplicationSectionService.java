@@ -69,6 +69,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
+import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.AddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
@@ -114,7 +115,8 @@ public class ApplicationSectionService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public void updateProgramDetail(Integer applicationId, ApplicationProgramDetailDTO programDetailDTO) throws DeduplicationException, InstantiationException, IllegalAccessException {
+    public void updateProgramDetail(Integer applicationId, ApplicationProgramDetailDTO programDetailDTO) throws DeduplicationException, InstantiationException,
+            IllegalAccessException {
         Application application = applicationService.getById(applicationId);
         Institution institution = application.getInstitution();
 
@@ -185,7 +187,8 @@ public class ApplicationSectionService {
                 new CommentAssignedUser().withUser(user).withRole(roleService.getById(APPLICATION_SUGGESTED_SUPERVISOR)).withRoleTransitionType(DELETE));
     }
 
-    public void updatePersonalDetail(Integer applicationId, ApplicationPersonalDetailDTO personalDetailDTO) throws DeduplicationException, InstantiationException, IllegalAccessException {
+    public void updatePersonalDetail(Integer applicationId, ApplicationPersonalDetailDTO personalDetailDTO) throws DeduplicationException,
+            InstantiationException, IllegalAccessException {
         Application application = applicationService.getById(applicationId);
         Institution institution = application.getInstitution();
 
@@ -226,7 +229,8 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL);
     }
 
-    public void updateAddress(Integer applicationId, ApplicationAddressDTO addressDTO) throws DeduplicationException, InstantiationException, IllegalAccessException {
+    public void updateAddress(Integer applicationId, ApplicationAddressDTO addressDTO) throws DeduplicationException, InstantiationException,
+            IllegalAccessException {
         Application application = applicationService.getById(applicationId);
         Institution institution = application.getInstitution();
 
@@ -282,7 +286,7 @@ public class ApplicationSectionService {
             importedInstitution = importedEntityService.getById(ImportedInstitution.class, institution, importedInstitutionDTO.getId());
         }
         QualificationType qualificationType = importedEntityService.getById(QualificationType.class, institution, qualificationDTO.getType());
-        Document qualificationDocument = entityService.getById(Document.class, qualificationDTO.getDocument().getId());
+
         qualification.setInstitution(importedInstitution);
         qualification.setType(qualificationType);
         qualification.setTitle(Strings.emptyToNull(qualificationDTO.getTitle()));
@@ -292,13 +296,19 @@ public class ApplicationSectionService {
         qualification.setCompleted(BooleanUtils.isTrue(qualificationDTO.getCompleted()));
         qualification.setGrade(qualificationDTO.getGrade());
         qualification.setAwardDate(qualificationDTO.getAwardDate());
-        qualification.setDocument(qualificationDocument);
+
+        FileDTO upload = qualificationDTO.getDocument();
+        if (upload != null) {
+            Document qualificationDocument = entityService.getById(Document.class, upload.getId());
+            qualification.setDocument(qualificationDocument);
+        }
 
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
         return qualification;
     }
 
-    public void deleteQualification(Integer applicationId, Integer qualificationId) throws DeduplicationException, InstantiationException, IllegalAccessException {
+    public void deleteQualification(Integer applicationId, Integer qualificationId) throws DeduplicationException, InstantiationException,
+            IllegalAccessException {
         Application application = applicationService.getById(applicationId);
 
         ApplicationQualification qualification = entityService.getByProperties(ApplicationQualification.class,
@@ -341,7 +351,8 @@ public class ApplicationSectionService {
         return employmentPosition;
     }
 
-    public void deleteEmploymentPosition(Integer applicationId, Integer employmentPositionId) throws DeduplicationException, InstantiationException, IllegalAccessException {
+    public void deleteEmploymentPosition(Integer applicationId, Integer employmentPositionId) throws DeduplicationException, InstantiationException,
+            IllegalAccessException {
         Application application = applicationService.getById(applicationId);
         ApplicationEmploymentPosition employmentPosition = entityService.getByProperties(ApplicationEmploymentPosition.class,
                 ImmutableMap.of("application", application, "id", employmentPositionId));
@@ -349,7 +360,8 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_EMPLOYMENT);
     }
 
-    public ApplicationFunding updateFunding(Integer applicationId, Integer fundingId, ApplicationFundingDTO fundingDTO) throws DeduplicationException, InstantiationException, IllegalAccessException {
+    public ApplicationFunding updateFunding(Integer applicationId, Integer fundingId, ApplicationFundingDTO fundingDTO) throws DeduplicationException,
+            InstantiationException, IllegalAccessException {
         Application application = applicationService.getById(applicationId);
 
         ApplicationFunding funding;
@@ -361,13 +373,17 @@ public class ApplicationSectionService {
         }
 
         FundingSource fundingSource = importedEntityService.getById(FundingSource.class, application.getInstitution(), fundingDTO.getFundingSource());
-        Document fundingDocument = entityService.getById(Document.class, fundingDTO.getDocument().getId());
 
         funding.setFundingSource(fundingSource);
         funding.setDescription(fundingDTO.getDescription());
         funding.setValue(fundingDTO.getValue());
         funding.setAwardDate(fundingDTO.getAwardDate());
-        funding.setDocument(fundingDocument);
+
+        FileDTO upload = fundingDTO.getDocument();
+        if (upload != null) {
+            Document qualificationDocument = entityService.getById(Document.class, upload.getId());
+            funding.setDocument(qualificationDocument);
+        }
 
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_FUNDING);
         return funding;
@@ -380,7 +396,8 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_FUNDING);
     }
 
-    public ApplicationPrize updatePrize(Integer applicationId, Integer prizeId, ApplicationPrizeDTO prizeDTO) throws DeduplicationException, InstantiationException, IllegalAccessException {
+    public ApplicationPrize updatePrize(Integer applicationId, Integer prizeId, ApplicationPrizeDTO prizeDTO) throws DeduplicationException,
+            InstantiationException, IllegalAccessException {
         Application application = applicationService.getById(applicationId);
 
         ApplicationPrize prize;
@@ -407,7 +424,8 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_FUNDING);
     }
 
-    public ApplicationReferee updateReferee(Integer applicationId, Integer refereeId, ApplicationRefereeDTO refereeDTO) throws DeduplicationException, InstantiationException, IllegalAccessException {
+    public ApplicationReferee updateReferee(Integer applicationId, Integer refereeId, ApplicationRefereeDTO refereeDTO) throws DeduplicationException,
+            InstantiationException, IllegalAccessException {
         Application application = applicationService.getById(applicationId);
 
         ApplicationReferee referee;
@@ -452,7 +470,8 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE);
     }
 
-    public void updateDocument(Integer applicationId, ApplicationDocumentDTO documentDTO) throws DeduplicationException, InstantiationException, IllegalAccessException {
+    public void updateDocument(Integer applicationId, ApplicationDocumentDTO documentDTO) throws DeduplicationException, InstantiationException,
+            IllegalAccessException {
         Application application = applicationService.getById(applicationId);
 
         ApplicationDocument document = application.getDocument();
@@ -472,7 +491,8 @@ public class ApplicationSectionService {
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_DOCUMENT);
     }
 
-    public void updateAdditionalInformation(Integer applicationId, ApplicationAdditionalInformationDTO additionalInformationDTO) throws DeduplicationException, InstantiationException, IllegalAccessException {
+    public void updateAdditionalInformation(Integer applicationId, ApplicationAdditionalInformationDTO additionalInformationDTO) throws DeduplicationException,
+            InstantiationException, IllegalAccessException {
         Application application = applicationService.getById(applicationId);
 
         ApplicationAdditionalInformation additionalInformation = application.getAdditionalInformation();
@@ -535,6 +555,13 @@ public class ApplicationSectionService {
             languageQualification.setWritingScore(languageQualificationDTO.getWritingScore());
             languageQualification.setSpeakingScore(languageQualificationDTO.getSpeakingScore());
             languageQualification.setListeningScore(languageQualificationDTO.getListeningScore());
+
+            FileDTO upload = languageQualificationDTO.getProofOfAward();
+            if (upload != null) {
+                Document languageQualificationDocument = entityService.getById(Document.class, upload.getId());
+                languageQualification.setDocument(languageQualificationDocument);
+            }
+
             languageQualification.setDocument(proofOfAward);
         }
     }

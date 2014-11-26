@@ -42,14 +42,14 @@ public class ApplicationPersonalDetail {
     @Size(max = 50)
     private String phone;
 
-    @Column(name = "first_language_locale", nullable = false)
+    @Column(name = "first_language_locale")
     private Boolean firstLanguageLocale;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_language_qualification_id")
     private ApplicationLanguageQualification languageQualification;
 
-    @Column(name = "visa_required", nullable = false)
+    @Column(name = "visa_required")
     private Boolean visaRequired;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)

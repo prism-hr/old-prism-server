@@ -194,16 +194,16 @@ public class AdvertService {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
 
-        if (advert == null) {
-            return null;
+        if (advert != null) {
+            AdvertClosingDate advertClosingDate = new AdvertClosingDate().withAdvert(advert).withClosingDate(advertClosingDateDTO.getClosingDate())
+                    .withStudyPlaces(advertClosingDateDTO.getStudyPlaces());
+            advert.getClosingDates().add(advertClosingDate);
+            advert.setClosingDate(getNextAdvertClosingDate(advert));
+            resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CLOSING_DATE);
+            return advertClosingDate;
         }
 
-        AdvertClosingDate advertClosingDate = new AdvertClosingDate().withAdvert(advert).withClosingDate(advertClosingDateDTO.getClosingDate())
-                .withStudyPlaces(advertClosingDateDTO.getStudyPlaces());
-        advert.getClosingDates().add(advertClosingDate);
-        advert.setClosingDate(advertDAO.getNextAdvertClosingDate(advert, new LocalDate()));
-        resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CLOSING_DATE);
-        return advertClosingDate;
+        return null;
     }
 
     public void updateClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, Integer closingDateId, AdvertClosingDateDTO advertClosingDateDTO)
@@ -215,7 +215,7 @@ public class AdvertService {
         if (advert.getId().equals(advertClosingDate.getAdvert().getId())) {
             advertClosingDate.setClosingDate(advertClosingDateDTO.getClosingDate());
             advertClosingDate.setStudyPlaces(advertClosingDateDTO.getStudyPlaces());
-            advert.setClosingDate(advertDAO.getNextAdvertClosingDate(advert, new LocalDate()));
+            advert.setClosingDate(getNextAdvertClosingDate(advert));
             resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CLOSING_DATE);
         } else {
             throw new Error();
@@ -230,7 +230,7 @@ public class AdvertService {
 
         if (advert.getId().equals(advertClosingDate.getAdvert().getId())) {
             advert.getClosingDates().remove(advertClosingDate);
-            advert.setClosingDate(advertDAO.getNextAdvertClosingDate(advert, new LocalDate()));
+            advert.setClosingDate(getNextAdvertClosingDate(advert));
             resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CLOSING_DATE);
         } else {
             throw new Error();
@@ -239,8 +239,7 @@ public class AdvertService {
 
     public void updateClosingDate(Advert transientAdvert, LocalDate baseline) {
         Advert persistentAdvert = getById(transientAdvert.getId());
-        AdvertClosingDate nextClosingDate = advertDAO.getNextAdvertClosingDate(persistentAdvert, baseline);
-        persistentAdvert.setClosingDate(nextClosingDate);
+        persistentAdvert.setClosingDate(getNextAdvertClosingDate(persistentAdvert));
     }
 
     public void updateCurrencyConversion(Advert transientAdvert) throws IOException, JAXBException, IllegalAccessException, InvocationTargetException,
@@ -266,9 +265,9 @@ public class AdvertService {
     }
 
     public InstitutionAddress createAddressCopy(InstitutionAddress address) {
-        InstitutionAddress newAddress = new InstitutionAddress().withDomicile(address.getDomicile())
-                .withInstitution(address.getInstitution()).withAddressLine1(address.getAddressLine1()).withAddressLine2(address.getAddressLine2())
-                .withAddressTown(address.getAddressTown()).withAddressDistrict(address.getAddressDistrict()).withAddressCode(address.getAddressCode());
+        InstitutionAddress newAddress = new InstitutionAddress().withDomicile(address.getDomicile()).withInstitution(address.getInstitution())
+                .withAddressLine1(address.getAddressLine1()).withAddressLine2(address.getAddressLine2()).withAddressTown(address.getAddressTown())
+                .withAddressDistrict(address.getAddressDistrict()).withAddressCode(address.getAddressCode());
         entityService.save(newAddress);
         return newAddress;
     }
@@ -452,6 +451,11 @@ public class AdvertService {
                 lOGGER.error("Problem performing currency conversion", e);
             }
         }
+    }
+
+    private AdvertClosingDate getNextAdvertClosingDate(Advert advert) {
+        entityService.flush();
+        return advertDAO.getNextAdvertClosingDate(advert, new LocalDate());
     }
 
 }

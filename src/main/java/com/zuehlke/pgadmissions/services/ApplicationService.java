@@ -258,7 +258,7 @@ public class ApplicationService {
         PrismAction actionId = commentDTO.getAction();
 
         if (actionId == PrismAction.APPLICATION_COMPLETE) {
-//            validateApplicationCompleteness(applicationId);
+            // validateApplicationCompleteness(applicationId);
         }
 
         Action action = actionService.getById(actionId);
@@ -277,9 +277,6 @@ public class ApplicationService {
                 .withPositionDescription(commentDTO.getPositionDescription()).withPositionProvisionalStartDate(positionProvisionalStartDate)
                 .withAppointmentConditions(commentDTO.getAppointmentConditions()).withApplicationRating(commentDTO.getApplicationRating());
 
-        commentService.appendAssignedUsers(comment, commentDTO);
-        commentService.appendTransitionStates(comment, commentDTO);
-
         if (commentDTO.getAppointmentTimeslots() != null) {
             commentService.appendAppointmentTimeslots(comment, commentDTO);
         }
@@ -290,10 +287,6 @@ public class ApplicationService {
 
         if (commentDTO.getCustomResponses() != null) {
             commentService.appendCustomResponses(comment, commentDTO);
-        }
-
-        if (commentDTO.getDocuments() != null) {
-            commentService.appendDocuments(comment, commentDTO);
         }
 
         if (commentDTO.getRejectionReason() != null) {

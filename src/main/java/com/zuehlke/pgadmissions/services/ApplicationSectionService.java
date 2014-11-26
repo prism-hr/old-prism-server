@@ -207,8 +207,7 @@ public class ApplicationSectionService {
         Language secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.<Language> getById(Language.class, institution,
                 personalDetailDTO.getSecondNationality()) : null;
         Domicile residenceCountry = importedEntityService.getById(Domicile.class, institution, personalDetailDTO.getDomicile());
-        Ethnicity ethnicity = importedEntityService.getById(Ethnicity.class, institution, personalDetailDTO.getEthnicity());
-        Disability disability = importedEntityService.getById(Disability.class, institution, personalDetailDTO.getDisability());
+
         personalDetail.setTitle(title);
         personalDetail.setGender(gender);
         personalDetail.setDateOfBirth(personalDetailDTO.getDateOfBirth());
@@ -220,8 +219,18 @@ public class ApplicationSectionService {
         personalDetail.setVisaRequired(personalDetailDTO.getVisaRequired());
         personalDetail.setPhone(personalDetailDTO.getPhone());
         personalDetail.setSkype(Strings.emptyToNull(personalDetailDTO.getSkype()));
-        personalDetail.setEthnicity(ethnicity);
-        personalDetail.setDisability(disability);
+        
+        Integer ethnicityId = personalDetailDTO.getEthnicity();
+        if (ethnicityId != null) {
+            Ethnicity ethnicity = importedEntityService.getById(Ethnicity.class, institution, ethnicityId);
+            personalDetail.setEthnicity(ethnicity);
+        }
+        
+        Integer disabilityId = personalDetailDTO.getDisability();
+        if (disabilityId != null) {
+            Disability disability = importedEntityService.getById(Disability.class, institution, personalDetailDTO.getDisability());
+            personalDetail.setDisability(disability);
+        }
 
         updateLanguageQualification(personalDetailDTO, institution, personalDetail);
         updatePassport(personalDetailDTO, personalDetail);

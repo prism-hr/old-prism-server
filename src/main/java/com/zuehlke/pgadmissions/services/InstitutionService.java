@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -43,8 +41,6 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 @Transactional
 public class InstitutionService {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     private InstitutionDAO institutionDAO;
 
@@ -62,6 +58,9 @@ public class InstitutionService {
 
     @Autowired
     private ActionService actionService;
+    
+    @Autowired
+    private CommentService commentService;
 
     @Autowired
     private StateService stateService;
@@ -202,7 +201,6 @@ public class InstitutionService {
             try {
                 institution.setLogoDocument(documentService.getExternalDocument(logoDocumentLink));
             } catch (IOException e) {
-                logger.error("Unable to download logo document for: " + institution.getTitle() + " (" + logoDocumentLink + ")", e);
                 Action action = actionService.getById(actionId);
                 actionService.throwWorkflowPermissionException(institution, action);
             }
@@ -221,7 +219,8 @@ public class InstitutionService {
         return entityService.getByProperty(Institution.class, "googleId", googleId);
     }
 
-    public ActionOutcomeDTO executeAction(Integer institutionId, CommentDTO commentDTO) throws DeduplicationException, InstantiationException, IllegalAccessException {
+    public ActionOutcomeDTO executeAction(Integer institutionId, CommentDTO commentDTO) throws DeduplicationException, InstantiationException,
+            IllegalAccessException {
         User user = userService.getById(commentDTO.getUser());
         Institution institution = getById(institutionId);
 
@@ -234,6 +233,7 @@ public class InstitutionService {
         State transitionState = stateService.getById(commentDTO.getTransitionState());
         Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
                 .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
+        commentService.appendCommentProperties(commentDTO, comment);
 
         InstitutionDTO institutionDTO = (InstitutionDTO) commentDTO.fetchResouceDTO();
         if (institutionDTO != null) {
@@ -242,7 +242,7 @@ public class InstitutionService {
 
         return actionService.executeUserAction(institution, action, comment);
     }
-    
+
     public boolean hasAuthenticatedFeeds(Institution institution) {
         return institutionDAO.getAuthenticatedFeedCount(institution) > 0;
     }

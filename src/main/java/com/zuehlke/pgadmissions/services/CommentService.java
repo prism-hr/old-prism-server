@@ -24,8 +24,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
@@ -370,24 +368,11 @@ public class CommentService {
     }
 
     public void appendAssignedUsers(Comment comment, CommentDTO commentDTO) throws DeduplicationException {
-        Application application = comment.getApplication();
-
-        if (comment.getAction().getId().equals(PrismAction.APPLICATION_COMPLETE)) {
-            Role refereeRole = entityService.getById(Role.class, PrismRole.APPLICATION_REFEREE);
-            for (ApplicationReferee referee : application.getReferees()) {
-                comment.getAssignedUsers().add(new CommentAssignedUser().withUser(referee.getUser()).withRole(refereeRole));
-            }
-            Role supervisorRole = entityService.getById(Role.class, PrismRole.APPLICATION_SUGGESTED_SUPERVISOR);
-            for (ApplicationSupervisor supervisor : application.getSupervisors()) {
-                comment.getAssignedUsers().add(new CommentAssignedUser().withUser(supervisor.getUser()).withRole(supervisorRole));
-            }
-        }
-
         if (commentDTO.getAssignedUsers() != null) {
             for (CommentAssignedUserDTO assignedUserDTO : commentDTO.getAssignedUsers()) {
                 AssignedUserDTO commentUserDTO = assignedUserDTO.getUser();
-                User commentUser = userService.getOrCreateUser(commentUserDTO.getFirstName(), commentUserDTO.getLastName(), commentUserDTO.getEmail(),
-                        application.getLocale());
+                User commentUser = userService.getOrCreateUser(commentUserDTO.getFirstName(), commentUserDTO.getLastName(), commentUserDTO.getEmail(), comment
+                        .getResource().getLocale());
                 comment.getAssignedUsers().add(
                         new CommentAssignedUser().withUser(commentUser).withRole(entityService.getById(Role.class, assignedUserDTO.getRole())));
             }
@@ -398,9 +383,13 @@ public class CommentService {
         State primaryTransitionState = entityService.getById(State.class, commentDTO.getTransitionState());
         primaryTransitionState = primaryTransitionState == null ? comment.getResource().getState() : primaryTransitionState;
         comment.getCommentTransitionStates().add(new CommentTransitionState().withState(primaryTransitionState).withPrimaryState(true));
-        for (PrismState transitionState : commentDTO.getSecondaryTransitionStates()) {
-            State transitionStateItem = stateService.getById(transitionState);
-            comment.getCommentTransitionStates().add(new CommentTransitionState().withState(transitionStateItem).withPrimaryState(false));
+        
+        List<PrismState> transitionStates = commentDTO.getSecondaryTransitionStates();
+        if (transitionStates != null) {
+            for (PrismState transitionState : commentDTO.getSecondaryTransitionStates()) {
+                State transitionStateItem = stateService.getById(transitionState);
+                comment.getCommentTransitionStates().add(new CommentTransitionState().withState(transitionStateItem).withPrimaryState(false));
+            }
         }
     }
 
@@ -437,6 +426,19 @@ public class CommentService {
         RejectionReason rejectionReason = entityService.getById(RejectionReason.class, commentDTO.getRejectionReason());
         comment.setRejectionReason(rejectionReason);
         comment.setContent(rejectionReason.getName());
+    }
+
+    public void appendCommentProperties(CommentDTO commentDTO, Comment comment) {
+        appendAssignedUsers(comment, commentDTO);
+        appendTransitionStates(comment, commentDTO);
+
+        if (commentDTO.getDocuments() != null) {
+            appendDocuments(comment, commentDTO);
+        }
+
+        if (commentDTO.getCustomResponses() != null) {
+            appendCustomResponses(comment, commentDTO);
+        }
     }
 
     private Comment getLatestAppointmentPreferenceComment(Application application, Comment schedulingComment, User user) {

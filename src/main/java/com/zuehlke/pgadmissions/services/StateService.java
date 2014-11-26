@@ -187,14 +187,14 @@ public class StateService {
     public StateTransition getStateTransition(Resource resource, Action action, Comment comment) {
         Resource operative = resourceService.getOperativeResource(resource, action);
 
-        Set<StateTransition> potentialStateTransitions = getPotentialStateTransitions(operative, action);
+        List<StateTransition> potentialStateTransitions = getPotentialStateTransitions(operative, action);
 
         if (potentialStateTransitions.size() > 1) {
-            PrismStateTransitionEvaluation transitionEvaluation = potentialStateTransitions.iterator().next().getStateTransitionEvaluation().getId();
+            PrismStateTransitionEvaluation transitionEvaluation = potentialStateTransitions.get(0).getStateTransitionEvaluation().getId();
             return (StateTransition) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(transitionEvaluation), operative, comment);
         }
 
-        return potentialStateTransitions.isEmpty() ? null : potentialStateTransitions.iterator().next();
+        return potentialStateTransitions.isEmpty() ? null : potentialStateTransitions.get(0);
     }
 
     public StateTransition getApplicationCompletedOutcome(Resource resource, Comment comment) {
@@ -479,12 +479,12 @@ public class StateService {
         return stateDAO.getStateTransition(resource, comment.getAction(), transitionStateId);
     }
 
-    private Set<StateTransition> getPotentialStateTransitions(Resource resource, Action action) {
+    private List<StateTransition> getPotentialStateTransitions(Resource resource, Action action) {
         Set<StateTransition> potentialStateTransitions = Sets.newLinkedHashSet();
         for (State state : stateDAO.getResourceStates(resource)) {
             potentialStateTransitions.addAll(stateDAO.getStateTransitions(state, action));
         }
-        return potentialStateTransitions;
+        return Lists.newLinkedList(potentialStateTransitions);
     }
 
 }

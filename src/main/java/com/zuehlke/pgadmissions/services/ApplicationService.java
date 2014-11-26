@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
@@ -277,16 +278,25 @@ public class ApplicationService {
                 .withPositionDescription(commentDTO.getPositionDescription()).withPositionProvisionalStartDate(positionProvisionalStartDate)
                 .withAppointmentConditions(commentDTO.getAppointmentConditions()).withApplicationRating(commentDTO.getApplicationRating());
 
+        commentService.appendCommentProperties(commentDTO, comment);
+
+        if (actionId == PrismAction.APPLICATION_COMPLETE) {
+            Role refereeRole = entityService.getById(Role.class, PrismRole.APPLICATION_REFEREE);
+            for (ApplicationReferee referee : application.getReferees()) {
+                comment.getAssignedUsers().add(new CommentAssignedUser().withUser(referee.getUser()).withRole(refereeRole));
+            }
+            Role supervisorRole = entityService.getById(Role.class, PrismRole.APPLICATION_SUGGESTED_SUPERVISOR);
+            for (ApplicationSupervisor supervisor : application.getSupervisors()) {
+                comment.getAssignedUsers().add(new CommentAssignedUser().withUser(supervisor.getUser()).withRole(supervisorRole));
+            }
+        }
+
         if (commentDTO.getAppointmentTimeslots() != null) {
             commentService.appendAppointmentTimeslots(comment, commentDTO);
         }
 
         if (commentDTO.getAppointmentPreferences() != null) {
             commentService.appendAppointmentPreferences(comment, commentDTO);
-        }
-
-        if (commentDTO.getCustomResponses() != null) {
-            commentService.appendCustomResponses(comment, commentDTO);
         }
 
         if (commentDTO.getRejectionReason() != null) {

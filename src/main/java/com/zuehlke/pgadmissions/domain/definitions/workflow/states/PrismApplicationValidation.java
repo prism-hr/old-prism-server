@@ -61,7 +61,6 @@ public class PrismApplicationValidation extends PrismWorkflowState {
             .withAction(PrismAction.APPLICATION_COMPLETE_VALIDATION_STAGE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-            .withNotificationTemplate(PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 

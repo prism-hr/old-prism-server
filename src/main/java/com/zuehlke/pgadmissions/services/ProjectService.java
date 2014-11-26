@@ -34,6 +34,9 @@ public class ProjectService {
     private ActionService actionService;
 
     @Autowired
+    private CommentService commentService;
+
+    @Autowired
     private ProgramService programService;
 
     @Autowired
@@ -69,7 +72,8 @@ public class ProjectService {
         return project;
     }
 
-    public ActionOutcomeDTO executeAction(Integer programId, CommentDTO commentDTO) throws DeduplicationException, InstantiationException, IllegalAccessException {
+    public ActionOutcomeDTO executeAction(Integer programId, CommentDTO commentDTO) throws DeduplicationException, InstantiationException,
+            IllegalAccessException {
         User user = userService.getById(commentDTO.getUser());
         Project project = getById(programId);
 
@@ -91,6 +95,7 @@ public class ProjectService {
 
         Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
                 .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
+        commentService.appendCommentProperties(commentDTO, comment);
 
         if (projectDTO != null) {
             update(programId, projectDTO);

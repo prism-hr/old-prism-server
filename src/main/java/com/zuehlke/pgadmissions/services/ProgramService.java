@@ -46,6 +46,9 @@ public class ProgramService {
 
     @Autowired
     private ActionService actionService;
+    
+    @Autowired
+    private CommentService commentService;
 
     @Autowired
     private SystemService systemService;
@@ -165,6 +168,7 @@ public class ProgramService {
 
         Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
                 .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
+        commentService.appendCommentProperties(commentDTO, comment);
 
         if (programDTO != null) {
             update(programId, programDTO);

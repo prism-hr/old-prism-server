@@ -278,7 +278,7 @@ public class ApplicationService {
                 .withPositionDescription(commentDTO.getPositionDescription()).withPositionProvisionalStartDate(positionProvisionalStartDate)
                 .withAppointmentConditions(commentDTO.getAppointmentConditions()).withApplicationRating(commentDTO.getApplicationRating());
 
-        commentService.appendCommentProperties(commentDTO, comment);
+        commentService.appendCommentProperties(comment, commentDTO);
 
         if (actionId == PrismAction.APPLICATION_COMPLETE) {
             Role refereeRole = entityService.getById(Role.class, PrismRole.APPLICATION_REFEREE);

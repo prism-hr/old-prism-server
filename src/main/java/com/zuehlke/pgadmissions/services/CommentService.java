@@ -428,7 +428,7 @@ public class CommentService {
         comment.setContent(rejectionReason.getName());
     }
 
-    public void appendCommentProperties(CommentDTO commentDTO, Comment comment) {
+    public void appendCommentProperties(Comment comment, CommentDTO commentDTO) {
         appendAssignedUsers(comment, commentDTO);
         appendTransitionStates(comment, commentDTO);
 

@@ -258,7 +258,7 @@ public class ApplicationService {
         PrismAction actionId = commentDTO.getAction();
 
         if (actionId == PrismAction.APPLICATION_COMPLETE) {
-            validateApplicationCompleteness(applicationId);
+//            validateApplicationCompleteness(applicationId);
         }
 
         Action action = actionService.getById(actionId);

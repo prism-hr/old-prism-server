@@ -119,35 +119,6 @@ public class PrismApplicationVerificationPendingCompletion extends PrismWorkflow
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_VERIFICATION_COMPLETED_OUTCOME)))); //
         
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.APPLICATION_CONFIRM_ELIGIBILITY) //
-            .withRaisesUrgentFlag(true) //
-            .withDefaultAction(false) //
-            .withNotificationTemplate(PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST) //
-                .withAssignments(Arrays.asList( // 
-                    new PrismStateActionAssignment() // 
-                        .withRole(PrismRole.INSTITUTION_ADMITTER))) //
-                .withNotifications(Arrays.asList( // 
-                    new PrismStateActionNotification() // 
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) // 
-                        .withDefinition(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
-                    new PrismStateActionNotification() // 
-                        .withRole(PrismRole.INSTITUTION_ADMITTER) // 
-                        .withDefinition(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
-                    new PrismStateActionNotification() // 
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR) // 
-                        .withDefinition(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
-                    new PrismStateActionNotification() // 
-                        .withRole(PrismRole.PROJECT_ADMINISTRATOR) // 
-                        .withDefinition(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), // 
-                    new PrismStateActionNotification() // 
-                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) // 
-                        .withDefinition(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION))) //
-                .withTransitions(Arrays.asList( // 
-                    new PrismStateTransition() // 
-                        .withTransitionState(PrismState.APPLICATION_VERIFICATION_PENDING_COMPLETION) // 
-                        .withTransitionAction(PrismAction.APPLICATION_COMPLETE_VERIFICATION_STAGE)))); //
-        
-        stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_EMAIL_CREATOR) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //

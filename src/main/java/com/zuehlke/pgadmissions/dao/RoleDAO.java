@@ -111,6 +111,21 @@ public class RoleDAO {
                 .list();
     }
 
+    public List<RoleTransition> getRoleTransitions(Resource resource, Action action, PrismRoleTransitionType roleTransitionType) {
+        return (List<RoleTransition>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
+                .createAlias("stateTransition", "stateTransition", JoinType.INNER_JOIN) //
+                .createAlias("stateTransition.stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.resourcePreviousStates", "resourcePreviousState", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("resourcePreviousState." + resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.eq("resourcePreviousState.primaryState", false)) //
+                .add(Restrictions.eq("stateAction.action", action)) //
+                .add(Restrictions.isNull("stateTransition.transitionState")) //
+                .add(Restrictions.eq("roleTransitionType", roleTransitionType)) //
+                .add(Restrictions.eq("restrictToActionOwner", true)) //
+                .list();
+    }
+
     public List<RoleTransition> getRoleTransitions(StateTransition stateTransition, PrismRoleTransitionType roleTransitionType) {
         return (List<RoleTransition>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
                 .add(Restrictions.eq("stateTransition", stateTransition)) //
@@ -149,14 +164,14 @@ public class RoleDAO {
     public void deleteObseleteUserRoles() {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete UserRole " //
-                     + "where role not in ( " //
-                         + "select role " //
-                         + "from RoleTransition " //
-                         + "group by role) " //
-                     + "and role not in ( " //
-                         + "select transitionRole " //
-                         + "from RoleTransition " //
-                         + "group by transitionRole)") //
+                        + "where role not in ( " //
+                        + "select role " //
+                        + "from RoleTransition " //
+                        + "group by role) " //
+                        + "and role not in ( " //
+                        + "select transitionRole " //
+                        + "from RoleTransition " //
+                        + "group by transitionRole)") //
                 .executeUpdate();
     }
 

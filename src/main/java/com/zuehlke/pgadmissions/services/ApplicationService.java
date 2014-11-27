@@ -27,6 +27,7 @@ import com.google.visualization.datasource.datatable.TableRow;
 import com.google.visualization.datasource.datatable.value.ValueType;
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
+import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
@@ -198,6 +199,14 @@ public class ApplicationService {
         }
     }
 
+    public void preProcessApplication(Application application, Comment comment) {
+        if (comment.isApplicationSubmittedComment()) {
+            application.setSubmittedTimestamp(new DateTime());
+            AdvertClosingDate advertClosingDate = application.getAdvert().getClosingDate();
+            application.setClosingDate(advertClosingDate == null ? null : advertClosingDate.getClosingDate());
+        }
+    }
+    
     public void postProcessApplication(Application application, Comment comment) throws DeduplicationException {
         if (comment.isApplicationCreatedComment()) {
             applicationSummaryService.incrementApplicationCreatedCount(application);
@@ -224,12 +233,7 @@ public class ApplicationService {
         }
 
         if (comment.isApplicationSubmittedComment()) {
-            application.setSubmittedTimestamp(new DateTime());
             applicationSummaryService.incrementApplicationSubmittedCount(application);
-        }
-
-        if (comment.isApplicationSubmittedToClosingDateComment()) {
-            application.setClosingDate(application.getDueDate());
         }
 
         if (comment.isApplicationApprovedComment()) {
@@ -466,5 +470,5 @@ public class ApplicationService {
 
         return recommended;
     }
-
+    
 }

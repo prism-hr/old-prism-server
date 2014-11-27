@@ -156,16 +156,19 @@ public class RoleService {
         }
     }
 
-    public void executeRoleTransitions(StateTransition stateTransition, Comment comment) throws DeduplicationException {
+    public void executeRoleTransitions(Resource resource, Comment comment) throws DeduplicationException {
         for (PrismRoleTransitionType roleTransitionType : PrismRoleTransitionType.values()) {
-            for (RoleTransition roleTransition : roleDAO.getRoleTransitions(stateTransition, roleTransitionType)) {
-                List<User> users = getRoleTransitionUsers(comment, roleTransition);
-                for (User user : users) {
-                    executeRoleTransition(comment, user, roleTransition);
-                }
-            }
+            List<RoleTransition> roleTransitions = roleDAO.getRoleTransitions(resource, comment.getAction(), roleTransitionType);
+            executeRoleTransitions(resource, comment, roleTransitions);
         }
-        
+        entityService.flush();
+    }
+
+    public void executeRoleTransitions(Resource resource, Comment comment, StateTransition stateTransition) throws DeduplicationException {
+        for (PrismRoleTransitionType roleTransitionType : PrismRoleTransitionType.values()) {
+            List<RoleTransition> roleTransitions = roleDAO.getRoleTransitions(stateTransition, roleTransitionType);
+            executeRoleTransitions(resource, comment, roleTransitions);
+        }
         entityService.flush();
     }
 
@@ -174,9 +177,17 @@ public class RoleService {
         updateUserRole(resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
     }
 
-    private List<User> getRoleTransitionUsers(Comment comment, RoleTransition roleTransition) throws WorkflowEngineException {
+    private void executeRoleTransitions(Resource resource, Comment comment, List<RoleTransition> roleTransitions) {
+        for (RoleTransition roleTransition : roleTransitions) {
+            List<User> users = getRoleTransitionUsers(resource, comment, roleTransition);
+            for (User user : users) {
+                executeRoleTransition(comment, user, roleTransition);
+            }
+        }
+    }
+
+    private List<User> getRoleTransitionUsers(Resource resource, Comment comment, RoleTransition roleTransition) throws WorkflowEngineException {
         User actionOwner = comment.getUser();
-        Resource resource = comment.getResource();
         User restrictedToUser = roleTransition.getRestrictToActionOwner() ? actionOwner : null;
 
         List<User> users;

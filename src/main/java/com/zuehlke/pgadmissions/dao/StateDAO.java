@@ -159,5 +159,14 @@ public class StateDAO {
                 .addOrder(Order.desc("primaryState")) //
                 .list();
     }
+    
+    public List<PrismStateGroup> getSecondaryResourceStateGroups(Resource resource) {
+        return (List<PrismStateGroup>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.property("state.stateGroup.id")) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.eq("primaryState", false)) //
+                .list();
+    }
 
 }

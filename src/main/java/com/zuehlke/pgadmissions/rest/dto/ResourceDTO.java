@@ -2,14 +2,14 @@ package com.zuehlke.pgadmissions.rest.dto;
 
 public class ResourceDTO {
 
-    private Integer workflowDisplayConfigurationVersion;
+    private Integer workflowPropertyConfigurationVersion;
 
-    public Integer getWorkflowDisplayConfigurationVersion() {
-        return workflowDisplayConfigurationVersion;
+    public Integer getWorkflowPropertyConfigurationVersion() {
+        return workflowPropertyConfigurationVersion;
     }
 
-    public void setWorkflowDisplayConfigurationVersion(Integer workflowDisplayConfigurationVersion) {
-        this.workflowDisplayConfigurationVersion = workflowDisplayConfigurationVersion;
+    public void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
+        this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
     }
 
 }

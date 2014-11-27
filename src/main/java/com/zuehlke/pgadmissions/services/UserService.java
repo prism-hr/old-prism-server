@@ -172,14 +172,14 @@ public class UserService {
     public void resetPassword(String email) {
         User user = getUserByEmail(email);
         if (user != null) {
-            String newPassword = EncryptionUtils.getTemporaryPassword();
-            notificationService.sendResetPasswordNotification(user, newPassword);
 
             UserAccount account = user.getUserAccount();
             if (account == null) {
                 User superAdmin = getUserByEmail("systemUserEmail");
                 notificationService.sendInvitationNotifications(superAdmin, user);
             } else {
+                String newPassword = EncryptionUtils.getTemporaryPassword();
+                notificationService.sendResetPasswordNotification(user, newPassword);
                 account.setTemporaryPassword(EncryptionUtils.getMD5(newPassword));
                 account.setTemporaryPasswordExpiryTimestamp(new DateTime().plusHours(1));
             }

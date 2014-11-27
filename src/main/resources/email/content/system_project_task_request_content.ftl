@@ -9,7 +9,7 @@
     Please login to view the requests and to check any updates. Details can be found in the Programme Requests tab.
 </p>
 
-${SYSTEM_HOMEPAGE_PROJECT}
+${SYSTEM_PROJECT_HOMEPAGE}
 
 <p>
     Yours sincerely,

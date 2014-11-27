@@ -153,11 +153,11 @@ public class ResourceResource {
         }
 
         switch (resource.getResourceScope()) {
-            case APPLICATION:
-                applicationResource.enrichApplicationRepresentation((Application) resource, (ApplicationExtendedRepresentation) representation);
-                break;
-            default:
-                break;
+        case APPLICATION:
+            applicationResource.enrichApplicationRepresentation((Application) resource, (ApplicationExtendedRepresentation) representation);
+            break;
+        default:
+            break;
         }
 
         return representation;
@@ -165,7 +165,7 @@ public class ResourceResource {
 
     @RequestMapping(method = RequestMethod.GET)
     public List<ResourceListRowRepresentation> getResources(@ModelAttribute ResourceDescriptor resourceDescriptor,
-                                                            @RequestParam(required = false) String filter, @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
+            @RequestParam(required = false) String filter, @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
         User currentUser = userService.getCurrentUser();
         ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
@@ -181,7 +181,7 @@ public class ResourceResource {
 
             addActions(currentUser, resourceScope, creationActions, rowDTO, representation);
 
-            for (String scopeName : new String[]{"institution", "program", "project"}) {
+            for (String scopeName : new String[] { "institution", "program", "project" }) {
                 Integer id = (Integer) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Id");
                 if (id != null) {
                     String title = (String) PropertyUtils.getSimpleProperty(rowDTO, scopeName + "Title");
@@ -198,10 +198,8 @@ public class ResourceResource {
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "type=report")
-    public void getReport(
-            @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestParam(required = false) String filter,
-            HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    public void getReport(@ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam(required = false) String filter, HttpServletRequest req,
+            HttpServletResponse resp) throws Exception {
         if (resourceDescriptor.getResourceScope() != PrismScope.APPLICATION) {
             throw new UnsupportedOperationException("Report can be generated only for applications");
         }
@@ -216,26 +214,24 @@ public class ResourceResource {
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)
     public void addUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                            @RequestBody Map<String, PrismRole> body) throws Exception {
+            @RequestBody Map<String, PrismRole> body) throws Exception {
         PrismRole role = body.get("role");
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
         roleService.updateUserRole(resource, user, PrismRoleTransitionType.CREATE, role);
-        // TODO: return PrismValidationError if workflow engine exception is thrown.
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles/{role}", method = RequestMethod.DELETE)
     public void deleteUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @PathVariable PrismRole role,
-                               @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
+            @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
         roleService.updateUserRole(resource, user, PrismRoleTransitionType.DELETE, role);
-        // TODO: return PrismValidationError if workflow engine exception is thrown.
     }
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
     public UserRepresentation addUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                                      @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) throws Exception {
+            @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         UserRepresentation newUser = userRolesRepresentation.getUser();
 
@@ -264,7 +260,7 @@ public class ResourceResource {
     }
 
     private void addActions(User currentUser, PrismScope resourceScope, HashMultimap<PrismState, PrismAction> creationActions,
-                            ResourceConsoleListRowDTO rowDTO, ResourceListRowRepresentation representation) {
+            ResourceConsoleListRowDTO rowDTO, ResourceListRowRepresentation representation) {
         representation.setActions(actionService.getPermittedActions(resourceScope, rowDTO.getSystemId(), rowDTO.getInstitutionId(), rowDTO.getProgramId(),
                 rowDTO.getProjectId(), rowDTO.getApplicationId(), currentUser));
         for (PrismAction creationAction : creationActions.get(rowDTO.getStateId())) {

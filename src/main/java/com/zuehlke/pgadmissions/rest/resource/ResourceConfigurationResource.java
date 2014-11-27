@@ -26,7 +26,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/{resourceScope:programs|institutions|systems}/{resourceId}/configuration")
+@RequestMapping("api/{resourceScope:projects|programs|institutions|systems}/{resourceId}/configuration")
 public class ResourceConfigurationResource {
 
     @Autowired
@@ -156,7 +156,7 @@ public class ResourceConfigurationResource {
     }
 
 
-    @RequestMapping(value = "/{resourceId}/{configurationType:workflowProperties}/version", method = RequestMethod.GET)
+    @RequestMapping(value = "{configurationType:workflowProperties}/version", method = RequestMethod.GET)
     public Integer getWorkflowPropertyConfigurationVersion(
             @ModelAttribute ResourceDescriptor resourceDescriptor,
             @PathVariable Integer resourceId,

@@ -50,7 +50,6 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -196,19 +195,9 @@ public class ApplicationService {
             return refereesResponded;
         }
 
-        PrismConfiguration configurationType = PrismConfiguration.WORKFLOW_PROPERTY;
-        WorkflowPropertyDefinition definition = (WorkflowPropertyDefinition) customizationService.getDefinitionById(configurationType,
-                PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE);
-        Integer configurationVersion = application.getWorkflowPropertyConfigurationVersion();
-
-        WorkflowPropertyConfiguration configuration;
-        if (configurationVersion == null) {
-            configuration = (WorkflowPropertyConfiguration) customizationService.getConfiguration(configurationType, application, application.getInstitution()
-                    .getUser(), definition);
-        } else {
-            configuration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(configurationType, definition,
-                    configurationVersion);
-        }
+        WorkflowPropertyConfiguration configuration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithOrWithoutVersion(
+                PrismConfiguration.WORKFLOW_PROPERTY, application, application.getInstitution().getUser(),
+                PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE, application.getWorkflowPropertyConfigurationVersion());
 
         for (int i = 0; i < (configuration.getMinimum() - refereesRespondedSize); i++) {
             refereesResponded.add(refereesNotResponded.get(i));

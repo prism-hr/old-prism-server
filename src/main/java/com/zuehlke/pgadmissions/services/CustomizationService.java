@@ -29,6 +29,8 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
@@ -131,6 +133,20 @@ public class CustomizationService {
             Integer version) {
         List<WorkflowConfiguration> configurations = getConfigurationsWithVersion(configurationType, version);
         return parseRepresentations(resource, configurationType, configurations);
+    }
+
+    public WorkflowPropertyConfiguration getConfigurationWithOrWithoutVersion(PrismConfiguration configurationType, Resource resource, User user,
+            Enum<?> definitionId, Integer configurationVersion) {
+        WorkflowPropertyDefinition definition = (WorkflowPropertyDefinition) getDefinitionById(configurationType, definitionId);
+
+        WorkflowPropertyConfiguration configuration;
+        if (configurationVersion == null) {
+            configuration = (WorkflowPropertyConfiguration) getConfiguration(configurationType, resource, user, definition);
+        } else {
+            configuration = (WorkflowPropertyConfiguration) getConfigurationWithVersion(configurationType, definition, configurationVersion);
+        }
+
+        return configuration;
     }
 
     public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,

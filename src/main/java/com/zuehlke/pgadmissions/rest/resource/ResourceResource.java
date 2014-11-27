@@ -282,6 +282,11 @@ public class ResourceResource {
         return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
     }
 
+    @RequestMapping(value = "/{resourceId}/workflowPropertyConfigurationVersion", method = RequestMethod.GET)
+    public Integer getWorkflowPropertyConfigurationVersion(@PathVariable Integer resourceId) throws Exception {
+        return 1;
+    }
+
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
         return RestApiUtils.getResourceDescriptor(resourceScope);

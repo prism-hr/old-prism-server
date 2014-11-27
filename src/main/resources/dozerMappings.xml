@@ -177,6 +177,10 @@
 			<a>creatorLastName</a>
 			<b>user.lastName</b>
 		</field>
+		<field>
+			<a>stateGroupId</a>
+			<b>stateGroup</b>
+		</field>
 	</mapping>
 
 	<mapping>

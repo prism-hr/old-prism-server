@@ -15,6 +15,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +41,8 @@ public class CustomizationDAO {
 
     public WorkflowConfiguration getConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
             WorkflowDefinition definition) {
-        PrismScope scope = definition.getScope().getId();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
-                .add(getResourceLocalizationCriterion(resource, scope, locale, programType)) //
+                .add(getResourceLocalizationCriterion(resource, definition.getScope().getId(), locale, programType)) //
                 .add(Restrictions.eq(configurationType.getDefinitionPropertyName(), definition));
 
         addActiveVersionCriterion(configurationType, criteria);
@@ -57,9 +57,8 @@ public class CustomizationDAO {
 
     public List<WorkflowConfiguration> getConfigurations(PrismConfiguration configurationType, Resource resource, PrismLocale locale,
             PrismProgramType programType, WorkflowDefinition definition) {
-        PrismScope scope = definition.getScope().getId();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
-                .add(getResourceLocalizationCriterion(resource, scope, locale, programType)) //
+                .add(getResourceLocalizationCriterion(resource, definition.getScope().getId(), locale, programType)) //
                 .add(Restrictions.eq(configurationType.getDefinitionPropertyName(), definition));
 
         addActiveVersionCriterion(configurationType, criteria);
@@ -215,6 +214,23 @@ public class CustomizationDAO {
                 .add(Restrictions.eq("scope.id", scope)) //
                 .addOrder(Order.asc("id")) //
                 .list();
+    }
+
+    public Integer getActiveConfigurationVersion(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
+            PrismScope scope) {
+        String definitionReference = configurationType.getDefinitionPropertyName();
+        return (Integer) sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
+                .setProjection(Projections.property("version")) //
+                .add(getResourceLocalizationCriterion(resource, scope, locale, programType)) //
+                .createAlias(definitionReference, definitionReference, JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(definitionReference + ".scope.id", scope)) //
+                .add(Restrictions.eq("active", true)) //
+                .addOrder(Order.desc("program")) //
+                .addOrder(Order.desc("institution")) //
+                .addOrder(Order.desc("system")) //
+                .addOrder(Order.asc("systemDefault")) //
+                .setMaxResults(1) //
+                .uniqueResult();
     }
 
     private Junction getResourceLocalizationCriterion(Resource resource, PrismScope scope, PrismLocale locale, PrismProgramType programType) {

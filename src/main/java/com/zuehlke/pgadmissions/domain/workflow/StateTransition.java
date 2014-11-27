@@ -17,7 +17,6 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 
@@ -127,18 +126,6 @@ public class StateTransition implements IUniqueEntity {
     public StateTransition withStateTransitionEvaluation(StateTransitionEvaluation stateTransitionEvaluation) {
         this.stateTransitionEvaluation = stateTransitionEvaluation;
         return this;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == null) {
-            return false;
-        }
-        if (getClass() != object.getClass()) {
-            return false;
-        }
-        final StateTransition other = (StateTransition) object;
-        return Objects.equal(stateAction.getId(), other.getStateAction().getId()) && Objects.equal(transitionState.getId(), other.getTransitionState().getId());
     }
 
     @Override

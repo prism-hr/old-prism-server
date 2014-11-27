@@ -330,6 +330,9 @@ public class CommentService {
         comment.setState(state);
         comment.setTransitionState(transitionState);
 
+        comment.addCommentState(state, true);
+        comment.addCommentTransitionState(transitionState, true);
+
         updateCommentStates(comment);
 
         if (comment.isSecondaryTransitionComment()) {
@@ -568,28 +571,32 @@ public class CommentService {
             }
         }
     }
-    
+
     private void updateCommentStates(Comment comment) {
         for (ResourceState resourceState : comment.getResource().getResourceStates()) {
-            comment.addCommentState(resourceState.getState(), resourceState.getPrimaryState());
-        }
-    }
-    
-    private void createCommentTransitionStates(Comment comment, State transitionState, Set<State> stateTerminations) {
-        comment.addCommentTransitionState(transitionState, true);
-        for (State secondaryTransitionState : comment.getSecondaryTransitionStates()) {
-            if (!stateTerminations.contains(secondaryTransitionState)) {
-                comment.addCommentTransitionState(transitionState, false);
+            boolean primaryState = resourceState.getPrimaryState();
+            if (!primaryState) {
+                comment.addCommentState(resourceState.getState(), primaryState);
             }
         }
     }
-    
+
+    private void createCommentTransitionStates(Comment comment, State transitionState, Set<State> stateTerminations) {
+        comment.addCommentTransitionState(transitionState, true);
+        for (State secondaryTransitionState : comment.getSecondaryTransitionStates()) {
+            if (stateTerminations == null || !stateTerminations.contains(secondaryTransitionState)) {
+                comment.addCommentTransitionState(secondaryTransitionState, false);
+            }
+        }
+    }
+
     private void updateCommentTransitionStates(Comment comment, Set<State> stateTerminations) {
         for (ResourceState resourceState : comment.getResource().getResourceStates()) {
-            State thisState = resourceState.getState();
-            if (!stateTerminations.contains(thisState)) {
-                comment.addCommentTransitionState(resourceState.getState(), resourceState.getPrimaryState());
-        
+            State state = resourceState.getState();
+            boolean primaryState = resourceState.getPrimaryState();
+            if (stateTerminations == null || (!stateTerminations.contains(state) && !primaryState)) {
+                comment.addCommentTransitionState(state, primaryState);
+
             }
         }
     }

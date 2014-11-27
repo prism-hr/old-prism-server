@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -14,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -150,6 +152,7 @@ public class StateService {
         commentService.create(comment);
         resource.addComment(comment);
 
+        resourceService.preProcessResource(resource, comment);
         entityService.flush();
 
         State state = resource.getState();
@@ -157,6 +160,7 @@ public class StateService {
 
         if (stateTransition == null) {
             commentService.recordStateTransition(comment, state, state);
+            roleService.executeRoleTransitions(resource, comment);
         } else {
             State transitionState = stateTransition.getTransitionState();
             transitionState = transitionState == null ? state : transitionState;
@@ -169,7 +173,7 @@ public class StateService {
             commentService.processComment(comment);
             resourceService.processResource(resource, comment);
 
-            roleService.executeRoleTransitions(stateTransition, comment);
+            roleService.executeRoleTransitions(resource, comment, stateTransition);
 
             if (stateTransition.getPropagatedActions().size() > 0) {
                 StateTransitionPending transientTransitionPending = new StateTransitionPending().withResource(resource).withStateTransition(stateTransition);
@@ -330,11 +334,11 @@ public class StateService {
         PrismStateGroup stateGroupId = resource.getState().getStateGroup().getId();
         if (stateGroupId == PrismStateGroup.APPLICATION_REFERENCE) {
             if (roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_REFEREE)).size() == 1) {
-                stateDAO.getStateTransition(resource, comment.getAction(), PrismState.APPLICATION_REFERENCE_PENDING_COMPLETION);
+                return stateDAO.getStateTransition(resource, comment.getAction(), PrismState.APPLICATION_REFERENCE_PENDING_COMPLETION);
             }
         } else {
             if (roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_REFEREE)).size() == 1) {
-                stateDAO.getStateTransition(resource, comment.getAction(), null);
+                return stateDAO.getStateTransition(resource, comment.getAction(), null);
             }
         }
         return null;
@@ -460,11 +464,15 @@ public class StateService {
     }
 
     private List<StateTransition> getPotentialStateTransitions(Resource resource, Action action) {
-        Set<StateTransition> potentialStateTransitions = Sets.newLinkedHashSet();
+        Map<SimpleEntry<Action, State>, StateTransition> potentialStateTransitions = Maps.newLinkedHashMap();
         for (State state : stateDAO.getResourceStates(resource)) {
-            potentialStateTransitions.addAll(stateDAO.getStateTransitions(state, action));
+            for (StateTransition stateTransition : stateDAO.getStateTransitions(state, action)) {
+                if (!potentialStateTransitions.containsKey(action)) {
+                    potentialStateTransitions.put(new SimpleEntry<Action, State>(action, stateTransition.getTransitionState()), stateTransition);
+                }
+            }
         }
-        return Lists.newLinkedList(potentialStateTransitions);
+        return Lists.newLinkedList(potentialStateTransitions.values());
     }
 
     private PrismState getApplicationRejectedOutcome(Resource resource) {

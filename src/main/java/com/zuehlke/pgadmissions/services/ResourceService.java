@@ -18,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
@@ -191,8 +189,14 @@ public class ResourceService {
         entityService.save(resource);
     }
 
-    public String generateResourceCode(Resource resource) {
-        return "PRiSM-" + PrismScope.getResourceScope(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId());
+    public void preProcessResource(Resource resource, Comment comment) {
+        switch (resource.getResourceScope()) {
+        case APPLICATION:
+            applicationService.preProcessApplication((Application) resource, comment);
+            break;
+        default:
+            break;
+        }
     }
 
     public void recordStateTransition(Resource resource, Comment comment, State state, State transitionState) throws DeduplicationException,
@@ -213,25 +217,21 @@ public class ResourceService {
     public void processResource(Resource resource, Comment comment) throws DeduplicationException {
         StateDurationDefinition stateDurationDefinition = resource.getState().getStateDurationDefinition();
 
-        if (stateDurationDefinition == null) {
-            resource.setDueDate(null);
-        } else {
-            LocalDate baselineCustom = null;
-            LocalDate baseline = new LocalDate();
+        LocalDate baselineCustom = null;
+        LocalDate baseline = new LocalDate();
 
-            PrismStateDurationEvaluation stateDurationEvaluation = resource.getState().getStateDurationEvaluation();
-            if (stateDurationEvaluation != null) {
-                baselineCustom = (LocalDate) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(stateDurationEvaluation), resource, comment);
-            }
-
-            baseline = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
-
-            StateDurationConfiguration stateDuration = stateService.getStateDurationConfiguration(resource, comment.getUser(), stateDurationDefinition);
-            Integer duration = stateDuration == null ? 0 : stateDuration.getDuration();
-
-            resource.setDueDate(baseline.plusDays(duration));
+        PrismStateDurationEvaluation stateDurationEvaluation = resource.getState().getStateDurationEvaluation();
+        if (stateDurationEvaluation != null) {
+            baselineCustom = (LocalDate) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(stateDurationEvaluation), resource, comment);
         }
 
+        baseline = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
+
+        StateDurationConfiguration stateDuration = stateDurationDefinition == null ? null : stateService.getStateDurationConfiguration(resource,
+                comment.getUser(), stateDurationDefinition);
+        Integer duration = stateDuration == null ? 0 : stateDuration.getDuration();
+
+        resource.setDueDate(baseline.plusDays(duration));
         entityService.flush();
     }
 
@@ -261,6 +261,10 @@ public class ResourceService {
         if (comment.isTransitionComment()) {
             createOrUpdateStateTransitionSummary(resource, baselineTime);
         }
+    }
+
+    public String generateResourceCode(Resource resource) {
+        return "PRiSM-" + PrismScope.getResourceScope(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId());
     }
 
     public void executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex) throws DeduplicationException, InstantiationException,
@@ -348,9 +352,7 @@ public class ResourceService {
     }
 
     public LocalDate getApplicationClosingDate(Resource resource, Comment comment) {
-        Advert advert = resource.getApplication().getAdvert();
-        AdvertClosingDate closingDate = advert.getClosingDate();
-        return closingDate == null ? null : closingDate.getClosingDate();
+        return resource.getApplication().getClosingDate();
     }
 
     public LocalDate getApplicationInterviewDate(Resource resource, Comment comment) {

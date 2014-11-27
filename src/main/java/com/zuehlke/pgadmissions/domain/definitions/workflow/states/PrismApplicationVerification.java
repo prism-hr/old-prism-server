@@ -115,7 +115,9 @@ public class PrismApplicationVerification extends PrismWorkflowState {
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_VERIFICATION_COMPLETED_OUTCOME),
                     new PrismStateTransition() //
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST)
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_VERIFICATION_COMPLETED_OUTCOME)))); //
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_VERIFICATION_COMPLETED_OUTCOME)
+                        .withStateTerminations(Lists.newArrayList( //
+                                PrismState.APPLICATION_VERIFICATION))))); //
         
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_CONFIRM_ELIGIBILITY) //
@@ -145,6 +147,10 @@ public class PrismApplicationVerification extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_VERIFICATION_PENDING_COMPLETION) // 
                         .withTransitionAction(PrismAction.APPLICATION_COMPLETE_VERIFICATION_STAGE) //
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_VERIFIED_OUTCOME), //
+                    new PrismStateTransition() // 
+                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) //
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_VERIFIED_OUTCOME) //
                         .withStateTerminations(Lists.newArrayList( //
                                 PrismState.APPLICATION_VERIFICATION))))); //
     

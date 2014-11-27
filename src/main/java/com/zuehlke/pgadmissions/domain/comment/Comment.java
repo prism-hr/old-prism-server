@@ -553,7 +553,7 @@ public class Comment {
     public final Set<State> getSecondaryTransitionStates() {
         return secondaryTransitionStates;
     }
-    
+
     public void addSecondaryTransitionState(State state) {
         secondaryTransitionStates.add(state);
     }
@@ -776,16 +776,11 @@ public class Comment {
     }
 
     public boolean isApplicationCreatedComment() {
-        return transitionState.getId() == PrismState.APPLICATION_UNSUBMITTED;
+        return action.getId().getCreationScope() == PrismScope.APPLICATION;
     }
 
     public boolean isApplicationSubmittedComment() {
-        return state.getStateGroup().getId() == PrismStateGroup.APPLICATION_UNSUBMITTED
-                && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_VALIDATION;
-    }
-
-    public boolean isApplicationSubmittedToClosingDateComment() {
-        return state.getStateGroup().getId() == PrismStateGroup.APPLICATION_UNSUBMITTED && transitionState.getId() == PrismState.APPLICATION_VALIDATION;
+        return action.getId() == PrismAction.APPLICATION_COMPLETE;
     }
 
     public boolean isApplicationApprovedComment() {
@@ -865,7 +860,7 @@ public class Comment {
         }
         return false;
     }
-    
+
     public boolean isSecondaryTransitionComment() {
         return !secondaryTransitionStates.isEmpty();
     }

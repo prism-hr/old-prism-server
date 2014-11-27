@@ -70,6 +70,7 @@ import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @RestController
 @RequestMapping("api/{resourceScope:applications|projects|programs|institutions|systems}")
@@ -156,7 +157,8 @@ public class ResourceResource {
                 secondaryStates.add(resourceState.getState().getId());
             }
         }
-        representation.setSecondaryStates(secondaryStates);
+
+        representation.setSecondaryStates(stateService.getSecondaryResourceStateGroups(resource));
 
         List<User> users = userService.getResourceUsers(resource);
         List<ResourceUserRolesRepresentation> userRolesRepresentations = Lists.newArrayListWithCapacity(users.size());
@@ -209,7 +211,9 @@ public class ResourceResource {
             resourceService.filterResourceListData(representation, currentUser);
 
             representation.setRaisesUpdateFlag(rowDTO.getUpdatedTimestamp().isAfter(baseline));
-            
+            representation.setSecondaryStateGroups(stateService.getSecondaryResourceStateGroups(resourceScope,
+                    (Integer) ReflectionUtils.getProperty(rowDTO, resourceScope.getLowerCaseName() + "Id")));
+
             representations.add(representation);
         }
 

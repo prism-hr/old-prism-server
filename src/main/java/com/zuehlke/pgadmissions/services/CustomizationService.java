@@ -29,6 +29,8 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
@@ -71,6 +73,14 @@ public class CustomizationService {
         PrismProgramType programType = resourceScope.getPrecedence() > INSTITUTION.getPrecedence() ? resource.getProgram().getProgramType()
                 .getPrismProgramType() : null;
         return getConfiguration(configurationType, resource, locale, programType, definition);
+    }
+
+    public Integer getActiveConfigurationVersion(PrismConfiguration configurationType, Resource resource, PrismScope scope) {
+        PrismScope resourceScope = resource.getResourceScope();
+        PrismLocale locale = resourceScope == SYSTEM ? userService.getCurrentUser().getLocale() : resource.getLocale();
+        PrismProgramType programType = resourceScope.getPrecedence() > INSTITUTION.getPrecedence() ? resource.getProgram().getProgramType()
+                .getPrismProgramType() : null;
+        return customizationDAO.getActiveConfigurationVersion(configurationType, resource, locale, programType, scope);
     }
 
     public WorkflowConfiguration getConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
@@ -131,6 +141,29 @@ public class CustomizationService {
             Integer version) {
         List<WorkflowConfiguration> configurations = getConfigurationsWithVersion(configurationType, version);
         return parseRepresentations(resource, configurationType, configurations);
+    }
+
+    public WorkflowPropertyConfiguration getConfigurationWithOrWithoutVersion(PrismConfiguration configurationType, Resource resource, User user,
+            Enum<?> definitionId, Integer configurationVersion) {
+        WorkflowPropertyDefinition definition = (WorkflowPropertyDefinition) getDefinitionById(configurationType, definitionId);
+
+        WorkflowPropertyConfiguration configuration;
+        if (configurationVersion == null) {
+            configuration = (WorkflowPropertyConfiguration) getConfiguration(configurationType, resource, user, definition);
+        } else {
+            configuration = (WorkflowPropertyConfiguration) getConfigurationWithVersion(configurationType, definition, configurationVersion);
+        }
+
+        return configuration;
+    }
+
+    public List<WorkflowConfigurationRepresentation> getConfigurationRepresentationsWithOrWithoutVersion(PrismConfiguration configurationType,
+            Resource resource, Integer configurationVersion) {
+        if (configurationVersion == null) {
+            return getConfigurationRepresentations(configurationType, resource, userService.getCurrentUser());
+        } else {
+            return getConfigurationRepresentationsWithVersion(resource, configurationType, configurationVersion);
+        }
     }
 
     public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,

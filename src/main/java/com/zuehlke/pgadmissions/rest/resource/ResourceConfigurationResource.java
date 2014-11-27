@@ -40,7 +40,7 @@ import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.utils.WordUtils;
 
 @RestController
-@RequestMapping("api/{resourceScope:programs|institutions|systems}/{resourceId}/configuration")
+@RequestMapping("api/{resourceScope:projects|programs|institutions|systems}/{resourceId}/configuration")
 public class ResourceConfigurationResource {
 
     @Autowired
@@ -170,14 +170,14 @@ public class ResourceConfigurationResource {
     }
 
 
-    @RequestMapping(value = "/{resourceId}/{configurationType:workflowProperties}/version", method = RequestMethod.GET)
+    @RequestMapping(value = "{configurationType:workflowProperties}/version", method = RequestMethod.GET)
     public Integer getWorkflowPropertyConfigurationVersion(
             @ModelAttribute PrismConfiguration configurationType,
             @ModelAttribute ResourceDescriptor resourceDescriptor,
             @PathVariable Integer resourceId,
-            @RequestParam PrismScope scope) throws Exception {
+            @RequestParam PrismScope targetScope) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        return customizationService.getActiveConfigurationVersion(configurationType, resource, scope);
+        return customizationService.getActiveConfigurationVersion(configurationType, resource, targetScope);
     }
 
     @ModelAttribute

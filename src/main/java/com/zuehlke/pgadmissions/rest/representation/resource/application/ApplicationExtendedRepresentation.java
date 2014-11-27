@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -65,6 +66,8 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
     private List<String> primaryThemes;
 
     private List<String> secondaryThemes;
+
+    private BigDecimal applicationRatingAverage;
 
     private String studyLocation;
 
@@ -278,6 +281,14 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
 
     public final void setSecondaryThemes(List<String> secondaryThemes) {
         this.secondaryThemes = secondaryThemes;
+    }
+
+    public BigDecimal getApplicationRatingAverage() {
+        return applicationRatingAverage;
+    }
+
+    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+        this.applicationRatingAverage = applicationRatingAverage;
     }
 
     public String getStudyLocation() {

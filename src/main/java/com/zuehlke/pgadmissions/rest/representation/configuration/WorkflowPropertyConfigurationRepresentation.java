@@ -12,6 +12,8 @@ public class WorkflowPropertyConfigurationRepresentation extends WorkflowConfigu
 
     private Boolean enabled;
 
+    private Boolean required;
+
     private Integer minimum;
 
     private Integer maximum;
@@ -46,6 +48,14 @@ public class WorkflowPropertyConfigurationRepresentation extends WorkflowConfigu
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Boolean getRequired() {
+        return required;
+    }
+
+    public void setRequired(Boolean required) {
+        this.required = required;
     }
 
     public Integer getMinimum() {

@@ -359,11 +359,11 @@ public class ResourceService {
         return comment.getInterviewDateTime().toLocalDate();
     }
 
-    public LocalDate getProjectClosingDate(Resource resource, Comment comment) {
+    public LocalDate getProjectEndDate(Resource resource, Comment comment) {
         return resource.getProject().getEndDate();
     }
 
-    public LocalDate getProgramClosingDate(Resource resource, Comment comment) {
+    public LocalDate getProgramEndDate(Resource resource, Comment comment) {
         return resource.getProgram().getEndDate();
     }
 

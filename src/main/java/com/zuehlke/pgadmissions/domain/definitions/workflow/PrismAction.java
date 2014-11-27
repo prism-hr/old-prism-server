@@ -67,18 +67,18 @@ public enum PrismAction {
     APPLICATION_ASSIGN_INTERVIEWERS(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, null, APPLICATION, null, Arrays.asList(
             new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_ASSESSMENT_CONTENT),
             new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
-            .addResolution(ASSIGNED_USERS, new PrismActionValidationFieldResolution(SIZE, "min", 0)).addResolution(INTERVIEW_TIME_ZONE, NOT_NULL)
+            .addResolution(ASSIGNED_USERS).addResolution(INTERVIEW_TIME_ZONE, NOT_NULL)
             .addResolution(INTERVIEW_DURATION, NOT_NULL).addResolution(INTERVIEW_DATE_TIME).addResolution(APPOINTMENT_TIMESLOTS)
             .addResolution(INTERVIEWER_INSTRUCTIONS).addResolution(INTERVIEWEE_INSTRUCTIONS).addResolution(INTERVIEW_LOCATION)
             .setCustomValidator(new CommentAssignInterviewersCustomValidator()).build()), //
     APPLICATION_ASSIGN_REVIEWERS(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, null, APPLICATION, null, Arrays.asList(
             new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT), new PrismActionRedaction().withRole(APPLICATION_REFEREE)
                     .withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
-            .addResolution(ASSIGNED_USERS, new PrismActionValidationFieldResolution(SIZE, "min", 1)).build()), //
+            .addResolution(ASSIGNED_USERS).build()), //
     APPLICATION_ASSIGN_SUPERVISORS(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, null, APPLICATION, null, Arrays.asList(
             new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT), new PrismActionRedaction().withRole(APPLICATION_REFEREE)
                     .withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
-            .addResolution(ASSIGNED_USERS, new PrismActionValidationFieldResolution(SIZE, "min", 2)).addResolution(POSITION_TITLE)
+            .addResolution(ASSIGNED_USERS).addResolution(POSITION_TITLE)
             .addResolution(POSITION_DESCRIPTION).addResolution(POSITION_PROVISIONAL_START_DATE).addResolution(APPOINTMENT_CONDITIONS).build()), //
     APPLICATION_COMMENT(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, null, APPLICATION, null, Arrays.asList(new PrismActionRedaction()
             .withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT),
@@ -119,7 +119,7 @@ public enum PrismAction {
             .addResolution(INTERVIEW_DATE_TIME, NOT_NULL).addResolution(INTERVIEWER_INSTRUCTIONS, NOT_EMPTY).addResolution(INTERVIEWEE_INSTRUCTIONS)
             .addResolution(INTERVIEW_LOCATION).build()), //
     APPLICATION_CONFIRM_OFFER_RECOMMENDATION(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, null, APPLICATION, null, null,
-            PrismActionValidationDefinition.builder().addResolution(ASSIGNED_USERS, new PrismActionValidationFieldResolution(SIZE, "min", 2))
+            PrismActionValidationDefinition.builder().addResolution(ASSIGNED_USERS)
                     .addResolution(POSITION_TITLE).addResolution(POSITION_DESCRIPTION).addResolution(POSITION_PROVISIONAL_START_DATE)
                     .addResolution(APPOINTMENT_CONDITIONS).build()), //
     APPLICATION_CONFIRM_REJECTION(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, null, APPLICATION, null, null,

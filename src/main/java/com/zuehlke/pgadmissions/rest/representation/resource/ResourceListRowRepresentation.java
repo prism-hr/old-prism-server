@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 import org.joda.time.DateTime;
@@ -29,6 +30,8 @@ public class ResourceListRowRepresentation {
     private LocalDate closingDate;
 
     private PrismStateGroup stateGroupId;
+
+    private List<PrismStateGroup> secondaryStateGroups;
 
     private LocalDate dueDate;
 
@@ -114,6 +117,14 @@ public class ResourceListRowRepresentation {
         this.stateGroupId = stateGroupId;
     }
 
+    public final List<PrismStateGroup> getSecondaryStateGroups() {
+        return secondaryStateGroups;
+    }
+
+    public final void setSecondaryStateGroups(List<PrismStateGroup> secondaryStateGroups) {
+        this.secondaryStateGroups = secondaryStateGroups;
+    }
+
     public LocalDate getDueDate() {
         return dueDate;
     }
@@ -161,10 +172,10 @@ public class ResourceListRowRepresentation {
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
-    
+
     public ResourceListRowRepresentation addAction(ActionRepresentation action) {
         actions.add(action);
         return this;
     }
-    
+
 }

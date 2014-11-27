@@ -191,8 +191,7 @@ public class ResourceResource {
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
         HashMultimap<PrismState, PrismAction> creationActions = actionService.getCreateResourceActionsByState(resourceScope);
 
-        List<ResourceConsoleListRowDTO> rowDTOs = resourceService.getResourceConsoleList(resourceScope, filterDTO, lastSequenceIdentifier);
-        for (ResourceConsoleListRowDTO rowDTO : rowDTOs) {
+        for (ResourceConsoleListRowDTO rowDTO : resourceService.getResourceConsoleList(resourceScope, filterDTO, lastSequenceIdentifier)) {
             ResourceListRowRepresentation representation = dozerBeanMapper.map(rowDTO, ResourceListRowRepresentation.class);
             representation.setResourceScope(resourceScope);
             representation.setId((Integer) PropertyUtils.getSimpleProperty(rowDTO, resourceScope.getLowerCaseName() + "Id"));
@@ -210,8 +209,10 @@ public class ResourceResource {
             resourceService.filterResourceListData(representation, currentUser);
 
             representation.setRaisesUpdateFlag(rowDTO.getUpdatedTimestamp().isAfter(baseline));
+            
             representations.add(representation);
         }
+
         return representations;
     }
 

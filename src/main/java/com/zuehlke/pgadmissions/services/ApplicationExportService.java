@@ -11,7 +11,6 @@ import javax.xml.transform.TransformerException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +36,8 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ApplicationExportDTO;
 import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -79,10 +76,10 @@ public class ApplicationExportService {
     protected ApplicationService applicationService;
 
     @Autowired
-    private WebServiceTemplate webServiceTemplate;
+    protected ActionService actionService;
 
     @Autowired
-    private ActionService actionService;
+    private WebServiceTemplate webServiceTemplate;
 
     @Autowired
     private EntityService entityService;
@@ -137,7 +134,7 @@ public class ApplicationExportService {
             IOUtils.closeQuietly(outputStream);
         }
 
-        executeExportAction(application, exportId, exportUserId, exportException);
+        actionService.executeExportAction(application, exportId, exportUserId, exportException);
     }
 
     protected SubmitAdmissionsApplicationRequest buildDataExportRequest(Application application) throws ApplicationExportException {
@@ -166,20 +163,6 @@ public class ApplicationExportService {
     protected OutputStream buildDocumentExportRequest(Application application, String exportReference, OutputStream outputStream) throws IOException {
         applicationDocumentExportBuilder.localize(propertyLoader).getDocuments(application, exportReference, outputStream);
         return outputStream;
-    }
-
-    protected void executeExportAction(Application application, String exportId, String exportUserId, String exportException) throws DeduplicationException,
-            InstantiationException, IllegalAccessException {
-        Action exportAction = actionService.getById(PrismAction.APPLICATION_EXPORT);
-        Institution exportInstitution = application.getInstitution();
-
-        Comment comment = new Comment().withUser(exportInstitution.getUser()).withAction(exportAction).withDeclinedResponse(false)
-                .withExportReference(exportId).withExportException(exportException).withCreatedTimestamp(new DateTime());
-        actionService.executeAction(application, exportAction, comment);
-
-        if (exportUserId != null) {
-            userService.createOrUpdateUserInstitutionIdentity(application, exportUserId);
-        }
     }
 
     private OutputStream sendDocumentExportRequest(Application application, String exportId) throws SftpException, IOException, ResourceNotFoundException,

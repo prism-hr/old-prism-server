@@ -61,6 +61,10 @@ public class CustomizationService {
     @Autowired
     private Mapper mapper;
 
+    public WorkflowDefinition getDefinitionById(PrismConfiguration configurationType, Enum<?> id) {
+        return entityService.getById(configurationType.getDefinitionClass(), id);
+    }
+
     public WorkflowConfiguration getConfiguration(PrismConfiguration configurationType, Resource resource, User user, WorkflowDefinition definition) {
         PrismScope resourceScope = resource.getResourceScope();
         PrismLocale locale = resourceScope == SYSTEM ? user.getLocale() : resource.getLocale();

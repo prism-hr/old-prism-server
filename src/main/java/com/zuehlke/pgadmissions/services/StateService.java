@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -464,15 +465,19 @@ public class StateService {
     }
 
     private List<StateTransition> getPotentialStateTransitions(Resource resource, Action action) {
-        Map<SimpleEntry<Action, State>, StateTransition> potentialStateTransitions = Maps.newLinkedHashMap();
-        for (State state : stateDAO.getResourceStates(resource)) {
-            for (StateTransition stateTransition : stateDAO.getStateTransitions(state, action)) {
-                if (!potentialStateTransitions.containsKey(action)) {
-                    potentialStateTransitions.put(new SimpleEntry<Action, State>(action, stateTransition.getTransitionState()), stateTransition);
+        if (action.getActionType() == PrismActionType.USER_INVOCATION) {
+            Map<SimpleEntry<Action, State>, StateTransition> potentialStateTransitions = Maps.newLinkedHashMap();
+            for (State state : stateDAO.getResourceStates(resource)) {
+                for (StateTransition stateTransition : stateDAO.getStateTransitions(state, action)) {
+                    if (!potentialStateTransitions.containsKey(action)) {
+                        potentialStateTransitions.put(new SimpleEntry<Action, State>(action, stateTransition.getTransitionState()), stateTransition);
+                    }
                 }
             }
+            return Lists.newLinkedList(potentialStateTransitions.values());
+        } else {
+            return Lists.newLinkedList(stateDAO.getStateTransitions(resource.getState(), action));
         }
-        return Lists.newLinkedList(potentialStateTransitions.values());
     }
 
     private PrismState getApplicationRejectedOutcome(Resource resource) {

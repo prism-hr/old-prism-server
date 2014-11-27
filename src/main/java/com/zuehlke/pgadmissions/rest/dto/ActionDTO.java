@@ -1,20 +1,21 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.util.Collection;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.List;
+
 public class ActionDTO {
 
     @NotNull
     private PrismAction actionId;
+
+    private Integer workflowPropertyConfigurationVersion;
 
     @Valid
     private InstitutionDTO newInstitution;
@@ -34,6 +35,14 @@ public class ActionDTO {
 
     public void setActionId(PrismAction actionId) {
         this.actionId = actionId;
+    }
+
+    public Integer getWorkflowPropertyConfigurationVersion() {
+        return workflowPropertyConfigurationVersion;
+    }
+
+    public void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
+        this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
     }
 
     public InstitutionDTO getNewInstitution() {
@@ -93,10 +102,10 @@ public class ActionDTO {
         return this;
     }
 
-    public ResourceDTO getOperativeResourceDTO() {
-        List<ResourceDTO> resourceDTOs = Lists.newArrayList(getNewInstitution(), getNewProgram(), getNewProject(), getNewApplication());
+    public Object getOperativeResourceDTO() {
+        List<Object> resourceDTOs = Lists.newArrayList(getNewInstitution(), getNewProgram(), getNewProject(), getNewApplication());
 
-        Collection<ResourceDTO> notNullResourceDTOs = Collections2.filter(resourceDTOs, Predicates.notNull());
+        Collection<Object> notNullResourceDTOs = Collections2.filter(resourceDTOs, Predicates.notNull());
 
         if (notNullResourceDTOs.size() != 1) {
             throw new Error();

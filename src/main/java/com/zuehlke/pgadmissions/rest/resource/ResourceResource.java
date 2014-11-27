@@ -1,31 +1,5 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
-import org.apache.commons.beanutils.PropertyUtils;
-import org.dozer.Mapper;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -35,12 +9,7 @@ import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -51,7 +20,6 @@ import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestApiUtils;
 import com.zuehlke.pgadmissions.rest.dto.ActionDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
@@ -62,15 +30,23 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepr
 import com.zuehlke.pgadmissions.rest.representation.resource.SimpleResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.comment.CommentValidator;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.CommentService;
-import com.zuehlke.pgadmissions.services.CustomizationService;
-import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.ResourceService;
-import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.StateService;
-import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.*;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.dozer.Mapper;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("api/{resourceScope:applications|projects|programs|institutions|systems}")
@@ -123,10 +99,10 @@ public class ResourceResource {
         }
 
         User user = userService.getCurrentUser();
-        ResourceDTO newResourceDTO = actionDTO.getOperativeResourceDTO();
+        Object newResourceDTO = actionDTO.getOperativeResourceDTO();
         Action action = actionService.getById(actionDTO.getActionId());
 
-        ActionOutcomeDTO actionOutcome = resourceService.createResource(user, action, newResourceDTO, referrer);
+        ActionOutcomeDTO actionOutcome = resourceService.createResource(user, action, newResourceDTO, referrer, actionDTO.getWorkflowPropertyConfigurationVersion());
         return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
     }
 
@@ -152,7 +128,7 @@ public class ResourceResource {
         representation.setRecommendedNextStates(stateService.getRecommendedNextStates(resource));
         List<PrismState> secondaryStates = Lists.newArrayListWithCapacity(resource.getResourceStates().size());
         for (ResourceState resourceState : resource.getResourceStates()) {
-            if(!resourceState.getPrimaryState()){
+            if (!resourceState.getPrimaryState()) {
                 secondaryStates.add(resourceState.getState().getId());
             }
         }
@@ -226,7 +202,7 @@ public class ResourceResource {
             @ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestParam(required = false) String filter,
             HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        if(resourceDescriptor.getResourceScope() != PrismScope.APPLICATION){
+        if (resourceDescriptor.getResourceScope() != PrismScope.APPLICATION) {
             throw new UnsupportedOperationException("Report can be generated only for applications");
         }
         ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
@@ -280,11 +256,6 @@ public class ResourceResource {
     public ActionOutcomeRepresentation executeAction(@PathVariable Integer resourceId, @Valid @RequestBody CommentDTO commentDTO) throws Exception {
         ActionOutcomeDTO actionOutcome = resourceService.executeAction(resourceId, commentDTO);
         return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
-    }
-
-    @RequestMapping(value = "/{resourceId}/workflowPropertyConfigurationVersion", method = RequestMethod.GET)
-    public Integer getWorkflowPropertyConfigurationVersion(@PathVariable Integer resourceId) throws Exception {
-        return 1;
     }
 
     @ModelAttribute

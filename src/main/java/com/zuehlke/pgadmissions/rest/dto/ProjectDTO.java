@@ -1,14 +1,14 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 import org.joda.time.LocalDate;
 
-public class ProjectDTO extends ResourceDTO {
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+public class ProjectDTO {
 
     @NotNull
     private Integer programId;

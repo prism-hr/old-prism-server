@@ -75,6 +75,14 @@ public class CustomizationService {
         return getConfiguration(configurationType, resource, locale, programType, definition);
     }
 
+    public Integer getActiveConfigurationVersion(PrismConfiguration configurationType, Resource resource, PrismScope scope) {
+        PrismScope resourceScope = resource.getResourceScope();
+        PrismLocale locale = resourceScope == SYSTEM ? userService.getCurrentUser().getLocale() : resource.getLocale();
+        PrismProgramType programType = resourceScope.getPrecedence() > INSTITUTION.getPrecedence() ? resource.getProgram().getProgramType()
+                .getPrismProgramType() : null;
+        return customizationDAO.getActiveConfigurationVersion(configurationType, resource, locale, programType, scope);
+    }
+
     public WorkflowConfiguration getConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
             WorkflowDefinition definition) {
         return customizationDAO.getConfiguration(configurationType, resource, locale, programType, definition);
@@ -147,6 +155,15 @@ public class CustomizationService {
         }
 
         return configuration;
+    }
+
+    public List<WorkflowConfigurationRepresentation> getConfigurationRepresentationsWithOrWithoutVersion(PrismConfiguration configurationType,
+            Resource resource, Integer configurationVersion) {
+        if (configurationVersion == null) {
+            return getConfigurationRepresentations(configurationType, resource, userService.getCurrentUser());
+        } else {
+            return getConfigurationRepresentationsWithVersion(resource, configurationType, configurationVersion);
+        }
     }
 
     public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,

@@ -1,5 +1,21 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.google.common.base.CaseFormat;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
@@ -12,18 +28,16 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestApiUtils;
-import com.zuehlke.pgadmissions.rest.dto.*;
+import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionConfigurationDTO;
+import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO;
+import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
+import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO;
+import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.ActionCustomQuestionValidator;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.utils.WordUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("api/{resourceScope:programs|institutions|systems}/{resourceId}/configuration")
@@ -158,10 +172,12 @@ public class ResourceConfigurationResource {
 
     @RequestMapping(value = "/{resourceId}/{configurationType:workflowProperties}/version", method = RequestMethod.GET)
     public Integer getWorkflowPropertyConfigurationVersion(
+            @ModelAttribute PrismConfiguration configurationType,
             @ModelAttribute ResourceDescriptor resourceDescriptor,
             @PathVariable Integer resourceId,
-            @ModelAttribute PrismConfiguration configurationType) throws Exception {
-        return 1;
+            @RequestParam PrismScope scope) throws Exception {
+        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
+        return customizationService.getActiveConfigurationVersion(configurationType, resource, scope);
     }
 
     @ModelAttribute

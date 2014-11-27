@@ -175,9 +175,9 @@ public class ResourceConfigurationResource {
             @ModelAttribute PrismConfiguration configurationType,
             @ModelAttribute ResourceDescriptor resourceDescriptor,
             @PathVariable Integer resourceId,
-            @RequestParam PrismScope scope) throws Exception {
+            @RequestParam PrismScope targetScope) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        return customizationService.getActiveConfigurationVersion(configurationType, resource, scope);
+        return customizationService.getActiveConfigurationVersion(configurationType, resource, targetScope);
     }
 
     @ModelAttribute

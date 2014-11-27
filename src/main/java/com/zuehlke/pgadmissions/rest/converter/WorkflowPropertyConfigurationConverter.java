@@ -1,9 +1,8 @@
 package com.zuehlke.pgadmissions.rest.converter;
 
-import org.dozer.DozerConverter;
-
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO;
+import org.dozer.DozerConverter;
 
 public class WorkflowPropertyConfigurationConverter extends DozerConverter<WorkflowPropertyConfigurationValueDTO, WorkflowPropertyConfiguration> {
 
@@ -14,7 +13,7 @@ public class WorkflowPropertyConfigurationConverter extends DozerConverter<Workf
     @Override
     public WorkflowPropertyConfiguration convertTo(WorkflowPropertyConfigurationValueDTO source, WorkflowPropertyConfiguration destination) {
         return new WorkflowPropertyConfiguration().withEnabled(source.getEnabled()).withMinimum(source.getMinimum()).withMaximum(source.getMaximum())
-                .withActive(true);
+                .withRequired(source.getRequired()).withActive(true);
     }
 
     @Override

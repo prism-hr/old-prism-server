@@ -9,6 +9,7 @@ import org.joda.time.LocalDate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 
@@ -18,9 +19,9 @@ public class AbstractResourceRepresentation {
 
     private String code;
 
-    private PrismState state;
+    private PrismStateGroup stateGroup;
 
-    private List<PrismState> secondaryStates;
+    private List<PrismStateGroup> secondaryStates;
 
     private PrismScope resourceScope;
 
@@ -58,19 +59,19 @@ public class AbstractResourceRepresentation {
         this.code = code;
     }
 
-    public PrismState getState() {
-        return state;
+    public final PrismStateGroup getStateGroup() {
+        return stateGroup;
     }
 
-    public void setState(PrismState state) {
-        this.state = state;
+    public final void setStateGroup(PrismStateGroup stateGroup) {
+        this.stateGroup = stateGroup;
     }
 
-    public List<PrismState> getSecondaryStates() {
+    public final List<PrismStateGroup> getSecondaryStates() {
         return secondaryStates;
     }
 
-    public void setSecondaryStates(List<PrismState> secondaryStates) {
+    public final void setSecondaryStates(List<PrismStateGroup> secondaryStates) {
         this.secondaryStates = secondaryStates;
     }
 

@@ -29,7 +29,7 @@ public class ResourceListRowRepresentation {
 
     private LocalDate closingDate;
 
-    private PrismStateGroup stateGroupId;
+    private PrismStateGroup stateGroup;
 
     private List<PrismStateGroup> secondaryStateGroups;
 
@@ -109,12 +109,12 @@ public class ResourceListRowRepresentation {
         this.closingDate = closingDate;
     }
 
-    public PrismStateGroup getStateGroupId() {
-        return stateGroupId;
+    public PrismStateGroup getStateGroup() {
+        return stateGroup;
     }
 
-    public void setStateGroupId(PrismStateGroup stateGroupId) {
-        this.stateGroupId = stateGroupId;
+    public void setStateGroup(PrismStateGroup stateGroup) {
+        this.stateGroup = stateGroup;
     }
 
     public final List<PrismStateGroup> getSecondaryStateGroups() {

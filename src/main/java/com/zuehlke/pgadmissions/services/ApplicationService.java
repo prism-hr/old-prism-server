@@ -1,5 +1,24 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.ValidationUtils;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.visualization.datasource.base.TypeMismatchException;
@@ -16,11 +35,13 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -28,6 +49,8 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -38,23 +61,6 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationValidator;
-import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.ValidationUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
 
 @Service
 @Transactional
@@ -180,13 +186,35 @@ public class ApplicationService {
     }
 
     public List<ApplicationReferee> getApplicationExportReferees(Application application) {
-        List<ApplicationReferee> referees = applicationDAO.getApplicationRefereesResponded(application);
-        int refereesResponded = referees.size();
+        List<ApplicationReferee> refereesResponded = applicationDAO.getApplicationRefereesResponded(application);
+        int refereesRespondedSize = refereesResponded.size();
+
         List<ApplicationReferee> refereesNotResponded = applicationDAO.getApplicationRefereesNotResponded(application);
-        for (int i = 0; i < (2 - refereesResponded); i++) {
-            referees.add(refereesNotResponded.get(i));
+        int refereesNotRespondedSize = refereesNotResponded.size();
+
+        if (refereesRespondedSize == 0 || refereesNotRespondedSize == 0) {
+            return refereesResponded;
         }
-        return referees;
+
+        PrismConfiguration configurationType = PrismConfiguration.WORKFLOW_PROPERTY;
+        WorkflowPropertyDefinition definition = (WorkflowPropertyDefinition) customizationService.getDefinitionById(configurationType,
+                PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE);
+        Integer configurationVersion = application.getWorkflowPropertyConfigurationVersion();
+
+        WorkflowPropertyConfiguration configuration;
+        if (configurationVersion == null) {
+            configuration = (WorkflowPropertyConfiguration) customizationService.getConfiguration(configurationType, application, application.getInstitution()
+                    .getUser(), definition);
+        } else {
+            configuration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(configurationType, definition,
+                    configurationVersion);
+        }
+
+        for (int i = 0; i < (configuration.getMinimum() - refereesRespondedSize); i++) {
+            refereesResponded.add(refereesNotResponded.get(i));
+        }
+
+        return refereesResponded;
     }
 
     public void validateApplicationCompleteness(Integer applicationId) {
@@ -431,7 +459,8 @@ public class ApplicationService {
     private void synchroniseOfferRecommendation(Application application, Comment comment) {
         application.setConfirmedStartDate(comment.getPositionProvisionalStartDate());
         application.setConfirmedPrimarySupervisor(Iterables.getFirst(roleService.getRoleUsers(application, PrismRole.APPLICATION_PRIMARY_SUPERVISOR), null));
-        application.setConfirmedSecondarySupervisor(Iterables.getFirst(roleService.getRoleUsers(application, PrismRole.APPLICATION_SECONDARY_SUPERVISOR), null));
+        application
+                .setConfirmedSecondarySupervisor(Iterables.getFirst(roleService.getRoleUsers(application, PrismRole.APPLICATION_SECONDARY_SUPERVISOR), null));
         application.setConfirmedOfferType(comment.getAppointmentConditions() == null ? PrismOfferType.UNCONDITIONAL : PrismOfferType.CONDITIONAL);
     }
 

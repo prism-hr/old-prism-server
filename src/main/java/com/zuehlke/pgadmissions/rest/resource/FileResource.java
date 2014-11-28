@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,12 +42,14 @@ public class FileResource {
     @Autowired
     private ApplicationDownloadService applicationDownloadService;
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/files", method = RequestMethod.POST)
     public Map<String, Object> uploadFile(@RequestParam(value = "file-data") Part uploadStream) throws IOException {
         Document document = documentService.create(uploadStream);
         return ImmutableMap.of("id", (Object) document.getId());
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/files/{fileId}", method = RequestMethod.GET)
     public void downloadFile(@PathVariable(value = "fileId") Integer documentId, HttpServletResponse response) throws IOException {
         Document document = documentService.getById(documentId);
@@ -54,6 +57,7 @@ public class FileResource {
         sendFileToClient(response, document);
     }
 
+    @PreAuthorize("permitAll")
     @RequestMapping(value = "/images/{fileId}", method = RequestMethod.GET)
     public void downloadImage(@PathVariable(value = "fileId") Integer fileId, HttpServletResponse response) throws IOException {
         Document file = documentService.getById(fileId);
@@ -74,7 +78,7 @@ public class FileResource {
         outputStream.write(document.getContent());
     }
 
-
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/pdfDownload", method = RequestMethod.GET)
     public void downloadPdf(@RequestParam(value = "applicationIds") String applicationIds, HttpServletResponse response) throws IOException {
         List<Integer> ids = null;

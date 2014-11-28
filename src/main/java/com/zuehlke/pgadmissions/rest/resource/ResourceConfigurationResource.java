@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -52,6 +53,7 @@ public class ResourceConfigurationResource {
     @Autowired
     private ActionCustomQuestionValidator actionCustomQuestionValidator;
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:notifications}/{id}", method = RequestMethod.GET)
     public WorkflowConfigurationRepresentation getConfiguration(@ModelAttribute PrismConfiguration configurationType,
                                                                 @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam(required = false) PrismLocale locale,
@@ -61,6 +63,7 @@ public class ResourceConfigurationResource {
         return customizationService.getConfigurationRepresentation(configurationType, resource, locale, programType, definition);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:customQuestions}/{id}", method = RequestMethod.GET)
     public List<WorkflowConfigurationRepresentation> getConfiguration(@ModelAttribute PrismConfiguration configurationType,
                                                                       @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam(required = false) PrismLocale locale,
@@ -70,6 +73,7 @@ public class ResourceConfigurationResource {
         return customizationService.getConfigurationRepresentations(configurationType, resource, locale, programType, definition);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:displayProperties|stateDurations|workflowProperties}", method = RequestMethod.GET)
     public List<WorkflowConfigurationRepresentation> getConfigurations(@ModelAttribute PrismConfiguration configurationType,
                                                                        @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam PrismScope scope,
@@ -78,6 +82,7 @@ public class ResourceConfigurationResource {
         return customizationService.getConfigurationRepresentations(configurationType, resource, scope, locale, programType);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:customQuestions|workflowProperties}", params = "version", method = RequestMethod.GET)
     public List<WorkflowConfigurationRepresentation> getConfigurationsWithVersion(@ModelAttribute PrismConfiguration configurationType,
                                                                                   @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam Integer version) throws Exception {
@@ -85,6 +90,7 @@ public class ResourceConfigurationResource {
         return customizationService.getConfigurationRepresentationsWithVersion(resource, configurationType, version);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:notifications}/{id}", method = RequestMethod.DELETE, headers = "Restore-Type")
     public void restoreConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @ModelAttribute PrismConfiguration configurationType,
                                      @PathVariable Integer resourceId, @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType,
@@ -98,6 +104,7 @@ public class ResourceConfigurationResource {
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:customQuestions}/{id}", method = RequestMethod.DELETE, headers = "Restore-Type")
     public void restoreConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @ModelAttribute PrismConfiguration configurationType,
                                      @PathVariable Integer resourceId, @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType,
@@ -111,6 +118,7 @@ public class ResourceConfigurationResource {
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:displayProperties|stateDurations|workflowProperties}", method = RequestMethod.DELETE, headers = "Restore-Type")
     public void restoreConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @ModelAttribute PrismConfiguration configurationType,
                                      @PathVariable Integer resourceId, @RequestParam PrismScope scope, @RequestParam(required = false) PrismLocale locale,
@@ -123,6 +131,7 @@ public class ResourceConfigurationResource {
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:notifications}/{id}", method = RequestMethod.PUT)
     public void updateNotificationConfiguration(@ModelAttribute PrismConfiguration configurationType, @ModelAttribute ResourceDescriptor resourceDescriptor,
                                                 @PathVariable Integer resourceId, @RequestParam PrismScope scope, @RequestParam(required = false) PrismLocale locale,
@@ -132,6 +141,7 @@ public class ResourceConfigurationResource {
         customizationService.createOrUpdateConfiguration(configurationType, resource, locale, programType, notificationConfigurationDTO);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:customQuestions}/{id}", method = RequestMethod.PUT)
     public void updateActionCustomQuestionConfiguration(@ModelAttribute PrismConfiguration configurationType,
                                                         @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam PrismScope scope,
@@ -142,6 +152,7 @@ public class ResourceConfigurationResource {
         customizationService.createOrUpdateConfigurationGroup(configurationType, resource, scope, locale, programType, actionCustomQuestionConfigurationDTO);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:stateDurations}", method = RequestMethod.PUT)
     public void updateStateDurationConfiguration(@ModelAttribute PrismConfiguration configurationType, @ModelAttribute ResourceDescriptor resourceDescriptor,
                                                  @PathVariable Integer resourceId, @RequestParam PrismScope scope, @RequestParam(required = false) PrismLocale locale,
@@ -151,6 +162,7 @@ public class ResourceConfigurationResource {
         customizationService.createOrUpdateConfigurationGroup(configurationType, resource, scope, locale, programType, stateDurationConfigurationDTO);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:displayProperties}", method = RequestMethod.PUT)
     public void updateDisplayPropertyConfiguration(@ModelAttribute PrismConfiguration configurationType, @ModelAttribute ResourceDescriptor resourceDescriptor,
                                                    @PathVariable Integer resourceId, @RequestParam PrismScope scope, @RequestParam(required = false) PrismLocale locale,
@@ -160,6 +172,7 @@ public class ResourceConfigurationResource {
         customizationService.createOrUpdateConfigurationGroup(configurationType, resource, scope, locale, programType, displayPropertyConfigurationDTO);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:workflowProperties}", method = RequestMethod.PUT)
     public void updateWorkflowPropertyConfiguration(@ModelAttribute PrismConfiguration configurationType,
                                                     @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam PrismScope scope,
@@ -169,7 +182,7 @@ public class ResourceConfigurationResource {
         customizationService.createOrUpdateConfigurationGroup(configurationType, resource, scope, locale, programType, workflowPropertyConfigurationDTO);
     }
 
-
+    @PreAuthorize("permitAll")
     @RequestMapping(value = "{configurationType:workflowProperties}/version", method = RequestMethod.GET)
     public Integer getWorkflowPropertyConfigurationVersion(
             @ModelAttribute PrismConfiguration configurationType,

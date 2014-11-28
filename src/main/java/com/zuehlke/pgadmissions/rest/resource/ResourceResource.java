@@ -14,6 +14,7 @@ import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -74,6 +75,7 @@ import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @RestController
 @RequestMapping("api/{resourceScope:applications|projects|programs|institutions|systems}")
+@PreAuthorize("isAuthenticated()")
 public class ResourceResource {
 
     @Autowired

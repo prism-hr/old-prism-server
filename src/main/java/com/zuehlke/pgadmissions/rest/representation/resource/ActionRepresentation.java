@@ -72,8 +72,8 @@ public class ActionRepresentation {
         return nextStates;
     }
 
-    public final void addNextStates(Collection<PrismState> nextStates) {
-        nextStates.addAll(nextStates);
+    public final void addNextStates(Collection<NextStateRepresentation> nextStates) {
+        this.nextStates.addAll(nextStates);
     }
 
     @Override
@@ -107,12 +107,12 @@ public class ActionRepresentation {
             return parallelizable;
         }
 
-        public ActionRepresentation.NextStateRepresentation withState(PrismState state) {
+        public NextStateRepresentation withState(PrismState state) {
             this.state = state;
             return this;
         }
 
-        public ActionRepresentation.NextStateRepresentation withParallelizable(Boolean parallelizable) {
+        public NextStateRepresentation withParallelizable(Boolean parallelizable) {
             this.parallelizable = parallelizable;
             return this;
         }

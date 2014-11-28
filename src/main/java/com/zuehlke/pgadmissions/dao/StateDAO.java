@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.NextStateRepresentation;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -169,17 +170,22 @@ public class StateDAO {
                 .list();
     }
 
-    public List<PrismState> getSelectableTransitionStates(State state, PrismAction actionId) {
-        return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
-                .setProjection(Projections.property("transitionState.id")) //
+    public List<NextStateRepresentation> getSelectableTransitionStates(State state, PrismAction actionId) {
+        return (List<NextStateRepresentation>) sessionFactory.getCurrentSession().createCriteria(StateTransition.class, "stateTransition") //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("transitionState.id"), "state") //
+                        .add(Projections.property("transitionState.parallelizable"), "parallelizable")) //
                 .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
+                .createAlias("transitionState", "transitionState", JoinType.INNER_JOIN) //
+                .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN) //
                 .createAlias("stateTransitionEvaluation", "stateTransitionEvaluation", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state", state)) //
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
                 .add(Restrictions.eq("stateTransitionEvaluation.nextStateSelection", true)) //
-                .addOrder(Order.asc("stateGroup.sequenceOrder")) //
+                .add(Restrictions.isNotNull("transitionState")) //
+                .addOrder(Order.asc("transitionStateGroup.sequenceOrder")) //
+                .setResultTransformer(Transformers.aliasToBean(NextStateRepresentation.class)) //
                 .list();
     }
+
 }

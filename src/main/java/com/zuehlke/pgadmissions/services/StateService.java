@@ -49,6 +49,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.NextStateRepresentation;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Service
@@ -462,7 +463,7 @@ public class StateService {
         return stateDAO.getSecondaryResourceStateGroups(resourceScope, resourceId);
     }
 
-    public List<PrismState> getSelectableTransitionStates(State state, PrismAction actionId) {
+    public List<NextStateRepresentation> getSelectableTransitionStates(State state, PrismAction actionId) {
         return stateDAO.getSelectableTransitionStates(state, actionId);
     }
 

@@ -171,29 +171,29 @@ public enum PrismAction {
             new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT), new PrismActionRedaction().withRole(APPLICATION_REFEREE)
                     .withRedactionType(ALL_CONTENT)), null), //
     APPLICATION_WITHDRAW(USER_INVOCATION, WITHDRAW_RESOURCE, false, true, false, true, false, null, APPLICATION, null, null, null), //
-    INSTITUTION_COMPLETE_APPROVAL_STAGE(USER_INVOCATION, PROCESS_RESOURCE, false, true, false, true, false, null, INSTITUTION, null, null, null), //
+    INSTITUTION_COMPLETE_APPROVAL_STAGE(USER_INVOCATION, VIEW_EDIT_RESOURCE, false, true, false, true, false, null, INSTITUTION, null, null, null), //
     INSTITUTION_STARTUP(SYSTEM_INVOCATION, INITIALISE_RESOURCE, false, false, false, true, false, null, INSTITUTION, null, null, null), //
     INSTITUTION_VIEW_EDIT(USER_INVOCATION, VIEW_EDIT_RESOURCE, false, false, false, false, false, null, INSTITUTION, null, null, null), //
-    INSTITUTION_CORRECT(USER_INVOCATION, PROCESS_RESOURCE, false, true, false, true, false, null, INSTITUTION, null, null, null), //
+    INSTITUTION_CORRECT(USER_INVOCATION, VIEW_EDIT_RESOURCE, false, true, false, true, false, null, INSTITUTION, null, null, null), //
     INSTITUTION_CREATE_PROGRAM(USER_INVOCATION, CREATE_RESOURCE, false, true, false, true, false, null, INSTITUTION, PROGRAM, null, null), //
     INSTITUTION_EMAIL_CREATOR(USER_INVOCATION, EMAIL_RESOURCE_CREATOR, false, false, false, false, false, null, INSTITUTION, null, null, null), //
     INSTITUTION_ESCALATE(SYSTEM_INVOCATION, ESCALATE_RESOURCE, false, false, false, false, false, null, INSTITUTION, null, null, null), //
     INSTITUTION_IMPORT_PROGRAM(SYSTEM_INVOCATION, CREATE_RESOURCE, false, true, false, true, false, null, INSTITUTION, PROGRAM, null, null), //
     INSTITUTION_WITHDRAW(USER_INVOCATION, WITHDRAW_RESOURCE, false, true, false, true, false, null, INSTITUTION, null, null, null), //
-    PROGRAM_COMPLETE_APPROVAL_STAGE(USER_INVOCATION, PROCESS_RESOURCE, false, true, false, true, false, null, PROGRAM, null, null, null), //
+    PROGRAM_COMPLETE_APPROVAL_STAGE(USER_INVOCATION, VIEW_EDIT_RESOURCE, false, true, false, true, false, null, PROGRAM, null, null, null), //
     PROGRAM_CONCLUDE(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, true, false, true, false, null, PROGRAM, null, null, null), //
     PROGRAM_VIEW_EDIT(USER_INVOCATION, VIEW_EDIT_RESOURCE, false, false, false, false, false, null, PROGRAM, null, null, null), //
-    PROGRAM_CORRECT(USER_INVOCATION, PROCESS_RESOURCE, false, true, false, true, false, null, PROGRAM, null, null, null), //
+    PROGRAM_CORRECT(USER_INVOCATION, VIEW_EDIT_RESOURCE, false, true, false, true, false, null, PROGRAM, null, null, null), //
     PROGRAM_CREATE_APPLICATION(USER_INVOCATION, CREATE_RESOURCE, false, true, false, true, false, null, PROGRAM, APPLICATION, null, null), //
     PROGRAM_CREATE_PROJECT(USER_INVOCATION, CREATE_RESOURCE, false, true, false, true, false, null, PROGRAM, PROJECT, null, null), //
     PROGRAM_EMAIL_CREATOR(USER_INVOCATION, EMAIL_RESOURCE_CREATOR, false, false, false, false, false, null, PROGRAM, null, null, null), //
     PROGRAM_ESCALATE(SYSTEM_INVOCATION, ESCALATE_RESOURCE, false, false, false, false, false, null, PROGRAM, null, null, null), //
     PROGRAM_RESTORE(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, true, false, true, false, null, PROGRAM, null, null, null), //
     PROGRAM_WITHDRAW(USER_INVOCATION, WITHDRAW_RESOURCE, false, true, false, true, false, null, PROGRAM, null, null, null), //
-    PROJECT_COMPLETE_APPROVAL_STAGE(USER_INVOCATION, PROCESS_RESOURCE, false, true, false, true, false, null, PROJECT, null, null, null), //
+    PROJECT_COMPLETE_APPROVAL_STAGE(USER_INVOCATION, VIEW_EDIT_RESOURCE, false, true, false, true, false, null, PROJECT, null, null, null), //
     PROJECT_CONCLUDE(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, true, false, true, false, null, PROJECT, null, null, null), //
     PROJECT_VIEW_EDIT(USER_INVOCATION, VIEW_EDIT_RESOURCE, false, false, false, false, false, null, PROJECT, null, null, null), //
-    PROJECT_CORRECT(USER_INVOCATION, PROCESS_RESOURCE, false, true, false, true, false, null, PROJECT, null, null, null), //
+    PROJECT_CORRECT(USER_INVOCATION, VIEW_EDIT_RESOURCE, false, true, false, true, false, null, PROJECT, null, null, null), //
     PROJECT_CREATE_APPLICATION(USER_INVOCATION, CREATE_RESOURCE, false, true, false, true, false, null, PROJECT, APPLICATION, null, null), //
     PROJECT_EMAIL_CREATOR(USER_INVOCATION, EMAIL_RESOURCE_CREATOR, false, false, false, false, false, null, PROJECT, null, null, null), //
     PROJECT_ESCALATE(SYSTEM_INVOCATION, ESCALATE_RESOURCE, false, false, false, false, false, null, PROJECT, null, null, null), //

@@ -77,7 +77,7 @@ public class CustomizationService {
 
     public Integer getActiveConfigurationVersion(PrismConfiguration configurationType, Resource resource, PrismScope scope) {
         PrismScope resourceScope = resource.getResourceScope();
-        PrismLocale locale = resourceScope == SYSTEM ? userService.getCurrentUser().getLocale() : resource.getLocale();
+        PrismLocale locale = userService.getCurrentUser() != null ? userService.getCurrentUser().getLocale() : resource.getLocale();
         PrismProgramType programType = resourceScope.getPrecedence() > INSTITUTION.getPrecedence() ? resource.getProgram().getProgramType()
                 .getPrismProgramType() : null;
         return customizationDAO.getActiveConfigurationVersion(configurationType, resource, locale, programType, scope);

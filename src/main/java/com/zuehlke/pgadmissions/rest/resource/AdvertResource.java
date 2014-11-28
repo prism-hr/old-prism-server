@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.rest.resource;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +22,7 @@ import com.zuehlke.pgadmissions.services.AdvertService;
 
 @RestController
 @RequestMapping("api/{resourceScope:projects|programs}/{resourceId}")
+@PreAuthorize("isAuthenticated()")
 public class AdvertResource {
 
     @Autowired
@@ -43,7 +45,7 @@ public class AdvertResource {
             @Valid @RequestBody AdvertCategoriesDTO categoriesDTO) throws Exception {
         advertService.updateCategories(resourceDescriptor.getType(), resourceId, categoriesDTO);
     }
-    
+
     @RequestMapping(value = "/closingDates", method = RequestMethod.POST)
     public Integer addClosingDate(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @Valid @RequestBody AdvertClosingDateDTO advertClosingDateDTO) throws Exception {

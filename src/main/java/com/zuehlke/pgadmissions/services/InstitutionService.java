@@ -215,8 +215,8 @@ public class InstitutionService {
         return institutionDAO.list();
     }
 
-    public Institution getByGoogleId(String googleId) {
-        return entityService.getByProperty(Institution.class, "googleId", googleId);
+    public Institution getActivatedInstitutionByGoogleId(String googleId) {
+        return institutionDAO.getActivatedInstitutionByGoogleId(googleId);
     }
 
     public ActionOutcomeDTO executeAction(Integer institutionId, CommentDTO commentDTO) throws DeduplicationException, InstantiationException,

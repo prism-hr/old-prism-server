@@ -59,7 +59,7 @@ public class InstitutionResource {
     @RequestMapping(method = RequestMethod.GET, params = "googleId")
     @ResponseBody
     public InstitutionExtendedRepresentation getInstitution(String googleId) {
-        Institution institution = institutionService.getByGoogleId(googleId);
+        Institution institution = institutionService.getActivatedInstitutionByGoogleId(googleId);
         return institution == null ? null : dozerBeanMapper.map(institution, InstitutionExtendedRepresentation.class);
     }
 

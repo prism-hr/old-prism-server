@@ -105,5 +105,12 @@ public class InstitutionDAO {
                 .add(Restrictions.eq("institution", institution)) //
                 .uniqueResult();
     }
+
+    public Institution getActivatedInstitutionByGoogleId(String googleId) {
+        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
+                .add(Restrictions.eq("googleId", googleId)) //
+                .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED_COMPLETED)) //
+                .uniqueResult();
+    }
     
 }

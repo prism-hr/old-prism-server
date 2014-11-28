@@ -135,11 +135,26 @@ public class CommentService {
                 stateGroupId = stateGroupId == null ? start.getState().getStateGroup().getId() : stateGroupId;
                 List<Comment> stateComments = commentDAO.getStateComments(resource, start, close, stateGroupId, previousStateComments);
 
+                CommentRepresentation lastViewEditComment = null;
                 TimelineCommentGroupRepresentation commentGroup = new TimelineCommentGroupRepresentation().withStateGroup(stateGroupId);
 
                 for (Comment comment : stateComments) {
-                    CommentRepresentation representation = getCommentRepresentation(user, comment, redactions.get(comment.getAction().getId()), loader);
-                    commentGroup.addComment(representation);
+                    if (comment.isViewEditComment()) {
+                        if (lastViewEditComment == null || lastViewEditComment.getCreatedTimestamp().plusHours(1).isBefore(comment.getCreatedTimestamp())) {
+                            CommentRepresentation representation = getCommentRepresentation(user, comment, redactions.get(comment.getAction().getId()), loader);
+                            commentGroup.addComment(representation);
+                            lastViewEditComment = representation;
+                        } else {
+                            String contentNew = comment.getContent();
+                            String contentExisting = lastViewEditComment.getContent();
+                            if (!contentExisting.contains(contentNew)) {
+                                contentExisting = contentExisting + "<br/>" + contentNew;
+                            }
+                        }
+                    } else {
+                        CommentRepresentation representation = getCommentRepresentation(user, comment, redactions.get(comment.getAction().getId()), loader);
+                        commentGroup.addComment(representation);
+                    }
                 }
 
                 timeline.addCommentGroup(commentGroup);

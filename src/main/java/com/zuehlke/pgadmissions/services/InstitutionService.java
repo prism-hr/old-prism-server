@@ -145,7 +145,6 @@ public class InstitutionService {
 
         institution.setCurrency(institutionDTO.getCurrency());
         institution.setHomepage(institutionDTO.getHomepage());
-        institution.setGoogleId(institutionDTO.getGoogleIdentifier());
         institution.setLinkedinUri(institutionDTO.getLinkedinIdentifier());
 
         institution.setDefaultProgramType(institutionDTO.getDefaultProgramType());

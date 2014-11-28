@@ -188,4 +188,21 @@ public class StateDAO {
                 .list();
     }
 
+    public List<NextStateRepresentation> getSelectableTransitionStates(State state) {
+        return (List<NextStateRepresentation>) sessionFactory.getCurrentSession().createCriteria(StateTransition.class, "stateTransition") //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("transitionState.id"), "state") //
+                        .add(Projections.property("transitionState.parallelizable"), "parallelizable")) //
+                .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("transitionState", "transitionState", JoinType.INNER_JOIN) //
+                .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN) //
+                .createAlias("stateTransitionEvaluation", "stateTransitionEvaluation", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("stateAction.state", state)) //
+                .add(Restrictions.eq("stateTransitionEvaluation.nextStateSelection", true)) //
+                .add(Restrictions.isNotNull("transitionState")) //
+                .addOrder(Order.asc("transitionStateGroup.sequenceOrder")) //
+                .setResultTransformer(Transformers.aliasToBean(NextStateRepresentation.class)) //
+                .list();
+    }
+
 }

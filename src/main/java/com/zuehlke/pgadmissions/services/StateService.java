@@ -463,6 +463,10 @@ public class StateService {
         return stateDAO.getSecondaryResourceStateGroups(resourceScope, resourceId);
     }
 
+    public List<NextStateRepresentation> getSelectableTransitionStates(State state) {
+        return stateDAO.getSelectableTransitionStates(state);
+    }
+
     public List<NextStateRepresentation> getSelectableTransitionStates(State state, PrismAction actionId) {
         return stateDAO.getSelectableTransitionStates(state, actionId);
     }

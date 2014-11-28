@@ -103,6 +103,7 @@ public class InstitutionDAO {
         return (Long) sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class) //
                 .setProjection(Projections.rowCount()) //
                 .add(Restrictions.eq("institution", institution)) //
+                .add(Restrictions.isNotNull("username"))
                 .uniqueResult();
     }
 

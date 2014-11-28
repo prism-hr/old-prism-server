@@ -33,6 +33,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -859,6 +860,10 @@ public class Comment {
             }
         }
         return false;
+    }
+
+    public boolean isViewEditComment() {
+        return action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE;
     }
 
     public boolean isSecondaryTransitionComment() {

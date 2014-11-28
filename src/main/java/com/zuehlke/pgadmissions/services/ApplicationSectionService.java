@@ -219,13 +219,13 @@ public class ApplicationSectionService {
         personalDetail.setVisaRequired(personalDetailDTO.getVisaRequired());
         personalDetail.setPhone(personalDetailDTO.getPhone());
         personalDetail.setSkype(Strings.emptyToNull(personalDetailDTO.getSkype()));
-        
+
         Integer ethnicityId = personalDetailDTO.getEthnicity();
         if (ethnicityId != null) {
             Ethnicity ethnicity = importedEntityService.getById(Ethnicity.class, institution, ethnicityId);
             personalDetail.setEthnicity(ethnicity);
         }
-        
+
         Integer disabilityId = personalDetailDTO.getDisability();
         if (disabilityId != null) {
             Disability disability = importedEntityService.getById(Disability.class, institution, personalDetailDTO.getDisability());
@@ -554,9 +554,9 @@ public class ApplicationSectionService {
                 languageQualification = new ApplicationLanguageQualification();
                 personalDetail.setLanguageQualification(languageQualification);
             }
+
             ImportedLanguageQualificationType languageQualificationType = importedEntityService.getById(ImportedLanguageQualificationType.class, institution,
                     languageQualificationDTO.getType());
-            Document proofOfAward = entityService.getById(Document.class, languageQualificationDTO.getProofOfAward().getId());
             languageQualification.setType(languageQualificationType);
             languageQualification.setExamDate(languageQualificationDTO.getExamDate());
             languageQualification.setOverallScore(languageQualificationDTO.getOverallScore());
@@ -570,8 +570,6 @@ public class ApplicationSectionService {
                 Document languageQualificationDocument = entityService.getById(Document.class, upload.getId());
                 languageQualification.setDocument(languageQualificationDocument);
             }
-
-            languageQualification.setDocument(proofOfAward);
         }
     }
 

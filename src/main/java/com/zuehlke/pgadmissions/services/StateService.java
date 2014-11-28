@@ -373,7 +373,13 @@ public class StateService {
     public StateTransition getApplicationRecruitedOutcome(Resource resource, Comment comment) {
         Comment recruitedComment = commentService.getEarliestComment((ResourceParent) resource, Application.class,
                 PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
-        return stateDAO.getStateTransition(resource, comment.getAction(), recruitedComment.getParentResourceTransitionState().getId());
+        State parentResourceTransitionState = recruitedComment.getParentResourceTransitionState();
+
+        if (parentResourceTransitionState == null) {
+            return stateDAO.getStateTransition(resource, comment.getAction(), resource.getState().getId());
+        } else {
+            return stateDAO.getStateTransition(resource, comment.getAction(), recruitedComment.getParentResourceTransitionState().getId());
+        }
     }
 
     public StateTransition getInstitutionApprovedOutcome(Resource resource, Comment comment) {
@@ -447,13 +453,17 @@ public class StateService {
         }
         return null;
     }
-    
+
     public List<PrismStateGroup> getSecondaryResourceStateGroups(Resource resource) {
         return getSecondaryResourceStateGroups(resource.getResourceScope(), resource.getId());
     }
 
     public List<PrismStateGroup> getSecondaryResourceStateGroups(PrismScope resourceScope, Integer resourceId) {
         return stateDAO.getSecondaryResourceStateGroups(resourceScope, resourceId);
+    }
+
+    public List<PrismState> getSelectableTransitionStates(State state, PrismAction actionId) {
+        return stateDAO.getSelectableTransitionStates(state, actionId);
     }
 
     private StateTransition getViewEditNextState(Resource resource, Comment comment) {

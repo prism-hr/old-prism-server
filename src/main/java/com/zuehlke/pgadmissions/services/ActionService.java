@@ -132,6 +132,10 @@ public class ActionService {
             if (BooleanUtils.isTrue(action.getPrimaryState())) {
                 action.addNextStates(stateService.getSelectableTransitionStates(resource.getState(), actionId));
             }
+            
+            if (actionId.isConcludeParentAction()) {
+                action.addNextParentResourceStates(stateService.getSelectableTransitionStates(resource.getParentResource().getState()));
+            }
         }
 
         return actions;

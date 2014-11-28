@@ -488,8 +488,10 @@ public class StateService {
             Map<SimpleEntry<Action, State>, StateTransition> potentialStateTransitions = Maps.newLinkedHashMap();
             for (State state : stateDAO.getResourceStates(resource)) {
                 for (StateTransition stateTransition : stateDAO.getStateTransitions(state, action)) {
-                    if (!potentialStateTransitions.containsKey(action)) {
-                        potentialStateTransitions.put(new SimpleEntry<Action, State>(action, stateTransition.getTransitionState()), stateTransition);
+                    SimpleEntry<Action, State> key = stateTransition.getStateTransitionEvaluation() == null ? new SimpleEntry<Action, State>(action, null)
+                            : new SimpleEntry<Action, State>(action, stateTransition.getTransitionState());
+                    if (!potentialStateTransitions.containsKey(key)) {
+                        potentialStateTransitions.put(key, stateTransition);
                     }
                 }
             }

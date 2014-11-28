@@ -11,6 +11,7 @@ import org.dozer.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -76,6 +77,7 @@ public class UserResource {
     @Autowired
     private Mapper dozerBeanMapper;
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(method = RequestMethod.GET)
     public UserExtendedRepresentation getUser() {
         User user = userService.getCurrentUser();
@@ -84,11 +86,13 @@ public class UserResource {
         return userRepresentation;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(method = RequestMethod.PUT)
     public void updateUser(@RequestBody UserDTO userDTO) {
         userService.updateUser(userDTO);
     }
 
+    @PreAuthorize("permitAll")
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public Map<String, String> authenticate(@RequestParam(required = false, value = "username") String username,
                                             @RequestParam(required = false, value = "password") String password) {
@@ -99,12 +103,14 @@ public class UserResource {
         return ImmutableMap.of("token", authenticationTokenHelper.createToken(userDetails));
     }
 
+    @PreAuthorize("permitAll")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public void submitRegistration(@RequestHeader(value = "referer", required = false) String referrer,
                                    @Valid @RequestBody UserRegistrationDTO userRegistrationDTO) throws Exception {
         userService.registerUser(userRegistrationDTO, referrer);
     }
 
+    @PreAuthorize("permitAll")
     @RequestMapping(value = "/activate", method = RequestMethod.PUT)
     public Map<String, Object> activateAccount(@RequestBody UserActivateDTO activateDTO) {
         User user = userService.getUserByActivationCode(activateDTO.getActivationCode());
@@ -122,16 +128,19 @@ public class UserResource {
         return ImmutableMap.of("status", status, "user", userRepresentation);
     }
 
+    @PreAuthorize("permitAll")
     @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
     public void resetPassword(@RequestParam String email) {
         userService.resetPassword(email);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/suggestion", method = RequestMethod.GET, params = "searchTerm")
     public List<UserRepresentation> getSimilarUsers(@RequestParam String searchTerm) {
         return userService.getSimilarUsers(searchTerm);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/filter/{resourceScope}", method = RequestMethod.PUT)
     public void saveFilter(@PathVariable String resourceScope, @RequestBody ResourceListFilterDTO filter) {
         PrismScope scope = PrismScope.valueOf(resourceScope.toUpperCase().substring(0, resourceScope.length() - 1));
@@ -144,6 +153,7 @@ public class UserResource {
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/filter/{resourceScope}", method = RequestMethod.GET)
     public ResourceListFilterDTO getFilter(@PathVariable String resourceScope) throws DeduplicationException {
         PrismScope scope = PrismScope.valueOf(resourceScope.toUpperCase().substring(0, resourceScope.length() - 1));

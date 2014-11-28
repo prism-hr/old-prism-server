@@ -258,7 +258,7 @@ public class ResourceService {
             resetNotifications(resource);
         }
 
-        if (comment.isTransitionComment()) {
+        if (comment.isTransitionComment() && comment.getAction().getCreationScope() == null) {
             createOrUpdateStateTransitionSummary(resource, baselineTime);
         }
     }

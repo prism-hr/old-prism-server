@@ -3,9 +3,9 @@ package com.zuehlke.pgadmissions.rest.representation.configuration;
 public class NotificationConfigurationRepresentation extends WorkflowConfigurationRepresentation {
 
     private String label;
-    
+
     private String tooltip;
-    
+
     private String subject;
 
     private String content;

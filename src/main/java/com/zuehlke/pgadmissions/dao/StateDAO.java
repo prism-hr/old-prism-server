@@ -169,4 +169,17 @@ public class StateDAO {
                 .list();
     }
 
+    public List<PrismState> getSelectableTransitionStates(State state, PrismAction actionId) {
+        return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
+                .setProjection(Projections.property("transitionState.id")) //
+                .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
+                .createAlias("stateTransitionEvaluation", "stateTransitionEvaluation", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("stateAction.state", state)) //
+                .add(Restrictions.eq("stateAction.action.id", actionId)) //
+                .add(Restrictions.eq("stateTransitionEvaluation.nextStateSelection", true)) //
+                .addOrder(Order.asc("stateGroup.sequenceOrder")) //
+                .list();
+    }
 }

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import java.util.Collection;
 import java.util.Set;
 
 import com.google.common.base.Objects;
@@ -44,8 +45,8 @@ public class ActionRepresentation {
         return actionEnhancements;
     }
 
-    public final void addActionEnhancement(PrismActionEnhancement actionEnhancement) {
-        actionEnhancements.add(actionEnhancement);
+    public final void addActionEnhancements(Collection<PrismActionEnhancement> actionEnhancement) {
+        actionEnhancements.addAll(actionEnhancement);
     }
 
     public final void setPrimaryState(Boolean primaryState) {
@@ -71,8 +72,8 @@ public class ActionRepresentation {
         return nextStates;
     }
 
-    public final void addNextState(NextStateRepresentation nextState) {
-        nextStates.add(nextState);
+    public final void addNextStates(Collection<PrismState> nextStates) {
+        nextStates.addAll(nextStates);
     }
 
     @Override

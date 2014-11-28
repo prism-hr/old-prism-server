@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -13,9 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
+import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
@@ -25,11 +24,13 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
-import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
 import com.zuehlke.pgadmissions.dto.StateActionDTO;
@@ -38,7 +39,6 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.NextStateRepresentation;
 
 @Service
 @Transactional
@@ -114,13 +114,31 @@ public class ActionService {
     }
 
     public Set<ActionRepresentation> getPermittedActions(Resource resource, User user) {
-        Set<ActionRepresentation> representations = parseActionRepresentations(actionDAO.getPermittedActions(resource, user));
-        representations.addAll(parseActionRepresentations(actionDAO.getCreateResourceActions(resource.getResourceScope())));
-        return representations;
+        Institution institution = resource.getInstitution();
+        Program program = resource.getProgram();
+        Project project = resource.getProject();
+        Application application = resource.getApplication();
+
+        Set<ActionRepresentation> actions = Sets.newLinkedHashSet(actionDAO.getPermittedActions(resource.getResourceScope(), resource.getId(), resource
+                .getSystem().getId(), institution == null ? null : institution.getId(), program == null ? null : program.getId(), project == null ? null
+                : project.getId(), application == null ? null : application.getId(), user));
+        actions.addAll(actionDAO.getCreateResourceActions(resource.getResourceScope()));
+
+        for (ActionRepresentation action : actions) {
+            PrismAction actionId = action.getId();
+            action.addActionEnhancements(actionDAO.getGlobalActionEnhancements(resource, actionId, user));
+            action.addActionEnhancements(actionDAO.getCustomActionEnhancements(resource, actionId, user));
+
+            if (BooleanUtils.isTrue(action.getPrimaryState())) {
+                action.addNextStates(stateService.getSelectableTransitionStates(resource.getState(), actionId));
+            }
+        }
+
+        return actions;
     }
 
     public Set<ActionRepresentation> getPermittedActions(PrismScope resourceScope, Integer systemId, Integer institutionId, Integer programId,
-                                                         Integer projectId, Integer applicationId, User user) {
+            Integer projectId, Integer applicationId, User user) {
         return Sets.newLinkedHashSet(actionDAO.getPermittedActions(resourceScope,
                 ObjectUtils.firstNonNull(applicationId, projectId, programId, institutionId, systemId), systemId, institutionId, programId, projectId,
                 applicationId, user));
@@ -169,7 +187,8 @@ public class ActionService {
         Action action = getById(registrationDTO.getAction().getActionId());
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             Object operativeResourceDTO = registrationDTO.getAction().getOperativeResourceDTO();
-            return resourceService.createResource(user, action, operativeResourceDTO, referrer, registrationDTO.getAction().getWorkflowPropertyConfigurationVersion());
+            return resourceService.createResource(user, action, operativeResourceDTO, referrer, registrationDTO.getAction()
+                    .getWorkflowPropertyConfigurationVersion());
         } else {
             Resource resource = entityService.getById(action.getScope().getId().getResourceClass(), registrationDTO.getResourceId());
             return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(resource).withTransitionAction(action);
@@ -270,60 +289,6 @@ public class ActionService {
             return;
         }
         throw new Error();
-    }
-
-    private Set<ActionRepresentation> parseActionRepresentations(List<ActionDTO> actions) {
-        ActionRepresentation thisActionRepresentation = null;
-
-        PrismState lastTransitionStateId = null;
-        NextStateRepresentation thisStateTransitionRepresentation = null;
-
-        HashMap<PrismAction, ActionRepresentation> representations = Maps.newLinkedHashMap();
-        for (ActionDTO action : actions) {
-            PrismAction thisActionId = action.getActionId();
-            boolean primaryState = action.isCreateResourceAction() || action.getPrimaryState();
-
-            if (!representations.containsKey(thisActionId)) {
-                thisActionRepresentation = new ActionRepresentation().withId(thisActionId).withRaisesUrgentFlag(action.getRaisesUrgentFlag())
-                        .withPrimaryState(action.getPrimaryState());
-                representations.put(thisActionId, thisActionRepresentation);
-            } else {
-                thisActionRepresentation = representations.get(thisActionId);
-                boolean raisesUrgentFlag = action.getRaisesUrgentFlag();
-                if (raisesUrgentFlag) {
-                    thisActionRepresentation.setRaisesUrgentFlag(raisesUrgentFlag);
-                }
-
-                if (primaryState) {
-                    thisActionRepresentation.setPrimaryState(primaryState);
-                }
-            }
-
-            PrismActionEnhancement globalActionEnhancement = action.getGlobalActionEnhancement();
-            if (globalActionEnhancement != null) {
-                thisActionRepresentation.addActionEnhancement(globalActionEnhancement);
-            }
-
-            PrismActionEnhancement customActionEnhancement = action.getCustomActionEnhancement();
-            if (customActionEnhancement != null) {
-                thisActionRepresentation.addActionEnhancement(customActionEnhancement);
-            }
-
-            if (primaryState && BooleanUtils.isTrue(action.getNextStateSelection())) {
-                PrismState thisTransitionStateId = action.getTransitionStateId();
-
-                if (thisTransitionStateId != null && !representations.containsKey(thisTransitionStateId)
-                        || (thisTransitionStateId != null && thisTransitionStateId != lastTransitionStateId)) {
-                    thisStateTransitionRepresentation = new NextStateRepresentation().withState(thisTransitionStateId).withParallelizable(
-                            action.getParallelizable());
-                    thisActionRepresentation.addNextState(thisStateTransitionRepresentation);
-                }
-
-                lastTransitionStateId = thisTransitionStateId;
-            }
-        }
-
-        return Sets.newLinkedHashSet(representations.values());
     }
 
 }

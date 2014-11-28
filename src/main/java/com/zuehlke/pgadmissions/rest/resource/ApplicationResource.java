@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,6 +59,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
 @RequestMapping(value = { "api/applications" })
+@PreAuthorize("isAuthenticated()")
 public class ApplicationResource {
 
     @Autowired

@@ -3,8 +3,10 @@ package com.zuehlke.pgadmissions.rest.resource;
 import java.util.List;
 import java.util.Set;
 
+import com.zuehlke.pgadmissions.domain.program.ProgramLocation;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +24,7 @@ import com.zuehlke.pgadmissions.services.AdvertService;
 
 @RestController
 @RequestMapping("/api/opportunities")
+@PreAuthorize("permitAll")
 public class OpportunitiesResource {
 
     @Autowired
@@ -42,6 +45,12 @@ public class OpportunitiesResource {
             representation.setResourceScope(resource.getResourceScope());
             representation.setResourceId(resource.getId());
             representation.setProgramType(resource.getProgram().getProgramType().getPrismProgramType());
+
+            List<String> locations = Lists.newArrayListWithCapacity(resource.getProgram().getLocations().size());
+            for (ProgramLocation programLocation : resource.getProgram().getLocations()) {
+                locations.add(programLocation.getLocation());
+            }
+            representation.setLocations(locations);
 
             Set<PrismStudyOption> studyOptions = Sets.newHashSet();
             for (ProgramStudyOption studyOption : resource.getProgram().getStudyOptions()) {

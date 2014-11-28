@@ -65,6 +65,8 @@ public class AdvertRepresentation {
 
     private Set<PrismStudyOption> studyOptions;
 
+    private List<String> locations;
+
     private InstitutionRepresentation institution;
 
     public Integer getId() {
@@ -265,6 +267,14 @@ public class AdvertRepresentation {
 
     public void setStudyOptions(Set<PrismStudyOption> studyOptions) {
         this.studyOptions = studyOptions;
+    }
+
+    public List<String> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(List<String> locations) {
+        this.locations = locations;
     }
 
     public InstitutionRepresentation getInstitution() {

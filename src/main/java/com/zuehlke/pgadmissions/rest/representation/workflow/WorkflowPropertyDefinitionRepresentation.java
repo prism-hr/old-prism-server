@@ -6,6 +6,8 @@ public class WorkflowPropertyDefinitionRepresentation extends StateDurationDefin
 
     private Boolean canBeDisabled;
 
+    private Boolean canBeOptional;
+
     public final Boolean getDefineRange() {
         return defineRange;
     }
@@ -20,6 +22,14 @@ public class WorkflowPropertyDefinitionRepresentation extends StateDurationDefin
 
     public final void setCanBeDisabled(Boolean canBeDisabled) {
         this.canBeDisabled = canBeDisabled;
+    }
+
+    public Boolean getCanBeOptional() {
+        return canBeOptional;
+    }
+
+    public void setCanBeOptional(Boolean canBeOptional) {
+        this.canBeOptional = canBeOptional;
     }
 
     public WorkflowPropertyDefinitionRepresentation withId(Enum<?> id) {

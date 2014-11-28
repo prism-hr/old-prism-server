@@ -34,9 +34,9 @@ public class ApplicationExportServiceDevelopment extends ApplicationExportServic
                     withDocumentExportRequest(byteOutputStream.toByteArray());
             exportRequests.put(application, exportRequest);
 
-            actionService.executeExportAction(application, "TEST EXPORT", "TEST EXPORT USER ID", null);
+            executeExportAction(application, "TEST EXPORT", "TEST EXPORT USER ID", null);
         } catch (Exception e) {
-            actionService.executeExportAction(application, null, null, e.getMessage());
+            executeExportAction(application, null, null, e.getMessage());
         } finally {
             IOUtils.closeQuietly(outputStream);
         }

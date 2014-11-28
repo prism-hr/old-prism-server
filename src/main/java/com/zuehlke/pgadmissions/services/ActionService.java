@@ -1,16 +1,30 @@
 package com.zuehlke.pgadmissions.services;
 
-import org.joda.time.DateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
-import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -25,15 +39,6 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.NextStateRepresentation;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
 
 @Service
 @Transactional
@@ -243,20 +248,6 @@ public class ActionService {
             creationActions.put(stateActionDTO.getStateId(), stateActionDTO.getActionId());
         }
         return creationActions;
-    }
-
-    public void executeExportAction(Application application, String exportId, String exportUserId, String exportException) throws DeduplicationException,
-            InstantiationException, IllegalAccessException {
-        Action exportAction = getById(PrismAction.APPLICATION_EXPORT);
-        Institution exportInstitution = application.getInstitution();
-
-        Comment comment = new Comment().withUser(exportInstitution.getUser()).withAction(exportAction).withDeclinedResponse(false)
-                .withExportReference(exportId).withExportException(exportException).withCreatedTimestamp(new DateTime());
-        executeAction(application, exportAction, comment);
-
-        if (exportUserId != null) {
-            userService.createOrUpdateUserInstitutionIdentity(application, exportUserId);
-        }
     }
 
     private boolean checkActionAvailable(Resource resource, Action action, User invoker) {

@@ -174,7 +174,8 @@ public class ActionDAO {
         return (List<ActionRepresentation>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class, "resourceState") //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("stateAction.action.id"), "id") //
-                        .add(Projections.max("stateAction.raisesUrgentFlag"), "raisesUrgentFlag")) //
+                        .add(Projections.max("stateAction.raisesUrgentFlag"), "raisesUrgentFlag") //
+                        .add(Projections.max("primaryState"), "primaryState")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -192,6 +193,7 @@ public class ActionDAO {
                         .add(Restrictions.eq("userRole.application.id", applicationId))) //
                 .add(Restrictions.eq("userRole.user", user)) //
                 .addOrder(Order.desc("raisesUrgentFlag")) //
+                .addOrder(Order.desc("primaryState")) //
                 .addOrder(Order.asc("action.id")) //
                 .setResultTransformer(Transformers.aliasToBean(ActionRepresentation.class)) //
                 .list();

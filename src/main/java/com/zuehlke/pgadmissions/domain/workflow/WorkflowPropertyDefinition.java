@@ -34,7 +34,7 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
 
     @Column(name = "can_be_disabled", nullable = false)
     private Boolean canBeDisabled;
-    
+
     @Column(name = "can_be_optional", nullable = false)
     private Boolean canBeOptional;
 
@@ -134,7 +134,7 @@ public class WorkflowPropertyDefinition extends WorkflowDefinition {
         this.canBeDisabled = canBeDisabled;
         return this;
     }
-    
+
     public WorkflowPropertyDefinition withCanBeOptional(Boolean canBeOptional) {
         this.canBeOptional = canBeOptional;
         return this;

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.zuehlke.pgadmissions.domain.program.ProgramLocation;
+import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,7 +35,7 @@ public class OpportunitiesResource {
     private Mapper dozerBeanMapper;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<AdvertRepresentation> getAdverts() {
+    public List<AdvertRepresentation> getAdverts(OpportunitiesQueryDTO query) {
         List<Advert> adverts = advertService.getActiveAdverts();
         List<AdvertRepresentation> representations = Lists.newArrayListWithExpectedSize(adverts.size());
         for (Advert advert : adverts) {

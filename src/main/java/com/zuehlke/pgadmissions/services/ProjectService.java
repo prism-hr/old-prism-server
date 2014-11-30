@@ -12,8 +12,10 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -134,6 +136,14 @@ public class ProjectService {
     public void sychronizeProject(Program program) {
         projectDAO.synchronizeProjectDueDates(program);
         projectDAO.synchronizeProjectEndDates(program);
+    }
+
+    public Integer getActiveProjectCount(ResourceParent resource) {
+        if (resource.getResourceScope() == PrismScope.PROJECT) {
+            throw new Error();
+        }
+        Long count = projectDAO.getActiveProjectCount(resource);
+        return count == null ? null : count.intValue();
     }
 
 }

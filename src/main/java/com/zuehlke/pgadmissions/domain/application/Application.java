@@ -758,6 +758,10 @@ public class Application extends Resource {
         return project == null ? null : project.getTitle();
     }
 
+    public String getCreatedTimestampDisplay(String dateFormat) {
+        return createdTimestamp == null ? null : createdTimestamp.toString(dateFormat, LocaleUtils.toLocale(this.getLocale().toString()));
+    }
+
     public String getSubmittedTimestampDisplay(String dateFormat) {
         return submittedTimestamp == null ? null : submittedTimestamp.toString(dateFormat, LocaleUtils.toLocale(this.getLocale().toString()));
     }

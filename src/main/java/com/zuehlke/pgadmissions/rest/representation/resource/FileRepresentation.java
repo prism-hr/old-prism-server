@@ -21,4 +21,5 @@ public class FileRepresentation {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
+    
 }

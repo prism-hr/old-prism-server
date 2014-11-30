@@ -4,6 +4,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramS
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.validation.Valid;
 
@@ -12,6 +14,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -19,6 +22,7 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.visualization.datasource.base.TypeMismatchException;
@@ -30,6 +34,9 @@ import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
+import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
@@ -38,12 +45,14 @@ import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -61,9 +70,15 @@ import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO.CommentApplicationOfferDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO.CommentApplicationPositionDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.DocumentSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.EmploymentPositionSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.QualificationSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.ApplicationValidator;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Service
 @Transactional
@@ -113,6 +128,9 @@ public class ApplicationService {
 
     @Autowired
     private ApplicationValidator applicationValidator;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     public Application getById(Integer id) {
         return entityService.getById(Application.class, id);
@@ -347,7 +365,64 @@ public class ApplicationService {
         return applicationDAO.getApplicationsForExport();
     }
 
-    public DataTable generateReport(ResourceListFilterDTO filterDTO) throws TypeMismatchException {
+    public ApplicationSummaryRepresentation getApplicationSummary(Integer applicationId) {
+        Application application = getById(applicationId);
+
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(application, userService.getCurrentUser());
+        String dateFormat = loader.load(PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT);
+
+        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
+        boolean personaDetailNull = personalDetail == null;
+
+        ApplicationSummaryRepresentation summary = new ApplicationSummaryRepresentation().withCreatedDate(application.getCreatedTimestampDisplay(dateFormat))
+                .withSubmittedDate(application.getSubmittedTimestampDisplay(dateFormat)).withClosingDate(application.getClosingDateDisplay(dateFormat))
+                .withPrimaryThemes(application.getPrimaryThemeDisplay()).withSecondaryThemes(application.getSecondaryThemeDisplay())
+                .withPhone(personalDetail == null ? null : personalDetail.getPhone()).withSkype(personaDetailNull ? null : personalDetail.getSkype());
+
+        ApplicationQualification latestQualification = applicationDAO.getLatestApplicationQualification(application);
+        if (latestQualification != null) {
+            summary.setLatestQualification(new QualificationSummaryRepresentation().withTitle(latestQualification.getTitle())
+                    .withSubject(latestQualification.getSubject()).withGrade(latestQualification.getGrade())
+                    .withInstitution(latestQualification.getInstitution().getName()).withStartDate(latestQualification.getStartDateDisplay(dateFormat))
+                    .withEndDate(latestQualification.getAwardDateDisplay(dateFormat)));
+        }
+
+        ApplicationEmploymentPosition latestEmploymentPosition = applicationDAO.getLatestApplicationEmploymentPosition(application);
+        if (latestEmploymentPosition != null) {
+            summary.setLatestEmploymentPosition(new EmploymentPositionSummaryRepresentation().withPosition(latestEmploymentPosition.getPosition())
+                    .withEmployer(latestEmploymentPosition.getEmployerName()).withStartDate(latestEmploymentPosition.getStartDateDisplay(dateFormat))
+                    .withEndDate(latestEmploymentPosition.getEndDateDisplay(dateFormat)));
+        }
+
+        ApplicationDocument applicationDocument = application.getDocument();
+        if (applicationDocument != null) {
+            Map<String, PrismDisplayPropertyDefinition> documentProperties = ImmutableMap.of("personalStatement",
+                    PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_PERSONAL_STATEMENT_LABEL, "researchStatement",
+                    PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_RESEARCH_STATEMENT_LABEL, "cv",
+                    PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_CV_LABEL, "coveringLetter",
+                    PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_COVERING_LETTER_LABEL);
+
+            for (Entry<String, PrismDisplayPropertyDefinition> documentProperty : documentProperties.entrySet()) {
+                Document document = (Document) ReflectionUtils.getProperty(applicationDocument, documentProperty.getKey());
+                if (document != null) {
+                    summary.addDocument(new DocumentSummaryRepresentation().withId(document.getId()).withLabel(loader.load(documentProperty.getValue())));
+                }
+            }
+        }
+
+        Long providedReferenceCount = applicationDAO.getProvidedReferenceCount(application);
+        summary.setReferenceProvidedCount(providedReferenceCount == null ? null : providedReferenceCount.intValue());
+
+        Long declinedReferenceCount = applicationDAO.getDeclinedReferenceCount(application);
+        summary.setReferenceDeclinedCount(declinedReferenceCount == null ? null : declinedReferenceCount.intValue());
+
+        summary.setOtherLiveApplications(applicationDAO.getOtherLiveApplications(application));
+        summary.setProcessings(applicationSummaryService.getProcessings(application));
+        
+        return summary;
+    }
+
+    public DataTable getApplicationReport(ResourceListFilterDTO filterDTO) throws TypeMismatchException {
         DataTable dataTable = new DataTable();
 
         ArrayList<ColumnDescription> cd = Lists.newArrayList();

@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -23,8 +24,8 @@ import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Entity
-@Table(name = "APPLICATION_PROCESSING_SUMMARY", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_id", "state_group_id"}),
-        @UniqueConstraint(columnNames = {"program_id", "state_group_id"}), @UniqueConstraint(columnNames = {"project_id", "state_group_id"})})
+@Table(name = "APPLICATION_PROCESSING_SUMMARY", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "state_group_id" }),
+        @UniqueConstraint(columnNames = { "program_id", "state_group_id" }), @UniqueConstraint(columnNames = { "project_id", "state_group_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ApplicationProcessingSummary implements IUniqueEntity {
 
@@ -133,12 +134,7 @@ public class ApplicationProcessingSummary implements IUniqueEntity {
     }
 
     public Resource getResource() {
-        if (institution != null) {
-            return institution;
-        } else if (program != null) {
-            return program;
-        }
-        return project;
+        return (Resource) ObjectUtils.firstNonNull(project, program, institution);
     }
 
     public void setResource(Resource resource) {

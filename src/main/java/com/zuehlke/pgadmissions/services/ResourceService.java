@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStateDefinition;
@@ -56,6 +57,7 @@ import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -73,6 +75,9 @@ public class ResourceService {
 
     @Autowired
     private ApplicationService applicationService;
+
+    @Autowired
+    private ApplicationSummaryService applicationSummaryService;
 
     @Autowired
     private ProjectService projectService;
@@ -365,6 +370,21 @@ public class ResourceService {
 
     public LocalDate getProgramEndDate(Resource resource, Comment comment) {
         return resource.getProgram().getEndDate();
+    }
+
+    public <T extends Resource> ResourceSummaryRepresentation getResourceSummary(Class<T> resourceClass, Integer resourceId) {
+        ResourceParent resource = (ResourceParent) getById(resourceClass, resourceId);
+        ResourceSummaryRepresentation summary = new ResourceSummaryRepresentation().withCreatedDate(resource.getCreatedTimestamp().toLocalDate());
+
+        if (resourceClass == Institution.class) {
+            summary.setProgramCount(programService.getActiveProgramCount((Institution) resource));
+            summary.setProjectCount(projectService.getActiveProjectCount(resource));
+        } else if (resourceClass == Program.class) {
+            summary.setProjectCount(projectService.getActiveProjectCount(resource));
+        }
+
+        summary.setProcessingSummaries(applicationSummaryService.getProcessingSummaries(resource));
+        return summary;
     }
 
     private Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter,

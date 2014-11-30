@@ -46,7 +46,7 @@ public class ProgramService {
 
     @Autowired
     private ActionService actionService;
-    
+
     @Autowired
     private CommentService commentService;
 
@@ -189,6 +189,11 @@ public class ProgramService {
     public List<String> listSuggestedStudyAreas(Integer programId, String location, String division) {
         Program program = getById(programId);
         return programDAO.listSuggestedStudyAreas(program, location, division);
+    }
+
+    public Integer getActiveProgramCount(Institution institution) {
+        Long count = programDAO.getActiveProgramCount(institution);
+        return count == null ? null : count.intValue();
     }
 
     private void update(Integer programId, ProgramDTO programDTO) {

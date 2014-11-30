@@ -38,7 +38,7 @@ public class ApplicationEmploymentPosition {
     @Column(name = "position", nullable = false)
     private String position;
 
-    @Column(name = "is_current", nullable = false)
+    @Column(name = "current", nullable = false)
     private Boolean current;
 
     @Column(name = "remit", nullable = false)

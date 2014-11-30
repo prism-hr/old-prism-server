@@ -1,12 +1,11 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -29,9 +28,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.visualization.datasource.DataSourceHelper;
-import com.google.visualization.datasource.DataSourceRequest;
-import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -53,6 +49,7 @@ import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceUserRolesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
@@ -106,7 +103,7 @@ public class ResourceResource {
     private ApplicationService applicationService;
 
     @Autowired
-    private Mapper dozerBeanMapper;
+    private Mapper beanMapper;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -124,20 +121,20 @@ public class ResourceResource {
 
         ActionOutcomeDTO actionOutcome = resourceService.createResource(user, action, newResourceDTO, referrer,
                 actionDTO.getWorkflowPropertyConfigurationVersion());
-        return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
+        return beanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @Transactional
-    public AbstractResourceRepresentation getResource(@PathVariable Integer id, @ModelAttribute ResourceDescriptor resourceDescriptor)
+    @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
+    public AbstractResourceRepresentation getResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, AccessDeniedException {
         User currentUser = userService.getCurrentUser();
-        Resource resource = entityService.getById(resourceDescriptor.getType(), id);
+        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         if (resource == null) {
             return null;
         }
 
-        AbstractResourceRepresentation representation = dozerBeanMapper.map(resource, resourceDescriptor.getRepresentationType());
+        AbstractResourceRepresentation representation = beanMapper.map(resource, resourceDescriptor.getRepresentationType());
         representation.setTimeline(commentService.getComments(resource, currentUser));
 
         Set<ActionRepresentation> permittedActions = actionService.getPermittedActions(resource, currentUser);
@@ -159,7 +156,7 @@ public class ResourceResource {
         List<User> users = userService.getResourceUsers(resource);
         List<ResourceUserRolesRepresentation> userRolesRepresentations = Lists.newArrayListWithCapacity(users.size());
         for (User user : users) {
-            UserRepresentation userRepresentation = dozerBeanMapper.map(user, UserRepresentation.class);
+            UserRepresentation userRepresentation = beanMapper.map(user, UserRepresentation.class);
             Set<PrismRole> roles = Sets.newHashSet(roleService.getUserRoles(resource, user));
             userRolesRepresentations.add(new ResourceUserRolesRepresentation(userRepresentation, roles));
         }
@@ -190,7 +187,7 @@ public class ResourceResource {
         HashMultimap<PrismState, PrismAction> creationActions = actionService.getCreateResourceActionsByState(resourceScope);
 
         for (ResourceConsoleListRowDTO rowDTO : resourceService.getResourceConsoleList(resourceScope, filterDTO, lastSequenceIdentifier)) {
-            ResourceListRowRepresentation representation = dozerBeanMapper.map(rowDTO, ResourceListRowRepresentation.class);
+            ResourceListRowRepresentation representation = beanMapper.map(rowDTO, ResourceListRowRepresentation.class);
             representation.setResourceScope(resourceScope);
             representation.setId((Integer) PropertyUtils.getSimpleProperty(rowDTO, resourceScope.getLowerCaseName() + "Id"));
 
@@ -216,19 +213,13 @@ public class ResourceResource {
         return representations;
     }
 
-    @RequestMapping(method = RequestMethod.GET, params = "type=report")
-    public void getReport(@ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam(required = false) String filter, HttpServletRequest req,
-            HttpServletResponse resp) throws Exception {
-        if (resourceDescriptor.getResourceScope() != PrismScope.APPLICATION) {
-            throw new UnsupportedOperationException("Report can be generated only for applications");
+    @RequestMapping(method = RequestMethod.GET, value = "resourceScope:projects|programs|institutions/{resourceId}", params = "type=summary")
+    public ResourceSummaryRepresentation getSummary(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId) {
+        PrismScope resourceScope = resourceDescriptor.getResourceScope();
+        if (Arrays.asList(PrismScope.SYSTEM, PrismScope.APPLICATION).contains(resourceScope)) {
+            throw new UnsupportedOperationException("Resource summary can only be generated for institutions, programs, projects");
         }
-        ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
-        DataTable reportTable = applicationService.generateReport(filterDTO);
-        DataSourceRequest dsRequest;
-        dsRequest = new DataSourceRequest(req);
-        DataSourceHelper.setServletResponse(reportTable, dsRequest, resp);
-        String fileName = resp.getHeader("Content-Disposition").replace("attachment; filename=", "");
-        resp.setHeader("file-name", fileName);
+        return resourceService.getResourceSummary(resourceScope.getResourceClass(), resourceId);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)
@@ -256,7 +247,7 @@ public class ResourceResource {
 
         User user = userService.getOrCreateUserWithRoles(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource.getLocale(), resource,
                 userRolesRepresentation.getRoles());
-        return dozerBeanMapper.map(user, UserRepresentation.class);
+        return beanMapper.map(user, UserRepresentation.class);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}", method = RequestMethod.DELETE)
@@ -270,7 +261,7 @@ public class ResourceResource {
     @RequestMapping(value = "/{resourceId}/comments", method = RequestMethod.POST)
     public ActionOutcomeRepresentation executeAction(@PathVariable Integer resourceId, @Valid @RequestBody CommentDTO commentDTO) throws Exception {
         ActionOutcomeDTO actionOutcome = resourceService.executeAction(resourceId, commentDTO);
-        return dozerBeanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
+        return beanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
     }
 
     @ModelAttribute

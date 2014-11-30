@@ -24,6 +24,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -198,4 +199,15 @@ public class ProgramDAO {
                 .list();
     }
 
+    public Long getActiveProgramCount(Institution institution) {
+        return (Long) sessionFactory.getCurrentSession().createCriteria(Program.class) //
+                .setProjection(Projections.countDistinct("id")) //
+                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
+                .createAlias("resourceStates", "resourceStates", JoinType.INNER_JOIN) //
+                .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("institution", institution)) //
+                .add(Restrictions.eq("stateAction.action.id", PrismAction.PROGRAM_CREATE_APPLICATION)) //
+                .uniqueResult();
+    }
 }

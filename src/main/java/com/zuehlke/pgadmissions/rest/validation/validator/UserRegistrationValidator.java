@@ -30,12 +30,10 @@ public class UserRegistrationValidator extends LocalValidatorFactoryBean impleme
 
         String activationCode = registrationDTO.getActivationCode();
         if (activationCode != null) {
-            // user already exists
             if (!activationCode.equals(userWithSameEmail.getActivationCode())) {
                 errors.rejectValue("activationCode", "incorrect");
             }
         } else {
-            // user does not exist yet
             if (userWithSameEmail != null) {
                 errors.rejectValue("email", "alreadyExists");
             }

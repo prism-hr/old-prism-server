@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.joda.time.LocalDate;
@@ -48,17 +49,13 @@ public class CommentDTO {
     @Size(max = 100)
     private String interviewLocation;
 
+    @Valid
+    private CommentApplicationPositionDetailDTO positionDetail;
+
+    @Valid
+    private CommentApplicationOfferDetailDTO offerDetail;
+
     private Boolean recruiterAcceptAppointment;
-
-    @Size(max = 255)
-    private String positionTitle;
-
-    @Size(max = 2000)
-    private String positionDescription;
-
-    private LocalDate positionProvisionalStartDate;
-
-    private String appointmentConditions;
 
     private Boolean declinedResponse;
 
@@ -206,36 +203,20 @@ public class CommentDTO {
         this.recruiterAcceptAppointment = recruiterAcceptAppointment;
     }
 
-    public String getPositionTitle() {
-        return positionTitle;
+    public final CommentApplicationPositionDetailDTO getPositionDetail() {
+        return positionDetail;
     }
 
-    public void setPositionTitle(String positionTitle) {
-        this.positionTitle = positionTitle;
+    public final void setPositionDetail(CommentApplicationPositionDetailDTO positionDetail) {
+        this.positionDetail = positionDetail;
     }
 
-    public String getPositionDescription() {
-        return positionDescription;
+    public final CommentApplicationOfferDetailDTO getOfferDetail() {
+        return offerDetail;
     }
 
-    public void setPositionDescription(String positionDescription) {
-        this.positionDescription = positionDescription;
-    }
-
-    public LocalDate getPositionProvisionalStartDate() {
-        return positionProvisionalStartDate;
-    }
-
-    public void setPositionProvisionalStartDate(LocalDate positionProvisionalStartDate) {
-        this.positionProvisionalStartDate = positionProvisionalStartDate;
-    }
-
-    public String getAppointmentConditions() {
-        return appointmentConditions;
-    }
-
-    public void setAppointmentConditions(String appointmentConditions) {
-        this.appointmentConditions = appointmentConditions;
+    public final void setOfferDetail(CommentApplicationOfferDetailDTO offerDetail) {
+        this.offerDetail = offerDetail;
     }
 
     public Boolean getDeclinedResponse() {
@@ -328,15 +309,69 @@ public class CommentDTO {
 
     public Object fetchResouceDTO() {
         switch (action.getScope()) {
-            case INSTITUTION:
-                return institution;
-            case PROGRAM:
-                return program;
-            case PROJECT:
-                return project;
-            default:
-                throw new Error();
+        case INSTITUTION:
+            return institution;
+        case PROGRAM:
+            return program;
+        case PROJECT:
+            return project;
+        default:
+            throw new Error();
         }
+    }
+
+    public static class CommentApplicationPositionDetailDTO {
+
+        @NotNull
+        @Size(max = 255)
+        private String positionTitle;
+
+        @NotNull
+        @Size(max = 2000)
+        private String positionDescription;
+
+        public final String getPositionTitle() {
+            return positionTitle;
+        }
+
+        public final void setPositionTitle(String positionTitle) {
+            this.positionTitle = positionTitle;
+        }
+
+        public final String getPositionDescription() {
+            return positionDescription;
+        }
+
+        public final void setPositionDescription(String positionDescription) {
+            this.positionDescription = positionDescription;
+        }
+
+    }
+
+    public static class CommentApplicationOfferDetailDTO {
+
+        @NotNull
+        private LocalDate positionProvisionalStartDate;
+
+        @NotNull
+        private String appointmentConditions;
+
+        public final LocalDate getPositionProvisionalStartDate() {
+            return positionProvisionalStartDate;
+        }
+
+        public final void setPositionProvisionalStartDate(LocalDate positionProvisionalStartDate) {
+            this.positionProvisionalStartDate = positionProvisionalStartDate;
+        }
+
+        public final String getAppointmentConditions() {
+            return appointmentConditions;
+        }
+
+        public final void setAppointmentConditions(String appointmentConditions) {
+            this.appointmentConditions = appointmentConditions;
+        }
+
     }
 
 }

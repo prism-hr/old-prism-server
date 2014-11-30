@@ -133,7 +133,7 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
                 validateImplodedRangeConstraint(application, "secondaryTheme", configuration, errors);
                 break;
             default:
-                throw new Error();
+                continue;
             }
         }
 

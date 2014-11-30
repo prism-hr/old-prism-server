@@ -145,7 +145,6 @@ public class AdvertService {
         updatePay(baseline, advert, currencyAtLocale, payDTO);
 
         advert.setLastCurrencyConversionDate(baseline);
-
         resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_FEE_AND_PAYMENT);
     }
 

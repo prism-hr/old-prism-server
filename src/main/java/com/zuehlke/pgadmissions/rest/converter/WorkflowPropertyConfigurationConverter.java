@@ -1,8 +1,10 @@
 package com.zuehlke.pgadmissions.rest.converter;
 
+import org.dozer.DozerConverter;
+
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO;
-import org.dozer.DozerConverter;
 
 public class WorkflowPropertyConfigurationConverter extends DozerConverter<WorkflowPropertyConfigurationValueDTO, WorkflowPropertyConfiguration> {
 
@@ -12,8 +14,15 @@ public class WorkflowPropertyConfigurationConverter extends DozerConverter<Workf
 
     @Override
     public WorkflowPropertyConfiguration convertTo(WorkflowPropertyConfigurationValueDTO source, WorkflowPropertyConfiguration destination) {
-        return new WorkflowPropertyConfiguration().withEnabled(source.getEnabled()).withMinimum(source.getMinimum()).withMaximum(source.getMaximum())
-                .withRequired(source.getRequired()).withActive(true);
+        boolean enabled = source.getEnabled();
+        PrismWorkflowPropertyDefinition definitionId = source.getDefinitionId();
+
+        boolean defineRange = definitionId.isDefineRange();
+        int minimum = defineRange && enabled ? source.getMinimum() : 0;
+        int maximum = defineRange && enabled ? source.getMaximum() : 0;
+
+        boolean required = defineRange ? source.getMinimum() > 1 : definitionId.isCanBeOptional() ? true : source.getRequired();
+        return new WorkflowPropertyConfiguration().withEnabled(enabled).withMinimum(minimum).withMaximum(maximum).withRequired(required).withActive(true);
     }
 
     @Override

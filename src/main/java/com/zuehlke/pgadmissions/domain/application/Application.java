@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -98,14 +99,8 @@ public class Application extends Resource {
     @JoinColumn(name = "application_program_detail_id", unique = true)
     private ApplicationProgramDetail programDetail;
 
-    @Column(name = "study_location")
-    private String studyLocation;
-
-    @Column(name = "study_division")
-    private String studyDivision;
-
-    @Column(name = "study_area")
-    private String studyArea;
+    @Embedded
+    private ApplicationStudyDetail studyDetail;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
@@ -435,28 +430,24 @@ public class Application extends Resource {
         this.programDetail = programDetail;
     }
 
-    public String getStudyLocation() {
-        return studyLocation;
+    public final ApplicationStudyDetail getStudyDetail() {
+        return studyDetail;
     }
 
-    public void setStudyLocation(String studyLocation) {
-        this.studyLocation = studyLocation;
+    public final void setStudyDetail(ApplicationStudyDetail studyDetail) {
+        this.studyDetail = studyDetail;
+    }
+
+    public String getStudyLocation() {
+        return studyDetail == null ? null : studyDetail.getStudyLocation();
     }
 
     public String getStudyDivision() {
-        return studyDivision;
-    }
-
-    public void setStudyDivision(String studyDivision) {
-        this.studyDivision = studyDivision;
+        return studyDetail == null ? null : studyDetail.getStudyDivision();
     }
 
     public String getStudyArea() {
-        return studyArea;
-    }
-
-    public void setStudyArea(String studyArea) {
-        this.studyArea = studyArea;
+        return studyDetail == null ? null : studyDetail.getStudyArea();
     }
 
     public Set<ApplicationSupervisor> getSupervisors() {

@@ -44,6 +44,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
 import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.application.ApplicationStudyDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
@@ -82,6 +83,7 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailDT
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPrizeDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO.ApplicationStudyDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
@@ -120,14 +122,16 @@ public class ApplicationSectionService {
         Application application = applicationService.getById(applicationId);
         Institution institution = application.getInstitution();
 
-        application.setStudyLocation(programDetailDTO.getStudyLocation());
-        application.setStudyDivision(programDetailDTO.getStudyDivision());
-        application.setStudyArea(programDetailDTO.getStudyArea());
-
         ApplicationProgramDetail programDetail = application.getProgramDetail();
         if (programDetail == null) {
             programDetail = new ApplicationProgramDetail();
             application.setProgramDetail(programDetail);
+        }
+
+        ApplicationStudyDetailDTO studyDetailDTO = programDetailDTO.getStudyDetail();
+        if (studyDetailDTO != null) {
+            application.setStudyDetail(new ApplicationStudyDetail().withStudyLocation(studyDetailDTO.getStudyLocation())
+                    .withStudyDivision(studyDetailDTO.getStudyDivision()).withStudyArea(studyDetailDTO.getStudyArea()));
         }
 
         StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, institution, programDetailDTO.getStudyOption().name());
@@ -141,9 +145,6 @@ public class ApplicationSectionService {
 
         List<String> secondaryThemes = programDetailDTO.getSecondaryThemes();
         application.setSecondaryTheme(secondaryThemes.isEmpty() ? null : Joiner.on("|").join(secondaryThemes));
-        application.setStudyLocation(programDetailDTO.getStudyLocation());
-        application.setStudyDivision(programDetailDTO.getStudyDivision());
-        application.setStudyArea(programDetailDTO.getStudyArea());
 
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL);
     }

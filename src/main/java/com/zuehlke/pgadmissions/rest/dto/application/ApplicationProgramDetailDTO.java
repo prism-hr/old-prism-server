@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.rest.dto.application;
 
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -12,14 +13,8 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
 public class ApplicationProgramDetailDTO {
 
-    @Size(max = 255)
-    private String studyLocation;
-
-    @Size(max = 255)
-    private String studyDivision;
-
-    @Size(max = 255)
-    private String studyArea;
+    @Valid
+    private ApplicationStudyDetailDTO studyDetail;
 
     @NotNull
     private PrismStudyOption studyOption;
@@ -33,6 +28,14 @@ public class ApplicationProgramDetailDTO {
     private List<String> primaryThemes = Lists.newArrayList();
 
     private List<String> secondaryThemes = Lists.newArrayList();
+
+    public final ApplicationStudyDetailDTO getStudyDetail() {
+        return studyDetail;
+    }
+
+    public final void setStudyDetail(ApplicationStudyDetailDTO studyDetail) {
+        this.studyDetail = studyDetail;
+    }
 
     public PrismStudyOption getStudyOption() {
         return studyOption;
@@ -74,28 +77,44 @@ public class ApplicationProgramDetailDTO {
         this.secondaryThemes = secondaryThemes;
     }
 
-    public final String getStudyLocation() {
-        return studyLocation;
-    }
+    public static class ApplicationStudyDetailDTO {
 
-    public final void setStudyLocation(String studyLocation) {
-        this.studyLocation = studyLocation;
-    }
+        @NotNull
+        @Size(max = 255)
+        private String studyLocation;
 
-    public final String getStudyDivision() {
-        return studyDivision;
-    }
+        @NotNull
+        @Size(max = 255)
+        private String studyDivision;
 
-    public final void setStudyDivision(String studyDivision) {
-        this.studyDivision = studyDivision;
-    }
+        @NotNull
+        @Size(max = 255)
+        private String studyArea;
 
-    public final String getStudyArea() {
-        return studyArea;
-    }
+        public final String getStudyLocation() {
+            return studyLocation;
+        }
 
-    public final void setStudyArea(String studyArea) {
-        this.studyArea = studyArea;
+        public final void setStudyLocation(String studyLocation) {
+            this.studyLocation = studyLocation;
+        }
+
+        public final String getStudyDivision() {
+            return studyDivision;
+        }
+
+        public final void setStudyDivision(String studyDivision) {
+            this.studyDivision = studyDivision;
+        }
+
+        public final String getStudyArea() {
+            return studyArea;
+        }
+
+        public final void setStudyArea(String studyArea) {
+            this.studyArea = studyArea;
+        }
+
     }
 
 }

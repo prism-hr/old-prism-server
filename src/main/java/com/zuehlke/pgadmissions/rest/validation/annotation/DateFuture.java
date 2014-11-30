@@ -9,7 +9,6 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-
 @Target(FIELD)
 @Retention(RUNTIME)
 @Constraint(validatedBy = DateFutureValidator.class)
@@ -17,8 +16,8 @@ public @interface DateFuture {
 
     String message() default "{dateFuture}";
 
-    Class<?>[] groups() default { };
+    Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payload() default { };
+    Class<? extends Payload>[] payload() default {};
 
 }

@@ -16,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -61,7 +59,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentatio
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.SimpleResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
-import com.zuehlke.pgadmissions.rest.validation.validator.comment.CommentValidator;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -113,9 +110,6 @@ public class ResourceResource {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    private CommentValidator commentDTOValidator;
 
     @RequestMapping(method = RequestMethod.POST)
     public ActionOutcomeRepresentation createResource(@RequestBody ActionDTO actionDTO, @RequestHeader(value = "referer", required = false) String referrer)
@@ -291,11 +285,6 @@ public class ResourceResource {
         for (PrismAction creationAction : creationActions.get(rowDTO.getStateId())) {
             representation.addAction(new ActionRepresentation().withId(creationAction).withRaisesUrgentFlag(false));
         }
-    }
-
-    @InitBinder(value = "commentDTO")
-    public void configureCommentBinding(WebDataBinder binder) {
-        binder.setValidator(commentDTOValidator);
     }
 
 }

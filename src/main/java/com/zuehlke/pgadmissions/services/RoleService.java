@@ -14,6 +14,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
@@ -53,7 +54,7 @@ public class RoleService {
     private UserService userService;
 
     @Autowired
-    private WorkflowService workflowService;
+    private CustomizationService customizationService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -205,7 +206,9 @@ public class RoleService {
             minimumPermitted = roleTransition.getMinimumPermitted();
             maximumPermitted = roleTransition.getMaximumPermitted();
         } else {
-            WorkflowPropertyConfiguration workflowPropertyConfiguration = workflowService.getWorkflowPropertyConfiguration(resource, actionOwner, definition);
+            WorkflowPropertyConfiguration workflowPropertyConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
+                    PrismConfiguration.WORKFLOW_PROPERTY, definition, resource.getWorkflowPropertyConfigurationVersion());
+            
             minimumPermitted = workflowPropertyConfiguration.getMinimum();
             maximumPermitted = workflowPropertyConfiguration.getMaximum();
         }

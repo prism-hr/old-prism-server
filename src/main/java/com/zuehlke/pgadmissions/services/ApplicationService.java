@@ -59,7 +59,7 @@ import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
-import com.zuehlke.pgadmissions.rest.validation.validator.CompleteApplicationValidator;
+import com.zuehlke.pgadmissions.rest.validation.validator.ApplicationValidator;
 
 @Service
 @Transactional
@@ -108,7 +108,7 @@ public class ApplicationService {
     private StateService stateService;
 
     @Autowired
-    private CompleteApplicationValidator completeApplicationValidator;
+    private ApplicationValidator completeApplicationValidator;
 
     public Application getById(Integer id) {
         return entityService.getById(Application.class, id);

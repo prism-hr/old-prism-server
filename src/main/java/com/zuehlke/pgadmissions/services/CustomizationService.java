@@ -143,8 +143,8 @@ public class CustomizationService {
         return parseRepresentations(resource, configurationType, configurations);
     }
 
-    public WorkflowPropertyConfiguration getConfigurationWithOrWithoutVersion(PrismConfiguration configurationType, Resource resource, User user,
-            Enum<?> definitionId, Integer configurationVersion) {
+    public WorkflowConfiguration getConfigurationWithOrWithoutVersion(PrismConfiguration configurationType, Resource resource, User user, Enum<?> definitionId,
+            Integer configurationVersion) {
         WorkflowPropertyDefinition definition = (WorkflowPropertyDefinition) getDefinitionById(configurationType, definitionId);
 
         WorkflowPropertyConfiguration configuration;

@@ -177,9 +177,9 @@ public class ProgramDAO {
 
     public List<String> listSuggestedDivisions(Program program, String location) {
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
-                .setProjection(Projections.groupProperty("studyDivision")) //
+                .setProjection(Projections.groupProperty("studyDetail.studyDivision")) //
                 .add(Restrictions.eq("program", program)) //
-                .add(Restrictions.eq("studyLocation", location)) //
+                .add(Restrictions.eq("studyDetail.studyLocation", location)) //
                 .add(Subqueries.in(location, DetachedCriteria.forClass(ProgramLocation.class) //
                         .setProjection(Projections.property("location")) //
                         .add(Restrictions.eq("program", program)))) //
@@ -188,10 +188,10 @@ public class ProgramDAO {
 
     public List<String> listSuggestedStudyAreas(Program program, String location, String division) {
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
-                .setProjection(Projections.groupProperty("studyArea")) //
+                .setProjection(Projections.groupProperty("studyDetail.studyArea")) //
                 .add(Restrictions.eq("program", program)) //
-                .add(Restrictions.eq("studyLocation", location)) //
-                .add(Restrictions.eq("studyDivision", division)) //
+                .add(Restrictions.eq("studyDetail.studyLocation", location)) //
+                .add(Restrictions.eq("studyDetail.studyDivision", division)) //
                 .add(Subqueries.in(location, DetachedCriteria.forClass(ProgramLocation.class) //
                         .setProjection(Projections.property("location")) //
                         .add(Restrictions.eq("program", program)))) //

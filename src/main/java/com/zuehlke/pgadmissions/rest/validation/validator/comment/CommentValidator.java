@@ -48,50 +48,14 @@ public class CommentValidator extends LocalValidatorFactoryBean implements Valid
         super.validate(target, errors, validationHints);
         CommentDTO comment = (CommentDTO) target;
         PrismAction action = comment.getAction();
+        
+        boolean validateRating = validateCustomResponses(comment, errors);
 
         PrismActionValidationDefinition validationDefinition = action.getValidationDefinition();
         if (validationDefinition == null) {
             return;
         }
         Map<PrismActionCommentField, List<PrismActionValidationFieldResolution>> fieldDefinitions = validationDefinition.getFieldResolutions();
-
-        List<CommentCustomResponseDTO> customResponseDTOs = comment.getCustomResponses();
-        boolean validateRating = true;
-
-        if (customResponseDTOs != null) {
-
-            int i = 0;
-            Integer version = null;
-            for (CommentCustomResponseDTO customResponseDTO : customResponseDTOs) {
-                errors.pushNestedPath("customResponses[" + i + "]");
-                ActionCustomQuestionConfiguration configuration = entityService.getById(ActionCustomQuestionConfiguration.class, customResponseDTO.getId());
-                version = version == null ? configuration.getVersion() : version;
-
-                Object propertyValue = customResponseDTO.getPropertyValue();
-                PrismCustomQuestionType propertyType = configuration.getCustomQuestionType();
-
-                if (configuration.getRequired()) {
-                    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "propertyValue", "notEmpty");
-                }
-
-                if (propertyValue != null) {
-                    if (propertyType.getPermittedValues() != null) {
-                        Preconditions.checkArgument(propertyType.getPermittedValues().contains(propertyValue));
-                    }
-                }
-
-                if (propertyType.name().startsWith("RATING")) {
-                    validateRating = false;
-                }
-                i++;
-                errors.popNestedPath();
-            }
-
-            List<ActionCustomQuestionConfiguration> configurations = (List<ActionCustomQuestionConfiguration>) (List<?>) customizationService
-                    .getConfigurationsWithVersion(PrismConfiguration.CUSTOM_QUESTION, version);
-
-            Preconditions.checkArgument(customResponseDTOs.size() == configurations.size());
-        }
 
         for (PrismActionCommentField field : PrismActionCommentField.values()) {
             if (field != APPLICATION_RATING || (field == APPLICATION_RATING && validateRating)) {
@@ -130,6 +94,47 @@ public class CommentValidator extends LocalValidatorFactoryBean implements Valid
                 ValidationUtils.invokeValidator(customValidator, comment, errors);
             }
         }
+    }
+
+    private boolean validateCustomResponses(CommentDTO comment, Errors errors) {
+        boolean validateRating = true;
+        List<CommentCustomResponseDTO> customResponseDTOs = comment.getCustomResponses();
+
+        if (customResponseDTOs != null) {
+
+            int i = 0;
+            Integer version = null;
+            for (CommentCustomResponseDTO customResponseDTO : customResponseDTOs) {
+                errors.pushNestedPath("customResponses[" + i + "]");
+                ActionCustomQuestionConfiguration configuration = entityService.getById(ActionCustomQuestionConfiguration.class, customResponseDTO.getId());
+                version = version == null ? configuration.getVersion() : version;
+
+                Object propertyValue = customResponseDTO.getPropertyValue();
+                PrismCustomQuestionType propertyType = configuration.getCustomQuestionType();
+
+                if (configuration.getRequired()) {
+                    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "propertyValue", "notEmpty");
+                }
+
+                if (propertyValue != null) {
+                    if (propertyType.getPermittedValues() != null) {
+                        Preconditions.checkArgument(propertyType.getPermittedValues().contains(propertyValue));
+                    }
+                }
+
+                if (propertyType.name().startsWith("RATING")) {
+                    validateRating = false;
+                }
+                i++;
+                errors.popNestedPath();
+            }
+
+            List<ActionCustomQuestionConfiguration> configurations = (List<ActionCustomQuestionConfiguration>) (List<?>) customizationService
+                    .getConfigurationsWithVersion(PrismConfiguration.CUSTOM_QUESTION, version);
+
+            Preconditions.checkArgument(customResponseDTOs.size() == configurations.size());
+        }
+        return validateRating;
     }
 
 }

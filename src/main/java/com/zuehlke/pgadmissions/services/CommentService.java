@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.ValidationUtils;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
@@ -50,6 +52,7 @@ import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguratio
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentAssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentCustomResponseDTO;
@@ -63,6 +66,7 @@ import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentatio
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedSupervisorRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.OfferRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.UserAppointmentPreferencesRepresentation;
+import com.zuehlke.pgadmissions.rest.validation.validator.comment.CommentValidator;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
@@ -91,10 +95,13 @@ public class CommentService {
     private UserService userService;
 
     @Autowired
-    private Mapper dozerBeanMapper;
+    private Mapper mapper;
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired
+    private CommentValidator commentValidator;
 
     public Comment getById(int id) {
         return entityService.getById(Comment.class, id);
@@ -317,6 +324,7 @@ public class CommentService {
         comment.getAppointmentPreferences().addAll(persistentPreferences);
         comment.getCustomResponses().addAll(persistentResponses);
 
+        validateComment(comment);
         entityService.flush();
     }
 
@@ -515,7 +523,7 @@ public class CommentService {
 
         CommentRepresentation representation;
         if (redactions.isEmpty() || userId.equals(author.getId()) || (authorDelegate != null && userId.equals(authorDelegate.getId()))) {
-            representation = dozerBeanMapper.map(comment, CommentRepresentation.class);
+            representation = mapper.map(comment, CommentRepresentation.class);
         } else {
 
             UserRepresentation authorRepresentation = new UserRepresentation().withFirstName(author.getFirstName()).withLastName(author.getLastName())
@@ -614,6 +622,14 @@ public class CommentService {
                 comment.addCommentTransitionState(state, primaryState);
 
             }
+        }
+    }
+
+    public void validateComment(Comment comment) {
+        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(comment, "comment");
+        ValidationUtils.invokeValidator(commentValidator, comment, errors);
+        if (errors.hasErrors()) {
+            throw new PrismValidationException("Comment not completed", errors);
         }
     }
 

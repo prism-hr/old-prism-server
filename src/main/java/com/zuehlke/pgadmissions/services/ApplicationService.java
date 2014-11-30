@@ -34,6 +34,8 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
+import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
@@ -56,6 +58,8 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.CommentDTO.CommentApplicationOfferDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.CommentDTO.CommentApplicationPositionDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
@@ -108,7 +112,7 @@ public class ApplicationService {
     private StateService stateService;
 
     @Autowired
-    private ApplicationValidator completeApplicationValidator;
+    private ApplicationValidator applicationValidator;
 
     public Application getById(Integer id) {
         return entityService.getById(Application.class, id);
@@ -206,10 +210,9 @@ public class ApplicationService {
         return refereesResponded;
     }
 
-    public void validateApplicationCompleteness(Integer applicationId) {
-        Application application = entityService.getById(Application.class, applicationId);
+    public void validateApplication(Application application) {
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(application, "application");
-        ValidationUtils.invokeValidator(completeApplicationValidator, application, errors);
+        ValidationUtils.invokeValidator(applicationValidator, application, errors);
         if (errors.hasErrors()) {
             throw new PrismValidationException("Application not completed", errors);
         }
@@ -279,14 +282,13 @@ public class ApplicationService {
         PrismAction actionId = commentDTO.getAction();
 
         if (actionId == PrismAction.APPLICATION_COMPLETE) {
-            // validateApplicationCompleteness(applicationId);
+            validateApplication(application);
         }
 
         Action action = actionService.getById(actionId);
         User user = userService.getById(commentDTO.getUser());
         User delegateUser = userService.getById(commentDTO.getDelegateUser());
         State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
-        LocalDate positionProvisionalStartDate = commentDTO.getPositionProvisionalStartDate();
 
         Comment comment = new Comment().withResource(application).withContent(commentDTO.getContent()).withUser(user).withDelegateUser(delegateUser)
                 .withAction(action).withTransitionState(transitionState).withCreatedTimestamp(new DateTime())
@@ -294,9 +296,18 @@ public class ApplicationService {
                 .withApplicationInterested(commentDTO.getApplicationInterested()).withInterviewDateTime(commentDTO.getInterviewDateTime())
                 .withInterviewTimeZone(commentDTO.getInterviewTimeZone()).withInterviewDuration(commentDTO.getInterviewDuration())
                 .withInterviewerInstructions(commentDTO.getInterviewerInstructions()).withIntervieweeInstructions(commentDTO.getIntervieweeInstructions())
-                .withInterviewLocation(commentDTO.getInterviewLocation()).withPositionTitle(commentDTO.getPositionTitle())
-                .withPositionDescription(commentDTO.getPositionDescription()).withPositionProvisionalStartDate(positionProvisionalStartDate)
-                .withAppointmentConditions(commentDTO.getAppointmentConditions()).withApplicationRating(commentDTO.getApplicationRating());
+                .withInterviewLocation(commentDTO.getInterviewLocation()).withApplicationRating(commentDTO.getApplicationRating());
+
+        CommentApplicationPositionDetailDTO positionDetailDTO = commentDTO.getPositionDetail();
+        if (positionDetailDTO != null) {
+            comment.setPositionDetail(new CommentApplicationPositionDetail().withPositionTitle(positionDetailDTO.getPositionTitle()));
+        }
+
+        CommentApplicationOfferDetailDTO offerDetailDTO = commentDTO.getOfferDetail();
+        if (offerDetailDTO != null) {
+            comment.setOfferDetail(new CommentApplicationOfferDetail().withPositionProvisionStartDate(offerDetailDTO.getPositionProvisionalStartDate())
+                    .withAppointmentConditions(offerDetailDTO.getAppointmentConditions()));
+        }
 
         commentService.appendCommentProperties(comment, commentDTO);
 

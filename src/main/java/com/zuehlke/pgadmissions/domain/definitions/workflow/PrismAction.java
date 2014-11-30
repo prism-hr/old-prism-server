@@ -15,7 +15,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.APPLICATION_ELIGIBLE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.APPLICATION_INTERESTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.APPLICATION_RATING;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.APPOINTMENT_CONDITIONS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.APPOINTMENT_PREFERENCES;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.APPOINTMENT_TIMESLOTS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.ASSIGNED_USERS;
@@ -27,9 +26,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCo
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.INTERVIEW_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.INTERVIEW_LOCATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.INTERVIEW_TIME_ZONE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.POSITION_DESCRIPTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.POSITION_PROVISIONAL_START_DATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.POSITION_TITLE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.RECRUITER_ACCEPT_APPOINTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.REJECTION_REASON;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.TRANSITION_STATE;
@@ -76,8 +72,7 @@ public enum PrismAction {
                     .withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder().addResolution(ASSIGNED_USERS).build()), //
     APPLICATION_ASSIGN_SUPERVISORS(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, false, null, APPLICATION, null, Arrays.asList(
             new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT), new PrismActionRedaction().withRole(APPLICATION_REFEREE)
-                    .withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder().addResolution(ASSIGNED_USERS).addResolution(POSITION_TITLE)
-            .addResolution(POSITION_DESCRIPTION).addResolution(POSITION_PROVISIONAL_START_DATE).addResolution(APPOINTMENT_CONDITIONS).build()), //
+                    .withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder().addResolution(ASSIGNED_USERS).build()), //
     APPLICATION_COMMENT(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, false, null, APPLICATION, null, Arrays.asList(
             new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT), new PrismActionRedaction().withRole(APPLICATION_REFEREE)
                     .withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder().addResolution(CONTENT, NOT_EMPTY)
@@ -118,20 +113,17 @@ public enum PrismAction {
             .addResolution(INTERVIEW_DATE_TIME, NOT_NULL).addResolution(INTERVIEWER_INSTRUCTIONS, NOT_EMPTY).addResolution(INTERVIEWEE_INSTRUCTIONS)
             .addResolution(INTERVIEW_LOCATION).build()), //
     APPLICATION_CONFIRM_OFFER_RECOMMENDATION(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, true, null, APPLICATION, null, null,
-            PrismActionValidationDefinition.builder().addResolution(ASSIGNED_USERS).addResolution(POSITION_TITLE).addResolution(POSITION_DESCRIPTION)
-                    .addResolution(POSITION_PROVISIONAL_START_DATE).addResolution(APPOINTMENT_CONDITIONS).build()), //
+            PrismActionValidationDefinition.builder().addResolution(ASSIGNED_USERS).build()), //
     APPLICATION_CONFIRM_REJECTION(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, false, null, APPLICATION, null, null,
             PrismActionValidationDefinition.builder().addResolution(REJECTION_REASON, NOT_NULL).build()), //
     APPLICATION_CONFIRM_PRIMARY_SUPERVISION(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, false, null, APPLICATION, null, Arrays.asList(
             new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT), new PrismActionRedaction().withRole(APPLICATION_REFEREE)
                     .withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder().addResolution(RECRUITER_ACCEPT_APPOINTMENT, NOT_NULL)
-            .addResolution(CONTENT).addResolution(ASSIGNED_USERS).addResolution(POSITION_TITLE).addResolution(POSITION_DESCRIPTION)
-            .addResolution(POSITION_PROVISIONAL_START_DATE).addResolution(APPOINTMENT_CONDITIONS)
-            .setCustomValidator(new CommentConfirmSupervisionCustomValidator()).build()), //
+            .addResolution(CONTENT).addResolution(ASSIGNED_USERS).setCustomValidator(new CommentConfirmSupervisionCustomValidator()).build()), //
     APPLICATION_CONFIRM_SECONDARY_SUPERVISION(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, false, null, APPLICATION, null, Arrays
             .asList(new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT),
                     new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
-            .addResolution(RECRUITER_ACCEPT_APPOINTMENT, NOT_NULL).setCustomValidator(new CommentConfirmSupervisionCustomValidator()).build()), //
+            .addResolution(RECRUITER_ACCEPT_APPOINTMENT, NOT_NULL).build()), //
     APPLICATION_CORRECT(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, false, null, APPLICATION, null, null, null), //
     APPLICATION_EMAIL_CREATOR(USER_INVOCATION, EMAIL_RESOURCE_CREATOR, false, false, false, false, false, false, null, APPLICATION, null, null, null), //
     APPLICATION_ESCALATE(SYSTEM_INVOCATION, ESCALATE_RESOURCE, false, false, false, false, false, false, null, APPLICATION, null, null, null), //

@@ -9,6 +9,7 @@ import java.util.TimeZone;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -139,18 +140,11 @@ public class Comment {
     @Column(name = "application_interview_location")
     private String interviewLocation;
 
-    @Column(name = "application_position_title")
-    private String positionTitle;
+    @Embedded
+    private CommentApplicationPositionDetail positionDetail;
 
-    @Column(name = "application_position_description")
-    private String positionDescription;
-
-    @Column(name = "application_position_provisional_start_date")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate positionProvisionalStartDate;
-
-    @Column(name = "application_appointment_conditions")
-    private String appointmentConditions;
+    @Embedded
+    private CommentApplicationOfferDetail offerDetail;
 
     @Column(name = "application_recruiter_accept_appointment")
     private Boolean recruiterAcceptAppointment;
@@ -403,36 +397,36 @@ public class Comment {
         this.interviewLocation = interviewLocation;
     }
 
-    public String getPositionTitle() {
-        return positionTitle;
+    public final CommentApplicationPositionDetail getPositionDetail() {
+        return positionDetail;
     }
 
-    public void setPositionTitle(String positionTitle) {
-        this.positionTitle = positionTitle;
+    public final void setPositionDetail(CommentApplicationPositionDetail positionDetail) {
+        this.positionDetail = positionDetail;
+    }
+
+    public String getPositionTitle() {
+        return positionDetail == null ? null : positionDetail.getPositionTitle();
     }
 
     public String getPositionDescription() {
-        return positionDescription;
+        return positionDetail == null ? null : positionDetail.getPositionDescription();
+    }
+    
+    public final CommentApplicationOfferDetail getOfferDetail() {
+        return offerDetail;
     }
 
-    public void setPositionDescription(String positionDescription) {
-        this.positionDescription = positionDescription;
+    public final void setOfferDetail(CommentApplicationOfferDetail offerDetail) {
+        this.offerDetail = offerDetail;
     }
 
     public LocalDate getPositionProvisionalStartDate() {
-        return positionProvisionalStartDate;
-    }
-
-    public void setPositionProvisionalStartDate(LocalDate positionProvisionalStartDate) {
-        this.positionProvisionalStartDate = positionProvisionalStartDate;
+        return offerDetail == null ? null : offerDetail.getPositionProvisionalStartDate();
     }
 
     public String getAppointmentConditions() {
-        return appointmentConditions;
-    }
-
-    public void setAppointmentConditions(String appointmentConditions) {
-        this.appointmentConditions = appointmentConditions;
+        return offerDetail == null ? null : offerDetail.getAppointmentConditions();
     }
 
     public Boolean getRecruiterAcceptAppointment() {
@@ -647,16 +641,6 @@ public class Comment {
         return this;
     }
 
-    public Comment withPositionTitle(String positionTitle) {
-        this.positionTitle = positionTitle;
-        return this;
-    }
-
-    public Comment withPositionDescription(String positionDescription) {
-        this.positionDescription = positionDescription;
-        return this;
-    }
-
     public Comment withApplicationRating(BigDecimal applicationRating) {
         this.applicationRating = applicationRating;
         return this;
@@ -714,16 +698,6 @@ public class Comment {
 
     public Comment withInterviewLocation(String interviewLocation) {
         this.interviewLocation = interviewLocation;
-        return this;
-    }
-
-    public Comment withAppointmentConditions(String appointmentConditions) {
-        this.appointmentConditions = appointmentConditions;
-        return this;
-    }
-
-    public Comment withPositionProvisionalStartDate(LocalDate positionProvisionalStartDate) {
-        this.positionProvisionalStartDate = positionProvisionalStartDate;
         return this;
     }
 
@@ -908,6 +882,7 @@ public class Comment {
     }
 
     public String getPositionProvisionalStartDateDisplay(String dateFormat) {
+        LocalDate positionProvisionalStartDate = getPositionProvisionalStartDate();
         return positionProvisionalStartDate == null ? null : positionProvisionalStartDate.toString(dateFormat,
                 LocaleUtils.toLocale(getResource().getLocale().toString()));
     }

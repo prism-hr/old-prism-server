@@ -9,8 +9,6 @@ import javax.validation.Valid;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,7 +47,6 @@ import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.RefereeRepresentation;
-import com.zuehlke.pgadmissions.rest.validation.validator.comment.CommentValidator;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationSectionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -82,9 +79,6 @@ public class ApplicationResource {
 
     @Autowired
     private Mapper dozerBeanMapper;
-
-    @Autowired
-    private CommentValidator commentDTOValidator;
 
     @RequestMapping(value = "/{applicationId}/startDate", method = RequestMethod.GET)
     public ApplicationStartDateRepresentation getStartDateRepresentation(@PathVariable Integer applicationId, @RequestParam PrismStudyOption studyOptionId) {
@@ -223,15 +217,10 @@ public class ApplicationResource {
     }
 
     @RequestMapping(value = "/{applicationId}/comments/{commentId}", method = RequestMethod.PUT)
-    public void updateComment(@PathVariable Integer applicationId, @PathVariable Integer commentId, @RequestBody CommentDTO commentDTO) {
+    public void updateComment(@PathVariable Integer applicationId, @PathVariable Integer commentId, @Valid @RequestBody CommentDTO commentDTO) {
         Comment comment = commentService.getById(commentId);
         Preconditions.checkArgument(comment.getApplication().getId().equals(applicationId));
         commentService.update(commentId, commentDTO);
-    }
-
-    @InitBinder(value = "commentDTO")
-    public void configureCommentBinding(WebDataBinder binder) {
-        binder.setValidator(commentDTOValidator);
     }
 
     public void enrichApplicationRepresentation(Application application, ApplicationExtendedRepresentation representation) {

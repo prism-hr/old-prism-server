@@ -10,46 +10,43 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import com.google.common.base.Preconditions;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
 
 @Component
 public class CommentAssignInterviewersCustomValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return CommentDTO.class.isAssignableFrom(clazz);
+        return Comment.class.isAssignableFrom(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
-        CommentDTO comment = (CommentDTO) target;
-        PrismAction action = comment.getAction();
+        Comment comment = (Comment) target;
+        PrismAction action = comment.getAction().getId();
         Preconditions.checkArgument(action == PrismAction.APPLICATION_ASSIGN_INTERVIEWERS, "Unexpected action: " + action);
 
         boolean takenPlace = false;
         if (comment.getInterviewDateTime() == null) {
-            // to be scheduled
-            if(comment.getAppointmentTimeslots() == null || comment.getAppointmentTimeslots().isEmpty()){
-                errors.rejectValue("appointmentTimeslots", "min", new Object[]{0}, null);
+            if (comment.getAppointmentTimeslots() == null || comment.getAppointmentTimeslots().isEmpty()) {
+                errors.rejectValue("appointmentTimeslots", "min", new Object[] { 0 }, null);
             }
         } else {
             DateTime interviewDateTime = comment.getInterviewDateTime().toDateTime(DateTimeZone.forTimeZone(comment.getInterviewTimeZone()));
             if (interviewDateTime.isBeforeNow()) {
-                // taken place
                 takenPlace = true;
                 rejectIfNotNull(comment, errors, "interviewerInstructions", "forbidden");
                 rejectIfNotNull(comment, errors, "intervieweeInstructions", "forbidden");
                 rejectIfNotNull(comment, errors, "interviewLocation", "forbidden");
             } else {
-                // scheduled
                 rejectIfNotNull(comment, errors, "appointmentTimeslots", "forbidden");
             }
         }
 
-        if(!takenPlace) {
+        if (!takenPlace) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "interviewerInstructions", "notEmpty");
         }
     }
-    
+
 }

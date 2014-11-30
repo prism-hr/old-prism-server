@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
@@ -16,6 +17,8 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.ApplicationProcessingRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation.ApplicationProcessingSummaryRepresentation;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import com.zuehlke.pgadmissions.utils.SummaryUtils;
 
@@ -69,6 +72,14 @@ public class ApplicationSummaryService {
 
     public void incrementApplicationWithdrawnCount(Application application) {
         incrementApplicationEventCount(application, "applicationWithdrawnCount");
+    }
+
+    public List<ApplicationProcessingRepresentation> getProcessings(Application application) {
+        return applicationSummaryDAO.getProcessings(application);
+    }
+    
+    public List<ApplicationProcessingSummaryRepresentation> getProcessingSummaries(ResourceParent resource) {
+        return applicationSummaryDAO.getProcessingSummaries(resource);
     }
 
     private void updateApplicationSummary(ResourceParent parentResource, Application application) {

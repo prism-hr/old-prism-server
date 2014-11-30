@@ -19,6 +19,7 @@ public class ApplicationQualificationDTO {
     @Size(max = 200)
     private String subject;
 
+    @NotEmpty
     @Size(max = 200)
     private String title;
 

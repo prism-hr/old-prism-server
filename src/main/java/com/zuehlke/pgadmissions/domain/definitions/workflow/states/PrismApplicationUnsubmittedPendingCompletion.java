@@ -87,7 +87,7 @@ public class PrismApplicationUnsubmittedPendingCompletion extends PrismWorkflowS
                         .withDefinition(PrismNotificationDefinition.APPLICATION_TERMINATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() //
-                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN_COMPLETED) //
+                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED) //
                         .withTransitionAction(PrismAction.APPLICATION_TERMINATE)))); //
 
         stateActions.add(new PrismStateAction() //
@@ -99,7 +99,7 @@ public class PrismApplicationUnsubmittedPendingCompletion extends PrismWorkflowS
                         .withRole(PrismRole.APPLICATION_CREATOR))) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() //
-                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN_COMPLETED) //
+                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED) //
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST))));
     }
 

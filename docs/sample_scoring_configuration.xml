@@ -1,0 +1,79 @@
+<customQuestions>
+	<alert>this is an alert :)</alert>
+	<!-- With character length restriction. -->
+	<question type="text">
+		<label>My Question 1</label>
+		<required>true</required>
+		<tooltip>this is a tool tip 1</tooltip>
+		<maxLength>25</maxLength>
+	</question>
+	<!-- Without character length restriction. -->
+	<question type="text">
+		<label>My Question 2</label>
+		<required>false</required>
+		<tooltip>this is a tool tip 2</tooltip>
+	</question>
+	<!-- With character length restriction. -->
+	<question type="textarea">
+		<label>My Question 3</label>
+		<required>true</required>
+		<tooltip>this is a tool tip 3</tooltip>
+		<maxLength>2000</maxLength>
+	</question>
+	<!-- Without character length restriction. -->
+	<question type="textarea">
+		<label>My Question 4</label>
+		<required>false</required>
+		<tooltip>this is a tool tip 4</tooltip>
+	</question>
+	<!-- With minimum date restriction today. -->
+	<question type="date">
+		<label>My Question 5</label>
+		<required>true</required>
+		<tooltip>this is a tool tip 5</tooltip>
+		<minDate>TODAY</minDate>
+	</question>
+	<!-- Without no minimum or maximum date restriction. -->
+	<question type="date">
+		<label>My Question 6</label>
+		<required>false</required>
+		<tooltip>this is a tool tip 6</tooltip>
+	</question>
+	<!-- With a specified maximum date. -->
+	<question type="date">
+		<label>My Question 7</label>
+		<required>true</required>
+		<tooltip>this is a tool tip 7</tooltip>
+		<maxDate>2013-07-15</maxDate>
+	</question>
+	<!-- Select one option only. -->
+	<question type="dropdown">
+		<label>My Question 9</label>
+		<required>true</required>
+		<tooltip>this is a tool tip 9</tooltip>
+		<options>
+			<option>Option 1</option>
+			<option>Option 2</option>
+			<option>Option 3</option>
+		</options>
+	</question>
+	<!-- Select multiple options. -->
+	<question type="dropdown">
+		<label>My Question 10</label>
+		<required>false</required>
+		<tooltip>this is a tool tip 10</tooltip>
+		<enableMultipleSelection>true</enableMultipleSelection>
+		<options>
+			<option>Option 1</option>
+			<option>Option 2</option>
+			<option>Option 3</option>
+		</options>
+	</question>
+	<!-- Star rating. 
+		 Only needs required (or not). -->
+	<question type="rating">
+		<label>My Question 11</label>
+		<required>true</required>
+		<tooltip>this is a tool tip 1</tooltip>
+	</question>
+</customQuestions>

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -220,8 +221,6 @@ public class ResourceService {
     }
 
     public void processResource(Resource resource, Comment comment) throws DeduplicationException {
-        StateDurationDefinition stateDurationDefinition = resource.getState().getStateDurationDefinition();
-
         LocalDate baselineCustom = null;
         LocalDate baseline = new LocalDate();
 
@@ -232,9 +231,10 @@ public class ResourceService {
 
         baseline = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
 
-        StateDurationConfiguration stateDuration = stateDurationDefinition == null ? null : stateService.getStateDurationConfiguration(resource,
+        StateDurationDefinition stateDurationDefinition = resource.getState().getStateDurationDefinition();
+        StateDurationConfiguration stateDurationConfiguration = stateDurationDefinition == null ? null : stateService.getStateDurationConfiguration(resource,
                 comment.getUser(), stateDurationDefinition);
-        Integer duration = stateDuration == null ? 0 : stateDuration.getDuration();
+        Integer duration = stateDurationConfiguration == null ? 0 : stateDurationConfiguration.getDuration();
 
         resource.setDueDate(baseline.plusDays(duration));
         entityService.flush();
@@ -328,19 +328,21 @@ public class ResourceService {
         return resourceDAO.getResourceRequiringSyndicatedUpdates(resourceClass, baseline, rangeStart, rangeClose);
     }
 
-    public <T extends Resource> List<ResourceConsoleListRowDTO> getResourceConsoleList(PrismScope scopeId, ResourceListFilterDTO filter,
-            String lastSequenceIdentifier) throws DeduplicationException {
-        User user = userService.getCurrentUser();
+    public <T extends Resource> List<ResourceConsoleListRowDTO> getResourceList(PrismScope scopeId, ResourceListFilterDTO filter, String lastSequenceIdentifier)
+            throws DeduplicationException {
         if (scopeId == PrismScope.SYSTEM) {
             throw new Error();
         }
 
+        User user = userService.getCurrentUser();
         List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(scopeId);
         filter = resourceListFilterService.saveOrGetByUserAndScope(user, scopeId, filter);
 
         Integer maxRecords = scopeId.getMaxConsoleListRecords();
         Set<Integer> assignedResources = getAssignedResources(user, scopeId, parentScopeIds, filter, lastSequenceIdentifier, maxRecords);
-        return resourceDAO.getResourceConsoleList(user, scopeId, parentScopeIds, assignedResources, filter, lastSequenceIdentifier, maxRecords);
+
+        return assignedResources.isEmpty() ? new ArrayList<ResourceConsoleListRowDTO>() : resourceDAO.getResourceConsoleList(user, scopeId, parentScopeIds,
+                assignedResources, filter, lastSequenceIdentifier, maxRecords);
     }
 
     public void filterResourceListData(ResourceListRowRepresentation representation, User currentUser) {
@@ -387,7 +389,11 @@ public class ResourceService {
         return summary;
     }
 
-    private Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter,
+    public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter) {
+        return getAssignedResources(user, scopeId, parentScopeIds, filter, null, null);
+    }
+
+    public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter,
             String lastSequenceIdentifier, Integer maxRecords) {
         Set<Integer> assigned = Sets.newHashSet();
         Junction conditions = getFilterConditions(scopeId, filter);

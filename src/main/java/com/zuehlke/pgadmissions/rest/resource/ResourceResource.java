@@ -186,7 +186,7 @@ public class ResourceResource {
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
         HashMultimap<PrismState, PrismAction> creationActions = actionService.getCreateResourceActionsByState(resourceScope);
 
-        for (ResourceConsoleListRowDTO rowDTO : resourceService.getResourceConsoleList(resourceScope, filterDTO, lastSequenceIdentifier)) {
+        for (ResourceConsoleListRowDTO rowDTO : resourceService.getResourceList(resourceScope, filterDTO, lastSequenceIdentifier)) {
             ResourceListRowRepresentation representation = beanMapper.map(rowDTO, ResourceListRowRepresentation.class);
             representation.setResourceScope(resourceScope);
             representation.setId((Integer) PropertyUtils.getSimpleProperty(rowDTO, resourceScope.getLowerCaseName() + "Id"));

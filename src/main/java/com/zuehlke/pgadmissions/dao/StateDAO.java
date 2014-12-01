@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
-import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
@@ -203,14 +202,6 @@ public class StateDAO {
                 .add(Restrictions.isNotNull("transitionState")) //
                 .addOrder(Order.asc("transitionStateGroup.sequenceOrder")) //
                 .setResultTransformer(Transformers.aliasToBean(NextStateRepresentation.class)) //
-                .list();
-    }
-
-    public List<PrismStateGroup> getStateGroups(PrismScope scopeId) {
-        return (List<PrismStateGroup>) sessionFactory.getCurrentSession().createCriteria(StateGroup.class) //
-                .setProjection(Projections.property("id")) //
-                .add(Restrictions.eq("scope.id", scopeId)) //
-                .addOrder(Order.asc("sequenceOrder")) //
                 .list();
     }
 

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -22,7 +23,9 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.OtherApplicationSummaryRepresentation;
 
 @Repository
@@ -182,6 +185,78 @@ public class ApplicationDAO {
                         .add(Restrictions.in("state.id", Arrays.asList(PrismState.APPLICATION_APPROVAL, PrismState.APPLICATION_REJECTED)))) //
                 .addOrder(Order.desc("sequenceIdentifier")) //
                 .setResultTransformer(Transformers.aliasToBean(OtherApplicationSummaryRepresentation.class)) //
+                .list();
+    }
+
+    public List<ApplicationReportListRowDTO> getApplicationReport(Set<Integer> assignedApplications) {
+        return (List<ApplicationReportListRowDTO>) sessionFactory.getCurrentSession().createCriteria(Application.class, "application") //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("id"), "id") //
+                        .add(Projections.property("user.fullName"), "fullName") //
+                        .add(Projections.property("user.email"), "email") //
+                        .add(Projections.property("nationality.name"), "nationality") //
+                        .add(Projections.property("domicile.name"), "domicile") //
+                        .add(Projections.property("country.name"), "country") //
+                        .add(Projections.property("personalDetail.dateOfBirth"), "dateOfBirth") //
+                        .add(Projections.property("gender.name"), "gender") //
+                        .add(Projections.property("institution.title"), "institution") //
+                        .add(Projections.property("program.title"), "program") //
+                        .add(Projections.property("project.title"), "project") //
+                        .add(Projections.property("studyOption.code"), "studyOption") //
+                        .add(Projections.property("referralSource.name"), "referralSource") //
+                        .add(Projections.property("referrer"), "referrer") //
+                        .add(Projections.property("createdTimestamp"), "createdDate") //
+                        .add(Projections.property("closingDate"), "closingDate") //
+                        .add(Projections.property("submittedTimestamp"), "submittedDate") //
+                        .add(Projections.property("updatedTimestamp"), "updatedDate") //
+                        .add(Projections.property("applicationRatingCount"), "ratingCount") //
+                        .add(Projections.property("applicationRatingAverage"), "ratingAverage") //
+                        .add(Projections.count("provideReferenceComment.id"), "providedReferences") //
+                        .add(Projections.count("declineReferenceComment.id"), "declinedReferences") //
+                        .add(Projections.property("verificationProcessing.instanceCount"), "verificationInstanceCount") //
+                        .add(Projections.property("verificationProcessing.dayDurationAverage"), "verificationInstanceDurationAverage") //
+                        .add(Projections.property("referenceProcessing.instanceCount"), "referenceInstanceCount") //
+                        .add(Projections.property("referenceProcessing.dayDurationAverage"), "referenceInstanceDurationAverage") //
+                        .add(Projections.property("reviewProcessing.instanceCount"), "reviewInstanceCount") //
+                        .add(Projections.property("reviewProcessing.dayDurationAverage"), "reviewInstanceDurationAverage") //
+                        .add(Projections.property("interviewProcessing.instanceCount"), "interviewInstanceCount") //
+                        .add(Projections.property("interviewProcessing.dayDurationAverage"), "interviewInstanceDurationAverage") //
+                        .add(Projections.property("approvalProcessing.instanceCount"), "approvalInstanceCount") //
+                        .add(Projections.property("approvalProcessing.dayDurationAverage"), "approvalInstanceDurationAverage") //
+                        .add(Projections.property("confirmedStartDate"), "confirmedStartDate") //
+                        .add(Projections.property("confirmedOfferType"), "confirmedOfferType")) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .createAlias("personalDetail", "personalDetail", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("personalDetail.firstNationality", "nationality", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("personalDetail.domicile", "domicile", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("personalDetail.country", "country", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("personalDetail.gender", "gender", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
+                .createAlias("program", "program", JoinType.INNER_JOIN) //
+                .createAlias("project", "project", JoinType.INNER_JOIN) //
+                .createAlias("programDetail", "programDetail", JoinType.INNER_JOIN) //
+                .createAlias("programDetail.studyOption", "studyOption", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("programDetail.referralSource", "referralSource", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("comments", "provideReferenceComment", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.conjunction() //
+                                .add(Restrictions.eq("provideReferenceComment.action.id", PrismAction.APPLICATION_PROVIDE_REFERENCE)) //
+                                .add(Restrictions.eq("provideReferenceComment.declinedResponse", false))) //
+                .createAlias("comments", "declineReferenceComment", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.conjunction() //
+                                .add(Restrictions.eq("declineReferenceComment.action.id", PrismAction.APPLICATION_PROVIDE_REFERENCE)) //
+                                .add(Restrictions.eq("declineReferenceComment.declinedResponse", true))) //
+                .createAlias("processings", "verificationProcessing", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.eq("verificationProcessing.stateGroup.id", PrismStateGroup.APPLICATION_VERIFICATION)) //
+                .createAlias("processings", "referenceProcessing", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.eq("referenceProcessing.stateGroup.id", PrismStateGroup.APPLICATION_REFERENCE)) //
+                .createAlias("processings", "reviewProcessing", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.eq("reviewProcessing.stateGroup.id", PrismStateGroup.APPLICATION_REVIEW)) //
+                .createAlias("processings", "interviewProcessing", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.eq("interviewProcessing.stateGroup.id", PrismStateGroup.APPLICATION_INTERVIEW)) //
+                .createAlias("processings", "approvalProcessing", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.eq("approvalProcessing.stateGroup.id", PrismStateGroup.APPLICATION_APPROVAL)) //
+                .setResultTransformer(Transformers.aliasToBean(ApplicationReportListRowDTO.class)) //
                 .list();
     }
 }

@@ -38,24 +38,27 @@ public class State extends WorkflowDefinition {
     @ManyToOne
     @JoinColumn(name = "state_duration_definition_id")
     private StateDurationDefinition stateDurationDefinition;
-    
+
     @Column(name = "state_duration_evaluation")
     @Enumerated(EnumType.STRING)
     private PrismStateDurationEvaluation stateDurationEvaluation;
 
     @Column(name = "parallelizable", nullable = false)
     private Boolean parallelizable;
-    
+
+    @Column(name = "hidden", nullable = false)
+    private Boolean hidden;
+
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
-    
+
     @OneToMany(mappedBy = "state")
     private Set<StateAction> stateActions = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "state")
     private Set<ResourceState> resourceStates = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "state")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
 
@@ -100,6 +103,14 @@ public class State extends WorkflowDefinition {
         this.parallelizable = parallelizable;
     }
 
+    public final Boolean getHidden() {
+        return hidden;
+    }
+
+    public final void setHidden(Boolean hidden) {
+        this.hidden = hidden;
+    }
+
     @Override
     public Scope getScope() {
         return scope;
@@ -109,7 +120,7 @@ public class State extends WorkflowDefinition {
     public void setScope(Scope scope) {
         this.scope = scope;
     }
-    
+
     public final Set<StateAction> getStateActions() {
         return stateActions;
     }
@@ -136,14 +147,19 @@ public class State extends WorkflowDefinition {
         this.stateDurationDefinition = stateDurationDefinition;
         return this;
     }
-    
+
     public State withStateDurationEvaluation(PrismStateDurationEvaluation stateDurationEvaluation) {
         this.stateDurationEvaluation = stateDurationEvaluation;
         return this;
     }
-    
+
     public State withParallelizable(Boolean parallelizable) {
         this.parallelizable = parallelizable;
+        return this;
+    }
+
+    public State withHidden(Boolean hidden) {
+        this.hidden = hidden;
         return this;
     }
 

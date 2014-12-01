@@ -111,10 +111,6 @@ public class StateService {
         return entityService.list(StateGroup.class);
     }
 
-    public List<PrismStateGroup> getStateGroups(PrismScope scopeId) {
-        return stateDAO.getStateGroups(scopeId);
-    }
-
     public List<StateTransitionEvaluation> getStateTransitionEvaluations() {
         return entityService.list(StateTransitionEvaluation.class);
     }

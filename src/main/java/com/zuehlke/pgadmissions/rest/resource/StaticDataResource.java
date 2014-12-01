@@ -9,6 +9,7 @@ import org.apache.commons.lang.WordUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -98,6 +99,7 @@ public class StaticDataResource {
 
     private ToIdFunction toIdFunction = new ToIdFunction();
 
+    @Cacheable("staticData")
     @RequestMapping(method = RequestMethod.GET)
     public Map<String, Object> getStaticData() {
         Map<String, Object> staticData = Maps.newHashMap();
@@ -199,6 +201,7 @@ public class StaticDataResource {
         return staticData;
     }
 
+    @Cacheable("institutionStaticData")
     @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET, params = "institutionId")
     public Map<String, Object> getStaticData(@RequestParam Integer institutionId) {

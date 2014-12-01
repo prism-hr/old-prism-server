@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.rest.representation.configuration;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory;
-
 import java.util.List;
+
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory;
 
 public class ProgramCategoryRepresentation {
 

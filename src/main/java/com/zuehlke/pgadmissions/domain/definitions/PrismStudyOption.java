@@ -11,7 +11,7 @@ import com.google.common.collect.Lists;
 public enum PrismStudyOption {
 
     FULL_TIME(PROGRAM_STUDY_OPTION_FULL_TIME, new String[] { "f+++++" }), //
-    PART_TIME(PROGRAM_STUDY_OPTION_PART_TIME,new String[] { "p+++++" }), //
+    PART_TIME(PROGRAM_STUDY_OPTION_PART_TIME, new String[] { "p+++++" }), //
     MODULAR_FLEXIBLE(PROGRAM_STUDY_OPTION_MODULAR_FLEXIBLE, new String[] { "b+++++" });
 
     private PrismDisplayPropertyDefinition displayProperty;

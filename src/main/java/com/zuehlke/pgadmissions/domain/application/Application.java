@@ -222,6 +222,9 @@ public class Application extends Resource {
 
     @OneToMany(mappedBy = "application")
     private Set<UserRole> userRoles = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "application")
+    private Set<ApplicationProcessing> processings = Sets.newHashSet();
 
     @Transient
     private Boolean acceptedTerms;
@@ -557,6 +560,10 @@ public class Application extends Resource {
         return userRoles;
     }
 
+    public final Set<ApplicationProcessing> getProcessings() {
+        return processings;
+    }
+
     public Application withId(Integer id) {
         this.id = id;
         return this;
@@ -776,10 +783,6 @@ public class Application extends Resource {
 
     public String getProjectOrProgramCodeDisplay() {
         return project == null ? program.getCode() : project.getCode();
-    }
-
-    public String getStudyOptionDisplay() {
-        return programDetail == null ? null : programDetail.getStudyOptionDisplay();
     }
 
     public PrismProgramStartType getDefaultStartType() {

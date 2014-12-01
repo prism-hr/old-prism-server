@@ -36,6 +36,12 @@ public class ApplicationSummaryRepresentation {
 
     private List<ApplicationProcessingRepresentation> processings;
 
+    private String studyOption;
+
+    private String referralSource;
+
+    private String referrer;
+
     public final String getCreatedDate() {
         return createdDate;
     }
@@ -150,6 +156,80 @@ public class ApplicationSummaryRepresentation {
 
     public final void setProcessings(List<ApplicationProcessingRepresentation> processings) {
         this.processings = processings;
+    }
+
+    public final String getStudyOption() {
+        return studyOption;
+    }
+
+    public final void setStudyOption(String studyOption) {
+        this.studyOption = studyOption;
+    }
+
+    public final String getReferralSource() {
+        return referralSource;
+    }
+
+    public final void setReferralSource(String referralSource) {
+        this.referralSource = referralSource;
+    }
+
+    public final String getReferrer() {
+        return referrer;
+    }
+
+    public final void setReferrer(String referrer) {
+        this.referrer = referrer;
+    }
+
+    public ApplicationSummaryRepresentation withCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+        return this;
+    }
+
+    public ApplicationSummaryRepresentation withSubmittedDate(String submittedDate) {
+        this.submittedDate = submittedDate;
+        return this;
+    }
+
+    public ApplicationSummaryRepresentation withClosingDate(String closingDate) {
+        this.closingDate = closingDate;
+        return this;
+    }
+
+    public ApplicationSummaryRepresentation withPhone(String phone) {
+        this.phone = phone;
+        return this;
+    }
+
+    public ApplicationSummaryRepresentation withSkype(String skype) {
+        this.skype = skype;
+        return this;
+    }
+
+    public ApplicationSummaryRepresentation withPrimaryThemes(String primaryThemes) {
+        this.primaryThemes = primaryThemes;
+        return this;
+    }
+
+    public ApplicationSummaryRepresentation withSecondaryThemes(String secondaryThemes) {
+        this.secondaryThemes = secondaryThemes;
+        return this;
+    }
+
+    public ApplicationSummaryRepresentation withStudyOption(String studyOption) {
+        this.studyOption = studyOption;
+        return this;
+    }
+
+    public ApplicationSummaryRepresentation withReferralSource(String referralSource) {
+        this.referralSource = referralSource;
+        return this;
+    }
+
+    public ApplicationSummaryRepresentation withReferrer(String referrer) {
+        this.referrer = referrer;
+        return this;
     }
 
     public static class QualificationSummaryRepresentation {
@@ -391,41 +471,6 @@ public class ApplicationSummaryRepresentation {
             return this;
         }
 
-    }
-
-    public ApplicationSummaryRepresentation withCreatedDate(String createdDate) {
-        this.createdDate = createdDate;
-        return this;
-    }
-
-    public ApplicationSummaryRepresentation withSubmittedDate(String submittedDate) {
-        this.submittedDate = submittedDate;
-        return this;
-    }
-
-    public ApplicationSummaryRepresentation withClosingDate(String closingDate) {
-        this.closingDate = closingDate;
-        return this;
-    }
-
-    public ApplicationSummaryRepresentation withPhone(String phone) {
-        this.phone = phone;
-        return this;
-    }
-
-    public ApplicationSummaryRepresentation withSkype(String skype) {
-        this.skype = skype;
-        return this;
-    }
-
-    public ApplicationSummaryRepresentation withPrimaryThemes(String primaryThemes) {
-        this.primaryThemes = primaryThemes;
-        return this;
-    }
-
-    public ApplicationSummaryRepresentation withSecondaryThemes(String secondaryThemes) {
-        this.secondaryThemes = secondaryThemes;
-        return this;
     }
 
     public static class OtherApplicationSummaryRepresentation {

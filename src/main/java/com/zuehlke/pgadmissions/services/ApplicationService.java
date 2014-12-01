@@ -2,10 +2,12 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
 
+import java.beans.IntrospectionException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -36,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
+import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
@@ -51,7 +54,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
@@ -63,6 +65,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
@@ -126,6 +129,15 @@ public class ApplicationService {
 
     @Autowired
     private StateService stateService;
+
+    @Autowired
+    private ResourceService resourceService;
+
+    @Autowired
+    private ScopeService scopeService;
+
+    @Autowired
+    private SystemService systemService;
 
     @Autowired
     private ApplicationValidator applicationValidator;
@@ -362,6 +374,13 @@ public class ApplicationService {
         }
     }
 
+    public void filterReportListData(ApplicationReportListRowDTO dto, User currentUser) {
+        if (currentUser.getEmail().equals(dto.getEmail())) {
+            dto.setRatingCount(null);
+            dto.setRatingAverage(null);
+        }
+    }
+
     public List<Integer> getApplicationsForExport() {
         return applicationDAO.getApplicationsForExport();
     }
@@ -372,13 +391,16 @@ public class ApplicationService {
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(application, userService.getCurrentUser());
         String dateFormat = loader.load(PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT);
 
+        ApplicationProgramDetail programDetail = application.getProgramDetail();
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
-        boolean personaDetailNull = personalDetail == null;
+        boolean personalDetailNull = personalDetail == null;
 
         ApplicationSummaryRepresentation summary = new ApplicationSummaryRepresentation().withCreatedDate(application.getCreatedTimestampDisplay(dateFormat))
                 .withSubmittedDate(application.getSubmittedTimestampDisplay(dateFormat)).withClosingDate(application.getClosingDateDisplay(dateFormat))
                 .withPrimaryThemes(application.getPrimaryThemeDisplay()).withSecondaryThemes(application.getSecondaryThemeDisplay())
-                .withPhone(personalDetail == null ? null : personalDetail.getPhone()).withSkype(personaDetailNull ? null : personalDetail.getSkype());
+                .withPhone(personalDetail == null ? null : personalDetail.getPhone()).withSkype(personalDetailNull ? null : personalDetail.getSkype())
+                .withStudyOption(loader.load(programDetail.getStudyOptionDisplay().getDisplayProperty()))
+                .withReferralSource(programDetail == null ? null : programDetail.getReferralSourceDisplay()).withReferrer(application.getReferrer());
 
         ApplicationQualification latestQualification = applicationDAO.getLatestApplicationQualification(application);
         if (latestQualification != null) {
@@ -423,50 +445,117 @@ public class ApplicationService {
         return summary;
     }
 
-    public DataTable getApplicationReport(ResourceListFilterDTO filterDTO) throws TypeMismatchException {
+    public DataTable getApplicationReport(ResourceListFilterDTO filter) throws TypeMismatchException, IntrospectionException {
         DataTable dataTable = new DataTable();
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem(), userService.getCurrentUser());
 
         ArrayList<ColumnDescription> cd = Lists.newArrayList();
-        cd.add(new ColumnDescription("id", ValueType.TEXT, "id"));
-        cd.add(new ColumnDescription("name", ValueType.TEXT, "First Name(s)"));
-        cd.add(new ColumnDescription("email", ValueType.TEXT, "E-mail"));
-        cd.add(new ColumnDescription("nationality1", ValueType.TEXT, "Nationality 1"));
-        cd.add(new ColumnDescription("dateOfBirth", ValueType.DATE, "Date Of Birth"));
-        cd.add(new ColumnDescription("gender", ValueType.TEXT, "Gender"));
-        cd.add(new ColumnDescription("institutionCode", ValueType.TEXT, "Institution Code"));
-        cd.add(new ColumnDescription("institutionName", ValueType.TEXT, "Institution Name"));
-        cd.add(new ColumnDescription("programCode", ValueType.TEXT, "Program Code"));
-        cd.add(new ColumnDescription("programName", ValueType.TEXT, "Program Name"));
-        cd.add(new ColumnDescription("projectCode", ValueType.TEXT, "Project Code"));
-        cd.add(new ColumnDescription("projectName", ValueType.TEXT, "Project Name"));
-        cd.add(new ColumnDescription("studyOption", ValueType.TEXT, "Study Option"));
-        cd.add(new ColumnDescription("referralSource", ValueType.TEXT, "Referral Source"));
-        cd.add(new ColumnDescription("referrer", ValueType.TEXT, "Referrer"));
-        cd.add(new ColumnDescription("createdDate", ValueType.DATE, "Created Date"));
-        cd.add(new ColumnDescription("closingDate", ValueType.DATE, "Closing Date"));
-        cd.add(new ColumnDescription("submittedDate", ValueType.DATE, "Submitted Date"));
-        cd.add(new ColumnDescription("updatedDate", ValueType.DATE, "Updated Date"));
-        cd.add(new ColumnDescription("ratingCount", ValueType.TEXT, "Rating Count"));
-        cd.add(new ColumnDescription("ratingAverage", ValueType.TEXT, "Rating Average"));
-        cd.add(new ColumnDescription("state", ValueType.TEXT, "State"));
-        cd.add(new ColumnDescription("providedReferences", ValueType.NUMBER, "Provided References"));
-        cd.add(new ColumnDescription("declinedReferences", ValueType.NUMBER, "Declined References"));
-
-        String[] stateColumns = new String[] { "instanceCount", "instanceCountLive", "instanceOccurenceAverage", "instanceDurationAverage" };
-        for (PrismStateGroup stateGroupId : stateService.getStateGroups(PrismScope.APPLICATION)) {
-            for (String stateColumn : stateColumns) {
-                cd.add(new ColumnDescription(stateGroupId.getReference() + stateColumn, ValueType.TEXT, stateGroupId.getReference() + stateColumn));
-            }
-        }
-        
-        cd.add(new ColumnDescription("confirmedStartDate", ValueType.NUMBER, "Confirmed Start Date"));
-        cd.add(new ColumnDescription("confirmedOfferType", ValueType.NUMBER, "Confirmed Offer Type"));
+        cd.add(new ColumnDescription("id", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.SYSTEM_ID)));
+        cd.add(new ColumnDescription("name", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.SYSTEM_NAME)));
+        cd.add(new ColumnDescription("email", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.SYSTEM_EMAIL)));
+        cd.add(new ColumnDescription("nationality", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_NATIONALITY)));
+        cd.add(new ColumnDescription("residence", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_COUNTRY_OF_DOMICILE)));
+        cd.add(new ColumnDescription("countryOfBirth", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_COUNTRY_OF_BIRTH)));
+        cd.add(new ColumnDescription("dateOfBirth", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_DATE_OF_BIRTH)));
+        cd.add(new ColumnDescription("gender", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_GENDER)));
+        cd.add(new ColumnDescription("institution", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.SYSTEM_INSTITUTION)));
+        cd.add(new ColumnDescription("program", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.SYSTEM_PROGRAM)));
+        cd.add(new ColumnDescription("project", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.SYSTEM_PROJECT)));
+        cd.add(new ColumnDescription("studyOption", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.PROGRAM_STUDY_OPTION)));
+        cd.add(new ColumnDescription("referralSource", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.APPLICATION_REFERRAL_SOURCE)));
+        cd.add(new ColumnDescription("referrer", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.APPLICATION_REFERRER)));
+        cd.add(new ColumnDescription("createdDate", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.SYSTEM_CREATED_DATE)));
+        cd.add(new ColumnDescription("closingDate", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.SYSTEM_CLOSING_DATE)));
+        cd.add(new ColumnDescription("submittedDate", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.SYSTEM_SUBMITTED_DATE)));
+        cd.add(new ColumnDescription("updatedDate", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.SYSTEM_UPDATED_DATE)));
+        cd.add(new ColumnDescription("academicYear", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.SYSTEM_ACADEMIC_YEAR)));
+        cd.add(new ColumnDescription("ratingCount", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.SYSTEM_TOTAL_RATING)));
+        cd.add(new ColumnDescription("ratingAverage", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.SYSTEM_AVERAGE_RATING)));
+        cd.add(new ColumnDescription("state", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.SYSTEM_STATE)));
+        cd.add(new ColumnDescription("providedReferences", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.APPLICATION_PROVIDED_REFERENCES)));
+        cd.add(new ColumnDescription("declinedReferences", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.APPLICATION_DECLINED_REFERENCES)));
+        cd.add(new ColumnDescription("applicationVerificationInstanceCount", ValueType.TEXT, loader
+                .load(PrismDisplayPropertyDefinition.APPLICATION_VERIFICATION_INSTANCE_COUNT)));
+        cd.add(new ColumnDescription("applicationVerificationInstanceDurationAverage", ValueType.TEXT, loader
+                .load(PrismDisplayPropertyDefinition.APPLICATION_VERIFICATION_INSTANCE_DURATION_AVERAGE)));
+        cd.add(new ColumnDescription("applicationReferenceInstanceCount", ValueType.TEXT, loader
+                .load(PrismDisplayPropertyDefinition.APPLICATION_REFERENCE_INSTANCE_COUNT)));
+        cd.add(new ColumnDescription("applicationReferenceInstanceDurationAverage", ValueType.TEXT, loader
+                .load(PrismDisplayPropertyDefinition.APPLICATION_REFERENCE_INSTANCE_DURATION_AVERAGE)));
+        cd.add(new ColumnDescription("applicationReviewInstanceCount", ValueType.TEXT, loader
+                .load(PrismDisplayPropertyDefinition.APPLICATION_REVIEW_INSTANCE_COUNT)));
+        cd.add(new ColumnDescription("applicationReviewInstanceDurationAverage", ValueType.TEXT, loader
+                .load(PrismDisplayPropertyDefinition.APPLICATION_REVIEW_INSTANCE_DURATION_AVERAGE)));
+        cd.add(new ColumnDescription("applicationInterviewInstanceCount", ValueType.TEXT, loader
+                .load(PrismDisplayPropertyDefinition.APPLICATION_INTERVIEW_INSTANCE_COUNT)));
+        cd.add(new ColumnDescription("applicationInterviewInstanceDurationAverage", ValueType.TEXT, loader
+                .load(PrismDisplayPropertyDefinition.APPLICATION_INTERVIEW_INSTANCE_DURATION_AVERAGE)));
+        cd.add(new ColumnDescription("applicationApprovalInstanceCount", ValueType.TEXT, loader
+                .load(PrismDisplayPropertyDefinition.APPLICATION_APPROVAL_INSTANCE_COUNT)));
+        cd.add(new ColumnDescription("applicationApprovalInstanceDurationAverage", ValueType.TEXT, loader
+                .load(PrismDisplayPropertyDefinition.APPLICATION_APPROVAL_INSTANCE_DURATION_AVERAGE)));
+        cd.add(new ColumnDescription("confirmedStartDate", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.APPLICATION_CONFIRMED_START_DATE)));
+        cd.add(new ColumnDescription("confirmedOfferType", ValueType.TEXT, loader.load(PrismDisplayPropertyDefinition.APPLICATION_CONFIRMED_OFFER_TYPE)));
         dataTable.addColumns(cd);
 
+        PrismScope scopeId = PrismScope.APPLICATION;
+        List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(PrismScope.APPLICATION);
+        Set<Integer> assignedApplications = resourceService.getAssignedResources(userService.getCurrentUser(), scopeId, parentScopeIds, filter);
+
+        User currentUser = userService.getCurrentUser();
+        String dateFormat = loader.load(PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT);
+
         TableRow row = new TableRow();
-        // row.addCell("app1");
+        for (ApplicationReportListRowDTO rowDTO : getApplicationReport(assignedApplications)) {
+            filterReportListData(rowDTO, currentUser);
+
+            row.addCell(rowDTO.getId());
+            row.addCell(rowDTO.getName());
+            row.addCell(rowDTO.getEmail());
+            row.addCell(rowDTO.getNationality());
+            row.addCell(rowDTO.getResidence());
+            row.addCell(rowDTO.getCountryOfBirth());
+            row.addCell(rowDTO.getDateOfBirthDisplay(dateFormat));
+            row.addCell(rowDTO.getGender());
+            row.addCell(rowDTO.getInstitution());
+            row.addCell(rowDTO.getProgram());
+            row.addCell(rowDTO.getProject());
+
+            PrismStudyOption studyOption = rowDTO.getStudyOptionDisplay();
+            row.addCell(studyOption == null ? null : loader.load(studyOption.getDisplayProperty()));
+
+            row.addCell(rowDTO.getReferralSource());
+            row.addCell(rowDTO.getReferrer());
+            row.addCell(rowDTO.getCreatedDateDisplay(dateFormat));
+            row.addCell(rowDTO.getClosingDateDisplay(dateFormat));
+            row.addCell(rowDTO.getSubmittedDateDisplay(dateFormat));
+            row.addCell(rowDTO.getUpdatedDateDisplay(dateFormat));
+            row.addCell(rowDTO.getAcademicYear());
+            row.addCell(rowDTO.getRatingCountDisplay());
+            row.addCell(rowDTO.getRatingAverageDisplay());
+            row.addCell(loader.load(rowDTO.getState().getDisplayProperty()));
+            row.addCell(rowDTO.getProvidedReferencesDisplay());
+            row.addCell(rowDTO.getDeclinedReferencesDisplay());
+            row.addCell(rowDTO.getVerificationInstanceCountDisplay());
+            row.addCell(rowDTO.getVerificationInstanceDurationAverageDisplay());
+            row.addCell(rowDTO.getReferenceInstanceCountDisplay());
+            row.addCell(rowDTO.getReferenceInstanceDurationAverageDisplay());
+            row.addCell(rowDTO.getReviewInstanceCountDisplay());
+            row.addCell(rowDTO.getReviewInstanceDurationAverageDisplay());
+            row.addCell(rowDTO.getInterviewInstanceCountDisplay());
+            row.addCell(rowDTO.getInterviewInstanceDurationAverageDisplay());
+            row.addCell(rowDTO.getApprovalInstanceCountDisplay());
+            row.addCell(rowDTO.getApprovalInstanceDurationAverageDisplay());
+            row.addCell(rowDTO.getConfirmedStartDateDisplay(dateFormat));
+            row.addCell(loader.load(rowDTO.getConfirmedOfferType().getDisplayProperty()));
+        }
         dataTable.addRow(row);
+
         return dataTable;
+    }
+
+    private List<ApplicationReportListRowDTO> getApplicationReport(Set<Integer> assignedApplications) {
+        return assignedApplications.isEmpty() ? new ArrayList<ApplicationReportListRowDTO>() : applicationDAO.getApplicationReport(assignedApplications);
     }
 
     private void purgeApplication(Application application, Comment comment) {

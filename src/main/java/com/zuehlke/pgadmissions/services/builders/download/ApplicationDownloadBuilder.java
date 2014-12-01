@@ -52,6 +52,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
@@ -569,8 +570,9 @@ public class ApplicationDownloadBuilder {
         applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(PROJECT_HEADER), application.getProjectDisplay(), fontSize, table);
 
         ApplicationProgramDetail programDetail = application.getProgramDetail();
+        PrismStudyOption studyOption = programDetail == null ? null : programDetail.getStudyOptionDisplay();
         applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(PROGRAM_STUDY_OPTION),
-                programDetail == null ? null : programDetail.getStudyOptionDisplay(), fontSize, table);
+                studyOption == null ? null : propertyLoader.load(studyOption.getDisplayProperty()), fontSize, table);
     }
 
     private void addApplicationSummaryExtended(Application application, PdfPTable table, ApplicationDownloadBuilderFontSize fontSize) {

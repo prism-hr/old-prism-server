@@ -15,25 +15,30 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCa
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_QUALIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REPORT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_STATE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_STATE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_WORKFLOW;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_STATE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_STATE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_STATE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_STATE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_STATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_WORKFLOW;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_STATE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -47,6 +52,11 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public enum PrismDisplayPropertyDefinition {
 
+    SYSTEM_SYSTEM(SYSTEM_GLOBAL, "System", SYSTEM), //
+    SYSTEM_INSTITUTION(SYSTEM_GLOBAL, "Institution", SYSTEM), //
+    SYSTEM_PROGRAM(SYSTEM_GLOBAL, "Program", SYSTEM), //
+    SYSTEM_PROJECT(SYSTEM_GLOBAL, "Project", SYSTEM), //
+    SYSTEM_APPLICATION(SYSTEM_GLOBAL, "Application", SYSTEM), //
     SYSTEM_DATE_FORMAT(SYSTEM_GLOBAL, "dd MMM yyyy", SYSTEM), //
     SYSTEM_DATE_TIME_FORMAT(SYSTEM_GLOBAL, "dd MMM yyyy HH:mm", SYSTEM), //
     SYSTEM_TIME_FORMAT(SYSTEM_GLOBAL, "HH:mm", SYSTEM), //
@@ -54,7 +64,9 @@ public enum PrismDisplayPropertyDefinition {
     SYSTEM_NO(SYSTEM_GLOBAL, "No", SYSTEM), //
     SYSTEM_VALUE_PROVIDED(SYSTEM_GLOBAL, "Provided", SYSTEM), //
     SYSTEM_VALUE_NOT_PROVIDED(SYSTEM_GLOBAL, "Not Provided", SYSTEM), //
+    SYSTEM_ID(SYSTEM_GLOBAL, "Id", SYSTEM), //
     SYSTEM_TITLE(SYSTEM_GLOBAL, "Title", SYSTEM), //
+    SYSTEM_NAME(SYSTEM_GLOBAL, "Name", SYSTEM), //
     SYSTEM_FIRST_NAME(SYSTEM_GLOBAL, "First Name", SYSTEM), //
     SYSTEM_FIRST_NAME_2(SYSTEM_GLOBAL, "First Name 2", SYSTEM), //
     SYSTEM_FIRST_NAME_3(SYSTEM_GLOBAL, "First Name 3", SYSTEM), //
@@ -65,10 +77,16 @@ public enum PrismDisplayPropertyDefinition {
     SYSTEM_ADDRESS(SYSTEM_GLOBAL, "Address", SYSTEM), //
     SYSTEM_RATING(SYSTEM_GLOBAL, "Rating", SYSTEM), //
     SYSTEM_AVERAGE_RATING(SYSTEM_GLOBAL, "Average Rating", SYSTEM), //
+    SYSTEM_TOTAL_RATING(SYSTEM_GLOBAL, "Total Ratings", SYSTEM), //
     SYSTEM_APPENDIX(SYSTEM_GLOBAL, "Appendix", SYSTEM), //
     SYSTEM_SEE(SYSTEM_GLOBAL, "See", SYSTEM), //
     SYSTEM_PAGE(SYSTEM_GLOBAL, "Page", SYSTEM), //
+    SYSTEM_CREATED_DATE(SYSTEM_GLOBAL, "Created Date", SYSTEM), //
     SYSTEM_CLOSING_DATE(SYSTEM_GLOBAL, "Closing Date", SYSTEM), //
+    SYSTEM_SUBMITTED_DATE(SYSTEM_GLOBAL, "Submitted Date", SYSTEM), //
+    SYSTEM_UPDATED_DATE(SYSTEM_GLOBAL, "Updated Date", SYSTEM), //
+    SYSTEM_ACADEMIC_YEAR(SYSTEM_GLOBAL, "Academic Year", SYSTEM), //
+    SYSTEM_STATE(SYSTEM_GLOBAL, "State", SYSTEM), //
     SYSTEM_COMMENT_HEADER(SYSTEM_GLOBAL, "Comment", SYSTEM), //
     SYSTEM_EMAIL_LINK_MESSAGE(SYSTEM_GLOBAL, "If you are unable to follow the links in this message, copy and paste them directly into your browser", SYSTEM), //
     SYSTEM_TELEPHONE_PLACEHOLDER(SYSTEM_GLOBAL, "+44 (0) 0000 000 000", SYSTEM), //
@@ -191,11 +209,17 @@ public enum PrismDisplayPropertyDefinition {
     APPLICATION_PROOF_OF_AWARD(APPLICATION_GLOBAL, "Proof of Award", APPLICATION), //
     APPLICATION_START_DATE(APPLICATION_GLOBAL, "Start Date", APPLICATION), //
     APPLICATION_CONFIRMED_START_DATE(APPLICATION_GLOBAL, "Confirmed Start Date", APPLICATION), //
+    APPLICATION_CONFIRMED_OFFER_TYPE(APPLICATION_GLOBAL, "Confirmed Offer Type", APPLICATION), //
+    APPLICATION_OFFER_CONDITIONAL(APPLICATION_GLOBAL, "Conditional", APPLICATION), //
+    APPLICATION_OFFER_UNCONDITIONAL(APPLICATION_GLOBAL, "Unconditional", APPLICATION), //
     APPLICATION_PREFERRED_START_DATE(APPLICATION_GLOBAL, "Preferred Start Date", APPLICATION), //
     APPLICATION_END_DATE(APPLICATION_GLOBAL, "End Date", APPLICATION), //
-    APPLICATION_REFERRAL_SOURCE(APPLICATION_GLOBAL, "How did you find us?", APPLICATION), //
+    APPLICATION_REFERRAL_SOURCE(APPLICATION_GLOBAL, "Referral Source", APPLICATION), //
+    APPLICATION_REFERRER(APPLICATION_GLOBAL, "Referrer", APPLICATION), //
     APPLICATION_PRIMARY_THEME(APPLICATION_GLOBAL, "Primary Themes", APPLICATION), //
     APPLICATION_SECONDARY_THEME(APPLICATION_GLOBAL, "Secondary Themes", APPLICATION), //
+    APPLICATION_PROVIDED_REFERENCES(APPLICATION_GLOBAL, "Provided References", APPLICATION), //
+    APPLICATION_DECLINED_REFERENCES(APPLICATION_GLOBAL, "Declined References", APPLICATION), //
     APPLICATION_STUDY_LOCATION(APPLICATION_PROGRAM_DETAIL, "Preferred Study Location", APPLICATION), //
     APPLICATION_STUDY_DIVISION(APPLICATION_PROGRAM_DETAIL, "Preferred Study Department", APPLICATION), //
     APPLICATION_STUDY_AREA(APPLICATION_PROGRAM_DETAIL, "Preferred Study Area", APPLICATION), //
@@ -398,10 +422,6 @@ public enum PrismDisplayPropertyDefinition {
     APPLICATION_POSITION_DETAIL_TOOLTIP(APPLICATION_WORKFLOW, "Enable collection of advanced project information", APPLICATION), //
     APPLICATION_OFFER_DETAIL_LABEL(APPLICATION_WORKFLOW, "Offer Detail", APPLICATION), //
     APPLICATION_OFFER_DETAIL_TOOLTIP(APPLICATION_WORKFLOW, "Enable collection of advanced terms of offer information", APPLICATION), //
-    PROJECT_PRIMARY_SUPERVISOR_LABEL(PROJECT_WORKFLOW, "Primary Supervisors", APPLICATION), //
-    PROJECT_PRIMARY_SUPERVISOR_TOOLTIP(PROJECT_WORKFLOW, "Specify how many primary supervisors a project must have", APPLICATION), //
-    PROJECT_SECONDARY_SUPERVISOR_LABEL(PROJECT_WORKFLOW, "Secondary Supervisors", APPLICATION), //
-    PROJECT_SECONDARY_SUPERVISOR_TOOLTIP(PROJECT_WORKFLOW, "Specify how many secondary supervisors a project must have", APPLICATION), //
     APPLICATION_COMPLETE_NOTIFICATION_LABEL(APPLICATION_NOTIFICATION, "Application Complete Notification", APPLICATION), //
     APPLICATION_COMPLETE_NOTIFICATION_TOOLTIP(APPLICATION_NOTIFICATION, "Confirmation of submission of an application", APPLICATION), //
     APPLICATION_COMPLETE_REQUEST_LABEL(APPLICATION_NOTIFICATION, "Application Complete Request", APPLICATION), //
@@ -490,7 +510,42 @@ public enum PrismDisplayPropertyDefinition {
     SYSTEM_PROJECT_TASK_REQUEST_REMINDER_LABEL(SYSTEM_NOTIFICATION, "System Project Task Reminder", SYSTEM), //
     SYSTEM_PROJECT_TASK_REQUEST_REMINDER_TOOLTIP(SYSTEM_NOTIFICATION, "Follow up request to perform tasks on projects", SYSTEM), //
     SYSTEM_PROJECT_UPDATE_NOTIFICATION_LABEL(SYSTEM_NOTIFICATION, "System Project Update Notification", SYSTEM), //
-    SYSTEM_PROJECT_UPDATE_NOTIFICATION_TOOLTIP(SYSTEM_NOTIFICATION, "Notification of updates to a given user's projects", SYSTEM); //
+    SYSTEM_PROJECT_UPDATE_NOTIFICATION_TOOLTIP(SYSTEM_NOTIFICATION, "Notification of updates to a given user's projects", SYSTEM), //
+    APPLICATION_VERIFICATION_INSTANCE_COUNT(APPLICATION_REPORT, "Verification State Count", APPLICATION), //
+    APPLICATION_VERIFICATION_INSTANCE_DURATION_AVERAGE(APPLICATION_REPORT, "Verification Duration Average", APPLICATION), //
+    APPLICATION_REFERENCE_INSTANCE_COUNT(APPLICATION_REPORT, "Reference State Count", APPLICATION), //
+    APPLICATION_REFERENCE_INSTANCE_DURATION_AVERAGE(APPLICATION_REPORT, "Reference Duration Average", APPLICATION), //
+    APPLICATION_REVIEW_INSTANCE_COUNT(APPLICATION_REPORT, "Review State Count", APPLICATION), //
+    APPLICATION_REVIEW_INSTANCE_DURATION_AVERAGE(APPLICATION_REPORT, "Review State Duration Average", APPLICATION), //
+    APPLICATION_INTERVIEW_INSTANCE_COUNT(APPLICATION_REPORT, "Interview State Count", APPLICATION), //
+    APPLICATION_INTERVIEW_INSTANCE_DURATION_AVERAGE(APPLICATION_REPORT, "Interview State Duration Average", APPLICATION), //
+    APPLICATION_APPROVAL_INSTANCE_COUNT(APPLICATION_REPORT, "Approval State Count", APPLICATION), //
+    APPLICATION_APPROVAL_INSTANCE_DURATION_AVERAGE(APPLICATION_REPORT, "Approval State Duration Average", APPLICATION), //
+    APPLICATION_UNSUBMITTED_STATE_GROUP(APPLICATION_STATE_GROUP, "Unsubmitted", APPLICATION), //
+    APPLICATION_VALIDATION_STATE_GROUP(APPLICATION_STATE_GROUP, "Validation", APPLICATION), //
+    APPLICATION_VERIFICATION_STATE_GROUP(APPLICATION_STATE_GROUP, "Eligibity Confirmation", APPLICATION), //
+    APPLICATION_REFERENCE_STATE_GROUP(APPLICATION_STATE_GROUP, "Reference", APPLICATION), //
+    APPLICATION_REVIEW_STATE_GROUP(APPLICATION_STATE_GROUP, "Review", APPLICATION), //
+    APPLICATION_INTERVIEW_STATE_GROUP(APPLICATION_STATE_GROUP, "Interview", APPLICATION), //
+    APPLICATION_APPROVAL_STATE_GROUP(APPLICATION_STATE_GROUP, "Approval", APPLICATION), //
+    APPLICATION_APPROVED_STATE_GROUP(APPLICATION_STATE_GROUP, "Approved", APPLICATION), //
+    APPLICATION_REJECTED_STATE_GROUP(APPLICATION_STATE_GROUP, "Rejected", APPLICATION), //
+    APPLICATION_WITHDRAWN_STATE_GROUP(APPLICATION_STATE_GROUP, "Withdrawn", APPLICATION), //
+    PROJECT_APPROVAL_STATE_GROUP(PROJECT_STATE_GROUP, "Approval", PROJECT), //
+    PROJECT_APPROVED_STATE_GROUP(PROJECT_STATE_GROUP, "Approved", PROJECT), //
+    PROJECT_REJECTED_STATE_GROUP(PROJECT_STATE_GROUP, "Rejected", PROJECT), //
+    PROJECT_DISABLED_STATE_GROUP(PROJECT_STATE_GROUP, "Disabled", PROJECT), //
+    PROJECT_WITHDRAWN_STATE_GROUP(PROJECT_STATE_GROUP, "Withdrawn", PROJECT), //
+    PROGRAM_APPROVAL_STATE_GROUP(PROGRAM_STATE_GROUP, "Approval", PROGRAM), //
+    PROGRAM_APPROVED_STATE_GROUP(PROGRAM_STATE_GROUP, "Approved", PROGRAM), //
+    PROGRAM_REJECTED_STATE_GROUP(PROGRAM_STATE_GROUP, "Rejected", PROGRAM), //
+    PROGRAM_DISABLED_STATE_GROUP(PROGRAM_STATE_GROUP, "Disabled", PROGRAM), //
+    PROGRAM_WITHDRAWN_STATE_GROUP(PROGRAM_STATE_GROUP, "Withdrawn", PROGRAM), //
+    INSTITUTION_APPROVAL_STATE_GROUP(INSTITUTION_STATE_GROUP, "Approval", INSTITUTION), //
+    INSTITUTION_APPROVED_STATE_GROUP(INSTITUTION_STATE_GROUP, "Approved", INSTITUTION), //
+    INSTITUTION_REJECTED_STATE_GROUP(INSTITUTION_STATE_GROUP, "Rejected", INSTITUTION), //
+    INSTITUTION_WITHDRAWN_STATE_GROUP(INSTITUTION_STATE_GROUP, "Withdrawn", INSTITUTION), //
+    SYSTEM_RUNNING_STATE_GROUP(SYSTEM_STATE_GROUP, "Running", SYSTEM); //
 
     private PrismDisplayPropertyCategory displayCategory;
 

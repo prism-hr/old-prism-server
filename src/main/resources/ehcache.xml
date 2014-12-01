@@ -5,14 +5,7 @@
 
   <defaultCache eternal="false" timeToIdleSeconds="1200" timeToLiveSeconds="1200" />
 
-  <cache name="com.zuehlke.pgadmissions.domain.Application" maxElementsInMemory="5000" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
-
-  <cache name="com.zuehlke.pgadmissions.domain.Program" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
-
-  <cache name="com.zuehlke.pgadmissions.domain.Project" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
-
-  <cache name="com.zuehlke.pgadmissions.domain.Role" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
-
-  <cache name="com.zuehlke.pgadmissions.domain.User" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
+  <cache name="staticData" />
+  <cache name="institutionStaticData" />
 
 </ehcache>

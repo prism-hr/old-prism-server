@@ -83,9 +83,9 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailDT
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPrizeDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationStudyDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationStudyDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ImportedInstitutionDTO;
 

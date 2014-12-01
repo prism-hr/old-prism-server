@@ -5,16 +5,17 @@ import java.util.List;
 import java.util.TimeZone;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.zuehlke.pgadmissions.rest.dto.*;
-import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.rest.dto.FileDTO;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
+import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
 
 public class CommentDTO {
 

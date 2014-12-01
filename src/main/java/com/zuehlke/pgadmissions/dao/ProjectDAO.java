@@ -66,7 +66,7 @@ public class ProjectDAO {
         return (Long) sessionFactory.getCurrentSession().createCriteria(Project.class) //
                 .setProjection(Projections.countDistinct("id")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias("resourceStates", "resourceStates", JoinType.INNER_JOIN) //
+                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resourceReference, resource)) //

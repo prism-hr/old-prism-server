@@ -41,7 +41,7 @@ public class ApplicationReportListRowDTO {
 
     private DateTime createdDate;
 
-    private DateTime closingDate;
+    private LocalDate closingDate;
 
     private DateTime submittedDate;
 
@@ -53,9 +53,9 @@ public class ApplicationReportListRowDTO {
 
     private PrismStateGroup state;
 
-    private Integer providedReferences;
+    private Long providedReferences;
 
-    private Integer declinedReferences;
+    private Long declinedReferences;
 
     private Integer verificationInstanceCount;
 
@@ -201,11 +201,11 @@ public class ApplicationReportListRowDTO {
         this.createdDate = createdDate;
     }
 
-    public final DateTime getClosingDate() {
+    public final LocalDate getClosingDate() {
         return closingDate;
     }
 
-    public final void setClosingDate(DateTime closingDate) {
+    public final void setClosingDate(LocalDate closingDate) {
         this.closingDate = closingDate;
     }
 
@@ -249,28 +249,28 @@ public class ApplicationReportListRowDTO {
         this.state = state;
     }
 
-    public final Integer getProvidedReferences() {
+    public final Long getProvidedReferences() {
         return providedReferences;
     }
 
-    public final void setProvidedReferences(Integer providedReferences) {
+    public final void setProvidedReferences(Long providedReferences) {
         this.providedReferences = providedReferences;
     }
 
-    public final Integer getDeclinedReferences() {
+    public final Long getDeclinedReferences() {
         return declinedReferences;
     }
 
-    public final void setDeclinedReferences(Integer declinedReferences) {
+    public final void setDeclinedReferences(Long declinedReferences) {
         this.declinedReferences = declinedReferences;
     }
 
-    public final Integer getApplicationVerificationInstanceCount() {
+    public final Integer getVerificationInstanceCount() {
         return verificationInstanceCount;
     }
 
-    public final void setApplicationVerificationInstanceCount(Integer applicationVerificationInstanceCount) {
-        this.verificationInstanceCount = applicationVerificationInstanceCount;
+    public final void setVerificationInstanceCount(Integer verificationInstanceCount) {
+        this.verificationInstanceCount = verificationInstanceCount;
     }
 
     public final BigDecimal getVerificationInstanceDurationAverage() {
@@ -361,94 +361,145 @@ public class ApplicationReportListRowDTO {
         this.confirmedOfferType = confirmedOfferType;
     }
 
+    public String getIdDisplay() {
+        return id == null ? "" : id.toString();
+    }
+
+    public String getNameDisplay() {
+        return name == null ? "" : name;
+    }
+
+    public String getEmailDisplay() {
+        return email == null ? "" : email;
+    }
+
+    public String getNationalityDisplay() {
+        return nationality == null ? "" : nationality;
+    }
+
+    public String getResidenceDisplay() {
+        return residence == null ? "" : residence;
+    }
+
+    public String getCountryOfBirthDisplay() {
+        return countryOfBirth == null ? "" : countryOfBirth;
+    }
+
     public String getDateOfBirthDisplay(String dateFormat) {
-        return dateOfBirth == null ? null : dateOfBirth.toString(dateFormat);
+        return dateOfBirth == null ? "" : dateOfBirth.toString(dateFormat);
+    }
+
+    public String getGenderDisplay() {
+        return gender == null ? "" : gender;
+    }
+
+    public String getInstitutionDisplay() {
+        return institution == null ? "" : institution;
+    }
+
+    public String getProgramDisplay() {
+        return program == null ? "" : program;
+    }
+
+    public String getProjectDisplay() {
+        return project == null ? "" : project;
+    }
+
+    public String getReferralSourceDisplay() {
+        return referralSource == null ? "" : referralSource;
+    }
+
+    public String getReferrerDisplay() {
+        return referrer == null ? "" : referrer;
     }
 
     public String getCreatedDateDisplay(String dateFormat) {
-        return createdDate == null ? null : createdDate.toString(dateFormat);
+        return createdDate == null ? "" : createdDate.toString(dateFormat);
     }
 
     public String getClosingDateDisplay(String dateFormat) {
-        return closingDate == null ? null : closingDate.toString(dateFormat);
+        return closingDate == null ? "" : closingDate.toString(dateFormat);
     }
 
     public String getSubmittedDateDisplay(String dateFormat) {
-        return submittedDate == null ? null : submittedDate.toString(dateFormat);
+        return submittedDate == null ? "" : submittedDate.toString(dateFormat);
     }
 
     public String getUpdatedDateDisplay(String dateFormat) {
-        return updatedDate == null ? null : updatedDate.toString(dateFormat);
+        return updatedDate == null ? "" : updatedDate.toString(dateFormat);
     }
 
-    public String getAcademicYear() {
+    public String getAcademicYearDisplay() {
         DateTime baseline = submittedDate == null ? createdDate : submittedDate;
+        if (baseline == null) {
+            return "";
+        }
         Integer baselineMonth = baseline.getMonthOfYear();
         return baselineMonth < 10 ? Integer.toString(baseline.getYear()) : Integer.toString(baseline.plusYears(1).getYear());
     }
 
     public String getRatingCountDisplay() {
-        return ratingCount == null ? null : ratingCount.toString();
+        return ratingCount == null ? "" : ratingCount.toString();
     }
 
     public String getRatingAverageDisplay() {
-        return ratingAverage == null ? null : ratingAverage.toPlainString();
+        return ratingAverage == null ? "" : ratingAverage.toPlainString();
     }
 
     public String getProvidedReferencesDisplay() {
-        return providedReferences == null ? null : providedReferences.toString();
+        return providedReferences == null ? "" : providedReferences.toString();
     }
 
     public String getDeclinedReferencesDisplay() {
-        return declinedReferences == null ? null : declinedReferences.toString();
-    }
-
-    public String getConfirmedStartDateDisplay(String dateFormat) {
-        return confirmedStartDate == null ? null : confirmedStartDate.toString(dateFormat);
+        return declinedReferences == null ? "" : declinedReferences.toString();
     }
 
     public String getVerificationInstanceCountDisplay() {
-        return verificationInstanceCount == null ? null : verificationInstanceCount.toString();
+        return verificationInstanceCount == null ? "" : verificationInstanceCount.toString();
     }
 
     public String getVerificationInstanceDurationAverageDisplay() {
-        return verificationInstanceDurationAverage == null ? null : verificationInstanceDurationAverage.toPlainString();
+        return verificationInstanceDurationAverage == null ? "" : verificationInstanceDurationAverage.toPlainString();
     }
 
     public String getReferenceInstanceCountDisplay() {
-        return referenceInstanceCount == null ? null : referenceInstanceCount.toString();
+        return referenceInstanceCount == null ? "" : referenceInstanceCount.toString();
     }
 
     public String getReferenceInstanceDurationAverageDisplay() {
-        return referenceInstanceDurationAverage == null ? null : referenceInstanceDurationAverage.toPlainString();
+        return referenceInstanceDurationAverage == null ? "" : referenceInstanceDurationAverage.toPlainString();
     }
 
     public String getReviewInstanceCountDisplay() {
-        return reviewInstanceCount == null ? null : reviewInstanceCount.toString();
+        return reviewInstanceCount == null ? "" : reviewInstanceCount.toString();
     }
 
     public String getReviewInstanceDurationAverageDisplay() {
-        return reviewInstanceDurationAverage == null ? null : reviewInstanceDurationAverage.toPlainString();
+        return reviewInstanceDurationAverage == null ? "" : reviewInstanceDurationAverage.toPlainString();
     }
 
     public String getInterviewInstanceCountDisplay() {
-        return interviewInstanceCount == null ? null : interviewInstanceCount.toString();
+        return interviewInstanceCount == null ? "" : interviewInstanceCount.toString();
     }
 
     public String getInterviewInstanceDurationAverageDisplay() {
-        return interviewInstanceDurationAverage == null ? null : interviewInstanceDurationAverage.toPlainString();
+        return interviewInstanceDurationAverage == null ? "" : interviewInstanceDurationAverage.toPlainString();
     }
 
     public String getApprovalInstanceCountDisplay() {
-        return approvalInstanceCount == null ? null : approvalInstanceCount.toString();
+        return approvalInstanceCount == null ? "" : approvalInstanceCount.toString();
     }
 
     public String getApprovalInstanceDurationAverageDisplay() {
-        return approvalInstanceDurationAverage == null ? null : approvalInstanceDurationAverage.toPlainString();
+        return approvalInstanceDurationAverage == null ? "" : approvalInstanceDurationAverage.toPlainString();
     }
 
     public PrismStudyOption getStudyOptionDisplay() {
         return studyOption == null ? null : PrismStudyOption.valueOf(studyOption);
+    }
+
+    public String getConfirmedStartDateDisplay(String dateFormat) {
+        return confirmedStartDate == null ? "" : confirmedStartDate.toString(dateFormat);
     }
 
 }

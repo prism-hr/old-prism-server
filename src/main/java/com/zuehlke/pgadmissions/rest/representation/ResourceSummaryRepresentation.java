@@ -14,6 +14,20 @@ public class ResourceSummaryRepresentation {
     private Integer programCount;
 
     private Integer projectCount;
+    
+    private Integer applicationCreatedCount;
+    
+    private Integer applicationSubmittedCount;
+    
+    private Integer applicationApprovedCount;
+    
+    private Integer applicationRejectedCount;
+    
+    private Integer applicationWithdrawnCount;
+    
+    private Integer applicationRatingCount;
+    
+    private BigDecimal applicationRatingOccurenceAverage;
 
     private List<ApplicationProcessingSummaryRepresentation> processingSummaries;
 
@@ -39,6 +53,62 @@ public class ResourceSummaryRepresentation {
 
     public final void setProjectCount(Integer projectCount) {
         this.projectCount = projectCount;
+    }
+
+    public final Integer getApplicationCreatedCount() {
+        return applicationCreatedCount;
+    }
+
+    public final void setApplicationCreatedCount(Integer applicationCreatedCount) {
+        this.applicationCreatedCount = applicationCreatedCount;
+    }
+
+    public final Integer getApplicationSubmittedCount() {
+        return applicationSubmittedCount;
+    }
+
+    public final void setApplicationSubmittedCount(Integer applicationSubmittedCount) {
+        this.applicationSubmittedCount = applicationSubmittedCount;
+    }
+
+    public final Integer getApplicationApprovedCount() {
+        return applicationApprovedCount;
+    }
+
+    public final void setApplicationApprovedCount(Integer applicationApprovedCount) {
+        this.applicationApprovedCount = applicationApprovedCount;
+    }
+
+    public final Integer getApplicationRejectedCount() {
+        return applicationRejectedCount;
+    }
+
+    public final void setApplicationRejectedCount(Integer applicationRejectedCount) {
+        this.applicationRejectedCount = applicationRejectedCount;
+    }
+
+    public final Integer getApplicationWithdrawnCount() {
+        return applicationWithdrawnCount;
+    }
+
+    public final void setApplicationWithdrawnCount(Integer applicationWithdrawnCount) {
+        this.applicationWithdrawnCount = applicationWithdrawnCount;
+    }
+
+    public final Integer getApplicationRatingCount() {
+        return applicationRatingCount;
+    }
+
+    public final void setApplicationRatingCount(Integer applicationRatingCount) {
+        this.applicationRatingCount = applicationRatingCount;
+    }
+
+    public final BigDecimal getApplicationRatingOccurenceAverage() {
+        return applicationRatingOccurenceAverage;
+    }
+
+    public final void setApplicationRatingOccurenceAverage(BigDecimal applicationRatingOccurenceAverage) {
+        this.applicationRatingOccurenceAverage = applicationRatingOccurenceAverage;
     }
 
     public final List<ApplicationProcessingSummaryRepresentation> getProcessingSummaries() {
@@ -142,5 +212,40 @@ public class ResourceSummaryRepresentation {
         this.projectCount = projectCount;
         return this;
     }
+    
+    public ResourceSummaryRepresentation withApplicationCreatedCount(Integer applicationCreatedCount) {
+        this.applicationCreatedCount = applicationCreatedCount;
+        return this;
+    }
+    
+    public ResourceSummaryRepresentation withApplicationSubmittedCount(Integer applicationSubmittedCount) {
+        this.applicationSubmittedCount = applicationSubmittedCount;
+        return this;
+    }
+    
+    public ResourceSummaryRepresentation withApplicationApprovedCount(Integer applicationApprovedCount) {
+        this.applicationApprovedCount = applicationApprovedCount;
+        return this;
+    }
+    
+    public ResourceSummaryRepresentation withApplicationRejectedCount(Integer applicationRejectedCount) {
+        this.applicationRejectedCount = applicationRejectedCount;
+        return this;
+    }
+    
+    public ResourceSummaryRepresentation withApplicationWithdrawnCount(Integer applicationWithdrawnCount) {
+        this.applicationWithdrawnCount = applicationWithdrawnCount;
+        return this;
+    }
+    
+    public ResourceSummaryRepresentation withApplicationRatingCount(Integer applicationRatingCount) {
+        this.applicationRatingCount = applicationRatingCount;
+        return this;
+    }
 
+    public ResourceSummaryRepresentation withApplicationRatingOccurenceAverage(BigDecimal applicationRatingOccurenceAverage) {
+        this.applicationRatingOccurenceAverage = applicationRatingOccurenceAverage;
+        return this;
+    }
+    
 }

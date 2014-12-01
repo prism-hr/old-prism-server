@@ -376,7 +376,12 @@ public class ResourceService {
 
     public <T extends Resource> ResourceSummaryRepresentation getResourceSummary(Class<T> resourceClass, Integer resourceId) {
         ResourceParent resource = (ResourceParent) getById(resourceClass, resourceId);
-        ResourceSummaryRepresentation summary = new ResourceSummaryRepresentation().withCreatedDate(resource.getCreatedTimestamp().toLocalDate());
+
+        ResourceSummaryRepresentation summary = new ResourceSummaryRepresentation().withCreatedDate(resource.getCreatedTimestamp().toLocalDate())
+                .withApplicationCreatedCount(resource.getApplicationCreatedCount()).withApplicationSubmittedCount(resource.getApplicationSubmittedCount())
+                .withApplicationApprovedCount(resource.getApplicationApprovedCount()).withApplicationRejectedCount(resource.getApplicationRejectedCount())
+                .withApplicationWithdrawnCount(resource.getApplicationWithdrawnCount()).withApplicationRatingCount(resource.getApplicationRatingCount())
+                .withApplicationRatingOccurenceAverage(resource.getApplicationRatingCountAverageNonZero());
 
         if (resourceClass == Institution.class) {
             summary.setProgramCount(programService.getActiveProgramCount((Institution) resource));

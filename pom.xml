@@ -4,7 +4,7 @@
 
     <name>UCL Postgraduate Admissions</name>
     <groupId>com.zuehlke</groupId>
-    <artifactId>pgadmissions</artifactId>
+    <artifactId>prism</artifactId>
     <packaging>war</packaging>
     <version>3.1.0-SNAPSHOT</version>
 

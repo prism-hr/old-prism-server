@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
@@ -58,7 +58,7 @@ public class InstitutionService {
 
     @Autowired
     private ActionService actionService;
-    
+
     @Autowired
     private CommentService commentService;
 
@@ -234,7 +234,7 @@ public class InstitutionService {
                 .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
         commentService.appendCommentProperties(comment, commentDTO);
 
-        InstitutionDTO institutionDTO = (InstitutionDTO) commentDTO.fetchResouceDTO();
+        InstitutionDTO institutionDTO = (InstitutionDTO) commentDTO.fetchResourceDTO();
         if (institutionDTO != null) {
             update(institutionId, institutionDTO);
         }

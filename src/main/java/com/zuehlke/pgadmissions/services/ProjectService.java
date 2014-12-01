@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.rest.dto.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
@@ -87,7 +87,7 @@ public class ProjectService {
         String commentContent = viewEditAction ? applicationContext.getBean(PropertyLoader.class).localize(project, user)
                 .load(PrismDisplayPropertyDefinition.PROJECT_COMMENT_UPDATED) : commentDTO.getContent();
 
-        ProjectDTO projectDTO = (ProjectDTO) commentDTO.fetchResouceDTO();
+        ProjectDTO projectDTO = (ProjectDTO) commentDTO.fetchResourceDTO();
         LocalDate dueDate = projectDTO.getEndDate();
 
         State transitionState = stateService.getById(commentDTO.getTransitionState());

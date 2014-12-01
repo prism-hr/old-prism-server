@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest.dto;
+package com.zuehlke.pgadmissions.rest.dto.comment;
 
 import javax.validation.constraints.NotNull;
 

@@ -69,11 +69,7 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
 
     private BigDecimal applicationRatingAverage;
 
-    private String studyLocation;
-
-    private String studyDivision;
-
-    private String studyArea;
+    private ApplicationStudyDetailRepresentation studyDetail;
 
     public ProgramRepresentation getProgram() {
         return program;
@@ -291,27 +287,11 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
         this.applicationRatingAverage = applicationRatingAverage;
     }
 
-    public String getStudyLocation() {
-        return studyLocation;
+    public ApplicationStudyDetailRepresentation getStudyDetail() {
+        return studyDetail;
     }
 
-    public void setStudyLocation(String studyLocation) {
-        this.studyLocation = studyLocation;
-    }
-
-    public String getStudyDivision() {
-        return studyDivision;
-    }
-
-    public void setStudyDivision(String studyDivision) {
-        this.studyDivision = studyDivision;
-    }
-
-    public String getStudyArea() {
-        return studyArea;
-    }
-
-    public void setStudyArea(String studyArea) {
-        this.studyArea = studyArea;
+    public void setStudyDetail(ApplicationStudyDetailRepresentation studyDetail) {
+        this.studyDetail = studyDetail;
     }
 }

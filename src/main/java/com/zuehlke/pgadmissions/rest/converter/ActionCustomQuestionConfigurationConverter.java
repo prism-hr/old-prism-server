@@ -23,7 +23,7 @@ public class ActionCustomQuestionConfigurationConverter extends DozerConverter<A
         return new ActionCustomQuestionConfiguration().withCustomQuestionType(PrismCustomQuestionType.getByComponentName(name)).withName(name)
                 .withEditable(source.getEditable()).withIndex(source.getIndex()).withLabel(source.getLabel()).withDescription(source.getDescription())
                 .withOptions(options == null ? null : Joiner.on("|").join(options)).withRequired(source.getRequired())
-                .withValidation(validation).withWeighting(source.getWeighting());
+                .withValidation(validation).withWeighting(source.getWeighting()).withPlaceholder(source.getPlaceholder());
     }
 
     @Override

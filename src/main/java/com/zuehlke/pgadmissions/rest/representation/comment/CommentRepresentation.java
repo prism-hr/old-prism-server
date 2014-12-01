@@ -62,13 +62,9 @@ public class CommentRepresentation {
 
     private String equivalentExperience;
 
-    private String positionTitle;
+    private CommentApplicationPositionDetailRepresentation positionDetail;
 
-    private String positionDescription;
-
-    private LocalDate positionProvisionalStartDate;
-
-    private String appointmentConditions;
+    private CommentApplicationOfferDetailRepresentation offerDetail;
 
     private Boolean recruiterAcceptAppointment;
 
@@ -288,36 +284,20 @@ public class CommentRepresentation {
         this.equivalentExperience = equivalentExperience;
     }
 
-    public String getPositionTitle() {
-        return positionTitle;
+    public CommentApplicationPositionDetailRepresentation getPositionDetail() {
+        return positionDetail;
     }
 
-    public void setPositionTitle(String positionTitle) {
-        this.positionTitle = positionTitle;
+    public void setPositionDetail(CommentApplicationPositionDetailRepresentation positionDetail) {
+        this.positionDetail = positionDetail;
     }
 
-    public String getPositionDescription() {
-        return positionDescription;
+    public CommentApplicationOfferDetailRepresentation getOfferDetail() {
+        return offerDetail;
     }
 
-    public void setPositionDescription(String positionDescription) {
-        this.positionDescription = positionDescription;
-    }
-
-    public LocalDate getPositionProvisionalStartDate() {
-        return positionProvisionalStartDate;
-    }
-
-    public void setPositionProvisionalStartDate(LocalDate positionProvisionalStartDate) {
-        this.positionProvisionalStartDate = positionProvisionalStartDate;
-    }
-
-    public String getAppointmentConditions() {
-        return appointmentConditions;
-    }
-
-    public void setAppointmentConditions(String appointmentConditions) {
-        this.appointmentConditions = appointmentConditions;
+    public void setOfferDetail(CommentApplicationOfferDetailRepresentation offerDetail) {
+        this.offerDetail = offerDetail;
     }
 
     public Boolean getRecruiterAcceptAppointment() {

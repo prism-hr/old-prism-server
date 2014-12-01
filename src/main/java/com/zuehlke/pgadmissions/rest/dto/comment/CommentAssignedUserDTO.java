@@ -1,9 +1,10 @@
-package com.zuehlke.pgadmissions.rest.dto;
+package com.zuehlke.pgadmissions.rest.dto.comment;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
 
 public class CommentAssignedUserDTO {
 

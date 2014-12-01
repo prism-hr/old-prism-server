@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest.dto;
+package com.zuehlke.pgadmissions.rest.dto.comment;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.zuehlke.pgadmissions.rest.dto.*;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
@@ -307,7 +308,7 @@ public class CommentDTO {
         this.documents = documents;
     }
 
-    public Object fetchResouceDTO() {
+    public Object fetchResourceDTO() {
         switch (action.getScope()) {
         case INSTITUTION:
             return institution;
@@ -318,60 +319,6 @@ public class CommentDTO {
         default:
             throw new Error();
         }
-    }
-
-    public static class CommentApplicationPositionDetailDTO {
-
-        @NotNull
-        @Size(max = 255)
-        private String positionTitle;
-
-        @NotNull
-        @Size(max = 2000)
-        private String positionDescription;
-
-        public final String getPositionTitle() {
-            return positionTitle;
-        }
-
-        public final void setPositionTitle(String positionTitle) {
-            this.positionTitle = positionTitle;
-        }
-
-        public final String getPositionDescription() {
-            return positionDescription;
-        }
-
-        public final void setPositionDescription(String positionDescription) {
-            this.positionDescription = positionDescription;
-        }
-
-    }
-
-    public static class CommentApplicationOfferDetailDTO {
-
-        @NotNull
-        private LocalDate positionProvisionalStartDate;
-
-        @NotNull
-        private String appointmentConditions;
-
-        public final LocalDate getPositionProvisionalStartDate() {
-            return positionProvisionalStartDate;
-        }
-
-        public final void setPositionProvisionalStartDate(LocalDate positionProvisionalStartDate) {
-            this.positionProvisionalStartDate = positionProvisionalStartDate;
-        }
-
-        public final String getAppointmentConditions() {
-            return appointmentConditions;
-        }
-
-        public final void setAppointmentConditions(String appointmentConditions) {
-            this.appointmentConditions = appointmentConditions;
-        }
-
     }
 
 }

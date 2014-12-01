@@ -177,8 +177,10 @@ public class ResourceDAO {
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.eqProperty("stateAction.state", "state"));
+                .add(Restrictions.eqProperty("stateAction.state", "state")) //
+                .add(Restrictions.eq("state.hidden", false));
 
         ResourceListConstraintBuilder.appendFilterCriterion(criteria, conditions, filter);
         ResourceListConstraintBuilder.appendLimitCriterion(criteria, filter, lastIdentifier, recordsToRetrieve);
@@ -199,7 +201,8 @@ public class ResourceDAO {
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.eqProperty("stateAction.state", "state"));
+                .add(Restrictions.eqProperty("stateAction.state", "state")) //
+                .add(Restrictions.eq("state.hidden", false));
 
         ResourceListConstraintBuilder.appendFilterCriterion(criteria, conditions, filter);
         ResourceListConstraintBuilder.appendLimitCriterion(criteria, filter, lastIdentifier, recordsToRetrieve);

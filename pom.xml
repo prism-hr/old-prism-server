@@ -388,7 +388,7 @@
             </extension>
         </extensions>
 
-        <finalName>pgadmissions</finalName>
+        <finalName>prism</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>

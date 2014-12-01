@@ -179,6 +179,7 @@ public class SystemInitialisationHelper {
     }
 
     public void verifyStateGroupCreation() {
+        
         for (StateGroup stateGroup : stateService.getStateGroups()) {
             assertEquals(stateGroup.getId().getSequenceOrder(), stateGroup.getSequenceOrder());
             assertEquals(stateGroup.getId().isRepeatable(), stateGroup.getRepeatable());

@@ -90,7 +90,7 @@ public class ApplicationResource {
 
     @Autowired
     private Mapper beanMapper;
-    
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -236,7 +236,7 @@ public class ApplicationResource {
         Preconditions.checkArgument(comment.getApplication().getId().equals(applicationId));
         commentService.update(commentId, commentDTO);
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "/{applicationId}", params = "type=summary")
     public ApplicationSummaryRepresentation getSummary(@PathVariable Integer applicationId) {
         return applicationService.getApplicationSummary(applicationId);
@@ -244,15 +244,14 @@ public class ApplicationResource {
 
     @RequestMapping(method = RequestMethod.GET, value = "/{applicationId}", params = "type=report")
     public void getReport(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer applicationId,
-            @RequestParam(required = false) String filter, HttpServletRequest req, HttpServletResponse response) throws Exception {
+            @RequestParam(required = false) String filter, HttpServletRequest request, HttpServletResponse response) throws Exception {
         if (resourceDescriptor.getResourceScope() != PrismScope.APPLICATION) {
             throw new UnsupportedOperationException("Report can only be generated for applications");
         }
         ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
         DataTable reportTable = applicationService.getApplicationReport(filterDTO);
-        DataSourceRequest dsRequest;
-        dsRequest = new DataSourceRequest(req);
-        DataSourceHelper.setServletResponse(reportTable, dsRequest, response);
+        DataSourceRequest dataSourceRequest = new DataSourceRequest(request);
+        DataSourceHelper.setServletResponse(reportTable, dataSourceRequest, response);
         String fileName = response.getHeader("Content-Disposition").replace("attachment; filename=", "");
         response.setHeader("file-name", fileName);
     }

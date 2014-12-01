@@ -162,14 +162,6 @@ public class Application extends Resource {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate confirmedStartDate;
 
-    @ManyToOne
-    @JoinColumn(name = "confirmed_primary_supervisor_id")
-    private User confirmedPrimarySupervisor;
-
-    @ManyToOne
-    @JoinColumn(name = "confirmed_secondary_supervisor_id")
-    private User confirmedSecondarySupervisor;
-
     @Column(name = "confirmed_offer_type")
     @Enumerated(EnumType.STRING)
     private PrismOfferType confirmedOfferType;
@@ -508,22 +500,6 @@ public class Application extends Resource {
 
     public void setConfirmedStartDate(LocalDate confirmedStartDate) {
         this.confirmedStartDate = confirmedStartDate;
-    }
-
-    public User getConfirmedPrimarySupervisor() {
-        return confirmedPrimarySupervisor;
-    }
-
-    public void setConfirmedPrimarySupervisor(User confirmedPrimarySupervisor) {
-        this.confirmedPrimarySupervisor = confirmedPrimarySupervisor;
-    }
-
-    public User getConfirmedSecondarySupervisor() {
-        return confirmedSecondarySupervisor;
-    }
-
-    public void setConfirmedSecondarySupervisor(User confirmedSecondarySupervisor) {
-        this.confirmedSecondarySupervisor = confirmedSecondarySupervisor;
     }
 
     public PrismOfferType getConfirmedOfferType() {

@@ -6,6 +6,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 public enum PrismStateGroup {
 
     APPLICATION_UNSUBMITTED(1, false, APPLICATION), //
@@ -37,7 +39,7 @@ public enum PrismStateGroup {
     private Integer sequenceOrder;
 
     private boolean repeatable;
-    
+
     private PrismScope scope;
 
     private PrismStateGroup(Integer sequenceOrder, boolean repeatable, PrismScope scope) {
@@ -45,7 +47,7 @@ public enum PrismStateGroup {
         this.repeatable = repeatable;
         this.scope = scope;
     }
-    
+
     public int getSequenceOrder() {
         return sequenceOrder;
     }
@@ -56,6 +58,15 @@ public enum PrismStateGroup {
 
     public PrismScope getScope() {
         return scope;
+    }
+
+    public String getReference() {
+        String reference = "";
+        String[] tokens = name().split("_");
+        for (int i = 0; i < tokens.length; i++) {
+            reference = i == 0 ? reference + tokens[i].toLowerCase() : WordUtils.capitalize(tokens[i]);
+        }
+        return reference;
     }
 
 }

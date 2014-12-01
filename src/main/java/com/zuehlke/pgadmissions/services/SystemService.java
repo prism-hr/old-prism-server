@@ -321,7 +321,8 @@ public class SystemService {
             Scope scope = entityService.getByProperty(Scope.class, "id", prismState.getScope());
             StateGroup stateGroup = entityService.getByProperty(StateGroup.class, "id", prismState.getStateGroup());
             State transientState = new State().withId(prismState).withStateGroup(stateGroup).withStateDurationDefinition(stateDurationDefinition)
-                    .withStateDurationEvaluation(prismState.getStateDurationEvaluation()).withParallelizable(prismState.isParallelizable()).withScope(scope);
+                    .withStateDurationEvaluation(prismState.getStateDurationEvaluation()).withParallelizable(prismState.isParallelizable())
+                    .withHidden(prismState.isHidden()).withScope(scope);
             entityService.createOrUpdate(transientState);
         }
     }

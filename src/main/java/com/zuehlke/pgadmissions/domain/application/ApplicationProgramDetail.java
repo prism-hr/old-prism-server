@@ -14,6 +14,7 @@ import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 
@@ -129,8 +130,8 @@ public class ApplicationProgramDetail {
         return referralSource == null ? null : referralSource.getName();
     }
 
-    public String getStudyOptionDisplay() {
-        return studyOption == null ? null : studyOption.getName();
+    public PrismStudyOption getStudyOptionDisplay() {
+        return studyOption == null ? null : PrismStudyOption.valueOf(studyOption.getCode());
     }
 
 }

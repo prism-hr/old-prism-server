@@ -221,8 +221,6 @@ public class ResourceService {
     }
 
     public void processResource(Resource resource, Comment comment) throws DeduplicationException {
-        StateDurationDefinition stateDurationDefinition = resource.getState().getStateDurationDefinition();
-
         LocalDate baselineCustom = null;
         LocalDate baseline = new LocalDate();
 
@@ -233,9 +231,10 @@ public class ResourceService {
 
         baseline = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
 
-        StateDurationConfiguration stateDuration = stateDurationDefinition == null ? null : stateService.getStateDurationConfiguration(resource,
+        StateDurationDefinition stateDurationDefinition = resource.getState().getStateDurationDefinition();
+        StateDurationConfiguration stateDurationConfiguration = stateDurationDefinition == null ? null : stateService.getStateDurationConfiguration(resource,
                 comment.getUser(), stateDurationDefinition);
-        Integer duration = stateDuration == null ? 0 : stateDuration.getDuration();
+        Integer duration = stateDurationConfiguration == null ? 0 : stateDurationConfiguration.getDuration();
 
         resource.setDueDate(baseline.plusDays(duration));
         entityService.flush();

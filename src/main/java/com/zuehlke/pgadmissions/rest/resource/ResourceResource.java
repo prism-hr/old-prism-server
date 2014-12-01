@@ -97,10 +97,10 @@ public class ResourceResource {
     private CustomizationService customizationService;
 
     @Autowired
-    private ApplicationResource applicationResource;
+    private ApplicationService applicationService;
 
     @Autowired
-    private ApplicationService applicationService;
+    private ApplicationResource applicationResource;
 
     @Autowired
     private Mapper beanMapper;
@@ -165,9 +165,15 @@ public class ResourceResource {
         representation.setWorkflowPropertyConfigurations(customizationService.getConfigurationRepresentationsWithOrWithoutVersion(
                 PrismConfiguration.WORKFLOW_PROPERTY, resource, resource.getWorkflowPropertyConfigurationVersion()));
 
-        switch (resource.getResourceScope()) {
+        PrismScope resourceScope = resource.getResourceScope();
+        switch (resourceScope) {
         case APPLICATION:
             applicationResource.enrichApplicationRepresentation((Application) resource, (ApplicationExtendedRepresentation) representation);
+            break;
+        case PROJECT:
+        case PROGRAM:
+        case INSTITUTION:
+            ReflectionUtils.setProperty(representation, "resourceSummary", resourceService.getResourceSummary(resourceScope.getResourceClass(), resourceId));
             break;
         default:
             break;

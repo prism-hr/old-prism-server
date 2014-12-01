@@ -6,7 +6,6 @@ import java.util.Set;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
@@ -153,38 +152,6 @@ public class AbstractResourceRepresentation {
 
     public void setWorkflowPropertyConfigurations(List<WorkflowConfigurationRepresentation> workflowPropertyConfigurations) {
         this.workflowPropertyConfigurations = workflowPropertyConfigurations;
-    }
-
-    public static class RoleRepresentation {
-
-        private PrismRole id;
-
-        private Boolean value;
-
-        public RoleRepresentation() {
-        }
-
-        public RoleRepresentation(PrismRole id, Boolean value) {
-            this.id = id;
-            this.value = value;
-        }
-
-        public PrismRole getId() {
-            return id;
-        }
-
-        public void setId(PrismRole id) {
-            this.id = id;
-        }
-
-        public Boolean getValue() {
-            return value;
-        }
-
-        public void setValue(Boolean value) {
-            this.value = value;
-        }
-
     }
 
 }

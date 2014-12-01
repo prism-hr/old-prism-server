@@ -8,6 +8,7 @@ import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.AppointmentTimeslotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
@@ -70,6 +71,8 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
     private BigDecimal applicationRatingAverage;
 
     private ApplicationStudyDetailRepresentation studyDetail;
+
+    private ApplicationSummaryRepresentation applicationSummary;
 
     public ProgramRepresentation getProgram() {
         return program;
@@ -294,4 +297,13 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
     public void setStudyDetail(ApplicationStudyDetailRepresentation studyDetail) {
         this.studyDetail = studyDetail;
     }
+
+    public final ApplicationSummaryRepresentation getApplicationSummary() {
+        return applicationSummary;
+    }
+
+    public final void setApplicationSummary(ApplicationSummaryRepresentation applicationSummary) {
+        this.applicationSummary = applicationSummary;
+    }
+
 }

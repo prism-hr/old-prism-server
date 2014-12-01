@@ -33,7 +33,7 @@ public class ApplicationQualification {
     @Column(name = "subject", nullable = false)
     private String subject;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title")
     private String title;
 
     @Column(name = "start_date", nullable = false)

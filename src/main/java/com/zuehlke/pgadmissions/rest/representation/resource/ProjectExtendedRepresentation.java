@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 
 public class ProjectExtendedRepresentation extends AbstractResourceRepresentation {
@@ -12,6 +13,8 @@ public class ProjectExtendedRepresentation extends AbstractResourceRepresentatio
     private String title;
 
     private AdvertRepresentation advert;
+    
+    private ResourceSummaryRepresentation resourceSummary;
 
     public InstitutionRepresentation getInstitution() {
         return institution;
@@ -44,4 +47,13 @@ public class ProjectExtendedRepresentation extends AbstractResourceRepresentatio
     public void setAdvert(AdvertRepresentation advert) {
         this.advert = advert;
     }
+
+    public final ResourceSummaryRepresentation getResourceSummary() {
+        return resourceSummary;
+    }
+
+    public final void setResourceSummary(ResourceSummaryRepresentation resourceSummary) {
+        this.resourceSummary = resourceSummary;
+    }
+    
 }

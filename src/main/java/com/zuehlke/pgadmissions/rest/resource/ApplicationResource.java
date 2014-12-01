@@ -66,7 +66,7 @@ import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
-@RequestMapping(value = {"api/applications"})
+@RequestMapping(value = { "api/applications" })
 @PreAuthorize("isAuthenticated()")
 public class ApplicationResource {
 
@@ -113,7 +113,7 @@ public class ApplicationResource {
 
     @RequestMapping(value = "/{applicationId}/supervisors/{supervisorId}", method = RequestMethod.PUT)
     public void deleteSupervisor(@PathVariable Integer applicationId, @PathVariable Integer supervisorId,
-                                 @Valid @RequestBody ApplicationSupervisorDTO supervisorDTO) throws Exception {
+            @Valid @RequestBody ApplicationSupervisorDTO supervisorDTO) throws Exception {
         applicationSectionService.updateSupervisor(applicationId, supervisorId, supervisorDTO);
     }
 
@@ -141,7 +141,7 @@ public class ApplicationResource {
 
     @RequestMapping(value = "/{applicationId}/qualifications/{qualificationId}", method = RequestMethod.PUT)
     public void updateQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId,
-                                    @Valid @RequestBody ApplicationQualificationDTO qualificationDTO) throws Exception {
+            @Valid @RequestBody ApplicationQualificationDTO qualificationDTO) throws Exception {
         applicationSectionService.updateQualification(applicationId, qualificationId, qualificationDTO);
     }
 
@@ -152,14 +152,14 @@ public class ApplicationResource {
 
     @RequestMapping(value = "/{applicationId}/employmentPositions", method = RequestMethod.POST)
     public Map<String, Object> createEmploymentPosition(@PathVariable Integer applicationId,
-                                                        @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) throws Exception {
+            @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) throws Exception {
         ApplicationEmploymentPosition employmentPosition = applicationSectionService.updateEmploymentPosition(applicationId, null, employmentPositionDTO);
         return ImmutableMap.of("id", (Object) employmentPosition.getId());
     }
 
     @RequestMapping(value = "/{applicationId}/employmentPositions/{employmentPositionId}", method = RequestMethod.PUT)
     public void updateEmploymentPosition(@PathVariable Integer applicationId, @PathVariable Integer employmentPositionId,
-                                         @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) throws Exception {
+            @Valid @RequestBody ApplicationEmploymentPositionDTO employmentPositionDTO) throws Exception {
         applicationSectionService.updateEmploymentPosition(applicationId, employmentPositionId, employmentPositionDTO);
     }
 
@@ -244,7 +244,7 @@ public class ApplicationResource {
 
     @RequestMapping(method = RequestMethod.GET, value = "/{applicationId}", params = "type=report")
     public void getReport(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer applicationId,
-                          @RequestParam(required = false) String filter, HttpServletRequest request, HttpServletResponse response) throws Exception {
+            @RequestParam(required = false) String filter, HttpServletRequest request, HttpServletResponse response) throws Exception {
         if (resourceDescriptor.getResourceScope() != PrismScope.APPLICATION) {
             throw new UnsupportedOperationException("Report can only be generated for applications");
         }
@@ -298,6 +298,8 @@ public class ApplicationResource {
             availableStudyOptions.add(studyOption.getStudyOption().getPrismStudyOption());
         }
         representation.setAvailableStudyOptions(availableStudyOptions);
+
+        representation.setApplicationSummary(applicationService.getApplicationSummary(application.getId()));
     }
 
 }

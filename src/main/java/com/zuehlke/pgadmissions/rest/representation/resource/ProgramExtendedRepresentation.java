@@ -6,6 +6,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 
 public class ProgramExtendedRepresentation extends AbstractResourceRepresentation {
@@ -27,6 +28,8 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
     private AdvertRepresentation advert;
 
     private Set<String> locations;
+    
+    private ResourceSummaryRepresentation resourceSummary;
 
     public InstitutionRepresentation getInstitution() {
         return institution;
@@ -99,4 +102,13 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
     public void setLocations(Set<String> locations) {
         this.locations = locations;
     }
+
+    public final ResourceSummaryRepresentation getResourceSummary() {
+        return resourceSummary;
+    }
+
+    public final void setResourceSummary(ResourceSummaryRepresentation resourceSummary) {
+        this.resourceSummary = resourceSummary;
+    }
+    
 }

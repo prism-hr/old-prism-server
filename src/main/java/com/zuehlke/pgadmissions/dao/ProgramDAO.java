@@ -203,11 +203,12 @@ public class ProgramDAO {
         return (Long) sessionFactory.getCurrentSession().createCriteria(Program.class) //
                 .setProjection(Projections.countDistinct("id")) //
                 .createAlias("institution", "institution", JoinType.INNER_JOIN) //
-                .createAlias("resourceStates", "resourceStates", JoinType.INNER_JOIN) //
+                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("institution", institution)) //
                 .add(Restrictions.eq("stateAction.action.id", PrismAction.PROGRAM_CREATE_APPLICATION)) //
                 .uniqueResult();
     }
+    
 }

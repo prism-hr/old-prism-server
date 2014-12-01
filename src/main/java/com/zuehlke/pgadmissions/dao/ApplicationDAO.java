@@ -189,74 +189,76 @@ public class ApplicationDAO {
     }
 
     public List<ApplicationReportListRowDTO> getApplicationReport(Set<Integer> assignedApplications) {
-        return (List<ApplicationReportListRowDTO>) sessionFactory.getCurrentSession().createCriteria(Application.class, "application") //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("id"), "id") //
-                        .add(Projections.property("user.fullName"), "fullName") //
-                        .add(Projections.property("user.email"), "email") //
-                        .add(Projections.property("nationality.name"), "nationality") //
-                        .add(Projections.property("domicile.name"), "domicile") //
-                        .add(Projections.property("country.name"), "country") //
-                        .add(Projections.property("personalDetail.dateOfBirth"), "dateOfBirth") //
-                        .add(Projections.property("gender.name"), "gender") //
-                        .add(Projections.property("institution.title"), "institution") //
-                        .add(Projections.property("program.title"), "program") //
-                        .add(Projections.property("project.title"), "project") //
-                        .add(Projections.property("studyOption.code"), "studyOption") //
-                        .add(Projections.property("referralSource.name"), "referralSource") //
-                        .add(Projections.property("referrer"), "referrer") //
-                        .add(Projections.property("createdTimestamp"), "createdDate") //
-                        .add(Projections.property("closingDate"), "closingDate") //
-                        .add(Projections.property("submittedTimestamp"), "submittedDate") //
-                        .add(Projections.property("updatedTimestamp"), "updatedDate") //
-                        .add(Projections.property("applicationRatingCount"), "ratingCount") //
-                        .add(Projections.property("applicationRatingAverage"), "ratingAverage") //
-                        .add(Projections.count("provideReferenceComment.id"), "providedReferences") //
-                        .add(Projections.count("declineReferenceComment.id"), "declinedReferences") //
-                        .add(Projections.property("verificationProcessing.instanceCount"), "verificationInstanceCount") //
-                        .add(Projections.property("verificationProcessing.dayDurationAverage"), "verificationInstanceDurationAverage") //
-                        .add(Projections.property("referenceProcessing.instanceCount"), "referenceInstanceCount") //
-                        .add(Projections.property("referenceProcessing.dayDurationAverage"), "referenceInstanceDurationAverage") //
-                        .add(Projections.property("reviewProcessing.instanceCount"), "reviewInstanceCount") //
-                        .add(Projections.property("reviewProcessing.dayDurationAverage"), "reviewInstanceDurationAverage") //
-                        .add(Projections.property("interviewProcessing.instanceCount"), "interviewInstanceCount") //
-                        .add(Projections.property("interviewProcessing.dayDurationAverage"), "interviewInstanceDurationAverage") //
-                        .add(Projections.property("approvalProcessing.instanceCount"), "approvalInstanceCount") //
-                        .add(Projections.property("approvalProcessing.dayDurationAverage"), "approvalInstanceDurationAverage") //
-                        .add(Projections.property("confirmedStartDate"), "confirmedStartDate") //
-                        .add(Projections.property("confirmedOfferType"), "confirmedOfferType")) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("personalDetail", "personalDetail", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("personalDetail.firstNationality", "nationality", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("personalDetail.domicile", "domicile", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("personalDetail.country", "country", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("personalDetail.gender", "gender", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
-                .createAlias("program", "program", JoinType.INNER_JOIN) //
-                .createAlias("project", "project", JoinType.INNER_JOIN) //
-                .createAlias("programDetail", "programDetail", JoinType.INNER_JOIN) //
-                .createAlias("programDetail.studyOption", "studyOption", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("programDetail.referralSource", "referralSource", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("comments", "provideReferenceComment", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.conjunction() //
-                                .add(Restrictions.eq("provideReferenceComment.action.id", PrismAction.APPLICATION_PROVIDE_REFERENCE)) //
-                                .add(Restrictions.eq("provideReferenceComment.declinedResponse", false))) //
-                .createAlias("comments", "declineReferenceComment", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.conjunction() //
-                                .add(Restrictions.eq("declineReferenceComment.action.id", PrismAction.APPLICATION_PROVIDE_REFERENCE)) //
-                                .add(Restrictions.eq("declineReferenceComment.declinedResponse", true))) //
-                .createAlias("processings", "verificationProcessing", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.eq("verificationProcessing.stateGroup.id", PrismStateGroup.APPLICATION_VERIFICATION)) //
-                .createAlias("processings", "referenceProcessing", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.eq("referenceProcessing.stateGroup.id", PrismStateGroup.APPLICATION_REFERENCE)) //
-                .createAlias("processings", "reviewProcessing", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.eq("reviewProcessing.stateGroup.id", PrismStateGroup.APPLICATION_REVIEW)) //
-                .createAlias("processings", "interviewProcessing", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.eq("interviewProcessing.stateGroup.id", PrismStateGroup.APPLICATION_INTERVIEW)) //
-                .createAlias("processings", "approvalProcessing", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.eq("approvalProcessing.stateGroup.id", PrismStateGroup.APPLICATION_APPROVAL)) //
+        return (List<ApplicationReportListRowDTO>) sessionFactory.getCurrentSession().createQuery( //
+                "select application.id as id, user.fullName as name, user.email as email, nationality.name as nationality, " //
+                    + "domicile.name as residence, personalDetail.dateOfBirth as dateOfBirth, gender.name as gender, " //
+                    + "institution.title as institution, program.title as program, project.title as project, " //
+                    + "studyOption.code as studyOption, referralSource.name as referralSource, application.referrer as referrer, " //
+                    + "application.createdTimestamp as createdDate, application.closingDate as closingDate, " //
+                    + "application.submittedTimestamp as submittedDate, application.updatedTimestamp as updatedDate, " //
+                    + "application.applicationRatingCount as ratingCount, application.applicationRatingAverage as ratingAverage, "
+                    + "state.stateGroup.id as state, count(provideReferenceComment.id) as providedReferences, " //
+                    + "count(declineReferenceComment.id) as declinedReferences, " //
+                    + "verificationProcessing.instanceCount as verificationInstanceCount, " //
+                    + "verificationProcessing.dayDurationAverage as verificationInstanceDurationAverage, " //
+                    + "referenceProcessing.instanceCount as referenceInstanceCount, " //
+                    + "referenceProcessing.dayDurationAverage as referenceInstanceDurationAverage, " //
+                    + "reviewProcessing.instanceCount as reviewInstanceCount, " //
+                    + "reviewProcessing.dayDurationAverage as reviewInstanceDurationAverage, " //
+                    + "interviewProcessing.instanceCount as interviewInstanceCount, " //
+                    + "interviewProcessing.dayDurationAverage as interviewInstanceDurationAverage, " //
+                    + "approvalProcessing.instanceCount as approvalInstanceCount, " //
+                    + "approvalProcessing.dayDurationAverage as approvalInstanceDurationAverage, "
+                    + "application.confirmedStartDate as confirmedStartDate, application.confirmedOfferType as confirmedOfferType " //
+                + "from Application as application "
+                    + "join application.user as user " //
+                    + "left join application.personalDetail as personalDetail " //
+                    + "left join personalDetail.firstNationality as nationality " //
+                    + "left join personalDetail.domicile as domicile " //
+                    + "left join personalDetail.country as country " //
+                    + "left join personalDetail.gender as gender " //
+                    + "join application.institution as institution " //
+                    + "join application.program as program " //
+                    + "left join application.project as project " //
+                    + "join application.programDetail as programDetail " //
+                    + "left join programDetail.studyOption as studyOption " //
+                    + "left join programDetail.referralSource as referralSource " //
+                    + "join application.state as state " //
+                    + "left join application.comments as provideReferenceComment " //
+                        + "with provideReferenceComment.action.id = :provideReferenceAction " //
+                            + "and provideReferenceComment.declinedResponse is false "
+                            + "or provideReferenceComment.id is null " //
+                    + "left join application.comments as declineReferenceComment " //
+                        + "with declineReferenceComment.action.id = :provideReferenceAction " //
+                            + "and declineReferenceComment.declinedResponse is true "
+                            + "or declineReferenceComment.id is null " //
+                    + "left join application.processings as verificationProcessing " //
+                        + "with verificationProcessing.stateGroup.id = :verificationStateGroup "
+                            + "or verificationProcessing.id is null " //
+                    + "left join application.processings as referenceProcessing " //
+                        + "with referenceProcessing.stateGroup.id = :referenceStateGroup "
+                            + "or referenceProcessing.id is null " //
+                    + "left join application.processings as reviewProcessing " //
+                        + "with reviewProcessing.stateGroup.id = :reviewStateGroup " //
+                            + "or reviewProcessing.id is null " //
+                    + "left join application.processings as interviewProcessing " //
+                        + "with interviewProcessing.stateGroup.id = :interviewStateGroup " //
+                            + "or interviewProcessing.id is null " //
+                    + "left join application.processings as approvalProcessing " //
+                        + "with approvalProcessing.stateGroup.id = :approvalStateGroup " //
+                            + "or approvalProcessing.id is null " //
+                + "where application.id in :assignedApplications " //
+                + "group by application.id " //
+                + "order by application.sequenceIdentifier desc") //
+                .setParameterList("assignedApplications", assignedApplications) //
+                .setParameter("provideReferenceAction", PrismAction.APPLICATION_PROVIDE_REFERENCE) //
+                .setParameter("verificationStateGroup", PrismStateGroup.APPLICATION_VERIFICATION) //
+                .setParameter("referenceStateGroup", PrismStateGroup.APPLICATION_REFERENCE) //
+                .setParameter("reviewStateGroup", PrismStateGroup.APPLICATION_REVIEW) //
+                .setParameter("interviewStateGroup", PrismStateGroup.APPLICATION_INTERVIEW) //
+                .setParameter("approvalStateGroup", PrismStateGroup.APPLICATION_APPROVAL) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationReportListRowDTO.class)) //
                 .list();
     }
+
 }

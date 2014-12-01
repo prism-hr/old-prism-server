@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -28,6 +30,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.visualization.datasource.DataSourceHelper;
+import com.google.visualization.datasource.DataSourceRequest;
+import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -217,6 +222,20 @@ public class ResourceResource {
         }
 
         return representations;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, params = "type=report")
+    public void getReport(@ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam(required = false) String filter, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        if (resourceDescriptor.getResourceScope() != PrismScope.APPLICATION) {
+            throw new UnsupportedOperationException("Report can only be generated for applications");
+        }
+        ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
+        DataTable reportTable = applicationService.getApplicationReport(filterDTO);
+        DataSourceRequest dataSourceRequest = new DataSourceRequest(request);
+        DataSourceHelper.setServletResponse(reportTable, dataSourceRequest, response);
+        String fileName = response.getHeader("Content-Disposition").replace("attachment; filename=", "");
+        response.setHeader("file-name", fileName);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "resourceScope:projects|programs|institutions/{resourceId}", params = "type=summary")

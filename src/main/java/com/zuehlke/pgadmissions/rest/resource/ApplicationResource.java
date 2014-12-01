@@ -4,14 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,9 +21,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.visualization.datasource.DataSourceHelper;
-import com.google.visualization.datasource.DataSourceRequest;
-import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
@@ -36,11 +30,8 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
-import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDocumentDTO;
@@ -240,20 +231,6 @@ public class ApplicationResource {
     @RequestMapping(method = RequestMethod.GET, value = "/{applicationId}", params = "type=summary")
     public ApplicationSummaryRepresentation getSummary(@PathVariable Integer applicationId) {
         return applicationService.getApplicationSummary(applicationId);
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/{applicationId}", params = "type=report")
-    public void getReport(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer applicationId,
-            @RequestParam(required = false) String filter, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (resourceDescriptor.getResourceScope() != PrismScope.APPLICATION) {
-            throw new UnsupportedOperationException("Report can only be generated for applications");
-        }
-        ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
-        DataTable reportTable = applicationService.getApplicationReport(filterDTO);
-        DataSourceRequest dataSourceRequest = new DataSourceRequest(request);
-        DataSourceHelper.setServletResponse(reportTable, dataSourceRequest, response);
-        String fileName = response.getHeader("Content-Disposition").replace("attachment; filename=", "");
-        response.setHeader("file-name", fileName);
     }
 
     public void enrichApplicationRepresentation(Application application, ApplicationExtendedRepresentation representation) {

@@ -501,58 +501,60 @@ public class ApplicationService {
 
         PrismScope scopeId = PrismScope.APPLICATION;
         List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(PrismScope.APPLICATION);
-        Set<Integer> assignedApplications = resourceService.getAssignedResources(userService.getCurrentUser(), scopeId, parentScopeIds, filter);
-
+        
         User currentUser = userService.getCurrentUser();
+        Set<Integer> assignedApplications = resourceService.getAssignedResources(currentUser, scopeId, parentScopeIds, filter);
+
         String dateFormat = loader.load(PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT);
-
-        for (ApplicationReportListRowDTO rowDTO : getApplicationReport(assignedApplications)) {
+        List<ApplicationReportListRowDTO> reportRows = getApplicationReport(assignedApplications); 
+        
+        for (ApplicationReportListRowDTO reportRow : reportRows) {
             TableRow row = new TableRow();
-            filterReportListData(rowDTO, currentUser);
+            filterReportListData(reportRow, currentUser);
 
-            row.addCell(rowDTO.getIdDisplay());
-            row.addCell(rowDTO.getNameDisplay());
-            row.addCell(rowDTO.getEmailDisplay());
-            row.addCell(rowDTO.getNationalityDisplay());
-            row.addCell(rowDTO.getResidenceDisplay());
-            row.addCell(rowDTO.getCountryOfBirthDisplay());
-            row.addCell(rowDTO.getDateOfBirthDisplay(dateFormat));
-            row.addCell(rowDTO.getGenderDisplay());
-            row.addCell(rowDTO.getInstitutionDisplay());
-            row.addCell(rowDTO.getProgramDisplay());
-            row.addCell(rowDTO.getProjectDisplay());
+            row.addCell(reportRow.getIdDisplay());
+            row.addCell(reportRow.getNameDisplay());
+            row.addCell(reportRow.getEmailDisplay());
+            row.addCell(reportRow.getNationalityDisplay());
+            row.addCell(reportRow.getResidenceDisplay());
+            row.addCell(reportRow.getCountryOfBirthDisplay());
+            row.addCell(reportRow.getDateOfBirthDisplay(dateFormat));
+            row.addCell(reportRow.getGenderDisplay());
+            row.addCell(reportRow.getInstitutionDisplay());
+            row.addCell(reportRow.getProgramDisplay());
+            row.addCell(reportRow.getProjectDisplay());
 
-            PrismStudyOption studyOption = rowDTO.getStudyOptionDisplay();
+            PrismStudyOption studyOption = reportRow.getStudyOptionDisplay();
             row.addCell(studyOption == null ? "" : loader.load(studyOption.getDisplayProperty()));
 
-            row.addCell(rowDTO.getReferralSourceDisplay());
-            row.addCell(rowDTO.getReferrerDisplay());
-            row.addCell(rowDTO.getCreatedDateDisplay(dateFormat));
-            row.addCell(rowDTO.getClosingDateDisplay(dateFormat));
-            row.addCell(rowDTO.getSubmittedDateDisplay(dateFormat));
-            row.addCell(rowDTO.getUpdatedDateDisplay(dateFormat));
-            row.addCell(rowDTO.getAcademicYearDisplay());
-            row.addCell(rowDTO.getRatingCountDisplay());
-            row.addCell(rowDTO.getRatingAverageDisplay());
+            row.addCell(reportRow.getReferralSourceDisplay());
+            row.addCell(reportRow.getReferrerDisplay());
+            row.addCell(reportRow.getCreatedDateDisplay(dateFormat));
+            row.addCell(reportRow.getClosingDateDisplay(dateFormat));
+            row.addCell(reportRow.getSubmittedDateDisplay(dateFormat));
+            row.addCell(reportRow.getUpdatedDateDisplay(dateFormat));
+            row.addCell(reportRow.getAcademicYearDisplay());
+            row.addCell(reportRow.getRatingCountDisplay());
+            row.addCell(reportRow.getRatingAverageDisplay());
 
-            PrismStateGroup state = rowDTO.getState();
+            PrismStateGroup state = reportRow.getState();
             row.addCell(state == null ? "" : loader.load(state.getDisplayProperty()));
 
-            row.addCell(rowDTO.getProvidedReferencesDisplay());
-            row.addCell(rowDTO.getDeclinedReferencesDisplay());
-            row.addCell(rowDTO.getVerificationInstanceCountDisplay());
-            row.addCell(rowDTO.getVerificationInstanceDurationAverageDisplay());
-            row.addCell(rowDTO.getReferenceInstanceCountDisplay());
-            row.addCell(rowDTO.getReferenceInstanceDurationAverageDisplay());
-            row.addCell(rowDTO.getReviewInstanceCountDisplay());
-            row.addCell(rowDTO.getReviewInstanceDurationAverageDisplay());
-            row.addCell(rowDTO.getInterviewInstanceCountDisplay());
-            row.addCell(rowDTO.getInterviewInstanceDurationAverageDisplay());
-            row.addCell(rowDTO.getApprovalInstanceCountDisplay());
-            row.addCell(rowDTO.getApprovalInstanceDurationAverageDisplay());
-            row.addCell(rowDTO.getConfirmedStartDateDisplay(dateFormat));
+            row.addCell(reportRow.getProvidedReferencesDisplay());
+            row.addCell(reportRow.getDeclinedReferencesDisplay());
+            row.addCell(reportRow.getVerificationInstanceCountDisplay());
+            row.addCell(reportRow.getVerificationInstanceDurationAverageDisplay());
+            row.addCell(reportRow.getReferenceInstanceCountDisplay());
+            row.addCell(reportRow.getReferenceInstanceDurationAverageDisplay());
+            row.addCell(reportRow.getReviewInstanceCountDisplay());
+            row.addCell(reportRow.getReviewInstanceDurationAverageDisplay());
+            row.addCell(reportRow.getInterviewInstanceCountDisplay());
+            row.addCell(reportRow.getInterviewInstanceDurationAverageDisplay());
+            row.addCell(reportRow.getApprovalInstanceCountDisplay());
+            row.addCell(reportRow.getApprovalInstanceDurationAverageDisplay());
+            row.addCell(reportRow.getConfirmedStartDateDisplay(dateFormat));
 
-            PrismOfferType confirmedOfferType = rowDTO.getConfirmedOfferType();
+            PrismOfferType confirmedOfferType = reportRow.getConfirmedOfferType();
             row.addCell(confirmedOfferType == null ? "" : loader.load(confirmedOfferType.getDisplayProperty()));
 
             dataTable.addRow(row);

@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.rest.dto.comment;
 
-import org.joda.time.LocalDate;
-
 import javax.validation.constraints.NotNull;
+
+import org.joda.time.LocalDate;
 
 public class CommentApplicationOfferDetailDTO {
 

@@ -1,5 +1,24 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
+import org.dozer.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -8,7 +27,13 @@ import com.google.common.collect.Maps;
 import com.google.visualization.datasource.DataSourceHelper;
 import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.datatable.DataTable;
-import com.zuehlke.pgadmissions.domain.application.*;
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
+import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
+import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
+import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -16,25 +41,29 @@ import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.*;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDocumentDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationEmploymentPositionDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationFundingDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPersonalDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationPrizeDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationQualificationDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationRefereeDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationSupervisorDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.RefereeRepresentation;
-import com.zuehlke.pgadmissions.services.*;
-import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.ApplicationSectionService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.CommentService;
+import com.zuehlke.pgadmissions.services.ProgramService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
 @RequestMapping(value = {"api/applications"})

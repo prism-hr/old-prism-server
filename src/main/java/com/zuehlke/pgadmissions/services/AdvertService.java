@@ -42,6 +42,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
+import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
@@ -165,7 +166,7 @@ public class AdvertService {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
 
-        for (String propertyName : new String[]{"domain", "industry", "function", "competency", "theme", "institution", "programType"}) {
+        for (String propertyName : new String[] { "domain", "industry", "function", "competency", "theme", "institution", "programType" }) {
             String propertySetterName = "add" + WordUtils.capitalize(propertyName);
             List<Object> values = (List<Object>) ReflectionUtils.getProperty(categoriesDTO, pluralize(propertyName));
 
@@ -264,6 +265,15 @@ public class AdvertService {
         InstitutionAddress newAddress = new InstitutionAddress().withDomicile(address.getDomicile()).withInstitution(address.getInstitution())
                 .withAddressLine1(address.getAddressLine1()).withAddressLine2(address.getAddressLine2()).withAddressTown(address.getAddressTown())
                 .withAddressDistrict(address.getAddressDistrict()).withAddressCode(address.getAddressCode());
+
+        GeographicLocation oldLocation = address.getLocation();
+        if (oldLocation != null) {
+            GeographicLocation newLocation = new GeographicLocation().withLocationX(oldLocation.getLocationX()).withLocationY(oldLocation.getLocationY())
+                    .withLocationViewNeX(oldLocation.getLocationViewNeX()).withLocationViewNeY(oldLocation.getLocationViewNeY())
+                    .withLocationViewSwX(oldLocation.getLocationViewSwX()).withLocationViewSwY(oldLocation.getLocationViewSwY());
+            newAddress.setLocation(newLocation);
+        }
+
         entityService.save(newAddress);
         return newAddress;
     }
@@ -291,7 +301,7 @@ public class AdvertService {
     }
 
     private void setMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-                                   BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context)
+            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Minimum" + context, minimumSpecified);
         PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Maximum" + context, maximumSpecified);
@@ -300,7 +310,7 @@ public class AdvertService {
     }
 
     private void setConvertedMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-                                            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
+            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (rate.compareTo(new BigDecimal(0)) == 1) {
             minimumSpecified = minimumSpecified.multiply(rate).setScale(2, RoundingMode.HALF_UP);
@@ -415,7 +425,7 @@ public class AdvertService {
     }
 
     private void updateFinancialDetails(AdvertFinancialDetail financialDetails, FinancialDetailsDTO financialDetailsDTO, String currencyAtLocale,
-                                        LocalDate baseline) throws Exception {
+            LocalDate baseline) throws Exception {
         PrismDurationUnit interval = financialDetailsDTO.getInterval();
         String currencySpecified = financialDetailsDTO.getCurrency();
 

@@ -285,14 +285,12 @@ public class ApplicationSectionService {
         ImportedInstitutionDTO importedInstitutionDTO = qualificationDTO.getInstitution();
         ImportedInstitution importedInstitution;
         if (importedInstitutionDTO.getId() == null) {
-            // create new institution
             Domicile domicile = importedEntityService.getById(Domicile.class, institution, importedInstitutionDTO.getDomicile());
             importedInstitution = new ImportedInstitution().withInstitution(institution).withDomicile(domicile).withEnabled(true).withCode("TEMPORARY_CODE")
                     .withName(importedInstitutionDTO.getName());
             entityService.save(importedInstitution);
             importedInstitution.setCode("CUSTOM_" + Strings.padStart(importedInstitution.getId().toString(), 10, '0'));
         } else {
-            // get existing institution
             importedInstitution = importedEntityService.getById(ImportedInstitution.class, institution, importedInstitutionDTO.getId());
         }
         QualificationType qualificationType = importedEntityService.getById(QualificationType.class, institution, qualificationDTO.getType());

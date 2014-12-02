@@ -33,7 +33,7 @@ public abstract class GeocodableLocation implements IUniqueEntity {
         }
         return filteredTokens;
     }
-
+    
     @Override
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addProperty("id", getId());

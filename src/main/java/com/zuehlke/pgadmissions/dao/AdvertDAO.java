@@ -189,8 +189,8 @@ public class AdvertDAO {
 
     private void appendLocationConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
         if (queryDTO.getNeLat() != null) {
-            criteria.add(Restrictions.between("address.location.locationX", queryDTO.getNeLat(), queryDTO.getSwLat()));
-            criteria.add(Restrictions.between("address.location.locationY", queryDTO.getNeLon(), queryDTO.getSwLon()));
+            criteria.add(Restrictions.between("address.location.locationX", queryDTO.getNeLon(), queryDTO.getNeLat()));
+            criteria.add(Restrictions.between("address.location.locationY", queryDTO.getSwLat(), queryDTO.getSwLon()));
         }
     }
 

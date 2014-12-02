@@ -212,11 +212,14 @@ public class ProgramService {
     }
 
     private void copyProgramDetails(Program program, ProgramDTO programDTO) {
+        Advert advert;
         if (program.getAdvert() == null) {
-            program.setAdvert(new Advert());
+            advert = new Advert();
+            advert.setAddress(advertService.createAddressCopy(program.getInstitution().getAddress()));
+            program.setAdvert(advert);
+        } else {
+            advert = program.getAdvert();
         }
-
-        Advert advert = program.getAdvert();
 
         if (!program.getImported()) {
             ProgramType programType = importedEntityService.getImportedEntityByCode(ProgramType.class, program.getInstitution(), programDTO.getProgramType()
@@ -232,6 +235,7 @@ public class ProgramService {
 
         program.getLocations().clear();
         entityService.flush();
+
         for (String location : programDTO.getLocations()) {
             program.addLocation(location);
         }
@@ -240,7 +244,7 @@ public class ProgramService {
         advert.setApplyHomepage(programDTO.getApplyHomepage());
         advert.setStudyDurationMinimum(programDTO.getStudyDurationMinimum());
         advert.setStudyDurationMaximum(programDTO.getStudyDurationMaximum());
-        advert.setAddress(advertService.createAddressCopy(program.getInstitution().getAddress()));
+
     }
 
     private void copyStudyOptions(Program program, ProgramDTO programDTO) {

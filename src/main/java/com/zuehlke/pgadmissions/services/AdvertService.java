@@ -52,6 +52,7 @@ import com.zuehlke.pgadmissions.rest.dto.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertFeesAndPaymentsDTO;
 import com.zuehlke.pgadmissions.rest.dto.FinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Service
@@ -101,10 +102,10 @@ public class AdvertService {
     }
 
     // TODO: user filters
-    public List<Advert> getActiveAdverts() {
+    public List<Advert> getActiveAdverts(OpportunitiesQueryDTO queryDTO) {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        return advertDAO.getActiveAdverts(activeProgramStates, activeProjectStates);
+        return advertDAO.getActiveAdverts(activeProgramStates, activeProjectStates, queryDTO);
     }
 
     public List<Advert> getRecommendedAdverts(User user) {

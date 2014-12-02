@@ -36,7 +36,7 @@ public class OpportunitiesResource {
 
     @RequestMapping(method = RequestMethod.GET)
     public List<AdvertRepresentation> getAdverts(OpportunitiesQueryDTO query) {
-        List<Advert> adverts = advertService.getActiveAdverts();
+        List<Advert> adverts = advertService.getActiveAdverts(query);
         List<AdvertRepresentation> representations = Lists.newArrayListWithExpectedSize(adverts.size());
         for (Advert advert : adverts) {
             AdvertRepresentation representation = dozerBeanMapper.map(advert, AdvertRepresentation.class);

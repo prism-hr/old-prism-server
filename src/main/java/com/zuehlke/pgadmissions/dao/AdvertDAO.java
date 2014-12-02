@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -186,8 +187,10 @@ public class AdvertDAO {
 
     private void appendLocationContraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
         OpportunityLocationQueryDTO locationQueryDTO = queryDTO.getLocation();
-        criteria.add(Restrictions.between("address.location.locationX", locationQueryDTO.getLocationViewNeX(), locationQueryDTO.getLocationViewSwX()));
-        criteria.add(Restrictions.between("address.location.locationY", locationQueryDTO.getLocationViewNeY(), locationQueryDTO.getLocationViewSwY()));
+        if (locationQueryDTO != null) {
+            criteria.add(Restrictions.between("address.location.locationX", locationQueryDTO.getLocationViewNeX(), locationQueryDTO.getLocationViewSwX()));
+            criteria.add(Restrictions.between("address.location.locationY", locationQueryDTO.getLocationViewNeY(), locationQueryDTO.getLocationViewSwY()));
+        }
     }
 
     private void appendKeywordConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
@@ -201,7 +204,7 @@ public class AdvertDAO {
                     .add(Restrictions.ilike("program.title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("institution.title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("projectProgram.title", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("projectInstitution", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("projectInstitution.title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("user.firstName", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("user.lastName", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("user.email", keyword, MatchMode.ANYWHERE))); //
@@ -209,8 +212,8 @@ public class AdvertDAO {
     }
 
     private void appendProgramTypeConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
-        List<PrismProgramType> programTypes = queryDTO.getProgramTypes();
-        programTypes = programTypes == null ? (List<PrismProgramType>) PrismProgramType.getProgramTypes(queryDTO.getProgramCategory()) : programTypes;
+        Collection<PrismProgramType> programTypes = queryDTO.getProgramTypes();
+        programTypes = programTypes == null ? PrismProgramType.getProgramTypes(queryDTO.getProgramCategory()) : programTypes;
 
         Disjunction programTypeConstraint = Restrictions.disjunction();
         for (PrismProgramType programType : programTypes) {

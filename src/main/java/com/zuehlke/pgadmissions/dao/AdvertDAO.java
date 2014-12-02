@@ -241,10 +241,10 @@ public class AdvertDAO {
     }
 
     private void appendFeeConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
-        Integer feeMinimum = queryDTO.getFeeMinimum();
-        Integer feeMaximum = queryDTO.getFeeMaximum();
+        Integer feeMinimum = queryDTO.getMaxFee();
+        Integer feeMaximum = queryDTO.getMinFee();
 
-        if (!(feeMinimum == null && feeMaximum == null)) {
+        if (!(feeMinimum == 0 && feeMaximum == 0)) {
             criteria.add(Restrictions.eq("fee.converted", true));
             if (feeMinimum != null) {
                 criteria.add(Restrictions.ge("fee.monthMinimumAtLocale", feeMinimum)); //
@@ -255,10 +255,10 @@ public class AdvertDAO {
     }
 
     private void appendPayConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
-        Integer payMinimum = queryDTO.getPayMinimum();
-        Integer payMaximum = queryDTO.getPayMaximum();
+        Integer payMinimum = queryDTO.getMinSalary();
+        Integer payMaximum = queryDTO.getMaxSalary();
 
-        if (!(payMinimum == null && payMaximum == null)) {
+        if (!(payMinimum == 0 && payMaximum == 0)) {
             criteria.add(Restrictions.eq("pay.converted", true));
             if (payMinimum != null) {
                 criteria.add(Restrictions.ge("pay.monthMinimumAtLocale", payMinimum)); //
@@ -269,10 +269,10 @@ public class AdvertDAO {
     }
 
     private void appendDurationConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
-        Integer durationMinimum = queryDTO.getDurationMinimum();
-        Integer durationMaximum = queryDTO.getDurationMaximum();
+        Integer durationMinimum = queryDTO.getMinDuration();
+        Integer durationMaximum = queryDTO.getMaxDuration();
 
-        if (!(durationMinimum == null && durationMaximum == null)) {
+        if (!(durationMinimum == 0 && durationMaximum == 0)) {
             if (durationMinimum != null) {
                 criteria.add(Restrictions.ge("studyDurationMinimum", durationMinimum)); //
             } else if (durationMaximum != null) {

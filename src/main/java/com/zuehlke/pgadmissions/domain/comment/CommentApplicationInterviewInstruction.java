@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
+@Embeddable
 public class CommentApplicationInterviewInstruction {
 
     @Column(name = "application_interviewee_instructions")

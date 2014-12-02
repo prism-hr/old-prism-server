@@ -260,8 +260,7 @@ public class ApplicationResource {
         representation.setUsersInterestedInApplication(interestedRepresentations);
         representation.setUsersPotentiallyInterestedInApplication(potentiallyInterestedRepresentations);
 
-        representation.setAppointmentTimeslots(commentService.getAppointmentTimeslots(application));
-        representation.setAppointmentPreferences(commentService.getAppointmentPreferences(application));
+        representation.setInterview(commentService.getInterview(application));
 
         representation.setOfferRecommendation(commentService.getOfferRecommendation(application));
         representation.setAssignedSupervisors(commentService.getApplicationSupervisors(application));

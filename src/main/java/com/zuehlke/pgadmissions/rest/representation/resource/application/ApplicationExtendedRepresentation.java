@@ -1,11 +1,5 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation;
@@ -13,6 +7,11 @@ import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.AppointmentTimeslotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProjectRepresentation;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public class ApplicationExtendedRepresentation extends AbstractResourceRepresentation {
 
@@ -54,9 +53,7 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
 
     private List<UserRepresentation> usersPotentiallyInterestedInApplication;
 
-    private List<AppointmentTimeslotRepresentation> appointmentTimeslots;
-
-    private List<UserAppointmentPreferencesRepresentation> appointmentPreferences;
+    private InterviewRepresentation interview;
 
     private OfferRepresentation offerRecommendation;
 
@@ -114,19 +111,19 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
         this.programDetail = programDetail;
     }
 
-    public final List<String> getPossibleThemes() {
+    public List<String> getPossibleThemes() {
         return possibleThemes;
     }
 
-    public final void setPossibleThemes(List<String> possibleThemes) {
+    public void setPossibleThemes(List<String> possibleThemes) {
         this.possibleThemes = possibleThemes;
     }
 
-    public final List<String> getPossibleLocations() {
+    public List<String> getPossibleLocations() {
         return possibleLocations;
     }
 
-    public final void setPossibleLocations(List<String> possibleLocations) {
+    public void setPossibleLocations(List<String> possibleLocations) {
         this.possibleLocations = possibleLocations;
     }
 
@@ -178,11 +175,11 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
         this.fundings = fundings;
     }
 
-    public final List<PrizeRepresentation> getPrizes() {
+    public List<PrizeRepresentation> getPrizes() {
         return prizes;
     }
 
-    public final void setPrizes(List<PrizeRepresentation> prizes) {
+    public void setPrizes(List<PrizeRepresentation> prizes) {
         this.prizes = prizes;
     }
 
@@ -226,20 +223,12 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
         this.usersPotentiallyInterestedInApplication = usersPotentiallyInterestedInApplication;
     }
 
-    public final List<AppointmentTimeslotRepresentation> getAppointmentTimeslots() {
-        return appointmentTimeslots;
+    public InterviewRepresentation getInterview() {
+        return interview;
     }
 
-    public final void setAppointmentTimeslots(List<AppointmentTimeslotRepresentation> appointmentTimeslots) {
-        this.appointmentTimeslots = appointmentTimeslots;
-    }
-
-    public final List<UserAppointmentPreferencesRepresentation> getAppointmentPreferences() {
-        return appointmentPreferences;
-    }
-
-    public final void setAppointmentPreferences(List<UserAppointmentPreferencesRepresentation> appointmentPreferences) {
-        this.appointmentPreferences = appointmentPreferences;
+    public void setInterview(InterviewRepresentation interview) {
+        this.interview = interview;
     }
 
     public OfferRepresentation getOfferRecommendation() {
@@ -266,19 +255,19 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
         this.availableStudyOptions = availableStudyOptions;
     }
 
-    public final List<String> getPrimaryThemes() {
+    public List<String> getPrimaryThemes() {
         return primaryThemes;
     }
 
-    public final void setPrimaryThemes(List<String> primaryThemes) {
+    public void setPrimaryThemes(List<String> primaryThemes) {
         this.primaryThemes = primaryThemes;
     }
 
-    public final List<String> getSecondaryThemes() {
+    public List<String> getSecondaryThemes() {
         return secondaryThemes;
     }
 
-    public final void setSecondaryThemes(List<String> secondaryThemes) {
+    public void setSecondaryThemes(List<String> secondaryThemes) {
         this.secondaryThemes = secondaryThemes;
     }
 
@@ -298,11 +287,11 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
         this.studyDetail = studyDetail;
     }
 
-    public final ApplicationSummaryRepresentation getApplicationSummary() {
+    public ApplicationSummaryRepresentation getApplicationSummary() {
         return applicationSummary;
     }
 
-    public final void setApplicationSummary(ApplicationSummaryRepresentation applicationSummary) {
+    public void setApplicationSummary(ApplicationSummaryRepresentation applicationSummary) {
         this.applicationSummary = applicationSummary;
     }
 

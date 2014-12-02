@@ -13,6 +13,9 @@ public class ApplicationDocumentDTO {
     private FileDTO cv;
 
     @Valid
+    private FileDTO researchStatement;
+    
+    @Valid
     private FileDTO coveringLetter;
 
     public FileDTO getPersonalStatement() {
@@ -30,6 +33,14 @@ public class ApplicationDocumentDTO {
     public void setCv(FileDTO cv) {
         this.cv = cv;
     }
+    
+    public final FileDTO getResearchStatement() {
+        return researchStatement;
+    }
+
+    public final void setResearchStatement(FileDTO researchStatement) {
+        this.researchStatement = researchStatement;
+    }
 
     public FileDTO getCoveringLetter() {
         return coveringLetter;
@@ -38,4 +49,5 @@ public class ApplicationDocumentDTO {
     public void setCoveringLetter(FileDTO coveringLetter) {
         this.coveringLetter = coveringLetter;
     }
+    
 }

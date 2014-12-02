@@ -490,13 +490,15 @@ public class ApplicationSectionService {
             application.setDocument(document);
         }
 
-        Document cv = documentDTO.getCv() != null ? entityService.getById(Document.class, documentDTO.getCv().getId()) : null;
         Document personalStatement = documentDTO.getPersonalStatement() != null ? entityService.getById(Document.class, documentDTO.getPersonalStatement()
                 .getId()) : null;
+        Document cv = documentDTO.getCv() != null ? entityService.getById(Document.class, documentDTO.getCv().getId()) : null;
+        Document researchStatement = documentDTO.getResearchStatement() != null ? entityService.getById(Document.class, documentDTO.getResearchStatement().getId()) : null;
         Document coveringLetter = documentDTO.getCoveringLetter() != null ? entityService.getById(Document.class, documentDTO.getCoveringLetter().getId())
                 : null;
         document.setCv(cv);
         document.setPersonalStatement(personalStatement);
+        document.setResearchStatement(researchStatement);
         document.setCoveringLetter(coveringLetter);
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_DOCUMENT);
     }

@@ -79,6 +79,7 @@ public class AdvertDAO {
         appendProjectsConstraint(queryDTO, criteria);
 
         return criteria.addOrder(Order.desc("sequenceIdentifier")) //
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY) //
                 .list();
     }
 

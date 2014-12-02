@@ -19,17 +19,17 @@ public class OpportunitiesQueryDTO {
 
     private List<PrismStudyOption> studyOptions;
 
-    private Integer feeMinimum;
+    private Integer minFee;
 
-    private Integer feeMaximum;
+    private Integer maxFee;
 
-    private Integer payMinimum;
+    private Integer minSalary;
 
-    private Integer payMaximum;
+    private Integer maxSalary;
 
-    private Integer durationMinimum;
+    private Integer minDuration;
 
-    private Integer durationMaximum;
+    private Integer maxDuration;
 
     private List<Integer> institutions;
 
@@ -76,53 +76,53 @@ public class OpportunitiesQueryDTO {
     public void setStudyOptions(List<PrismStudyOption> studyOptions) {
         this.studyOptions = studyOptions;
     }
-
-    public Integer getFeeMinimum() {
-        return feeMinimum;
+    
+    public final Integer getMinFee() {
+        return minFee;
     }
 
-    public void setFeeMinimum(Integer feeMinimum) {
-        this.feeMinimum = feeMinimum;
+    public final void setMinFee(Integer minFee) {
+        this.minFee = minFee;
     }
 
-    public Integer getFeeMaximum() {
-        return feeMaximum;
+    public final Integer getMaxFee() {
+        return maxFee;
     }
 
-    public void setFeeMaximum(Integer feeMaximum) {
-        this.feeMaximum = feeMaximum;
+    public final void setMaxFee(Integer maxFee) {
+        this.maxFee = maxFee;
     }
 
-    public Integer getPayMinimum() {
-        return payMinimum;
+    public final Integer getMinSalary() {
+        return minSalary;
     }
 
-    public void setPayMinimum(Integer payMinimum) {
-        this.payMinimum = payMinimum;
+    public final void setMinSalary(Integer minSalary) {
+        this.minSalary = minSalary;
     }
 
-    public Integer getPayMaximum() {
-        return payMaximum;
+    public final Integer getMaxSalary() {
+        return maxSalary;
     }
 
-    public void setPayMaximum(Integer payMaximum) {
-        this.payMaximum = payMaximum;
+    public final void setMaxSalary(Integer maxSalary) {
+        this.maxSalary = maxSalary;
     }
 
-    public Integer getDurationMinimum() {
-        return durationMinimum;
+    public final Integer getMinDuration() {
+        return minDuration;
     }
 
-    public void setDurationMinimum(Integer durationMinimum) {
-        this.durationMinimum = durationMinimum;
+    public final void setMinDuration(Integer minDuration) {
+        this.minDuration = minDuration;
     }
 
-    public Integer getDurationMaximum() {
-        return durationMaximum;
+    public final Integer getMaxDuration() {
+        return maxDuration;
     }
 
-    public void setDurationMaximum(Integer durationMaximum) {
-        this.durationMaximum = durationMaximum;
+    public final void setMaxDuration(Integer maxDuration) {
+        this.maxDuration = maxDuration;
     }
 
     public List<Integer> getInstitutions() {

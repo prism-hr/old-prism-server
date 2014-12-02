@@ -262,8 +262,8 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
     }
 
     private void validateRequiredConstraint(Object object, String parentProperty, String property, WorkflowPropertyConfiguration configuration, Errors errors) {
-        if (configuration.getEnabled()) {
-            if (configuration.getRequired() && object == null) {
+        if (BooleanUtils.isTrue(configuration.getEnabled())) {
+            if (BooleanUtils.isTrue(configuration.getRequired()) && object == null) {
                 errors.pushNestedPath(parentProperty);
                 errors.rejectValue(property, "notNull");
                 errors.popNestedPath();

@@ -208,19 +208,17 @@ public class ResourceService {
 
     public void recordStateTransition(Resource resource, Comment comment, State state, State transitionState) throws DeduplicationException,
             InstantiationException, IllegalAccessException {
-        if (comment.isStateTransitionComment()) {
-            resource.setPreviousState(state);
-            resource.setState(transitionState);
+        resource.setPreviousState(state);
+        resource.setState(transitionState);
 
-            deleteResourceStates(resource.getResourcePreviousStates());
-            deleteResourceStates(resource.getResourceStates());
-            entityService.flush();
+        deleteResourceStates(resource.getResourcePreviousStates());
+        deleteResourceStates(resource.getResourceStates());
+        entityService.flush();
 
-            insertResourceStates(resource, resource.getResourcePreviousStates(), comment.getCommentStates(), ResourcePreviousState.class);
-            insertResourceStates(resource, resource.getResourceStates(), comment.getCommentTransitionStates(), ResourceState.class);
+        insertResourceStates(resource, resource.getResourcePreviousStates(), comment.getCommentStates(), ResourcePreviousState.class);
+        insertResourceStates(resource, resource.getResourceStates(), comment.getCommentTransitionStates(), ResourceState.class);
 
-            entityService.flush();
-        }
+        entityService.flush();
     }
 
     public void processResource(Resource resource, Comment comment) throws DeduplicationException {

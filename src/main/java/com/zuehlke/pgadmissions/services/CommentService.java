@@ -380,7 +380,7 @@ public class CommentService {
 
         updateCommentStates(comment);
 
-        if (comment.isSecondaryTransitionComment()) {
+        if (comment.isSecondaryTransitionComment() || comment.isStateGroupTransitionComment()) {
             createCommentTransitionStates(comment, transitionState, stateTerminations);
         } else {
             updateCommentTransitionStates(comment, stateTerminations);
@@ -657,7 +657,6 @@ public class CommentService {
             boolean primaryState = resourceState.getPrimaryState();
             if (stateTerminations == null || (!stateTerminations.contains(state) && !primaryState)) {
                 comment.addCommentTransitionState(state, primaryState);
-
             }
         }
     }

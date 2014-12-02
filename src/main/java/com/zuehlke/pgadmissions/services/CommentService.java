@@ -8,7 +8,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import com.zuehlke.pgadmissions.rest.representation.comment.*;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.InterviewRepresentation;
 import org.dozer.Mapper;
+import org.dozer.Mapping;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -67,10 +70,6 @@ import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.TimelineRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.TimelineRepresentation.TimelineCommentGroupRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.AppointmentTimeslotRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentApplicationInterviewAppointmentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentApplicationInterviewInstructionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedSupervisorRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.OfferRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.UserAppointmentPreferencesRepresentation;
@@ -110,6 +109,9 @@ public class CommentService {
 
     @Autowired
     private CommentValidator commentValidator;
+
+    @Autowired
+    private Mapper dozerBeanMapper;
 
     public Comment getById(int id) {
         return entityService.getById(Comment.class, id);
@@ -185,48 +187,40 @@ public class CommentService {
         return commentDAO.getApplicationAssessmentComments(application);
     }
 
-    public List<AppointmentTimeslotRepresentation> getAppointmentTimeslots(Application application) {
+    public InterviewRepresentation getInterview(Application application) {
         Comment schedulingComment = commentDAO.getLatestComment(application, PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
+        if(schedulingComment == null){
+            return null;
+        }
+        InterviewRepresentation interview = new InterviewRepresentation();
 
-        if (schedulingComment != null) {
-            List<AppointmentTimeslotRepresentation> schedulingOptions = Lists.newLinkedList();
-            for (CommentAppointmentTimeslot schedulingOption : commentDAO.getAppointmentTimeslots(schedulingComment)) {
-                schedulingOptions.add(new AppointmentTimeslotRepresentation().withId(schedulingOption.getId()).withDateTime(schedulingOption.getDateTime()));
-            }
-
-            return schedulingOptions;
+        // timeslots
+        interview.setAppointmentTimeslots(Lists.<AppointmentTimeslotRepresentation>newLinkedList());
+        for (CommentAppointmentTimeslot schedulingOption : commentDAO.getAppointmentTimeslots(schedulingComment)) {
+            interview.getAppointmentTimeslots().add(new AppointmentTimeslotRepresentation().withId(schedulingOption.getId()).withDateTime(schedulingOption.getDateTime()));
         }
 
-        return Lists.newArrayList();
-    }
+        // preferences
+        interview.setAppointmentPreferences(Lists.<UserAppointmentPreferencesRepresentation>newLinkedList());
+        for (User invitee : commentDAO.getAppointmentInvitees(schedulingComment)) {
+            UserRepresentation inviteeRepresentation = userService.getUserRepresentation(invitee);
+            UserAppointmentPreferencesRepresentation preferenceRepresentation = new UserAppointmentPreferencesRepresentation()
+                    .withUser(inviteeRepresentation);
 
-    public List<UserAppointmentPreferencesRepresentation> getAppointmentPreferences(Application application) {
-        Comment schedulingComment = commentDAO.getLatestComment(application, PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
+            List<Boolean> inviteePreferences = Lists.newLinkedList();
 
-        if (schedulingComment != null) {
-            List<UserAppointmentPreferencesRepresentation> schedulingPreferences = Lists.newLinkedList();
-
-            for (User invitee : commentDAO.getAppointmentInvitees(schedulingComment)) {
-                UserRepresentation inviteeRepresentation = userService.getUserRepresentation(invitee);
-                UserAppointmentPreferencesRepresentation preferenceRepresentation = new UserAppointmentPreferencesRepresentation()
-                        .withUser(inviteeRepresentation);
-
-                List<Boolean> inviteePreferences = Lists.newLinkedList();
-
-                Comment preferenceComment = getLatestAppointmentPreferenceComment(application, schedulingComment, invitee);
-                List<LocalDateTime> inviteeResponses = commentDAO.getAppointmentPreferences(preferenceComment);
-                for (CommentAppointmentTimeslot timeslot : commentDAO.getAppointmentTimeslots(schedulingComment)) {
-                    inviteePreferences.add(inviteeResponses.contains(timeslot.getDateTime()));
-                }
-
-                preferenceRepresentation.withPreferences(inviteePreferences);
-                schedulingPreferences.add(preferenceRepresentation);
+            Comment preferenceComment = getLatestAppointmentPreferenceComment(application, schedulingComment, invitee);
+            List<LocalDateTime> inviteeResponses = commentDAO.getAppointmentPreferences(preferenceComment);
+            for (CommentAppointmentTimeslot timeslot : commentDAO.getAppointmentTimeslots(schedulingComment)) {
+                inviteePreferences.add(inviteeResponses.contains(timeslot.getDateTime()));
             }
 
-            return schedulingPreferences;
+            preferenceRepresentation.withPreferences(inviteePreferences);
+            interview.getAppointmentPreferences().add(preferenceRepresentation);
         }
-
-        return Lists.newArrayList();
+        dozerBeanMapper.map(schedulingComment.getInterviewAppointment(), interview);
+        dozerBeanMapper.map(schedulingComment.getInterviewInstruction(), interview);
+        return interview;
     }
 
     public List<ApplicationAssignedSupervisorRepresentation> getApplicationSupervisors(Application application) {

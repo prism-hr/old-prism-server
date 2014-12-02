@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
+@Embeddable
 public class CommentApplicationPositionDetail {
 
     @Column(name = "application_position_title")
@@ -25,15 +27,15 @@ public class CommentApplicationPositionDetail {
     public final void setPositionDescription(String positionDescription) {
         this.positionDescription = positionDescription;
     }
-    
+
     public CommentApplicationPositionDetail withPositionTitle(String positionTitle) {
         this.positionTitle = positionTitle;
         return this;
     }
-    
+
     public CommentApplicationPositionDetail withPositionDescription(String positionDescription) {
         this.positionDescription = positionDescription;
         return this;
     }
-    
+
 }

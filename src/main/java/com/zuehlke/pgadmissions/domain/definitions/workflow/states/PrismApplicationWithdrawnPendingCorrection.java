@@ -55,7 +55,7 @@ public class PrismApplicationWithdrawnPendingCorrection extends PrismWorkflowSta
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_WITHDRAWN_PENDING_CORRECTION) // 
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST)))); //
+                        .withTransitionAction(PrismAction.APPLICATION_COMMENT)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_CORRECT) //

@@ -112,10 +112,14 @@ public class ProjectService {
     }
 
     private void copyProjectDetails(Project project, ProjectDTO projectDTO) {
+        Advert advert;
         if (project.getAdvert() == null) {
-            project.setAdvert(new Advert());
+            advert = new Advert();
+            advert.setAddress(advertService.createAddressCopy(project.getInstitution().getAddress())); 
+            project.setAdvert(advert);
+        } else {
+            advert = project.getAdvert();
         }
-        Advert advert = project.getAdvert();
 
         String title = projectDTO.getTitle();
         project.setEndDate(projectDTO.getEndDate());
@@ -125,7 +129,6 @@ public class ProjectService {
         advert.setApplyHomepage(projectDTO.getApplyHomepage());
         advert.setStudyDurationMinimum(projectDTO.getStudyDurationMinimum());
         advert.setStudyDurationMaximum(projectDTO.getStudyDurationMaximum());
-        advert.setAddress(advertService.createAddressCopy(project.getInstitution().getAddress()));
     }
 
     public void postProcessProject(Project project, Comment comment) {

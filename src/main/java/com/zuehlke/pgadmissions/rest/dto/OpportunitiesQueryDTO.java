@@ -13,10 +13,6 @@ public class OpportunitiesQueryDTO {
 
     private String keyword;
 
-    private Integer[] programs;
-
-    private Integer[] projects;
-
     public String getLocationId() {
         return locationId;
     }
@@ -47,22 +43,6 @@ public class OpportunitiesQueryDTO {
 
     public void setKeyword(String keyword) {
         this.keyword = keyword;
-    }
-
-    public final Integer[] getPrograms() {
-        return programs;
-    }
-
-    public final void setPrograms(Integer[] programs) {
-        this.programs = programs;
-    }
-
-    public final Integer[] getProjects() {
-        return projects;
-    }
-
-    public final void setProjects(Integer[] projects) {
-        this.projects = projects;
     }
 
 }

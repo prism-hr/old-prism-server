@@ -1,10 +1,12 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
+@Embeddable
 public class CommentApplicationOfferDetail {
 
     @Column(name = "application_position_provisional_start_date")

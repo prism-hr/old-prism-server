@@ -102,7 +102,6 @@ public class AdvertService {
         return entityService.getById(AdvertClosingDate.class, id);
     }
 
-    // TODO: user filters
     public List<Advert> getActiveAdverts(OpportunitiesQueryDTO queryDTO) {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -241,44 +242,15 @@ public class AdvertDAO {
     }
 
     private void appendFeeConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
-        Integer feeMinimum = queryDTO.getMaxFee();
-        Integer feeMaximum = queryDTO.getMinFee();
-
-        if (!(feeMinimum == 0 && feeMaximum == 0)) {
-            criteria.add(Restrictions.eq("fee.converted", true));
-            if (feeMinimum != null) {
-                criteria.add(Restrictions.ge("fee.monthMinimumAtLocale", feeMinimum)); //
-            } else if (feeMaximum != null) {
-                criteria.add(Restrictions.le("fee.monthMaximumAtLocale", feeMaximum)); //
-            }
-        }
+        appendRangeConstraint(criteria, "fee.monthMinimumAtLocale", "fee.monthMaximumAtLocale", queryDTO.getMinFee(), queryDTO.getMaxFee(), true);
     }
 
     private void appendPayConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
-        Integer payMinimum = queryDTO.getMinSalary();
-        Integer payMaximum = queryDTO.getMaxSalary();
-
-        if (!(payMinimum == 0 && payMaximum == 0)) {
-            criteria.add(Restrictions.eq("pay.converted", true));
-            if (payMinimum != null) {
-                criteria.add(Restrictions.ge("pay.monthMinimumAtLocale", payMinimum)); //
-            } else if (payMaximum != null) {
-                criteria.add(Restrictions.le("pay.monthMaximumAtLocale", payMaximum)); //
-            }
-        }
+        appendRangeConstraint(criteria, "pay.monthMinimumAtLocale", "pay.monthMaximumAtLocale", queryDTO.getMinSalary(), queryDTO.getMaxSalary(), true);
     }
 
     private void appendDurationConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
-        Integer durationMinimum = queryDTO.getMinDuration();
-        Integer durationMaximum = queryDTO.getMaxDuration();
-
-        if (!(durationMinimum == 0 && durationMaximum == 0)) {
-            if (durationMinimum != null) {
-                criteria.add(Restrictions.ge("studyDurationMinimum", durationMinimum)); //
-            } else if (durationMaximum != null) {
-                criteria.add(Restrictions.le("studyDurationMaximum", durationMaximum)); //
-            }
-        }
+        appendRangeConstraint(criteria, "studyDurationMinimum", "studyDurationMaximum", queryDTO.getMinDuration(), queryDTO.getMaxDuration(), false);
     }
 
     private void appendInstitutionsConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
@@ -303,6 +275,20 @@ public class AdvertDAO {
         List<Integer> projects = queryDTO.getProjects();
         if (projects != null && !projects.isEmpty()) {
             criteria.add(Restrictions.in("project.id", projects));
+        }
+    }
+
+    private void appendRangeConstraint(Criteria criteria, String loColumn, String hiColumn, Integer loValue, Integer hiValue, boolean decimal) {
+        if (loValue == null && hiValue == null) {
+            return;
+        } else if (loValue == 0 && hiValue == 0) {
+            return;
+        }
+
+        if (loValue != null) {
+            criteria.add(Restrictions.ge(loColumn, hiValue != null && hiValue < loValue ? hiValue : decimal ? new BigDecimal(loValue) : loValue));
+        } else if (hiValue != null) {
+            criteria.add(Restrictions.le(hiColumn, loValue != null && loValue > hiValue ? loValue : decimal ? new BigDecimal(hiValue) : hiValue)); //
         }
     }
 

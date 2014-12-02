@@ -21,7 +21,6 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewAppointment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
@@ -365,11 +364,6 @@ public class ResourceService {
 
     public LocalDate getApplicationClosingDate(Resource resource, Comment comment) {
         return resource.getApplication().getClosingDate();
-    }
-
-    public LocalDate getApplicationInterviewDate(Resource resource, Comment comment) {
-        CommentApplicationInterviewAppointment interviewAppointment = comment.getInterviewAppointment();
-        return interviewAppointment.getInterviewDateTime().toLocalDate();
     }
 
     public LocalDate getProjectEndDate(Resource resource, Comment comment) {

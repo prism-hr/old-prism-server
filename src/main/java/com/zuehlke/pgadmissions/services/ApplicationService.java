@@ -602,8 +602,10 @@ public class ApplicationService {
 
     private void synchroniseOfferRecommendation(Application application, Comment comment) {
         CommentApplicationOfferDetail offerDetail = comment.getOfferDetail();
-        application.setConfirmedStartDate(offerDetail.getPositionProvisionalStartDate());
-        application.setConfirmedOfferType(offerDetail.getAppointmentConditions() == null ? PrismOfferType.UNCONDITIONAL : PrismOfferType.CONDITIONAL);
+        if (offerDetail != null) {
+            application.setConfirmedStartDate(offerDetail.getPositionProvisionalStartDate());
+            application.setConfirmedOfferType(offerDetail.getAppointmentConditions() == null ? PrismOfferType.UNCONDITIONAL : PrismOfferType.CONDITIONAL);
+        }
     }
 
     private Application getPreviousApplication(Application application) {

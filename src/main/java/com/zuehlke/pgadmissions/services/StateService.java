@@ -528,7 +528,7 @@ public class StateService {
 
     private StateTransition getInterviewerAssignedOutcome(Resource resource, Comment comment) {
         CommentApplicationInterviewAppointment interviewAppointment = comment.getInterviewAppointment();
-        LocalDateTime interviewDateTime = interviewAppointment.getInterviewDateTime();
+        LocalDateTime interviewDateTime = interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime();
         if (interviewDateTime != null) {
             DateTime interviewZonedDateTime = interviewDateTime.toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone()));
             if (new DateTime().isAfter(interviewZonedDateTime)) {

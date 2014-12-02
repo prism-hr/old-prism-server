@@ -1,20 +1,17 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.util.List;
 
 public class OpportunitiesQueryDTO {
 
     @NotNull
     private PrismProgramCategory programCategory;
-
-    private OpportunityLocationQueryDTO location;
 
     private String keyword;
 
@@ -40,20 +37,20 @@ public class OpportunitiesQueryDTO {
 
     private List<Integer> projects;
 
+    private BigDecimal neLat;
+
+    private BigDecimal neLon;
+
+    private BigDecimal swLat;
+
+    private BigDecimal swLon;
+
     public PrismProgramCategory getProgramCategory() {
         return programCategory;
     }
 
     public void setProgramCategory(PrismProgramCategory programCategory) {
         this.programCategory = programCategory;
-    }
-
-    public final OpportunityLocationQueryDTO getLocation() {
-        return location;
-    }
-
-    public final void setLocation(OpportunityLocationQueryDTO location) {
-        this.location = location;
     }
 
     public String getKeyword() {
@@ -64,136 +61,123 @@ public class OpportunitiesQueryDTO {
         this.keyword = keyword;
     }
 
-    public final List<PrismProgramType> getProgramTypes() {
+    public List<PrismProgramType> getProgramTypes() {
         return programTypes;
     }
 
-    public final void setProgramTypes(List<PrismProgramType> programTypes) {
+    public void setProgramTypes(List<PrismProgramType> programTypes) {
         this.programTypes = programTypes;
     }
 
-    public final List<PrismStudyOption> getStudyOptions() {
+    public List<PrismStudyOption> getStudyOptions() {
         return studyOptions;
     }
 
-    public final void setStudyOptions(List<PrismStudyOption> studyOptions) {
+    public void setStudyOptions(List<PrismStudyOption> studyOptions) {
         this.studyOptions = studyOptions;
     }
 
-    public final Integer getFeeMinimum() {
+    public Integer getFeeMinimum() {
         return feeMinimum;
     }
 
-    public final void setFeeMinimum(Integer feeMinimum) {
+    public void setFeeMinimum(Integer feeMinimum) {
         this.feeMinimum = feeMinimum;
     }
 
-    public final Integer getFeeMaximum() {
+    public Integer getFeeMaximum() {
         return feeMaximum;
     }
 
-    public final void setFeeMaximum(Integer feeMaximum) {
+    public void setFeeMaximum(Integer feeMaximum) {
         this.feeMaximum = feeMaximum;
     }
 
-    public final Integer getPayMinimum() {
+    public Integer getPayMinimum() {
         return payMinimum;
     }
 
-    public final void setPayMinimum(Integer payMinimum) {
+    public void setPayMinimum(Integer payMinimum) {
         this.payMinimum = payMinimum;
     }
 
-    public final Integer getPayMaximum() {
+    public Integer getPayMaximum() {
         return payMaximum;
     }
 
-    public final void setPayMaximum(Integer payMaximum) {
+    public void setPayMaximum(Integer payMaximum) {
         this.payMaximum = payMaximum;
     }
 
-    public final Integer getDurationMinimum() {
+    public Integer getDurationMinimum() {
         return durationMinimum;
     }
 
-    public final void setDurationMinimum(Integer durationMinimum) {
+    public void setDurationMinimum(Integer durationMinimum) {
         this.durationMinimum = durationMinimum;
     }
 
-    public final Integer getDurationMaximum() {
+    public Integer getDurationMaximum() {
         return durationMaximum;
     }
 
-    public final void setDurationMaximum(Integer durationMaximum) {
+    public void setDurationMaximum(Integer durationMaximum) {
         this.durationMaximum = durationMaximum;
     }
 
-    public final List<Integer> getInstitutions() {
+    public List<Integer> getInstitutions() {
         return institutions;
     }
 
-    public final void setInstitutions(List<Integer> institutions) {
+    public void setInstitutions(List<Integer> institutions) {
         this.institutions = institutions;
     }
 
-    public final List<Integer> getPrograms() {
+    public List<Integer> getPrograms() {
         return programs;
     }
 
-    public final void setPrograms(List<Integer> programs) {
+    public void setPrograms(List<Integer> programs) {
         this.programs = programs;
     }
 
-    public final List<Integer> getProjects() {
+    public List<Integer> getProjects() {
         return projects;
     }
 
-    public final void setProjects(List<Integer> projects) {
+    public void setProjects(List<Integer> projects) {
         this.projects = projects;
     }
 
-    public static class OpportunityLocationQueryDTO {
-
-        private BigDecimal locationViewNeX;
-
-        private BigDecimal locationViewNeY;
-
-        private BigDecimal locationViewSwX;
-
-        private BigDecimal locationViewSwY;
-
-        public final BigDecimal getLocationViewNeX() {
-            return locationViewNeX;
-        }
-
-        public final void setLocationViewNeX(BigDecimal locationViewNeX) {
-            this.locationViewNeX = locationViewNeX;
-        }
-
-        public final BigDecimal getLocationViewNeY() {
-            return locationViewNeY;
-        }
-
-        public final void setLocationViewNeY(BigDecimal locationViewNeY) {
-            this.locationViewNeY = locationViewNeY;
-        }
-
-        public final BigDecimal getLocationViewSwX() {
-            return locationViewSwX;
-        }
-
-        public final void setLocationViewSwX(BigDecimal locationViewSwX) {
-            this.locationViewSwX = locationViewSwX;
-        }
-
-        public final BigDecimal getLocationViewSwY() {
-            return locationViewSwY;
-        }
-
-        public final void setLocationViewSwY(BigDecimal locationViewSwY) {
-            this.locationViewSwY = locationViewSwY;
-        }
-
+    public BigDecimal getNeLat() {
+        return neLat;
     }
 
+    public void setNeLat(BigDecimal neLat) {
+        this.neLat = neLat;
+    }
+
+    public BigDecimal getNeLon() {
+        return neLon;
+    }
+
+    public void setNeLon(BigDecimal neLon) {
+        this.neLon = neLon;
+    }
+
+    public BigDecimal getSwLat() {
+        return swLat;
+    }
+
+    public void setSwLat(BigDecimal swLat) {
+        this.swLat = swLat;
+    }
+
+    public BigDecimal getSwLon() {
+        return swLon;
+    }
+
+    public void setSwLon(BigDecimal swLon) {
+        this.swLon = swLon;
+    }
 }

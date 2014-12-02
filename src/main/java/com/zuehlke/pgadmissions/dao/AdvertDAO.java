@@ -30,7 +30,6 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
-import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO.OpportunityLocationQueryDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -45,12 +44,14 @@ public class AdvertDAO {
                 .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program.institution", "institution", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program.programType", "programType", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("program.studyOptions", "studyOption", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("program.studyOptions", "programStudyOption", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("programStudyOption.studyOption", "studyOption", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("project", "project", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("project.program", "projectProgram", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("projectProgram.institution", "projectInstitution", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("projectProgram.programType", "projectProgramType", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("projectProgram.studyOptions", "projectStudyOption", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("projectProgram.studyOptions", "projectProgramStudyOption", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("projectProgramStudyOption.studyOption", "projectStudyOption", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("project.userRoles", "userRole", JoinType.LEFT_OUTER_JOIN, //
                         Restrictions.in("userRole.role.id", Arrays.asList(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROJECT_SECONDARY_SUPERVISOR))) //
                 .createAlias("userRole.user", "user", JoinType.LEFT_OUTER_JOIN) //
@@ -62,7 +63,7 @@ public class AdvertDAO {
                                 .add(Restrictions.isNotNull("project")) //
                                 .add(Restrictions.in("project.state.id", activeProjectStates))));
 
-        appendLocationContraint(criteria, queryDTO);
+        appendLocationConstraint(criteria, queryDTO);
         appendKeywordConstraint(queryDTO, criteria);
 
         appendProgramTypeConstraint(criteria, queryDTO);
@@ -185,11 +186,10 @@ public class AdvertDAO {
                 .list();
     }
 
-    private void appendLocationContraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
-        OpportunityLocationQueryDTO locationQueryDTO = queryDTO.getLocation();
-        if (locationQueryDTO != null) {
-            criteria.add(Restrictions.between("address.location.locationX", locationQueryDTO.getLocationViewNeX(), locationQueryDTO.getLocationViewSwX()));
-            criteria.add(Restrictions.between("address.location.locationY", locationQueryDTO.getLocationViewNeY(), locationQueryDTO.getLocationViewSwY()));
+    private void appendLocationConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
+        if (queryDTO.getNeLat() != null) {
+            criteria.add(Restrictions.between("address.location.locationX", queryDTO.getNeLat(), queryDTO.getSwLat()));
+            criteria.add(Restrictions.between("address.location.locationY", queryDTO.getNeLon(), queryDTO.getSwLon()));
         }
     }
 
@@ -233,7 +233,7 @@ public class AdvertDAO {
             for (PrismStudyOption studyOption : studyOptions) {
                 studyOptionConstraint //
                         .add(Restrictions.eq("studyOption.code", studyOption.name())) //
-                        .add(Restrictions.eq("projectStudyOption", studyOption.name())); //
+                        .add(Restrictions.eq("projectStudyOption.code", studyOption.name())); //
             }
         }
         criteria.add(studyOptionConstraint);

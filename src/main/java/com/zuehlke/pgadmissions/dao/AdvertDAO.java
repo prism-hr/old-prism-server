@@ -1,5 +1,20 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFilterCategory;
@@ -15,17 +30,6 @@ import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO.OpportunityLocationQueryDTO;
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.*;
-import org.hibernate.sql.JoinType;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -46,8 +50,9 @@ public class AdvertDAO {
                 .createAlias("projectProgram.institution", "projectInstitution", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("projectProgram.programType", "projectProgramType", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("projectProgram.studyOptions", "projectStudyOption", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("project.userRoles", "supervisor", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.in("supervisor.role.id", Arrays.asList(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROJECT_SECONDARY_SUPERVISOR))) //
+                .createAlias("project.userRoles", "userRole", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.in("userRole.role.id", Arrays.asList(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROJECT_SECONDARY_SUPERVISOR))) //
+                .createAlias("userRole.user", "user", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("program")) //
@@ -56,22 +61,8 @@ public class AdvertDAO {
                                 .add(Restrictions.isNotNull("project")) //
                                 .add(Restrictions.in("project.state.id", activeProjectStates))));
 
-        if (queryDTO.getLocation() != null) {
-            appendLocationContraint(criteria, queryDTO);
-        }
-
-        String keyword = queryDTO.getKeyword();
-        if (keyword != null) {
-            criteria.add(Restrictions.disjunction() //
-                    .add(Restrictions.ilike("title", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("summary", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("description", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("project.title", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("program.title", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("institution.title", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("projectProgram.title", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("projectInstitution", keyword, MatchMode.ANYWHERE))); //
-        }
+        appendLocationContraint(criteria, queryDTO);
+        appendKeywordConstraint(queryDTO, criteria);
 
         appendProgramTypeConstraint(criteria, queryDTO);
         appendStudyOptionConstraint(queryDTO, criteria);
@@ -199,9 +190,27 @@ public class AdvertDAO {
         criteria.add(Restrictions.between("address.location.locationY", locationQueryDTO.getLocationViewNeY(), locationQueryDTO.getLocationViewSwY()));
     }
 
+    private void appendKeywordConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
+        String keyword = queryDTO.getKeyword();
+        if (keyword != null) {
+            criteria.add(Restrictions.disjunction() //
+                    .add(Restrictions.ilike("title", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("summary", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("description", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("project.title", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("program.title", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("institution.title", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("projectProgram.title", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("projectInstitution", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("user.firstName", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("user.lastName", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("user.email", keyword, MatchMode.ANYWHERE))); //
+        }
+    }
+
     private void appendProgramTypeConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
-        Collection<PrismProgramType> programTypes = queryDTO.getProgramTypes();
-        programTypes = programTypes == null ? PrismProgramType.getProgramTypes(queryDTO.getProgramCategory()) : programTypes;
+        List<PrismProgramType> programTypes = queryDTO.getProgramTypes();
+        programTypes = programTypes == null ? (List<PrismProgramType>) PrismProgramType.getProgramTypes(queryDTO.getProgramCategory()) : programTypes;
 
         Disjunction programTypeConstraint = Restrictions.disjunction();
         for (PrismProgramType programType : programTypes) {

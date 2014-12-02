@@ -50,8 +50,9 @@ public class AdvertDAO {
                 .createAlias("projectProgram.institution", "projectInstitution", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("projectProgram.programType", "projectProgramType", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("projectProgram.studyOptions", "projectStudyOption", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("project.userRoles", "supervisor", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.in("supervisor.role.id", Arrays.asList(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROJECT_SECONDARY_SUPERVISOR))) //
+                .createAlias("project.userRoles", "userRole", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.in("userRole.role.id", Arrays.asList(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROJECT_SECONDARY_SUPERVISOR))) //
+                .createAlias("userRole.user", "user", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("program")) //
@@ -61,19 +62,7 @@ public class AdvertDAO {
                                 .add(Restrictions.in("project.state.id", activeProjectStates))));
 
         appendLocationContraint(criteria, queryDTO);
-
-        String keyword = queryDTO.getKeyword();
-        if (keyword != null) {
-            criteria.add(Restrictions.disjunction() //
-                    .add(Restrictions.ilike("title", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("summary", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("description", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("project.title", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("program.title", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("institution.title", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("projectProgram.title", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.ilike("projectInstitution", keyword, MatchMode.ANYWHERE))); //
-        }
+        appendKeywordConstraint(queryDTO, criteria);
 
         appendProgramTypeConstraint(criteria, queryDTO);
         appendStudyOptionConstraint(queryDTO, criteria);
@@ -199,6 +188,24 @@ public class AdvertDAO {
         OpportunityLocationQueryDTO locationQueryDTO = queryDTO.getLocation();
         criteria.add(Restrictions.between("address.location.locationX", locationQueryDTO.getLocationViewNeX(), locationQueryDTO.getLocationViewSwX()));
         criteria.add(Restrictions.between("address.location.locationY", locationQueryDTO.getLocationViewNeY(), locationQueryDTO.getLocationViewSwY()));
+    }
+
+    private void appendKeywordConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
+        String keyword = queryDTO.getKeyword();
+        if (keyword != null) {
+            criteria.add(Restrictions.disjunction() //
+                    .add(Restrictions.ilike("title", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("summary", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("description", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("project.title", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("program.title", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("institution.title", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("projectProgram.title", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("projectInstitution", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("user.firstName", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("user.lastName", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("user.email", keyword, MatchMode.ANYWHERE))); //
+        }
     }
 
     private void appendProgramTypeConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {

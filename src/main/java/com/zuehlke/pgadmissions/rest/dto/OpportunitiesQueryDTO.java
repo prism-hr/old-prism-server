@@ -14,7 +14,6 @@ public class OpportunitiesQueryDTO {
     @NotNull
     private PrismProgramCategory programCategory;
 
-    @NotNull
     private OpportunityLocationQueryDTO location;
 
     private String keyword;

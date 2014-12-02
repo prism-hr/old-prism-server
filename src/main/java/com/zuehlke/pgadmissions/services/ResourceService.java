@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewAppointment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
@@ -367,15 +368,16 @@ public class ResourceService {
     }
 
     public LocalDate getApplicationInterviewDate(Resource resource, Comment comment) {
-        return comment.getInterviewAppointment().getInterviewDateTime().toLocalDate();
+        CommentApplicationInterviewAppointment interviewAppointment = comment.getInterviewAppointment();
+        return interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime().toLocalDate();
     }
-    
+
     public LocalDate getProjectEndDate(Resource resource, Comment comment) {
-        return resource.getProject().getEndDate();
+        return comment.getTransitionState().getId() == PrismState.PROJECT_DISABLED_COMPLETED ? null : resource.getProject().getEndDate();
     }
 
     public LocalDate getProgramEndDate(Resource resource, Comment comment) {
-        return resource.getProgram().getEndDate();
+        return comment.getTransitionState().getId() == PrismState.PROGRAM_DISABLED_COMPLETED ? null : resource.getProgram().getEndDate();
     }
 
     public <T extends Resource> ResourceSummaryRepresentation getResourceSummary(Class<T> resourceClass, Integer resourceId) {

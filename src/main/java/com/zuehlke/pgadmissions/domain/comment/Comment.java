@@ -1,45 +1,9 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.TimeZone;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import org.apache.commons.lang3.LocaleUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -53,6 +17,20 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.TimeZone;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
 @Entity
 @Table(name = "COMMENT")
@@ -336,35 +314,35 @@ public class Comment {
         this.applicationEligible = applicationEligible;
     }
 
-    public final CommentApplicationInterviewAppointment getInterviewAppointment() {
+    public CommentApplicationInterviewAppointment getInterviewAppointment() {
         return interviewAppointment;
     }
 
-    public final void setInterviewAppointment(CommentApplicationInterviewAppointment interviewAppointment) {
+    public void setInterviewAppointment(CommentApplicationInterviewAppointment interviewAppointment) {
         this.interviewAppointment = interviewAppointment;
     }
 
-    public final CommentApplicationInterviewInstruction getInterviewInstruction() {
+    public CommentApplicationInterviewInstruction getInterviewInstruction() {
         return interviewInstruction;
     }
 
-    public final void setInterviewInstruction(CommentApplicationInterviewInstruction interviewInstruction) {
+    public void setInterviewInstruction(CommentApplicationInterviewInstruction interviewInstruction) {
         this.interviewInstruction = interviewInstruction;
     }
 
-    public final CommentApplicationPositionDetail getPositionDetail() {
+    public CommentApplicationPositionDetail getPositionDetail() {
         return positionDetail;
     }
 
-    public final void setPositionDetail(CommentApplicationPositionDetail positionDetail) {
+    public void setPositionDetail(CommentApplicationPositionDetail positionDetail) {
         this.positionDetail = positionDetail;
     }
 
-    public final CommentApplicationOfferDetail getOfferDetail() {
+    public CommentApplicationOfferDetail getOfferDetail() {
         return offerDetail;
     }
 
-    public final void setOfferDetail(CommentApplicationOfferDetail offerDetail) {
+    public void setOfferDetail(CommentApplicationOfferDetail offerDetail) {
         this.offerDetail = offerDetail;
     }
 
@@ -484,7 +462,7 @@ public class Comment {
         this.createdTimestamp = createdTimestamp;
     }
 
-    public final Set<State> getSecondaryTransitionStates() {
+    public Set<State> getSecondaryTransitionStates() {
         return secondaryTransitionStates;
     }
 
@@ -718,7 +696,7 @@ public class Comment {
     public boolean isInterviewScheduledExpeditedComment() {
         return action.getId() == PrismAction.APPLICATION_ASSIGN_INTERVIEWERS
                 && Arrays.asList(PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW, PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK).contains(
-                        transitionState.getId());
+                transitionState.getId());
     }
 
     public boolean isUserCreationComment() {

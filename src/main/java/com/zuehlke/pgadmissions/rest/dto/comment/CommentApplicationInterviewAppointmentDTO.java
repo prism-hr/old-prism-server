@@ -8,7 +8,6 @@ import org.joda.time.LocalDateTime;
 
 public class CommentApplicationInterviewAppointmentDTO {
 
-    @NotNull
     private LocalDateTime interviewDateTime;
 
     @NotNull
@@ -40,5 +39,5 @@ public class CommentApplicationInterviewAppointmentDTO {
     public final void setInterviewDuration(Integer interviewDuration) {
         this.interviewDuration = interviewDuration;
     }
-    
+
 }

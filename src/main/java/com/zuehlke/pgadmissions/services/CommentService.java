@@ -196,13 +196,11 @@ public class CommentService {
         }
         InterviewRepresentation interview = new InterviewRepresentation();
 
-        // timeslots
         interview.setAppointmentTimeslots(Lists.<AppointmentTimeslotRepresentation>newLinkedList());
         for (CommentAppointmentTimeslot schedulingOption : commentDAO.getAppointmentTimeslots(schedulingComment)) {
             interview.getAppointmentTimeslots().add(new AppointmentTimeslotRepresentation().withId(schedulingOption.getId()).withDateTime(schedulingOption.getDateTime()));
         }
 
-        // preferences
         interview.setAppointmentPreferences(Lists.<UserAppointmentPreferencesRepresentation>newLinkedList());
         for (User invitee : commentDAO.getAppointmentInvitees(schedulingComment)) {
             UserRepresentation inviteeRepresentation = userService.getUserRepresentation(invitee);
@@ -220,8 +218,17 @@ public class CommentService {
             preferenceRepresentation.withPreferences(inviteePreferences);
             interview.getAppointmentPreferences().add(preferenceRepresentation);
         }
-        dozerBeanMapper.map(schedulingComment.getInterviewAppointment(), interview);
-        dozerBeanMapper.map(schedulingComment.getInterviewInstruction(), interview);
+        
+        CommentApplicationInterviewAppointment interviewAppointment = schedulingComment.getInterviewAppointment();
+        if (interviewAppointment != null) {
+            dozerBeanMapper.map(interviewAppointment, interview);
+        }
+        
+        CommentApplicationInterviewInstruction interviewInstruction = schedulingComment.getInterviewInstruction();
+        if (interviewInstruction != null) {
+            dozerBeanMapper.map(interviewInstruction, interview);
+        }
+
         return interview;
     }
 

@@ -172,8 +172,11 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
 
     private void validateImplodedRangeConstraint(Application application, String property, WorkflowPropertyConfiguration configuration, Errors errors) {
         String properties = (String) ReflectionUtils.getProperty(application, property);
-        Integer propertiesSize = StringUtils.countMatches(properties, "|");
-        validateRangeConstraint(configuration, property, propertiesSize == 0 ? 0 : propertiesSize + 1, errors);
+        if (properties == null || properties.isEmpty()) {
+            validateRangeConstraint(configuration, property, 0, errors);
+        } else {
+            validateRangeConstraint(configuration, property, StringUtils.countMatches(properties, "|") + 1, errors);
+        }
     }
 
     private void validateDocumentConstraint(Application application, String property, String propertyDocument, WorkflowPropertyConfiguration configuration,

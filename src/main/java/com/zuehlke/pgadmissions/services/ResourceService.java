@@ -366,6 +366,10 @@ public class ResourceService {
         return resource.getApplication().getClosingDate();
     }
 
+    public LocalDate getApplicationInterviewDate(Resource resource, Comment comment) {
+        return comment.getInterviewAppointment().getInterviewDateTime().toLocalDate();
+    }
+    
     public LocalDate getProjectEndDate(Resource resource, Comment comment) {
         return resource.getProject().getEndDate();
     }

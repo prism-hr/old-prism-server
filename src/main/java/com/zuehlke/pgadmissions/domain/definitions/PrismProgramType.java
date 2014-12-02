@@ -77,6 +77,8 @@ public enum PrismProgramType {
 
     private static final HashMultimap<PrismProgramType, PrismProgramTypeRecommendation> recommendations = HashMultimap.create();
 
+    private static final HashMultimap<PrismProgramCategory, PrismProgramType> programTypesByCategory = HashMultimap.create();
+
     private static final List<String> stringValues = Lists.newArrayList();
 
     static {
@@ -132,6 +134,7 @@ public enum PrismProgramType {
 
         for (PrismProgramType programType : PrismProgramType.values()) {
             stringValues.add(programType.name());
+            programTypesByCategory.put(programType.getProgramCategory(), programType);
         }
     }
 
@@ -229,12 +232,16 @@ public enum PrismProgramType {
         return null;
     }
 
-    public static Set<PrismProgramType> getRelations(PrismProgramType programType) {
-        return relations.get(programType);
+    public Set<PrismProgramType> getRelations() {
+        return relations.get(this);
     }
 
-    public static Set<PrismProgramTypeRecommendation> getRecommendations(PrismProgramType programType) {
-        return recommendations.get(programType);
+    public Set<PrismProgramTypeRecommendation> getRecommendations() {
+        return recommendations.get(this);
+    }
+
+    public static Set<PrismProgramType> getProgramTypes(PrismProgramCategory programCategory) {
+        return programTypesByCategory.get(programCategory);
     }
 
     public static PrismProgramType getSystemProgramType() {

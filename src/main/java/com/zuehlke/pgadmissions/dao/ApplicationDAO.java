@@ -225,28 +225,21 @@ public class ApplicationDAO {
                     + "left join programDetail.referralSource as referralSource " //
                     + "join application.state as state " //
                     + "left join application.comments as provideReferenceComment " //
-                        + "with (provideReferenceComment.action.id = :provideReferenceAction " //
-                            + "and provideReferenceComment.declinedResponse is false) "
-                            + "or provideReferenceComment.id is null " //
+                        + "with provideReferenceComment.action.id = :provideReferenceAction " //
+                            + "and provideReferenceComment.declinedResponse is false " //
                     + "left join application.comments as declineReferenceComment " //
-                        + "with (declineReferenceComment.action.id = :provideReferenceAction " //
-                            + "and declineReferenceComment.declinedResponse is true) "
-                            + "or declineReferenceComment.id is null " //
+                        + "with declineReferenceComment.action.id = :provideReferenceAction " //
+                            + "and declineReferenceComment.declinedResponse is true " //
                     + "left join application.processings as verificationProcessing " //
-                        + "with verificationProcessing.stateGroup.id = :verificationStateGroup "
-                            + "or verificationProcessing.id is null " //
+                        + "with verificationProcessing.stateGroup.id = :verificationStateGroup " //
                     + "left join application.processings as referenceProcessing " //
-                        + "with referenceProcessing.stateGroup.id = :referenceStateGroup "
-                            + "or referenceProcessing.id is null " //
+                        + "with referenceProcessing.stateGroup.id = :referenceStateGroup " //
                     + "left join application.processings as reviewProcessing " //
                         + "with reviewProcessing.stateGroup.id = :reviewStateGroup " //
-                            + "or reviewProcessing.id is null " //
                     + "left join application.processings as interviewProcessing " //
                         + "with interviewProcessing.stateGroup.id = :interviewStateGroup " //
-                            + "or interviewProcessing.id is null " //
                     + "left join application.processings as approvalProcessing " //
                         + "with approvalProcessing.stateGroup.id = :approvalStateGroup " //
-                            + "or approvalProcessing.id is null " //
                 + "where application.id in :assignedApplications " //
                 + "group by application.id " //
                 + "order by application.sequenceIdentifier desc") //

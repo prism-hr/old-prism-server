@@ -7,11 +7,41 @@ import org.apache.commons.lang.BooleanUtils;
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
 
-public class ResourceListFilterDTO extends ListFilterDTO {
+public class ResourceListFilterDTO {
+
+    private FilterMatchMode matchMode;
+
+    private FilterSortOrder sortOrder;
+
+    private String valueString;
 
     private Boolean urgentOnly;
 
     private List<ResourceListFilterConstraintDTO> constraints;
+
+    public final FilterMatchMode getMatchMode() {
+        return matchMode;
+    }
+
+    public final void setMatchMode(FilterMatchMode matchMode) {
+        this.matchMode = matchMode;
+    }
+
+    public final FilterSortOrder getSortOrder() {
+        return sortOrder;
+    }
+
+    public final void setSortOrder(FilterSortOrder sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    public final String getValueString() {
+        return valueString;
+    }
+
+    public final void setValueString(String valueString) {
+        this.valueString = valueString;
+    }
 
     public final Boolean getUrgentOnly() {
         return urgentOnly;
@@ -34,17 +64,17 @@ public class ResourceListFilterDTO extends ListFilterDTO {
         this.urgentOnly = urgentOnly;
         return this;
     }
-    
+
     public ResourceListFilterDTO withMatchMode(FilterMatchMode matchMode) {
-        setMatchMode(matchMode);
+        this.matchMode = matchMode;
         return this;
     }
-    
+
     public ResourceListFilterDTO withSortOrder(FilterSortOrder sortOrder) {
-        setSortOrder(sortOrder);
+        this.sortOrder = sortOrder;
         return this;
     }
-    
+
     public ResourceListFilterDTO withValueString(String valueString) {
         setValueString(valueString);
         return this;

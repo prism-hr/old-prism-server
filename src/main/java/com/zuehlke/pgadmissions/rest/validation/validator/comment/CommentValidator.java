@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -155,7 +156,7 @@ public class CommentValidator extends LocalValidatorFactoryBean implements Valid
             WorkflowPropertyConfiguration positionDetailConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
                     configurationType, positionDetailDefinition, workflowPropertyConfigurationVersion);
 
-            if (positionDetailConfiguration.getRequired()) {
+            if (positionDetailConfiguration != null && BooleanUtils.isTrue(positionDetailConfiguration.getRequired())) {
                 ValidationUtils.rejectIfEmpty(errors, "positionDetail", "notNull");
             }
 
@@ -164,7 +165,7 @@ public class CommentValidator extends LocalValidatorFactoryBean implements Valid
             WorkflowPropertyConfiguration offerDetailConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
                     configurationType, offerDetailDefinition, workflowPropertyConfigurationVersion);
 
-            if (offerDetailConfiguration.getRequired()) {
+            if (offerDetailConfiguration != null && BooleanUtils.isTrue(offerDetailConfiguration.getRequired())) {
                 ValidationUtils.rejectIfEmpty(errors, "offerDetail", "notNull");
             }
         }

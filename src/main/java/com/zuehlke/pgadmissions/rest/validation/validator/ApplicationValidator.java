@@ -249,8 +249,6 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
 
     private void validateRangeConstraint(WorkflowPropertyConfiguration configuration, String property, Integer propertiesSize, Errors errors) {
         if (BooleanUtils.isTrue(configuration.getEnabled())) {
-            errors.pushNestedPath(property);
-
             Integer minimum = configuration.getMinimum();
             Integer maximum = configuration.getMaximum();
             
@@ -259,8 +257,6 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
             } else if (maximum != null && propertiesSize > maximum) {
                 errors.rejectValue(property, "tooMany");
             }
-
-            errors.popNestedPath();
         }
     }
 

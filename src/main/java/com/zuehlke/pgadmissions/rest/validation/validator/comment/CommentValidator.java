@@ -165,7 +165,7 @@ public class CommentValidator extends LocalValidatorFactoryBean implements Valid
             WorkflowPropertyConfiguration offerDetailConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
                     configurationType, offerDetailDefinition, workflowPropertyConfigurationVersion);
 
-            if (offerDetailConfiguration != null && BooleanUtils.isTrue(offerDetailConfiguration.getRequired())) {
+            if (offerDetailConfiguration != null && BooleanUtils.isTrue(offerDetailConfiguration.getRequired()) && ) {
                 ValidationUtils.rejectIfEmpty(errors, "offerDetail", "notNull");
             }
         }

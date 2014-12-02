@@ -9,7 +9,6 @@ public class CommentApplicationOfferDetailDTO {
     @NotNull
     private LocalDate positionProvisionalStartDate;
 
-    @NotNull
     private String appointmentConditions;
 
     public final LocalDate getPositionProvisionalStartDate() {

@@ -14,7 +14,6 @@ public class OpportunitiesQueryDTO {
     @NotNull
     private PrismProgramCategory programCategory;
 
-    @NotNull
     private OpportunityLocationQueryDTO location;
 
     private String keyword;
@@ -152,13 +151,13 @@ public class OpportunitiesQueryDTO {
     public final void setProjects(List<Integer> projects) {
         this.projects = projects;
     }
-    
+
     public static class OpportunityLocationQueryDTO {
-        
+
         private BigDecimal locationViewNeX;
-        
+
         private BigDecimal locationViewNeY;
-        
+
         private BigDecimal locationViewSwX;
 
         private BigDecimal locationViewSwY;
@@ -194,7 +193,7 @@ public class OpportunitiesQueryDTO {
         public final void setLocationViewSwY(BigDecimal locationViewSwY) {
             this.locationViewSwY = locationViewSwY;
         }
-        
+
     }
 
 }

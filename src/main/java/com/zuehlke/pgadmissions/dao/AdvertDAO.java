@@ -1,20 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFilterCategory;
@@ -30,6 +15,17 @@ import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO.OpportunityLocationQueryDTO;
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.*;
+import org.hibernate.sql.JoinType;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -60,7 +56,9 @@ public class AdvertDAO {
                                 .add(Restrictions.isNotNull("project")) //
                                 .add(Restrictions.in("project.state.id", activeProjectStates))));
 
-        appendLocationContraint(criteria, queryDTO);
+        if (queryDTO.getLocation() != null) {
+            appendLocationContraint(criteria, queryDTO);
+        }
 
         String keyword = queryDTO.getKeyword();
         if (keyword != null) {
@@ -202,8 +200,8 @@ public class AdvertDAO {
     }
 
     private void appendProgramTypeConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
-        List<PrismProgramType> programTypes = queryDTO.getProgramTypes();
-        programTypes = programTypes == null ? (List<PrismProgramType>) PrismProgramType.getProgramTypes(queryDTO.getProgramCategory()) : programTypes;
+        Collection<PrismProgramType> programTypes = queryDTO.getProgramTypes();
+        programTypes = programTypes == null ? PrismProgramType.getProgramTypes(queryDTO.getProgramCategory()) : programTypes;
 
         Disjunction programTypeConstraint = Restrictions.disjunction();
         for (PrismProgramType programType : programTypes) {

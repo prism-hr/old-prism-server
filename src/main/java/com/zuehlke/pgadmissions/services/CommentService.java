@@ -389,6 +389,13 @@ public class CommentService {
             buildAggregatedRating(comment);
         }
 
+        // FIXME : We should let the user edit these instead
+        if (comment.isInterviewScheduledComment()) {
+            Comment schedulingComment = getLatestComment(comment.getResource(), PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
+            comment.setInterviewTimeZone(schedulingComment.getInterviewTimeZone());
+            comment.setInterviewDuration(schedulingComment.getInterviewDuration());
+        }
+
         if (comment.isInterviewScheduledExpeditedComment()) {
             appendInterviewPreferenceComments(comment);
         }
@@ -461,6 +468,14 @@ public class CommentService {
 
         if (commentDTO.getCustomResponses() != null) {
             appendCustomResponses(comment, commentDTO);
+        }
+    }
+
+    public void validateComment(Comment comment) {
+        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(comment, "comment");
+        ValidationUtils.invokeValidator(commentValidator, comment, errors);
+        if (errors.hasErrors()) {
+            throw new PrismValidationException("Comment not completed", errors);
         }
     }
 
@@ -540,10 +555,11 @@ public class CommentService {
                         .addInterviewDuration(comment.getInterviewDuration().toString()).addIntervieweeInstructions(comment.getIntervieweeInstructions())
                         .addInterviewLocation(comment.getInterviewLocation());
 
+                Set<AppointmentTimeslotRepresentation> timeslots = Sets.newLinkedHashSet();
                 for (CommentAppointmentTimeslot timeslot : comment.getAppointmentTimeslots()) {
-                    representation
-                            .addAppointmentTimeslot(new AppointmentTimeslotRepresentation().withId(timeslot.getId()).withDateTime(timeslot.getDateTime()));
+                    timeslots.add(new AppointmentTimeslotRepresentation().withId(timeslot.getId()).withDateTime(timeslot.getDateTime()));
                 }
+                representation.setAppointmentTimeslots(timeslots);
             }
         }
 
@@ -622,14 +638,6 @@ public class CommentService {
                 comment.addCommentTransitionState(state, primaryState);
 
             }
-        }
-    }
-
-    public void validateComment(Comment comment) {
-        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(comment, "comment");
-        ValidationUtils.invokeValidator(commentValidator, comment, errors);
-        if (errors.hasErrors()) {
-            throw new PrismValidationException("Comment not completed", errors);
         }
     }
 

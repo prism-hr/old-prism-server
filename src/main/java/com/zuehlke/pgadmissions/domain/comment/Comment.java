@@ -412,7 +412,7 @@ public class Comment {
     public String getPositionDescription() {
         return positionDetail == null ? null : positionDetail.getPositionDescription();
     }
-    
+
     public final CommentApplicationOfferDetail getOfferDetail() {
         return offerDetail;
     }
@@ -794,6 +794,10 @@ public class Comment {
 
     public boolean isApplicationInterviewPendingInterviewComment() {
         return transitionState.getId() == PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
+    }
+
+    public boolean isInterviewScheduledComment() {
+        return action.getId() == PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
     }
 
     public boolean isInterviewScheduledExpeditedComment() {

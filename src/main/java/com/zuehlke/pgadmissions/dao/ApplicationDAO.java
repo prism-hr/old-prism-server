@@ -10,7 +10,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
-import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -221,7 +220,7 @@ public class ApplicationDAO {
                     + "join application.institution as institution " //
                     + "join application.program as program " //
                     + "left join application.project as project " //
-                    + "join application.programDetail as programDetail " //
+                    + "left join application.programDetail as programDetail " //
                     + "left join programDetail.studyOption as studyOption " //
                     + "left join programDetail.referralSource as referralSource " //
                     + "join application.state as state " //
@@ -260,17 +259,6 @@ public class ApplicationDAO {
                 .setParameter("approvalStateGroup", PrismStateGroup.APPLICATION_APPROVAL) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationReportListRowDTO.class)) //
                 .list();
-    }
-    
-    public LocalDateTime getInterviewDateTime(Application application) {
-        return (LocalDateTime) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.property("interviewDateTime")) //
-                .add(Restrictions.eq("application", application)) //
-                .add(Restrictions.isNotNull("interviewDateTime")) //
-                .addOrder(Order.desc("createdTimestamp")) //
-                .addOrder(Order.desc("id")) //
-                .setMaxResults(1) //
-                .uniqueResult();
     }
 
 }

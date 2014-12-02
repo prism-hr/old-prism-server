@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.rest.dto.comment;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.TimeZone;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
@@ -36,20 +35,11 @@ public class CommentDTO {
 
     private BigDecimal applicationRating;
 
-    private LocalDateTime interviewDateTime;
+    @Valid
+    private CommentApplicationInterviewAppointmentDTO interviewAppointment;
 
-    private TimeZone interviewTimeZone;
-
-    private Integer interviewDuration;
-
-    @Size(max = 1000)
-    private String intervieweeInstructions;
-
-    @Size(max = 1000)
-    private String interviewerInstructions;
-
-    @Size(max = 100)
-    private String interviewLocation;
+    @Valid
+    private CommentApplicationInterviewInstructionDTO interviewInstruction;
 
     @Valid
     private CommentApplicationPositionDetailDTO positionDetail;
@@ -149,52 +139,20 @@ public class CommentDTO {
         this.applicationRating = applicationRating;
     }
 
-    public LocalDateTime getInterviewDateTime() {
-        return interviewDateTime;
+    public final CommentApplicationInterviewAppointmentDTO getInterviewAppointment() {
+        return interviewAppointment;
     }
 
-    public void setInterviewDateTime(LocalDateTime interviewDateTime) {
-        this.interviewDateTime = interviewDateTime;
+    public final void setInterviewAppointment(CommentApplicationInterviewAppointmentDTO interviewAppointment) {
+        this.interviewAppointment = interviewAppointment;
     }
 
-    public TimeZone getInterviewTimeZone() {
-        return interviewTimeZone;
+    public final CommentApplicationInterviewInstructionDTO getInterviewInstruction() {
+        return interviewInstruction;
     }
 
-    public void setInterviewTimeZone(TimeZone interviewTimeZone) {
-        this.interviewTimeZone = interviewTimeZone;
-    }
-
-    public Integer getInterviewDuration() {
-        return interviewDuration;
-    }
-
-    public void setInterviewDuration(Integer interviewDuration) {
-        this.interviewDuration = interviewDuration;
-    }
-
-    public String getIntervieweeInstructions() {
-        return intervieweeInstructions;
-    }
-
-    public void setIntervieweeInstructions(String intervieweeInstructions) {
-        this.intervieweeInstructions = intervieweeInstructions;
-    }
-
-    public String getInterviewerInstructions() {
-        return interviewerInstructions;
-    }
-
-    public void setInterviewerInstructions(String interviewerInstructions) {
-        this.interviewerInstructions = interviewerInstructions;
-    }
-
-    public String getInterviewLocation() {
-        return interviewLocation;
-    }
-
-    public void setInterviewLocation(String interviewLocation) {
-        this.interviewLocation = interviewLocation;
+    public final void setInterviewInstruction(CommentApplicationInterviewInstructionDTO interviewInstruction) {
+        this.interviewInstruction = interviewInstruction;
     }
 
     public Boolean getRecruiterAcceptAppointment() {

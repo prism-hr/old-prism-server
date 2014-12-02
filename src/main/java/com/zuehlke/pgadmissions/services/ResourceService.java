@@ -11,7 +11,6 @@ import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -22,6 +21,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewAppointment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
@@ -208,37 +208,41 @@ public class ResourceService {
 
     public void recordStateTransition(Resource resource, Comment comment, State state, State transitionState) throws DeduplicationException,
             InstantiationException, IllegalAccessException {
-        resource.setPreviousState(state);
-        resource.setState(transitionState);
+        if (comment.isStateTransitionComment()) {
+            resource.setPreviousState(state);
+            resource.setState(transitionState);
 
-        deleteResourceStates(resource.getResourcePreviousStates());
-        deleteResourceStates(resource.getResourceStates());
-        entityService.flush();
+            deleteResourceStates(resource.getResourcePreviousStates());
+            deleteResourceStates(resource.getResourceStates());
+            entityService.flush();
 
-        insertResourceStates(resource, resource.getResourcePreviousStates(), comment.getCommentStates(), ResourcePreviousState.class);
-        insertResourceStates(resource, resource.getResourceStates(), comment.getCommentTransitionStates(), ResourceState.class);
+            insertResourceStates(resource, resource.getResourcePreviousStates(), comment.getCommentStates(), ResourcePreviousState.class);
+            insertResourceStates(resource, resource.getResourceStates(), comment.getCommentTransitionStates(), ResourceState.class);
 
-        entityService.flush();
+            entityService.flush();
+        }
     }
 
     public void processResource(Resource resource, Comment comment) throws DeduplicationException {
-        LocalDate baselineCustom = null;
-        LocalDate baseline = new LocalDate();
+        if (comment.isStateTransitionComment()) {
+            LocalDate baselineCustom = null;
+            LocalDate baseline = new LocalDate();
 
-        PrismStateDurationEvaluation stateDurationEvaluation = resource.getState().getStateDurationEvaluation();
-        if (stateDurationEvaluation != null) {
-            baselineCustom = (LocalDate) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(stateDurationEvaluation), resource, comment);
+            PrismStateDurationEvaluation stateDurationEvaluation = resource.getState().getStateDurationEvaluation();
+            if (stateDurationEvaluation != null) {
+                baselineCustom = (LocalDate) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(stateDurationEvaluation), resource, comment);
+            }
+
+            baseline = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
+
+            StateDurationDefinition stateDurationDefinition = resource.getState().getStateDurationDefinition();
+            StateDurationConfiguration stateDurationConfiguration = stateDurationDefinition == null ? null : stateService.getStateDurationConfiguration(
+                    resource, comment.getUser(), stateDurationDefinition);
+            Integer duration = stateDurationConfiguration == null ? 0 : stateDurationConfiguration.getDuration();
+
+            resource.setDueDate(baseline.plusDays(duration));
+            entityService.flush();
         }
-
-        baseline = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
-
-        StateDurationDefinition stateDurationDefinition = resource.getState().getStateDurationDefinition();
-        StateDurationConfiguration stateDurationConfiguration = stateDurationDefinition == null ? null : stateService.getStateDurationConfiguration(resource,
-                comment.getUser(), stateDurationDefinition);
-        Integer duration = stateDurationConfiguration == null ? 0 : stateDurationConfiguration.getDuration();
-
-        resource.setDueDate(baseline.plusDays(duration));
-        entityService.flush();
     }
 
     public void postProcessResource(Resource resource, Comment comment) throws DeduplicationException {
@@ -264,7 +268,7 @@ public class ResourceService {
             resetNotifications(resource);
         }
 
-        if (comment.isTransitionComment() && comment.getAction().getCreationScope() == null) {
+        if (comment.isStateGroupTransitionComment() && comment.getAction().getCreationScope() == null) {
             createOrUpdateStateTransitionSummary(resource, baselineTime);
         }
     }
@@ -364,34 +368,16 @@ public class ResourceService {
     }
 
     public LocalDate getApplicationInterviewDate(Resource resource, Comment comment) {
-        LocalDateTime interviewDateTime = comment.getInterviewDateTime();
-        return interviewDateTime == null ? applicationService.getInterviewDateTime((Application) resource).toLocalDate() : interviewDateTime.toLocalDate();
+        CommentApplicationInterviewAppointment interviewAppointment = comment.getInterviewAppointment();
+        return interviewAppointment.getInterviewDateTime().toLocalDate();
     }
 
     public LocalDate getProjectEndDate(Resource resource, Comment comment) {
-        State state = comment.getState();
-        State transitionState = comment.getTransitionState();
-        if (Objects.equals(state, transitionState)) {
-            return resource.getDueDate();
-        } else {
-            if (transitionState.getId() == PrismState.PROJECT_DISABLED_COMPLETED) {
-                return null;
-            }
-            return resource.getProject().getEndDate();
-        }
+        return resource.getProject().getEndDate();
     }
 
     public LocalDate getProgramEndDate(Resource resource, Comment comment) {
-        State state = comment.getState();
-        State transitionState = comment.getTransitionState();
-        if (Objects.equals(state, transitionState)) {
-            return resource.getDueDate();
-        } else {
-            if (transitionState.getId() == PrismState.PROGRAM_DISABLED_COMPLETED) {
-                return null;
-            }
-            return resource.getProgram().getEndDate();
-        }
+        return resource.getProgram().getEndDate();
     }
 
     public <T extends Resource> ResourceSummaryRepresentation getResourceSummary(Class<T> resourceClass, Integer resourceId) {

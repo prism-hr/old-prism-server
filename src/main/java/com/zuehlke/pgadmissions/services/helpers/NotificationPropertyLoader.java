@@ -49,6 +49,9 @@ import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewInstruction;
+import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
+import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
@@ -198,29 +201,32 @@ public class NotificationPropertyLoader {
     }
 
     public String getApplicationInterviewerInstructions() {
-        String instructions = templateModelDTO.getComment().getInterviewerInstructions();
+        CommentApplicationInterviewInstruction interviewInstruction = templateModelDTO.getComment().getInterviewInstruction();
+        String instructions = interviewInstruction == null ? null : interviewInstruction.getInterviewerInstructions();
         return instructions == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : instructions;
     }
 
     public String getApplicationIntervieweeInstructions() {
-        String instructions = templateModelDTO.getComment().getIntervieweeInstructions();
+        CommentApplicationInterviewInstruction interviewInstruction = templateModelDTO.getComment().getInterviewInstruction();
+        String instructions = interviewInstruction == null ? null : interviewInstruction.getIntervieweeInstructions();
         return instructions == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : instructions;
     }
 
     public String getApplicationInterviewLocation() throws IOException, TemplateException {
-        Comment comment = templateModelDTO.getComment();
-        if (comment.getInterviewLocation() == null) {
-            return "<p>" + propertyLoader.load(APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED) + "</p>";
-        }
-        return buildRedirectionControl(comment.getInterviewLocation(), APPLICATION_COMMENT_DIRECTIONS);
+        CommentApplicationInterviewInstruction interviewInstruction = templateModelDTO.getComment().getInterviewInstruction();
+        String interviewLocation = interviewInstruction == null ? null : interviewInstruction.getInterviewLocation();
+        return interviewLocation == null ? "<p>" + propertyLoader.load(APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED) + "</p>" : buildRedirectionControl(
+                interviewLocation, APPLICATION_COMMENT_DIRECTIONS);
     }
 
     public String getApplicationConfirmedPositionTitle() {
-        return templateModelDTO.getComment().getPositionTitle();
+        CommentApplicationPositionDetail positionDetail = templateModelDTO.getComment().getPositionDetail();
+        return positionDetail == null ? null : positionDetail.getPositionTitle();
     }
 
     public String getApplicationConfirmedPositionDescription() {
-        return templateModelDTO.getComment().getPositionDescription();
+        CommentApplicationPositionDetail positionDetail = templateModelDTO.getComment().getPositionDetail();
+        return positionDetail == null ? null : positionDetail.getPositionDescription();
     }
 
     public String getApplicationConfirmedStartDate() {
@@ -236,7 +242,8 @@ public class NotificationPropertyLoader {
     }
 
     public String getApplicationConfirmedOfferConditions() {
-        return templateModelDTO.getComment().getAppointmentConditions();
+        CommentApplicationOfferDetail offerDetail = templateModelDTO.getComment().getOfferDetail();
+        return offerDetail == null ? null : offerDetail.getAppointmentConditions();
     }
 
     public String getApplicationRejectionReason() {

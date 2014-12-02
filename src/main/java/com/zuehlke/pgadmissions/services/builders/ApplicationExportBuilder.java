@@ -66,6 +66,8 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
+import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
 import com.zuehlke.pgadmissions.domain.imported.Gender;
 import com.zuehlke.pgadmissions.domain.imported.Language;
 import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
@@ -312,12 +314,15 @@ public class ApplicationExportBuilder {
 
         Comment offerRecommendationComment = applicationExportDTO.getOfferRecommendationComment();
         if (offerRecommendationComment != null) {
-            applicationTp.setAtasStatement(offerRecommendationComment.getPositionDescription());
+            CommentApplicationPositionDetail positionDetail = offerRecommendationComment.getPositionDetail();
+            CommentApplicationOfferDetail offerDetail = offerRecommendationComment.getOfferDetail();
 
-            String conditions = offerRecommendationComment.getAppointmentConditions();
+            applicationTp.setAtasStatement(positionDetail == null ? null : positionDetail.getPositionDescription());
+
+            String conditions = offerDetail.getAppointmentConditions();
             String offerSummary = propertyLoader.load(APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION) + ": " + conditions == null ? propertyLoader
                     .load(SYSTEM_NONE) : conditions + "\n\n" + propertyLoader.load(APPLICATION_PREFERRED_START_DATE) + ": "
-                    + offerRecommendationComment.getPositionProvisionalStartDate().toString(propertyLoader.load(SYSTEM_DATE_FORMAT));
+                    + offerDetail.getPositionProvisionalStartDate().toString(propertyLoader.load(SYSTEM_DATE_FORMAT));
 
             applicationTp.setDepartmentalOfferConditions(offerSummary);
         }

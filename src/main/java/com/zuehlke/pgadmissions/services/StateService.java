@@ -20,6 +20,7 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewAppointment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -526,9 +527,10 @@ public class StateService {
     }
 
     private StateTransition getInterviewerAssignedOutcome(Resource resource, Comment comment) {
-        LocalDateTime interviewDateTime = comment.getInterviewDateTime();
+        CommentApplicationInterviewAppointment interviewAppointment = comment.getInterviewAppointment();
+        LocalDateTime interviewDateTime = interviewAppointment.getInterviewDateTime();
         if (interviewDateTime != null) {
-            DateTime interviewZonedDateTime = interviewDateTime.toDateTime(DateTimeZone.forTimeZone(comment.getInterviewTimeZone()));
+            DateTime interviewZonedDateTime = interviewDateTime.toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone()));
             if (new DateTime().isAfter(interviewZonedDateTime)) {
                 return stateDAO.getStateTransition(resource, comment.getAction(), PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK);
             } else {

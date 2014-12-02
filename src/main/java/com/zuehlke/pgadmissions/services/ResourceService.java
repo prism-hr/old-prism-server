@@ -11,6 +11,7 @@ import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -363,7 +364,8 @@ public class ResourceService {
     }
 
     public LocalDate getApplicationInterviewDate(Resource resource, Comment comment) {
-        return comment.getInterviewDateTime().toLocalDate();
+        LocalDateTime interviewDateTime = comment.getInterviewDateTime();
+        return interviewDateTime == null ? applicationService.getInterviewDateTime((Application) resource).toLocalDate() : interviewDateTime.toLocalDate();
     }
 
     public LocalDate getProjectEndDate(Resource resource, Comment comment) {

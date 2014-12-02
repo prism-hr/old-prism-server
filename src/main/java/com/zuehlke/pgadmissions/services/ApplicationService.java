@@ -15,6 +15,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -394,13 +395,16 @@ public class ApplicationService {
 
         ApplicationProgramDetail programDetail = application.getProgramDetail();
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
+        
+        boolean programDetailNull = programDetail == null;
         boolean personalDetailNull = personalDetail == null;
 
+        PrismStudyOption studyOption = programDetailNull ? null : programDetail.getStudyOptionDisplay();
         ApplicationSummaryRepresentation summary = new ApplicationSummaryRepresentation().withCreatedDate(application.getCreatedTimestampDisplay(dateFormat))
                 .withSubmittedDate(application.getSubmittedTimestampDisplay(dateFormat)).withClosingDate(application.getClosingDateDisplay(dateFormat))
                 .withPrimaryThemes(application.getPrimaryThemeDisplay()).withSecondaryThemes(application.getSecondaryThemeDisplay())
                 .withPhone(personalDetail == null ? null : personalDetail.getPhone()).withSkype(personalDetailNull ? null : personalDetail.getSkype())
-                .withStudyOption(loader.load(programDetail.getStudyOptionDisplay().getDisplayProperty()))
+                .withStudyOption(studyOption == null ? null : loader.load(programDetail.getStudyOptionDisplay().getDisplayProperty()))
                 .withReferralSource(programDetail == null ? null : programDetail.getReferralSourceDisplay()).withReferrer(application.getReferrer());
 
         ApplicationQualification latestQualification = applicationDAO.getLatestApplicationQualification(application);
@@ -501,13 +505,13 @@ public class ApplicationService {
 
         PrismScope scopeId = PrismScope.APPLICATION;
         List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(PrismScope.APPLICATION);
-        
+
         User currentUser = userService.getCurrentUser();
         Set<Integer> assignedApplications = resourceService.getAssignedResources(currentUser, scopeId, parentScopeIds, filter);
 
         String dateFormat = loader.load(PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT);
-        List<ApplicationReportListRowDTO> reportRows = getApplicationReport(assignedApplications); 
-        
+        List<ApplicationReportListRowDTO> reportRows = getApplicationReport(assignedApplications);
+
         for (ApplicationReportListRowDTO reportRow : reportRows) {
             TableRow row = new TableRow();
             filterReportListData(reportRow, currentUser);
@@ -561,6 +565,10 @@ public class ApplicationService {
         }
 
         return dataTable;
+    }
+    
+    public LocalDateTime getInterviewDateTime(Application application) {
+        return applicationDAO.getInterviewDateTime(application);
     }
 
     private List<ApplicationReportListRowDTO> getApplicationReport(Set<Integer> assignedApplications) {

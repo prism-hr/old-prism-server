@@ -19,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationStudyDetail;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.Disability;
@@ -208,14 +207,16 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
 
     private void validateCriminalConvictionConstraint(Application application, WorkflowPropertyConfiguration configuration, Errors errors) {
         ApplicationAdditionalInformation additionalInformation = application.getAdditionalInformation();
-        String criminalConviction = additionalInformation == null ? null : additionalInformation.getConvictionsText();
-        validateRequiredConstraint(criminalConviction, "additionalInformation", "convictionsText", configuration, errors);
+        validateRequiredConstraint(additionalInformation, "additionalInformation", "convictionsText", configuration, errors);
     }
 
     private void validateLanguageProofOfAwardConstraint(Application application, WorkflowPropertyConfiguration configuration, Errors errors) {
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
-        ApplicationLanguageQualification qualification = personalDetail == null ? null : personalDetail.getLanguageQualification();
-        validateRequiredConstraint(qualification.getDocument(), "personalDetail.languageQualification", "document", configuration, errors);
+        ApplicationLanguageQualification languageQualification = personalDetail == null ? null : personalDetail.getLanguageQualification();
+        
+        if (languageQualification != null) {
+            validateRequiredConstraint(languageQualification.getDocument(), "personalDetail.languageQualification", "document", configuration, errors);
+        }
     }
 
     private void validateLanguageConstraint(Application application, WorkflowPropertyConfiguration configuration, Errors errors) {
@@ -233,19 +234,16 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
         Boolean visaRequired = personalDetail == null ? null : personalDetail.getVisaRequired();
 
         validateRequiredConstraint(visaRequired, "personalDetail", "visaRequired", configuration, errors);
-        if (BooleanUtils.isFalse(visaRequired)) {
-            validateRequiredConstraint(personalDetail.getLanguageQualification(), "personalDetail", "passport", configuration, errors);
+        if (BooleanUtils.isTrue(visaRequired)) {
+            validateRequiredConstraint(personalDetail.getPassport(), "personalDetail", "passport", configuration, errors);
         }
     }
 
     private void validateStudyDetailConstraint(Errors errors, Application application, WorkflowPropertyConfiguration configuration) throws Error {
-        ApplicationStudyDetail studyDetail = application.getStudyDetail();
         if (configuration.getEnabled()) {
             if (configuration.getRequired()) {
                 ValidationUtils.rejectIfEmpty(errors, "studyDetail", "notNull");
             }
-        } else if (studyDetail != null) {
-            throw new Error();
         }
     }
 
@@ -260,8 +258,6 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
             }
 
             errors.popNestedPath();
-        } else if (propertiesSize > 0) {
-            throw new Error();
         }
     }
 
@@ -269,12 +265,9 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
         if (configuration.getEnabled()) {
             if (configuration.getRequired() && object == null) {
                 errors.pushNestedPath(parentProperty);
-                errors.rejectValue(parentProperty + "." + property, "notNull");
+                errors.rejectValue(property, "notNull");
                 errors.popNestedPath();
             }
-        } else if (object != null) {
-            throw new Error();
-
         }
     }
 

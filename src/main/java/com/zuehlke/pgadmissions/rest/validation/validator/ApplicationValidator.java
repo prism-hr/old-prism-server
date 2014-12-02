@@ -240,20 +240,23 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
     }
 
     private void validateStudyDetailConstraint(Errors errors, Application application, WorkflowPropertyConfiguration configuration) throws Error {
-        if (configuration.getEnabled()) {
-            if (configuration.getRequired()) {
+        if (BooleanUtils.isTrue(configuration.getEnabled())) {
+            if (BooleanUtils.isTrue(configuration.getRequired())) {
                 ValidationUtils.rejectIfEmpty(errors, "studyDetail", "notNull");
             }
         }
     }
 
     private void validateRangeConstraint(WorkflowPropertyConfiguration configuration, String property, Integer propertiesSize, Errors errors) {
-        if (configuration.getEnabled()) {
+        if (BooleanUtils.isTrue(configuration.getEnabled())) {
             errors.pushNestedPath(property);
 
-            if (propertiesSize < configuration.getMinimum()) {
+            Integer minimum = configuration.getMinimum();
+            Integer maximum = configuration.getMaximum();
+            
+            if (minimum != null && propertiesSize < minimum) {
                 errors.rejectValue(property, "tooFew");
-            } else if (propertiesSize > configuration.getMaximum()) {
+            } else if (maximum != null && propertiesSize > maximum) {
                 errors.rejectValue(property, "tooMany");
             }
 

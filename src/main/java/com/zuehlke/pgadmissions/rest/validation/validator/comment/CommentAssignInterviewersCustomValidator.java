@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.utils.ValidationUtils.rejectIfNotNull;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -11,6 +12,7 @@ import org.springframework.validation.Validator;
 
 import com.google.common.base.Preconditions;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewAppointment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
 @Component
@@ -28,12 +30,15 @@ public class CommentAssignInterviewersCustomValidator implements Validator {
         Preconditions.checkArgument(action == PrismAction.APPLICATION_ASSIGN_INTERVIEWERS, "Unexpected action: " + action);
 
         boolean takenPlace = false;
-        if (comment.getInterviewDateTime() == null) {
+        CommentApplicationInterviewAppointment interviewAppointment = comment.getInterviewAppointment();
+        LocalDateTime interviewLocalDateTime = interviewAppointment.getInterviewDateTime();
+
+        if (interviewLocalDateTime == null) {
             if (comment.getAppointmentTimeslots() == null || comment.getAppointmentTimeslots().isEmpty()) {
                 errors.rejectValue("appointmentTimeslots", "min", new Object[] { 0 }, null);
             }
         } else {
-            DateTime interviewDateTime = comment.getInterviewDateTime().toDateTime(DateTimeZone.forTimeZone(comment.getInterviewTimeZone()));
+            DateTime interviewDateTime = interviewLocalDateTime.toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone()));
             if (interviewDateTime.isBeforeNow()) {
                 takenPlace = true;
                 rejectIfNotNull(comment, errors, "interviewerInstructions", "forbidden");

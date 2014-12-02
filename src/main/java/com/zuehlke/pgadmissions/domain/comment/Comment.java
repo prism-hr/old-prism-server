@@ -5,7 +5,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Set;
-import java.util.TimeZone;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -28,7 +27,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -121,24 +119,11 @@ public class Comment {
     @Column(name = "application_interested")
     private Boolean applicationInterested;
 
-    @Column(name = "application_interview_datetime")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
-    private LocalDateTime interviewDateTime;
+    @Embedded
+    private CommentApplicationInterviewAppointment interviewAppointment;
 
-    @Column(name = "application_interview_timezone")
-    private TimeZone interviewTimeZone;
-
-    @Column(name = "application_interview_duration")
-    private Integer interviewDuration;
-
-    @Column(name = "application_interviewee_instructions")
-    private String intervieweeInstructions;
-
-    @Column(name = "application_interviewer_instructions")
-    private String interviewerInstructions;
-
-    @Column(name = "application_interview_location")
-    private String interviewLocation;
+    @Embedded
+    private CommentApplicationInterviewInstruction interviewInstruction;
 
     @Embedded
     private CommentApplicationPositionDetail positionDetail;
@@ -349,52 +334,20 @@ public class Comment {
         this.applicationEligible = applicationEligible;
     }
 
-    public LocalDateTime getInterviewDateTime() {
-        return interviewDateTime;
+    public final CommentApplicationInterviewAppointment getInterviewAppointment() {
+        return interviewAppointment;
     }
 
-    public void setInterviewDateTime(LocalDateTime interviewDateTime) {
-        this.interviewDateTime = interviewDateTime;
+    public final void setInterviewAppointment(CommentApplicationInterviewAppointment interviewAppointment) {
+        this.interviewAppointment = interviewAppointment;
     }
 
-    public TimeZone getInterviewTimeZone() {
-        return interviewTimeZone;
+    public final CommentApplicationInterviewInstruction getInterviewInstruction() {
+        return interviewInstruction;
     }
 
-    public void setInterviewTimeZone(TimeZone interviewTimeZone) {
-        this.interviewTimeZone = interviewTimeZone;
-    }
-
-    public Integer getInterviewDuration() {
-        return interviewDuration;
-    }
-
-    public void setInterviewDuration(Integer interviewDuration) {
-        this.interviewDuration = interviewDuration;
-    }
-
-    public String getIntervieweeInstructions() {
-        return intervieweeInstructions;
-    }
-
-    public void setIntervieweeInstructions(String intervieweeInstructions) {
-        this.intervieweeInstructions = intervieweeInstructions;
-    }
-
-    public String getInterviewerInstructions() {
-        return interviewerInstructions;
-    }
-
-    public void setInterviewerInstructions(String interviewerInstructions) {
-        this.interviewerInstructions = interviewerInstructions;
-    }
-
-    public String getInterviewLocation() {
-        return interviewLocation;
-    }
-
-    public void setInterviewLocation(String interviewLocation) {
-        this.interviewLocation = interviewLocation;
+    public final void setInterviewInstruction(CommentApplicationInterviewInstruction interviewInstruction) {
+        this.interviewInstruction = interviewInstruction;
     }
 
     public final CommentApplicationPositionDetail getPositionDetail() {
@@ -405,28 +358,12 @@ public class Comment {
         this.positionDetail = positionDetail;
     }
 
-    public String getPositionTitle() {
-        return positionDetail == null ? null : positionDetail.getPositionTitle();
-    }
-
-    public String getPositionDescription() {
-        return positionDetail == null ? null : positionDetail.getPositionDescription();
-    }
-
     public final CommentApplicationOfferDetail getOfferDetail() {
         return offerDetail;
     }
 
     public final void setOfferDetail(CommentApplicationOfferDetail offerDetail) {
         this.offerDetail = offerDetail;
-    }
-
-    public LocalDate getPositionProvisionalStartDate() {
-        return offerDetail == null ? null : offerDetail.getPositionProvisionalStartDate();
-    }
-
-    public String getAppointmentConditions() {
-        return offerDetail == null ? null : offerDetail.getAppointmentConditions();
     }
 
     public Boolean getRecruiterAcceptAppointment() {
@@ -671,33 +608,13 @@ public class Comment {
         return this;
     }
 
-    public Comment withInterviewDateTime(LocalDateTime interviewDateTime) {
-        this.interviewDateTime = interviewDateTime;
+    public Comment withInterviewAppointment(CommentApplicationInterviewAppointment interviewAppointment) {
+        this.interviewAppointment = interviewAppointment;
         return this;
     }
 
-    public Comment withInterviewTimeZone(TimeZone interviewTimeZone) {
-        this.interviewTimeZone = interviewTimeZone;
-        return this;
-    }
-
-    public Comment withInterviewDuration(Integer interviewDuration) {
-        this.interviewDuration = interviewDuration;
-        return this;
-    }
-
-    public Comment withIntervieweeInstructions(String intervieweeInstructions) {
-        this.intervieweeInstructions = intervieweeInstructions;
-        return this;
-    }
-
-    public Comment withInterviewerInstructions(String interviewerInstructions) {
-        this.interviewerInstructions = interviewerInstructions;
-        return this;
-    }
-
-    public Comment withInterviewLocation(String interviewLocation) {
-        this.interviewLocation = interviewLocation;
+    public Comment withInterviewInstruction(CommentApplicationInterviewInstruction interviewInstruction) {
+        this.interviewInstruction = interviewInstruction;
         return this;
     }
 
@@ -796,18 +713,10 @@ public class Comment {
         return transitionState.getId() == PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
     }
 
-    public boolean isInterviewScheduledComment() {
-        return action.getId() == PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
-    }
-
     public boolean isInterviewScheduledExpeditedComment() {
         return action.getId() == PrismAction.APPLICATION_ASSIGN_INTERVIEWERS
                 && Arrays.asList(PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW, PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK).contains(
                         transitionState.getId());
-    }
-
-    public boolean isStateGroupTransitionComment() {
-        return !state.getStateGroup().getId().equals(transitionState.getStateGroup().getId());
     }
 
     public boolean isUserCreationComment() {
@@ -819,7 +728,11 @@ public class Comment {
         return false;
     }
 
-    public boolean isTransitionComment() {
+    public boolean isStateTransitionComment() {
+        return !state.equals(transitionState) || action.getCreationScope() != null;
+    }
+
+    public boolean isStateGroupTransitionComment() {
         StateGroup stateGroup = state == null ? null : state.getStateGroup();
         StateGroup transitionStateGroup = transitionState == null ? null : transitionState.getStateGroup();
         if (action.getTransitionAction()) {
@@ -865,34 +778,19 @@ public class Comment {
     }
 
     public String getInterviewDateTimeDisplay(String dateTimeFormat) {
-        return interviewDateTime == null ? null : interviewDateTime.toString(dateTimeFormat, LocaleUtils.toLocale(getResource().getLocale().toString()));
-    }
-
-    public String getInterviewEndDateTimeDisplay(String dateTimeFormat, String timeFormat) {
-        if (interviewDateTime == null) {
-            return null;
-        } else {
-            LocalDateTime interviewEndDateTime = interviewDateTime.plusMinutes(interviewDuration);
-
-            LocalDate interviewDate = interviewDateTime.toLocalDate();
-            LocalDate interviewEndDate = interviewEndDateTime.toLocalDate();
-
-            if (interviewDate.isAfter(interviewEndDate)) {
-                return interviewEndDateTime.toString(dateTimeFormat);
-            }
-
-            return interviewEndDateTime.toString(timeFormat);
-        }
+        return interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime().toString(dateTimeFormat,
+                LocaleUtils.toLocale(getResource().getLocale().toString()));
     }
 
     public String getPositionProvisionalStartDateDisplay(String dateFormat) {
-        LocalDate positionProvisionalStartDate = getPositionProvisionalStartDate();
+        LocalDate positionProvisionalStartDate = offerDetail == null ? null : offerDetail.getPositionProvisionalStartDate();
         return positionProvisionalStartDate == null ? null : positionProvisionalStartDate.toString(dateFormat,
                 LocaleUtils.toLocale(getResource().getLocale().toString()));
     }
 
     public String getInterviewTimeZoneDisplay() {
-        return interviewTimeZone == null ? null : interviewTimeZone.getDisplayName(LocaleUtils.toLocale(getResource().getLocale().toString()));
+        return interviewAppointment == null ? null : interviewAppointment.getInterviewTimeZone().getDisplayName(
+                LocaleUtils.toLocale(getResource().getLocale().toString()));
     }
 
 }

@@ -657,6 +657,9 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
                         .withRole(PrismRole.APPLICATION_INTERVIEWER) //
                         .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER), //
                     new PrismStateActionAssignment() // 
+                        .withRole(PrismRole.APPLICATION_POTENTIAL_INTERVIEWER) //
+                        .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER), //
+                    new PrismStateActionAssignment() // 
                         .withRole(PrismRole.APPLICATION_REFEREE) //
                         .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_AS_REFEREE), //
                     new PrismStateActionAssignment() // 

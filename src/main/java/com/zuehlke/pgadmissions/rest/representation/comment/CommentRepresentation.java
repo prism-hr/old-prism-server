@@ -2,11 +2,8 @@ package com.zuehlke.pgadmissions.rest.representation.comment;
 
 import java.util.List;
 import java.util.Set;
-import java.util.TimeZone;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -32,35 +29,13 @@ public class CommentRepresentation {
 
     private PrismState transitionState;
 
-    private LocalDate userSpecifiedDueDate;
-
     private PrismYesNoUnsureResponse applicationEligible;
 
     private Boolean applicationInterested;
 
-    private String residenceState;
+    private CommentApplicationInterviewAppointmentRepresentation interviewAppointment;
 
-    private Boolean suitableForInstitution;
-
-    private Boolean suitableForOpportunity;
-
-    private Boolean desireToInterview;
-
-    private Boolean desireToRecruit;
-
-    private LocalDateTime interviewDateTime;
-
-    private TimeZone interviewTimeZone;
-
-    private String interviewDurationDisplay;
-
-    private String intervieweeInstructions;
-
-    private String interviewerInstructions;
-
-    private String interviewLocation;
-
-    private String equivalentExperience;
+    private CommentApplicationInterviewInstructionRepresentation interviewInstruction;
 
     private CommentApplicationPositionDetailRepresentation positionDetail;
 
@@ -164,14 +139,6 @@ public class CommentRepresentation {
         this.transitionState = transitionState;
     }
 
-    public LocalDate getUserSpecifiedDueDate() {
-        return userSpecifiedDueDate;
-    }
-
-    public void setUserSpecifiedDueDate(LocalDate userSpecifiedDueDate) {
-        this.userSpecifiedDueDate = userSpecifiedDueDate;
-    }
-
     public PrismYesNoUnsureResponse getApplicationEligible() {
         return applicationEligible;
     }
@@ -188,100 +155,20 @@ public class CommentRepresentation {
         this.applicationInterested = applicationInterested;
     }
 
-    public String getResidenceState() {
-        return residenceState;
+    public final CommentApplicationInterviewAppointmentRepresentation getInterviewAppointment() {
+        return interviewAppointment;
     }
 
-    public void setResidenceState(String residenceState) {
-        this.residenceState = residenceState;
+    public final void setInterviewAppointment(CommentApplicationInterviewAppointmentRepresentation interviewAppointment) {
+        this.interviewAppointment = interviewAppointment;
     }
 
-    public Boolean getSuitableForInstitution() {
-        return suitableForInstitution;
+    public final CommentApplicationInterviewInstructionRepresentation getInterviewInstruction() {
+        return interviewInstruction;
     }
 
-    public void setSuitableForInstitution(Boolean suitableForInstitution) {
-        this.suitableForInstitution = suitableForInstitution;
-    }
-
-    public Boolean getSuitableForOpportunity() {
-        return suitableForOpportunity;
-    }
-
-    public void setSuitableForOpportunity(Boolean suitableForOpportunity) {
-        this.suitableForOpportunity = suitableForOpportunity;
-    }
-
-    public Boolean getDesireToInterview() {
-        return desireToInterview;
-    }
-
-    public void setDesireToInterview(Boolean desireToInterview) {
-        this.desireToInterview = desireToInterview;
-    }
-
-    public Boolean getDesireToRecruit() {
-        return desireToRecruit;
-    }
-
-    public void setDesireToRecruit(Boolean desireToRecruit) {
-        this.desireToRecruit = desireToRecruit;
-    }
-
-    public LocalDateTime getInterviewDateTime() {
-        return interviewDateTime;
-    }
-
-    public void setInterviewDateTime(LocalDateTime interviewDateTime) {
-        this.interviewDateTime = interviewDateTime;
-    }
-
-    public TimeZone getInterviewTimeZone() {
-        return interviewTimeZone;
-    }
-
-    public void setInterviewTimeZone(TimeZone interviewTimeZone) {
-        this.interviewTimeZone = interviewTimeZone;
-    }
-
-    public final String getInterviewDurationDisplay() {
-        return interviewDurationDisplay;
-    }
-
-    public final void setInterviewDurationEndDateTimeDisplay(String interviewDurationDisplay) {
-        this.interviewDurationDisplay = interviewDurationDisplay;
-    }
-
-    public String getIntervieweeInstructions() {
-        return intervieweeInstructions;
-    }
-
-    public void setIntervieweeInstructions(String intervieweeInstructions) {
-        this.intervieweeInstructions = intervieweeInstructions;
-    }
-
-    public String getInterviewerInstructions() {
-        return interviewerInstructions;
-    }
-
-    public void setInterviewerInstructions(String interviewerInstructions) {
-        this.interviewerInstructions = interviewerInstructions;
-    }
-
-    public String getInterviewLocation() {
-        return interviewLocation;
-    }
-
-    public void setInterviewLocation(String interviewLocation) {
-        this.interviewLocation = interviewLocation;
-    }
-
-    public String getEquivalentExperience() {
-        return equivalentExperience;
-    }
-
-    public void setEquivalentExperience(String equivalentExperience) {
-        this.equivalentExperience = equivalentExperience;
+    public final void setInterviewInstruction(CommentApplicationInterviewInstructionRepresentation interviewInstruction) {
+        this.interviewInstruction = interviewInstruction;
     }
 
     public CommentApplicationPositionDetailRepresentation getPositionDetail() {
@@ -464,35 +351,6 @@ public class CommentRepresentation {
     public CommentRepresentation addCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
         return this;
-    }
-
-    public CommentRepresentation addInterviewTimeZone(TimeZone interviewTimeZone) {
-        this.interviewTimeZone = interviewTimeZone;
-        return this;
-    }
-
-    public CommentRepresentation addInterviewDateTime(LocalDateTime interviewDateTime) {
-        this.interviewDateTime = interviewDateTime;
-        return this;
-    }
-
-    public CommentRepresentation addInterviewDuration(String interviewDuration) {
-        this.interviewDurationDisplay = interviewDuration;
-        return this;
-    }
-
-    public CommentRepresentation addIntervieweeInstructions(String intervieweeInstructions) {
-        this.intervieweeInstructions = intervieweeInstructions;
-        return this;
-    }
-
-    public CommentRepresentation addInterviewLocation(String interviewLocation) {
-        this.interviewLocation = interviewLocation;
-        return this;
-    }
-
-    public void addAppointmentTimeslot(AppointmentTimeslotRepresentation appointmentTimeslot) {
-        appointmentTimeslots.add(appointmentTimeslot);
     }
 
 }

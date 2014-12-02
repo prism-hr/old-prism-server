@@ -15,7 +15,6 @@ import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -280,7 +279,7 @@ public class ApplicationService {
             applicationSummaryService.summariseApplication(application, comment);
         }
 
-        if (comment.isTransitionComment()) {
+        if (comment.isStateGroupTransitionComment()) {
             applicationSummaryService.summariseApplicationProcessing(application);
         }
 
@@ -326,14 +325,12 @@ public class ApplicationService {
         Comment comment = new Comment().withResource(application).withContent(commentDTO.getContent()).withUser(user).withDelegateUser(delegateUser)
                 .withAction(action).withTransitionState(transitionState).withCreatedTimestamp(new DateTime())
                 .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse())).withApplicationEligible(commentDTO.getApplicationEligible())
-                .withApplicationInterested(commentDTO.getApplicationInterested()).withInterviewDateTime(commentDTO.getInterviewDateTime())
-                .withInterviewTimeZone(commentDTO.getInterviewTimeZone()).withInterviewDuration(commentDTO.getInterviewDuration())
-                .withInterviewerInstructions(commentDTO.getInterviewerInstructions()).withIntervieweeInstructions(commentDTO.getIntervieweeInstructions())
-                .withInterviewLocation(commentDTO.getInterviewLocation()).withApplicationRating(commentDTO.getApplicationRating());
+                .withApplicationInterested(commentDTO.getApplicationInterested()).withApplicationRating(commentDTO.getApplicationRating());
 
         CommentApplicationPositionDetailDTO positionDetailDTO = commentDTO.getPositionDetail();
         if (positionDetailDTO != null) {
-            comment.setPositionDetail(new CommentApplicationPositionDetail().withPositionTitle(positionDetailDTO.getPositionTitle()));
+            comment.setPositionDetail(new CommentApplicationPositionDetail().withPositionTitle(positionDetailDTO.getPositionTitle()).withPositionDescription(
+                    positionDetailDTO.getPositionDescription()));
         }
 
         CommentApplicationOfferDetailDTO offerDetailDTO = commentDTO.getOfferDetail();
@@ -395,7 +392,7 @@ public class ApplicationService {
 
         ApplicationProgramDetail programDetail = application.getProgramDetail();
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
-        
+
         boolean programDetailNull = programDetail == null;
         boolean personalDetailNull = personalDetail == null;
 
@@ -566,10 +563,6 @@ public class ApplicationService {
 
         return dataTable;
     }
-    
-    public LocalDateTime getInterviewDateTime(Application application) {
-        return applicationDAO.getInterviewDateTime(application);
-    }
 
     private List<ApplicationReportListRowDTO> getApplicationReport(Set<Integer> assignedApplications) {
         return assignedApplications.isEmpty() ? new ArrayList<ApplicationReportListRowDTO>() : applicationDAO.getApplicationReport(assignedApplications);
@@ -608,8 +601,9 @@ public class ApplicationService {
     }
 
     private void synchroniseOfferRecommendation(Application application, Comment comment) {
-        application.setConfirmedStartDate(comment.getPositionProvisionalStartDate());
-        application.setConfirmedOfferType(comment.getAppointmentConditions() == null ? PrismOfferType.UNCONDITIONAL : PrismOfferType.CONDITIONAL);
+        CommentApplicationOfferDetail offerDetail = comment.getOfferDetail();
+        application.setConfirmedStartDate(offerDetail.getPositionProvisionalStartDate());
+        application.setConfirmedOfferType(offerDetail.getAppointmentConditions() == null ? PrismOfferType.UNCONDITIONAL : PrismOfferType.CONDITIONAL);
     }
 
     private Application getPreviousApplication(Application application) {

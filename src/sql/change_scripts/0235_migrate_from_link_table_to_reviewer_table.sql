@@ -1,0 +1,1 @@
+INSERT INTO REVIEWER(registered_user_id, application_form_id) select reviewer_id, application_form_id from APPLICATION_FORM_REVIEWER_LINK;

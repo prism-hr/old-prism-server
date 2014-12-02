@@ -1,10 +1,9 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
-import com.zuehlke.pgadmissions.rest.representation.comment.AppointmentTimeslotRepresentation;
-
-import javax.persistence.Column;
 import java.util.List;
 import java.util.TimeZone;
+
+import com.zuehlke.pgadmissions.rest.representation.comment.AppointmentTimeslotRepresentation;
 
 public class InterviewRepresentation {
 

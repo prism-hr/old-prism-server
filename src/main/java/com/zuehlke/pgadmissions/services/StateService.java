@@ -460,12 +460,12 @@ public class StateService {
         return stateDAO.getSecondaryResourceStateGroups(resourceScope, resourceId);
     }
 
-    public List<NextStateRepresentation> getSelectableTransitionStates(State state) {
-        return stateDAO.getSelectableTransitionStates(state);
+    public List<NextStateRepresentation> getSelectableTransitionStates(State state, boolean importedResource) {
+        return stateDAO.getSelectableTransitionStates(state, importedResource);
     }
 
-    public List<NextStateRepresentation> getSelectableTransitionStates(State state, PrismAction actionId) {
-        return stateDAO.getSelectableTransitionStates(state, actionId);
+    public List<NextStateRepresentation> getSelectableTransitionStates(State state, PrismAction actionId, boolean importedResource) {
+        return stateDAO.getSelectableTransitionStates(state, actionId, importedResource);
     }
 
     private StateTransition getViewEditNextState(Resource resource, Comment comment) {

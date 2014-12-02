@@ -114,14 +114,15 @@ public class ActionService {
     }
 
     public Set<ActionRepresentation> getPermittedActions(Resource resource, User user) {
+        PrismScope scope = resource.getResourceScope();
         Institution institution = resource.getInstitution();
         Program program = resource.getProgram();
         Project project = resource.getProject();
         Application application = resource.getApplication();
 
-        Set<ActionRepresentation> actions = Sets.newLinkedHashSet(actionDAO.getPermittedActions(resource.getResourceScope(), resource.getId(), resource
-                .getSystem().getId(), institution == null ? null : institution.getId(), program == null ? null : program.getId(), project == null ? null
-                : project.getId(), application == null ? null : application.getId(), user));
+        Set<ActionRepresentation> actions = Sets.newLinkedHashSet(actionDAO.getPermittedActions(scope, resource.getId(), resource.getSystem().getId(),
+                institution == null ? null : institution.getId(), program == null ? null : program.getId(), project == null ? null : project.getId(),
+                application == null ? null : application.getId(), user));
         actions.addAll(actionDAO.getCreateResourceActions(resource.getResourceScope()));
 
         for (ActionRepresentation action : actions) {
@@ -130,11 +131,14 @@ public class ActionService {
             action.addActionEnhancements(actionDAO.getCustomActionEnhancements(resource, actionId, user));
 
             if (BooleanUtils.isTrue(action.getPrimaryState())) {
-                action.addNextStates(stateService.getSelectableTransitionStates(resource.getState(), actionId));
+                action.addNextStates(stateService.getSelectableTransitionStates(resource.getState(), actionId,
+                        scope == PrismScope.PROGRAM && program.getImported()));
             }
-            
+
             if (actionId.isConcludeParentAction()) {
-                action.addNextParentResourceStates(stateService.getSelectableTransitionStates(resource.getParentResource().getState()));
+                Resource parentResource = resource.getParentResource();
+                action.addNextParentResourceStates(stateService.getSelectableTransitionStates(parentResource.getState(),
+                        parentResource.getResourceScope() == PrismScope.PROGRAM && program.getImported()));
             }
         }
 

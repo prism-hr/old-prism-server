@@ -369,11 +369,29 @@ public class ResourceService {
     }
 
     public LocalDate getProjectEndDate(Resource resource, Comment comment) {
-        return resource.getProject().getEndDate();
+        State state = comment.getState();
+        State transitionState = comment.getTransitionState();
+        if (Objects.equals(state, transitionState)) {
+            return resource.getDueDate();
+        } else {
+            if (transitionState.getId() == PrismState.PROJECT_DISABLED_COMPLETED) {
+                return null;
+            }
+            return resource.getProject().getEndDate();
+        }
     }
 
     public LocalDate getProgramEndDate(Resource resource, Comment comment) {
-        return resource.getProgram().getEndDate();
+        State state = comment.getState();
+        State transitionState = comment.getTransitionState();
+        if (Objects.equals(state, transitionState)) {
+            return resource.getDueDate();
+        } else {
+            if (transitionState.getId() == PrismState.PROGRAM_DISABLED_COMPLETED) {
+                return null;
+            }
+            return resource.getProgram().getEndDate();
+        }
     }
 
     public <T extends Resource> ResourceSummaryRepresentation getResourceSummary(Class<T> resourceClass, Integer resourceId) {

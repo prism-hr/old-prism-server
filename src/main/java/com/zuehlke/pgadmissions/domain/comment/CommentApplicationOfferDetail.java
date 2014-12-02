@@ -29,15 +29,15 @@ public class CommentApplicationOfferDetail {
     public final void setAppointmentConditions(String appointmentConditions) {
         this.appointmentConditions = appointmentConditions;
     }
-    
+
     public CommentApplicationOfferDetail withPositionProvisionStartDate(LocalDate positionProvisionalStartDate) {
         this.positionProvisionalStartDate = positionProvisionalStartDate;
         return this;
     }
-    
+
     public CommentApplicationOfferDetail withAppointmentConditions(String appointmentConditions) {
         this.appointmentConditions = appointmentConditions;
         return this;
     }
-    
+
 }

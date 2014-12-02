@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.rest.validation.validator.comment;
 
 import static com.zuehlke.pgadmissions.utils.ValidationUtils.rejectIfNotNull;
 
+import java.util.TimeZone;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
@@ -31,19 +33,24 @@ public class CommentAssignInterviewersCustomValidator implements Validator {
 
         boolean takenPlace = false;
         CommentApplicationInterviewAppointment interviewAppointment = comment.getInterviewAppointment();
-        LocalDateTime interviewLocalDateTime = interviewAppointment.getInterviewDateTime();
+        LocalDateTime interviewLocalDateTime = interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime();
 
         if (interviewLocalDateTime == null) {
             if (comment.getAppointmentTimeslots() == null || comment.getAppointmentTimeslots().isEmpty()) {
                 errors.rejectValue("appointmentTimeslots", "min", new Object[] { 0 }, null);
             }
         } else {
+            TimeZone interviewTimezone = interviewAppointment.getInterviewTimeZone();
+            if (interviewTimezone == null) {
+                ValidationUtils.rejectIfEmpty(errors, "interviewAppointment.interviewTimezone", "notNull");
+            }
+
             DateTime interviewDateTime = interviewLocalDateTime.toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone()));
             if (interviewDateTime.isBeforeNow()) {
                 takenPlace = true;
-                rejectIfNotNull(comment, errors, "interviewerInstructions", "forbidden");
-                rejectIfNotNull(comment, errors, "intervieweeInstructions", "forbidden");
-                rejectIfNotNull(comment, errors, "interviewLocation", "forbidden");
+                rejectIfNotNull(comment, errors, "interviewInstruction.interviewerInstructions", "forbidden");
+                rejectIfNotNull(comment, errors, "interviewInstruction.intervieweeInstructions", "forbidden");
+                rejectIfNotNull(comment, errors, "interviewInstruction.interviewLocation", "forbidden");
             } else {
                 rejectIfNotNull(comment, errors, "appointmentTimeslots", "forbidden");
             }

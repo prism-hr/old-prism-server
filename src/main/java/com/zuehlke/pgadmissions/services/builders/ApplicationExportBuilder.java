@@ -315,16 +315,19 @@ public class ApplicationExportBuilder {
         Comment offerRecommendationComment = applicationExportDTO.getOfferRecommendationComment();
         if (offerRecommendationComment != null) {
             CommentApplicationPositionDetail positionDetail = offerRecommendationComment.getPositionDetail();
-            CommentApplicationOfferDetail offerDetail = offerRecommendationComment.getOfferDetail();
-
             applicationTp.setAtasStatement(positionDetail == null ? null : positionDetail.getPositionDescription());
 
-            String conditions = offerDetail.getAppointmentConditions();
-            String offerSummary = propertyLoader.load(APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION) + ": " + conditions == null ? propertyLoader
-                    .load(SYSTEM_NONE) : conditions + "\n\n" + propertyLoader.load(APPLICATION_PREFERRED_START_DATE) + ": "
-                    + offerDetail.getPositionProvisionalStartDate().toString(propertyLoader.load(SYSTEM_DATE_FORMAT));
+            CommentApplicationOfferDetail offerDetail = offerRecommendationComment.getOfferDetail();
+            if (offerDetail != null) {
+                String none = propertyLoader.load(SYSTEM_NONE);
+                LocalDate positionProvisionalStartDate = offerDetail.getPositionProvisionalStartDate();
+                String conditions = offerDetail.getAppointmentConditions();
 
-            applicationTp.setDepartmentalOfferConditions(offerSummary);
+                String offerSummary = propertyLoader.load(APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION) + ": " + conditions == null ? none : conditions
+                        + "\n\n" + propertyLoader.load(APPLICATION_PREFERRED_START_DATE) + ": " + positionProvisionalStartDate == null ? none
+                        : positionProvisionalStartDate.toString(propertyLoader.load(SYSTEM_DATE_FORMAT));
+                applicationTp.setDepartmentalOfferConditions(offerSummary);
+            }
         }
 
         return applicationTp;

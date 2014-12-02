@@ -494,10 +494,13 @@ public class CommentService {
         CommentApplicationPositionDetail positionDetail = sourceComment.getPositionDetail();
         CommentApplicationOfferDetail offerDetail = sourceComment.getOfferDetail();
 
-        return new OfferRepresentation().withPositionTitle(positionDetail == null ? null : positionDetail.getPositionTitle())
-                .withPositionDescription(positionDetail == null ? null : positionDetail.getPositionDescription())
-                .withPositionProvisionalStartDate(offerDetail == null ? null : offerDetail.getPositionProvisionalStartDate())
-                .withAppointmentConditions(offerDetail == null ? null : offerDetail.getAppointmentConditions());
+        boolean positionDetailNull = positionDetail == null;
+        boolean offerDetailNull = offerDetail == null;
+
+        return new OfferRepresentation().withPositionTitle(positionDetailNull ? null : positionDetail.getPositionTitle())
+                .withPositionDescription(positionDetailNull ? null : positionDetail.getPositionDescription())
+                .withPositionProvisionalStartDate(offerDetailNull ? null : offerDetail.getPositionProvisionalStartDate())
+                .withAppointmentConditions(offerDetailNull ? null : offerDetail.getAppointmentConditions());
     }
 
     private void setCommentAuthorRoles(Comment comment, Resource resource, Action action) {

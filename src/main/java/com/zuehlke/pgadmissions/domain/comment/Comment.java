@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -27,6 +28,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -778,8 +780,11 @@ public class Comment {
     }
 
     public String getInterviewDateTimeDisplay(String dateTimeFormat) {
-        return interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime().toString(dateTimeFormat,
-                LocaleUtils.toLocale(getResource().getLocale().toString()));
+        if (interviewAppointment == null) {
+            return null;
+        }
+        LocalDateTime interviewDateTime = interviewAppointment.getInterviewDateTime();
+        return interviewDateTime == null ? null : interviewDateTime.toString(dateTimeFormat, LocaleUtils.toLocale(getResource().getLocale().toString()));
     }
 
     public String getPositionProvisionalStartDateDisplay(String dateFormat) {
@@ -789,8 +794,11 @@ public class Comment {
     }
 
     public String getInterviewTimeZoneDisplay() {
-        return interviewAppointment == null ? null : interviewAppointment.getInterviewTimeZone().getDisplayName(
-                LocaleUtils.toLocale(getResource().getLocale().toString()));
+        if (interviewAppointment == null) {
+            return null;
+        }
+        TimeZone interviewTimezone = interviewAppointment.getInterviewTimeZone();
+        return interviewTimezone == null ? null : interviewTimezone.getDisplayName(LocaleUtils.toLocale(getResource().getLocale().toString()));
     }
 
 }

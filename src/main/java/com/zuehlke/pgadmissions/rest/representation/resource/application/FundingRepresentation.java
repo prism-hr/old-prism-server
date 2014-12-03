@@ -10,6 +10,8 @@ public class FundingRepresentation {
 
     private Integer fundingSource;
 
+    private String sponsor;
+
     private FileRepresentation document;
 
     private String description;
@@ -17,6 +19,8 @@ public class FundingRepresentation {
     private String value;
 
     private LocalDate awardDate;
+
+    private String terms;
 
     public Integer getId() {
         return id;
@@ -32,6 +36,14 @@ public class FundingRepresentation {
 
     public void setFundingSource(Integer fundingSource) {
         this.fundingSource = fundingSource;
+    }
+
+    public final String getSponsor() {
+        return sponsor;
+    }
+
+    public final void setSponsor(String sponsor) {
+        this.sponsor = sponsor;
     }
 
     public FileRepresentation getDocument() {
@@ -65,5 +77,13 @@ public class FundingRepresentation {
     public void setAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
     }
-    
+
+    public final String getTerms() {
+        return terms;
+    }
+
+    public final void setTerms(String terms) {
+        this.terms = terms;
+    }
+
 }

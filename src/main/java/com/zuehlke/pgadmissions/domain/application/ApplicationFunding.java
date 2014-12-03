@@ -32,6 +32,9 @@ public class ApplicationFunding {
     @JoinColumn(name = "funding_source_id", nullable = false)
     private FundingSource fundingSource;
 
+    @Column(name = "sponsor")
+    private String sponsor;
+    
     @Column(name = "description", nullable = false)
     private String description;
 
@@ -41,6 +44,9 @@ public class ApplicationFunding {
     @Column(name = "award_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate awardDate;
+    
+    @Column(name = "terms")
+    private String terms;    
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "document_id", unique = true)
@@ -61,7 +67,15 @@ public class ApplicationFunding {
     public void setFundingSource(FundingSource fundingSource) {
         this.fundingSource = fundingSource;
     }
+    
+    public final String getSponsor() {
+        return sponsor;
+    }
 
+    public final void setSponsor(String sponsor) {
+        this.sponsor = sponsor;
+    }
+    
     public String getDescription() {
         return description;
     }
@@ -86,6 +100,14 @@ public class ApplicationFunding {
         this.awardDate = awardDate;
     }
 
+    public final String getTerms() {
+        return terms;
+    }
+
+    public final void setTerms(String terms) {
+        this.terms = terms;
+    }
+    
     public Application getApplication() {
         return application;
     }

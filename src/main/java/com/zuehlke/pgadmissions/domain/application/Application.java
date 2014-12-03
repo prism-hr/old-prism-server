@@ -222,7 +222,7 @@ public class Application extends Resource {
 
     @OneToMany(mappedBy = "application")
     private Set<UserRole> userRoles = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "application")
     private Set<ApplicationProcessing> processings = Sets.newHashSet();
 
@@ -431,18 +431,6 @@ public class Application extends Resource {
 
     public final void setStudyDetail(ApplicationStudyDetail studyDetail) {
         this.studyDetail = studyDetail;
-    }
-
-    public String getStudyLocation() {
-        return studyDetail == null ? null : studyDetail.getStudyLocation();
-    }
-
-    public String getStudyDivision() {
-        return studyDetail == null ? null : studyDetail.getStudyDivision();
-    }
-
-    public String getStudyArea() {
-        return studyDetail == null ? null : studyDetail.getStudyArea();
     }
 
     public Set<ApplicationSupervisor> getSupervisors() {

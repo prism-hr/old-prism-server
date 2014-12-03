@@ -29,7 +29,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismCustomQuestionT
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
@@ -151,19 +150,15 @@ public class CommentValidator extends LocalValidatorFactoryBean implements Valid
             PrismConfiguration configurationType = PrismConfiguration.WORKFLOW_PROPERTY;
             Integer workflowPropertyConfigurationVersion = comment.getResource().getWorkflowPropertyConfigurationVersion();
 
-            WorkflowPropertyDefinition positionDetailDefinition = (WorkflowPropertyDefinition) customizationService.getDefinitionById(configurationType,
-                    PrismWorkflowPropertyDefinition.APPLICATION_POSITION_DETAIL);
             WorkflowPropertyConfiguration positionDetailConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
-                    configurationType, positionDetailDefinition, workflowPropertyConfigurationVersion);
+                    configurationType, PrismWorkflowPropertyDefinition.APPLICATION_POSITION_DETAIL, workflowPropertyConfigurationVersion);
 
             if (positionDetailConfiguration != null && BooleanUtils.isTrue(positionDetailConfiguration.getRequired())) {
                 ValidationUtils.rejectIfEmpty(errors, "positionDetail", "notNull");
             }
 
-            WorkflowPropertyDefinition offerDetailDefinition = (WorkflowPropertyDefinition) customizationService.getDefinitionById(configurationType,
-                    PrismWorkflowPropertyDefinition.APPLICATION_OFFER_DETAIL);
             WorkflowPropertyConfiguration offerDetailConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
-                    configurationType, offerDetailDefinition, workflowPropertyConfigurationVersion);
+                    configurationType, PrismWorkflowPropertyDefinition.APPLICATION_OFFER_DETAIL, workflowPropertyConfigurationVersion);
 
             if (offerDetailConfiguration != null && BooleanUtils.isTrue(offerDetailConfiguration.getRequired())) {
                 ValidationUtils.rejectIfEmpty(errors, "offerDetail", "notNull");

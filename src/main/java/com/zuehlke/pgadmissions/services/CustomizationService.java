@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SY
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -28,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfigurationVersioned;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
@@ -91,6 +93,11 @@ public class CustomizationService {
     public List<DisplayPropertyConfiguration> getDisplayPropertyConfiguration(Resource resource, PrismScope scope,
             PrismDisplayPropertyCategory displayPropertyCategory, PrismLocale locale, PrismProgramType programType) {
         return customizationDAO.getDisplayPropertyConfiguration(resource, scope, displayPropertyCategory, locale, programType);
+    }
+
+    public WorkflowConfiguration getConfigurationWithVersion(PrismConfiguration configurationType, Enum<?> definitionId, Integer version) {
+        WorkflowDefinition definition = getDefinitionById(configurationType, definitionId);
+        return customizationDAO.getConfigurationWithVersion(configurationType, definition, version);
     }
 
     public WorkflowConfiguration getConfigurationWithVersion(PrismConfiguration configurationType, WorkflowDefinition definition, Integer version) {
@@ -273,6 +280,16 @@ public class CustomizationService {
             PrismProgramType programType, WorkflowConfigurationDTO workflowConfigurationDTO) throws CustomizationException {
         WorkflowConfiguration configuration = createConfiguration(configurationType, resource, locale, programType, workflowConfigurationDTO);
         return entityService.createOrUpdate(configuration);
+    }
+
+    public boolean isConfigurationEnabled(PrismConfiguration configurationType, Resource resource, Enum<?> definitionId) {
+        Class<?> configurationClass = configurationType.getConfigurationClass();
+        if (configurationClass.isAssignableFrom(WorkflowConfigurationVersioned.class)) {
+            WorkflowConfiguration configuration = getConfigurationWithVersion(configurationType, definitionId,
+                    resource.getWorkflowPropertyConfigurationVersion());
+            return configuration == null ? false : BooleanUtils.isTrue((Boolean) ReflectionUtils.getProperty(configuration, "enabled"));
+        }
+        throw new Error();
     }
 
     private WorkflowConfiguration createConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale,

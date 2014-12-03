@@ -19,16 +19,23 @@ public class ApplicationFundingDTO {
     private FileDTO document;
 
     @NotEmpty
+    @Size(max = 255)
+    private String sponsor;
+    
+    @NotEmpty
     @Size(max = 2000)
     private String description;
 
     @NotEmpty
     @Size(max = 100)
     private String value;
-
+    
     @NotNull
     @DateNotFuture
     private LocalDate awardDate;
+    
+    @Size(max = 2000)
+    private String terms;
 
     public Integer getId() {
         return id;

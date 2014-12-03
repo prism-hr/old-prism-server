@@ -9,7 +9,7 @@ import org.joda.time.LocalDate;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 
 public class AbstractResourceRepresentation {
@@ -40,7 +40,7 @@ public class AbstractResourceRepresentation {
 
     private List<ResourceUserRolesRepresentation> users;
 
-    private List<WorkflowConfigurationRepresentation> workflowPropertyConfigurations;
+    private List<WorkflowPropertyConfigurationRepresentation> workflowPropertyConfigurations;
 
     public Integer getId() {
         return id;
@@ -146,11 +146,11 @@ public class AbstractResourceRepresentation {
         this.users = users;
     }
 
-    public List<WorkflowConfigurationRepresentation> getWorkflowPropertyConfigurations() {
+    public final List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations() {
         return workflowPropertyConfigurations;
     }
 
-    public void setWorkflowPropertyConfigurations(List<WorkflowConfigurationRepresentation> workflowPropertyConfigurations) {
+    public final void setWorkflowPropertyConfigurations(List<WorkflowPropertyConfigurationRepresentation> workflowPropertyConfigurations) {
         this.workflowPropertyConfigurations = workflowPropertyConfigurations;
     }
 

@@ -176,7 +176,7 @@ public class ProgramDAO {
                 .list();
     }
 
-    public List<String> listSuggestedDivisions(Program program, String location) {
+    public List<String> getSuggestedDivisions(Program program, String location) {
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .setProjection(Projections.groupProperty("studyDetail.studyDivision")) //
                 .add(Restrictions.eq("program", program)) //
@@ -187,7 +187,7 @@ public class ProgramDAO {
                 .list();
     }
 
-    public List<String> listSuggestedStudyAreas(Program program, String location, String division) {
+    public List<String> getSuggestedStudyAreas(Program program, String location, String division) {
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .setProjection(Projections.groupProperty("studyDetail.studyArea")) //
                 .add(Restrictions.eq("program", program)) //

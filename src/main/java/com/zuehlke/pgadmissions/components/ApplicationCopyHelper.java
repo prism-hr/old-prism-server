@@ -14,6 +14,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPassport;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
+import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -64,6 +65,13 @@ public class ApplicationCopyHelper {
             funding.setApplication(to);
             copyFunding(funding, fromFunding);
         }
+        
+        for (ApplicationPrize fromPrize : from.getPrizes()) {
+            ApplicationPrize prize = new ApplicationPrize();
+            to.getPrizes().add(prize);
+            prize.setApplication(to);
+            copyPrize(prize, fromPrize);
+        }
 
         for (ApplicationReferee fromReferee : from.getReferees()) {
             ApplicationReferee referee = new ApplicationReferee();
@@ -108,6 +116,13 @@ public class ApplicationCopyHelper {
         to.setValue(from.getValue());
         to.setAwardDate(from.getAwardDate());
         to.setDocument(copyDocument(from.getDocument()));
+    }
+    
+    public void copyPrize(ApplicationPrize to, ApplicationPrize from) {
+        to.setProvider(from.getProvider());
+        to.setTitle(from.getTitle());
+        to.setDescription(from.getDescription());
+        to.setAwardDate(from.getAwardDate());
     }
 
     public void copyEmploymentPosition(ApplicationEmploymentPosition to, ApplicationEmploymentPosition from) {
@@ -163,6 +178,8 @@ public class ApplicationCopyHelper {
     public void copyApplicationFormDocument(ApplicationDocument to, ApplicationDocument from) {
         to.setCv(copyDocument(from.getCv()));
         to.setPersonalStatement(copyDocument(from.getPersonalStatement()));
+        to.setResearchStatement(copyDocument(from.getResearchStatement()));
+        to.setCoveringLetter(copyDocument(from.getCoveringLetter()));
     }
 
     private Address copyAddress(Institution toInstitution, Address from) {

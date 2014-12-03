@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.components;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,10 +18,14 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.Address;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
+import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 
 @Component
@@ -29,74 +34,218 @@ public class ApplicationCopyHelper {
     @Autowired
     private ImportedEntityService importedEntityService;
 
+    @Autowired
+    private CustomizationService customizationService;
+
     @Transactional
-    public void copyApplicationData(Application to, Application from) {
+    public void copyApplication(Application to, Application from) {
+        copyApplicationPersonalDetail(to, from);
+        copyApplicationAddress(to, from);
+        copyApplicationQualifications(to, from);
+        copyApplicationEmploymentPositions(to, from);
+        copyApplicationFundings(to, from);
+        copyApplicationPrizes(to, from);
+        copyApplicationReferences(to, from);
+        copyApplicationDocument(to, from);
+        copyApplicationAdditionalInformation(to, from);
+    }
+
+    private void copyApplicationPersonalDetail(Application to, Application from) {
         if (from.getPersonalDetail() != null) {
             ApplicationPersonalDetail personalDetail = new ApplicationPersonalDetail();
             to.setPersonalDetail(personalDetail);
             personalDetail.setApplication(to);
-            copyPersonalDetail(to.getPersonalDetail(), from.getPersonalDetail());
-        }
+            
+            Institution toInstitution = to.getInstitution();
+            personalDetail.setTitle(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getTitle()));
+            personalDetail.setGender(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getGender()));
+            personalDetail.setDateOfBirth(from.getPersonalDetail().getDateOfBirth());
+            personalDetail.setCountry(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getCountry()));
+            personalDetail.setFirstNationality(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getFirstNationality()));
+            personalDetail.setSecondNationality(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getSecondNationality()));
+            personalDetail.setDomicile(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getDomicile()));
+            personalDetail.setPhone(from.getPersonalDetail().getPhone());
+            personalDetail.setSkype(from.getPersonalDetail().getSkype());
 
-        if (from.getAddress() != null) {
-            ApplicationAddress applicationFormAddress = new ApplicationAddress();
-            to.setAddress(applicationFormAddress);
-            applicationFormAddress.setApplication(to);
-            copyApplicationFormAddress(to.getAddress(), from.getAddress());
-        }
+            if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
+                    PrismWorkflowPropertyDefinition.APPLICATION_DEMOGRAPHIC)) {
+                personalDetail.setEthnicity(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getEthnicity()));
+                personalDetail.setDisability(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getDisability()));
+            }
 
-        for (ApplicationQualification fromQualification : from.getQualifications()) {
-            ApplicationQualification qualification = new ApplicationQualification();
-            to.getQualifications().add(qualification);
-            qualification.setApplication(to);
-            copyQualification(qualification, fromQualification);
-        }
+            if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
+                    PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE)) {
+                personalDetail.setFirstLanguageLocale(from.getPersonalDetail().getFirstLanguageLocale());
+                personalDetail.setLanguageQualification(copyLanguageQualification(toInstitution, from.getPersonalDetail().getLanguageQualification(), to));
+            }
 
-        for (ApplicationEmploymentPosition fromEmployment : from.getEmploymentPositions()) {
-            ApplicationEmploymentPosition employment = new ApplicationEmploymentPosition();
-            to.getEmploymentPositions().add(employment);
-            employment.setApplication(to);
-            copyEmploymentPosition(employment, fromEmployment);
-        }
-
-        for (ApplicationFunding fromFunding : from.getFundings()) {
-            ApplicationFunding funding = new ApplicationFunding();
-            to.getFundings().add(funding);
-            funding.setApplication(to);
-            copyFunding(funding, fromFunding);
-        }
-        
-        for (ApplicationPrize fromPrize : from.getPrizes()) {
-            ApplicationPrize prize = new ApplicationPrize();
-            to.getPrizes().add(prize);
-            prize.setApplication(to);
-            copyPrize(prize, fromPrize);
-        }
-
-        for (ApplicationReferee fromReferee : from.getReferees()) {
-            ApplicationReferee referee = new ApplicationReferee();
-            to.getReferees().add(referee);
-            referee.setApplication(to);
-            copyReferee(referee, fromReferee);
-        }
-
-        if (from.getDocument() != null) {
-            ApplicationDocument applicationFormDocument = new ApplicationDocument();
-            to.setDocument(applicationFormDocument);
-            applicationFormDocument.setApplication(to);
-            copyApplicationFormDocument(to.getDocument(), from.getDocument());
-        }
-
-        if (from.getAdditionalInformation() != null) {
-            ApplicationAdditionalInformation additionalInformation = new ApplicationAdditionalInformation();
-            to.setAdditionalInformation(additionalInformation);
-            additionalInformation.setApplication(to);
-            copyAdditionalInformation(additionalInformation, from.getAdditionalInformation());
+            if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
+                    PrismWorkflowPropertyDefinition.APPLICATION_RESIDENCE)) {
+                personalDetail.setVisaRequired(from.getPersonalDetail().getVisaRequired());
+                personalDetail.setPassport(copyPassport(from.getPersonalDetail().getPassport()));
+            }
         }
     }
 
-    public void copyAdditionalInformation(ApplicationAdditionalInformation to, ApplicationAdditionalInformation from) {
-        to.setConvictionsText(from.getConvictionsText());
+    private void copyApplicationAddress(Application to, Application from) {
+        if (from.getAddress() != null) {
+            ApplicationAddress applicationAddress = new ApplicationAddress();
+            to.setAddress(applicationAddress);
+            applicationAddress.setApplication(to);
+            Institution toInstitution = to.getInstitution();
+            applicationAddress.setCurrentAddress(copyAddress(toInstitution, from.getAddress().getCurrentAddress()));
+            applicationAddress.setContactAddress(copyAddress(toInstitution, from.getAddress().getContactAddress()));
+        }
+    }
+
+    private void copyApplicationQualifications(Application to, Application from) {
+        WorkflowPropertyConfiguration qualificationConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
+                PrismConfiguration.WORKFLOW_PROPERTY, PrismWorkflowPropertyDefinition.APPLICATION_QUALIFICATION, to.getWorkflowPropertyConfigurationVersion());
+
+        if (BooleanUtils.isTrue(qualificationConfiguration.getEnabled())) {
+            boolean qualificationProofOfAwardEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
+                    PrismWorkflowPropertyDefinition.APPLICATION_QUALIFICATION_PROOF_OF_AWARD);
+
+            Integer counter = 0;
+            for (ApplicationQualification fromQualification : from.getQualifications()) {
+                if (counter.equals(qualificationConfiguration.getMaximum())) {
+                    break;
+                }
+                ApplicationQualification qualification = new ApplicationQualification();
+                to.getQualifications().add(qualification);
+                qualification.setApplication(to);
+                copyQualification(qualification, fromQualification, qualificationProofOfAwardEnabled);
+                counter++;
+            }
+        }
+    }
+
+    private void copyApplicationEmploymentPositions(Application to, Application from) {
+        WorkflowPropertyConfiguration employmentConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
+                PrismConfiguration.WORKFLOW_PROPERTY, PrismWorkflowPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION,
+                to.getWorkflowPropertyConfigurationVersion());
+
+        if (BooleanUtils.isTrue(employmentConfiguration.getEnabled())) {
+            Integer counter = 0;
+            for (ApplicationEmploymentPosition fromEmployment : from.getEmploymentPositions()) {
+                if (counter.equals(employmentConfiguration.getMaximum())) {
+                    break;
+                }
+                ApplicationEmploymentPosition employment = new ApplicationEmploymentPosition();
+                to.getEmploymentPositions().add(employment);
+                employment.setApplication(to);
+                copyEmploymentPosition(employment, fromEmployment);
+                counter++;
+            }
+        }
+    }
+
+    private void copyApplicationFundings(Application to, Application from) {
+        WorkflowPropertyConfiguration fundingConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
+                PrismConfiguration.WORKFLOW_PROPERTY, PrismWorkflowPropertyDefinition.APPLICATION_FUNDING, to.getWorkflowPropertyConfigurationVersion());
+
+        if (BooleanUtils.isTrue(fundingConfiguration.getEnabled())) {
+            boolean fundingProofOfAwardEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
+                    PrismWorkflowPropertyDefinition.APPLICATION_FUNDING_PROOF_OF_AWARD);
+
+            Integer counter = 0;
+            for (ApplicationFunding fromFunding : from.getFundings()) {
+                if (counter.equals(fundingConfiguration.getMaximum())) {
+                    break;
+                }
+                ApplicationFunding funding = new ApplicationFunding();
+                to.getFundings().add(funding);
+                funding.setApplication(to);
+                copyFunding(funding, fromFunding, fundingProofOfAwardEnabled);
+                counter++;
+            }
+        }
+    }
+
+    private void copyApplicationPrizes(Application to, Application from) {
+        WorkflowPropertyConfiguration prizeConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
+                PrismConfiguration.WORKFLOW_PROPERTY, PrismWorkflowPropertyDefinition.APPLICATION_FUNDING, to.getWorkflowPropertyConfigurationVersion());
+
+        if (BooleanUtils.isTrue(prizeConfiguration.getEnabled())) {
+            Integer counter = 0;
+            for (ApplicationPrize fromPrize : from.getPrizes()) {
+                if (counter.equals(prizeConfiguration.getMaximum())) {
+                    break;
+                }
+                ApplicationPrize prize = new ApplicationPrize();
+                to.getPrizes().add(prize);
+                prize.setApplication(to);
+                copyPrize(prize, fromPrize);
+                counter++;
+            }
+        }
+    }
+
+    private void copyApplicationReferences(Application to, Application from) {
+        WorkflowPropertyConfiguration refereeConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
+                PrismConfiguration.WORKFLOW_PROPERTY, PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE, to.getWorkflowPropertyConfigurationVersion());
+
+        if (BooleanUtils.isTrue(refereeConfiguration.getEnabled())) {
+            Integer counter = 0;
+            for (ApplicationReferee fromReferee : from.getReferees()) {
+                if (counter.equals(refereeConfiguration.getMaximum())) {
+                    break;
+                }
+                ApplicationReferee referee = new ApplicationReferee();
+                to.getReferees().add(referee);
+                referee.setApplication(to);
+                copyReferee(referee, fromReferee);
+                counter++;
+            }
+        }
+    }
+
+    private void copyApplicationDocument(Application to, Application from) {
+        boolean personalStatementEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
+                PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_PERSONAL_STATEMENT);
+
+        boolean cvEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
+                PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_CV);
+
+        boolean researchStatementEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
+                PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_RESEARCH_STATEMENT);
+
+        boolean coveringLetterEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
+                PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_COVERING_LETTER);
+
+        if (personalStatementEnabled || cvEnabled || researchStatementEnabled || coveringLetterEnabled) {
+            if (from.getDocument() != null) {
+                ApplicationDocument applicationDocument = new ApplicationDocument();
+                to.setDocument(applicationDocument);
+                applicationDocument.setApplication(to);
+
+                if (personalStatementEnabled) {
+                    applicationDocument.setPersonalStatement(from.getDocument().getCoveringLetter());
+                }
+
+                if (cvEnabled) {
+                    applicationDocument.setCv(from.getDocument().getCv());
+                }
+
+                if (researchStatementEnabled) {
+                    applicationDocument.setResearchStatement(from.getDocument().getResearchStatement());
+                }
+
+                if (coveringLetterEnabled) {
+                    applicationDocument.setCoveringLetter(from.getDocument().getCoveringLetter());
+                }
+            }
+        }
+    }
+
+    private void copyApplicationAdditionalInformation(Application to, Application from) {
+        if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
+                PrismWorkflowPropertyDefinition.APPLICATION_CRIMINAL_CONVICTION) && from.getAdditionalInformation() != null) {
+            ApplicationAdditionalInformation additionalInformation = new ApplicationAdditionalInformation();
+            to.setAdditionalInformation(additionalInformation);
+            additionalInformation.setApplication(to);
+            additionalInformation.setConvictionsText(from.getAdditionalInformation().getConvictionsText());
+        }
     }
 
     public void copyReferee(ApplicationReferee to, ApplicationReferee from) {
@@ -109,15 +258,18 @@ public class ApplicationCopyHelper {
         to.setAddress(copyAddress(toInstitution, from.getAddress()));
     }
 
-    public void copyFunding(ApplicationFunding to, ApplicationFunding from) {
+    public void copyFunding(ApplicationFunding to, ApplicationFunding from, boolean proofOfAwardEnabled) {
         Institution toInstitution = to.getApplication().getInstitution();
         to.setFundingSource(getEnabledImportedObject(toInstitution, from.getFundingSource()));
         to.setDescription(from.getDescription());
         to.setValue(from.getValue());
         to.setAwardDate(from.getAwardDate());
-        to.setDocument(copyDocument(from.getDocument()));
+
+        if (proofOfAwardEnabled) {
+            to.setDocument(copyDocument(from.getDocument()));
+        }
     }
-    
+
     public void copyPrize(ApplicationPrize to, ApplicationPrize from) {
         to.setProvider(from.getProvider());
         to.setTitle(from.getTitle());
@@ -136,7 +288,7 @@ public class ApplicationCopyHelper {
         to.setEmployerAddress(copyAddress(toInstitution, from.getEmployerAddress()));
     }
 
-    public void copyQualification(ApplicationQualification to, ApplicationQualification from) {
+    public void copyQualification(ApplicationQualification to, ApplicationQualification from, boolean proofOfAwardEnabled) {
         Institution toInstitution = to.getApplication().getInstitution();
         to.setInstitution(getEnabledImportedObject(toInstitution, from.getInstitution()));
         to.setType(getEnabledImportedObject(toInstitution, from.getType()));
@@ -147,39 +299,10 @@ public class ApplicationCopyHelper {
         to.setCompleted(from.getCompleted());
         to.setGrade(from.getGrade());
         to.setAwardDate(from.getAwardDate());
-        to.setDocument(copyDocument(from.getDocument()));
-    }
 
-    public void copyPersonalDetail(ApplicationPersonalDetail to, ApplicationPersonalDetail from) {
-        Institution toInstitution = to.getApplication().getInstitution();
-        to.setTitle(getEnabledImportedObject(toInstitution, from.getTitle()));
-        to.setGender(getEnabledImportedObject(toInstitution, from.getGender()));
-        to.setDateOfBirth(from.getDateOfBirth());
-        to.setCountry(getEnabledImportedObject(toInstitution, from.getCountry()));
-        to.setFirstNationality(getEnabledImportedObject(toInstitution, from.getFirstNationality()));
-        to.setSecondNationality(getEnabledImportedObject(toInstitution, from.getSecondNationality()));
-        to.setFirstLanguageLocale(from.getFirstLanguageLocale());
-        to.setDomicile(getEnabledImportedObject(toInstitution, from.getDomicile()));
-        to.setVisaRequired(from.getVisaRequired());
-        to.setPhone(from.getPhone());
-        to.setSkype(from.getSkype());
-        to.setEthnicity(getEnabledImportedObject(toInstitution, from.getEthnicity()));
-        to.setDisability(getEnabledImportedObject(toInstitution, from.getDisability()));
-        to.setLanguageQualification(copyLanguageQualification(toInstitution, from.getLanguageQualification()));
-        to.setPassport(copyPassport(from.getPassport()));
-    }
-
-    public void copyApplicationFormAddress(ApplicationAddress to, ApplicationAddress from) {
-        Institution toInstitution = to.getApplication().getInstitution();
-        to.setCurrentAddress(copyAddress(toInstitution, from.getCurrentAddress()));
-        to.setContactAddress(copyAddress(toInstitution, from.getContactAddress()));
-    }
-
-    public void copyApplicationFormDocument(ApplicationDocument to, ApplicationDocument from) {
-        to.setCv(copyDocument(from.getCv()));
-        to.setPersonalStatement(copyDocument(from.getPersonalStatement()));
-        to.setResearchStatement(copyDocument(from.getResearchStatement()));
-        to.setCoveringLetter(copyDocument(from.getCoveringLetter()));
+        if (proofOfAwardEnabled) {
+            to.setDocument(copyDocument(from.getDocument()));
+        }
     }
 
     private Address copyAddress(Institution toInstitution, Address from) {
@@ -209,7 +332,8 @@ public class ApplicationCopyHelper {
         return to;
     }
 
-    private ApplicationLanguageQualification copyLanguageQualification(Institution toInstitution, ApplicationLanguageQualification from) {
+    private ApplicationLanguageQualification copyLanguageQualification(Institution toInstitution, ApplicationLanguageQualification from,
+            Application toApplication) {
         if (from == null) {
             return null;
         }
@@ -221,7 +345,12 @@ public class ApplicationCopyHelper {
         to.setWritingScore(from.getWritingScore());
         to.setSpeakingScore(from.getSpeakingScore());
         to.setListeningScore(from.getListeningScore());
-        to.setDocument(copyDocument(from.getDocument()));
+
+        if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, toApplication,
+                PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE_PROOF_OF_AWARD)) {
+            to.setDocument(copyDocument(from.getDocument()));
+        }
+
         return to;
     }
 

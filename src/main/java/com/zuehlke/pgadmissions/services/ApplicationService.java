@@ -153,16 +153,11 @@ public class ApplicationService {
     public Application create(User user, ApplicationDTO applicationDTO) throws Exception {
         Resource parentResource = entityService.getById(applicationDTO.getResourceScope().getResourceClass(), applicationDTO.getResourceId());
         Application application = new Application().withUser(user).withParentResource(parentResource).withDoRetain(false).withCreatedTimestamp(new DateTime());
-
-        Application previousApplication = getPreviousApplication(application);
-        if (previousApplication != null) {
-            applicationCopyHelper.copyApplicationData(application, previousApplication);
-        }
-
         return application;
     }
 
     public void save(Application application) {
+        prepopulateApplication(application);
         entityService.save(application);
     }
 
@@ -329,7 +324,8 @@ public class ApplicationService {
 
         CommentApplicationPositionDetailDTO positionDetailDTO = commentDTO.getPositionDetail();
         if (positionDetailDTO != null) {
-            comment.setPositionDetail(new CommentApplicationPositionDetail().withPositionTitle(positionDetailDTO.getPositionTitle()).withPositionDescription(positionDetailDTO.getPositionDescription()));
+            comment.setPositionDetail(new CommentApplicationPositionDetail().withPositionTitle(positionDetailDTO.getPositionTitle()).withPositionDescription(
+                    positionDetailDTO.getPositionDescription()));
         }
 
         CommentApplicationOfferDetailDTO offerDetailDTO = commentDTO.getOfferDetail();
@@ -563,7 +559,6 @@ public class ApplicationService {
         return dataTable;
     }
 
-
     private List<ApplicationReportListRowDTO> getApplicationReport(Set<Integer> assignedApplications) {
         return assignedApplications.isEmpty() ? new ArrayList<ApplicationReportListRowDTO>() : applicationDAO.getApplicationReport(assignedApplications);
     }
@@ -641,6 +636,13 @@ public class ApplicationService {
         }
 
         return recommended;
+    }
+
+    public void prepopulateApplication(Application application) {
+        Application previousApplication = getPreviousApplication(application);
+        if (previousApplication != null) {
+            applicationCopyHelper.copyApplication(application, previousApplication);
+        }
     }
 
 }

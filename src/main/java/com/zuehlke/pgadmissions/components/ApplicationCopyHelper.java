@@ -217,19 +217,19 @@ public class ApplicationCopyHelper {
                 applicationDocument.setApplication(to);
 
                 if (personalStatementEnabled) {
-                    applicationDocument.setPersonalStatement(from.getDocument().getCoveringLetter());
+                    applicationDocument.setPersonalStatement(copyDocument(from.getDocument().getCoveringLetter()));
                 }
 
                 if (cvEnabled) {
-                    applicationDocument.setCv(from.getDocument().getCv());
+                    applicationDocument.setCv(copyDocument(from.getDocument().getCv()));
                 }
 
                 if (researchStatementEnabled) {
-                    applicationDocument.setResearchStatement(from.getDocument().getResearchStatement());
+                    applicationDocument.setResearchStatement(copyDocument(from.getDocument().getResearchStatement()));
                 }
 
                 if (coveringLetterEnabled) {
-                    applicationDocument.setCoveringLetter(from.getDocument().getCoveringLetter());
+                    applicationDocument.setCoveringLetter(copyDocument(from.getDocument().getCoveringLetter()));
                 }
             }
         }

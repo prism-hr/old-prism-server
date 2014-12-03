@@ -238,7 +238,7 @@ public class ResourceResource {
         response.setHeader("file-name", fileName);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "resourceScope:projects|programs|institutions/{resourceId}", params = "type=summary")
+    @RequestMapping(method = RequestMethod.GET, value = "{resourceScope:projects|programs|institutions}/{resourceId}", params = "type=summary")
     public ResourceSummaryRepresentation getSummary(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId) {
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
         if (Arrays.asList(PrismScope.SYSTEM, PrismScope.APPLICATION).contains(resourceScope)) {

@@ -79,6 +79,7 @@ import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresenta
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.DocumentSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.EmploymentPositionSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.QualificationSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.ApplicationValidator;
@@ -87,6 +88,7 @@ import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Service
 @Transactional
+@SuppressWarnings("unchecked")
 public class ApplicationService {
 
     @Autowired
@@ -557,6 +559,20 @@ public class ApplicationService {
         }
 
         return dataTable;
+    }
+    
+    public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Application application) {
+        List<WorkflowPropertyConfigurationRepresentation> configurations = (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) customizationService.getConfigurationRepresentationsWithOrWithoutVersion(
+                PrismConfiguration.WORKFLOW_PROPERTY, application, application.getWorkflowPropertyConfigurationVersion());         
+        if (application.isSubmitted()) {
+            for (WorkflowPropertyConfigurationRepresentation configuration : configurations) {
+                PrismWorkflowPropertyDefinition definitionId = (PrismWorkflowPropertyDefinition) configuration.getDefinitionId();
+                if (definitionId == PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE) {
+                    configuration.setMaximum(definitionId.getMaximumPermitted());
+                }
+            }
+        }
+        return configurations;
     }
 
     private List<ApplicationReportListRowDTO> getApplicationReport(Set<Integer> assignedApplications) {

@@ -181,14 +181,14 @@ public class ProgramService {
         return programDAO.getPossibleLocations(program);
     }
 
-    public List<String> listSuggestedDivisions(Integer programId, String location) {
+    public List<String> getSuggestedDivisions(Integer programId, String location) {
         Program program = getById(programId);
-        return programDAO.listSuggestedDivisions(program, location);
+        return programDAO.getSuggestedDivisions(program, location);
     }
 
-    public List<String> listSuggestedStudyAreas(Integer programId, String location, String division) {
+    public List<String> getSuggestedStudyAreas(Integer programId, String location, String division) {
         Program program = getById(programId);
-        return programDAO.listSuggestedStudyAreas(program, location, division);
+        return programDAO.getSuggestedStudyAreas(program, location, division);
     }
 
     public Integer getActiveProgramCount(Institution institution) {

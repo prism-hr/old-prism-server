@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewAppoin
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -60,6 +61,7 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -67,6 +69,7 @@ import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Service
 @Transactional
+@SuppressWarnings("unchecked")
 public class ResourceService {
 
     @Autowired
@@ -107,6 +110,9 @@ public class ResourceService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CustomizationService customizationService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -353,10 +359,7 @@ public class ResourceService {
         case APPLICATION:
             applicationService.filterResourceListData(representation, currentUser);
             break;
-        case INSTITUTION:
-        case PROGRAM:
-        case PROJECT:
-        case SYSTEM:
+        default:
             break;
         }
     }
@@ -411,6 +414,16 @@ public class ResourceService {
             assigned.addAll(resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, conditions, lastSequenceIdentifier, maxRecords));
         }
         return assigned;
+    }
+
+    public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Resource resource) {
+        switch (resource.getResourceScope()) {
+        case APPLICATION:
+            return applicationService.getWorkflowPropertyConfigurations((Application) resource);
+        default:
+            return (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) customizationService.getConfigurationRepresentationsWithOrWithoutVersion(
+                    PrismConfiguration.WORKFLOW_PROPERTY, resource, resource.getWorkflowPropertyConfigurationVersion());
+        }
     }
 
     private Junction getFilterConditions(PrismScope scopeId, ResourceListFilterDTO filter) {

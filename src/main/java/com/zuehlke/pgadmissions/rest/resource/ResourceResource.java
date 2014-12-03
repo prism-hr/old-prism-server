@@ -34,7 +34,6 @@ import com.google.visualization.datasource.DataSourceHelper;
 import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -167,8 +166,7 @@ public class ResourceResource {
         }
         representation.setUsers(userRolesRepresentations);
 
-        representation.setWorkflowPropertyConfigurations(customizationService.getConfigurationRepresentationsWithOrWithoutVersion(
-                PrismConfiguration.WORKFLOW_PROPERTY, resource, resource.getWorkflowPropertyConfigurationVersion()));
+        representation.setWorkflowPropertyConfigurations(resourceService.getWorkflowPropertyConfigurations(resource));
 
         PrismScope resourceScope = resource.getResourceScope();
         switch (resourceScope) {

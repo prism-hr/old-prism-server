@@ -36,9 +36,9 @@ public enum ResourceListFilterProperty implements FilterProperty {
     UPDATED_TIMESTAMP("updatedTimestamp", DATE, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER), Arrays.asList(APPLICATION, PROJECT, PROGRAM, INSTITUTION)), //
     DUE_DATE("dueDate", DATE, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER), Arrays.asList(APPLICATION)), //
     CLOSING_DATE("closingDate", DATE, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER), Arrays.asList(APPLICATION)), //
-    STUDY_LOCATION("studyLocation", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION)), //
-    STUDY_DIVISION("studyDivision", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION)), //
-    STUDY_AREA("studyArea", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION)), //
+    STUDY_LOCATION("studyDetail.studyLocation", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION)), //
+    STUDY_DIVISION("studyDetail.studyDivision", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION)), //
+    STUDY_AREA("studyDetail.studyArea", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION)), //
     CONFIRMED_START_DATE("confirmed_start_date", DATE, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER), Arrays.asList(APPLICATION)), //
     RATING("applicationRatingAverage", NUMBER, Arrays.asList(BETWEEN, GREATER, LESSER), Arrays.asList(APPLICATION, PROJECT, PROGRAM, INSTITUTION)), //
     REFERRER("referrer", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION, PROJECT, PROGRAM, INSTITUTION)), //

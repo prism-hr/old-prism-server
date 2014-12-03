@@ -272,6 +272,8 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
                 errors.rejectValue(property, "notNull");
                 errors.popNestedPath();
             }
+        } else if (object != null) {
+            throw new Error();
         }
     }
 

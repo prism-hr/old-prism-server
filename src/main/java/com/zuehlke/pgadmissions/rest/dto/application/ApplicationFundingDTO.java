@@ -16,8 +16,6 @@ public class ApplicationFundingDTO {
     @NotNull
     private Integer fundingSource;
 
-    private FileDTO document;
-
     @NotEmpty
     @Size(max = 255)
     private String sponsor;
@@ -36,6 +34,8 @@ public class ApplicationFundingDTO {
     
     @Size(max = 2000)
     private String terms;
+    
+    private FileDTO document;
 
     public Integer getId() {
         return id;
@@ -44,6 +44,14 @@ public class ApplicationFundingDTO {
     public void setId(Integer id) {
         this.id = id;
     }
+    
+    public final String getSponsor() {
+        return sponsor;
+    }
+
+    public final void setSponsor(String sponsor) {
+        this.sponsor = sponsor;
+    }
 
     public Integer getFundingSource() {
         return fundingSource;
@@ -51,14 +59,6 @@ public class ApplicationFundingDTO {
 
     public void setFundingSource(Integer fundingSource) {
         this.fundingSource = fundingSource;
-    }
-
-    public FileDTO getDocument() {
-        return document;
-    }
-
-    public void setDocument(FileDTO document) {
-        this.document = document;
     }
 
     public String getDescription() {
@@ -84,4 +84,21 @@ public class ApplicationFundingDTO {
     public void setAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
     }
+
+    public final String getTerms() {
+        return terms;
+    }
+
+    public final void setTerms(String terms) {
+        this.terms = terms;
+    }
+    
+    public FileDTO getDocument() {
+        return document;
+    }
+
+    public void setDocument(FileDTO document) {
+        this.document = document;
+    }
+    
 }

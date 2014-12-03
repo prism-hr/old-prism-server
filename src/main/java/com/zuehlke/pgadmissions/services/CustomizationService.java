@@ -284,7 +284,7 @@ public class CustomizationService {
 
     public boolean isConfigurationEnabled(PrismConfiguration configurationType, Resource resource, Enum<?> definitionId) {
         Class<?> configurationClass = configurationType.getConfigurationClass();
-        if (configurationClass.isAssignableFrom(WorkflowConfigurationVersioned.class)) {
+        if (WorkflowConfigurationVersioned.class.isAssignableFrom(configurationClass)) {
             WorkflowConfiguration configuration = getConfigurationWithVersion(configurationType, definitionId,
                     resource.getWorkflowPropertyConfigurationVersion());
             return configuration == null ? false : BooleanUtils.isTrue((Boolean) ReflectionUtils.getProperty(configuration, "enabled"));

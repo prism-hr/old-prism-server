@@ -37,8 +37,9 @@ public class ApplicationDAO {
 
     public Application getPreviousSubmittedApplication(Application application) {
         return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user", application.getUser())) //
-                .add(Restrictions.eq("institution", application.getInstitution())) //
+                .add(Restrictions.eq("institution.locale", application.getLocale())) //
                 .add(Restrictions.isNotNull("submittedTimestamp")) //
                 .addOrder(Order.desc("submittedTimestamp")) //
                 .addOrder(Order.desc("id")) //
@@ -48,8 +49,9 @@ public class ApplicationDAO {
 
     public Application getPreviousUnsubmittedApplication(Application application) {
         return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user", application.getUser())) //
-                .add(Restrictions.eq("institution", application.getInstitution())) //
+                .add(Restrictions.eq("institution.locale", application.getLocale())) //
                 .add(Restrictions.isNull("submittedTimestamp")) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //

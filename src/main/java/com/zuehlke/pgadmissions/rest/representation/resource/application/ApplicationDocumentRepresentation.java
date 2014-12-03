@@ -9,6 +9,8 @@ public class ApplicationDocumentRepresentation {
     private FileRepresentation cv;
 
     private FileRepresentation coveringLetter;
+    
+    private FileRepresentation researchStatement;
 
     public FileRepresentation getPersonalStatement() {
         return personalStatement;
@@ -33,4 +35,13 @@ public class ApplicationDocumentRepresentation {
     public void setCoveringLetter(FileRepresentation coveringLetter) {
         this.coveringLetter = coveringLetter;
     }
+
+    public final FileRepresentation getResearchStatement() {
+        return researchStatement;
+    }
+
+    public final void setResearchStatement(FileRepresentation researchStatement) {
+        this.researchStatement = researchStatement;
+    }
+    
 }

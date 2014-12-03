@@ -142,7 +142,7 @@ public class Institution extends ResourceParent {
     @OneToOne
     private InstitutionAddress address;
 
-    @Column(name = "is_ucl_institution", nullable = false)
+    @Column(name = "ucl_institution", nullable = false)
     private Boolean uclInstitution;
 
     @Column(name = "application_created_count")

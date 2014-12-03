@@ -7,11 +7,9 @@ SET workflow_property_configuration_version = (
 	SELECT version
 	FROM WORKFLOW_PROPERTY_CONFIGURATION
 	WHERE active = 1
-	AND institution_id = (
-		SELECT id
-		FROM INSTITUTION
-		WHERE ucl_institution = 1)
+	AND system_id IS NOT NULL
 	GROUP BY version)
+WHERE workflow_property_configuration_version IS NULL 
 ;
 
 DELETE FROM RESOURCE_STATE

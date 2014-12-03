@@ -55,7 +55,7 @@ public class ApplicationCopyHelper {
             ApplicationPersonalDetail personalDetail = new ApplicationPersonalDetail();
             to.setPersonalDetail(personalDetail);
             personalDetail.setApplication(to);
-            
+
             Institution toInstitution = to.getInstitution();
             personalDetail.setTitle(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getTitle()));
             personalDetail.setGender(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getGender()));
@@ -67,20 +67,17 @@ public class ApplicationCopyHelper {
             personalDetail.setPhone(from.getPersonalDetail().getPhone());
             personalDetail.setSkype(from.getPersonalDetail().getSkype());
 
-            if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
-                    PrismWorkflowPropertyDefinition.APPLICATION_DEMOGRAPHIC)) {
+            if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to, PrismWorkflowPropertyDefinition.APPLICATION_DEMOGRAPHIC)) {
                 personalDetail.setEthnicity(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getEthnicity()));
                 personalDetail.setDisability(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getDisability()));
             }
 
-            if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
-                    PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE)) {
+            if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to, PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE)) {
                 personalDetail.setFirstLanguageLocale(from.getPersonalDetail().getFirstLanguageLocale());
                 personalDetail.setLanguageQualification(copyLanguageQualification(toInstitution, from.getPersonalDetail().getLanguageQualification(), to));
             }
 
-            if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
-                    PrismWorkflowPropertyDefinition.APPLICATION_RESIDENCE)) {
+            if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to, PrismWorkflowPropertyDefinition.APPLICATION_RESIDENCE)) {
                 personalDetail.setVisaRequired(from.getPersonalDetail().getVisaRequired());
                 personalDetail.setPassport(copyPassport(from.getPersonalDetail().getPassport()));
             }
@@ -164,7 +161,7 @@ public class ApplicationCopyHelper {
 
     private void copyApplicationPrizes(Application to, Application from) {
         WorkflowPropertyConfiguration prizeConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
-                PrismConfiguration.WORKFLOW_PROPERTY, PrismWorkflowPropertyDefinition.APPLICATION_FUNDING, to.getWorkflowPropertyConfigurationVersion());
+                PrismConfiguration.WORKFLOW_PROPERTY, PrismWorkflowPropertyDefinition.APPLICATION_PRIZE, to.getWorkflowPropertyConfigurationVersion());
 
         if (BooleanUtils.isTrue(prizeConfiguration.getEnabled())) {
             Integer counter = 0;

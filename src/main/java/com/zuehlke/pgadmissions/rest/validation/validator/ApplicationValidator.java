@@ -260,6 +260,8 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
             } else if (maximum != null && propertiesSize > maximum) {
                 errors.rejectValue(property, "tooMany");
             }
+        } else if (propertiesSize > 0) {
+            throw new Error();
         }
     }
 

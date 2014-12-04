@@ -209,7 +209,6 @@ public class StaticDataResource {
 
         Institution institution = entityService.getById(Institution.class, institutionId);
 
-        // Display names for imported entities
         for (Class<? extends ImportedEntity> entityClass : new Class[]{ReferralSource.class, Title.class, Ethnicity.class, Disability.class, Gender.class,
                 Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, FundingSource.class, RejectionReason.class,
                 ResidenceState.class}) {
@@ -223,7 +222,6 @@ public class StaticDataResource {
             staticData.put(pluralize(simpleName), entityRepresentations);
         }
 
-        // Display names and min/max values for language qualification types
         List<ImportedLanguageQualificationType> languageQualificationTypes = importedEntityService.getEnabledImportedEntities(institution,
                 ImportedLanguageQualificationType.class);
         List<LanguageQualificationTypeRepresentation> languageQualificationTypeRepresentations = Lists.newArrayListWithCapacity(languageQualificationTypes

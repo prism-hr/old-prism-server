@@ -207,23 +207,27 @@ public class CommentService {
             UserAppointmentPreferencesRepresentation preferenceRepresentation = new UserAppointmentPreferencesRepresentation()
                     .withUser(inviteeRepresentation);
 
-            List<Boolean> inviteePreferences = Lists.newLinkedList();
+            List<Integer> inviteePreferences = Lists.newLinkedList();
 
             Comment preferenceComment = getLatestAppointmentPreferenceComment(application, schedulingComment, invitee);
-            List<LocalDateTime> inviteeResponses = commentDAO.getAppointmentPreferences(preferenceComment);
-            for (CommentAppointmentTimeslot timeslot : commentDAO.getAppointmentTimeslots(schedulingComment)) {
-                inviteePreferences.add(inviteeResponses.contains(timeslot.getDateTime()));
+            if(preferenceComment != null) {
+                List<LocalDateTime> inviteeResponses = commentDAO.getAppointmentPreferences(preferenceComment);
+                for (CommentAppointmentTimeslot timeslot : commentDAO.getAppointmentTimeslots(schedulingComment)) {
+                    if(inviteeResponses.contains(timeslot.getDateTime())) {
+                        inviteePreferences.add(timeslot.getId());
+                    }
+                }
+                preferenceRepresentation.setPreferences(inviteePreferences);
             }
 
-            preferenceRepresentation.withPreferences(inviteePreferences);
             interview.getAppointmentPreferences().add(preferenceRepresentation);
         }
-        
+
         CommentApplicationInterviewAppointment interviewAppointment = schedulingComment.getInterviewAppointment();
         if (interviewAppointment != null) {
             dozerBeanMapper.map(interviewAppointment, interview);
         }
-        
+
         CommentApplicationInterviewInstruction interviewInstruction = schedulingComment.getInterviewInstruction();
         if (interviewInstruction != null) {
             dozerBeanMapper.map(interviewInstruction, interview);

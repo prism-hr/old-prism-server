@@ -211,7 +211,8 @@ public class UserService {
         List<Comment> assessments = commentService.getApplicationAssessmentComments(application);
         for (Comment comment : assessments) {
             User recruiter = comment.getUser();
-            if (!recruiters.contains(recruiter) && (BooleanUtils.isTrue(comment.getApplicationInterested()))) {
+            if (!recruiters.contains(recruiter)
+                    && ((BooleanUtils.isTrue(comment.getApplicationInterested())) || BooleanUtils.isTrue(comment.getRecruiterAcceptAppointment()))) {
                 orderedRecruiters.put(recruiter.getIndexName(), recruiter);
             }
             recruiters.add(recruiter);

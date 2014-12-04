@@ -6,7 +6,7 @@ import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 
 public class UserAppointmentPreferencesRepresentation {
 
-    private List<Boolean> preferences;
+    private List<Integer> preferences;
 
     private UserRepresentation user;
 
@@ -18,21 +18,16 @@ public class UserAppointmentPreferencesRepresentation {
         this.user = user;
     }
 
-    public List<Boolean> getPreferences() {
+    public List<Integer> getPreferences() {
         return preferences;
     }
 
-    public void setAnswers(List<Boolean> preferences) {
+    public void setPreferences(List<Integer> preferences) {
         this.preferences = preferences;
     }
 
     public UserAppointmentPreferencesRepresentation withUser(UserRepresentation user) {
         this.user = user;
-        return this;
-    }
-
-    public UserAppointmentPreferencesRepresentation withPreferences(List<Boolean> preferences) {
-        this.preferences = preferences;
         return this;
     }
 

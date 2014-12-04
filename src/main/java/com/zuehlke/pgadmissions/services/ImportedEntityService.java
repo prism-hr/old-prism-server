@@ -170,8 +170,11 @@ public class ImportedEntityService {
 
         Domicile domicile = entityService.getByProperties(Domicile.class,
                 ImmutableMap.of("institution", (Object) institution, "code", (Object) domicileCode, "enabled", true));
+
+        String institutionNameClean = institutionDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "");
+
         ImportedInstitution transientImportedInstitution = new ImportedInstitution().withInstitution(institution).withDomicile(domicile)
-                .withCode(institutionDefinition.getCode()).withName(institutionDefinition.getName()).withEnabled(true);
+                .withCode(institutionDefinition.getCode()).withName(institutionNameClean).withEnabled(true);
 
         if (domicile == null) {
             throw new DataImportException("No enabled domicile for Institution " + transientImportedInstitution.getResourceSignature().toString()
@@ -184,8 +187,10 @@ public class ImportedEntityService {
     public void mergeImportedLanguageQualificationType(Institution institution, LanguageQualificationType languageQualificationTypeDefinition)
             throws DeduplicationException {
         int precision = 2;
+        String languageQualificationTypeNameClean = languageQualificationTypeDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "");
+
         ImportedLanguageQualificationType transientImportedLanguageQualificationType = new ImportedLanguageQualificationType().withInstitution(institution)
-                .withCode(languageQualificationTypeDefinition.getCode()).withName(languageQualificationTypeDefinition.getName())
+                .withCode(languageQualificationTypeDefinition.getCode()).withName(languageQualificationTypeNameClean)
                 .withMinimumOverallScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumOverallScore(), precision))
                 .withMaximumOverallScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumOverallScore(), precision))
                 .withMinimumReadingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumReadingScore(), precision))
@@ -205,7 +210,11 @@ public class ImportedEntityService {
         ImportedEntity transientEntity = entityClass.newInstance();
         transientEntity.setInstitution(institution);
         transientEntity.setCode((String) ReflectionUtils.getProperty(entityDefinition, "code"));
-        transientEntity.setName((String) ReflectionUtils.getProperty(entityDefinition, "name"));
+       
+        String name = (String) ReflectionUtils.getProperty(entityDefinition, "name");
+        String nameClean = name.replace("\n", "").replace("\r", "").replace("\t", "");
+        transientEntity.setName(nameClean);
+        
         transientEntity.setEnabled(true);
         entityService.createOrUpdate(transientEntity);
     }
@@ -297,6 +306,8 @@ public class ImportedEntityService {
         User proxyCreator = institution.getUser();
 
         String transientTitle = programDefinition.getName();
+        String transientTitleClean = transientTitle.replace("\n", "").replace("\r", "").replace("\t", "");
+
         Advert transientAdvert = new Advert().withTitle(transientTitle);
 
         DateTime baseline = new DateTime();
@@ -308,7 +319,7 @@ public class ImportedEntityService {
 
         ProgramType programType = getImportedEntityByCode(ProgramType.class, institution, programTypeId.name());
         Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution)
-                .withImportedCode(programDefinition.getCode()).withTitle(transientTitle).withRequireProjectDefinition(transientRequireProjectDefinition)
+                .withImportedCode(programDefinition.getCode()).withTitle(transientTitleClean).withRequireProjectDefinition(transientRequireProjectDefinition)
                 .withImported(true).withAdvert(transientAdvert).withProgramType(programType).withUser(proxyCreator).withCreatedTimestamp(baseline)
                 .withUpdatedTimestamp(baseline);
 

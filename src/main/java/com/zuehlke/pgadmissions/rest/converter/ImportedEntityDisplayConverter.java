@@ -17,8 +17,7 @@ public class ImportedEntityDisplayConverter extends DozerConverter<ImportedEntit
 
     @Override
     public ImportedEntity convertFrom(String source, ImportedEntity destination) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException();
     }
 
 }

@@ -1,5 +1,5 @@
 ALTER TABLE APPLICATION
-	ADD COLUMN study_application_id VARCHAR(255) AFTER study_program,
+	ADD COLUMN study_application_id VARCHAR(255) AFTER study_area,
 	ADD INDEX (study_application_id, sequence_identifier)
 ;
 

@@ -583,7 +583,7 @@ public class CommentService {
                 for (CommentAppointmentTimeslot timeslot : comment.getAppointmentTimeslots()) {
                     timeslots.add(new AppointmentTimeslotRepresentation().withId(timeslot.getId()).withDateTime(timeslot.getDateTime()));
                 }
-                representation.setAppointmentTimeslots(timeslots);
+                representation.setAppointmentTimeslots(Lists.newLinkedList(timeslots));
             }
         }
 

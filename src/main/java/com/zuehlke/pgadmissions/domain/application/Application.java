@@ -99,7 +99,7 @@ public class Application extends Resource {
     @JoinColumn(name = "application_program_detail_id", unique = true)
     private ApplicationProgramDetail programDetail;
 
-    @Column(name = "previous_application", nullable = false)
+    @Column(name = "previous_application")
     private Boolean previousApplication;
 
     @Embedded

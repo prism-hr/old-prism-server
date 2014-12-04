@@ -118,15 +118,15 @@ public class CustomizationDAO {
     }
 
     public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
-            WorkflowDefinition definition) {
+            Enum<?> definitionId) {
         Query query = sessionFactory.getCurrentSession().createQuery( //
                 getUpdateOperation(configurationType) //
                         + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
-                        + "and " + configurationType.getDefinitionPropertyName() + " = :definition " //
+                        + "and " + configurationType.getDefinitionPropertyName() + ".id" + " = :definitionId " //
                         + getLocaleCriterionUpdate(locale) //
                         + getProgramTypeCriterionUpdate(programType)) //
                 .setParameter("resource", resource) //
-                .setParameter("definition", definition);
+                .setParameter("definitionId", definitionId);
         applyLocalizationConstraints(locale, programType, query);
         query.executeUpdate();
     }
@@ -146,11 +146,11 @@ public class CustomizationDAO {
     }
 
     public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
-            WorkflowDefinition definition) {
+            Enum<?> definitionId) {
         PrismScope resourceScope = resource.getResourceScope();
 
         String updateOperation = getUpdateOperation(configurationType);
-        String definitionCriterion = "where " + configurationType.getDefinitionPropertyName() + " = :definition ";
+        String definitionCriterion = "where " + configurationType.getDefinitionPropertyName() + ".id" + " = :definitionId ";
 
         String localeCriterion = getLocaleCriterionUpdate(locale);
         String programTypeCriterion = getProgramTypeCriterionUpdate(programType);
@@ -171,7 +171,7 @@ public class CustomizationDAO {
         }
 
         query.setParameter(resourceScope.getLowerCaseName(), resource) //
-                .setParameter("definition", definition);
+                .setParameter("definition", definitionId);
 
         applyLocalizationConstraints(locale, programType, query);
         query.executeUpdate();

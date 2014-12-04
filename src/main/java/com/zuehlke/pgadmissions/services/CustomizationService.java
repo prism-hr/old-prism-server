@@ -174,8 +174,8 @@ public class CustomizationService {
     }
 
     public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
-            WorkflowDefinition definition) {
-        customizationDAO.restoreDefaultConfiguration(configurationType, resource, locale, programType, definition);
+            Enum<?> definitionId) {
+        customizationDAO.restoreDefaultConfiguration(configurationType, resource, locale, programType, definitionId);
     }
 
     public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
@@ -188,8 +188,8 @@ public class CustomizationService {
     }
 
     public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
-            WorkflowDefinition definition) {
-        customizationDAO.restoreGlobalConfiguration(configurationType, resource, locale, programType, definition);
+            Enum<?> definitionId) {
+        customizationDAO.restoreGlobalConfiguration(configurationType, resource, locale, programType, definitionId);
     }
 
     public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
@@ -205,6 +205,30 @@ public class CustomizationService {
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
     }
 
+    public void createOrUpdateConfigurationGroup(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
+            PrismProgramType programType, List<? extends WorkflowConfigurationDTO> workflowConfigurationGroupDTO) throws CustomizationException,
+            DeduplicationException, InstantiationException, IllegalAccessException {
+        List<WorkflowDefinition> definitions = getDefinitions(configurationType, scope);
+
+        if (configurationType.isValidateResponseSize()
+                && (workflowConfigurationGroupDTO.isEmpty() || workflowConfigurationGroupDTO.size() != definitions.size())) {
+            throw new Error();
+        }
+
+        createConfigurationGroup(configurationType, resource, scope, locale, programType, workflowConfigurationGroupDTO);
+        resourceService.executeUpdate(resource,
+                PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
+    }
+
+    public void createOrUpdateConfigurationGroup(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
+            Enum<?> definitionId, List<? extends WorkflowConfigurationDTO> workflowConfigurationGroupDTO) throws CustomizationException,
+            DeduplicationException, InstantiationException, IllegalAccessException {
+
+        createConfigurationGroup(configurationType, resource, locale, programType, definitionId, workflowConfigurationGroupDTO);
+        resourceService.executeUpdate(resource,
+                PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
+    }
+
     public void createConfigurationGroup(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
             PrismProgramType programType, List<? extends WorkflowConfigurationDTO> valueDTOs) throws CustomizationException {
         if (configurationType.isVersioned()) {
@@ -214,18 +238,13 @@ public class CustomizationService {
         }
     }
 
-    public void createOrUpdateConfigurationGroup(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
-            PrismProgramType programType, List<? extends WorkflowConfigurationDTO> workflowConfigurationGroupDTO) throws CustomizationException,
+    public void createConfigurationGroup(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
+            Enum<?> definitionId, List<? extends WorkflowConfigurationDTO> workflowConfigurationGroupDTO) throws CustomizationException,
             DeduplicationException, InstantiationException, IllegalAccessException {
-        List<WorkflowDefinition> definitions = getDefinitions(configurationType, scope);
-        List<? extends WorkflowConfigurationDTO> valueDTOs = workflowConfigurationGroupDTO;
-
-        if (configurationType.isValidateResponseSize() && (valueDTOs.isEmpty() || valueDTOs.size() != definitions.size())) {
-            throw new Error();
+        if (configurationType.isVersioned()) {
+            createOrUpdateConfigurationGroupVersion(configurationType, resource, locale, programType, definitionId, workflowConfigurationGroupDTO);
         } else {
-            createConfigurationGroup(configurationType, resource, scope, locale, programType, valueDTOs);
-            resourceService.executeUpdate(resource,
-                    PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
+            createOrUpdateConfigurationGroup(configurationType, resource, locale, programType, definitionId, workflowConfigurationGroupDTO);
         }
     }
 
@@ -345,10 +364,21 @@ public class CustomizationService {
         }
     }
 
+    private void createOrUpdateConfigurationGroupVersion(PrismConfiguration configurationType, Resource resource, PrismLocale locale,
+            PrismProgramType programType, Enum<?> definitionId, List<? extends WorkflowConfigurationDTO> valueDTOs) throws CustomizationException {
+        restoreDefaultConfiguration(configurationType, resource, locale, programType, definitionId);
+        createOrUpdateConfigurationGroupVersion(configurationType, resource, locale, programType, valueDTOs);
+    }
+
     private void createOrUpdateConfigurationGroupVersion(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
             PrismProgramType programType, List<? extends WorkflowConfigurationDTO> valueDTOs) throws CustomizationException {
-        Integer version = null;
         restoreDefaultConfiguration(configurationType, resource, scope, locale, programType);
+        createOrUpdateConfigurationGroupVersion(configurationType, resource, locale, programType, valueDTOs);
+    }
+
+    private void createOrUpdateConfigurationGroupVersion(PrismConfiguration configurationType, Resource resource, PrismLocale locale,
+            PrismProgramType programType, List<? extends WorkflowConfigurationDTO> valueDTOs) throws CustomizationException {
+        Integer version = null;
         for (WorkflowConfigurationDTO valueDTO : valueDTOs) {
             WorkflowConfiguration transientConfiguration = createConfiguration(configurationType, resource, locale, programType, valueDTO);
             ReflectionUtils.setProperty(transientConfiguration, "active", true);

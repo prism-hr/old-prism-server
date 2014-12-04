@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.comment;
 
 import java.util.List;
-import java.util.Set;
 
 import org.joda.time.DateTime;
 
@@ -43,6 +42,10 @@ public class CommentRepresentation {
 
     private Boolean recruiterAcceptAppointment;
 
+    private String rejectionReason;
+
+    private String rejectionReasonSystem;
+
     private Integer applicationRating;
 
     private Boolean useCustomRefereeQuestions;
@@ -63,15 +66,15 @@ public class CommentRepresentation {
 
     private DateTime createdTimestamp;
 
-    private Set<CommentAssignedUserRepresentation> assignedUsers;
+    private List<CommentAssignedUserRepresentation> assignedUsers;
 
-    private Set<AppointmentTimeslotRepresentation> appointmentTimeslots;
+    private List<AppointmentTimeslotRepresentation> appointmentTimeslots;
 
-    private Set<AppointmentPreferenceRepresentation> appointmentPreferences;
+    private List<AppointmentPreferenceRepresentation> appointmentPreferences;
 
-    private Set<CommentPropertyRepresentation> properties;
+    private List<CommentPropertyRepresentation> properties;
 
-    private Set<FileRepresentation> documents;
+    private List<FileRepresentation> documents;
 
     private List<CommentCustomResponseRepresentation> customResponses;
 
@@ -195,6 +198,22 @@ public class CommentRepresentation {
         this.recruiterAcceptAppointment = recruiterAcceptAppointment;
     }
 
+    public final String getRejectionReason() {
+        return rejectionReason;
+    }
+
+    public final void setRejectionReason(String rejectionReason) {
+        this.rejectionReason = rejectionReason;
+    }
+
+    public final String getRejectionReasonSystem() {
+        return rejectionReasonSystem;
+    }
+
+    public final void setRejectionReasonSystem(String rejectionReasonSystem) {
+        this.rejectionReasonSystem = rejectionReasonSystem;
+    }
+
     public Integer getApplicationRating() {
         return applicationRating;
     }
@@ -275,43 +294,43 @@ public class CommentRepresentation {
         this.createdTimestamp = createdTimestamp;
     }
 
-    public Set<CommentAssignedUserRepresentation> getAssignedUsers() {
+    public List<CommentAssignedUserRepresentation> getAssignedUsers() {
         return assignedUsers;
     }
 
-    public void setAssignedUsers(Set<CommentAssignedUserRepresentation> assignedUsers) {
+    public void setAssignedUsers(List<CommentAssignedUserRepresentation> assignedUsers) {
         this.assignedUsers = assignedUsers;
     }
 
-    public Set<AppointmentTimeslotRepresentation> getAppointmentTimeslots() {
+    public List<AppointmentTimeslotRepresentation> getAppointmentTimeslots() {
         return appointmentTimeslots;
     }
 
-    public void setAppointmentTimeslots(Set<AppointmentTimeslotRepresentation> appointmentTimeslots) {
+    public void setAppointmentTimeslots(List<AppointmentTimeslotRepresentation> appointmentTimeslots) {
         this.appointmentTimeslots = appointmentTimeslots;
     }
 
-    public Set<AppointmentPreferenceRepresentation> getAppointmentPreferences() {
+    public List<AppointmentPreferenceRepresentation> getAppointmentPreferences() {
         return appointmentPreferences;
     }
 
-    public void setAppointmentPreferences(Set<AppointmentPreferenceRepresentation> appointmentPreferences) {
+    public void setAppointmentPreferences(List<AppointmentPreferenceRepresentation> appointmentPreferences) {
         this.appointmentPreferences = appointmentPreferences;
     }
 
-    public Set<FileRepresentation> getDocuments() {
+    public List<FileRepresentation> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(Set<FileRepresentation> documents) {
+    public void setDocuments(List<FileRepresentation> documents) {
         this.documents = documents;
     }
 
-    public Set<CommentPropertyRepresentation> getProperties() {
+    public List<CommentPropertyRepresentation> getProperties() {
         return properties;
     }
 
-    public void setProperties(Set<CommentPropertyRepresentation> properties) {
+    public void setProperties(List<CommentPropertyRepresentation> properties) {
         this.properties = properties;
     }
 

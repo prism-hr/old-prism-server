@@ -280,6 +280,15 @@
 			<a>transitionState.id</a>
 			<b>transitionState</b>
 		</field>
+		<field>
+			<a>transitionState.id</a>
+			<b>transitionState</b>
+		</field>
+		<field
+			custom-converter="com.zuehlke.pgadmissions.rest.converter.ImportedEntityDisplayConverter">
+			<a>rejectionReason</a>
+			<b>rejectionReason</b>
+		</field>
 	</mapping>
 
 	<mapping>

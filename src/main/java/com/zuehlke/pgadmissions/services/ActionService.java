@@ -229,8 +229,10 @@ public class ActionService {
 
     public HashMultimap<PrismAction, PrismActionRedactionType> getRedactions(Resource resource, User user) {
         List<PrismRole> roleIds = roleService.getRoles(resource, user);
-        List<ActionRedactionDTO> redactions = actionDAO.getRedactions(resource, roleIds);
-
+        List<ActionRedactionDTO> redactions = Lists.newArrayList();
+        if (!roleIds.isEmpty()) {
+            redactions = actionDAO.getRedactions(resource, roleIds);
+        }
         HashMultimap<PrismAction, PrismActionRedactionType> actionRedactions = HashMultimap.create();
         for (ActionRedactionDTO redaction : redactions) {
             actionRedactions.put(redaction.getActionId(), redaction.getRedactionType());

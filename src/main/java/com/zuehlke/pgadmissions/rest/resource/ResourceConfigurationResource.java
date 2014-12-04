@@ -96,11 +96,10 @@ public class ResourceConfigurationResource {
             @PathVariable Integer resourceId, @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType,
             @RequestHeader(value = "Restore-Type") String restoreType, @PathVariable PrismNotificationDefinition id) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        WorkflowDefinition definition = entityService.getById(configurationType.getDefinitionClass(), id);
         if (restoreType.equals("global")) {
-            customizationService.restoreGlobalConfiguration(configurationType, resource, locale, programType, definition);
+            customizationService.restoreGlobalConfiguration(configurationType, resource, locale, programType, id);
         } else {
-            customizationService.restoreDefaultConfiguration(configurationType, resource, locale, programType, definition);
+            customizationService.restoreDefaultConfiguration(configurationType, resource, locale, programType, id);
         }
     }
 
@@ -110,11 +109,10 @@ public class ResourceConfigurationResource {
             @PathVariable Integer resourceId, @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType,
             @RequestHeader(value = "Restore-Type") String restoreType, @PathVariable PrismActionCustomQuestionDefinition id) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        WorkflowDefinition definition = entityService.getById(configurationType.getDefinitionClass(), id);
         if (restoreType.equals("global")) {
-            customizationService.restoreGlobalConfiguration(configurationType, resource, locale, programType, definition);
+            customizationService.restoreGlobalConfiguration(configurationType, resource, locale, programType, id);
         } else {
-            customizationService.restoreDefaultConfiguration(configurationType, resource, locale, programType, definition);
+            customizationService.restoreDefaultConfiguration(configurationType, resource, locale, programType, id);
         }
     }
 
@@ -144,12 +142,11 @@ public class ResourceConfigurationResource {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:customQuestions}/{id}", method = RequestMethod.PUT)
     public void updateActionCustomQuestionConfiguration(@ModelAttribute PrismConfiguration configurationType,
-            @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam PrismScope scope,
-            @RequestParam(required = false) PrismLocale locale, @RequestParam(required = false) PrismProgramType programType,
-            @PathVariable PrismActionCustomQuestionDefinition id, @Valid @RequestBody ActionCustomQuestionConfigurationDTO actionCustomQuestionConfigurationDTO)
-            throws Exception {
+            @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam(required = false) PrismLocale locale,
+            @RequestParam(required = false) PrismProgramType programType, @PathVariable PrismActionCustomQuestionDefinition id,
+            @Valid @RequestBody ActionCustomQuestionConfigurationDTO actionCustomQuestionConfigurationDTO) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        customizationService.createOrUpdateConfigurationGroup(configurationType, resource, scope, locale, programType, actionCustomQuestionConfigurationDTO);
+        customizationService.createOrUpdateConfigurationGroup(configurationType, resource, locale, programType, id, actionCustomQuestionConfigurationDTO);
     }
 
     @PreAuthorize("isAuthenticated()")

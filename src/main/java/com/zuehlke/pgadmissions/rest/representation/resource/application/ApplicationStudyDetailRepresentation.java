@@ -7,6 +7,8 @@ public class ApplicationStudyDetailRepresentation {
     private String studyDivision;
 
     private String studyArea;
+    
+    private String studyApplicationId;
 
     public final String getStudyLocation() {
         return studyLocation;
@@ -30,6 +32,14 @@ public class ApplicationStudyDetailRepresentation {
 
     public final void setStudyArea(String studyArea) {
         this.studyArea = studyArea;
+    }
+
+    public final String getStudyApplicationId() {
+        return studyApplicationId;
+    }
+
+    public final void setStudyApplicationId(String studyApplicationId) {
+        this.studyApplicationId = studyApplicationId;
     }
 
 }

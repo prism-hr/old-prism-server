@@ -12,6 +12,9 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
 public class ApplicationProgramDetailDTO {
 
+    @NotNull
+    private Boolean previousApplication;
+    
     @Valid
     private ApplicationStudyDetailDTO studyDetail;
 
@@ -27,6 +30,14 @@ public class ApplicationProgramDetailDTO {
     private List<String> primaryThemes = Lists.newArrayList();
 
     private List<String> secondaryThemes = Lists.newArrayList();
+    
+    public final Boolean getPreviousApplication() {
+        return previousApplication;
+    }
+
+    public final void setPreviousApplication(Boolean previousApplication) {
+        this.previousApplication = previousApplication;
+    }
 
     public final ApplicationStudyDetailDTO getStudyDetail() {
         return studyDetail;

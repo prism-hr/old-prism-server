@@ -58,6 +58,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinitio
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
+import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
@@ -170,6 +171,8 @@ public class ApplicationDownloadBuilder {
                     studyDetail == null ? null : studyDetail.getStudyDivision(), body);
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_AREA),
                     studyDetail == null ? null : studyDetail.getStudyArea(), body);
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_APPLICATION_ID), studyDetail.getStudyApplicationId(),
+                    body);
         }
     }
 
@@ -688,7 +691,14 @@ public class ApplicationDownloadBuilder {
     private void addApplicationSummary(Application application, PdfPTable table, ApplicationDownloadBuilderFontSize fontSize) {
         applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(INSTITUTION_HEADER), application.getInstitutionDisplay(), fontSize, table);
         applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(PROGRAM_HEADER), application.getProgramDisplay(), fontSize, table);
-        applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(PROJECT_HEADER), application.getProjectDisplay(), fontSize, table);
+
+        Project project = application.getProject();
+        if (project != null) {
+            applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(PROJECT_HEADER), application.getProjectDisplay(), fontSize, table);
+        }
+
+        applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(APPLICATION_PREVIOUS_APPLICATION),
+                propertyLoader.load(SYSTEM_YES, SYSTEM_NO, application.getPreviousApplication()), fontSize, table);
 
         ApplicationProgramDetail programDetail = application.getProgramDetail();
         PrismStudyOption studyOption = programDetail == null ? null : programDetail.getStudyOptionDisplay();

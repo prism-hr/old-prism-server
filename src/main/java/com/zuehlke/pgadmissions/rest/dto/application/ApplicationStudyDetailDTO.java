@@ -16,6 +16,9 @@ public class ApplicationStudyDetailDTO {
     @NotNull
     @Size(max = 255)
     private String studyArea;
+    
+    @Size(max = 255)
+    private String studyApplicationId;
 
     public final String getStudyLocation() {
         return studyLocation;
@@ -39,6 +42,14 @@ public class ApplicationStudyDetailDTO {
 
     public final void setStudyArea(String studyArea) {
         this.studyArea = studyArea;
+    }
+
+    public final String getStudyApplicationId() {
+        return studyApplicationId;
+    }
+
+    public final void setStudyApplicationId(String studyApplicationId) {
+        this.studyApplicationId = studyApplicationId;
     }
 
 }

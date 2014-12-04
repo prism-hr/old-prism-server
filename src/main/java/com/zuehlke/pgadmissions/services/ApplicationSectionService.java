@@ -128,10 +128,13 @@ public class ApplicationSectionService {
             application.setProgramDetail(programDetail);
         }
 
+        application.setPreviousApplication(programDetailDTO.getPreviousApplication());
+
         ApplicationStudyDetailDTO studyDetailDTO = programDetailDTO.getStudyDetail();
         if (studyDetailDTO != null) {
             application.setStudyDetail(new ApplicationStudyDetail().withStudyLocation(studyDetailDTO.getStudyLocation())
-                    .withStudyDivision(studyDetailDTO.getStudyDivision()).withStudyArea(studyDetailDTO.getStudyArea()));
+                    .withStudyDivision(studyDetailDTO.getStudyDivision()).withStudyArea(studyDetailDTO.getStudyArea())
+                    .withStudyApplicationId(studyDetailDTO.getStudyApplicationId()));
         }
 
         StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, institution, programDetailDTO.getStudyOption().name());
@@ -491,7 +494,8 @@ public class ApplicationSectionService {
         Document personalStatement = documentDTO.getPersonalStatement() != null ? entityService.getById(Document.class, documentDTO.getPersonalStatement()
                 .getId()) : null;
         Document cv = documentDTO.getCv() != null ? entityService.getById(Document.class, documentDTO.getCv().getId()) : null;
-        Document researchStatement = documentDTO.getResearchStatement() != null ? entityService.getById(Document.class, documentDTO.getResearchStatement().getId()) : null;
+        Document researchStatement = documentDTO.getResearchStatement() != null ? entityService.getById(Document.class, documentDTO.getResearchStatement()
+                .getId()) : null;
         Document coveringLetter = documentDTO.getCoveringLetter() != null ? entityService.getById(Document.class, documentDTO.getCoveringLetter().getId())
                 : null;
         document.setCv(cv);

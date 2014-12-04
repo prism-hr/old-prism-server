@@ -14,6 +14,9 @@ public class ApplicationStudyDetail {
 
     @Column(name = "study_area")
     private String studyArea;
+    
+    @Column(name = "study_application_id")
+    private String studyApplicationId;    
 
     public final String getStudyLocation() {
         return studyLocation;
@@ -39,6 +42,14 @@ public class ApplicationStudyDetail {
         this.studyArea = studyArea;
     }
 
+    public final String getStudyApplicationId() {
+        return studyApplicationId;
+    }
+
+    public final void setStudyApplicationId(String studyApplicationId) {
+        this.studyApplicationId = studyApplicationId;
+    }
+    
     public ApplicationStudyDetail withStudyLocation(String studyLocation) {
         this.studyLocation = studyLocation;
         return this;
@@ -53,5 +64,10 @@ public class ApplicationStudyDetail {
         this.studyArea = studyArea;
         return this;
     }
-
+    
+    public ApplicationStudyDetail withStudyApplicationId(String studyApplicationId) {
+        this.studyApplicationId = studyApplicationId;
+        return this;
+    }
+    
 }

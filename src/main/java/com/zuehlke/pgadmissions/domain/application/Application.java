@@ -99,6 +99,9 @@ public class Application extends Resource {
     @JoinColumn(name = "application_program_detail_id", unique = true)
     private ApplicationProgramDetail programDetail;
 
+    @Column(name = "previous_application", nullable = false)
+    private Boolean previousApplication;
+
     @Embedded
     private ApplicationStudyDetail studyDetail;
 
@@ -423,6 +426,14 @@ public class Application extends Resource {
 
     public void setProgramDetail(ApplicationProgramDetail programDetail) {
         this.programDetail = programDetail;
+    }
+
+    public final Boolean getPreviousApplication() {
+        return previousApplication;
+    }
+
+    public final void setPreviousApplication(Boolean previousApplication) {
+        this.previousApplication = previousApplication;
     }
 
     public final ApplicationStudyDetail getStudyDetail() {

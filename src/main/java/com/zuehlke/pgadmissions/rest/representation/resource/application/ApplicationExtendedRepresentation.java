@@ -22,6 +22,10 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
     private LocalDate closingDate;
 
     private DateTime submittedTimestamp;
+    
+    private Boolean previousApplication;
+    
+    private ApplicationStudyDetailRepresentation studyDetail;
 
     private ProgramDetailRepresentation programDetail;
 
@@ -67,8 +71,6 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
 
     private BigDecimal applicationRatingAverage;
 
-    private ApplicationStudyDetailRepresentation studyDetail;
-
     private ApplicationSummaryRepresentation applicationSummary;
 
     public ProgramRepresentation getProgram() {
@@ -101,6 +103,22 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
 
     public void setSubmittedTimestamp(DateTime submittedTimestamp) {
         this.submittedTimestamp = submittedTimestamp;
+    }
+    
+    public final Boolean getPreviousApplication() {
+        return previousApplication;
+    }
+
+    public final void setPreviousApplication(Boolean previousApplication) {
+        this.previousApplication = previousApplication;
+    }
+
+    public ApplicationStudyDetailRepresentation getStudyDetail() {
+        return studyDetail;
+    }
+
+    public void setStudyDetail(ApplicationStudyDetailRepresentation studyDetail) {
+        this.studyDetail = studyDetail;
     }
 
     public ProgramDetailRepresentation getProgramDetail() {
@@ -277,14 +295,6 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
 
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
-    }
-
-    public ApplicationStudyDetailRepresentation getStudyDetail() {
-        return studyDetail;
-    }
-
-    public void setStudyDetail(ApplicationStudyDetailRepresentation studyDetail) {
-        this.studyDetail = studyDetail;
     }
 
     public ApplicationSummaryRepresentation getApplicationSummary() {

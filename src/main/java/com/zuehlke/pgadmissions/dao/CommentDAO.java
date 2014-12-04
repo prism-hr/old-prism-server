@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -189,8 +190,13 @@ public class CommentDAO {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("transitionState", "transitionState", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
-                .add(Restrictions.eq("action.visibleAction", true)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("action.visibleAction", true))
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.eq("action.actionType", PrismActionType.SYSTEM_INVOCATION)) //
+                                .add(Restrictions.neProperty("state.stateGroup", "transitionState.stateGroup")))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("state.stateGroup.id", stateGroupId)) //
                         .add(Restrictions.isNull("state"))) //

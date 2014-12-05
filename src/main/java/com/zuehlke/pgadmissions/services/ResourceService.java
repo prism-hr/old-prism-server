@@ -487,6 +487,7 @@ public class ResourceService {
                     case STUDY_AREA:
                     case STUDY_DIVISION:
                     case STUDY_LOCATION:
+                    case STUDY_APPLICATION:
                         ResourceListConstraintBuilder.appendStringFilterCriterion(conditions, propertyName, constraint.getValueString(), negated);
                         break;
                     case SUPERVISOR:

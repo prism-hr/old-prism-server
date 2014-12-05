@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
@@ -126,22 +127,27 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
 
             if (lastImportedTimestamp == null || lastModifiedTimestamp == 0
                     || new LocalDateTime(lastModifiedTimestamp).toDateTime().isAfter(lastImportedTimestamp)) {
-                JAXBContext jaxbContext = JAXBContext.newInstance(importedEntityType.getJaxbClass());
-
-                SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-                Schema schema = schemaFactory.newSchema(new DefaultResourceLoader().getResource(importedEntityType.getSchemaLocation()).getFile());
-
-                Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-                unmarshaller.setSchema(schema);
-
-                Object unmarshalled = unmarshaller.unmarshal(fileUrl);
-                return (List<Object>) ReflectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbPropertyName());
+                return readImportedData(importedEntityType, fileUrl);
             }
 
             return null;
         } finally {
             Authenticator.setDefault(null);
         }
+    }
+
+    @CacheEvict("institutionStaticData")
+    private List<Object> readImportedData(PrismImportedEntity importedEntityType, URL fileUrl) throws JAXBException, SAXException, IOException {
+        JAXBContext jaxbContext = JAXBContext.newInstance(importedEntityType.getJaxbClass());
+
+        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        Schema schema = schemaFactory.newSchema(new DefaultResourceLoader().getResource(importedEntityType.getSchemaLocation()).getFile());
+
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        unmarshaller.setSchema(schema);
+
+        Object unmarshalled = unmarshaller.unmarshal(fileUrl);
+        return (List<Object>) ReflectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbPropertyName());
     }
 
     private void mergeImportedPrograms(Institution institution, List<ProgrammeOccurrence> programDefinitions) throws DeduplicationException,

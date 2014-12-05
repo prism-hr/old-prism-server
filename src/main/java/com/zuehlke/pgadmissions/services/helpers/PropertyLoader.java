@@ -54,6 +54,10 @@ public class PropertyLoader {
     }
 
     public PropertyLoader localize(Resource resource, User user) {
+        return localize(resource, user == null ? null : user.getLocale());
+    }
+
+    public PropertyLoader localize(Resource resource, PrismLocale locale) {
         PrismScope resourceScope = resource.getResourceScope();
         if (Arrays.asList(PROGRAM, PROJECT, APPLICATION).contains(resourceScope)) {
             Program program = resource.getProgram();
@@ -63,7 +67,7 @@ public class PropertyLoader {
             this.resource = resource;
             this.programType = null;
         }
-        this.locale = resourceScope == SYSTEM ? user.getLocale() : resource.getLocale();
+        this.locale = resourceScope == SYSTEM ? locale == null ? resource.getLocale() : locale : resource.getLocale();
         return this;
     }
 

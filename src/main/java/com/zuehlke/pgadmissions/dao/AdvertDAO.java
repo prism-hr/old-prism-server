@@ -78,7 +78,7 @@ public class AdvertDAO {
 
         appendProgramsConstraint(queryDTO, criteria);
         appendProjectsConstraint(queryDTO, criteria);
-        
+
         String lastSequenceIdentifier = queryDTO.getLastSequenceIdentifier();
         if (lastSequenceIdentifier != null) {
             criteria.add(Restrictions.lt("sequenceIdentifier", lastSequenceIdentifier));
@@ -294,7 +294,7 @@ public class AdvertDAO {
         if (loValue != null) {
             criteria.add(Restrictions.ge(loColumn, hiValue != null && hiValue < loValue ? hiValue : decimal ? new BigDecimal(loValue) : loValue));
         } else if (hiValue != null) {
-            criteria.add(Restrictions.le(hiColumn, loValue != null && loValue > hiValue ? loValue : decimal ? new BigDecimal(hiValue) : hiValue)); //
+            criteria.add(Restrictions.le(hiColumn, loValue != null && loValue > hiValue ? loValue : decimal ? new BigDecimal(hiValue) : hiValue));
         }
     }
 

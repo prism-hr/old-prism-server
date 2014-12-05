@@ -1,4 +1,4 @@
 ALTER TABLE APPLICATION
-	ADD COLUMN legacy_code VARCHAR(50) AFTER code,
-	ADD INDEX (legacy_code, sequence_identifier)
+	ADD COLUMN code_legacy VARCHAR(50) AFTER code,
+	ADD INDEX (code_legacy, sequence_identifier)
 ;

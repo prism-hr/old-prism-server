@@ -44,6 +44,8 @@ public class OpportunitiesQueryDTO {
     private BigDecimal swLat;
 
     private BigDecimal swLon;
+    
+    private String lastSequenceIdentifier;
 
     public PrismProgramCategory getProgramCategory() {
         return programCategory;
@@ -180,4 +182,13 @@ public class OpportunitiesQueryDTO {
     public void setSwLon(BigDecimal swLon) {
         this.swLon = swLon;
     }
+
+    public final String getLastSequenceIdentifier() {
+        return lastSequenceIdentifier;
+    }
+
+    public final void setLastSequenceIdentifier(String lastSequenceIdentifier) {
+        this.lastSequenceIdentifier = lastSequenceIdentifier;
+    }
+    
 }

@@ -63,6 +63,9 @@ public class Application extends Resource {
     @Column(name = "code", unique = true)
     private String code;
 
+    @Column(name = "code_legacy")
+    private String codeLegacy;
+
     @ManyToOne
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "user_id", nullable = false)
@@ -250,6 +253,14 @@ public class Application extends Resource {
     @Override
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public final String getCodeLegacy() {
+        return codeLegacy;
+    }
+
+    public final void setCodeLegacy(String codeLegacy) {
+        this.codeLegacy = codeLegacy;
     }
 
     @Override

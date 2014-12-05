@@ -78,8 +78,14 @@ public class AdvertDAO {
 
         appendProgramsConstraint(queryDTO, criteria);
         appendProjectsConstraint(queryDTO, criteria);
+        
+        String lastSequenceIdentifier = queryDTO.getLastSequenceIdentifier();
+        if (lastSequenceIdentifier != null) {
+            criteria.add(Restrictions.lt("sequenceIdentifier", lastSequenceIdentifier));
+        }
 
         return criteria.addOrder(Order.desc("sequenceIdentifier")) //
+                .setMaxResults(25) //
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY) //
                 .list();
     }

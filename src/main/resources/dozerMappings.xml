@@ -178,6 +178,10 @@
 			<b>user.lastName</b>
 		</field>
 		<field>
+			<a>creatorEmail</a>
+			<b>user.email</b>
+		</field>
+		<field>
 			<a>stateGroupId</a>
 			<b>stateGroup</b>
 		</field>

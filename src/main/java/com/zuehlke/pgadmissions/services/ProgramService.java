@@ -82,6 +82,10 @@ public class ProgramService {
         }
     }
 
+    public Program getProgramByImportedCode(String importedCode) {
+        return getProgramByImportedCode(null, importedCode);
+    }
+
     public Program getProgramByImportedCode(Institution institution, String importedCode) {
         institution = institution == null ? institutionService.getUclInstitution() : institution;
         return programDAO.getProgramByImportedCode(institution, importedCode);

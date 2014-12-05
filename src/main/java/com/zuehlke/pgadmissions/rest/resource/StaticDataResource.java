@@ -181,6 +181,8 @@ public class StaticDataResource {
             ProgramCategoryRepresentation category = new ProgramCategoryRepresentation();
             category.setId(prismProgramCategory);
             category.setDisplayName(prismProgramCategory.name());
+            category.setHasFee(prismProgramCategory.isHasFee());
+            category.setHasPay(prismProgramCategory.isHasFee());
             category.setProgramTypes(Lists.<ProgramTypeRepresentation>newLinkedList());
             for (PrismProgramType prismProgramType : PrismProgramType.values()) {
                 if (prismProgramType.getProgramCategory() == prismProgramCategory) {

@@ -195,7 +195,17 @@ public class PrismApplicationReview extends PrismWorkflowState {
                                 .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
                                 .withTransitionType(PrismRoleTransitionType.UPDATE) //
                                 .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
-                                .withRestrictToOwner(false))), //
+                                .withRestrictToOwner(false))), // 
+                    new PrismStateTransition() // 
+                        .withTransitionState(PrismState.APPLICATION_REVIEW) // 
+                        .withTransitionAction(PrismAction.APPLICATION_ASSIGN_REVIEWERS) // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_STATE_COMPLETED_OUTCOME) // 
+                        .withRoleTransitions(Arrays.asList( // 
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.UPDATE) //
+                                .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
+                                .withRestrictToOwner(false))), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REJECTED) // 
                         .withTransitionAction(PrismAction.APPLICATION_CONFIRM_REJECTION) // 

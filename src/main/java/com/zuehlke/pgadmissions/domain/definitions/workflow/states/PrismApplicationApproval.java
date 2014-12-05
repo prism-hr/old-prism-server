@@ -235,7 +235,17 @@ public class PrismApplicationApproval extends PrismWorkflowState {
                     new PrismStateActionNotification() // 
                         .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) // 
                         .withDefinition(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION))) //
-                .withTransitions(Arrays.asList( // 
+                .withTransitions(Arrays.asList( //
+                    new PrismStateTransition() // 
+                        .withTransitionState(PrismState.APPLICATION_APPROVAL) // 
+                        .withTransitionAction(PrismAction.APPLICATION_ASSIGN_SUPERVISORS) // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_STATE_COMPLETED_OUTCOME) // 
+                        .withRoleTransitions(Arrays.asList( // 
+                            new PrismRoleTransition() //
+                                .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
+                                .withTransitionType(PrismRoleTransitionType.UPDATE) //
+                                .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
+                                .withRestrictToOwner(false))), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_APPROVED) // 
                         .withTransitionAction(PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION) // 

@@ -111,7 +111,7 @@ public class ResourceResource {
 
     @Autowired
     private ObjectMapper objectMapper;
-
+    
     @RequestMapping(method = RequestMethod.POST)
     public ActionOutcomeRepresentation createResource(@RequestBody ActionDTO actionDTO, @RequestHeader(value = "referer", required = false) String referrer)
             throws Exception {

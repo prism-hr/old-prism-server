@@ -167,6 +167,10 @@ public class ApplicationService {
         return entityService.getByProperty(Application.class, "code", code);
     }
 
+    public Application getByLegacyCode(String legacyCode) {
+        return entityService.getByProperty(Application.class, "legacyCode", legacyCode);
+    }
+
     public ApplicationStartDateRepresentation getStartDateRepresentation(Integer applicationId, PrismStudyOption studyOptionId) {
         LocalDate baseline = new LocalDate();
         Application application = getById(applicationId);
@@ -560,15 +564,20 @@ public class ApplicationService {
 
         return dataTable;
     }
-    
+
     public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Application application) {
-        List<WorkflowPropertyConfigurationRepresentation> configurations = (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) customizationService.getConfigurationRepresentationsWithOrWithoutVersion(
-                PrismConfiguration.WORKFLOW_PROPERTY, application, application.getWorkflowPropertyConfigurationVersion());         
+        List<WorkflowPropertyConfigurationRepresentation> configurations = (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) customizationService
+                .getConfigurationRepresentationsWithOrWithoutVersion(PrismConfiguration.WORKFLOW_PROPERTY, application,
+                        application.getWorkflowPropertyConfigurationVersion());
         if (application.isSubmitted()) {
             for (WorkflowPropertyConfigurationRepresentation configuration : configurations) {
                 PrismWorkflowPropertyDefinition definitionId = (PrismWorkflowPropertyDefinition) configuration.getDefinitionId();
                 if (definitionId == PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE) {
                     configuration.setMaximum(definitionId.getMaximumPermitted());
+                } else if (definitionId == PrismWorkflowPropertyDefinition.APPLICATION_POSITION_DETAIL
+                        && BooleanUtils.isTrue(application.getProgram().getRequireProjectDefinition())) {
+                    configuration.setEnabled(true);
+                    configuration.setRequired(true);
                 }
             }
         }

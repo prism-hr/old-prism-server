@@ -69,6 +69,8 @@ public class AdvertRepresentation {
 
     private InstitutionRepresentation institution;
 
+    private String sequenceIdentifier;
+
     public Integer getId() {
         return id;
     }
@@ -283,6 +285,14 @@ public class AdvertRepresentation {
 
     public void setInstitution(InstitutionRepresentation institution) {
         this.institution = institution;
+    }
+
+    public final String getSequenceIdentifier() {
+        return sequenceIdentifier;
+    }
+
+    public final void setSequenceIdentifier(String sequenceIdentifier) {
+        this.sequenceIdentifier = sequenceIdentifier;
     }
 
 }

@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
@@ -141,6 +142,10 @@ public class RoleService {
     public List<User> getRoleUsers(Resource resource, PrismRole roleId) {
         Role role = getById(roleId);
         return roleDAO.getRoleUsers(resource, role);
+    }
+    
+    public List<PrismRole> getCreatableRoles(PrismScope scopeId) {
+        return roleDAO.getCreatableRoles(scopeId);
     }
 
     public void deleteObseleteUserRoles() {

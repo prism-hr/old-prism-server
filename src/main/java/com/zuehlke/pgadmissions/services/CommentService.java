@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
@@ -70,6 +68,7 @@ import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.AppointmentTimeslotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentApplicationInterviewAppointmentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentApplicationInterviewInstructionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentAssignedUserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedSupervisorRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.InterviewRepresentation;
@@ -144,7 +143,9 @@ public class CommentService {
             PrismStateGroup stateGroupId = null;
             List<Comment> previousStateComments = Lists.newArrayList();
 
+            List<PrismRole> creatableRoles = roleService.getCreatableRoles(resource.getResourceScope());
             HashMultimap<PrismAction, PrismActionRedactionType> redactions = actionService.getRedactions(resource, user);
+
             for (int i = 0; i < transitionCommentCount; i++) {
                 Comment start = transitionComments.get(i);
                 Comment close = i == (transitionCommentCount - 1) ? null : transitionComments.get(i + 1);
@@ -158,7 +159,8 @@ public class CommentService {
                 for (Comment comment : stateComments) {
                     if (comment.isViewEditComment()) {
                         if (lastViewEditComment == null || lastViewEditComment.getCreatedTimestamp().plusHours(1).isBefore(comment.getCreatedTimestamp())) {
-                            CommentRepresentation representation = getCommentRepresentation(user, comment, redactions.get(comment.getAction().getId()));
+                            CommentRepresentation representation = getCommentRepresentation(user, comment, redactions.get(comment.getAction().getId()),
+                                    creatableRoles);
                             commentGroup.addComment(representation);
                             lastViewEditComment = representation;
                         } else {
@@ -170,7 +172,8 @@ public class CommentService {
                             }
                         }
                     } else {
-                        CommentRepresentation representation = getCommentRepresentation(user, comment, redactions.get(comment.getAction().getId()));
+                        CommentRepresentation representation = getCommentRepresentation(user, comment, redactions.get(comment.getAction().getId()),
+                                creatableRoles);
                         commentGroup.addComment(representation);
                     }
                 }
@@ -191,29 +194,29 @@ public class CommentService {
 
     public InterviewRepresentation getInterview(Application application) {
         Comment schedulingComment = commentDAO.getLatestComment(application, PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
-        if(schedulingComment == null){
+        if (schedulingComment == null) {
             return null;
         }
         InterviewRepresentation interview = new InterviewRepresentation();
 
-        interview.setAppointmentTimeslots(Lists.<AppointmentTimeslotRepresentation>newLinkedList());
+        interview.setAppointmentTimeslots(Lists.<AppointmentTimeslotRepresentation> newLinkedList());
         for (CommentAppointmentTimeslot schedulingOption : commentDAO.getAppointmentTimeslots(schedulingComment)) {
-            interview.getAppointmentTimeslots().add(new AppointmentTimeslotRepresentation().withId(schedulingOption.getId()).withDateTime(schedulingOption.getDateTime()));
+            interview.getAppointmentTimeslots().add(
+                    new AppointmentTimeslotRepresentation().withId(schedulingOption.getId()).withDateTime(schedulingOption.getDateTime()));
         }
 
-        interview.setAppointmentPreferences(Lists.<UserAppointmentPreferencesRepresentation>newLinkedList());
+        interview.setAppointmentPreferences(Lists.<UserAppointmentPreferencesRepresentation> newLinkedList());
         for (User invitee : commentDAO.getAppointmentInvitees(schedulingComment)) {
             UserRepresentation inviteeRepresentation = userService.getUserRepresentation(invitee);
-            UserAppointmentPreferencesRepresentation preferenceRepresentation = new UserAppointmentPreferencesRepresentation()
-                    .withUser(inviteeRepresentation);
+            UserAppointmentPreferencesRepresentation preferenceRepresentation = new UserAppointmentPreferencesRepresentation().withUser(inviteeRepresentation);
 
             List<Integer> inviteePreferences = Lists.newLinkedList();
 
             Comment preferenceComment = getLatestAppointmentPreferenceComment(application, schedulingComment, invitee);
-            if(preferenceComment != null) {
+            if (preferenceComment != null) {
                 List<LocalDateTime> inviteeResponses = commentDAO.getAppointmentPreferences(preferenceComment);
                 for (CommentAppointmentTimeslot timeslot : commentDAO.getAppointmentTimeslots(schedulingComment)) {
-                    if(inviteeResponses.contains(timeslot.getDateTime())) {
+                    if (inviteeResponses.contains(timeslot.getDateTime())) {
                         inviteePreferences.add(timeslot.getId());
                     }
                 }
@@ -547,7 +550,7 @@ public class CommentService {
         }
     }
 
-    private CommentRepresentation getCommentRepresentation(User user, Comment comment, Set<PrismActionRedactionType> redactions) {
+    private CommentRepresentation getCommentRepresentation(User user, Comment comment, Set<PrismActionRedactionType> redactions, List<PrismRole> creatableRoles) {
         Action action = comment.getAction();
         Integer userId = user.getId();
 
@@ -568,7 +571,7 @@ public class CommentService {
                     .addAction(comment.getAction().getId()).addDeclinedResponse(comment.getDeclinedResponse())
                     .addCreatedTimestamp(comment.getCreatedTimestamp());
 
-            if (redactions.contains(ALL_ASSESSMENT_CONTENT)) {
+            if (redactions.contains(PrismActionRedactionType.ALL_ASSESSMENT_CONTENT)) {
                 CommentApplicationInterviewAppointment interviewAppointment = comment.getInterviewAppointment();
                 if (interviewAppointment != null) {
                     representation.setInterviewAppointment(new CommentApplicationInterviewAppointmentRepresentation()
@@ -591,8 +594,23 @@ public class CommentService {
             }
         }
 
+        appendCommentAssignedUsers(comment, representation, creatableRoles);
         representation.setEmphasizedAction(action.getEmphasizedAction());
+        
         return representation;
+    }
+
+    private void appendCommentAssignedUsers(Comment comment, CommentRepresentation representation, List<PrismRole> creatableRoles) {
+        Set<CommentAssignedUser> assignees = comment.getAssignedUsers();
+        if (!assignees.isEmpty()) {
+            List<CommentAssignedUserRepresentation> representations = Lists.newLinkedList();
+            for (CommentAssignedUser assignee : assignees) {
+                if (creatableRoles.contains(assignee.getRole().getId())) {
+                    representations.add(mapper.map(assignee, CommentAssignedUserRepresentation.class));
+                }
+            }
+            representation.setAssignedUsers(representations);
+        }
     }
 
     private void buildAggregatedRating(Comment comment) {

@@ -289,6 +289,10 @@
 			<a>rejectionReason</a>
 			<b>rejectionReason</b>
 		</field>
+		<field-exclude>
+			<a>assignedUsers</a>
+			<b>assignedUsers</b>
+		</field-exclude>
 	</mapping>
 
 	<mapping>

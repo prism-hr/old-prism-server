@@ -210,6 +210,7 @@ public class StaticDataService {
         return staticData;
     }
 
+    // TODO: pass selected locale to the property loader when it is possible to select locale on the homepage
     public Map<String, Object> getProgramCategories() {
         Map<String, Object> staticData = Maps.newHashMap();
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem(), userService.getCurrentUser());

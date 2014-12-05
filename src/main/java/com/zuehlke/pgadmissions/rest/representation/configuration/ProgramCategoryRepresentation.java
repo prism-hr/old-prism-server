@@ -9,6 +9,10 @@ public class ProgramCategoryRepresentation {
     private PrismProgramCategory id;
 
     private String displayName;
+    
+    private boolean hasFee;
+    
+    private boolean hasPay;
 
     private List<ProgramTypeRepresentation> programTypes;
 
@@ -27,6 +31,22 @@ public class ProgramCategoryRepresentation {
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
+    
+    public final boolean isHasFee() {
+        return hasFee;
+    }
+
+    public final void setHasFee(boolean hasFee) {
+        this.hasFee = hasFee;
+    }
+
+    public final boolean isHasPay() {
+        return hasPay;
+    }
+
+    public final void setHasPay(boolean hasPay) {
+        this.hasPay = hasPay;
+    }
 
     public List<ProgramTypeRepresentation> getProgramTypes() {
         return programTypes;
@@ -35,4 +55,5 @@ public class ProgramCategoryRepresentation {
     public void setProgramTypes(List<ProgramTypeRepresentation> programTypes) {
         this.programTypes = programTypes;
     }
+    
 }

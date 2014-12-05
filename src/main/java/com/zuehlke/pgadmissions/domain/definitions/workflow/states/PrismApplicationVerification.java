@@ -112,6 +112,10 @@ public class PrismApplicationVerification extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REVIEW) // 
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_REVIEWERS) // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_VERIFICATION_COMPLETED_OUTCOME), //
+                    new PrismStateTransition() // 
+                        .withTransitionState(PrismState.APPLICATION_VERIFICATION) // 
+                        .withTransitionAction(PrismAction.APPLICATION_CONFIRM_ELIGIBILITY) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_VERIFICATION_COMPLETED_OUTCOME),
                     new PrismStateTransition() //
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST)

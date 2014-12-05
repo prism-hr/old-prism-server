@@ -102,6 +102,10 @@ public class PrismApplicationReference extends PrismWorkflowState {
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_INTERVIEWERS) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME), // 
                     new PrismStateTransition() // 
+                        .withTransitionState(PrismState.APPLICATION_REFERENCE) // 
+                        .withTransitionAction(PrismAction.APPLICATION_PROVIDE_REFERENCE) // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME),
+                    new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_REJECTED) // 
                         .withTransitionAction(PrismAction.APPLICATION_CONFIRM_REJECTION) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME), // 

@@ -1,23 +1,30 @@
 package com.zuehlke.pgadmissions.legacy;
 
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ProgramService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Map;
 
 @Controller
 @RequestMapping("api/pgadmissions")
 public class RedirectionController {
+
+    private static Logger log = LoggerFactory.getLogger(RedirectionController.class);
+
+    @Value("${application.url}")
+    private String applicationUrl;
 
     @Autowired
     private AdvertService advertService;
@@ -30,41 +37,50 @@ public class RedirectionController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String redirect(@RequestParam String originalUrl) {
+        String redirectionPrefix = "redirect:" + applicationUrl + "/#/";
+
         try {
-            String originalQuery = originalUrl.substring(originalUrl.lastIndexOf("?"));
+            if (!originalUrl.contains("?")) {
+                return redirectionPrefix;
+            }
+            String originalQuery = originalUrl.substring(originalUrl.indexOf("?") + 1);
             String originalParameterPairs[] = originalQuery.split("&");
 
+            String redirect;
             Map<String, String> originalParameters = Maps.newHashMap();
             for (String originalParameterPair : originalParameterPairs) {
                 String[] keyValue = originalParameterPair.split("=");
                 originalParameters.put(keyValue[0], keyValue[1]);
             }
 
-            String redirect;
-            if (originalParameters.containsKey("applicationId")) {
-                Application application = applicationService.getByLegacyCode(originalParameters.get("applicationId"));
-                redirect = "redirect: api/application/" + application.getId().toString();
+
+            if (originalParameters.containsKey("activationCode") && originalParameters.containsKey("applicationId")) {
+                Application application = applicationService.getByCodeLegacy(originalParameters.get("applicationId"));
+                if (application == null) {
+                    return redirectionPrefix;
+                }
+                redirect = redirectionPrefix + "activate?activationCode=" + originalParameters.get("activationCode");
+                redirect += "&resourceId=" + application.getId();
+                redirect += "&actionId=" + "APPLICATION_VIEW_EDIT";
             } else if (originalParameters.containsKey("advert")) {
                 Advert advert = advertService.getById(Integer.parseInt(originalParameters.get("advert")));
                 if (advert.isProgramAdvert()) {
-                    redirect = "redirect:api/opportunities/?program[]=" + advert.getProgram().getId().toString();
+                    redirect = redirectionPrefix + "?program=" + advert.getProgram().getId();
                 } else {
-                    redirect = "redirect:api/opportunities/?project[]=" + advert.getProject().getId().toString();
+                    redirect = redirectionPrefix + "?project=" + advert.getProject().getId();
                 }
             } else if (originalParameters.containsKey("program")) {
                 Integer programId = programService.getProgramByImportedCode(originalParameters.get("program")).getId();
-                redirect = "redirect:api/opportunities/?program[]=" + programId.toString();
+                redirect = redirectionPrefix + "?program=" + programId;
             } else {
-                redirect = "redirect:api/applications";
+                redirect = redirectionPrefix;
             }
 
-            if (originalParameters.containsKey("activationCode")) {
-                redirect = redirect + "&activationCode=" + originalParameters.get("activationCode");
-            }
 
             return redirect;
         } catch (Exception e) {
-            return "redirect:api/applications";
+            log.error("Redirection error", e);
+            return redirectionPrefix;
         }
     }
 

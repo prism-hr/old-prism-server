@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
-public class ApplicationAddressRepresentation {
+public class ApplicationAddressRepresentation extends ApplicationSectionRepresentation {
 
     private AddressRepresentation currentAddress;
 

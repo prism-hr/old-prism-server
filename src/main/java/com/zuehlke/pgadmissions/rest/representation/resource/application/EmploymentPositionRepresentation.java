@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import org.joda.time.LocalDate;
 
-public class EmploymentPositionRepresentation {
+public class EmploymentPositionRepresentation extends ApplicationSectionRepresentation {
 
     private Integer id;
 

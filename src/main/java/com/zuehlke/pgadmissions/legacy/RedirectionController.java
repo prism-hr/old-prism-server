@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
@@ -37,46 +38,34 @@ public class RedirectionController {
     private ProgramService programService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public void redirect(@RequestParam String originalUrl, HttpServletResponse response) {
+    public void redirect(HttpServletRequest request, HttpServletResponse response) {
         String redirectionPrefix = applicationUrl + "/#/";
         response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
         try {
-            if (!originalUrl.contains("?")) {
-                response.setHeader("Location", redirectionPrefix);
-                return;
-            }
-            String originalQuery = originalUrl.substring(originalUrl.indexOf("?") + 1);
-            String originalParameterPairs[] = originalQuery.split("&");
 
             String redirect;
-            Map<String, String> originalParameters = Maps.newHashMap();
-            for (String originalParameterPair : originalParameterPairs) {
-                String[] keyValue = originalParameterPair.split("=");
-                originalParameters.put(keyValue[0], keyValue[1]);
-            }
 
-
-            if (originalParameters.containsKey("activationCode") && originalParameters.containsKey("applicationId")) {
-                Application application = applicationService.getByCodeLegacy(originalParameters.get("applicationId"));
+            if (request.getParameter("activationCode") != null && request.getParameter("applicationId") != null) {
+                Application application = applicationService.getByCodeLegacy(request.getParameter("applicationId"));
                 if (application == null) {
                     redirect = redirectionPrefix;
                 } else {
-                    redirect = redirectionPrefix + "activate?activationCode=" + originalParameters.get("activationCode");
+                    redirect = redirectionPrefix + "activate?activationCode=" + request.getParameter("activationCode");
                     redirect += "&resourceId=" + application.getId();
                     redirect += "&actionId=" + "APPLICATION_VIEW_EDIT";
                 }
-            } else if (originalParameters.containsKey("advert")) {
-                Advert advert = advertService.getById(Integer.parseInt(originalParameters.get("advert")));
+            } else if (request.getParameter("advert") != null) {
+                Advert advert = advertService.getById(Integer.parseInt(request.getParameter("advert")));
                 if (advert.isProgramAdvert()) {
                     redirect = redirectionPrefix + "?program=" + advert.getProgram().getId();
                 } else {
                     redirect = redirectionPrefix + "?project=" + advert.getProject().getId();
                 }
-            } else if (originalParameters.containsKey("program")) {
-                Integer programId = programService.getProgramByImportedCode(originalParameters.get("program")).getId();
+            } else if (request.getParameter("program") != null) {
+                Integer programId = programService.getProgramByImportedCode(request.getParameter("program")).getId();
                 redirect = redirectionPrefix + "?program=" + programId;
             } else {
-                log.warn("Unexpected legacy URL: " + originalQuery);
+                log.warn("Unexpected legacy URL: " + request.getRequestURI());
                 redirect = redirectionPrefix;
             }
 

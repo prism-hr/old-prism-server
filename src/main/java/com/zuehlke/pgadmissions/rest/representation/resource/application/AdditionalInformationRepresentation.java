@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
-public class AdditionalInformationRepresentation {
+public class AdditionalInformationRepresentation extends ApplicationSectionRepresentation {
 
     private String convictionsText;
 

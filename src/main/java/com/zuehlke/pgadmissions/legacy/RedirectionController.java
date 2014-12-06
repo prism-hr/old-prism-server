@@ -73,6 +73,7 @@ public class RedirectionController {
                 Integer programId = programService.getProgramByImportedCode(originalParameters.get("program")).getId();
                 redirect = redirectionPrefix + "?program=" + programId;
             } else {
+                log.warn("Unexpected legacy URL: " + originalQuery);
                 redirect = redirectionPrefix;
             }
 

@@ -226,6 +226,7 @@ public class SystemService {
 
     @Transactional
     public void initializeSearchIndex() throws InterruptedException {
+        // TODO drop it
         systemDAO.initializeSearchIndex();
     }
 

@@ -35,7 +35,7 @@ public class ApplicationFunding extends ApplicationSection {
 
     @Column(name = "sponsor")
     private String sponsor;
-    
+
     @Column(name = "description", nullable = false)
     private String description;
 
@@ -45,14 +45,14 @@ public class ApplicationFunding extends ApplicationSection {
     @Column(name = "award_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate awardDate;
-    
+
     @Column(name = "terms")
-    private String terms;    
+    private String terms;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "document_id", unique = true)
     private Document document;
-    
+
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
@@ -64,7 +64,7 @@ public class ApplicationFunding extends ApplicationSection {
     public Integer getId() {
         return id;
     }
-    
+
     public Application getApplication() {
         return application;
     }
@@ -80,7 +80,7 @@ public class ApplicationFunding extends ApplicationSection {
     public void setFundingSource(FundingSource fundingSource) {
         this.fundingSource = fundingSource;
     }
-    
+
     public final String getSponsor() {
         return sponsor;
     }
@@ -88,7 +88,7 @@ public class ApplicationFunding extends ApplicationSection {
     public final void setSponsor(String sponsor) {
         this.sponsor = sponsor;
     }
-    
+
     public String getDescription() {
         return description;
     }
@@ -120,7 +120,7 @@ public class ApplicationFunding extends ApplicationSection {
     public final void setTerms(String terms) {
         this.terms = terms;
     }
-    
+
     public Document getDocument() {
         return document;
     }
@@ -128,15 +128,15 @@ public class ApplicationFunding extends ApplicationSection {
     public void setDocument(Document document) {
         this.document = document;
     }
-    
+
     @Override
-    public DateTime getLastEditedTimestamp() {
+    public DateTime getLastUpdatedTimestamp() {
         return lastUpdatedTimestamp;
     }
 
     @Override
-    public void setLastEditedTimestamp(DateTime lastEditedTimestamp) {
-        this.lastUpdatedTimestamp = lastEditedTimestamp;
+    public void setLastEditedTimestamp(DateTime lastUpdatedTimestamp) {
+        this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
 
     public ApplicationFunding withId(Integer id) {

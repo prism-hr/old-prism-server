@@ -65,7 +65,7 @@ public class ApplicationQualification extends ApplicationSection {
 
     @Column(name = "completed", nullable = false)
     private Boolean completed;
-    
+
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
@@ -77,7 +77,7 @@ public class ApplicationQualification extends ApplicationSection {
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     public Application getApplication() {
         return application;
     }
@@ -167,13 +167,13 @@ public class ApplicationQualification extends ApplicationSection {
     }
 
     @Override
-    public DateTime getLastEditedTimestamp() {
+    public DateTime getLastUpdatedTimestamp() {
         return lastUpdatedTimestamp;
     }
 
     @Override
-    public void setLastEditedTimestamp(DateTime lastEditedTimestamp) {
-        this.lastUpdatedTimestamp = lastEditedTimestamp;
+    public void setLastEditedTimestamp(DateTime lastUpdatedTimestamp) {
+        this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
 
     public ApplicationQualification withId(Integer id) {

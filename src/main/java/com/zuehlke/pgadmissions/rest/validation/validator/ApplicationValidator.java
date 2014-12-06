@@ -137,32 +137,34 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
         }
 
     }
-    
+
     private void validateStartDate(Application application, ApplicationProgramDetail programDetail, Errors errors) {
-        errors.pushNestedPath("programDetail");
-        LocalDate startDate = programDetail.getStartDate();
+        if (programDetail != null) {
+            errors.pushNestedPath("programDetail");
+            LocalDate startDate = programDetail.getStartDate();
 
-        Program program = application.getProgram();
-        ProgramStudyOption studyOption = programService.getEnabledProgramStudyOption(program, programDetail.getStudyOption());
+            Program program = application.getProgram();
+            ProgramStudyOption studyOption = programService.getEnabledProgramStudyOption(program, programDetail.getStudyOption());
 
-        if (studyOption == null) {
-            List<ProgramStudyOption> otherStudyOptions = programService.getEnabledProgramStudyOptions(program);
-            if (otherStudyOptions.isEmpty()) {
-                throw new CannotApplyException();
+            if (studyOption == null) {
+                List<ProgramStudyOption> otherStudyOptions = programService.getEnabledProgramStudyOptions(program);
+                if (otherStudyOptions.isEmpty()) {
+                    throw new CannotApplyException();
+                }
+                errors.rejectValue("studyOption", "notAvailable");
+            } else {
+                LocalDate earliestStartDate = applicationService.getEarliestStartDate(studyOption.getId(), new LocalDate());
+                LocalDate latestStartDate = applicationService.getLatestStartDate(studyOption.getId());
+
+                if (startDate.isBefore(earliestStartDate)) {
+                    errors.rejectValue("startDate", "notBefore", new Object[]{earliestStartDate}, null);
+                } else if (startDate.isAfter(latestStartDate)) {
+                    errors.rejectValue("startDate", "notAfter", new Object[]{latestStartDate}, null);
+                }
             }
-            errors.rejectValue("studyOption", "notAvailable");
-        } else {
-            LocalDate earliestStartDate = applicationService.getEarliestStartDate(studyOption.getId(), new LocalDate());
-            LocalDate latestStartDate = applicationService.getLatestStartDate(studyOption.getId());
 
-            if (startDate.isBefore(earliestStartDate)) {
-                errors.rejectValue("startDate", "notBefore", new Object[] { earliestStartDate }, null);
-            } else if (startDate.isAfter(latestStartDate)) {
-                errors.rejectValue("startDate", "notAfter", new Object[] { latestStartDate }, null);
-            }
+            errors.popNestedPath();
         }
-
-        errors.popNestedPath();
     }
 
     private void validateRangeConstraint(Application application, String property, WorkflowPropertyConfiguration configuration, Errors errors) {
@@ -216,7 +218,7 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
     private void validateLanguageProofOfAwardConstraint(Application application, WorkflowPropertyConfiguration configuration, Errors errors) {
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         ApplicationLanguageQualification languageQualification = personalDetail == null ? null : personalDetail.getLanguageQualification();
-        
+
         if (languageQualification != null) {
             validateRequiredConstraint(languageQualification.getDocument(), "personalDetail.languageQualification", "document", configuration, errors);
         }
@@ -254,7 +256,7 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
         if (BooleanUtils.isTrue(configuration.getEnabled())) {
             Integer minimum = configuration.getMinimum();
             Integer maximum = configuration.getMaximum();
-            
+
             if (minimum != null && propertiesSize < minimum) {
                 errors.rejectValue(property, "tooFew");
             } else if (maximum != null && propertiesSize > maximum) {

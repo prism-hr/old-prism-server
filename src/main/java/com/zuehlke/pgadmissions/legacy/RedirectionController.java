@@ -38,7 +38,7 @@ public class RedirectionController {
 
     @RequestMapping(method = RequestMethod.GET)
     public void redirect(@RequestParam String originalUrl, HttpServletResponse response) {
-        String redirectionPrefix = "redirect:" + applicationUrl + "/#/";
+        String redirectionPrefix = applicationUrl + "/#/";
         response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
         try {
             if (!originalUrl.contains("?")) {

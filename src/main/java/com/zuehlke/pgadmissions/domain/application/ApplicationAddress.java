@@ -21,10 +21,10 @@ public class ApplicationAddress extends ApplicationSection {
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @OneToOne(mappedBy = "address")
     private Application application;
-    
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "current_address_id", nullable = false)
     private Address currentAddress;
@@ -36,7 +36,6 @@ public class ApplicationAddress extends ApplicationSection {
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
-
 
     public Integer getId() {
         return id;
@@ -53,7 +52,7 @@ public class ApplicationAddress extends ApplicationSection {
     public void setApplication(Application application) {
         this.application = application;
     }
-    
+
     public Address getCurrentAddress() {
         return currentAddress;
     }
@@ -71,15 +70,15 @@ public class ApplicationAddress extends ApplicationSection {
     }
 
     @Override
-    public DateTime getLastEditedTimestamp() {
+    public DateTime getLastUpdatedTimestamp() {
         return lastUpdatedTimestamp;
     }
 
     @Override
-    public void setLastEditedTimestamp(DateTime lastEditedTimestamp) {
-        this.lastUpdatedTimestamp = lastEditedTimestamp;
+    public void setLastEditedTimestamp(DateTime lastUpdatedTimestamp) {
+        this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
-    
+
     public boolean currentAddressIsContactAddress() {
         return currentAddress == contactAddress;
     }

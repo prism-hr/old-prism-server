@@ -52,7 +52,7 @@ public class ApplicationLanguageQualification extends ApplicationSection {
     @JoinColumn(name = "document_id", unique = true)
     private Document document;
 
-    @Column(name = "submitted_timestamp")
+    @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
 

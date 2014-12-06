@@ -675,7 +675,7 @@ public class ApplicationService {
             for (ObjectError error : errors.getAllErrors()) {
                 Object property = ReflectionUtils.getProperty(application, error.getObjectName());
                 if (ApplicationSection.class.isAssignableFrom(property.getClass())) {
-                    ReflectionUtils.setProperty(property, "lastEditedTimestamp", null);
+                    ReflectionUtils.setProperty(property, "lastUpdatedTimestamp", null);
                 }
             }
         }

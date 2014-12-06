@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @Controller
@@ -36,12 +37,13 @@ public class RedirectionController {
     private ProgramService programService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public String redirect(@RequestParam String originalUrl) {
+    public void redirect(@RequestParam String originalUrl, HttpServletResponse response) {
         String redirectionPrefix = "redirect:" + applicationUrl + "/#/";
 
         try {
             if (!originalUrl.contains("?")) {
-                return redirectionPrefix;
+                response.encodeRedirectURL(redirectionPrefix);
+                return;
             }
             String originalQuery = originalUrl.substring(originalUrl.indexOf("?") + 1);
             String originalParameterPairs[] = originalQuery.split("&");
@@ -57,11 +59,12 @@ public class RedirectionController {
             if (originalParameters.containsKey("activationCode") && originalParameters.containsKey("applicationId")) {
                 Application application = applicationService.getByCodeLegacy(originalParameters.get("applicationId"));
                 if (application == null) {
-                    return redirectionPrefix;
+                    redirect = redirectionPrefix;
+                } else {
+                    redirect = redirectionPrefix + "activate?activationCode=" + originalParameters.get("activationCode");
+                    redirect += "&resourceId=" + application.getId();
+                    redirect += "&actionId=" + "APPLICATION_VIEW_EDIT";
                 }
-                redirect = redirectionPrefix + "activate?activationCode=" + originalParameters.get("activationCode");
-                redirect += "&resourceId=" + application.getId();
-                redirect += "&actionId=" + "APPLICATION_VIEW_EDIT";
             } else if (originalParameters.containsKey("advert")) {
                 Advert advert = advertService.getById(Integer.parseInt(originalParameters.get("advert")));
                 if (advert.isProgramAdvert()) {
@@ -77,11 +80,10 @@ public class RedirectionController {
                 redirect = redirectionPrefix;
             }
 
-
-            return redirect;
+            response.encodeRedirectURL(redirect);
         } catch (Exception e) {
             log.error("Redirection error", e);
-            return redirectionPrefix;
+            response.encodeRedirectURL(redirectionPrefix);
         }
     }
 

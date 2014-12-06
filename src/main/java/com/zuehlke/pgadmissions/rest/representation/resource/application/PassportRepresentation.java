@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import org.joda.time.LocalDate;
 
-public class PassportRepresentation {
+public class PassportRepresentation extends ApplicationSectionRepresentation {
 
     private String number;
 

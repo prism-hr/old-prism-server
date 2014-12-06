@@ -4,7 +4,7 @@ import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
-public class ProgramDetailRepresentation {
+public class ProgramDetailRepresentation extends ApplicationSectionRepresentation {
 
     private PrismStudyOption studyOption;
 

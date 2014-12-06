@@ -4,7 +4,7 @@ import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
 
-public class LanguageQualificationRepresentation {
+public class LanguageQualificationRepresentation extends ApplicationSectionRepresentation {
 
     private Integer type;
 

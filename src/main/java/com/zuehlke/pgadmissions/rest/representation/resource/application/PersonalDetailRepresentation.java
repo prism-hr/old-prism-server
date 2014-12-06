@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import org.joda.time.LocalDate;
 
-public class PersonalDetailRepresentation {
+public class PersonalDetailRepresentation extends ApplicationSectionRepresentation {
 
     private String skype;
 

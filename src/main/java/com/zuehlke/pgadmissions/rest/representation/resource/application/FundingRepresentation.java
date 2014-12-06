@@ -4,7 +4,7 @@ import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
 
-public class FundingRepresentation {
+public class FundingRepresentation extends ApplicationSectionRepresentation {
 
     private Integer id;
 

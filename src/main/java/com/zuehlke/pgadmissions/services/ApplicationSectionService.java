@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -142,6 +143,7 @@ public class ApplicationSectionService {
         programDetail.setStudyOption(studyOption);
         programDetail.setStartDate(programDetailDTO.getStartDate());
         programDetail.setReferralSource(referralSource);
+        programDetail.setLastEditedTimestamp(DateTime.now());
 
         List<String> primaryThemes = programDetailDTO.getPrimaryThemes();
         application.setPrimaryTheme(primaryThemes.isEmpty() ? null : Joiner.on("|").join(primaryThemes));
@@ -169,6 +171,7 @@ public class ApplicationSectionService {
 
         supervisor.setUser(user);
         supervisor.setAcceptedSupervision(supervisorDTO.getAcceptedSupervision());
+        supervisor.setLastEditedTimestamp(DateTime.now());
 
         CommentAssignedUser assignee = null;
         if (application.isSubmitted()) {
@@ -238,6 +241,7 @@ public class ApplicationSectionService {
 
         updateLanguageQualification(personalDetailDTO, institution, personalDetail);
         updatePassport(personalDetailDTO, personalDetail);
+        personalDetail.setLastEditedTimestamp(DateTime.now());
 
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL);
     }
@@ -268,6 +272,7 @@ public class ApplicationSectionService {
             address.setContactAddress(contactAddress);
         }
         copyAddress(institution, contactAddress, contactAddressDTO);
+        address.setLastEditedTimestamp(DateTime.now());
 
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDRESS);
     }
@@ -313,6 +318,7 @@ public class ApplicationSectionService {
             Document qualificationDocument = entityService.getById(Document.class, upload.getId());
             qualification.setDocument(qualificationDocument);
         }
+        qualification.setLastEditedTimestamp(DateTime.now());
 
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
         return qualification;
@@ -357,6 +363,7 @@ public class ApplicationSectionService {
         employmentPosition.setStartDate(employmentPositionDTO.getStartDate());
         employmentPosition.setCurrent(BooleanUtils.isTrue(employmentPositionDTO.getCurrent()));
         employmentPosition.setEndDate(employmentPositionDTO.getEndDate());
+        employmentPosition.setLastEditedTimestamp(DateTime.now());
 
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_EMPLOYMENT);
         return employmentPosition;
@@ -395,6 +402,7 @@ public class ApplicationSectionService {
             Document qualificationDocument = entityService.getById(Document.class, upload.getId());
             funding.setDocument(qualificationDocument);
         }
+        funding.setLastEditedTimestamp(DateTime.now());
 
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_FUNDING);
         return funding;
@@ -423,6 +431,7 @@ public class ApplicationSectionService {
         prize.setTitle(prizeDTO.getTitle());
         prize.setDescription(prizeDTO.getDescription());
         prize.setAwardDate(prizeDTO.getAwardDate());
+        prize.setLastEditedTimestamp(DateTime.now());
 
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_FUNDING);
         return prize;
@@ -464,6 +473,7 @@ public class ApplicationSectionService {
         copyAddress(application.getInstitution(), address, addressDTO);
         referee.setPhone(refereeDTO.getPhone());
         referee.setSkype(Strings.emptyToNull(refereeDTO.getSkype()));
+        referee.setLastEditedTimestamp(DateTime.now());
 
         CommentAssignedUser assignee = null;
         if (application.isSubmitted()) {
@@ -502,6 +512,8 @@ public class ApplicationSectionService {
         document.setPersonalStatement(personalStatement);
         document.setResearchStatement(researchStatement);
         document.setCoveringLetter(coveringLetter);
+        document.setLastEditedTimestamp(DateTime.now());
+
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_DOCUMENT);
     }
 
@@ -516,6 +528,8 @@ public class ApplicationSectionService {
         }
 
         additionalInformation.setConvictionsText(Strings.emptyToNull(additionalInformationDTO.getConvictionsText()));
+        additionalInformation.setLastEditedTimestamp(DateTime.now());
+
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION);
     }
 

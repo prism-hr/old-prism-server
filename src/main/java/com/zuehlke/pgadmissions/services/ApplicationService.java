@@ -167,8 +167,8 @@ public class ApplicationService {
         return entityService.getByProperty(Application.class, "code", code);
     }
 
-    public Application getByLegacyCode(String legacyCode) {
-        return entityService.getByProperty(Application.class, "legacyCode", legacyCode);
+    public Application getByCodeLegacy(String codeLegacy) {
+        return entityService.getByProperty(Application.class, "codeLegacy", codeLegacy);
     }
 
     public ApplicationStartDateRepresentation getStartDateRepresentation(Integer applicationId, PrismStudyOption studyOptionId) {

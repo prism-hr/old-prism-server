@@ -53,7 +53,7 @@ public class ApplicationEmploymentPosition extends ApplicationSection {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate endDate;
     
-    @Column(name = "submitted_timestamp")
+    @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
 

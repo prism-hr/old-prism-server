@@ -27,9 +27,10 @@ public class ApplicationAdditionalInformation extends ApplicationSection {
     @OneToOne(mappedBy = "additionalInformation")
     private Application application;
     
-    @Column(name = "submitted_timestamp")
+    @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
+
 
     public void setId(Integer id) {
         this.id = id;

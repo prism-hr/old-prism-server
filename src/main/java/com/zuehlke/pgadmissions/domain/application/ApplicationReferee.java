@@ -54,7 +54,7 @@ public class ApplicationReferee extends ApplicationSection {
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
     
-    @Column(name = "submitted_timestamp")
+    @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
 

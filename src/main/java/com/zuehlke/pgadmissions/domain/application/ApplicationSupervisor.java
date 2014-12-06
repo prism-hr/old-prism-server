@@ -33,7 +33,7 @@ public class ApplicationSupervisor extends ApplicationSection {
     @Column(name = "aware_of_application", nullable = false)
     private Boolean acceptedSupervision = false;
 
-    @Column(name = "submitted_timestamp")
+    @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
 

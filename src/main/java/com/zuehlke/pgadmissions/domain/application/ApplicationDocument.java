@@ -41,7 +41,7 @@ public class ApplicationDocument extends ApplicationSection {
     @JoinColumn(name = "covering_letter_id", unique = true)
     private Document coveringLetter;
     
-    @Column(name = "submitted_timestamp")
+    @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
 

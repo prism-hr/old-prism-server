@@ -39,10 +39,10 @@ public class RedirectionController {
     @RequestMapping(method = RequestMethod.GET)
     public void redirect(@RequestParam String originalUrl, HttpServletResponse response) {
         String redirectionPrefix = "redirect:" + applicationUrl + "/#/";
-
+        response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
         try {
             if (!originalUrl.contains("?")) {
-                response.encodeRedirectURL(redirectionPrefix);
+                response.setHeader("Location", redirectionPrefix);
                 return;
             }
             String originalQuery = originalUrl.substring(originalUrl.indexOf("?") + 1);
@@ -80,10 +80,10 @@ public class RedirectionController {
                 redirect = redirectionPrefix;
             }
 
-            response.encodeRedirectURL(redirect);
+            response.setHeader("Location", redirect);
         } catch (Exception e) {
             log.error("Redirection error", e);
-            response.encodeRedirectURL(redirectionPrefix);
+            response.setHeader("Location", redirectionPrefix);
         }
     }
 

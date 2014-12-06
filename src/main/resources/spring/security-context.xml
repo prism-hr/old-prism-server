@@ -6,8 +6,8 @@
     http://www.springframework.org/schema/security
     http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
-    <security:http pattern="/api/static" security="none"/>
-    <security:http pattern="/api/pgadmissions" security="none" disable-url-rewriting="true"/>
+    <security:http pattern="/api/static" security="none" create-session="stateless"/>
+    <security:http pattern="/api/pgadmissions" security="none" create-session="stateless"/>
 
     <security:global-method-security pre-post-annotations="enabled"/>
     <security:http realm="Prism API" use-expressions="true" auto-config="false" create-session="stateless"

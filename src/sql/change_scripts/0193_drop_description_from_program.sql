@@ -1,0 +1,1 @@
+ALTER TABLE PROGRAM DROP COLUMN description;

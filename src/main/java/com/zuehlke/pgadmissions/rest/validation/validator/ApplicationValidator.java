@@ -137,7 +137,7 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
         }
 
     }
-
+    
     private void validateStartDate(Application application, ApplicationProgramDetail programDetail, Errors errors) {
         errors.pushNestedPath("programDetail");
         LocalDate startDate = programDetail.getStartDate();

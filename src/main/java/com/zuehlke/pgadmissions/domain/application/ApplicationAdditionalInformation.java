@@ -9,11 +9,13 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 
 @Entity
 @Table(name = "APPLICATION_ADDITIONAL_INFORMATION")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class ApplicationAdditionalInformation {
+public class ApplicationAdditionalInformation extends ApplicationSection {
 
     @Id
     @GeneratedValue
@@ -24,6 +26,10 @@ public class ApplicationAdditionalInformation {
 
     @OneToOne(mappedBy = "additionalInformation")
     private Application application;
+    
+    @Column(name = "submitted_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastUpdatedTimestamp;
 
     public void setId(Integer id) {
         this.id = id;
@@ -63,4 +69,15 @@ public class ApplicationAdditionalInformation {
         this.application = application;
         return this;
     }
+
+    @Override
+    public DateTime getLastEditedTimestamp() {
+        return lastUpdatedTimestamp;
+    }
+
+    @Override
+    public void setLastEditedTimestamp(DateTime lastEditedTimestamp) {
+        this.lastUpdatedTimestamp = lastEditedTimestamp;
+    }
+    
 }

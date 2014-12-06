@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -20,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.imported.QualificationType;
 
 @Entity
 @Table(name = "APPLICATION_QUALIFICATION")
-public class ApplicationQualification {
+public class ApplicationQualification extends ApplicationSection {
 
     @Id
     @GeneratedValue
@@ -64,6 +65,10 @@ public class ApplicationQualification {
 
     @Column(name = "completed", nullable = false)
     private Boolean completed;
+    
+    @Column(name = "submitted_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastUpdatedTimestamp;
 
     public Integer getId() {
         return id;
@@ -71,6 +76,14 @@ public class ApplicationQualification {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+    
+    public Application getApplication() {
+        return application;
+    }
+
+    public void setApplication(Application application) {
+        this.application = application;
     }
 
     public Document getDocument() {
@@ -153,12 +166,14 @@ public class ApplicationQualification {
         this.completed = completed;
     }
 
-    public Application getApplication() {
-        return application;
+    @Override
+    public DateTime getLastEditedTimestamp() {
+        return lastUpdatedTimestamp;
     }
 
-    public void setApplication(Application application) {
-        this.application = application;
+    @Override
+    public void setLastEditedTimestamp(DateTime lastEditedTimestamp) {
+        this.lastUpdatedTimestamp = lastEditedTimestamp;
     }
 
     public ApplicationQualification withId(Integer id) {

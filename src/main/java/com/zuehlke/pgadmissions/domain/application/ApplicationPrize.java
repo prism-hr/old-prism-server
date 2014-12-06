@@ -9,11 +9,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 @Entity
 @Table(name = "APPLICATION_PRIZE")
-public class ApplicationPrize {
+public class ApplicationPrize extends ApplicationSection {
 
     @Id
     @GeneratedValue
@@ -35,6 +36,10 @@ public class ApplicationPrize {
     @Column(name = "award_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate awardDate;
+    
+    @Column(name = "submitted_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastUpdatedTimestamp;
 
     public final Integer getId() {
         return id;
@@ -82,6 +87,16 @@ public class ApplicationPrize {
 
     public final void setAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
+    }
+    
+    @Override
+    public DateTime getLastEditedTimestamp() {
+        return lastUpdatedTimestamp;
+    }
+
+    @Override
+    public void setLastEditedTimestamp(DateTime lastEditedTimestamp) {
+        this.lastUpdatedTimestamp = lastEditedTimestamp;
     }
     
     public ApplicationPrize withProvider(String provider) {

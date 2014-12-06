@@ -1,24 +1,30 @@
 package com.zuehlke.pgadmissions.domain.application;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.document.Document;
 
 @Entity
 @Table(name = "APPLICATION_DOCUMENT")
-public class ApplicationDocument {
+public class ApplicationDocument extends ApplicationSection {
 
     @Id
     @GeneratedValue
     private Integer id;
 
+    @OneToOne(mappedBy = "document")
+    private Application application;
+    
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "personal_statement_id", unique = true)
     private Document personalStatement;
@@ -34,12 +40,10 @@ public class ApplicationDocument {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "covering_letter_id", unique = true)
     private Document coveringLetter;
-
-    @OneToOne(mappedBy = "document")
-    private Application application;
-
-    @Transient
-    private Boolean acceptedTerms;
+    
+    @Column(name = "submitted_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastUpdatedTimestamp;
 
     public Integer getId() {
         return id;
@@ -47,6 +51,14 @@ public class ApplicationDocument {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+    
+    public Application getApplication() {
+        return application;
+    }
+
+    public void setApplication(Application application) {
+        this.application = application;
     }
 
     public Document getPersonalStatement() {
@@ -81,14 +93,6 @@ public class ApplicationDocument {
         this.coveringLetter = coveringLetter;
     }
 
-    public Application getApplication() {
-        return application;
-    }
-
-    public void setApplication(Application application) {
-        this.application = application;
-    }
-
     public ApplicationDocument withPersonalStatement(Document document) {
         this.personalStatement = document;
         return this;
@@ -107,6 +111,16 @@ public class ApplicationDocument {
     public ApplicationDocument withCoveringLetter(Document coveringLetter) {
         this.coveringLetter = coveringLetter;
         return this;
+    }
+    
+    @Override
+    public DateTime getLastEditedTimestamp() {
+        return lastUpdatedTimestamp;
+    }
+
+    @Override
+    public void setLastEditedTimestamp(DateTime lastEditedTimestamp) {
+        this.lastUpdatedTimestamp = lastEditedTimestamp;
     }
 
 }

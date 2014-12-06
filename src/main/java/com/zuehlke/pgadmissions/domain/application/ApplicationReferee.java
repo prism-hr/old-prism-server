@@ -11,13 +11,16 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.user.Address;
 import com.zuehlke.pgadmissions.domain.user.User;
 
 @Entity
 @Table(name = "APPLICATION_REFEREE", uniqueConstraints = {@UniqueConstraint(columnNames = {"application_id", "user_id"})})
-public class ApplicationReferee {
+public class ApplicationReferee extends ApplicationSection {
 
     @Id
     @GeneratedValue
@@ -50,6 +53,10 @@ public class ApplicationReferee {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
+    
+    @Column(name = "submitted_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastUpdatedTimestamp;
 
     public Application getApplication() {
         return application;
@@ -121,6 +128,16 @@ public class ApplicationReferee {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    @Override
+    public DateTime getLastEditedTimestamp() {
+        return lastUpdatedTimestamp;
+    }
+
+    @Override
+    public void setLastEditedTimestamp(DateTime lastEditedTimestamp) {
+        this.lastUpdatedTimestamp = lastEditedTimestamp;
     }
 
     public ApplicationReferee withId(Integer id) {

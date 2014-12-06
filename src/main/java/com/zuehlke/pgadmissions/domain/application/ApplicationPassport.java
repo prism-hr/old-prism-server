@@ -9,11 +9,12 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 @Entity
 @Table(name = "APPLICATION_PASSPORT")
-public class ApplicationPassport {
+public class ApplicationPassport extends ApplicationSection {
 
     @Id
     @GeneratedValue
@@ -35,6 +36,10 @@ public class ApplicationPassport {
     @Column(name = "expiry_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate expiryDate;
+    
+    @Column(name = "submitted_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastUpdatedTimestamp;
 
     public Integer getId() {
         return id;
@@ -74,6 +79,16 @@ public class ApplicationPassport {
 
     public void setExpiryDate(LocalDate expiryDate) {
         this.expiryDate = expiryDate;
+    }
+    
+    @Override
+    public DateTime getLastEditedTimestamp() {
+        return lastUpdatedTimestamp;
+    }
+
+    @Override
+    public void setLastEditedTimestamp(DateTime lastEditedTimestamp) {
+        this.lastUpdatedTimestamp = lastEditedTimestamp;
     }
 
     public ApplicationPassport withNumber(String number) {

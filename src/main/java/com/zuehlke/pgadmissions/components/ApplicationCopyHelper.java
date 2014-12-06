@@ -1,11 +1,16 @@
 package com.zuehlke.pgadmissions.components;
 
+import java.util.Set;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
@@ -18,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -29,6 +35,7 @@ import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 
 @Component
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ApplicationCopyHelper {
 
     @Autowired
@@ -36,6 +43,8 @@ public class ApplicationCopyHelper {
 
     @Autowired
     private CustomizationService customizationService;
+
+    private final Set<ApplicationSection> sectionsWithErrors = Sets.newHashSet();
 
     @Transactional
     public void copyApplication(Application to, Application from) {
@@ -48,6 +57,10 @@ public class ApplicationCopyHelper {
         copyApplicationReferences(to, from);
         copyApplicationDocument(to, from);
         copyApplicationAdditionalInformation(to, from);
+        
+        for (ApplicationSection sectionWithError : sectionsWithErrors) {
+            sectionWithError.setLastEditedTimestamp(null);
+        }
     }
 
     private void copyApplicationPersonalDetail(Application to, Application from) {
@@ -57,19 +70,19 @@ public class ApplicationCopyHelper {
             personalDetail.setApplication(to);
 
             Institution toInstitution = to.getInstitution();
-            personalDetail.setTitle(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getTitle()));
-            personalDetail.setGender(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getGender()));
+            personalDetail.setTitle(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getTitle(), personalDetail));
+            personalDetail.setGender(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getGender(), personalDetail));
             personalDetail.setDateOfBirth(from.getPersonalDetail().getDateOfBirth());
-            personalDetail.setCountry(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getCountry()));
-            personalDetail.setFirstNationality(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getFirstNationality()));
-            personalDetail.setSecondNationality(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getSecondNationality()));
-            personalDetail.setDomicile(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getDomicile()));
+            personalDetail.setCountry(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getCountry(), personalDetail));
+            personalDetail.setFirstNationality(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getFirstNationality(), personalDetail));
+            personalDetail.setSecondNationality(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getSecondNationality(), personalDetail));
+            personalDetail.setDomicile(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getDomicile(), personalDetail));
             personalDetail.setPhone(from.getPersonalDetail().getPhone());
             personalDetail.setSkype(from.getPersonalDetail().getSkype());
 
             if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to, PrismWorkflowPropertyDefinition.APPLICATION_DEMOGRAPHIC)) {
-                personalDetail.setEthnicity(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getEthnicity()));
-                personalDetail.setDisability(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getDisability()));
+                personalDetail.setEthnicity(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getEthnicity(), personalDetail));
+                personalDetail.setDisability(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getDisability(), personalDetail));
             }
 
             if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to, PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE)) {
@@ -81,6 +94,8 @@ public class ApplicationCopyHelper {
                 personalDetail.setVisaRequired(from.getPersonalDetail().getVisaRequired());
                 personalDetail.setPassport(copyPassport(from.getPersonalDetail().getPassport()));
             }
+            
+            personalDetail.setLastEditedTimestamp(new DateTime());
         }
     }
 
@@ -90,8 +105,9 @@ public class ApplicationCopyHelper {
             to.setAddress(applicationAddress);
             applicationAddress.setApplication(to);
             Institution toInstitution = to.getInstitution();
-            applicationAddress.setCurrentAddress(copyAddress(toInstitution, from.getAddress().getCurrentAddress()));
-            applicationAddress.setContactAddress(copyAddress(toInstitution, from.getAddress().getContactAddress()));
+            applicationAddress.setCurrentAddress(copyAddress(toInstitution, from.getAddress().getCurrentAddress(), applicationAddress));
+            applicationAddress.setContactAddress(copyAddress(toInstitution, from.getAddress().getContactAddress(), applicationAddress));
+            applicationAddress.setLastEditedTimestamp(new DateTime());
         }
     }
 
@@ -242,6 +258,7 @@ public class ApplicationCopyHelper {
             to.setAdditionalInformation(additionalInformation);
             additionalInformation.setApplication(to);
             additionalInformation.setConvictionsText(from.getAdditionalInformation().getConvictionsText());
+            additionalInformation.setLastEditedTimestamp(new DateTime());
         }
     }
 
@@ -252,12 +269,13 @@ public class ApplicationCopyHelper {
         to.setJobTitle(from.getJobTitle());
         to.setPhone(from.getPhone());
         to.setSkype(from.getSkype());
-        to.setAddress(copyAddress(toInstitution, from.getAddress()));
+        to.setAddress(copyAddress(toInstitution, from.getAddress(), to));
+        to.setLastEditedTimestamp(new DateTime());
     }
 
     public void copyFunding(ApplicationFunding to, ApplicationFunding from, boolean proofOfAwardEnabled) {
         Institution toInstitution = to.getApplication().getInstitution();
-        to.setFundingSource(getEnabledImportedObject(toInstitution, from.getFundingSource()));
+        to.setFundingSource(getEnabledImportedObject(toInstitution, from.getFundingSource(), to));
         to.setDescription(from.getDescription());
         to.setValue(from.getValue());
         to.setAwardDate(from.getAwardDate());
@@ -265,6 +283,8 @@ public class ApplicationCopyHelper {
         if (proofOfAwardEnabled) {
             to.setDocument(copyDocument(from.getDocument()));
         }
+        
+        to.setLastEditedTimestamp(new DateTime());
     }
 
     public void copyPrize(ApplicationPrize to, ApplicationPrize from) {
@@ -272,6 +292,7 @@ public class ApplicationCopyHelper {
         to.setTitle(from.getTitle());
         to.setDescription(from.getDescription());
         to.setAwardDate(from.getAwardDate());
+        to.setLastEditedTimestamp(new DateTime());
     }
 
     public void copyEmploymentPosition(ApplicationEmploymentPosition to, ApplicationEmploymentPosition from) {
@@ -282,13 +303,14 @@ public class ApplicationCopyHelper {
         to.setStartDate(from.getStartDate());
         to.setCurrent(from.getCurrent());
         to.setEndDate(from.getEndDate());
-        to.setEmployerAddress(copyAddress(toInstitution, from.getEmployerAddress()));
+        to.setEmployerAddress(copyAddress(toInstitution, from.getEmployerAddress(), to));
+        to.setLastEditedTimestamp(new DateTime());
     }
 
     public void copyQualification(ApplicationQualification to, ApplicationQualification from, boolean proofOfAwardEnabled) {
         Institution toInstitution = to.getApplication().getInstitution();
-        to.setInstitution(getEnabledImportedObject(toInstitution, from.getInstitution()));
-        to.setType(getEnabledImportedObject(toInstitution, from.getType()));
+        to.setInstitution(getEnabledImportedObject(toInstitution, from.getInstitution(), to));
+        to.setType(getEnabledImportedObject(toInstitution, from.getType(), to));
         to.setTitle(from.getTitle());
         to.setSubject(from.getSubject());
         to.setLanguage(from.getLanguage());
@@ -300,20 +322,22 @@ public class ApplicationCopyHelper {
         if (proofOfAwardEnabled) {
             to.setDocument(copyDocument(from.getDocument()));
         }
+        
+        to.setLastEditedTimestamp(new DateTime());
     }
 
-    private Address copyAddress(Institution toInstitution, Address from) {
-        if (from == null) {
+    private Address copyAddress(Institution toInstitution, Address fromAddress, ApplicationSection toSection) {
+        if (fromAddress == null) {
             return null;
         }
-        Address to = new Address();
-        to.setAddressLine1(from.getAddressLine1());
-        to.setAddressLine2(from.getAddressLine2());
-        to.setAddressTown(from.getAddressTown());
-        to.setAddressRegion(from.getAddressRegion());
-        to.setAddressCode(from.getAddressCode());
-        to.setDomicile(getEnabledImportedObject(toInstitution, from.getDomicile()));
-        return to;
+        Address toAddress = new Address();
+        toAddress.setAddressLine1(fromAddress.getAddressLine1());
+        toAddress.setAddressLine2(fromAddress.getAddressLine2());
+        toAddress.setAddressTown(fromAddress.getAddressTown());
+        toAddress.setAddressRegion(fromAddress.getAddressRegion());
+        toAddress.setAddressCode(fromAddress.getAddressCode());
+        toAddress.setDomicile(getEnabledImportedObject(toInstitution, fromAddress.getDomicile(), toSection));
+        return toAddress;
     }
 
     private Document copyDocument(Document from) {
@@ -335,7 +359,7 @@ public class ApplicationCopyHelper {
             return null;
         }
         ApplicationLanguageQualification to = new ApplicationLanguageQualification();
-        to.setType(getEnabledImportedObject(toInstitution, from.getType()));
+        to.setType(getEnabledImportedObject(toInstitution, from.getType(), to));
         to.setExamDate(from.getExamDate());
         to.setOverallScore(from.getOverallScore());
         to.setReadingScore(from.getReadingScore());
@@ -347,7 +371,8 @@ public class ApplicationCopyHelper {
                 PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE_PROOF_OF_AWARD)) {
             to.setDocument(copyDocument(from.getDocument()));
         }
-
+        
+        to.setLastEditedTimestamp(new DateTime());
         return to;
     }
 
@@ -360,21 +385,28 @@ public class ApplicationCopyHelper {
         to.setName(from.getName());
         to.setIssueDate(from.getIssueDate());
         to.setExpiryDate(from.getExpiryDate());
+        to.setLastEditedTimestamp(new DateTime());
         return to;
     }
 
-    private <T extends ImportedEntity> T getEnabledImportedObject(Institution toInstitution, T fromEntity) {
+    private <T extends ImportedEntity> T getEnabledImportedObject(Institution toInstitution, T fromEntity, ApplicationSection toSection) {
+        T toEntity = null;
         if (fromEntity == null) {
-            return null;
+            toEntity = null;
         } else {
             Institution fromInstitution = fromEntity.getInstitution();
             if (fromEntity.getEnabled() && fromInstitution == toInstitution) {
-                return fromEntity;
+                toEntity = fromEntity;
             } else if (fromInstitution != toInstitution) {
-                return importedEntityService.getCorrespondingImportedEntity(toInstitution, fromEntity);
+                toEntity = importedEntityService.getCorrespondingImportedEntity(toInstitution, fromEntity);
             }
         }
-        return null;
+
+        if (fromEntity != null && toEntity == null) {
+            sectionsWithErrors.add(toSection);
+        }
+
+        return toEntity;
     }
 
 }

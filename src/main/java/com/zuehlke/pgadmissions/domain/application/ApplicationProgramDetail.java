@@ -12,6 +12,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
@@ -20,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 
 @Entity
 @Table(name = "APPLICATION_PROGRAM_DETAIL")
-public class ApplicationProgramDetail {
+public class ApplicationProgramDetail extends ApplicationSection {
 
     @Id
     @GeneratedValue
@@ -44,12 +45,24 @@ public class ApplicationProgramDetail {
     @Transient
     private String sourceOfInterestText;
 
+    @Column(name = "submitted_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastUpdatedTimestamp;
+
     public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Application getApplication() {
+        return application;
+    }
+
+    public void setApplication(Application application) {
+        this.application = application;
     }
 
     public StudyOption getStudyOption() {
@@ -84,12 +97,14 @@ public class ApplicationProgramDetail {
         this.sourceOfInterestText = sourceOfInterest;
     }
 
-    public Application getApplication() {
-        return application;
+    @Override
+    public DateTime getLastEditedTimestamp() {
+        return lastUpdatedTimestamp;
     }
 
-    public void setApplication(Application application) {
-        this.application = application;
+    @Override
+    public void setLastEditedTimestamp(DateTime lastEditedTimestamp) {
+        this.lastUpdatedTimestamp = lastEditedTimestamp;
     }
 
     public ApplicationProgramDetail withId(Integer id) {

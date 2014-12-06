@@ -20,6 +20,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,6 +42,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
@@ -108,9 +110,6 @@ public class ApplicationService {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private ApplicationCopyHelper applicationCopyHelper;
 
     @Autowired
     private ProgramService programService;
@@ -243,9 +242,8 @@ public class ApplicationService {
         return refereesResponded;
     }
 
-    public void validateApplication(Application application) {
-        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(application, "application");
-        ValidationUtils.invokeValidator(applicationValidator, application, errors);
+    public void validateApplicationAndThrowException(Application application) {
+        BeanPropertyBindingResult errors = validateApplication(application);
         if (errors.hasErrors()) {
             throw new PrismValidationException("Application not completed", errors);
         }
@@ -315,7 +313,7 @@ public class ApplicationService {
         PrismAction actionId = commentDTO.getAction();
 
         if (actionId == PrismAction.APPLICATION_COMPLETE) {
-            validateApplication(application);
+            validateApplicationAndThrowException(application);
         }
 
         Action action = actionService.getById(actionId);
@@ -663,10 +661,23 @@ public class ApplicationService {
         return recommended;
     }
 
-    public void prepopulateApplication(Application application) {
+    private BeanPropertyBindingResult validateApplication(Application application) {
+        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(application, "application");
+        ValidationUtils.invokeValidator(applicationValidator, application, errors);
+        return errors;
+    }
+
+    private void prepopulateApplication(Application application) {
         Application previousApplication = getPreviousApplication(application);
         if (previousApplication != null) {
-            applicationCopyHelper.copyApplication(application, previousApplication);
+            applicationContext.getBean(ApplicationCopyHelper.class).copyApplication(application, previousApplication);
+            BeanPropertyBindingResult errors = validateApplication(application);
+            for (ObjectError error : errors.getAllErrors()) {
+                Object property = ReflectionUtils.getProperty(application, error.getObjectName());
+                if (ApplicationSection.class.isAssignableFrom(property.getClass())) {
+                    ReflectionUtils.setProperty(property, "lastEditedTimestamp", null);
+                }
+            }
         }
     }
 

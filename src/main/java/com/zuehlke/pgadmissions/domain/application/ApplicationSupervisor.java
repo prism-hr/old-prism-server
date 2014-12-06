@@ -9,11 +9,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
 import com.zuehlke.pgadmissions.domain.user.User;
 
 @Entity
-@Table(name = "APPLICATION_SUPERVISOR", uniqueConstraints = {@UniqueConstraint(columnNames = {"application_id", "user_id"})})
-public class ApplicationSupervisor {
+@Table(name = "APPLICATION_SUPERVISOR", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "user_id" }) })
+public class ApplicationSupervisor extends ApplicationSection {
 
     @Id
     @GeneratedValue
@@ -29,6 +32,10 @@ public class ApplicationSupervisor {
 
     @Column(name = "aware_of_application", nullable = false)
     private Boolean acceptedSupervision = false;
+
+    @Column(name = "submitted_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastUpdatedTimestamp;
 
     public Integer getId() {
         return id;
@@ -60,6 +67,16 @@ public class ApplicationSupervisor {
 
     public void setAcceptedSupervision(Boolean acceptedSupervision) {
         this.acceptedSupervision = acceptedSupervision;
+    }
+
+    @Override
+    public DateTime getLastEditedTimestamp() {
+        return lastUpdatedTimestamp;
+    }
+
+    @Override
+    public void setLastEditedTimestamp(DateTime lastEditedTimestamp) {
+        this.lastUpdatedTimestamp = lastEditedTimestamp;
     }
 
     public ApplicationSupervisor withId(Integer id) {

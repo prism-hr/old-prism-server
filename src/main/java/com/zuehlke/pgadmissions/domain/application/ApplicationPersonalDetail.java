@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.base.Joiner;
@@ -25,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.imported.Title;
 
 @Entity
 @Table(name = "APPLICATION_PERSONAL_DETAIL")
-public class ApplicationPersonalDetail {
+public class ApplicationPersonalDetail extends ApplicationSection {
 
     @Id
     @GeneratedValue
@@ -91,6 +92,10 @@ public class ApplicationPersonalDetail {
     @ManyToOne
     @JoinColumn(name = "domicile_id")
     private Domicile domicile;
+
+    @Column(name = "submitted_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastUpdatedTimestamp;
 
     public void setId(Integer id) {
         this.id = id;
@@ -234,6 +239,16 @@ public class ApplicationPersonalDetail {
 
     public void setLanguageQualification(ApplicationLanguageQualification languageQualification) {
         this.languageQualification = languageQualification;
+    }
+
+    @Override
+    public DateTime getLastEditedTimestamp() {
+        return lastUpdatedTimestamp;
+    }
+
+    @Override
+    public void setLastEditedTimestamp(DateTime lastEditedTimestamp) {
+        this.lastUpdatedTimestamp = lastEditedTimestamp;
     }
 
     public ApplicationPersonalDetail withId(Integer id) {

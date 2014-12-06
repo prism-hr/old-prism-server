@@ -11,6 +11,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -18,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationTyp
 
 @Entity
 @Table(name = "APPLICATION_LANGUAGE_QUALIFICATION")
-public class ApplicationLanguageQualification {
+public class ApplicationLanguageQualification extends ApplicationSection {
 
     @Id
     @GeneratedValue
@@ -50,6 +51,10 @@ public class ApplicationLanguageQualification {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "document_id", unique = true)
     private Document document;
+
+    @Column(name = "submitted_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastUpdatedTimestamp;
 
     public Integer getId() {
         return id;
@@ -121,6 +126,16 @@ public class ApplicationLanguageQualification {
 
     public void setDocument(Document document) {
         this.document = document;
+    }
+
+    @Override
+    public DateTime getLastEditedTimestamp() {
+        return lastUpdatedTimestamp;
+    }
+
+    @Override
+    public void setLastEditedTimestamp(DateTime lastEditedTimestamp) {
+        this.lastUpdatedTimestamp = lastEditedTimestamp;
     }
 
     public ApplicationLanguageQualification withType(ImportedLanguageQualificationType type) {

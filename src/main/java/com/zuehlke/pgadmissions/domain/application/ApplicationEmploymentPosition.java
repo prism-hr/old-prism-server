@@ -12,13 +12,14 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.user.Address;
 
 @Entity
 @Table(name = "APPLICATION_EMPLOYMENT_POSITION")
-public class ApplicationEmploymentPosition {
+public class ApplicationEmploymentPosition extends ApplicationSection {
 
     @Id
     @GeneratedValue
@@ -38,19 +39,23 @@ public class ApplicationEmploymentPosition {
     @Column(name = "position", nullable = false)
     private String position;
 
-    @Column(name = "current", nullable = false)
-    private Boolean current;
-
     @Column(name = "remit", nullable = false)
     private String remit;
 
     @Column(name = "start_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate startDate;
+    
+    @Column(name = "current", nullable = false)
+    private Boolean current;
 
     @Column(name = "end_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate endDate;
+    
+    @Column(name = "submitted_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastUpdatedTimestamp;
 
     public void setId(Integer id) {
         this.id = id;
@@ -99,6 +104,14 @@ public class ApplicationEmploymentPosition {
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
+    
+    public Boolean getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(Boolean current) {
+        this.current = current;
+    }
 
     public LocalDate getEndDate() {
         return endDate;
@@ -116,14 +129,16 @@ public class ApplicationEmploymentPosition {
         this.employerAddress = employerAdress;
     }
 
-    public Boolean getCurrent() {
-        return current;
+    @Override
+    public DateTime getLastEditedTimestamp() {
+        return lastUpdatedTimestamp;
     }
 
-    public void setCurrent(Boolean current) {
-        this.current = current;
+    @Override
+    public void setLastEditedTimestamp(DateTime lastEditedTimestamp) {
+        this.lastUpdatedTimestamp = lastEditedTimestamp;
     }
-
+    
     public ApplicationEmploymentPosition withId(Integer id) {
         this.id = id;
         return this;

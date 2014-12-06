@@ -45,14 +45,14 @@ public class ApplicationEmploymentPosition extends ApplicationSection {
     @Column(name = "start_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate startDate;
-    
+
     @Column(name = "current", nullable = false)
     private Boolean current;
 
     @Column(name = "end_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate endDate;
-    
+
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
@@ -104,7 +104,7 @@ public class ApplicationEmploymentPosition extends ApplicationSection {
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
-    
+
     public Boolean getCurrent() {
         return current;
     }
@@ -130,15 +130,15 @@ public class ApplicationEmploymentPosition extends ApplicationSection {
     }
 
     @Override
-    public DateTime getLastEditedTimestamp() {
+    public DateTime getLastUpdatedTimestamp() {
         return lastUpdatedTimestamp;
     }
 
     @Override
-    public void setLastEditedTimestamp(DateTime lastEditedTimestamp) {
-        this.lastUpdatedTimestamp = lastEditedTimestamp;
+    public void setLastEditedTimestamp(DateTime lastUpdatedTimestamp) {
+        this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
-    
+
     public ApplicationEmploymentPosition withId(Integer id) {
         this.id = id;
         return this;

@@ -53,7 +53,7 @@ public class ApplicationReferee extends ApplicationSection {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
-    
+
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
@@ -131,13 +131,13 @@ public class ApplicationReferee extends ApplicationSection {
     }
 
     @Override
-    public DateTime getLastEditedTimestamp() {
+    public DateTime getLastUpdatedTimestamp() {
         return lastUpdatedTimestamp;
     }
 
     @Override
-    public void setLastEditedTimestamp(DateTime lastEditedTimestamp) {
-        this.lastUpdatedTimestamp = lastEditedTimestamp;
+    public void setLastEditedTimestamp(DateTime lastUpdatedTimestamp) {
+        this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
 
     public ApplicationReferee withId(Integer id) {

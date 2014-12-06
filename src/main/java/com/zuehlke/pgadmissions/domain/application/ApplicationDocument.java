@@ -24,7 +24,7 @@ public class ApplicationDocument extends ApplicationSection {
 
     @OneToOne(mappedBy = "document")
     private Application application;
-    
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "personal_statement_id", unique = true)
     private Document personalStatement;
@@ -40,7 +40,7 @@ public class ApplicationDocument extends ApplicationSection {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "covering_letter_id", unique = true)
     private Document coveringLetter;
-    
+
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
@@ -52,7 +52,7 @@ public class ApplicationDocument extends ApplicationSection {
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     public Application getApplication() {
         return application;
     }
@@ -112,15 +112,15 @@ public class ApplicationDocument extends ApplicationSection {
         this.coveringLetter = coveringLetter;
         return this;
     }
-    
+
     @Override
-    public DateTime getLastEditedTimestamp() {
+    public DateTime getLastUpdatedTimestamp() {
         return lastUpdatedTimestamp;
     }
 
     @Override
-    public void setLastEditedTimestamp(DateTime lastEditedTimestamp) {
-        this.lastUpdatedTimestamp = lastEditedTimestamp;
+    public void setLastEditedTimestamp(DateTime lastUpdatedTimestamp) {
+        this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
 
 }

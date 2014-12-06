@@ -70,13 +70,13 @@ public class ApplicationSupervisor extends ApplicationSection {
     }
 
     @Override
-    public DateTime getLastEditedTimestamp() {
+    public DateTime getLastUpdatedTimestamp() {
         return lastUpdatedTimestamp;
     }
 
     @Override
-    public void setLastEditedTimestamp(DateTime lastEditedTimestamp) {
-        this.lastUpdatedTimestamp = lastEditedTimestamp;
+    public void setLastEditedTimestamp(DateTime lastUpdatedTimestamp) {
+        this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
 
     public ApplicationSupervisor withId(Integer id) {

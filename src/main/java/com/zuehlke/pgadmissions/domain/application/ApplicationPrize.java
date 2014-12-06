@@ -29,14 +29,14 @@ public class ApplicationPrize extends ApplicationSection {
 
     @Column(name = "title", nullable = false)
     private String title;
-    
+
     @Column(name = "description", nullable = false)
     private String description;
 
     @Column(name = "award_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate awardDate;
-    
+
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
@@ -88,17 +88,17 @@ public class ApplicationPrize extends ApplicationSection {
     public final void setAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
     }
-    
+
     @Override
-    public DateTime getLastEditedTimestamp() {
+    public DateTime getLastUpdatedTimestamp() {
         return lastUpdatedTimestamp;
     }
 
     @Override
-    public void setLastEditedTimestamp(DateTime lastEditedTimestamp) {
-        this.lastUpdatedTimestamp = lastEditedTimestamp;
+    public void setLastEditedTimestamp(DateTime lastUpdatedTimestamp) {
+        this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
-    
+
     public ApplicationPrize withProvider(String provider) {
         this.provider = provider;
         return this;
@@ -108,19 +108,19 @@ public class ApplicationPrize extends ApplicationSection {
         this.title = title;
         return this;
     }
-    
+
     public ApplicationPrize withDescription(String description) {
         this.description = description;
         return this;
     }
-    
+
     public ApplicationPrize withAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
         return this;
     }
-    
+
     public String getAwardDateDisplay(String dateFormat) {
         return awardDate.toString(dateFormat);
     }
-    
+
 }

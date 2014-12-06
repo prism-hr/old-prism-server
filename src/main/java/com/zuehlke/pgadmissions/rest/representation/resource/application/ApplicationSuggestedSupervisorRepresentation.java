@@ -33,4 +33,5 @@ public class ApplicationSuggestedSupervisorRepresentation extends ApplicationSec
     public void setAcceptedSupervision(Boolean acceptedSupervision) {
         this.acceptedSupervision = acceptedSupervision;
     }
+    
 }

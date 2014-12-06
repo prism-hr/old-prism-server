@@ -57,7 +57,7 @@ public class ApplicationCopyHelper {
         copyApplicationReferences(to, from);
         copyApplicationDocument(to, from);
         copyApplicationAdditionalInformation(to, from);
-        
+
         for (ApplicationSection sectionWithError : sectionsWithErrors) {
             sectionWithError.setLastEditedTimestamp(null);
         }
@@ -94,7 +94,7 @@ public class ApplicationCopyHelper {
                 personalDetail.setVisaRequired(from.getPersonalDetail().getVisaRequired());
                 personalDetail.setPassport(copyPassport(from.getPersonalDetail().getPassport()));
             }
-            
+
             personalDetail.setLastEditedTimestamp(new DateTime());
         }
     }
@@ -247,6 +247,7 @@ public class ApplicationCopyHelper {
                 if (coveringLetterEnabled) {
                     applicationDocument.setCoveringLetter(copyDocument(from.getDocument().getCoveringLetter()));
                 }
+                applicationDocument.setLastEditedTimestamp(new DateTime());
             }
         }
     }
@@ -283,7 +284,7 @@ public class ApplicationCopyHelper {
         if (proofOfAwardEnabled) {
             to.setDocument(copyDocument(from.getDocument()));
         }
-        
+
         to.setLastEditedTimestamp(new DateTime());
     }
 
@@ -322,7 +323,7 @@ public class ApplicationCopyHelper {
         if (proofOfAwardEnabled) {
             to.setDocument(copyDocument(from.getDocument()));
         }
-        
+
         to.setLastEditedTimestamp(new DateTime());
     }
 
@@ -371,7 +372,7 @@ public class ApplicationCopyHelper {
                 PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE_PROOF_OF_AWARD)) {
             to.setDocument(copyDocument(from.getDocument()));
         }
-        
+
         to.setLastEditedTimestamp(new DateTime());
         return to;
     }

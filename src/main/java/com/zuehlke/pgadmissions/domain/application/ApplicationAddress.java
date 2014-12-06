@@ -33,9 +33,10 @@ public class ApplicationAddress extends ApplicationSection {
     @JoinColumn(name = "contact_address_id", nullable = false)
     private Address contactAddress;
 
-    @Column(name = "submitted_timestamp")
+    @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
+
 
     public Integer getId() {
         return id;

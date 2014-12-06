@@ -626,14 +626,6 @@ public class ApplicationService {
         }
     }
 
-    private Application getPreviousApplication(Application application) {
-        Application previousApplication = applicationDAO.getPreviousSubmittedApplication(application);
-        if (previousApplication == null) {
-            previousApplication = applicationDAO.getPreviousUnsubmittedApplication(application);
-        }
-        return previousApplication;
-    }
-
     private LocalDate getRecommendedStartDate(Application application, ProgramStudyOption studyOption, LocalDate baseline) {
         if (studyOption == null) {
             return null;
@@ -668,7 +660,7 @@ public class ApplicationService {
     }
 
     private void prepopulateApplication(Application application) {
-        Application previousApplication = getPreviousApplication(application);
+        Application previousApplication = applicationDAO.getPreviousSubmittedApplication(application);
         if (previousApplication != null) {
             applicationContext.getBean(ApplicationCopyHelper.class).copyApplication(application, previousApplication);
             BeanPropertyBindingResult errors = validateApplication(application);

@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 
-public class ApplicationSuggestedSupervisorRepresentation {
+public class ApplicationSuggestedSupervisorRepresentation extends ApplicationSectionRepresentation {
 
     private Integer id;
 
@@ -33,4 +33,5 @@ public class ApplicationSuggestedSupervisorRepresentation {
     public void setAcceptedSupervision(Boolean acceptedSupervision) {
         this.acceptedSupervision = acceptedSupervision;
     }
+    
 }

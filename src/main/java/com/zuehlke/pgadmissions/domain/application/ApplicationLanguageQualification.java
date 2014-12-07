@@ -27,7 +27,7 @@ public class ApplicationLanguageQualification extends ApplicationSection {
 
     @OneToOne(mappedBy = "languageQualification")
     private ApplicationPersonalDetail personalDetail;
-    
+
     @ManyToOne
     @JoinColumn(name = "language_qualification_type_id")
     private ImportedLanguageQualificationType type;
@@ -66,21 +66,13 @@ public class ApplicationLanguageQualification extends ApplicationSection {
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     public final ApplicationPersonalDetail getPersonalDetail() {
         return personalDetail;
     }
 
     public final void setPersonalDetail(ApplicationPersonalDetail personalDetail) {
         this.personalDetail = personalDetail;
-    }
-
-    public final DateTime getLastUpdatedTimestamp() {
-        return lastUpdatedTimestamp;
-    }
-
-    public final void setLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
-        this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
 
     public ImportedLanguageQualificationType getType() {

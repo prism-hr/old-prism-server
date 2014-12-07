@@ -1,1 +1,0 @@
-ALTER TABLE REVIEW_COMMENT CHANGE COLUMN suitable_candidate old_suitable_candidate VARCHAR(30),  CHANGE COLUMN decline old_decline VARCHAR(30),   CHANGE COLUMN admins_notified old_admins_notified varchar(30);

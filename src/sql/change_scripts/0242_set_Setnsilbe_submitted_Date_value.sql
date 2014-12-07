@@ -1,1 +1,0 @@
-UPDATE APPLICATION_FORM SET submitted_on_timestamp = app_date_time where submitted_on_timestamp = '0000-00-00 00:00:00';

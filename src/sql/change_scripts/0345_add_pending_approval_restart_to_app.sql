@@ -1,1 +1,0 @@
-ALTER TABLE APPLICATION_FORM add column pending_approval_restart tinyint(1);

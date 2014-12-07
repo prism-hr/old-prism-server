@@ -1,1 +1,0 @@
-ALTER TABLE APPLICATION_FORM ADD COLUMN application_number varchar(200),  ADD CONSTRAINT   UNIQUE (application_number);

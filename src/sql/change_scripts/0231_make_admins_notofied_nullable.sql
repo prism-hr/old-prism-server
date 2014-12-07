@@ -1,1 +1,0 @@
-ALTER TABLE REVIEW_COMMENT MODIFY COLUMN admins_notified varchar(10) DEFAULT 'NO';

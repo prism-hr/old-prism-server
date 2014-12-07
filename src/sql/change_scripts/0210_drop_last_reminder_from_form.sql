@@ -1,1 +1,0 @@
-ALTER TABLE APPLICATION_FORM DROP COLUMN last_email_reminder_date;

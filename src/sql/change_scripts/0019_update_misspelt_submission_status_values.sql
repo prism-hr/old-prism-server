@@ -1,1 +1,0 @@
-UPDATE APPLICATION_FORM set submission_status = 'UNSUBMITTED' where submission_status = 'UNSUBMITED';

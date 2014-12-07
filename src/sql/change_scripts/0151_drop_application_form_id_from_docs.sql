@@ -1,1 +1,0 @@
-ALTER TABLE DOCUMENT DROP COLUMN application_form_id;

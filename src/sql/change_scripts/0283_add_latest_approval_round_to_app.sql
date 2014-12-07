@@ -1,1 +1,0 @@
-ALTER TABLE APPLICATION_FORM ADD COLUMN latest_approval_round_id INTEGER UNSIGNED,  ADD CONSTRAINT latest_approval_round_fk FOREIGN KEY (latest_approval_round_id) REFERENCES APPROVAL_ROUND(id);

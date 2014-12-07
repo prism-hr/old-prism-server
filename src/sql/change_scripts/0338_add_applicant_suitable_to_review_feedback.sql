@@ -1,1 +1,0 @@
-ALTER TABLE REVIEW_COMMENT ADD COLUMN applicant_suitable_for_programme tinyint(1);

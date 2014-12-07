@@ -1,1 +1,0 @@
-UPDATE APPLICATION_FORM_QUALIFICATION set institution_country_id = (select id from COUNTRIES where code='GB');

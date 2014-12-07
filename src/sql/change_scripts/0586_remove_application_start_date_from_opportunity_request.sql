@@ -1,3 +1,0 @@
-ALTER TABLE OPPORTUNITY_REQUEST
-DROP COLUMN application_start_date
-;

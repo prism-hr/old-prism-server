@@ -1,1 +1,0 @@
-ALTER TABLE APPLICATION_FORM CHANGE validation_due_date due_date DATE; 

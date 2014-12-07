@@ -75,14 +75,6 @@ public class ApplicationLanguageQualification extends ApplicationSection {
         this.personalDetail = personalDetail;
     }
 
-    public final DateTime getLastUpdatedTimestamp() {
-        return lastUpdatedTimestamp;
-    }
-
-    public final void setLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
-        this.lastUpdatedTimestamp = lastUpdatedTimestamp;
-    }
-
     public ImportedLanguageQualificationType getType() {
         return type;
     }

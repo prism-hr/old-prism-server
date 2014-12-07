@@ -1,1 +1,0 @@
-INSERT INTO APPLICATION_ROLE(authority) values ('INTERVIEWER');

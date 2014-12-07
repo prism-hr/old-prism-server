@@ -1,5 +1,0 @@
-ALTER TABLE APPLICATION_FUNDING
-	ADD COLUMN sponsor VARCHAR(255) AFTER funding_source_id,
-	ADD COLUMN terms VARCHAR(2000) AFTER award_date,
-	ADD INDEX (sponsor)
-;

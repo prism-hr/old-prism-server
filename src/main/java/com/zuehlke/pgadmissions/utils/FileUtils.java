@@ -10,7 +10,7 @@ public class FileUtils {
 
     public static String getContent(String filePath) {
         try {
-            return Joiner.on(java.lang.System.lineSeparator()).join(Resources.readLines(Resources.getResource(filePath), Charsets.UTF_8));
+            return Joiner.on(System.getProperty("line.separator")).join(Resources.readLines(Resources.getResource(filePath), Charsets.UTF_8));
         } catch (IOException e) {
             throw new Error(e);
         }

@@ -23,12 +23,10 @@ public class ApplicationExportServiceMock extends ApplicationExportServiceDevelo
 
     private void verifyDataExportRequest(Application application, SubmitAdmissionsApplicationRequest dataExportRequest) {
         assertNotNull(dataExportRequest);
-        // TODO: assertions for the content of the SOAP request
     }
 
     private void verifyDocumentExportRequest(Application application, byte[] documentExportRequest) {
         assertNotNull(documentExportRequest);
-        // TODO: assertions for the content of the zip folder
     }
     
 }

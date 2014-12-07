@@ -5,7 +5,7 @@
     <groupId>com.zuehlke</groupId>
     <artifactId>prism</artifactId>
     <packaging>war</packaging>
-    <version>4.0.1-SNAPSHOT</version>
+    <version>4.0.1</version>
 
     <properties>
         <spring.version>4.1.1.RELEASE</spring.version>
@@ -23,7 +23,7 @@
 
     <scm>
         <connection>scm:hg:http://mercurial.alumeni.co.uk/mercurial/pgadmissions/</connection>
-        <tag>HEAD</tag>
+        <tag>prism-4.0.1</tag>
     </scm>
 
 	<!-- Repository for Scribe - OAuth Support -->

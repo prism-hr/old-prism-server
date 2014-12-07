@@ -23,6 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.DocumentDAO;
 import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
 
 @Service
 @Transactional
@@ -30,6 +33,9 @@ public class DocumentService {
 
     @Autowired
     private DocumentDAO documentDAO;
+
+    @Autowired
+    private ActionService actionService;
 
     @Autowired
     private EntityService entityService;
@@ -77,6 +83,17 @@ public class DocumentService {
 
     public void deleteOrphanDocuments() {
         documentDAO.deleteOrphanDocuments();
+    }
+
+    public void validateDownload(Document document) {
+        User user = userService.getCurrentUser();
+        Resource resource = document.getResource();
+        if (resource != null) {
+            Action viewEditAction = actionService.getViewEditAction(resource);
+            actionService.validateUserAction(resource, viewEditAction, userService.getCurrentUser());
+        } else if (document.getUserPortrait() != null && !user.isEnabled()) {
+            throw new Error();
+        }
     }
 
     private String getFileName(Part upload) {

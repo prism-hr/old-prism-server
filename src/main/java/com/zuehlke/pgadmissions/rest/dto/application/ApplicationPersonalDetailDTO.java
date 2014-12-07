@@ -53,7 +53,6 @@ public class ApplicationPersonalDetailDTO {
 
     private Integer disability;
 
-//    @NotNull TODO: remove from scope of residence configuration on client
     private Integer domicile;
 
     @Size(min = 1)

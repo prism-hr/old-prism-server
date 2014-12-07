@@ -12,8 +12,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -52,8 +50,6 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 @Service
 @Transactional
 public class ApplicationExportService {
-
-    protected static final Logger LOGGER = LoggerFactory.getLogger(ApplicationExportService.class);
 
     private PropertyLoader propertyLoader;
 
@@ -112,7 +108,6 @@ public class ApplicationExportService {
         OutputStream outputStream = null;
 
         try {
-            LOGGER.info("Exporting data for application: " + applicationCode);
             SubmitAdmissionsApplicationRequest exportRequest = buildDataExportRequest(application);
             AdmissionsApplicationResponse exportResponse = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(exportRequest,
                     new WebServiceMessageCallback() {
@@ -125,13 +120,11 @@ public class ApplicationExportService {
                 throw new ApplicationExportException("No response to export request for application " + applicationCode);
             }
 
-            LOGGER.info("Exporting documents for application: " + applicationCode);
             ReferenceTp exportReference = exportResponse.getReference();
             exportId = exportReference.getApplicationID();
             exportUserId = exportReference.getApplicantID();
             outputStream = sendDocumentExportRequest(application, exportId);
         } catch (Exception e) {
-            LOGGER.error("Error exporting application: " + applicationCode, e);
             exportException = ExceptionUtils.getStackTrace(e);
         } finally {
             IOUtils.closeQuietly(outputStream);

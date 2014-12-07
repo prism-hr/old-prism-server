@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualificat
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 
 @Entity
@@ -166,6 +167,22 @@ public class Document {
     public final ApplicationDocument getApplicationCoveringLetter() {
         return applicationCoveringLetter;
     }
+    
+    public final User getUserPortrait() {
+        return userPortrait;
+    }
+
+    public final void setUserPortrait(User userPortrait) {
+        this.userPortrait = userPortrait;
+    }
+
+    public final Institution getInstitutionLogo() {
+        return institutionLogo;
+    }
+
+    public final void setInstitutionLogo(Institution institutionLogo) {
+        this.institutionLogo = institutionLogo;
+    }
 
     public MultipartFile getFileData() {
         return fileData;
@@ -203,6 +220,26 @@ public class Document {
     public Document withCreatedTimestamp(DateTime dateTime) {
         this.createdTimestamp = dateTime;
         return this;
+    }
+    
+    public Resource getResource() {
+        if (applicationLanguageQualification != null) {
+            return applicationLanguageQualification.getPersonalDetail().getApplication();
+        } else if (applicationQualification != null) {
+            return applicationQualification.getApplication();
+        } else if (applicationFunding != null) {
+            return applicationFunding.getApplication();
+        } else if (applicationPersonalStatement != null) {
+            return applicationPersonalStatement.getApplication();
+        } else if (applicationResearchStatement != null) {
+            return applicationResearchStatement.getApplication();
+        } else if (applicationCoveringLetter != null) {
+            return applicationCoveringLetter.getApplication();
+        } else if (applicationCv != null) {
+            return applicationCv.getApplication();
+        } else {
+            return null;
+        }
     }
     
 }

@@ -1,1 +1,0 @@
-ALTER TABLE APPLICATION_FORM ADD additional_information varchar(5000);

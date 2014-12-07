@@ -1,11 +1,8 @@
 package com.zuehlke.pgadmissions.legacy;
 
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.ProgramService;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,17 +10,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 
 @Controller
 @RequestMapping("api/pgadmissions")
 public class RedirectionController {
 
-    private static Logger log = LoggerFactory.getLogger(RedirectionController.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(RedirectionController.class);
 
     @Value("${application.url}")
     private String applicationUrl;
@@ -65,13 +63,13 @@ public class RedirectionController {
                 Integer programId = programService.getProgramByImportedCode(request.getParameter("program")).getId();
                 redirect = redirectionPrefix + "?program=" + programId;
             } else {
-                log.warn("Unexpected legacy URL: " + request.getRequestURI());
+                LOGGER.warn("Unexpected legacy URL: " + request.getRequestURI());
                 redirect = redirectionPrefix;
             }
 
             response.setHeader("Location", redirect);
         } catch (Exception e) {
-            log.error("Redirection error", e);
+            LOGGER.error("Redirection error", e);
             response.setHeader("Location", redirectionPrefix);
         }
     }

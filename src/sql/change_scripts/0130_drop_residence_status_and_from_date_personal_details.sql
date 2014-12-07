@@ -1,2 +1,0 @@
-ALTER TABLE APPLICATION_FORM_PERSONAL_DETAIL DROP COLUMN residence_status,
-DROP COLUMN residence_from_date;

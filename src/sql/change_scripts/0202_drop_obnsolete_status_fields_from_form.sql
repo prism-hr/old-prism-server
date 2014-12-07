@@ -1,1 +1,0 @@
-ALTER TABLE APPLICATION_FORM DROP COLUMN submission_status, DROP COLUMN approval_status, DROP COLUMN validation_stage;

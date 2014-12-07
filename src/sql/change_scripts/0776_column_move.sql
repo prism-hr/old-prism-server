@@ -1,3 +1,0 @@
-ALTER TABLE ACTION
-	MODIFY COLUMN visible_action INT(1) UNSIGNED NOT NULL AFTER declinable_action
-;

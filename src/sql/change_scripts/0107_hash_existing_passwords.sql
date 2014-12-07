@@ -1,1 +1,0 @@
-update REGISTERED_USER set password = md5(password) where password = 'password';

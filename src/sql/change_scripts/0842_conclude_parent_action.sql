@@ -1,7 +1,0 @@
-ALTER TABLE ACTION
-	ADD COLUMN conclude_parent_action INT(1) UNSIGNED NOT NULL DEFAULT 1 AFTER emphasized_action
-;
-
-ALTER TABLE ACTION
-	MODIFY COLUMN conclude_parent_action INT(1) UNSIGNED NOT NULL
-;

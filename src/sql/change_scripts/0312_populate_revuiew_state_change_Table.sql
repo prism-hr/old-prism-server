@@ -1,1 +1,0 @@
-insert into REVIEW_STATE_CHANGE_EVENT(id) select id from STATE_CHANGE_EVENT where new_status = 'REVIEW';

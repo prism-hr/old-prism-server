@@ -1,3 +1,0 @@
-ALTER TABLE INSTITUTION
-ADD CONSTRAINT UNIQUE (domicile_code, name)
-;

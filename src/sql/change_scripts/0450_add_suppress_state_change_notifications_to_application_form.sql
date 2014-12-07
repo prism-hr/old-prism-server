@@ -1,2 +1,0 @@
-ALTER TABLE APPLICATION_FORM ADD COLUMN suppress_state_change_notifications TINYINT(1) DEFAULT 0
-;

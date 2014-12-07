@@ -1,2 +1,0 @@
-ALTER TABLE APPLICATION_FORM ADD COLUMN is_editable_by_applicant tinyint(1) NOT NULL DEFAULT 1
-;

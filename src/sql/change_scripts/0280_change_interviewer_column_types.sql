@@ -1,1 +1,0 @@
-ALTER TABLE INTERVIEWER DROP COLUMN requires_admin_notification, ADD COLUMN requires_admin_notification tinyint(1) default 0, MODIFY COLUMN admins_notified_on DATETIME;

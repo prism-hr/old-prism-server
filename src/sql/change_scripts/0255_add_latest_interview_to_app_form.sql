@@ -1,1 +1,0 @@
-ALTER TABLE APPLICATION_FORM ADD COLUMN latest_interview_id INTEGER UNSIGNED,  ADD CONSTRAINT latest_interview_fk FOREIGN KEY (latest_interview_id) REFERENCES INTERVIEW(id);

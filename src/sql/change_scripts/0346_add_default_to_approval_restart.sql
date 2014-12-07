@@ -1,1 +1,0 @@
-ALTER TABLE APPLICATION_FORM MODIFY  pending_approval_restart tinyint(1) default 0;

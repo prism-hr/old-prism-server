@@ -1,1 +1,0 @@
-ALTER TABLE REGISTERED_USER ADD COLUMN originally_project_id INTEGER UNSIGNED,  ADD CONSTRAINT project_user_fk FOREIGN KEY (originally_project_id) REFERENCES PROJECT(id);

@@ -1,1 +1,0 @@
-ALTER TABLE SUPERVISOR DROP FOREIGN KEY application_form_programme_detail_supervisor_fk, DROP COLUMN programme_detail_id;

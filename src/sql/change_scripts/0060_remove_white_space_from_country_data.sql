@@ -1,1 +1,0 @@
-update COUNTRIES set name= SUBSTRING(name, 2, length(name))  where name like ' %'; 

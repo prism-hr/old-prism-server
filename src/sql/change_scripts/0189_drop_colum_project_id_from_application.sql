@@ -1,1 +1,0 @@
-ALTER TABLE APPLICATION_FORM DROP COLUMN project_id, DROP FOREIGN KEY application_project_fk;

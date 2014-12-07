@@ -1,1 +1,0 @@
-INSERT INTO VALIDATION_COMMENT(id) select id from STATECHANGE_COMMENT where comment_type = 'VALIDATION';

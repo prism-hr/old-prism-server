@@ -1,1 +1,0 @@
-UPDATE REGISTERED_USER SET firstName="Jane", lastName="Doe", email="test@email.com";

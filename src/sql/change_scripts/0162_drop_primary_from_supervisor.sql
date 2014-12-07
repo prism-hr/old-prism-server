@@ -1,1 +1,0 @@
-ALTER TABLE SUPERVISOR DROP COLUMN primary_supervisor;

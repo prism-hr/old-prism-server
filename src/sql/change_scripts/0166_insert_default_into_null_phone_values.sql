@@ -1,1 +1,0 @@
-update APPLICATION_FORM_PERSONAL_DETAIL set phone = '0123 456 789' where phone is null;

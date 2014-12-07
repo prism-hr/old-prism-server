@@ -1,1 +1,0 @@
-ALTER TABLE EVENT DROP COLUMN new_status;

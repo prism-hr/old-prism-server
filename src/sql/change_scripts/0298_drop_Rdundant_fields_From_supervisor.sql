@@ -1,1 +1,0 @@
-ALTER TABLE SUPERVISOR DROP COLUMN email, DROP COLUMN firstname, DROP COLUMN lastname, DROP COLUMN aware_supervisor;

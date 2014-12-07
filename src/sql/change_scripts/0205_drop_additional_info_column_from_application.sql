@@ -1,2 +1,0 @@
-ALTER TABLE APPLICATION_FORM DROP COLUMN additional_information
-;

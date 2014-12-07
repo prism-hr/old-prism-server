@@ -1,3 +1,0 @@
-ALTER TABLE APPLICATION_PERSONAL_DETAIL
-	CHANGE COLUMN first_language_english first_language_locale INT(1) UNSIGNED NOT NULL
-;

@@ -1,1 +1,0 @@
-ALTER TABLE DOCUMENT DROP COLUMN nationality_id, DROP FOREIGN KEY doc_nat_fk;

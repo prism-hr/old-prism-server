@@ -1,3 +1,0 @@
-ALTER TABLE APPLICATION_FORM
-	DROP COLUMN research_home_page
-;

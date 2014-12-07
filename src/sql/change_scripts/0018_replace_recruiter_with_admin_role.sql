@@ -1,1 +1,0 @@
-UPDATE APPLICATION_ROLE SET authority='ADMINISTRATOR' where authority='RECRUITER';

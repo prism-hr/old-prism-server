@@ -1,1 +1,0 @@
-UPDATE APPLICATION_FORM set application_number = (select concat(PROGRAM.code,  '-', '2012', '-', APPLICATION_FORM.id)  from PROGRAM where APPLICATION_FORM.program_id = PROGRAM.id);

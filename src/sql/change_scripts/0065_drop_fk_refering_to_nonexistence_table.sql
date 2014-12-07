@@ -1,2 +1,0 @@
-ALTER TABLE TELEPHONE DROP FOREIGN KEY tel_referee_fkey;
-

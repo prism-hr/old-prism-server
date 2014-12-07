@@ -1,7 +1,0 @@
-CREATE TABLE EVENT (
-  id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  event_date DATETIME NOT NULL, 	
-  new_status varchar(50),
-  PRIMARY KEY (id)
-)
-ENGINE = InnoDB;

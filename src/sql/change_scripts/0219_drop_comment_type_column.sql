@@ -1,1 +1,0 @@
-ALTER TABLE COMMENT DROP COLUMN comment_type;

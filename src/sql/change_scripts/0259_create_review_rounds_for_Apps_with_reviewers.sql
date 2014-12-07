@@ -1,1 +1,0 @@
-INSERT INTO REVIEW_ROUND (application_form_id) select distinct REVIEWER.application_form_id from REVIEWER;

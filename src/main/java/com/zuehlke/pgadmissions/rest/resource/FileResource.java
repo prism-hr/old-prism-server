@@ -53,7 +53,7 @@ public class FileResource {
     @RequestMapping(value = "/files/{fileId}", method = RequestMethod.GET)
     public void downloadFile(@PathVariable(value = "fileId") Integer documentId, HttpServletResponse response) throws IOException {
         Document document = documentService.getById(documentId);
-        // TODO check permissions for given document
+        documentService.validateDownload(document);
         sendFileToClient(response, document);
     }
 
@@ -72,8 +72,7 @@ public class FileResource {
         response.setHeader("Content-Disposition", "attachment; filename=\"" + document.getFileName() + "\"");
         response.setHeader("File-Name", document.getFileName());
         response.setContentType(document.getContentType());
-        // TODO: reinstate? response.setContentLength(document.getContent().length);
-
+        response.setContentLength(document.getContent().length);
         ServletOutputStream outputStream = response.getOutputStream();
         outputStream.write(document.getContent());
     }

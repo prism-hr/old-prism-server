@@ -23,10 +23,7 @@ public class ApplicationExportServiceDevelopment extends ApplicationExportServic
         Application application = applicationService.getById(applicationId);
         OutputStream outputStream = null;
         try {
-            LOGGER.info("Building data export request for application: " + application.getCode());
             SubmitAdmissionsApplicationRequest dataExportRequest = buildDataExportRequest(application);
-
-            LOGGER.info("Building document export request for application: " + application.getCode());
             outputStream = buildDocumentExportRequest(application, application.getCode(), new ByteArrayOutputStream());
             ByteArrayOutputStream byteOutputStream = (ByteArrayOutputStream) outputStream;
 

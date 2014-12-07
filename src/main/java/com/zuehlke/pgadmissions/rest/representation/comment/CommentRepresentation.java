@@ -72,8 +72,6 @@ public class CommentRepresentation {
 
     private List<AppointmentPreferenceRepresentation> appointmentPreferences;
 
-    private List<CommentPropertyRepresentation> properties;
-
     private List<FileRepresentation> documents;
 
     private List<CommentCustomResponseRepresentation> customResponses;
@@ -324,14 +322,6 @@ public class CommentRepresentation {
 
     public void setDocuments(List<FileRepresentation> documents) {
         this.documents = documents;
-    }
-
-    public List<CommentPropertyRepresentation> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(List<CommentPropertyRepresentation> properties) {
-        this.properties = properties;
     }
 
     public List<CommentCustomResponseRepresentation> getCustomResponses() {

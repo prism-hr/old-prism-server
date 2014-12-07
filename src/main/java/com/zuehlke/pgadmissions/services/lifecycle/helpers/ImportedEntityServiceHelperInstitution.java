@@ -18,8 +18,6 @@ import javax.xml.validation.SchemaFactory;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
@@ -48,8 +46,6 @@ import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ImportedEntityServiceHelperInstitution.class);
-
     @Value("${context.environment}")
     private String contextEnvironment;
     @Autowired
@@ -70,7 +66,6 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
                 System.setProperty("http.maxRedirects", "5");
                 importEntities(importedEntityFeed);
             } catch (DataImportException e) {
-                LOGGER.error("Error importing reference data", e);
                 String errorMessage = e.getMessage();
                 Throwable cause = e.getCause();
                 if (cause != null) {

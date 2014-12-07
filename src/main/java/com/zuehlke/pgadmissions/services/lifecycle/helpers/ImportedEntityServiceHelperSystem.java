@@ -42,7 +42,7 @@ import com.zuehlke.pgadmissions.services.SystemService;
 
 @Component
 public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
-
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(ImportedEntityServiceHelperSystem.class);
 
     private final HashMap<LocalDate, Integer> geocodingRequestTotals = Maps.newHashMap();
@@ -76,13 +76,10 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
         if (lastImportDate == null || lastImportDate.isBefore(baseline)) {
             importInstitutionDomiciles();
             systemService.setLastDataImportDate(baseline);
-        } else {
-            LOGGER.info("Skipped the import from file " + institutionDomicileImportLocation);
         }
     }
 
     private void importInstitutionDomiciles() throws DataImportException {
-        LOGGER.info("Starting the import from file: " + institutionDomicileImportLocation);
         try {
             List<CountryType> unmarshalled = unmarshalInstitutionDomiciles(institutionDomicileImportLocation);
             Map<String, String> countryCurrencies = parseCountryCurrencies(countryCurrencyImportLocation);
@@ -93,7 +90,6 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
     }
 
     private Map<String, String> parseCountryCurrencies(String importLocation) throws IOException, DataImportException {
-        LOGGER.info("Starting the import from file: " + countryCurrencyImportLocation);
         URL fileUrl = new DefaultResourceLoader().getResource(importLocation).getURL();
         CSVReader reader = new CSVReader(new InputStreamReader(fileUrl.openStream(), Charsets.UTF_8));
         try {
@@ -165,7 +161,6 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
                 LocationSearchResponseDTO response = geocodableLocationService.getLocation(address);
                 if (response.getStatus().equals("OK")) {
                     try {
-                        LOGGER.info("Geocoding location: " + address + " - request " + (geocodedCounter + 1) + " of " + googleGeocodeApiBatchLimit + " today");
                         geocodableLocationService.setLocation(location, response);
                         geocodingRequestTotals.put(baseline, geocodedCounter + 1);
                     } catch (Exception e) {
@@ -173,12 +168,7 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
                     }
                 } else if (location.getClass().equals(InstitutionDomicileRegion.class)) {
                     geocodableLocationService.setFallbackLocation((InstitutionDomicileRegion) location);
-                    LOGGER.info("Setting fallback location for: " + address + " - zero results in geocoding request");
-                } else {
-                    LOGGER.info("No geocoding location found for country " + address);
                 }
-            } else {
-                LOGGER.info("Skipped geocoding for location :" + address);
             }
         }
     }

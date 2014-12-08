@@ -18,6 +18,8 @@
                                     </xs:sequence>
                                 </xs:complexType>
                             </xs:element>
+                            <xs:element name="identifier" type="xs:string"/>
+                            <xs:element name="academicYear" type="xs:string"/>
                             <xs:element name="modeOfAttendance">
                                 <xs:complexType>
                                     <xs:sequence>
@@ -26,8 +28,6 @@
                                     </xs:sequence>
                                 </xs:complexType>
                             </xs:element>
-                            <xs:element name="identifier" type="xs:string"/>
-                            <xs:element name="academicYear" type="xs:string"/>
                             <xs:element name="startDate" type="xs:string"/>
                             <xs:element name="endDate" type="xs:string"/>
                         </xs:sequence>

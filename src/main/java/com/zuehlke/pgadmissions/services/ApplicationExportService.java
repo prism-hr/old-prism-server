@@ -81,9 +81,6 @@ public class ApplicationExportService {
     private WebServiceTemplate webServiceTemplate;
 
     @Autowired
-    private EntityService entityService;
-
-    @Autowired
     private CommentService commentService;
 
     @Autowired
@@ -98,7 +95,7 @@ public class ApplicationExportService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public void submitExportRequest(Integer applicationId) throws DeduplicationException, IOException, Exception {
+    public void submitExportRequest(Integer applicationId) throws Exception {
         Application application = applicationService.getById(applicationId);
         String applicationCode = application.getCode();
 

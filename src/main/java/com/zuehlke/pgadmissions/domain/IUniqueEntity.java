@@ -30,7 +30,7 @@ public interface IUniqueEntity {
         }
 
         public ResourceSignature addProperty(String key, Object value) {
-            if (!(key == null || value == null)) {
+            if (key != null) {
                 properties.put(key, value);
             }
             return this;

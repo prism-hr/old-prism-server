@@ -51,4 +51,5 @@ public class NotificationConfigurationRepresentation extends WorkflowConfigurati
     public void setReminderInterval(Integer reminderInterval) {
         this.reminderInterval = reminderInterval;
     }
+    
 }

@@ -173,7 +173,7 @@ public enum PrismAction {
     INSTITUTION_IMPORT_PROGRAM(SYSTEM_INVOCATION, IMPORT_RESOURCE, false, true, false, true, false, false, null, INSTITUTION, PROGRAM, null, null), //
     INSTITUTION_WITHDRAW(USER_INVOCATION, WITHDRAW_RESOURCE, false, true, false, true, false, false, null, INSTITUTION, null, null, null), //
     PROGRAM_COMPLETE_APPROVAL_STAGE(USER_INVOCATION, PROCESS_RESOURCE, false, true, false, true, false, false, null, PROGRAM, null, null, null), //
-    PROGRAM_CONCLUDE(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, true, false, true, false, false, null, PROGRAM, null, null, null), //
+    PROGRAM_CONCLUDE(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, true, false, false, false, false, null, PROGRAM, null, null, null), //
     PROGRAM_VIEW_EDIT(USER_INVOCATION, VIEW_EDIT_RESOURCE, false, false, false, false, false, false, null, PROGRAM, null, null, null), //
     PROGRAM_CORRECT(USER_INVOCATION, PROCESS_RESOURCE, false, true, false, true, false, false, null, PROGRAM, null, null, null), //
     PROGRAM_CREATE_APPLICATION(USER_INVOCATION, CREATE_RESOURCE, false, true, false, true, false, false, null, PROGRAM, APPLICATION, null, null), //

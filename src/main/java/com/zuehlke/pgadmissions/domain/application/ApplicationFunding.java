@@ -30,7 +30,7 @@ public class ApplicationFunding extends ApplicationSection {
     private Application application;
 
     @ManyToOne
-    @JoinColumn(name = "funding_source_id", nullable = false)
+    @JoinColumn(name = "funding_source_id")
     private FundingSource fundingSource;
 
     @Column(name = "sponsor")

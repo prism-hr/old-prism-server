@@ -77,7 +77,12 @@ public class EntityDAO {
         HashMap<String, Object> properties = resourceSignature.getProperties();
 
         for (Map.Entry<String, Object> property : properties.entrySet()) {
-            criteria.add(Restrictions.eq(property.getKey(), property.getValue()));
+            Object value = property.getValue();
+            if (value == null) {
+                criteria.add(Restrictions.isNull(property.getKey()));
+            } else {
+                criteria.add(Restrictions.eq(property.getKey(), property.getValue()));
+            }
         }
 
         HashMultimap<String, Object> exclusions = resourceSignature.getExclusions();

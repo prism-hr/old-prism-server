@@ -229,9 +229,6 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
         Boolean firstLanguageLocale = personalDetail == null ? null : personalDetail.getFirstLanguageLocale();
 
         validateRequiredConstraint(firstLanguageLocale, "personalDetail", "firstLanguageLocale", configuration, errors);
-        if (BooleanUtils.isFalse(firstLanguageLocale)) {
-            validateRequiredConstraint(personalDetail.getLanguageQualification(), "personalDetail", "languageQualification", configuration, errors);
-        }
     }
 
     private void validateResidenceConstraint(Application application, WorkflowPropertyConfiguration configuration, Errors errors) {
@@ -239,9 +236,6 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
         Boolean visaRequired = personalDetail == null ? null : personalDetail.getVisaRequired();
 
         validateRequiredConstraint(visaRequired, "personalDetail", "visaRequired", configuration, errors);
-        if (BooleanUtils.isTrue(visaRequired)) {
-            validateRequiredConstraint(personalDetail.getPassport(), "personalDetail", "passport", configuration, errors);
-        }
     }
 
     private void validateStudyDetailConstraint(Errors errors, Application application, WorkflowPropertyConfiguration configuration) throws Error {

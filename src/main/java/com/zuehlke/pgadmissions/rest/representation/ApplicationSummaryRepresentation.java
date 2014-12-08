@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public class ApplicationSummaryRepresentation {
 
@@ -42,143 +42,143 @@ public class ApplicationSummaryRepresentation {
 
     private String referrer;
 
-    public final String getCreatedDate() {
+    public String getCreatedDate() {
         return createdDate;
     }
 
-    public final void setCreatedDate(String createdDate) {
+    public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
     }
 
-    public final String getSubmittedDate() {
+    public String getSubmittedDate() {
         return submittedDate;
     }
 
-    public final void setSubmittedDate(String submittedDate) {
+    public void setSubmittedDate(String submittedDate) {
         this.submittedDate = submittedDate;
     }
 
-    public final String getClosingDate() {
+    public String getClosingDate() {
         return closingDate;
     }
 
-    public final void setClosingDate(String closingDate) {
+    public void setClosingDate(String closingDate) {
         this.closingDate = closingDate;
     }
 
-    public final String getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public final void setPhone(String Phone) {
+    public void setPhone(String Phone) {
         this.phone = Phone;
     }
 
-    public final String getSkype() {
+    public String getSkype() {
         return skype;
     }
 
-    public final void setSkype(String skype) {
+    public void setSkype(String skype) {
         this.skype = skype;
     }
 
-    public final QualificationSummaryRepresentation getLatestQualification() {
+    public QualificationSummaryRepresentation getLatestQualification() {
         return latestQualification;
     }
 
-    public final void setLatestQualification(QualificationSummaryRepresentation latestQualification) {
+    public void setLatestQualification(QualificationSummaryRepresentation latestQualification) {
         this.latestQualification = latestQualification;
     }
 
-    public final EmploymentPositionSummaryRepresentation getLatestEmploymentPosition() {
+    public EmploymentPositionSummaryRepresentation getLatestEmploymentPosition() {
         return latestEmploymentPosition;
     }
 
-    public final void setLatestEmploymentPosition(EmploymentPositionSummaryRepresentation latestEmploymentPosition) {
+    public void setLatestEmploymentPosition(EmploymentPositionSummaryRepresentation latestEmploymentPosition) {
         this.latestEmploymentPosition = latestEmploymentPosition;
     }
 
-    public final String getPrimaryThemes() {
+    public String getPrimaryThemes() {
         return primaryThemes;
     }
 
-    public final void setPrimaryThemes(String primaryThemes) {
+    public void setPrimaryThemes(String primaryThemes) {
         this.primaryThemes = primaryThemes;
     }
 
-    public final String getSecondaryThemes() {
+    public String getSecondaryThemes() {
         return secondaryThemes;
     }
 
-    public final void setSecondaryThemes(String secondaryThemes) {
+    public void setSecondaryThemes(String secondaryThemes) {
         this.secondaryThemes = secondaryThemes;
     }
 
-    public final List<DocumentSummaryRepresentation> getDocuments() {
+    public List<DocumentSummaryRepresentation> getDocuments() {
         return documents;
     }
 
-    public final void addDocument(DocumentSummaryRepresentation document) {
+    public void addDocument(DocumentSummaryRepresentation document) {
         this.documents.add(document);
     }
 
-    public final Integer getReferenceProvidedCount() {
+    public Integer getReferenceProvidedCount() {
         return referenceProvidedCount;
     }
 
-    public final void setReferenceProvidedCount(Integer referenceProvidedCount) {
+    public void setReferenceProvidedCount(Integer referenceProvidedCount) {
         this.referenceProvidedCount = referenceProvidedCount;
     }
 
-    public final Integer getReferenceDeclinedCount() {
+    public Integer getReferenceDeclinedCount() {
         return referenceDeclinedCount;
     }
 
-    public final void setReferenceDeclinedCount(Integer referenceDeclinedCount) {
+    public void setReferenceDeclinedCount(Integer referenceDeclinedCount) {
         this.referenceDeclinedCount = referenceDeclinedCount;
     }
 
-    public final List<OtherApplicationSummaryRepresentation> getOtherLiveApplications() {
+    public List<OtherApplicationSummaryRepresentation> getOtherLiveApplications() {
         return otherLiveApplications;
     }
 
-    public final void setOtherLiveApplications(List<OtherApplicationSummaryRepresentation> otherLiveApplications) {
+    public void setOtherLiveApplications(List<OtherApplicationSummaryRepresentation> otherLiveApplications) {
         this.otherLiveApplications = otherLiveApplications;
     }
 
-    public final void setDocuments(List<DocumentSummaryRepresentation> documents) {
+    public void setDocuments(List<DocumentSummaryRepresentation> documents) {
         this.documents = documents;
     }
 
-    public final List<ApplicationProcessingRepresentation> getProcessings() {
+    public List<ApplicationProcessingRepresentation> getProcessings() {
         return processings;
     }
 
-    public final void setProcessings(List<ApplicationProcessingRepresentation> processings) {
+    public void setProcessings(List<ApplicationProcessingRepresentation> processings) {
         this.processings = processings;
     }
 
-    public final String getStudyOption() {
+    public String getStudyOption() {
         return studyOption;
     }
 
-    public final void setStudyOption(String studyOption) {
+    public void setStudyOption(String studyOption) {
         this.studyOption = studyOption;
     }
 
-    public final String getReferralSource() {
+    public String getReferralSource() {
         return referralSource;
     }
 
-    public final void setReferralSource(String referralSource) {
+    public void setReferralSource(String referralSource) {
         this.referralSource = referralSource;
     }
 
-    public final String getReferrer() {
+    public String getReferrer() {
         return referrer;
     }
 
-    public final void setReferrer(String referrer) {
+    public void setReferrer(String referrer) {
         this.referrer = referrer;
     }
 
@@ -246,51 +246,51 @@ public class ApplicationSummaryRepresentation {
 
         private String endDate;
 
-        public final String getTitle() {
+        public String getTitle() {
             return title;
         }
 
-        public final void setTitle(String title) {
+        public void setTitle(String title) {
             this.title = title;
         }
 
-        public final String getSubject() {
+        public String getSubject() {
             return subject;
         }
 
-        public final void setSubject(String subject) {
+        public void setSubject(String subject) {
             this.subject = subject;
         }
 
-        public final String getGrade() {
+        public String getGrade() {
             return grade;
         }
 
-        public final void setGrade(String grade) {
+        public void setGrade(String grade) {
             this.grade = grade;
         }
 
-        public final String getInstitution() {
+        public String getInstitution() {
             return institution;
         }
 
-        public final void setInstitution(String institution) {
+        public void setInstitution(String institution) {
             this.institution = institution;
         }
 
-        public final String getStartDate() {
+        public String getStartDate() {
             return startDate;
         }
 
-        public final void setStartDate(String startDate) {
+        public void setStartDate(String startDate) {
             this.startDate = startDate;
         }
 
-        public final String getEndDate() {
+        public String getEndDate() {
             return endDate;
         }
 
-        public final void setEndDate(String endDate) {
+        public void setEndDate(String endDate) {
             this.endDate = endDate;
         }
 
@@ -336,35 +336,35 @@ public class ApplicationSummaryRepresentation {
 
         private String endDate;
 
-        public final String getPosition() {
+        public String getPosition() {
             return position;
         }
 
-        public final void setPosition(String position) {
+        public void setPosition(String position) {
             this.position = position;
         }
 
-        public final String getEmployer() {
+        public String getEmployer() {
             return employer;
         }
 
-        public final void setEmployer(String employer) {
+        public void setEmployer(String employer) {
             this.employer = employer;
         }
 
-        public final String getStartDate() {
+        public String getStartDate() {
             return startDate;
         }
 
-        public final void setStartDate(String startDate) {
+        public void setStartDate(String startDate) {
             this.startDate = startDate;
         }
 
-        public final String getEndDate() {
+        public String getEndDate() {
             return endDate;
         }
 
-        public final void setEndDate(String endDate) {
+        public void setEndDate(String endDate) {
             this.endDate = endDate;
         }
 
@@ -396,19 +396,19 @@ public class ApplicationSummaryRepresentation {
 
         private String label;
 
-        public final Integer getId() {
+        public Integer getId() {
             return id;
         }
 
-        public final void setId(Integer id) {
+        public void setId(Integer id) {
             this.id = id;
         }
 
-        public final String getLabel() {
+        public String getLabel() {
             return label;
         }
 
-        public final void setLabel(String label) {
+        public void setLabel(String label) {
             this.label = label;
         }
 
@@ -432,27 +432,27 @@ public class ApplicationSummaryRepresentation {
 
         private BigDecimal instanceDurationAverage;
 
-        public final PrismStateGroup getStateGroup() {
+        public PrismStateGroup getStateGroup() {
             return stateGroup;
         }
 
-        public final void setStateGroup(PrismStateGroup stateGroup) {
+        public void setStateGroup(PrismStateGroup stateGroup) {
             this.stateGroup = stateGroup;
         }
 
-        public final Integer getInstanceTotal() {
+        public Integer getInstanceTotal() {
             return instanceTotal;
         }
 
-        public final void setInstanceTotal(Integer instanceTotal) {
+        public void setInstanceTotal(Integer instanceTotal) {
             this.instanceTotal = instanceTotal;
         }
 
-        public final BigDecimal getInstanceDurationAverage() {
+        public BigDecimal getInstanceDurationAverage() {
             return instanceDurationAverage;
         }
 
-        public final void setInstanceDurationAverage(BigDecimal instanceDurationAverage) {
+        public void setInstanceDurationAverage(BigDecimal instanceDurationAverage) {
             this.instanceDurationAverage = instanceDurationAverage;
         }
 
@@ -481,57 +481,57 @@ public class ApplicationSummaryRepresentation {
 
         private String project;
 
-        private BigDecimal ratingCount;
+        private Integer ratingCount;
 
         private BigDecimal ratingAverage;
 
         private PrismStateGroup stateGroup;
 
-        public final Integer getId() {
+        public Integer getId() {
             return id;
         }
 
-        public final void setId(Integer id) {
+        public void setId(Integer id) {
             this.id = id;
         }
 
-        public final String getProgram() {
+        public String getProgram() {
             return program;
         }
 
-        public final void setProgram(String program) {
+        public void setProgram(String program) {
             this.program = program;
         }
 
-        public final String getProject() {
+        public String getProject() {
             return project;
         }
 
-        public final void setProject(String project) {
+        public void setProject(String project) {
             this.project = project;
         }
 
-        public final BigDecimal getRatingCount() {
+        public Integer getRatingCount() {
             return ratingCount;
         }
 
-        public final void setRatingCount(BigDecimal ratingCount) {
+        public void setRatingCount(Integer ratingCount) {
             this.ratingCount = ratingCount;
         }
 
-        public final BigDecimal getRatingAverage() {
+        public BigDecimal getRatingAverage() {
             return ratingAverage;
         }
 
-        public final void setRatingAverage(BigDecimal ratingAverage) {
+        public void setRatingAverage(BigDecimal ratingAverage) {
             this.ratingAverage = ratingAverage;
         }
 
-        public final PrismStateGroup getStateGroup() {
+        public PrismStateGroup getStateGroup() {
             return stateGroup;
         }
 
-        public final void setStateGroup(PrismStateGroup stateGroup) {
+        public void setStateGroup(PrismStateGroup stateGroup) {
             this.stateGroup = stateGroup;
         }
 

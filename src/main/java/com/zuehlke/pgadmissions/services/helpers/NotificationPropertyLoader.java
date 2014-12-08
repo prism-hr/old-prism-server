@@ -318,7 +318,7 @@ public class NotificationPropertyLoader {
     }
 
     public String getSystemUserNewPassword() throws IOException, TemplateException {
-        return buildRedirectionControl(SYSTEM_NEW_PASSWORD);
+        return templateModelDTO.getNewPassword();
     }
 
     public String getSystemUserAccountManagement() throws IOException, TemplateException {

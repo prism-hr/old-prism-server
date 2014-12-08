@@ -63,9 +63,6 @@ public class MailSender {
     @Value("${email.address.from}")
     private String emailAddressFrom;
 
-    @Value("${email.address.to}")
-    private String emailAddressTo;
-
     @Value("${email.location}")
     private String emailTemplateLocation;
 

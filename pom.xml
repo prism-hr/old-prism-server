@@ -1,12 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <name>UCL Postgraduate Admissions</name>
     <groupId>com.zuehlke</groupId>
     <artifactId>prism</artifactId>
     <packaging>war</packaging>
-    <version>3.1.0-SNAPSHOT</version>
+    <version>4.0.2-SNAPSHOT</version>
 
     <properties>
         <spring.version>4.1.1.RELEASE</spring.version>
@@ -575,7 +574,7 @@
                     <formats>
                         <format>html</format>
                     </formats>
-                    <check/>
+                    <check />
                 </configuration>
             </plugin>
 
@@ -617,9 +616,8 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <delete file="${project.build.outputDirectory}/environment.properties"/>
-                                        <copy file="src/environments/environment.sit.properties"
-                                              tofile="${project.build.outputDirectory}/environment.properties"/>
+                                        <delete file="${project.build.outputDirectory}/environment.properties" />
+                                        <copy file="src/environments/environment.sit.properties" tofile="${project.build.outputDirectory}/environment.properties" />
                                     </tasks>
                                 </configuration>
                             </execution>
@@ -647,9 +645,8 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <delete file="${project.build.outputDirectory}/environment.properties"/>
-                                        <copy file="src/environments/environment.uat.properties"
-                                              tofile="${project.build.outputDirectory}/environment.properties"/>
+                                        <delete file="${project.build.outputDirectory}/environment.properties" />
+                                        <copy file="src/environments/environment.uat.properties" tofile="${project.build.outputDirectory}/environment.properties" />
                                     </tasks>
                                 </configuration>
                             </execution>
@@ -677,9 +674,8 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <delete file="${project.build.outputDirectory}/environment.properties"/>
-                                        <copy file="src/environments/environment.ucl.prod.properties"
-                                              tofile="${project.build.outputDirectory}/environment.properties"/>
+                                        <delete file="${project.build.outputDirectory}/environment.properties" />
+                                        <copy file="src/environments/environment.ucl.prod.properties" tofile="${project.build.outputDirectory}/environment.properties" />
                                     </tasks>
                                 </configuration>
                             </execution>

@@ -111,7 +111,7 @@ public class ResourceResource {
 
     @Autowired
     private ObjectMapper objectMapper;
-    
+
     @RequestMapping(method = RequestMethod.POST)
     public ActionOutcomeRepresentation createResource(@RequestBody ActionDTO actionDTO, @RequestHeader(value = "referer", required = false) String referrer)
             throws Exception {
@@ -131,7 +131,7 @@ public class ResourceResource {
     @Transactional
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
     public AbstractResourceRepresentation getResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, AccessDeniedException {
+            throws Exception {
         User currentUser = userService.getCurrentUser();
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         if (resource == null) {

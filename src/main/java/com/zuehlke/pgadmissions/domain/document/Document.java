@@ -1,21 +1,5 @@
 package com.zuehlke.pgadmissions.domain.document;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import org.bouncycastle.util.Arrays;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
@@ -24,6 +8,12 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
+import org.bouncycastle.util.Arrays;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "DOCUMENT")
@@ -33,9 +23,13 @@ public class Document {
     @GeneratedValue
     private Integer id;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category")
+    private FileCategory category;
+
     @Column(name = "file_name", nullable = false)
     private String fileName;
-    
+
     @Lob
     @Column(name = "file_content", nullable = false)
     @Type(type = "binary")
@@ -43,43 +37,43 @@ public class Document {
 
     @Column(name = "content_type", nullable = false)
     private String contentType;
-    
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    
+
     @ManyToOne
     @JoinColumn(name = "comment_id", insertable = false, updatable = false)
     private Comment comment;
-    
+
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
-    
+
     @OneToOne(mappedBy = "document")
     private ApplicationLanguageQualification applicationLanguageQualification;
-    
+
     @OneToOne(mappedBy = "document")
     private ApplicationQualification applicationQualification;
-    
+
     @OneToOne(mappedBy = "document")
     private ApplicationFunding applicationFunding;
-    
+
     @OneToOne(mappedBy = "personalStatement")
     private ApplicationDocument applicationPersonalStatement;
-    
+
     @OneToOne(mappedBy = "researchStatement")
     private ApplicationDocument applicationResearchStatement;
 
     @OneToOne(mappedBy = "coveringLetter")
     private ApplicationDocument applicationCoveringLetter;
-    
+
     @OneToOne(mappedBy = "cv")
     private ApplicationDocument applicationCv;
-    
+
     @OneToOne(mappedBy = "portraitDocument")
     private User userPortrait;
-    
+
     @OneToOne(mappedBy = "logoDocument")
     private Institution institutionLogo;
 
@@ -93,6 +87,7 @@ public class Document {
     public Integer getId() {
         return id;
     }
+
 
     public String getFileName() {
         return fileName;
@@ -120,11 +115,11 @@ public class Document {
         this.contentType = contentType;
     }
 
-    public final User getUser() {
+    public User getUser() {
         return user;
     }
 
-    public final void setUser(User user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
@@ -136,51 +131,51 @@ public class Document {
         this.createdTimestamp = createdTimestamp;
     }
 
-    public final Comment getComment() {
+    public Comment getComment() {
         return comment;
     }
 
-    public final ApplicationLanguageQualification getApplicationLanguageQualification() {
+    public ApplicationLanguageQualification getApplicationLanguageQualification() {
         return applicationLanguageQualification;
     }
 
-    public final ApplicationQualification getApplicationQualification() {
+    public ApplicationQualification getApplicationQualification() {
         return applicationQualification;
     }
 
-    public final ApplicationFunding getApplicationFunding() {
+    public ApplicationFunding getApplicationFunding() {
         return applicationFunding;
     }
 
-    public final ApplicationDocument getApplicationPersonalStatement() {
+    public ApplicationDocument getApplicationPersonalStatement() {
         return applicationPersonalStatement;
     }
-    
-    public final ApplicationDocument getApplicationResearchStatement() {
+
+    public ApplicationDocument getApplicationResearchStatement() {
         return applicationResearchStatement;
     }
-    
-    public final ApplicationDocument getApplicationCv() {
+
+    public ApplicationDocument getApplicationCv() {
         return applicationCv;
     }
 
-    public final ApplicationDocument getApplicationCoveringLetter() {
+    public ApplicationDocument getApplicationCoveringLetter() {
         return applicationCoveringLetter;
     }
-    
-    public final User getUserPortrait() {
+
+    public User getUserPortrait() {
         return userPortrait;
     }
 
-    public final void setUserPortrait(User userPortrait) {
+    public void setUserPortrait(User userPortrait) {
         this.userPortrait = userPortrait;
     }
 
-    public final Institution getInstitutionLogo() {
+    public Institution getInstitutionLogo() {
         return institutionLogo;
     }
 
-    public final void setInstitutionLogo(Institution institutionLogo) {
+    public void setInstitutionLogo(Institution institutionLogo) {
         this.institutionLogo = institutionLogo;
     }
 
@@ -194,6 +189,11 @@ public class Document {
 
     public Document withId(Integer id) {
         this.id = id;
+        return this;
+    }
+
+    public Document withCategory(final FileCategory category) {
+        this.category = category;
         return this;
     }
 
@@ -211,17 +211,17 @@ public class Document {
         this.contentType = contentType;
         return this;
     }
-    
+
     public Document withUser(User user) {
         this.user = user;
         return this;
     }
-    
+
     public Document withCreatedTimestamp(DateTime dateTime) {
         this.createdTimestamp = dateTime;
         return this;
     }
-    
+
     public Resource getResource() {
         if (applicationLanguageQualification != null) {
             return applicationLanguageQualification.getPersonalDetail().getApplication();
@@ -241,5 +241,5 @@ public class Document {
             return null;
         }
     }
-    
+
 }

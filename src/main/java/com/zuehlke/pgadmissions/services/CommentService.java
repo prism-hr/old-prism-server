@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import com.zuehlke.pgadmissions.domain.document.FileCategory;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -101,6 +102,9 @@ public class CommentService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private DocumentService documentService;
 
     @Autowired
     private Mapper mapper;
@@ -365,7 +369,7 @@ public class CommentService {
         comment.getDocuments().clear();
 
         for (FileDTO fileDTO : commentDTO.getDocuments()) {
-            Document document = entityService.getById(Document.class, fileDTO.getId());
+            Document document = documentService.getById(fileDTO.getId(), FileCategory.DOCUMENT);
             comment.getDocuments().add(document);
         }
     }
@@ -596,7 +600,7 @@ public class CommentService {
 
         appendCommentAssignedUsers(comment, representation, creatableRoles);
         representation.setEmphasizedAction(action.getEmphasizedAction());
-        
+
         return representation;
     }
 
@@ -693,7 +697,7 @@ public class CommentService {
 
     private void appendDocuments(Comment comment, CommentDTO commentDTO) {
         for (FileDTO fileDTO : commentDTO.getDocuments()) {
-            Document document = entityService.getById(Document.class, fileDTO.getId());
+            Document document = documentService.getById(fileDTO.getId(), FileCategory.DOCUMENT);
             comment.getDocuments().add(document);
         }
     }

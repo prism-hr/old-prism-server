@@ -8,6 +8,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
+import com.zuehlke.pgadmissions.domain.document.FileCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,16 +44,23 @@ public class FileResource {
     private ApplicationDownloadService applicationDownloadService;
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/files", method = RequestMethod.POST)
-    public Map<String, Object> uploadFile(@RequestParam(value = "file-data") Part uploadStream) throws IOException {
-        Document document = documentService.create(uploadStream);
+    @RequestMapping(value = "/documents", method = RequestMethod.POST)
+    public Map<String, Object> uploadDocument(@RequestParam(value = "file-data") Part uploadStream) throws IOException {
+        Document document = documentService.create(FileCategory.DOCUMENT, uploadStream);
         return ImmutableMap.of("id", (Object) document.getId());
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/files/{fileId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/images", method = RequestMethod.POST)
+    public Map<String, Object> uploadImage(@RequestParam(value = "file-data") Part uploadStream) throws IOException {
+        Document document = documentService.create(FileCategory.IMAGE, uploadStream);
+        return ImmutableMap.of("id", (Object) document.getId());
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/documents/{fileId}", method = RequestMethod.GET)
     public void downloadFile(@PathVariable(value = "fileId") Integer documentId, HttpServletResponse response) throws IOException {
-        Document document = documentService.getById(documentId);
+        Document document = documentService.getById(documentId, FileCategory.DOCUMENT);
         documentService.validateDownload(document);
         sendFileToClient(response, document);
     }
@@ -60,10 +68,7 @@ public class FileResource {
     @PreAuthorize("permitAll")
     @RequestMapping(value = "/images/{fileId}", method = RequestMethod.GET)
     public void downloadImage(@PathVariable(value = "fileId") Integer fileId, HttpServletResponse response) throws IOException {
-        Document file = documentService.getById(fileId);
-        if(!file.getContentType().startsWith("image/")){
-            throw new ResourceNotFoundException("Requested file is not a image");
-        }
+        Document file = documentService.getById(fileId, FileCategory.IMAGE);
 
         sendFileToClient(response, file);
     }

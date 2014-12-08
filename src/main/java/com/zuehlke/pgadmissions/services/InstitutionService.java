@@ -8,6 +8,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.I
 import java.io.IOException;
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.document.FileCategory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -193,13 +194,13 @@ public class InstitutionService {
             return;
         } else if (logoDocumentDTO == null) {
             try {
-                institution.setLogoDocument(documentService.getExternalDocument(logoDocumentLink));
+                institution.setLogoDocument(documentService.getExternalFile(FileCategory.IMAGE, logoDocumentLink));
             } catch (IOException e) {
                 Action action = actionService.getById(actionId);
                 actionService.throwWorkflowPermissionException(institution, action);
             }
         } else {
-            Document image = documentService.getById(logoDocumentDTO.getId());
+            Document image = documentService.getById(logoDocumentDTO.getId(), FileCategory.IMAGE);
             Preconditions.checkState(image.getContentType().equals("image/jpeg"), "Unexpected image type: " + image.getContentType());
             institution.setLogoDocument(image);
         }

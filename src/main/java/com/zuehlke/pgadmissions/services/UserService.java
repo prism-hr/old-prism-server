@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
+import com.zuehlke.pgadmissions.domain.document.FileCategory;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
@@ -66,6 +67,9 @@ public class UserService {
 
     @Autowired
     private ResourceService resourceService;
+
+    @Autowired
+    private DocumentService documentService;
 
     @Value("${system.user.email}")
     private String systemUserEmail;
@@ -146,7 +150,7 @@ public class UserService {
 
         Document portraitDocument = null;
         if (userDTO.getPortraitDocument() != null) {
-            portraitDocument = entityService.getById(Document.class, userDTO.getPortraitDocument());
+            portraitDocument = documentService.getById(userDTO.getPortraitDocument(), FileCategory.IMAGE);
         }
         user.setPortraitDocument(portraitDocument);
         user.setLinkedinUri(userDTO.getLinkedinUri());

@@ -247,5 +247,9 @@ public class ApplicationQualification extends ApplicationSection {
     public String getTypeDisplay() {
         return type == null ? null : type.getName();
     }
+    
+    public String getInstitutionDisplay() {
+        return institution == null ? null : institution.getName();
+    }
 
 }

@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.EMAIL_RESOURCE_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.EXPORT_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.INITIALISE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.MANAGE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PROCESS_RESOURCE;
@@ -169,7 +170,7 @@ public enum PrismAction {
     INSTITUTION_CREATE_PROGRAM(USER_INVOCATION, CREATE_RESOURCE, false, true, false, true, false, false, null, INSTITUTION, PROGRAM, null, null), //
     INSTITUTION_EMAIL_CREATOR(USER_INVOCATION, EMAIL_RESOURCE_CREATOR, false, false, false, false, false, false, null, INSTITUTION, null, null, null), //
     INSTITUTION_ESCALATE(SYSTEM_INVOCATION, ESCALATE_RESOURCE, false, false, false, false, false, false, null, INSTITUTION, null, null, null), //
-    INSTITUTION_IMPORT_PROGRAM(SYSTEM_INVOCATION, CREATE_RESOURCE, false, true, false, true, false, false, null, INSTITUTION, PROGRAM, null, null), //
+    INSTITUTION_IMPORT_PROGRAM(SYSTEM_INVOCATION, IMPORT_RESOURCE, false, true, false, true, false, false, null, INSTITUTION, PROGRAM, null, null), //
     INSTITUTION_WITHDRAW(USER_INVOCATION, WITHDRAW_RESOURCE, false, true, false, true, false, false, null, INSTITUTION, null, null, null), //
     PROGRAM_COMPLETE_APPROVAL_STAGE(USER_INVOCATION, PROCESS_RESOURCE, false, true, false, true, false, false, null, PROGRAM, null, null, null), //
     PROGRAM_CONCLUDE(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, true, false, true, false, false, null, PROGRAM, null, null, null), //

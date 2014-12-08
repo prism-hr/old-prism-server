@@ -312,7 +312,8 @@ public class ResourceService {
     }
 
     public Resource getOperativeResource(Resource resource, Action action) {
-        return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? resource.getParentResource() : resource;
+        return Arrays.asList(PrismActionCategory.CREATE_RESOURCE, PrismActionCategory.IMPORT_RESOURCE).contains(action.getActionCategory()) ? resource
+                .getParentResource() : resource;
     }
 
     public <T extends Resource> List<Integer> getResourcesToEscalate(Class<T> resourceClass, PrismAction actionId, LocalDate baseline) {

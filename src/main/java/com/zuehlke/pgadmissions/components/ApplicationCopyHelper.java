@@ -348,6 +348,7 @@ public class ApplicationCopyHelper {
         Document to = new Document();
         to.setContentType(from.getContentType());
         to.setFileName(from.getFileName());
+        to.setCategory(from.getCategory());
         to.setContent(from.getContent());
         to.setUser(from.getUser());
         to.setCreatedTimestamp(new DateTime());

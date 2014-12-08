@@ -87,7 +87,14 @@ public class Document {
     public Integer getId() {
         return id;
     }
+    
+    public final FileCategory getCategory() {
+        return category;
+    }
 
+    public final void setCategory(FileCategory category) {
+        this.category = category;
+    }
 
     public String getFileName() {
         return fileName;

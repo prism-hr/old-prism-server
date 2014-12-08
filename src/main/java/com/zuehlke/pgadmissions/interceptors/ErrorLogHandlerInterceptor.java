@@ -30,7 +30,7 @@ public class ErrorLogHandlerInterceptor extends HandlerInterceptorAdapter {
 
             User currentUser = userService.getCurrentUser();
 
-            log.error(DiagnosticInfoPrintUtils.getRequestErrorLogMessage(request, currentUser), ex);
+            log.error(DiagnosticInfoPrintUtils.getRequestErrorLogMessage(request, currentUser) + ", Exception: " + ex);
 
         }
     }

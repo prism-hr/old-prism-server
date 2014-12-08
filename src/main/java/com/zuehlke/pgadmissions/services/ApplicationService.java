@@ -407,7 +407,7 @@ public class ApplicationService {
         if (latestQualification != null) {
             summary.setLatestQualification(new QualificationSummaryRepresentation().withTitle(latestQualification.getTitle())
                     .withSubject(latestQualification.getSubject()).withGrade(latestQualification.getGrade())
-                    .withInstitution(latestQualification.getInstitution().getName()).withStartDate(latestQualification.getStartDateDisplay(dateFormat))
+                    .withInstitution(latestQualification.getInstitutionDisplay()).withStartDate(latestQualification.getStartDateDisplay(dateFormat))
                     .withEndDate(latestQualification.getAwardDateDisplay(dateFormat)));
         }
 

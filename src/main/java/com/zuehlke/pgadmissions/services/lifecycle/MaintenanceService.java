@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.services.lifecycle;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +19,8 @@ import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityService
 
 @Service
 public class MaintenanceService {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(MaintenanceService.class);
     
     @Value("${maintenance.run}")
     private Boolean maintenanceRun;
@@ -63,6 +67,7 @@ public class MaintenanceService {
         } catch (BeansException e) {
             throw new Error(e);
         } catch (Exception e) {
+            LOGGER.error("Error performing maintenance task", e);
         }
     }
 

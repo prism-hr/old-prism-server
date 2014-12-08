@@ -45,7 +45,7 @@ public class ImportedLanguageQualificationType extends ImportedEntity {
     @ManyToOne
     @JoinColumn(name = "root_id")
     private ImportedLanguageQualificationType root;
-    
+
     @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
@@ -223,7 +223,7 @@ public class ImportedLanguageQualificationType extends ImportedEntity {
         this.root = root;
         return this;
     }
-    
+
     public ImportedLanguageQualificationType withInstitution(Institution institution) {
         this.institution = institution;
         return this;
@@ -288,10 +288,14 @@ public class ImportedLanguageQualificationType extends ImportedEntity {
         this.maximumListeningScore = maximumListeningScore;
         return this;
     }
-    
+
     public ImportedLanguageQualificationType withEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
+    }
+
+    public ResourceSignature getResourceSignature() {
+        return new ResourceSignature().addProperty("institution", getInstitution()).addProperty("code", getCode());
     }
 
 }

@@ -174,7 +174,7 @@ public class ImportedInstitution extends ImportedEntity {
     
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("domicile", domicile);
+        return new ResourceSignature().addProperty("institution", getInstitution()).addProperty("code", getCode());
     }
 
 }

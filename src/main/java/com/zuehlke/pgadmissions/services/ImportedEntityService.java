@@ -32,10 +32,10 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.imported.ProgramType;
+import com.zuehlke.pgadmissions.domain.imported.SimpleImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicileRegion;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
@@ -135,7 +135,7 @@ public class ImportedEntityService {
             StudyOption studyOption = mergeStudyOption(institution, occurrence.getModeOfAttendance());
 
             LocalDate transientStartDate = dateFormatter.parseLocalDate(occurrence.getStartDate()).minusYears(1);
-            LocalDate transientCloseDate = dateFormatter.parseLocalDate(occurrence.getEndDate()).minusYears(1);
+            LocalDate transientCloseDate = dateFormatter.parseLocalDate(occurrence.getEndDate());
 
             ProgramStudyOption transientProgramStudyOption = new ProgramStudyOption().withProgram(persistentProgram).withStudyOption(studyOption)
                     .withApplicationStartDate(transientStartDate).withApplicationCloseDate(transientCloseDate)
@@ -207,21 +207,21 @@ public class ImportedEntityService {
 
     public <T extends ImportedEntity> void mergeImportedEntity(Class<T> entityClass, Institution institution, Object entityDefinition)
             throws InstantiationException, IllegalAccessException, DeduplicationException {
-        ImportedEntity transientEntity = entityClass.newInstance();
+        SimpleImportedEntity transientEntity = (SimpleImportedEntity) entityClass.newInstance();
         transientEntity.setInstitution(institution);
+        transientEntity.setType(PrismImportedEntity.getTypeByClass(entityClass));
         transientEntity.setCode((String) ReflectionUtils.getProperty(entityDefinition, "code"));
-       
+
         String name = (String) ReflectionUtils.getProperty(entityDefinition, "name");
         String nameClean = name.replace("\n", "").replace("\r", "").replace("\t", "");
         transientEntity.setName(nameClean);
-        
+
         transientEntity.setEnabled(true);
         entityService.createOrUpdate(transientEntity);
     }
 
     public void disableAllInstitutionDomiciles() {
         importedEntityDAO.disableAllEntities(InstitutionDomicile.class);
-        importedEntityDAO.disableAllEntities(InstitutionDomicileRegion.class);
     }
 
     public void setLastImportedTimestamp(ImportedEntityFeed detachedImportedEntityFeed) {
@@ -270,28 +270,6 @@ public class ImportedEntityService {
                 .withEnabled(true);
         InstitutionDomicile persistentInstitutionDomicile = geocodableLocationService.getOrCreate(transientInstitutionDomicile);
         return new InstitutionDomicileImportDTO().withDomicile(persistentInstitutionDomicile).withSubdivisions(subdivisions).withCategories(categories);
-    }
-
-    public InstitutionDomicileRegion mergeInstitutionDomicileRegion(String domicileId, SubdivisionType subdivision, Map<Short, String> categories)
-            throws DeduplicationException {
-        InstitutionDomicile domicile = entityService.getById(InstitutionDomicile.class, domicileId);
-        String name = subdivision.getSubdivisionLocale().get(0).getSubdivisionLocaleName();
-        InstitutionDomicileRegion transientRegion = new InstitutionDomicileRegion().withId(subdivision.getSubdivisionCode().getValue()).withEnabled(true)
-                .withDomicile(domicile).withParentRegion(null).withNestedPath(truncateString(name, 20)).withNestedLevel(0).withName(name)
-                .withRegionType(categories.get(subdivision.getCategoryId()));
-        return geocodableLocationService.getOrCreate(transientRegion);
-    }
-
-    public InstitutionDomicileRegion mergeNestedInstitutionDomicileRegion(String domicileId, String regionId, SubdivisionType subdivision,
-            Map<Short, String> categories) throws DeduplicationException {
-        InstitutionDomicile domicile = entityService.getById(InstitutionDomicile.class, domicileId);
-        InstitutionDomicileRegion region = entityService.getById(InstitutionDomicileRegion.class, regionId);
-        String name = subdivision.getSubdivisionLocale().get(0).getSubdivisionLocaleName();
-        InstitutionDomicileRegion transientNestedRegion = new InstitutionDomicileRegion().withId(subdivision.getSubdivisionCode().getValue()).withEnabled(true)
-                .withDomicile(domicile).withParentRegion(region).withNestedPath(region.getNestedPath() + "." + truncateString(name, 20))
-                .withNestedLevel(region.getNestedLevel() + 1).withName(name).withRegionType(categories.get(subdivision.getCategoryId()));
-        return geocodableLocationService.getOrCreate(transientNestedRegion);
-
     }
 
     public List<Integer> getPendingImportEntityFeeds(Integer institutionId) {
@@ -365,6 +343,7 @@ public class ImportedEntityService {
         PrismStudyOption studyOptionId = PrismStudyOption.findValueFromString(externalCode);
         studyOptionId = studyOptionId == null ? institution.getDefaultStudyOption() : studyOptionId;
         StudyOption studyOption = new StudyOption().withInstitution(institution).withCode(studyOptionId.name()).withName(externalCode).withEnabled(true);
+        studyOption.setType(PrismImportedEntity.STUDY_OPTION);
         return entityService.createOrUpdate(studyOption);
     }
 
@@ -377,11 +356,6 @@ public class ImportedEntityService {
         Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                 .addAssignedUser(invoker, invokerRole, PrismRoleTransitionType.CREATE);
         actionService.executeAction(program, action, comment);
-    }
-
-    private String truncateString(String string, int characters) {
-        int length = string.length();
-        return string.substring(0, length < characters ? length : characters);
     }
 
 }

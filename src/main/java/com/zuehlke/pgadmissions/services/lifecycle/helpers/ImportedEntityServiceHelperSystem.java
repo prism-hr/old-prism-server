@@ -26,7 +26,6 @@ import au.com.bytecode.opencsv.CSVReader;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicileRegion;
 import com.zuehlke.pgadmissions.domain.location.GeocodableLocation;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.dto.InstitutionDomicileImportDTO;
@@ -35,14 +34,13 @@ import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.iso.jaxb.CountryCodesType;
 import com.zuehlke.pgadmissions.iso.jaxb.CountryType;
-import com.zuehlke.pgadmissions.iso.jaxb.SubdivisionType;
 import com.zuehlke.pgadmissions.services.GeocodableLocationService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
 @Component
 public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ImportedEntityServiceHelperSystem.class);
 
     private final HashMap<LocalDate, Integer> geocodingRequestTotals = Maps.newHashMap();
@@ -128,26 +126,7 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
             if (importDTO != null) {
                 InstitutionDomicile domicile = importDTO.getDomicile();
                 geocodeLocation(domicile, baseline);
-                mergeInstitutionDomicileRegions(domicile.getId(), importDTO.getSubdivisions(), importDTO.getCategories(), baseline);
             }
-        }
-    }
-
-    private void mergeInstitutionDomicileRegions(String domicileId, List<SubdivisionType> subdivisions, Map<Short, String> categories, LocalDate baseline)
-            throws DeduplicationException, IOException, JAXBException, InterruptedException {
-        for (SubdivisionType subdivision : subdivisions) {
-            InstitutionDomicileRegion region = importedEntityService.mergeInstitutionDomicileRegion(domicileId, subdivision, categories);
-            geocodeLocation(region, baseline);
-            mergeNestedInstitutionDomicileRegions(domicileId, region.getId(), subdivision, categories, baseline);
-        }
-    }
-
-    private void mergeNestedInstitutionDomicileRegions(String domicileId, String regionId, SubdivisionType subdivision, Map<Short, String> categories,
-            LocalDate baseline) throws IOException, JAXBException, InterruptedException, DeduplicationException {
-        for (SubdivisionType nestedSubdivision : subdivision.getSubdivision()) {
-            InstitutionDomicileRegion nested = importedEntityService.mergeNestedInstitutionDomicileRegion(domicileId, regionId, nestedSubdivision, categories);
-            geocodeLocation(nested, baseline);
-            mergeNestedInstitutionDomicileRegions(domicileId, nested.getId(), nestedSubdivision, categories, baseline);
         }
     }
 
@@ -166,8 +145,6 @@ public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
                     } catch (Exception e) {
                         LOGGER.error("Error geocoding location: " + address, e);
                     }
-                } else if (location.getClass().equals(InstitutionDomicileRegion.class)) {
-                    geocodableLocationService.setFallbackLocation((InstitutionDomicileRegion) location);
                 }
             }
         }

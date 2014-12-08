@@ -18,7 +18,6 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicileRegion;
 import com.zuehlke.pgadmissions.domain.location.GeocodableLocation;
 import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
 import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO;
@@ -103,32 +102,6 @@ public class GeocodableLocationService {
                 .withLocationViewSwY(gViewportSw.getLng());
 
         persistentLocation.setLocation(geographicLocation);
-    }
-
-    public void setFallbackLocation(InstitutionDomicileRegion region) {
-        region = getById(InstitutionDomicileRegion.class, region.getId());
-        InstitutionDomicileRegion cursorRegion = null;
-
-        for (int i = region.getNestedLevel(); i < 0; i--) {
-            if (cursorRegion == null) {
-                cursorRegion = region;
-            } else {
-                cursorRegion = cursorRegion.getParentRegion();
-            }
-
-            InstitutionDomicileRegion parentRegion = cursorRegion.getParentRegion();
-
-            if (parentRegion != null) {
-                GeographicLocation parentLocation = parentRegion.getLocation();
-                if (parentLocation != null) {
-                    region.setLocation(parentLocation);
-                    return;
-                }
-            }
-        }
-
-        GeographicLocation countryLocation = region.getDomicile().getLocation();
-        region.setLocation(countryLocation);
     }
 
 }

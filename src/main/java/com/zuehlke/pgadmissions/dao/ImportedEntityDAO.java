@@ -112,7 +112,7 @@ public class ImportedEntityDAO {
     public void disableAllImportedProgramStudyOptions(Institution institution) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update ProgramStudyOption " //
-                        + "set enabled = false, " + "defaultStartDate = null " //
+                        + "set enabled = false " //
                         + "where program in (" //
                         + "select id " //
                         + "from Program " //
@@ -126,11 +126,12 @@ public class ImportedEntityDAO {
         sessionFactory.getCurrentSession().createQuery( //
                 "update ProgramStudyOptionInstance " //
                         + "set enabled = false " //
-                        + "where programStudyOption in (" //
+                        + "where studyOption in (" //
                         + "select programStudyOption.id " //
-                        + "from Program join programStudyOptions programStudyOption " //
-                        + "where institution = :institution " //
-                        + "and imported is true)") //
+                        + "from ProgramStudyOption as programStudyOption " //
+                        + "join programStudyOption.program as program " //
+                        + "where program.institution = :institution " //
+                        + "and program.imported is true)") //
                 .setParameter("institution", institution) //
                 .executeUpdate();
 

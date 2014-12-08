@@ -24,7 +24,6 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicileRegion;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -86,10 +85,6 @@ public class InstitutionService {
 
     public List<InstitutionDomicile> getDomiciles() {
         return institutionDAO.getDomciles();
-    }
-
-    public List<InstitutionDomicileRegion> getRegionsByDomicile(InstitutionDomicile domicile) {
-        return institutionDAO.getRegionsByDomicile(domicile);
     }
 
     public List<Institution> listApprovedInstitutionsByCountry(InstitutionDomicile domicile) {

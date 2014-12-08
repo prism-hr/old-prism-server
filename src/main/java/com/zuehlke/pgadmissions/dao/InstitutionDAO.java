@@ -18,7 +18,6 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicileRegion;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionSuggestionDTO;
 
 @Repository
@@ -32,14 +31,6 @@ public class InstitutionDAO {
         return sessionFactory.getCurrentSession().createCriteria(InstitutionDomicile.class) //
                 .add(Restrictions.eq("enabled", true)) //
                 .addOrder(Order.asc("name")) //
-                .list();
-    }
-
-    public List<InstitutionDomicileRegion> getRegionsByDomicile(InstitutionDomicile domicile) {
-        return sessionFactory.getCurrentSession().createCriteria(InstitutionDomicileRegion.class) //
-                .add(Restrictions.eq("domicile", domicile)) //
-                .add(Restrictions.eq("enabled", true)) //
-                .addOrder(Order.asc("nestedPath")) //
                 .list();
     }
 

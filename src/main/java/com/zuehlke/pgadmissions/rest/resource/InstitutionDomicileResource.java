@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicileRegion;
-import com.zuehlke.pgadmissions.rest.representation.InstitutionDomicileRegionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
@@ -42,20 +40,6 @@ public class InstitutionDomicileResource {
             institutionRepresentations.add(dozerBeanMapper.map(institution, InstitutionRepresentation.class));
         }
         return institutionRepresentations;
-    }
-
-    @RequestMapping(value = "regions", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    public List<InstitutionDomicileRegionRepresentation> getRegions(@PathVariable String domicileId) {
-        InstitutionDomicile domicile = entityService.getByProperty(InstitutionDomicile.class, "id", domicileId);
-        List<InstitutionDomicileRegion> regions = institutionService.getRegionsByDomicile(domicile);
-
-        List<InstitutionDomicileRegionRepresentation> regionRepresentations = Lists.newArrayListWithCapacity(regions.size());
-        for (InstitutionDomicileRegion region : regions) {
-            regionRepresentations.add(dozerBeanMapper.map(region, InstitutionDomicileRegionRepresentation.class));
-        }
-
-        return regionRepresentations;
     }
 
 }

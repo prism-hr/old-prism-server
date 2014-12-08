@@ -58,7 +58,7 @@ public abstract class ImportedEntity implements IUniqueEntity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("institution", getInstitution()).addProperty("importedEntityType", getType()).addProperty("code", getCode());
+        return new ResourceSignature().addProperty("institution", getInstitution()).addProperty("type", getType()).addProperty("code", getCode());
     }
 
 }

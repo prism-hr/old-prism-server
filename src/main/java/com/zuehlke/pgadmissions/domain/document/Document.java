@@ -87,7 +87,7 @@ public class Document {
     public Integer getId() {
         return id;
     }
-    
+
     public final FileCategory getCategory() {
         return category;
     }
@@ -230,7 +230,9 @@ public class Document {
     }
 
     public Resource getResource() {
-        if (applicationLanguageQualification != null) {
+        if (comment != null) {
+            return comment.getResource();
+        } else if (applicationLanguageQualification != null) {
             return applicationLanguageQualification.getPersonalDetail().getApplication();
         } else if (applicationQualification != null) {
             return applicationQualification.getApplication();

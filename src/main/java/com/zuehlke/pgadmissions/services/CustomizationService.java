@@ -107,7 +107,8 @@ public class CustomizationService {
     public WorkflowConfigurationRepresentation getConfigurationRepresentation(PrismConfiguration configurationType, Resource resource, PrismLocale locale,
             PrismProgramType programType, WorkflowDefinition definition) {
         resource = getConfiguredResource(resource);
-        WorkflowConfiguration configuration = getConfiguration(configurationType, resource, locale, programType, definition);
+        WorkflowConfiguration configuration = getConfiguration(configurationType, resource, locale,
+                resource.getResourceScope() == PrismScope.PROGRAM ? resource.getProgram().getProgramType().getPrismProgramType() : programType, definition);
         WorkflowConfigurationRepresentation representation = mapper.map(configuration, configurationType.getConfigurationRepresentationClass());
 
         if (configurationType.isLocalizable()) {

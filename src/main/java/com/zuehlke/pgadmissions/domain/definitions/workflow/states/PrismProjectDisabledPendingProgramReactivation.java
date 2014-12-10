@@ -25,9 +25,7 @@ public class PrismProjectDisabledPendingProgramReactivation extends PrismWorkflo
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DISABLED_COMPLETED) // 
                         .withTransitionAction(PrismAction.PROJECT_CONCLUDE) // 
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME)// 
-                        .withPropagatedActions(Arrays.asList( //
-                                PrismAction.APPLICATION_TERMINATE)), // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DISABLED_PENDING_PROGRAM_REACTIVATION) // 
                         .withTransitionAction(PrismAction.PROJECT_CONCLUDE) // 
@@ -50,9 +48,7 @@ public class PrismProjectDisabledPendingProgramReactivation extends PrismWorkflo
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DISABLED_COMPLETED) // 
-                        .withTransitionAction(PrismAction.PROJECT_ESCALATE)// 
-                        .withPropagatedActions(Arrays.asList( //
-                                PrismAction.APPLICATION_TERMINATE))))); //
+                        .withTransitionAction(PrismAction.PROJECT_ESCALATE)))); //
         
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_RESTORE) //
@@ -109,9 +105,7 @@ public class PrismProjectDisabledPendingProgramReactivation extends PrismWorkflo
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DISABLED_COMPLETED) // 
-                        .withTransitionAction(PrismAction.PROJECT_TERMINATE)// 
-                        .withPropagatedActions(Arrays.asList( //
-                                PrismAction.APPLICATION_TERMINATE))))); //
+                        .withTransitionAction(PrismAction.PROJECT_TERMINATE)))); //
         
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_VIEW_EDIT) //

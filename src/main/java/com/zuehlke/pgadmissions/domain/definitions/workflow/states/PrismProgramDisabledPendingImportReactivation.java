@@ -27,14 +27,13 @@ public class PrismProgramDisabledPendingImportReactivation extends PrismWorkflow
                         .withTransitionAction(PrismAction.PROGRAM_CONCLUDE) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME)// 
                         .withPropagatedActions(Arrays.asList( //
-                                PrismAction.APPLICATION_TERMINATE,  //
-                                PrismAction.PROJECT_TERMINATE)), // 
+                            PrismAction.PROJECT_TERMINATE)), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_DISABLED_PENDING_IMPORT_REACTIVATION) // 
                         .withTransitionAction(PrismAction.PROGRAM_CONCLUDE) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME)// 
                         .withPropagatedActions(Arrays.asList( //
-                                PrismAction.PROJECT_SUSPEND))))); //
+                            PrismAction.PROJECT_SUSPEND))))); //
         
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_EMAIL_CREATOR) //
@@ -60,8 +59,7 @@ public class PrismProgramDisabledPendingImportReactivation extends PrismWorkflow
                         .withTransitionState(PrismState.PROGRAM_DISABLED_COMPLETED) // 
                         .withTransitionAction(PrismAction.PROGRAM_ESCALATE)// 
                         .withPropagatedActions(Arrays.asList( //
-                                PrismAction.APPLICATION_TERMINATE,  //
-                                PrismAction.PROJECT_TERMINATE))))); //
+                            PrismAction.PROJECT_TERMINATE))))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_RESTORE) //
@@ -80,13 +78,13 @@ public class PrismProgramDisabledPendingImportReactivation extends PrismWorkflow
                         .withTransitionAction(PrismAction.PROGRAM_RESTORE) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.PROGRAM_RESTORED_OUTCOME)// 
                         .withPropagatedActions(Arrays.asList( //
-                                PrismAction.PROJECT_RESTORE)), // 
+                            PrismAction.PROJECT_RESTORE)), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_DEACTIVATED) // 
                         .withTransitionAction(PrismAction.PROGRAM_RESTORE) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.PROGRAM_RESTORED_OUTCOME)// 
                         .withPropagatedActions(Arrays.asList( //
-                                PrismAction.PROJECT_RESTORE))))); //
+                            PrismAction.PROJECT_RESTORE))))); //
         
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_VIEW_EDIT) //

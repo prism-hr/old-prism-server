@@ -78,19 +78,6 @@ public class PrismApplicationUnsubmitted extends PrismWorkflowState {
                         .withTransitionAction(PrismAction.APPLICATION_ESCALATE)))); //
     
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.APPLICATION_TERMINATE) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-                .withNotifications(Arrays.asList( // 
-                    new PrismStateActionNotification() // 
-                        .withRole(PrismRole.APPLICATION_CREATOR) // 
-                        .withDefinition(PrismNotificationDefinition.APPLICATION_TERMINATE_NOTIFICATION))) //
-                .withTransitions(Arrays.asList( // 
-                    new PrismStateTransition() // 
-                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED) // 
-                        .withTransitionAction(PrismAction.APPLICATION_TERMINATE)))); //
-    
-        stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_WITHDRAW) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //

@@ -292,7 +292,7 @@ public class StateService {
 
     public StateTransition getApplicationProcessedOutcome(Resource resource, Comment comment) {
         PrismAction actionId = comment.getAction().getId();
-        if (Arrays.asList(PrismAction.APPLICATION_TERMINATE, PrismAction.APPLICATION_ESCALATE).contains(actionId)) {
+        if (actionId == PrismAction.APPLICATION_ESCALATE) {
             return getApplicationRejectedOutcome(resource, comment);
         } else if (actionId == PrismAction.APPLICATION_WITHDRAW) {
             return getApplicationWithdrawnOutcome(resource, comment);

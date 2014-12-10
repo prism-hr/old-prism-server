@@ -285,7 +285,7 @@ public class ActionDAO {
 
     public List<PrismAction> getEscalationActions() {
         return (List<PrismAction>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.property("action.id")) //
+                .setProjection(Projections.groupProperty("action.id")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("action.actionCategory", Arrays.asList(ESCALATE_RESOURCE, PURGE_RESOURCE))) //
@@ -295,7 +295,7 @@ public class ActionDAO {
 
     public List<PrismAction> getPropagatedActions(Integer stateTransitionPendingId) {
         return (List<PrismAction>) sessionFactory.getCurrentSession().createCriteria(StateTransitionPending.class) //
-                .setProjection(Projections.property("propagatedAction.id")) //
+                .setProjection(Projections.groupProperty("propagatedAction.id")) //
                 .createAlias("stateTransition", "stateTransition", JoinType.INNER_JOIN) //
                 .createAlias("stateTransition.propagatedActions", "propagatedAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("id", stateTransitionPendingId)) //

@@ -295,11 +295,11 @@ public class NotificationPropertyLoader {
             Project project = advert.getProject();
             Resource resource = project == null ? program : project;
 
-            String applyUri = advert.getApplyHomepage();
-            applyUri = applyUri == null ? buildRedirectionUri(resource, templateModelDTO.getTransitionAction(), templateModelDTO.getUser()) : applyUri;
+            String applyUrl = advert.getApplyHomepage();
+            applyUrl = applyUrl == null ? buildRedirectionUrl(resource, templateModelDTO.getTransitionAction(), templateModelDTO.getUser()) : applyUrl;
 
             recommendations.add("<p>" + program.getTitle() + project == null ? "<br/>" : "<br/>" + project == null ? "" : project.getTitle() + "<br/>"
-                    + buildRedirectionControl(applyUri, SYSTEM_APPLY) + "</p>");
+                    + buildRedirectionControl(applyUrl, SYSTEM_APPLY) + "</p>");
         }
 
         return Joiner.on("").join(recommendations);
@@ -322,7 +322,8 @@ public class NotificationPropertyLoader {
     }
 
     public String getSystemUserAccountManagement() throws IOException, TemplateException {
-        return buildRedirectionControl(SYSTEM_USER_ACCOUNT);
+        String url = templateModelDTO.getResource().getSystem().getHomepage() + "/#/account";
+        return buildRedirectionControl(url, SYSTEM_USER_ACCOUNT);
     }
 
     public String getSystemUserAccountActivation() throws IOException, TemplateException {
@@ -345,25 +346,25 @@ public class NotificationPropertyLoader {
         return buildRedirectionControl(linkLabel, null);
     }
 
-    private String buildRedirectionControl(String uri, PrismDisplayPropertyDefinition linkLabel) throws IOException, TemplateException {
-        return buildRedirectionControl(uri, linkLabel, null);
+    private String buildRedirectionControl(String url, PrismDisplayPropertyDefinition linkLabel) throws IOException, TemplateException {
+        return buildRedirectionControl(url, linkLabel, null);
     }
 
     private String buildRedirectionControl(PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel) throws IOException,
             TemplateException {
         Resource resource = templateModelDTO.getResource();
-        String uri = buildRedirectionUri(resource, templateModelDTO.getTransitionAction(), templateModelDTO.getUser());
-        return buildRedirectionControl(uri, linkLabel, declineLinkLabel);
+        String url = buildRedirectionUrl(resource, templateModelDTO.getTransitionAction(), templateModelDTO.getUser());
+        return buildRedirectionControl(url, linkLabel, declineLinkLabel);
     }
 
-    private String buildRedirectionControl(String uri, PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel)
+    private String buildRedirectionControl(String url, PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel)
             throws IOException, TemplateException {
         Map<String, Object> model = Maps.newHashMap();
-        ImmutableMap<String, String> link = ImmutableMap.of("url", uri, "label", propertyLoader.load(linkLabel));
+        ImmutableMap<String, String> link = ImmutableMap.of("url", url, "label", propertyLoader.load(linkLabel));
         model.put("link", link);
 
         if (declineLinkLabel != null) {
-            ImmutableMap<String, String> declineLink = ImmutableMap.of("url", uri + "&decline=1", "label", propertyLoader.load(declineLinkLabel));
+            ImmutableMap<String, String> declineLink = ImmutableMap.of("url", url + "&decline=1", "label", propertyLoader.load(declineLinkLabel));
             model.put("declineLink", declineLink);
         }
 
@@ -373,7 +374,7 @@ public class NotificationPropertyLoader {
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
     }
 
-    private String buildRedirectionUri(Resource resource, PrismAction actionId, User user) {
+    private String buildRedirectionUrl(Resource resource, PrismAction actionId, User user) {
         Resource operative = (Resource) ReflectionUtils.getProperty(resource, actionId.getScope().getLowerCaseName());
         return operative.getSystem().getHomepage() + "/#/activate?resourceId=" + operative.getId() + "&actionId=" + actionId.name() + "&activationCode="
                 + user.getActivationCode();

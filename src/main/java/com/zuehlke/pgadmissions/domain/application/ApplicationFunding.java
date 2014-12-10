@@ -1,21 +1,12 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.imported.FundingSource;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.FundingSource;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "APPLICATION_FUNDING")
@@ -81,11 +72,11 @@ public class ApplicationFunding extends ApplicationSection {
         this.fundingSource = fundingSource;
     }
 
-    public final String getSponsor() {
+    public String getSponsor() {
         return sponsor;
     }
 
-    public final void setSponsor(String sponsor) {
+    public void setSponsor(String sponsor) {
         this.sponsor = sponsor;
     }
 
@@ -113,11 +104,11 @@ public class ApplicationFunding extends ApplicationSection {
         this.awardDate = awardDate;
     }
 
-    public final String getTerms() {
+    public String getTerms() {
         return terms;
     }
 
-    public final void setTerms(String terms) {
+    public void setTerms(String terms) {
         this.terms = terms;
     }
 

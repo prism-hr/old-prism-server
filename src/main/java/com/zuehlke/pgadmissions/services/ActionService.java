@@ -247,7 +247,7 @@ public class ActionService {
     public void throwWorkflowPermissionException(Resource resource, Action action, String message) {
         Action fallbackAction = action.getFallbackAction();
         Resource fallbackResource = resource.getEnclosingResource(fallbackAction.getScope().getId());
-        throw new WorkflowPermissionException(action, fallbackAction, resource, fallbackResource);
+        throw new WorkflowPermissionException(message, fallbackAction, fallbackResource);
     }
 
     public void throwWorkflowEngineException(Resource resource, Action action, String message) {

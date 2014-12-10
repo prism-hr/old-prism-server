@@ -173,16 +173,16 @@ public class ApplicationService {
     public ApplicationStartDateRepresentation getStartDateRepresentation(Integer applicationId, PrismStudyOption studyOptionId) {
         LocalDate baseline = new LocalDate();
         Application application = getById(applicationId);
-        
+
         StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, application.getInstitution(), studyOptionId.name());
         ProgramStudyOption programStudyOption = programService.getEnabledProgramStudyOption(application.getProgram(), studyOption);
-        
-        if (studyOption != null) {
+
+        if (programStudyOption != null) {
             return new ApplicationStartDateRepresentation().withEarliestDate(getEarliestStartDate(programStudyOption.getId(), baseline))
                     .withRecommendedDate(getRecommendedStartDate(application, programStudyOption, baseline))
                     .withLatestDate(getLatestStartDate(programStudyOption.getId()));
         }
-        
+
         return null;
     }
 

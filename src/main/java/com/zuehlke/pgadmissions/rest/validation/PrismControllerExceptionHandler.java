@@ -4,6 +4,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +19,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -27,13 +31,20 @@ import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 
+import javax.inject.Inject;
+
 @ControllerAdvice
 public class PrismControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(PrismControllerExceptionHandler.class);
 
+    @Inject
+    private UserService userService;
+
     @ExceptionHandler(value = WorkflowPermissionException.class)
-    public final ResponseEntity<Object> handleWorkflowPermissionsException(WorkflowPermissionException ex, WebRequest request) {
+    public final ResponseEntity<Object> handleWorkflowPermissionsException(WorkflowPermissionException ex, ServletWebRequest request) {
+        User currentUser = userService.getCurrentUser();
+
         log.error("Problem", ex);
         Resource fallbackResource = ex.getFallbackResource();
         Map<String, Object> body = Maps.newHashMap();
@@ -42,6 +53,7 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
         if (ex.getMessage() != null) {
             body.put("message", ex.getMessage());
         }
+        log.error(DiagnosticInfoPrintUtils.getRequestErrorLogMessage(request.getRequest(), currentUser) + ", Exception: " + ex);
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fundingSources>
+  <fundingSource>
+    <code>UG_SCHOLARSHIP</code>
+    <name>Undergraduate Study Scholarship</name>
+  </fundingSource>
+  <fundingSource>
+    <code>PGT_SCHOLARSHIP</code>
+    <name>Postgraduate (Taught) Study Scholarship</name>
+  </fundingSource>
+  <fundingSource>
+    <code>PGR_SCHOLARSHIP</code>
+    <name>Postgraduate (Research) Study Scholarship</name>
+  </fundingSource>
+</fundingSources>

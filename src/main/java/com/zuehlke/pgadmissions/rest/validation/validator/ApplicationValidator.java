@@ -108,7 +108,7 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
                 validateLanguageConstraint(application, configuration, errors);
                 break;
             case APPLICATION_LANGUAGE_PROOF_OF_AWARD:
-                validateLanguageProofOfAwardConstraint(application, configuration, errors);
+                validateLanguageDocumentConstraint(application, configuration, errors);
                 break;
             case APPLICATION_PRIZE:
                 validateRangeConstraint(application, "prizes", configuration, errors);
@@ -215,7 +215,7 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
         validateRequiredConstraint(additionalInformation, "additionalInformation", "convictionsText", configuration, errors);
     }
 
-    private void validateLanguageProofOfAwardConstraint(Application application, WorkflowPropertyConfiguration configuration, Errors errors) {
+    private void validateLanguageDocumentConstraint(Application application, WorkflowPropertyConfiguration configuration, Errors errors) {
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         ApplicationLanguageQualification languageQualification = personalDetail == null ? null : personalDetail.getLanguageQualification();
 

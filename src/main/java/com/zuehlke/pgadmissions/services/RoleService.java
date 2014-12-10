@@ -143,7 +143,7 @@ public class RoleService {
         Role role = getById(roleId);
         return roleDAO.getRoleUsers(resource, role);
     }
-    
+
     public List<PrismRole> getCreatableRoles(PrismScope scopeId) {
         return roleDAO.getCreatableRoles(scopeId);
     }
@@ -213,7 +213,7 @@ public class RoleService {
         } else {
             WorkflowPropertyConfiguration workflowPropertyConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
                     PrismConfiguration.WORKFLOW_PROPERTY, definition, resource.getWorkflowPropertyConfigurationVersion());
-            
+
             minimumPermitted = workflowPropertyConfiguration.getMinimum();
             maximumPermitted = workflowPropertyConfiguration.getMaximum();
         }

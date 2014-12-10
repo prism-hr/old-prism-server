@@ -20,7 +20,7 @@ public class LanguageQualificationRepresentation extends ApplicationSectionRepre
 
     private String listeningScore;
 
-    private FileRepresentation proofOfAward;
+    private FileRepresentation document;
 
     public Integer getType() {
         return type;
@@ -78,11 +78,11 @@ public class LanguageQualificationRepresentation extends ApplicationSectionRepre
         this.listeningScore = listeningScore;
     }
 
-    public FileRepresentation getProofOfAward() {
-        return proofOfAward;
+    public FileRepresentation getDocument() {
+        return document;
     }
 
-    public void setProofOfAward(FileRepresentation proofOfAward) {
-        this.proofOfAward = proofOfAward;
+    public void setDocument(FileRepresentation document) {
+        this.document = document;
     }
 }

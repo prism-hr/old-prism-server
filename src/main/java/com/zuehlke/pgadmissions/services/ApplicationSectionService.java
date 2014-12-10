@@ -527,7 +527,7 @@ public class ApplicationSectionService {
             languageQualification.setSpeakingScore(languageQualificationDTO.getSpeakingScore());
             languageQualification.setListeningScore(languageQualificationDTO.getListeningScore());
 
-            FileDTO upload = languageQualificationDTO.getProofOfAward();
+            FileDTO upload = languageQualificationDTO.getDocument();
             if (upload != null) {
                 Document languageQualificationDocument = documentService.getById(upload.getId(), FileCategory.DOCUMENT);
                 languageQualification.setDocument(languageQualificationDocument);

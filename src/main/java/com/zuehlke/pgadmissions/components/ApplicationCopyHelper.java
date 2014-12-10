@@ -116,7 +116,7 @@ public class ApplicationCopyHelper {
                 PrismConfiguration.WORKFLOW_PROPERTY, PrismWorkflowPropertyDefinition.APPLICATION_QUALIFICATION, to.getWorkflowPropertyConfigurationVersion());
 
         if (BooleanUtils.isTrue(qualificationConfiguration.getEnabled())) {
-            boolean qualificationProofOfAwardEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
+            boolean qualificationDocumentEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
                     PrismWorkflowPropertyDefinition.APPLICATION_QUALIFICATION_PROOF_OF_AWARD);
 
             Integer counter = 0;
@@ -127,7 +127,7 @@ public class ApplicationCopyHelper {
                 ApplicationQualification qualification = new ApplicationQualification();
                 to.getQualifications().add(qualification);
                 qualification.setApplication(to);
-                copyQualification(qualification, fromQualification, qualificationProofOfAwardEnabled);
+                copyQualification(qualification, fromQualification, qualificationDocumentEnabled);
                 counter++;
             }
         }
@@ -158,7 +158,7 @@ public class ApplicationCopyHelper {
                 PrismConfiguration.WORKFLOW_PROPERTY, PrismWorkflowPropertyDefinition.APPLICATION_FUNDING, to.getWorkflowPropertyConfigurationVersion());
 
         if (BooleanUtils.isTrue(fundingConfiguration.getEnabled())) {
-            boolean fundingProofOfAwardEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
+            boolean fundingDocumentEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
                     PrismWorkflowPropertyDefinition.APPLICATION_FUNDING_PROOF_OF_AWARD);
 
             Integer counter = 0;
@@ -169,7 +169,7 @@ public class ApplicationCopyHelper {
                 ApplicationFunding funding = new ApplicationFunding();
                 to.getFundings().add(funding);
                 funding.setApplication(to);
-                copyFunding(funding, fromFunding, fundingProofOfAwardEnabled);
+                copyFunding(funding, fromFunding, fundingDocumentEnabled);
                 counter++;
             }
         }
@@ -274,14 +274,14 @@ public class ApplicationCopyHelper {
         to.setLastEditedTimestamp(new DateTime());
     }
 
-    public void copyFunding(ApplicationFunding to, ApplicationFunding from, boolean proofOfAwardEnabled) {
+    public void copyFunding(ApplicationFunding to, ApplicationFunding from, boolean documentEnabled) {
         Institution toInstitution = to.getApplication().getInstitution();
         to.setFundingSource(getEnabledImportedObject(toInstitution, from.getFundingSource(), to));
         to.setDescription(from.getDescription());
         to.setValue(from.getValue());
         to.setAwardDate(from.getAwardDate());
 
-        if (proofOfAwardEnabled) {
+        if (documentEnabled) {
             to.setDocument(copyDocument(from.getDocument()));
         }
 
@@ -308,7 +308,7 @@ public class ApplicationCopyHelper {
         to.setLastEditedTimestamp(new DateTime());
     }
 
-    public void copyQualification(ApplicationQualification to, ApplicationQualification from, boolean proofOfAwardEnabled) {
+    public void copyQualification(ApplicationQualification to, ApplicationQualification from, boolean documentEnabled) {
         Institution toInstitution = to.getApplication().getInstitution();
         to.setInstitution(getEnabledImportedObject(toInstitution, from.getInstitution(), to));
         to.setType(getEnabledImportedObject(toInstitution, from.getType(), to));
@@ -320,7 +320,7 @@ public class ApplicationCopyHelper {
         to.setGrade(from.getGrade());
         to.setAwardDate(from.getAwardDate());
 
-        if (proofOfAwardEnabled) {
+        if (documentEnabled) {
             to.setDocument(copyDocument(from.getDocument()));
         }
 

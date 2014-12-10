@@ -32,7 +32,7 @@ public class ApplicationLanguageQualificationDTO {
     @NotEmpty
     private String listeningScore;
 
-    private FileDTO proofOfAward;
+    private FileDTO document;
 
     public Integer getType() {
         return type;
@@ -90,11 +90,11 @@ public class ApplicationLanguageQualificationDTO {
         this.listeningScore = listeningScore;
     }
 
-    public FileDTO getProofOfAward() {
-        return proofOfAward;
+    public FileDTO getDocument() {
+        return document;
     }
 
-    public void setProofOfAward(FileDTO proofOfAward) {
-        this.proofOfAward = proofOfAward;
+    public void setDocument(FileDTO document) {
+        this.document = document;
     }
 }

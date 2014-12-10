@@ -185,7 +185,7 @@ public class UserService {
                 String newPassword = EncryptionUtils.getTemporaryPassword();
                 notificationService.sendResetPasswordNotification(user, newPassword);
                 account.setTemporaryPassword(EncryptionUtils.getMD5(newPassword));
-                account.setTemporaryPasswordExpiryTimestamp(new DateTime().plusHours(1));
+                account.setTemporaryPasswordExpiryTimestamp(new DateTime().plusDays(2));
             }
         }
     }

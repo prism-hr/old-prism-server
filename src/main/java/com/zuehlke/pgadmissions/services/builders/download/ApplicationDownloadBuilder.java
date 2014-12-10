@@ -375,7 +375,7 @@ public class ApplicationDownloadBuilder {
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_SUBHEADER), null, body);
                 applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
             } else {
-                boolean proofOfAwardEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
+                boolean documentEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
                         PrismWorkflowPropertyDefinition.APPLICATION_QUALIFICATION_PROOF_OF_AWARD);
 
                 int counter = 1;
@@ -414,7 +414,7 @@ public class ApplicationDownloadBuilder {
                             propertyLoader.load(APPLICATION_QUALIFICATION_CONFIRMED_AWARD_DATE, APPLICATION_QUALIFICATION_EXPECTED_AWARD_DATE, completed),
                             qualification.getAwardDateDisplay(dateFormat), subBody);
 
-                    if (proofOfAwardEnabled) {
+                    if (documentEnabled) {
                         addDocument(subBody, propertyLoader.load(APPLICATION_QUALIFICATION_FINAL_TRANSCRIPT,
                                 PrismDisplayPropertyDefinition.APPLICATION_QUALIFICATION_INTERIM_TRANSCRIPT, completed), qualification.getDocument(),
                                 applicationDownloadDTO.isIncludeAttachments());
@@ -471,7 +471,7 @@ public class ApplicationDownloadBuilder {
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_FUNDING_SUBHEADER), null, body);
                 applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
             } else {
-                boolean proofOfAwardEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
+                boolean documentEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
                         PrismWorkflowPropertyDefinition.APPLICATION_FUNDING_PROOF_OF_AWARD);
 
                 int counter = 1;
@@ -488,7 +488,7 @@ public class ApplicationDownloadBuilder {
                             funding.getAwardDateDisplay(propertyLoader.load(SYSTEM_DATE_FORMAT)), subBody);
                     applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_FUNDING_TERMS), funding.getTerms(), subBody);
 
-                    if (proofOfAwardEnabled) {
+                    if (documentEnabled) {
                         addDocument(subBody, propertyLoader.load(APPLICATION_PROOF_OF_AWARD), funding.getDocument(),
                                 applicationDownloadDTO.isIncludeAttachments());
                     }

@@ -8,7 +8,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import com.zuehlke.pgadmissions.domain.document.FileCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,8 +23,8 @@ import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.document.FileCategory;
 import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationDownloadService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.EntityService;

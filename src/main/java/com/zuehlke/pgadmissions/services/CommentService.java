@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import com.zuehlke.pgadmissions.domain.document.FileCategory;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -45,6 +44,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionT
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.document.FileCategory;
 import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -315,11 +315,6 @@ public class CommentService {
         }
 
         return new OfferRepresentation();
-    }
-
-    public Comment getRejectionComment(Application application) {
-        Comment comment = getLatestComment(application, PrismAction.APPLICATION_CONFIRM_REJECTION);
-        return comment == null ? getLatestComment(application, PrismAction.APPLICATION_TERMINATE) : comment;
     }
 
     public void create(Comment comment) {

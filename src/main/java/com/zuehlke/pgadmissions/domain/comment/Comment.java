@@ -685,8 +685,8 @@ public class Comment {
     }
 
     public boolean isApplicationAutomatedRejectionComment() {
-        return Arrays.asList(PrismAction.APPLICATION_ESCALATE, PrismAction.APPLICATION_TERMINATE).contains(action.getId())
-                && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED && rejectionReason == null;
+        return action.getId() == PrismAction.APPLICATION_ESCALATE && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED
+                && rejectionReason == null;
     }
 
     public boolean isApplicationInterviewPendingInterviewComment() {
@@ -696,7 +696,7 @@ public class Comment {
     public boolean isInterviewScheduledExpeditedComment() {
         return action.getId() == PrismAction.APPLICATION_ASSIGN_INTERVIEWERS
                 && Arrays.asList(PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW, PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK).contains(
-                transitionState.getId());
+                        transitionState.getId());
     }
 
     public boolean isUserCreationComment() {

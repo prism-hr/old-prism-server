@@ -339,9 +339,11 @@ public class ApplicationSectionService {
         FundingSource fundingSource = importedEntityService.getById(FundingSource.class, application.getInstitution(), fundingDTO.getFundingSource());
 
         funding.setFundingSource(fundingSource);
+        funding.setSponsor(fundingDTO.getSponsor());
         funding.setDescription(fundingDTO.getDescription());
         funding.setValue(fundingDTO.getValue());
         funding.setAwardDate(fundingDTO.getAwardDate());
+        funding.setTerms(fundingDTO.getTerms());
 
         FileDTO fileDTO = fundingDTO.getDocument();
         if (fileDTO != null) {

@@ -276,10 +276,12 @@ public class ApplicationCopyHelper {
 
     public void copyFunding(ApplicationFunding to, ApplicationFunding from, boolean documentEnabled) {
         Institution toInstitution = to.getApplication().getInstitution();
+        to.setSponsor(from.getSponsor());
         to.setFundingSource(getEnabledImportedObject(toInstitution, from.getFundingSource(), to));
         to.setDescription(from.getDescription());
         to.setValue(from.getValue());
         to.setAwardDate(from.getAwardDate());
+        to.setTerms(from.getTerms());
 
         if (documentEnabled) {
             to.setDocument(copyDocument(from.getDocument()));

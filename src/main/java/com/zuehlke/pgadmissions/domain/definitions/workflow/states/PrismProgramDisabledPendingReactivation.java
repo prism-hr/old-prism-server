@@ -29,14 +29,13 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
                         .withTransitionAction(PrismAction.PROGRAM_CONCLUDE) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME)// 
                         .withPropagatedActions(Arrays.asList( //
-                                PrismAction.APPLICATION_TERMINATE,  //
-                                PrismAction.PROJECT_TERMINATE)), // 
+                            PrismAction.PROJECT_TERMINATE)), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION) // 
                         .withTransitionAction(PrismAction.PROGRAM_CONCLUDE) // 
                         .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME)// 
                         .withPropagatedActions(Arrays.asList( //
-                                PrismAction.PROJECT_SUSPEND))))); //
+                            PrismAction.PROJECT_SUSPEND))))); //
         
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_EMAIL_CREATOR) //
@@ -193,8 +192,7 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
                         .withTransitionState(PrismState.PROGRAM_DISABLED_COMPLETED) // 
                         .withTransitionAction(PrismAction.PROGRAM_ESCALATE)// 
                         .withPropagatedActions(Arrays.asList( //
-                                PrismAction.APPLICATION_TERMINATE,  //
-                                PrismAction.PROJECT_TERMINATE))))); //
+                            PrismAction.PROJECT_TERMINATE))))); //
     }
 
 }

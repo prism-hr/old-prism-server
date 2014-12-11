@@ -40,7 +40,7 @@ public enum ResourceListFilterProperty implements FilterProperty {
     STUDY_DIVISION("studyDetail.studyDivision", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION)), //
     STUDY_AREA("studyDetail.studyArea", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION)), //
     STUDY_APPLICATION("studyDetail.studyApplicationId", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION)), //
-    CONFIRMED_START_DATE("confirmed_start_date", DATE, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER), Arrays.asList(APPLICATION)), //
+    CONFIRMED_START_DATE("confirmedStartDate", DATE, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER), Arrays.asList(APPLICATION)), //
     RATING("applicationRatingAverage", NUMBER, Arrays.asList(BETWEEN, GREATER, LESSER), Arrays.asList(APPLICATION, PROJECT, PROGRAM, INSTITUTION)), //
     REFERRER("referrer", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION, PROJECT, PROGRAM, INSTITUTION)), //
     SUPERVISOR("id", STRING, Arrays.asList(FilterExpression.CONTAIN), Arrays.asList(APPLICATION)), //

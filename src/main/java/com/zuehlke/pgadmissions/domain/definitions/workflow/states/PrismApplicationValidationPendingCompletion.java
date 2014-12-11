@@ -188,7 +188,7 @@ public class PrismApplicationValidationPendingCompletion extends PrismWorkflowSt
             .withDefaultAction(true) //
                 .withTransitions(Arrays.asList( //
                     new PrismStateTransition() //
-                        .withTransitionState(PrismState.APPLICATION_VALIDATION) //
+                        .withTransitionState(PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION) //
                         .withTransitionAction(PrismAction.APPLICATION_VIEW_EDIT) //
                         .withRoleTransitions(Arrays.asList( //
                             new PrismRoleTransition() //

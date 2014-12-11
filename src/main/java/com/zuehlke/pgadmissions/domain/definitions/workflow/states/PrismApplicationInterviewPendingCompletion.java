@@ -332,7 +332,7 @@ public class PrismApplicationInterviewPendingCompletion extends PrismWorkflowSta
             .withDefaultAction(true) //
                 .withTransitions(Arrays.asList( //
                     new PrismStateTransition() //
-                        .withTransitionState(PrismState.APPLICATION_REVIEW) //
+                        .withTransitionState(PrismState.APPLICATION_INTERVIEW_PENDING_COMPLETION) //
                         .withTransitionAction(PrismAction.APPLICATION_VIEW_EDIT) //
                         .withRoleTransitions(Arrays.asList( //
                             new PrismRoleTransition() //

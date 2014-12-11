@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +34,7 @@ public class ApplicationExportServiceDevelopment extends ApplicationExportServic
 
             executeExportAction(application, "TEST EXPORT", "TEST EXPORT USER ID", null);
         } catch (Exception e) {
-            executeExportAction(application, null, null, e.getMessage());
+            executeExportAction(application, null, null, ExceptionUtils.getStackTrace(e));
         } finally {
             IOUtils.closeQuietly(outputStream);
         }

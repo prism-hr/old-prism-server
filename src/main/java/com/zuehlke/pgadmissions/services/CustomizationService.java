@@ -106,9 +106,10 @@ public class CustomizationService {
 
     public WorkflowConfigurationRepresentation getConfigurationRepresentation(PrismConfiguration configurationType, Resource resource, PrismLocale locale,
             PrismProgramType programType, WorkflowDefinition definition) {
-        resource = getConfiguredResource(resource);
-        WorkflowConfiguration configuration = getConfiguration(configurationType, resource, locale,
-                resource.getResourceScope() == PrismScope.PROGRAM ? resource.getProgram().getProgramType().getPrismProgramType() : programType, definition);
+        Resource configuredResource = getConfiguredResource(resource);
+        PrismProgramType configuredProgramType = getConfiguredProgramType(resource, programType);
+
+        WorkflowConfiguration configuration = getConfiguration(configurationType, configuredResource, locale, configuredProgramType, definition);
         WorkflowConfigurationRepresentation representation = mapper.map(configuration, configurationType.getConfigurationRepresentationClass());
 
         if (configurationType.isLocalizable()) {
@@ -129,15 +130,21 @@ public class CustomizationService {
 
     public List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource resource,
             PrismLocale locale, PrismProgramType programType, WorkflowDefinition definition) {
-        resource = getConfiguredResource(resource);
-        List<WorkflowConfiguration> configurations = customizationDAO.getConfigurations(configurationType, resource, locale, programType, definition);
+        Resource configuredResource = getConfiguredResource(resource);
+        PrismProgramType configuredProgramType = getConfiguredProgramType(resource, programType);
+
+        List<WorkflowConfiguration> configurations = customizationDAO.getConfigurations(configurationType, configuredResource, locale, configuredProgramType,
+                definition);
         return parseRepresentations(resource, configurationType, configurations);
     }
 
     public List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource resource, PrismScope scope,
             PrismLocale locale, PrismProgramType programType) {
-        resource = getConfiguredResource(resource);
-        List<WorkflowConfiguration> configurations = customizationDAO.getConfigurations(configurationType, resource, scope, locale, programType);
+        Resource configuredResource = getConfiguredResource(resource);
+        PrismProgramType configuredProgramType = getConfiguredProgramType(resource, programType);
+
+        List<WorkflowConfiguration> configurations = customizationDAO.getConfigurations(configurationType, configuredResource, scope, locale,
+                configuredProgramType);
         return parseRepresentations(resource, configurationType, configurations);
     }
 
@@ -407,6 +414,10 @@ public class CustomizationService {
                 loader.load((PrismDisplayPropertyDefinition) ReflectionUtils.getProperty(definition.getId(), "label")));
         ReflectionUtils.setProperty(representation, "tooltip",
                 loader.load((PrismDisplayPropertyDefinition) ReflectionUtils.getProperty(definition.getId(), "tooltip")));
+    }
+
+    private PrismProgramType getConfiguredProgramType(Resource resource, PrismProgramType programType) {
+        return resource.getResourceScope() == PrismScope.PROGRAM ? resource.getProgram().getProgramType().getPrismProgramType() : programType;
     }
 
 }

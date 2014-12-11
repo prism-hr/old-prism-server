@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinitio
 import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -227,31 +228,32 @@ public class ResourceService {
     }
 
     public void processResource(Resource resource, Comment comment) throws DeduplicationException {
-        if (comment.isStateTransitionComment()) {
-            LocalDate baselineCustom = null;
-            LocalDate baseline = new LocalDate();
+        LocalDate baselineCustom = null;
+        LocalDate baseline = new LocalDate();
 
-            PrismStateDurationEvaluation stateDurationEvaluation = resource.getState().getStateDurationEvaluation();
-            if (stateDurationEvaluation != null) {
-                baselineCustom = (LocalDate) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(stateDurationEvaluation), resource, comment);
-            }
-
-            baseline = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
-
-            StateDurationDefinition stateDurationDefinition = resource.getState().getStateDurationDefinition();
-            StateDurationConfiguration stateDurationConfiguration = stateDurationDefinition == null ? null : stateService.getStateDurationConfiguration(
-                    resource, comment.getUser(), stateDurationDefinition);
-            Integer duration = stateDurationConfiguration == null ? 0 : stateDurationConfiguration.getDuration();
-
-            resource.setDueDate(baseline.plusDays(duration));
-            entityService.flush();
+        PrismStateDurationEvaluation stateDurationEvaluation = resource.getState().getStateDurationEvaluation();
+        if (stateDurationEvaluation != null) {
+            baselineCustom = (LocalDate) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(stateDurationEvaluation), resource, comment);
         }
+
+        baseline = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
+
+        StateDurationDefinition stateDurationDefinition = resource.getState().getStateDurationDefinition();
+        StateDurationConfiguration stateDurationConfiguration = stateDurationDefinition == null ? null : stateService.getStateDurationConfiguration(
+                resource, comment.getUser(), stateDurationDefinition);
+        Integer duration = stateDurationConfiguration == null ? 0 : stateDurationConfiguration.getDuration();
+
+        resource.setDueDate(baseline.plusDays(duration));
+        entityService.flush();
     }
 
     public void postProcessResource(Resource resource, Comment comment) throws DeduplicationException {
         DateTime baselineTime = new DateTime();
-        resource.setUpdatedTimestamp(baselineTime);
-        resource.setSequenceIdentifier(Long.toString(baselineTime.getMillis()) + String.format("%010d", resource.getId()));
+        
+        if (comment.getAction().getId().getActionType() == PrismActionType.USER_INVOCATION) {
+            resource.setUpdatedTimestamp(baselineTime);
+            resource.setSequenceIdentifier(Long.toString(baselineTime.getMillis()) + String.format("%010d", resource.getId()));
+        }
 
         switch (resource.getResourceScope()) {
         case PROGRAM:

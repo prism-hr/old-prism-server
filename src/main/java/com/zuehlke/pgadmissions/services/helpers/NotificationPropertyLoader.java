@@ -147,13 +147,13 @@ public class NotificationPropertyLoader {
     public String getTemplateHelpdesk() throws IOException, TemplateException {
         return buildRedirectionControl(templateModelDTO.getResource().getHelpdeskDisplay(), SYSTEM_HELPDESK);
     }
-
-    public String getTemplateViewEdit() throws IOException, TemplateException {
-        return buildRedirectionControl(SYSTEM_VIEW_EDIT);
-    }
-
+    
     public String getActionComplete() throws IOException, TemplateException {
         return buildRedirectionControl(SYSTEM_PROCEED, templateModelDTO.getTransitionAction().isDeclinableAction() ? SYSTEM_DECLINE : null);
+    }
+    
+    public String getActionViewEdit() throws IOException, TemplateException {
+        return buildRedirectionControl(SYSTEM_VIEW_EDIT);
     }
 
     public String getCommentContent() {

@@ -3,7 +3,7 @@
 </h1>
 
 <p>
-    An error occurred during the import of reference data at ${COMMENT_DATE_TIME}. The details of the error are:
+    An error occurred during the import of reference data for your institution. The details of the error are:
 </p>
 
 <p>

@@ -156,10 +156,6 @@ public class ImportedEntityService {
             closeDate = closeDate == null || closeDate.isBefore(transientCloseDate) ? transientCloseDate : closeDate;
         }
 
-        if (startDate.isAfter(baseline) || closeDate.isBefore(baseline)) {
-            throw new DataImportException("Attempted to import a program that cannot be used");
-        }
-
         persistentProgram.setEndDate(closeDate);
         executeProgramImportAction(persistentProgram);
     }

@@ -43,10 +43,6 @@ public class ImportedLanguageQualificationType extends ImportedEntity {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "root_id")
-    private ImportedLanguageQualificationType root;
-
-    @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
 
@@ -96,15 +92,6 @@ public class ImportedLanguageQualificationType extends ImportedEntity {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    @Override
-    public final ImportedLanguageQualificationType getRoot() {
-        return root;
-    }
-
-    public final void setRoot(ImportedLanguageQualificationType root) {
-        this.root = root;
     }
 
     public Institution getInstitution() {
@@ -217,11 +204,6 @@ public class ImportedLanguageQualificationType extends ImportedEntity {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public ImportedLanguageQualificationType withRoot(ImportedLanguageQualificationType root) {
-        this.root = root;
-        return this;
     }
 
     public ImportedLanguageQualificationType withInstitution(Institution institution) {

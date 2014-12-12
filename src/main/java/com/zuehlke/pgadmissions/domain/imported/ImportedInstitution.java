@@ -40,10 +40,6 @@ public class ImportedInstitution extends ImportedEntity {
     @Id
     @GeneratedValue
     private Integer id;
-    
-    @ManyToOne
-    @JoinColumn(name = "root_id")
-    private ImportedInstitution root;
 
     @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
@@ -69,15 +65,6 @@ public class ImportedInstitution extends ImportedEntity {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-    
-    @Override
-    public final ImportedInstitution getRoot() {
-        return root;
-    }
-
-    public final void setRoot(ImportedInstitution root) {
-        this.root = root;
     }
 
     public Institution getInstitution() {
@@ -118,11 +105,6 @@ public class ImportedInstitution extends ImportedEntity {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
-    }
-    
-    public ImportedInstitution withRoot(ImportedInstitution root) {
-        this.root = root;
-        return this;
     }
 
     public ImportedInstitution withInstitution(Institution institution) {
@@ -171,7 +153,7 @@ public class ImportedInstitution extends ImportedEntity {
     public String getDomicileDisplay() {
         return domicile == null ? null : domicile.toString();
     }
-    
+
     @Override
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addProperty("institution", getInstitution()).addProperty("code", getCode());

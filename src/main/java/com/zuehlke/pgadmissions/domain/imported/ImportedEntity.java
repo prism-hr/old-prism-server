@@ -11,8 +11,6 @@ public abstract class ImportedEntity implements IUniqueEntity {
 
     public abstract void setId(Integer id);
     
-    public abstract ImportedEntity getRoot();
-
     public abstract Institution getInstitution();
 
     public abstract void setInstitution(Institution institution);

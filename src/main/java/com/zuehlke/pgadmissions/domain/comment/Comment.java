@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.Type;
@@ -25,6 +26,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
 import javax.persistence.*;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Set;
@@ -735,6 +737,10 @@ public class Comment {
 
     public boolean isViewEditComment() {
         return action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE;
+    }
+    
+    public boolean isUserComment() {
+        return action.getActionType() == PrismActionType.USER_INVOCATION;
     }
 
     public boolean isSecondaryTransitionComment() {

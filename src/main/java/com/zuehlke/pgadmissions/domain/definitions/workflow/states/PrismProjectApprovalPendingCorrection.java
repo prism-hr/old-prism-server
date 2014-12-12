@@ -56,7 +56,7 @@ public class PrismProjectApprovalPendingCorrection extends PrismWorkflowState {
             .withDefaultAction(false) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
-                        .withTransitionState(PrismState.PROJECT_DISABLED_PENDING_PROGRAM_REACTIVATION) // 
+                        .withTransitionState(PrismState.PROJECT_DISABLED_PENDING_REACTIVATION) // 
                         .withTransitionAction(PrismAction.PROJECT_SUSPEND)))); //
 
         stateActions.add(new PrismStateAction() //

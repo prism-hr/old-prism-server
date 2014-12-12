@@ -179,7 +179,6 @@ public enum PrismAction {
     PROGRAM_CREATE_PROJECT(USER_INVOCATION, CREATE_RESOURCE, false, true, false, true, false, false, null, PROGRAM, PROJECT, null, null), //
     PROGRAM_EMAIL_CREATOR(USER_INVOCATION, EMAIL_RESOURCE_CREATOR, false, false, false, false, false, false, null, PROGRAM, null, null, null), //
     PROGRAM_ESCALATE(SYSTEM_INVOCATION, ESCALATE_RESOURCE, false, false, false, false, false, false, null, PROGRAM, null, null, null), //
-    PROGRAM_RESTORE(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, true, false, true, false, false, null, PROGRAM, null, null, null), //
     PROGRAM_WITHDRAW(USER_INVOCATION, WITHDRAW_RESOURCE, false, true, false, true, false, false, null, PROGRAM, null, null, null), //
     PROJECT_COMPLETE_APPROVAL_STAGE(USER_INVOCATION, PROCESS_RESOURCE, false, true, false, true, false, false, null, PROJECT, null, null, null), //
     PROJECT_CONCLUDE(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, true, false, true, false, false, null, PROJECT, null, null, null), //
@@ -188,7 +187,6 @@ public enum PrismAction {
     PROJECT_CREATE_APPLICATION(USER_INVOCATION, CREATE_RESOURCE, false, true, false, true, false, false, null, PROJECT, APPLICATION, null, null), //
     PROJECT_EMAIL_CREATOR(USER_INVOCATION, EMAIL_RESOURCE_CREATOR, false, false, false, false, false, false, null, PROJECT, null, null, null), //
     PROJECT_ESCALATE(SYSTEM_INVOCATION, ESCALATE_RESOURCE, false, false, false, false, false, false, null, PROJECT, null, null, null), //
-    PROJECT_RESTORE(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, true, false, true, false, false, null, PROJECT, null, null, null), //
     PROJECT_SUSPEND(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, true, false, true, false, false, null, PROJECT, null, null, null), //
     PROJECT_TERMINATE(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, true, false, true, false, false, null, PROJECT, null, null, null), //
     PROJECT_WITHDRAW(USER_INVOCATION, WITHDRAW_RESOURCE, false, true, false, true, false, false, null, PROJECT, null, null, null), //

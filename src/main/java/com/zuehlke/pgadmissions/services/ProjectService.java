@@ -53,6 +53,9 @@ public class ProjectService {
     private UserService userService;
 
     @Autowired
+    private ResourceService resourceService;
+
+    @Autowired
     private StateService stateService;
 
     @Autowired
@@ -150,15 +153,18 @@ public class ProjectService {
         if (!projects.isEmpty()) {
             State state = stateService.getById(PrismState.PROJECT_APPROVED);
             State previousState = stateService.getById(PrismState.PROJECT_DISABLED_PENDING_REACTIVATION);
-            
+
             for (Project project : projects) {
                 project.setState(state);
-                entityService.createOrUpdate(new ResourceState().withResource(project).withState(state).withPrimaryState(true));
-
                 project.setPreviousState(previousState);
-                entityService.createOrUpdate(new ResourcePreviousState().withResource(project).withState(previousState).withPrimaryState(true));
-
                 project.setDueDate(project.getEndDate());
+
+                project.getResourceStates().clear();
+                project.getResourcePreviousStates().clear();
+                entityService.flush();
+
+                entityService.createOrUpdate(new ResourceState().withResource(project).withState(state).withPrimaryState(true));
+                entityService.createOrUpdate(new ResourcePreviousState().withResource(project).withState(previousState).withPrimaryState(true));
             }
         }
     }

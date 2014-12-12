@@ -187,7 +187,7 @@ public class PrismProgramDeactivated extends PrismWorkflowState {
             .withDefaultAction(false) //
                 .withTransitions(Arrays.asList( // 
                     new PrismStateTransition() // 
-                        .withTransitionState(PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION) // 
+                        .withTransitionState(PrismState.PROGRAM_DISABLED_COMPLETED) // 
                         .withTransitionAction(PrismAction.PROGRAM_ESCALATE) // 
                         .withPropagatedActions(Arrays.asList( //
                                 PrismAction.PROJECT_SUSPEND))))); //

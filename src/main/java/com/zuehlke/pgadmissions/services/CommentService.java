@@ -170,7 +170,9 @@ public class CommentService {
                         } else {
                             String contentNew = comment.getContent();
                             String contentExisting = lastViewEditComment.getContent();
-                            if (!contentExisting.contains(contentNew)) {
+                            if (contentExisting == null) {
+                                lastViewEditComment.setContent(contentNew);
+                            } else if (!contentExisting.contains(contentNew)) {
                                 contentExisting = contentExisting + "<br/>" + contentNew;
                                 lastViewEditComment.setContent(contentExisting);
                             }

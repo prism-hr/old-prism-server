@@ -215,15 +215,6 @@ public class PrismProjectDisabledPendingReactivation extends PrismWorkflowState 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DISABLED_COMPLETED) // 
                         .withTransitionAction(PrismAction.PROJECT_ESCALATE)))); //
-    
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROJECT_SUSPEND) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) // //
-                .withTransitions(Arrays.asList( // 
-                    new PrismStateTransition() // 
-                        .withTransitionState(PrismState.PROJECT_DISABLED_PENDING_PROGRAM_REACTIVATION) // 
-                        .withTransitionAction(PrismAction.PROJECT_SUSPEND)))); //
     }
 
 }

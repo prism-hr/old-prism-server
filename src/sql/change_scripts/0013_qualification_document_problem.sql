@@ -18,3 +18,7 @@ alter table imported_language_qualification_type
 	drop foreign key imported_language_qualification_type_ibfk_2,
 	drop column root_id
 ;
+
+update system
+set helpdesk = "http://uclprism.freshdesk.com/"
+;

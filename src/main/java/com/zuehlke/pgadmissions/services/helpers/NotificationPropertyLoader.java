@@ -11,6 +11,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DECLINE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_HELPDESK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_HELPDESK_REPORT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_HOMEPAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_INSTITUTION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROCEED;
@@ -139,12 +140,12 @@ public class NotificationPropertyLoader {
         return templateModelDTO.getResource().getSystem().getTitle();
     }
 
-    public String getTemplateSystemHomepage() {
-        return templateModelDTO.getResource().getSystem().getHomepage();
+    public String getTemplateSystemHomepage() throws IOException, TemplateException {
+        return buildRedirectionControl(templateModelDTO.getResource().getSystem().getHomepage(), SYSTEM_HOMEPAGE);
     }
 
     public String getTemplateHelpdesk() throws IOException, TemplateException {
-        return buildRedirectionControl(SYSTEM_HELPDESK);
+        return buildRedirectionControl(templateModelDTO.getResource().getHelpdeskDisplay(), SYSTEM_HELPDESK);
     }
 
     public String getTemplateViewEdit() throws IOException, TemplateException {

@@ -39,13 +39,3 @@ set content = REPLACE(content, "TEMPLATE_VIEW_EDIT", "ACTION_VIEW_EDIT"),
 update notification_configuration
 set content = replace(content, "at ${COMMENT_DATE_TIME}", "for your institution")
 ;
-
-delete 
-from program_study_option_instance
-;
-
-update imported_entity_feed
-set last_imported_timestamp = null
-where imported_entity_type = "PROGRAM"
-	and institution_id = 5243
-;

@@ -147,14 +147,15 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
 
     private void mergeImportedPrograms(Institution institution, List<ProgrammeOccurrence> programDefinitions) throws DeduplicationException,
             DataImportException, InstantiationException, IllegalAccessException {
-        LocalDate baseline = new LocalDate();
+        DateTime baselineTime = new DateTime();
+        LocalDate baseline = baselineTime.toLocalDate();
 
         importedEntityService.disableAllImportedPrograms(institution, baseline);
         HashMultimap<String, ProgrammeOccurrence> batchedOccurrences = getBatchedImportedPrograms(programDefinitions);
 
         for (String programCode : batchedOccurrences.keySet()) {
             Set<ProgrammeOccurrence> occurrencesInBatch = batchedOccurrences.get(programCode);
-            importedEntityService.mergeImportedProgram(institution, occurrencesInBatch, baseline);
+            importedEntityService.mergeImportedProgram(institution, occurrencesInBatch, baseline, baselineTime);
         }
     }
 

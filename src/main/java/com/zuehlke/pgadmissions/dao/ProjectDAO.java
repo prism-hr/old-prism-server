@@ -1,26 +1,30 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DEACTIVATED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DISABLED_PENDING_REACTIVATION;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class ProjectDAO {
 
     @Autowired
@@ -70,8 +74,16 @@ public class ProjectDAO {
                 .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resourceReference, resource)) //
-                .add(Restrictions.eq("stateAction.action.id", PrismAction.PROJECT_CREATE_APPLICATION)) //
+                .add(Restrictions.eq("stateAction.action.id", PROJECT_CREATE_APPLICATION)) //
                 .uniqueResult();
+    }
+
+    public List<Project> getProjectsPendingReactivation(Program program, LocalDate baseline) {
+        return (List<Project>) sessionFactory.getCurrentSession().createCriteria(Project.class) //
+                .add(Restrictions.eq("program", program)) //
+                .add(Restrictions.eq("state.id", PROJECT_DISABLED_PENDING_REACTIVATION)) //
+                .add(Restrictions.ge("endDate", baseline)) //
+                .list();
     }
 
 }

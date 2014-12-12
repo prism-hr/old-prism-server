@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.Domicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
@@ -42,6 +43,7 @@ import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
+import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.InstitutionDomicileImportDTO;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -73,10 +75,13 @@ public class ImportedEntityService {
     private EntityService entityService;
 
     @Autowired
+    private GeocodableLocationService geocodableLocationService;
+
+    @Autowired
     private RoleService roleService;
 
     @Autowired
-    private GeocodableLocationService geocodableLocationService;
+    private StateService stateService;
 
     @Autowired
     private SystemService systemService;
@@ -124,7 +129,7 @@ public class ImportedEntityService {
         importedEntityDAO.disableAllImportedProgramStudyOptionInstances(institution);
     }
 
-    public void mergeImportedProgram(Institution institution, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline)
+    public void mergeImportedProgram(Institution institution, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline, DateTime baselineTime)
             throws DeduplicationException, DataImportException, InstantiationException, IllegalAccessException {
         Programme programDefinition = programInstanceDefinitions.iterator().next().getProgramme();
         Program persistentProgram = mergeProgram(institution, programDefinition, baseline);
@@ -157,7 +162,7 @@ public class ImportedEntityService {
         }
 
         persistentProgram.setEndDate(closeDate);
-        executeProgramImportAction(persistentProgram);
+        executeProgramImportAction(persistentProgram, baselineTime);
     }
 
     public void mergeImportedInstitution(Institution institution, com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution institutionDefinition)
@@ -339,14 +344,16 @@ public class ImportedEntityService {
         return entityService.createOrUpdate(studyOption);
     }
 
-    private void executeProgramImportAction(Program program) throws DeduplicationException, InstantiationException, IllegalAccessException {
+    private void executeProgramImportAction(Program program, DateTime baselineTime) throws DeduplicationException, InstantiationException,
+            IllegalAccessException {
         Action action = actionService.getById(PrismAction.INSTITUTION_IMPORT_PROGRAM);
 
         User invoker = program.getUser();
         Role invokerRole = roleService.getCreatorRole(program);
 
-        Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
-                .addAssignedUser(invoker, invokerRole, PrismRoleTransitionType.CREATE);
+        State importState = stateService.getById(PrismState.PROGRAM_APPROVED);
+        Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(baselineTime).withAction(action).withDeclinedResponse(false)
+                .withTransitionState(importState).addAssignedUser(invoker, invokerRole, PrismRoleTransitionType.CREATE);
         actionService.executeAction(program, action, comment);
     }
 

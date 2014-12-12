@@ -13,6 +13,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -115,7 +116,7 @@ public class ProjectService {
         Advert advert;
         if (project.getAdvert() == null) {
             advert = new Advert();
-            advert.setAddress(advertService.createAddressCopy(project.getInstitution().getAddress())); 
+            advert.setAddress(advertService.createAddressCopy(project.getInstitution().getAddress()));
             project.setAdvert(advert);
         } else {
             advert = project.getAdvert();
@@ -132,13 +133,20 @@ public class ProjectService {
     }
 
     public void postProcessProject(Project project, Comment comment) {
-        Advert advert = project.getAdvert();
-        advert.setSequenceIdentifier(project.getSequenceIdentifier().substring(0, 13) + String.format("%010d", advert.getId()));
+        advertService.setSequenceIdentifier(project.getAdvert(), project.getSequenceIdentifier().substring(0, 13));
     }
 
-    public void sychronizeProject(Program program) {
+    public void sychronizeProjects(Program program) {
         projectDAO.synchronizeProjectDueDates(program);
         projectDAO.synchronizeProjectEndDates(program);
+    }
+
+    public void restoreProjects(Program program, LocalDate baseline) {
+        for (Project project : projectDAO.getProjectsPendingReactivation(program, baseline)) {
+            project.setState(stateService.getById(PrismState.PROJECT_APPROVED));
+            project.setPreviousState(stateService.getById(PrismState.PROJECT_DISABLED_PENDING_REACTIVATION));
+            project.setDueDate(project.getEndDate());
+        }
     }
 
     public Integer getActiveProjectCount(ResourceParent resource) {

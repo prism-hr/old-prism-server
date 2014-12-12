@@ -8,5 +8,5 @@ testIndexes/*
 bin/*
 .externalToolBuilders/*
 .idea/*
-pgadmissions.iml
+prism.iml
 prism-development.ppk

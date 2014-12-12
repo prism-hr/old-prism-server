@@ -8,6 +8,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
+import com.google.common.io.Resources;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,6 +55,13 @@ public class FileResource {
     public Map<String, Object> uploadImage(@RequestParam(value = "file-data") Part uploadStream) throws IOException {
         Document document = documentService.create(FileCategory.IMAGE, uploadStream);
         return ImmutableMap.of("id", (Object) document.getId());
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/documents/blank", method = RequestMethod.GET)
+    public void downloadFile(HttpServletResponse response) throws IOException {
+        byte[] content = Resources.toByteArray(Resources.getResource("document/blank_qualification_explanation.pdf"));
+        sendFileToClient(response, new Document().withContent(content).withContentType("application/pdf").withFileName("explanation.pdf"));
     }
 
     @PreAuthorize("isAuthenticated()")

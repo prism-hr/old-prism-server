@@ -127,7 +127,7 @@ public class ImportedEntityService {
     public void mergeImportedProgram(Institution institution, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline)
             throws DeduplicationException, DataImportException, InstantiationException, IllegalAccessException {
         Programme programDefinition = programInstanceDefinitions.iterator().next().getProgramme();
-        Program persistentProgram = mergeProgram(institution, programDefinition);
+        Program persistentProgram = mergeProgram(institution, programDefinition, baseline);
 
         LocalDate startDate = null;
         LocalDate closeDate = null;
@@ -272,15 +272,13 @@ public class ImportedEntityService {
         return importedEntityDAO.getPendingImportedEntityFeeds(institutionId);
     }
 
-    private Program mergeProgram(Institution institution, Programme programDefinition) throws DeduplicationException {
+    private Program mergeProgram(Institution institution, Programme programDefinition, LocalDate baseline) throws DeduplicationException {
         User proxyCreator = institution.getUser();
 
         String transientTitle = programDefinition.getName();
         String transientTitleClean = transientTitle.replace("\n", "").replace("\r", "").replace("\t", "");
 
         Advert transientAdvert = new Advert().withTitle(transientTitle);
-
-        DateTime baseline = new DateTime();
 
         PrismProgramType programTypeId = PrismProgramType.findValueFromString(programDefinition.getName());
         programTypeId = programTypeId == null ? institution.getDefaultProgramType() : programTypeId;
@@ -290,20 +288,20 @@ public class ImportedEntityService {
         ProgramType programType = getImportedEntityByCode(ProgramType.class, institution, programTypeId.name());
         Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution)
                 .withImportedCode(programDefinition.getCode()).withTitle(transientTitleClean).withRequireProjectDefinition(transientRequireProjectDefinition)
-                .withImported(true).withAdvert(transientAdvert).withProgramType(programType).withUser(proxyCreator).withCreatedTimestamp(baseline)
-                .withUpdatedTimestamp(baseline);
+                .withImported(true).withAdvert(transientAdvert).withProgramType(programType).withUser(proxyCreator).withCreatedTimestamp(new DateTime());
 
         Program persistentProgram = entityService.getDuplicateEntity(transientProgram);
 
         if (persistentProgram == null) {
             entityService.save(transientProgram);
-            return transientProgram;
+            persistentProgram = transientProgram;
         } else {
             persistentProgram.setTitle(transientTitle);
             persistentProgram.setRequireProjectDefinition(transientRequireProjectDefinition);
-            persistentProgram.setUpdatedTimestamp(baseline);
-            return persistentProgram;
         }
+
+        persistentProgram.setDueDate(baseline);
+        return persistentProgram;
     }
 
     private ProgramStudyOption mergeProgramStudyOption(ProgramStudyOption transientProgramStudyOption, LocalDate baseline) throws DeduplicationException {

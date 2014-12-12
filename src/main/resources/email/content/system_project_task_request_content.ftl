@@ -13,5 +13,5 @@ ${SYSTEM_PROJECT_HOMEPAGE}
 
 <p>
     Yours sincerely,
-    <br/> ${TEMPLATE_AUTHOR}
+    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>

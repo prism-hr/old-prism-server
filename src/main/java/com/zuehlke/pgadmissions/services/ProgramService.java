@@ -110,10 +110,12 @@ public class ProgramService {
 
     public void postProcessProgram(Program program, Comment comment) {
         if (comment.isProgramApproveOrDeactivateComment()) {
-            projectService.sychronizeProject(program);
+            projectService.sychronizeProjects(program);
+            if (comment.isProgramRestoreComment()) {
+                projectService.restoreProjects(program, comment.getCreatedTimestamp().toLocalDate());
+            }
         }
-        Advert advert = program.getAdvert();
-        advert.setSequenceIdentifier(program.getSequenceIdentifier().substring(0, 13) + String.format("%010d", advert.getId()));
+        advertService.setSequenceIdentifier(program.getAdvert(), program.getSequenceIdentifier().substring(0, 13));
     }
 
     public List<ProgramStudyOption> getEnabledProgramStudyOptions(Program program) {

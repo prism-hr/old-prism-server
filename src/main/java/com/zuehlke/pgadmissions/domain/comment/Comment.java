@@ -628,9 +628,9 @@ public class Comment {
                 && Arrays.asList(PrismState.PROGRAM_APPROVED, PrismState.PROGRAM_DEACTIVATED).contains(transitionState.getId());
     }
 
-    public boolean isProjectApproveOrDeactivateComment() {
-        return action.getScope().getId() == PrismScope.PROJECT
-                && Arrays.asList(PrismState.PROJECT_APPROVED, PrismState.PROJECT_DEACTIVATED).contains(transitionState.getId());
+    public boolean isProgramRestoreComment() {
+        return action.getId() == PrismAction.INSTITUTION_IMPORT_PROGRAM && state.getId() == PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION
+                && transitionState.getId() == PrismState.PROGRAM_APPROVED;
     }
 
     public boolean isProjectCreateApplicationComment() {
@@ -738,7 +738,7 @@ public class Comment {
     public boolean isViewEditComment() {
         return action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE;
     }
-    
+
     public boolean isUserComment() {
         return action.getActionType() == PrismActionType.USER_INVOCATION;
     }

@@ -292,6 +292,10 @@ public class AdvertService {
             return themes;
         }
     }
+    
+    public void setSequenceIdentifier(Advert advert, String prefix) {
+        advert.setSequenceIdentifier(prefix + String.format("%010d", advert.getId()));
+    }
 
     private String getCurrencyAtLocale(Advert advert) {
         InstitutionAddress localeAddress = advert.getAddress();

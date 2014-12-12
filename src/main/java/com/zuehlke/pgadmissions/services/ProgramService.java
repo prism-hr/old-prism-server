@@ -141,10 +141,6 @@ public class ProgramService {
         for (ProgramStudyOption elapsedOption : elapsedOptions) {
             elapsedOption.setEnabled(false);
         }
-
-        if (persistentProgram.getStudyOptions().size() == elapsedOptions.size()) {
-            persistentProgram.setDueDate(baseline);
-        }
     }
 
     public List<ProgramRepresentation> getSimilarPrograms(Integer institutionId, String searchTerm) {

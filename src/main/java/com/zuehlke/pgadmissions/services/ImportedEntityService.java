@@ -285,13 +285,15 @@ public class ImportedEntityService {
 
         boolean transientRequireProjectDefinition = programDefinition.isAtasRegistered();
 
+        DateTime baselineDateTime = new DateTime();
+
         ProgramType programType = getImportedEntityByCode(ProgramType.class, institution, programTypeId.name());
         Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution)
                 .withImportedCode(programDefinition.getCode()).withTitle(transientTitleClean).withRequireProjectDefinition(transientRequireProjectDefinition)
-                .withImported(true).withAdvert(transientAdvert).withProgramType(programType).withUser(proxyCreator).withCreatedTimestamp(new DateTime());
+                .withImported(true).withAdvert(transientAdvert).withProgramType(programType).withUser(proxyCreator).withCreatedTimestamp(baselineDateTime)
+                .withUpdatedTimestamp(baselineDateTime);
 
         Program persistentProgram = entityService.getDuplicateEntity(transientProgram);
-
         if (persistentProgram == null) {
             entityService.save(transientProgram);
             persistentProgram = transientProgram;

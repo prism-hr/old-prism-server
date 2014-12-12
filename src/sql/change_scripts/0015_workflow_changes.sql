@@ -182,4 +182,3 @@ delete
 from state_transition_evaluation
 where id in ("PROGRAM_RESTORED_OUTCOME", "PROJECT_RESTORED_OUTCOME", "PROGRAM_EXPIRED_OUTCOME")
 ;
-

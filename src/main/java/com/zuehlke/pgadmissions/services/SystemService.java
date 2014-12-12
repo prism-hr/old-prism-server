@@ -340,7 +340,8 @@ public class SystemService {
     private void initializeStateDurationDefinitions() throws DeduplicationException {
         for (PrismStateDurationDefinition prismStateDuration : PrismStateDurationDefinition.values()) {
             Scope scope = scopeService.getById(prismStateDuration.getScope());
-            StateDurationDefinition transientStateDurationDefinition = new StateDurationDefinition().withId(prismStateDuration).withScope(scope);
+            StateDurationDefinition transientStateDurationDefinition = new StateDurationDefinition().withId(prismStateDuration)
+                    .withEscalation(prismStateDuration.isEscalation()).withScope(scope);
             entityService.createOrUpdate(transientStateDurationDefinition);
         }
     }

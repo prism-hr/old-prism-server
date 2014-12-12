@@ -22,3 +22,11 @@ alter table imported_language_qualification_type
 update system
 set helpdesk = "http://uclprism.freshdesk.com/"
 ;
+
+alter table state_duration_definition
+	add column escalation int(1) unsigned not null default 0 after id
+;
+
+alter table state_duration_definition
+	modify column escalation int(1) unsigned not null after id
+;

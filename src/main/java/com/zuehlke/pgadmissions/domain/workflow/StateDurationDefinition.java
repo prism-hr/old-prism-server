@@ -24,6 +24,9 @@ public class StateDurationDefinition extends WorkflowDefinition {
     @Enumerated(EnumType.STRING)
     private PrismStateDurationDefinition id;
 
+    @Column(name = "escalation", nullable = false)
+    private Boolean escalation;
+    
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
@@ -35,6 +38,14 @@ public class StateDurationDefinition extends WorkflowDefinition {
 
     public void setId(PrismStateDurationDefinition id) {
         this.id = id;
+    }
+    
+    public final Boolean getEscalation() {
+        return escalation;
+    }
+
+    public final void setEscalation(Boolean escalation) {
+        this.escalation = escalation;
     }
 
     @Override
@@ -52,6 +63,11 @@ public class StateDurationDefinition extends WorkflowDefinition {
         return this;
     }
 
+    public StateDurationDefinition withEscalation(Boolean escalation) {
+        this.escalation = escalation;
+        return this;
+    }
+    
     public StateDurationDefinition withScope(Scope scope) {
         this.scope = scope;
         return this;

@@ -227,28 +227,29 @@ public class ResourceService {
     }
 
     public void processResource(Resource resource, Comment comment) throws DeduplicationException {
-        LocalDate baselineCustom = null;
-        LocalDate baseline = new LocalDate();
-
-        PrismStateDurationEvaluation stateDurationEvaluation = resource.getState().getStateDurationEvaluation();
-        if (stateDurationEvaluation != null) {
-            baselineCustom = (LocalDate) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(stateDurationEvaluation), resource, comment);
-        }
-
-        baseline = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
-
         StateDurationDefinition stateDurationDefinition = resource.getState().getStateDurationDefinition();
-        StateDurationConfiguration stateDurationConfiguration = stateDurationDefinition == null ? null : stateService.getStateDurationConfiguration(
-                resource, comment.getUser(), stateDurationDefinition);
-        Integer duration = stateDurationConfiguration == null ? 0 : stateDurationConfiguration.getDuration();
+        if (comment.isStateTransitionComment() || BooleanUtils.isTrue(stateDurationDefinition.getEscalation())) {
+            LocalDate baselineCustom = null;
+            LocalDate baseline = new LocalDate();
 
-        resource.setDueDate(baseline.plusDays(duration));
-        entityService.flush();
+            PrismStateDurationEvaluation stateDurationEvaluation = resource.getState().getStateDurationEvaluation();
+            if (stateDurationEvaluation != null) {
+                baselineCustom = (LocalDate) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(stateDurationEvaluation), resource, comment);
+            }
+
+            baseline = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
+
+            StateDurationConfiguration stateDurationConfiguration = stateDurationDefinition == null ? null : stateService.getStateDurationConfiguration(
+                    resource, comment.getUser(), stateDurationDefinition);
+            resource.setDueDate(baseline.plusDays(stateDurationConfiguration == null ? 0 : stateDurationConfiguration.getDuration()));
+
+            entityService.flush();
+        }
     }
 
     public void postProcessResource(Resource resource, Comment comment) throws DeduplicationException {
         DateTime baselineTime = new DateTime();
-        
+
         if (comment.isUserComment() || resource.getSequenceIdentifier() == null) {
             resource.setUpdatedTimestamp(baselineTime);
             resource.setSequenceIdentifier(Long.toString(baselineTime.getMillis()) + String.format("%010d", resource.getId()));

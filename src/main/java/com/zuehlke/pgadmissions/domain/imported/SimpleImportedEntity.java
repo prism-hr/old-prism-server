@@ -43,15 +43,11 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "imported_entity_type", discriminatorType = DiscriminatorType.STRING)
 @Indexed
-public abstract class SimpleImportedEntity extends ImportedEntity {
+public class SimpleImportedEntity extends ImportedEntity {
 
     @Id
     @GeneratedValue
     private Integer id;
-
-    @ManyToOne
-    @JoinColumn(name = "root_id")
-    private SimpleImportedEntity root;
 
     @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
@@ -77,15 +73,6 @@ public abstract class SimpleImportedEntity extends ImportedEntity {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    @Override
-    public final SimpleImportedEntity getRoot() {
-        return root;
-    }
-
-    public final void setRoot(SimpleImportedEntity root) {
-        this.root = root;
     }
 
     public Institution getInstitution() {

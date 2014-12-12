@@ -38,9 +38,8 @@ public class ApplicationDAO {
 
     public Application getPreviousSubmittedApplication(Application application) {
         return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class) //
-                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user", application.getUser())) //
-                .add(Restrictions.eq("institution.locale", application.getLocale())) //
+                .add(Restrictions.eq("institution", application.getInstitution())) //
                 .add(Restrictions.isNotNull("submittedTimestamp")) //
                 .add(Restrictions.not( //
                         Restrictions.in("state.id", Arrays.asList( //

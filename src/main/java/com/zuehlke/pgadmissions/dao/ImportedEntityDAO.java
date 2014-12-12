@@ -146,14 +146,4 @@ public class ImportedEntityDAO {
                 .list();
     }
 
-    public <T extends ImportedEntity> T getCorrespondingImportedEntity(Institution toInstitution, ImportedEntity fromEntity) {
-        ImportedEntity root = fromEntity.getRoot();
-        root = root == null ? fromEntity : root;
-        return (T) sessionFactory.getCurrentSession().createCriteria(fromEntity.getClass()) //
-                .add(Restrictions.eq("root", root)) //
-                .add(Restrictions.eq("institution", toInstitution)) //
-                .add(Restrictions.eq("enabled", true)) //
-                .uniqueResult();
-    }
-
 }

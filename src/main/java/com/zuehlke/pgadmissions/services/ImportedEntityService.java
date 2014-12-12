@@ -276,10 +276,6 @@ public class ImportedEntityService {
         return importedEntityDAO.getPendingImportedEntityFeeds(institutionId);
     }
 
-    public <T extends ImportedEntity> T getCorrespondingImportedEntity(Institution toInstitution, ImportedEntity fromEntity) {
-        return importedEntityDAO.getCorrespondingImportedEntity(toInstitution, fromEntity);
-    }
-
     private Program mergeProgram(Institution institution, Programme programDefinition) throws DeduplicationException {
         User proxyCreator = institution.getUser();
 

@@ -397,13 +397,8 @@ public class ApplicationCopyHelper {
         T toEntity = null;
         if (fromEntity == null) {
             toEntity = null;
-        } else {
-            Institution fromInstitution = fromEntity.getInstitution();
-            if (fromEntity.getEnabled() && fromInstitution == toInstitution) {
-                toEntity = fromEntity;
-            } else if (fromInstitution != toInstitution) {
-                toEntity = importedEntityService.getCorrespondingImportedEntity(toInstitution, fromEntity);
-            }
+        } else if (fromEntity.getEnabled()) {
+            toEntity = fromEntity;
         }
 
         if (fromEntity != null && toEntity == null) {

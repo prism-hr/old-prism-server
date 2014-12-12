@@ -50,7 +50,6 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(true) //
             .withActionEnhancement(PrismActionEnhancement.PROGRAM_VIEW_EDIT_AS_USER) //
-            .withNotificationTemplate(PrismNotificationDefinition.SYSTEM_PROGRAM_TASK_REQUEST) //
                 .withAssignments(Arrays.asList( // 
                     new PrismStateActionAssignment() // 
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), // 

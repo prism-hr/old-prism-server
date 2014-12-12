@@ -178,7 +178,7 @@ public class PrismProjectApproved extends PrismWorkflowState {
             .withDefaultAction(false) //
                 .withTransitions(Arrays.asList( //
                     new PrismStateTransition() //
-                        .withTransitionState(PrismState.PROJECT_DISABLED_PENDING_REACTIVATION) //
+                        .withTransitionState(PrismState.PROJECT_DISABLED_COMPLETED) //
                         .withTransitionAction(PrismAction.PROJECT_ESCALATE)))); //
 
         stateActions.add(new PrismStateAction() //

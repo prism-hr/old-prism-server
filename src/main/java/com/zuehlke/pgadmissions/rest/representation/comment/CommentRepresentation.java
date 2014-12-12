@@ -60,7 +60,7 @@ public class CommentRepresentation {
 
     private String exportResponse;
 
-    private String exportError;
+    private String exportException;
 
     private String exportReference;
 
@@ -268,12 +268,12 @@ public class CommentRepresentation {
         this.exportResponse = exportResponse;
     }
 
-    public String getExportError() {
-        return exportError;
+    public String getExportException() {
+        return exportException;
     }
 
-    public void setExportError(String exportError) {
-        this.exportError = exportError;
+    public void setExportException(String exportException) {
+        this.exportException = exportException;
     }
 
     public String getExportReference() {

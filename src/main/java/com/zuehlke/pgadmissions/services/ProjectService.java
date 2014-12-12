@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.List;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -142,10 +146,20 @@ public class ProjectService {
     }
 
     public void restoreProjects(Program program, LocalDate baseline) {
-        for (Project project : projectDAO.getProjectsPendingReactivation(program, baseline)) {
-            project.setState(stateService.getById(PrismState.PROJECT_APPROVED));
-            project.setPreviousState(stateService.getById(PrismState.PROJECT_DISABLED_PENDING_REACTIVATION));
-            project.setDueDate(project.getEndDate());
+        List<Project> projects = projectDAO.getProjectsPendingReactivation(program, baseline);
+        if (!projects.isEmpty()) {
+            State state = stateService.getById(PrismState.PROJECT_APPROVED);
+            State previousState = stateService.getById(PrismState.PROJECT_DISABLED_PENDING_REACTIVATION);
+            
+            for (Project project : projects) {
+                project.setState(state);
+                entityService.createOrUpdate(new ResourceState().withResource(project).withState(state).withPrimaryState(true));
+
+                project.setPreviousState(previousState);
+                entityService.createOrUpdate(new ResourcePreviousState().withResource(project).withState(previousState).withPrimaryState(true));
+
+                project.setDueDate(project.getEndDate());
+            }
         }
     }
 

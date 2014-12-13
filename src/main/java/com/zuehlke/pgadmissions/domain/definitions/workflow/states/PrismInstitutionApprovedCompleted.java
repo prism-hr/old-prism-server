@@ -73,7 +73,7 @@ public class PrismInstitutionApprovedCompleted extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVAL) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_PROGRAM_LIST) // 
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.PROGRAM_CREATED_OUTCOME)
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROGRAM_CREATED_OUTCOME)
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
@@ -85,7 +85,7 @@ public class PrismInstitutionApprovedCompleted extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_APPROVED) // 
                         .withTransitionAction(PrismAction.PROGRAM_VIEW_EDIT) // 
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.PROGRAM_CREATED_OUTCOME) // 
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROGRAM_CREATED_OUTCOME) // 
                         .withRoleTransitions(Arrays.asList( // 
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //

@@ -44,15 +44,15 @@ public class PrismProjectApproval extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_APPROVAL_PENDING_CORRECTION) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_PROJECT_LIST) // 
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_APPROVED_OUTCOME), // 
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_APPROVED_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_APPROVED) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_PROJECT_LIST) // 
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_APPROVED_OUTCOME), // 
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_APPROVED_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_REJECTED) // 
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_PROJECT_LIST) // 
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_APPROVED_OUTCOME)))); //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_APPROVED_OUTCOME)))); //
         
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_EMAIL_CREATOR) //

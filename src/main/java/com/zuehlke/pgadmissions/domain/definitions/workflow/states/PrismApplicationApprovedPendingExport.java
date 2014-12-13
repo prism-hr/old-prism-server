@@ -107,19 +107,19 @@ public class PrismApplicationApprovedPendingExport extends PrismWorkflowState {
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_APPROVED) // 
                         .withTransitionAction(PrismAction.APPLICATION_EXPORT) // 
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME), //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME), //
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_APPROVED_COMPLETED) // 
                         .withTransitionAction(PrismAction.APPLICATION_EXPORT) // 
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME), // 
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_APPROVED_PENDING_CORRECTION) // 
                         .withTransitionAction(PrismAction.APPLICATION_EXPORT) // 
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME), // 
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME), // 
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.APPLICATION_APPROVED_PENDING_EXPORT) // 
                         .withTransitionAction(PrismAction.APPLICATION_EXPORT) // 
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME)))); //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME)))); //
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_VIEW_EDIT) //

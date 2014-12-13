@@ -14,7 +14,7 @@
 	${COMMENT_TRANSITION_OUTCOME}
 </p>
 
-${TEMPLATE_VIEW_EDIT}
+${ACTION_VIEW_EDIT}
 
 <p>
     Yours sincerely,

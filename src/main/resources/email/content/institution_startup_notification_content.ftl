@@ -3,10 +3,10 @@
 </h1>
 
 <p>
-    Your new institution ${INSTITUTION_CODE} is now ready for use. Login to create users, and add users and projects. 
+    Your new institution ${INSTITUTION_CODE} is now ready for use. Login to create users, and add users and projects.
 </p>
 
-${TEMPLATE_VIEW_EDIT}
+${ACTION_VIEW_EDIT}
 
 <p>
     Yours sincerely,

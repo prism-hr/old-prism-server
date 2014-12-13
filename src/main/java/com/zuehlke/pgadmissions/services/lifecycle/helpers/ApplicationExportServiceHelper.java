@@ -19,10 +19,11 @@ public class ApplicationExportServiceHelper extends AbstractServiceHelper {
 
     @Override
     public void execute() throws Exception {
-        List<Integer> applicationIds = applicationService.getApplicationsForExport();
-        for (Integer applicationId : applicationIds) {
-            applicationExportService.submitExportRequest(applicationId);
-        }
+        // temporarily suspended
+//        List<Integer> applicationIds = applicationService.getApplicationsForExport();
+//        for (Integer applicationId : applicationIds) {
+//            applicationExportService.submitExportRequest(applicationId);
+//        }
     }
 
 }

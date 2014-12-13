@@ -22,7 +22,7 @@
 
 ${APPLICATION_INTERVIEW_LOCATION}
 
-${TEMPLATE_VIEW_EDIT}
+${ACTION_VIEW_EDIT}
 
 <p>
     Yours sincerely,

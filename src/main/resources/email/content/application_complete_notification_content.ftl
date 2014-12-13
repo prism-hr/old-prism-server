@@ -16,7 +16,7 @@
     see a timeline of all events and processing steps that have taken place on it.
 </p>
 
-${TEMPLATE_VIEW_EDIT}
+${ACTION_VIEW_EDIT}
 
 <p>
     Note that we do not contact Referees immediately after you submit your application.

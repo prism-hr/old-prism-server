@@ -20,20 +20,6 @@ public class PrismProjectDisabledPendingReactivation extends PrismWorkflowState 
     @Override
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROJECT_CONCLUDE) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) // //
-                .withTransitions(Arrays.asList( // 
-                    new PrismStateTransition() // 
-                        .withTransitionState(PrismState.PROJECT_DISABLED_COMPLETED) // 
-                        .withTransitionAction(PrismAction.PROJECT_CONCLUDE) // 
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME), // 
-                    new PrismStateTransition() // 
-                        .withTransitionState(PrismState.PROJECT_DISABLED_PENDING_REACTIVATION) // 
-                        .withTransitionAction(PrismAction.PROJECT_CONCLUDE) // 
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME)))); //
-        
-        stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_EMAIL_CREATOR) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
@@ -45,7 +31,7 @@ public class PrismProjectDisabledPendingReactivation extends PrismWorkflowState 
         
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_VIEW_EDIT) //
-            .withRaisesUrgentFlag(true) //
+            .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
             .withActionEnhancement(PrismActionEnhancement.PROJECT_VIEW_EDIT_AS_USER) //
                 .withAssignments(Arrays.asList( // 

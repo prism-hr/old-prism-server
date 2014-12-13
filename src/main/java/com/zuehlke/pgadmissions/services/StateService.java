@@ -401,6 +401,14 @@ public class StateService {
         return getViewEditNextState(resource, comment);
     }
 
+    public StateTransition getProgramEscalatedOutcome(Resource resource, Comment comment) {
+        if (BooleanUtils.isTrue(resource.getProgram().getImported())) {
+            return stateDAO.getStateTransition(resource, comment.getAction(), PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION);
+        } else {
+            return stateDAO.getStateTransition(resource, comment.getAction(), PrismState.PROGRAM_DISABLED_COMPLETED);
+        }
+    }
+
     public StateTransition getProjectViewEditOutcome(Resource resource, Comment comment) {
         return getViewEditNextState(resource, comment);
     }

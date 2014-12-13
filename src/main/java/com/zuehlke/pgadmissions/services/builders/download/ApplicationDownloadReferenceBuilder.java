@@ -74,17 +74,19 @@ public class ApplicationDownloadReferenceBuilder {
     }
 
     private void addReferenceDocument(Document pdfDocument, PdfWriter pdfWriter, Comment referenceComment) {
-        PdfContentByte content = pdfWriter.getDirectContent();
-        for (com.zuehlke.pgadmissions.domain.document.Document input : referenceComment.getDocuments()) {
-            try {
-                PdfReader reader = new PdfReader(input.getContent());
-                for (int i = 1; i <= reader.getNumberOfPages(); i++) {
-                    pdfDocument.newPage();
-                    PdfImportedPage page = pdfWriter.getImportedPage(reader, i);
-                    content.addTemplate(page, 0, 0);
+        if (referenceComment != null) {
+            PdfContentByte content = pdfWriter.getDirectContent();
+            for (com.zuehlke.pgadmissions.domain.document.Document input : referenceComment.getDocuments()) {
+                try {
+                    PdfReader reader = new PdfReader(input.getContent());
+                    for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+                        pdfDocument.newPage();
+                        PdfImportedPage page = pdfWriter.getImportedPage(reader, i);
+                        content.addTemplate(page, 0, 0);
+                    }
+                } catch (IOException e) {
+                    throw new PdfDocumentBuilderException(e);
                 }
-            } catch (IOException e) {
-                throw new PdfDocumentBuilderException(e);
             }
         }
     }

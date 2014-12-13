@@ -13,7 +13,6 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
@@ -22,19 +21,18 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 public class ApplicationDownloadEquivalentExperienceBuilder {
 
     private PropertyLoader propertyLoader;
-    
+
     private ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper;
 
-    public byte[] build(final Application application, final Comment approvalComment) {
+    public byte[] build(final Application application) {
         try {
-            
+
             Document pdfDocument = applicationDownloadBuilderHelper.startDocument();
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             applicationDownloadBuilderHelper.startDocumentWriter(outputStream, pdfDocument);
 
             PdfPTable body = applicationDownloadBuilderHelper.newSectionHeader(propertyLoader.load(APPLICATION_QUALIFICATION_EQUIVALENT_HEADER));
-            PdfPCell cell = applicationDownloadBuilderHelper.newContentCellMedium(approvalComment == null ? null : propertyLoader
-                    .load(APPLICATION_QUALIFICATION_EXPERIENCE_MESSAGE));
+            PdfPCell cell = applicationDownloadBuilderHelper.newContentCellMedium(propertyLoader.load(APPLICATION_QUALIFICATION_EXPERIENCE_MESSAGE));
             cell.setColspan(2);
             body.addCell(cell);
 
@@ -50,7 +48,7 @@ public class ApplicationDownloadEquivalentExperienceBuilder {
     public ApplicationDownloadEquivalentExperienceBuilder localize(PropertyLoader propertyLoader,
             ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper) {
         this.propertyLoader = propertyLoader;
-        this.applicationDownloadBuilderHelper  = applicationDownloadBuilderHelper;
+        this.applicationDownloadBuilderHelper = applicationDownloadBuilderHelper;
         return this;
     }
 

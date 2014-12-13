@@ -210,10 +210,6 @@ public class ApplicationService {
         return latestStartDate.isAfter(closeDate) ? latestStartDate.minusWeeks(1) : latestStartDate;
     }
 
-    public String getApplicationExportReference(Application application) {
-        return applicationDAO.getApplicationExportReference(application);
-    }
-
     public String getApplicationCreatorIpAddress(Application application) {
         return applicationDAO.getApplicationCreatorIpAddress(application);
     }
@@ -233,8 +229,10 @@ public class ApplicationService {
         List<ApplicationReferee> refereesNotResponded = applicationDAO.getApplicationRefereesNotResponded(application);
         int refereesNotRespondedSize = refereesNotResponded.size();
 
-        if (refereesRespondedSize == 0 || refereesNotRespondedSize == 0) {
+        if (refereesNotRespondedSize == 0) {
             return refereesResponded;
+        } else if (refereesRespondedSize == 0) {
+            return refereesNotResponded;
         }
 
         WorkflowPropertyConfiguration configuration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithOrWithoutVersion(

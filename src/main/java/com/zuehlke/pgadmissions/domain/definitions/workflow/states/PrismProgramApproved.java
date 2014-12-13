@@ -206,12 +206,19 @@ public class PrismProgramApproved extends PrismWorkflowState {
             .withAction(PrismAction.PROGRAM_ESCALATE) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false) //
-                .withTransitions(Arrays.asList(
-                    new PrismStateTransition() //
+                .withTransitions(Arrays.asList( //
+                    new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROGRAM_DISABLED_COMPLETED) // 
-                        .withTransitionAction(PrismAction.PROGRAM_ESCALATE) // 
+                        .withTransitionAction(PrismAction.PROGRAM_ESCALATE) //
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.PROGRAM_ESCALATED_OUTCOME) //
                         .withPropagatedActions(Arrays.asList( //
-                                PrismAction.PROJECT_SUSPEND))))); //
+                            PrismAction.PROJECT_TERMINATE)),
+                    new PrismStateTransition() // 
+                        .withTransitionState(PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION) // 
+                        .withTransitionAction(PrismAction.PROGRAM_ESCALATE) // 
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.PROGRAM_ESCALATED_OUTCOME) //
+                        .withPropagatedActions(Arrays.asList( //
+                            PrismAction.PROJECT_SUSPEND))))); //
     }
 
 }

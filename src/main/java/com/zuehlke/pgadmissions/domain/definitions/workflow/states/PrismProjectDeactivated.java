@@ -24,6 +24,10 @@ public class PrismProjectDeactivated extends PrismWorkflowState {
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false)  //
                 .withTransitions(Arrays.asList( // 
+                    new PrismStateTransition() //
+                        .withTransitionState(PrismState.PROJECT_APPROVED) //
+                        .withTransitionAction(PrismAction.PROJECT_CONCLUDE) //
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME), //
                     new PrismStateTransition() // 
                         .withTransitionState(PrismState.PROJECT_DEACTIVATED) // 
                         .withTransitionAction(PrismAction.PROJECT_CONCLUDE) // 

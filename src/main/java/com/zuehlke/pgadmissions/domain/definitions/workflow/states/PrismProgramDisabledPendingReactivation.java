@@ -20,24 +20,6 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
     @Override
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROGRAM_CONCLUDE) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-                .withTransitions(Arrays.asList( // 
-                    new PrismStateTransition() // 
-                        .withTransitionState(PrismState.PROGRAM_DISABLED_COMPLETED) // 
-                        .withTransitionAction(PrismAction.PROGRAM_CONCLUDE) // 
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME)// 
-                        .withPropagatedActions(Arrays.asList( //
-                            PrismAction.PROJECT_TERMINATE)), // 
-                    new PrismStateTransition() // 
-                        .withTransitionState(PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION) // 
-                        .withTransitionAction(PrismAction.PROGRAM_CONCLUDE) // 
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME)// 
-                        .withPropagatedActions(Arrays.asList( //
-                            PrismAction.PROJECT_SUSPEND))))); //
-        
-        stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_EMAIL_CREATOR) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false)  //
@@ -47,7 +29,7 @@ public class PrismProgramDisabledPendingReactivation extends PrismWorkflowState 
     
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_VIEW_EDIT) //
-            .withRaisesUrgentFlag(true) //
+            .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
             .withActionEnhancement(PrismActionEnhancement.PROGRAM_VIEW_EDIT_AS_USER) //
                 .withAssignments(Arrays.asList( // 

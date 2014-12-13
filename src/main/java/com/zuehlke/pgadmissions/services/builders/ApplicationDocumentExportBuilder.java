@@ -23,8 +23,6 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualificat
 import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
@@ -62,11 +60,11 @@ public class ApplicationDocumentExportBuilder {
         try {
             zos = new ZipOutputStream(outputStream);
             buildContentsFile(application, exportReference, contentsProperties, zos);
-            buildAcademicQualifications(application, exportReference, contentsProperties, zos);
-            buildLanguageQualification(application, exportReference, contentsProperties, zos);
-            buildPersonalStatement(application, exportReference, contentsProperties, zos);
+            buildAcademicQualifications(application, contentsProperties, zos);
+            buildLanguageQualification(application, contentsProperties, zos);
+            buildPersonalStatement(application, contentsProperties, zos);
             buildCv(application, exportReference, contentsProperties, zos);
-            buildReferences(application, exportReference, contentsProperties, zos);
+            buildReferences(application, contentsProperties, zos);
             buildStandaloneApplication(application, exportReference, contentsProperties, zos);
             buildMergedApplication(application, exportReference, contentsProperties, zos);
         } finally {
@@ -88,35 +86,42 @@ public class ApplicationDocumentExportBuilder {
         zos.closeEntry();
     }
 
-    private void buildAcademicQualifications(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
-            throws IOException {
+    private void buildAcademicQualifications(Application application, Properties contentsProperties, ZipOutputStream zos) throws IOException {
         List<ApplicationQualification> qualifications = applicationService.getApplicationExportQualifications(application);
         int qualificationCount = qualifications.size();
         if (qualificationCount > 0) {
             for (int i = 0; i < qualificationCount; i++) {
                 String filename = getRandomFilename();
                 zos.putNextEntry(new ZipEntry(filename));
-                Document transcript = qualifications.get(i).getDocument();
-                zos.write(getFileContents(application, transcript));
+                Document document = qualifications.get(i).getDocument();
+
+                if (document == null) {
+                    buildSurrogateAcademicQualificationProofOfAward(application, zos);
+                } else {
+                    zos.write(getFileContents(application, document));
+                }
+
                 zos.closeEntry();
                 int qualificationNumberId = i + 1;
                 contentsProperties.put("transcript." + qualificationNumberId + ".serverFilename", filename);
-                contentsProperties.put("transcript." + qualificationNumberId + ".applicationFilename", transcript.getFileName());
+                contentsProperties.put("transcript." + qualificationNumberId + ".applicationFilename", document.getFileName());
             }
         } else {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
-            Comment approvalComment = commentService.getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
-            zos.write(applicationContext.getBean(ApplicationDownloadEquivalentExperienceBuilder.class)
-                    .localize(propertyLoader, applicationDownloadBuilderHelper).build(application, approvalComment));
+            buildSurrogateAcademicQualificationProofOfAward(application, zos);
             zos.closeEntry();
             contentsProperties.put("transcript.1.serverFilename", filename);
             contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
         }
     }
 
-    private void buildLanguageQualification(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
-            throws IOException {
+    private void buildSurrogateAcademicQualificationProofOfAward(Application application, ZipOutputStream zos) throws IOException {
+        zos.write(applicationContext.getBean(ApplicationDownloadEquivalentExperienceBuilder.class).localize(propertyLoader, applicationDownloadBuilderHelper)
+                .build(application));
+    }
+
+    private void buildLanguageQualification(Application application, Properties contentsProperties, ZipOutputStream zos) throws IOException {
         ApplicationPersonalDetail applicationPersonalDetail = application.getPersonalDetail();
         ApplicationLanguageQualification applicationLanguageQualification = applicationPersonalDetail == null ? null : applicationPersonalDetail
                 .getLanguageQualification();
@@ -132,7 +137,7 @@ public class ApplicationDocumentExportBuilder {
         }
     }
 
-    private void buildPersonalStatement(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
+    private void buildPersonalStatement(Application application, Properties contentsProperties, ZipOutputStream zos) throws IOException {
         ApplicationDocument applicationDocument = application.getDocument();
         Document document = applicationDocument == null ? null : applicationDocument.getPersonalStatement();
         if (document != null) {
@@ -158,7 +163,7 @@ public class ApplicationDocumentExportBuilder {
         }
     }
 
-    private void buildReferences(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
+    private void buildReferences(Application application, Properties contentsProperties, ZipOutputStream zos) throws IOException {
         List<ApplicationReferee> referees = applicationService.getApplicationExportReferees(application);
         for (int i = 0; i < 2; i++) {
             String filename = getRandomFilename();

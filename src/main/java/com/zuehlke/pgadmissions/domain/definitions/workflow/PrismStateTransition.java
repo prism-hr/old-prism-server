@@ -11,7 +11,7 @@ public class PrismStateTransition {
 
     private PrismAction transitionAction;
 
-    private PrismStateTransitionEvaluation transitionEvaluation;
+    private PrismStateTransitionEvaluation stateTransitionEvaluation;
 
     private List<PrismRoleTransition> roleTransitions = Lists.newArrayList();
 
@@ -27,8 +27,8 @@ public class PrismStateTransition {
         return transitionAction;
     }
 
-    public PrismStateTransitionEvaluation getTransitionEvaluation() {
-        return transitionEvaluation;
+    public PrismStateTransitionEvaluation getStateTransitionEvaluation() {
+        return stateTransitionEvaluation;
     }
 
     public List<PrismRoleTransition> getRoleTransitions() {
@@ -53,8 +53,8 @@ public class PrismStateTransition {
         return this;
     }
 
-    public PrismStateTransition withTransitionEvaluation(PrismStateTransitionEvaluation transitionEvaluation) {
-        this.transitionEvaluation = transitionEvaluation;
+    public PrismStateTransition withStateTransitionEvaluation(PrismStateTransitionEvaluation transitionEvaluation) {
+        this.stateTransitionEvaluation = transitionEvaluation;
         return this;
     }
 
@@ -75,7 +75,7 @@ public class PrismStateTransition {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(transitionState, transitionAction, transitionEvaluation, roleTransitions, propagatedActions, stateTerminations);
+        return Objects.hashCode(transitionState, transitionAction, stateTransitionEvaluation, roleTransitions, propagatedActions, stateTerminations);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class PrismStateTransition {
         final List<PrismAction> otherPropagatedActions = other.getPropagatedActions();
         final List<PrismState> otherStateTerminations = other.getStateTerminations();
         return Objects.equal(transitionState, other.getTransitionState()) && Objects.equal(transitionAction, other.getTransitionAction())
-                && Objects.equal(transitionEvaluation, other.getTransitionEvaluation()) && roleTransitions.size() == otherRoleTransitions.size()
+                && Objects.equal(stateTransitionEvaluation, other.getStateTransitionEvaluation()) && roleTransitions.size() == otherRoleTransitions.size()
                 && roleTransitions.containsAll(otherRoleTransitions) && propagatedActions.size() == otherPropagatedActions.size()
                 && propagatedActions.containsAll(otherPropagatedActions) && stateTerminations.size() == otherStateTerminations.size()
                 && stateTerminations.containsAll(otherStateTerminations);

@@ -27,15 +27,15 @@ public class PrismProjectApproved extends PrismWorkflowState {
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.PROJECT_APPROVED) //
                         .withTransitionAction(PrismAction.PROJECT_CONCLUDE) //
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME), //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME), //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.PROJECT_DEACTIVATED) //
                         .withTransitionAction(PrismAction.PROJECT_CONCLUDE) //
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME), //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME), //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.PROJECT_DISABLED_COMPLETED) //
                         .withTransitionAction(PrismAction.PROJECT_CONCLUDE) //
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME)))); //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME)))); //
 
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_EMAIL_CREATOR) //
@@ -65,7 +65,7 @@ public class PrismProjectApproved extends PrismWorkflowState {
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.PROJECT_APPROVED) //
                         .withTransitionAction(PrismAction.PROJECT_VIEW_EDIT) //
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_VIEW_EDIT_OUTCOME)
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_VIEW_EDIT_OUTCOME)
                         .withRoleTransitions(Arrays.asList( //
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROJECT_ADMINISTRATOR) //
@@ -104,7 +104,7 @@ public class PrismProjectApproved extends PrismWorkflowState {
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.PROJECT_DEACTIVATED) //
                         .withTransitionAction(PrismAction.PROJECT_VIEW_EDIT) //
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_VIEW_EDIT_OUTCOME)
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_VIEW_EDIT_OUTCOME)
                         .withRoleTransitions(Arrays.asList( //
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.PROJECT_ADMINISTRATOR) //
@@ -143,7 +143,7 @@ public class PrismProjectApproved extends PrismWorkflowState {
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.PROJECT_DISABLED_COMPLETED) //
                         .withTransitionAction(PrismAction.PROJECT_VIEW_EDIT) //
-                        .withTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_VIEW_EDIT_OUTCOME)))); //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_VIEW_EDIT_OUTCOME)))); //
 
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_CREATE_APPLICATION) //

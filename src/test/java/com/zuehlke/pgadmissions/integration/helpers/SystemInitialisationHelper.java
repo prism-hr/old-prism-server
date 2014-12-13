@@ -357,7 +357,7 @@ public class SystemInitialisationHelper {
             PrismStateTransition prismStateTransition = new PrismStateTransition()
                     .withTransitionState(transitionState == null ? null : transitionState.getId())
                     .withTransitionAction(stateTransition.getTransitionAction().getId())
-                    .withTransitionEvaluation(evaluation == null ? null : evaluation.getId());
+                    .withStateTransitionEvaluation(evaluation == null ? null : evaluation.getId());
 
             for (RoleTransition roleTransition : stateTransition.getRoleTransitions()) {
                 WorkflowPropertyDefinition workflowPropertyDefinition = roleTransition.getWorkflowPropertyDefinition();

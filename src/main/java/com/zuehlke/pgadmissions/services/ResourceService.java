@@ -228,7 +228,7 @@ public class ResourceService {
 
     public void processResource(Resource resource, Comment comment) throws DeduplicationException {
         StateDurationDefinition stateDurationDefinition = resource.getState().getStateDurationDefinition();
-        if (comment.isStateTransitionComment() || BooleanUtils.isTrue(stateDurationDefinition.getEscalation())) {
+        if (comment.isStateTransitionComment() || (stateDurationDefinition != null && BooleanUtils.isTrue(stateDurationDefinition.getEscalation()))) {
             LocalDate baselineCustom = null;
             LocalDate baseline = new LocalDate();
 

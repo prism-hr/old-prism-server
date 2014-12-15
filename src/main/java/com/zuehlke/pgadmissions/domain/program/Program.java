@@ -288,6 +288,14 @@ public class Program extends ResourceParent {
     public void setCode(String code) {
         this.code = code;
     }
+    
+    public final String getImportedCode() {
+        return importedCode;
+    }
+
+    public final void setImportedCode(String importedCode) {
+        this.importedCode = importedCode;
+    }
 
     public String getTitle() {
         return title;

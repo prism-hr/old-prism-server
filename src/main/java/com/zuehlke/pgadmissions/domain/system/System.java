@@ -58,9 +58,6 @@ public class System extends Resource {
     @Enumerated(EnumType.STRING)
     private PrismLocale locale;
 
-    @Column(name = "homepage", nullable = false)
-    private String homepage;
-
     @Column(name = "helpdesk", nullable = false)
     private String helpdesk;
 
@@ -105,10 +102,10 @@ public class System extends Resource {
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
-    
+
     @OneToMany(mappedBy = "system")
     private Set<ResourceState> resourceStates = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "system")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
 
@@ -165,14 +162,6 @@ public class System extends Resource {
 
     public final void setLocale(PrismLocale locale) {
         this.locale = locale;
-    }
-
-    public final String getHomepage() {
-        return homepage;
-    }
-
-    public final void setHomepage(String homepage) {
-        this.homepage = homepage;
     }
 
     public final String getHelpdesk() {
@@ -348,7 +337,7 @@ public class System extends Resource {
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
-    
+
     @Override
     public Integer getWorkflowPropertyConfigurationVersion() {
         return null;
@@ -358,7 +347,7 @@ public class System extends Resource {
     public void setWorkflowPropertyConfigurationVersion(Integer workflowResourceConfigurationVersion) {
         return;
     }
-    
+
     @Override
     public final Set<ResourceState> getResourceStates() {
         return resourceStates;
@@ -385,12 +374,12 @@ public class System extends Resource {
     public Set<Comment> getComments() {
         return comments;
     }
-    
+
     @Override
     public Set<UserRole> getUserRoles() {
         return userRoles;
     }
-    
+
     public Set<Project> getProjects() {
         return projects;
     }
@@ -407,11 +396,6 @@ public class System extends Resource {
 
     public System withLocale(PrismLocale locale) {
         this.locale = locale;
-        return this;
-    }
-
-    public System withHomepage(String homepage) {
-        this.homepage = homepage;
         return this;
     }
 

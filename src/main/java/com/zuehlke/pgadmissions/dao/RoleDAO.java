@@ -116,9 +116,9 @@ public class RoleDAO {
                 .createAlias("stateTransition", "stateTransition", JoinType.INNER_JOIN) //
                 .createAlias("stateTransition.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.resourcePreviousStates", "resourcePreviousState", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("resourcePreviousState." + resource.getResourceScope().getLowerCaseName(), resource)) //
-                .add(Restrictions.eq("resourcePreviousState.primaryState", false)) //
+                .createAlias("state.resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("resourceState." + resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.eq("resourceState.primaryState", false)) //
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.isNull("stateTransition.transitionState")) //
                 .add(Restrictions.eq("roleTransitionType", roleTransitionType)) //

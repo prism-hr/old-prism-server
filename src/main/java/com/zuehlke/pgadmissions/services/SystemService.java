@@ -389,7 +389,7 @@ public class SystemService {
         User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail, PrismLocale.getSystemLocale());
         State systemRunning = stateService.getById(PrismState.SYSTEM_RUNNING);
         DateTime startupTimestamp = new DateTime();
-        System transientSystem = new System().withId(systemId).withTitle(systemName).withLocale(PrismLocale.getSystemLocale()).withHomepage(applicationUrl)
+        System transientSystem = new System().withId(systemId).withTitle(systemName).withLocale(PrismLocale.getSystemLocale())
                 .withHelpdesk(systemHelpdesk).withUser(systemUser).withState(systemRunning).withCipherSalt(EncryptionUtils.getUUID())
                 .withCreatedTimestamp(startupTimestamp).withUpdatedTimestamp(startupTimestamp);
         System system = entityService.createOrUpdate(transientSystem);
@@ -564,7 +564,7 @@ public class SystemService {
     }
 
     private void persistConfigurations(PrismConfiguration configurationType, System system, PrismScope prismScope,
-            List<? extends WorkflowConfigurationDTO> configurationDTO) throws CustomizationException {
+                                       List<? extends WorkflowConfigurationDTO> configurationDTO) throws CustomizationException {
         if (configurationDTO.size() > 0) {
             customizationService.createConfigurationGroup(configurationType, system, prismScope, getSystemLocale(),
                     prismScope.getPrecedence() > PrismScope.INSTITUTION.getPrecedence() ? getSystemProgramType() : null, configurationDTO);

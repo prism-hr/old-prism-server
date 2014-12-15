@@ -698,7 +698,7 @@ public class ApplicationDownloadBuilder {
         }
 
         applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(APPLICATION_PREVIOUS_APPLICATION),
-                propertyLoader.load(SYSTEM_YES, SYSTEM_NO, application.getPreviousApplication()), fontSize, table);
+                propertyLoader.load(SYSTEM_YES, SYSTEM_NO, BooleanUtils.toBoolean(application.getPreviousApplication())), fontSize, table);
 
         ApplicationProgramDetail programDetail = application.getProgramDetail();
         PrismStudyOption studyOption = programDetail == null ? null : programDetail.getStudyOptionDisplay();

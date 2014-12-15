@@ -82,6 +82,9 @@ public class NotificationPropertyLoader {
     @Value("${email.control.template}")
     private String emailControlTemplateLocation;
 
+    @Value("${application.url}")
+    private String applicationUrl;
+
     @Autowired
     private AdvertService advertService;
 
@@ -90,9 +93,6 @@ public class NotificationPropertyLoader {
 
     @Autowired
     private FreeMarkerConfig freemarkerConfig;
-
-    @Autowired
-    private ApplicationContext applicationContext;
 
     public String load(PrismNotificationDefinitionProperty property) {
         String value = (String) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(property));
@@ -141,17 +141,17 @@ public class NotificationPropertyLoader {
     }
 
     public String getTemplateSystemHomepage() throws IOException, TemplateException {
-        return buildRedirectionControl(templateModelDTO.getResource().getSystem().getHomepage(), SYSTEM_HOMEPAGE);
+        return buildRedirectionControl(applicationUrl, SYSTEM_HOMEPAGE);
     }
 
     public String getTemplateHelpdesk() throws IOException, TemplateException {
         return buildRedirectionControl(templateModelDTO.getResource().getHelpdeskDisplay(), SYSTEM_HELPDESK);
     }
-    
+
     public String getActionComplete() throws IOException, TemplateException {
         return buildRedirectionControl(SYSTEM_PROCEED, templateModelDTO.getTransitionAction().isDeclinableAction() ? SYSTEM_DECLINE : null);
     }
-    
+
     public String getActionViewEdit() throws IOException, TemplateException {
         return buildRedirectionControl(SYSTEM_VIEW_EDIT);
     }
@@ -322,7 +322,7 @@ public class NotificationPropertyLoader {
     }
 
     public String getSystemUserAccountManagement() throws IOException, TemplateException {
-        String url = templateModelDTO.getResource().getSystem().getHomepage() + "/#/account";
+        String url = applicationUrl + "/#/account";
         return buildRedirectionControl(url, SYSTEM_USER_ACCOUNT);
     }
 
@@ -376,7 +376,7 @@ public class NotificationPropertyLoader {
 
     private String buildRedirectionUrl(Resource resource, PrismAction actionId, User user) {
         Resource operative = (Resource) ReflectionUtils.getProperty(resource, actionId.getScope().getLowerCaseName());
-        return operative.getSystem().getHomepage() + "/#/activate?resourceId=" + operative.getId() + "&actionId=" + actionId.name() + "&activationCode="
+        return applicationUrl + "/#/activate?resourceId=" + operative.getId() + "&actionId=" + actionId.name() + "&activationCode="
                 + user.getActivationCode();
     }
 

@@ -22,9 +22,10 @@ public class ApplicationExportServiceDevelopment extends ApplicationExportServic
     @Override
     public void submitExportRequest(Integer applicationId) throws Exception {
         Application application = applicationService.getById(applicationId);
+        SubmitAdmissionsApplicationRequest dataExportRequest = buildDataExportRequest(application);
+        
         OutputStream outputStream = null;
         try {
-            SubmitAdmissionsApplicationRequest dataExportRequest = buildDataExportRequest(application);
             outputStream = buildDocumentExportRequest(application, application.getCode(), new ByteArrayOutputStream());
             ByteArrayOutputStream byteOutputStream = (ByteArrayOutputStream) outputStream;
 
@@ -32,9 +33,9 @@ public class ApplicationExportServiceDevelopment extends ApplicationExportServic
                     withDocumentExportRequest(byteOutputStream.toByteArray());
             exportRequests.put(application, exportRequest);
 
-            executeExportAction(application, "TEST EXPORT", "TEST EXPORT USER ID", null);
+            executeExportAction(application, dataExportRequest, "TEST EXPORT", "TEST EXPORT USER ID", null);
         } catch (Exception e) {
-            executeExportAction(application, null, null, ExceptionUtils.getStackTrace(e));
+            executeExportAction(application, dataExportRequest, null, null, ExceptionUtils.getStackTrace(e));
         } finally {
             IOUtils.closeQuietly(outputStream);
         }

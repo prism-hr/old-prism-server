@@ -338,7 +338,7 @@ public class ApplicationExportBuilder {
 
         Program program = application.getProgram();
         ProgrammeOccurrenceTp occurrenceTp = objectFactory.createProgrammeOccurrenceTp();
-        occurrenceTp.setCode(program.getCode());
+        occurrenceTp.setCode(program.getImportedCode());
         occurrenceTp.setModeOfAttendance(buildModeofattendance(application));
 
         ProgramStudyOptionInstance exportProgramInstance = applicationExportDTO.getExportProgramInstance();

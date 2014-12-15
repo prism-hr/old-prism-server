@@ -179,7 +179,7 @@ public class SystemInitialisationHelper {
     }
 
     public void verifyStateGroupCreation() {
-        
+
         for (StateGroup stateGroup : stateService.getStateGroups()) {
             assertEquals(stateGroup.getId().getSequenceOrder(), stateGroup.getSequenceOrder());
             assertEquals(stateGroup.getId().isRepeatable(), stateGroup.getRepeatable());
@@ -206,7 +206,6 @@ public class SystemInitialisationHelper {
         System system = systemService.getSystem();
         assertEquals(system.getTitle(), systemName);
         assertEquals(system.getLocale(), PrismLocale.getSystemLocale());
-        assertEquals(system.getHomepage(), applicationUrl);
         assertEquals(system.getHelpdesk(), systemHelpdesk);
         assertEquals(system.getCode(), resourceService.generateResourceCode(system));
         assertEquals(system.getState().getId(), PrismState.SYSTEM_RUNNING);

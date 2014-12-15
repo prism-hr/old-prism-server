@@ -152,6 +152,9 @@ public class Comment {
     @Column(name = "application_use_custom_recruiter_questions")
     private Boolean useCustomRecruiterQuestions;
 
+    @Column(name = "application_export_request")
+    private String exportRequest;
+    
     @Column(name = "application_export_reference")
     private String exportReference;
 
@@ -416,6 +419,14 @@ public class Comment {
         this.useCustomRecruiterQuestions = useCustomRecruiterQuestions;
     }
 
+    public final String getApplicationExportRequest() {
+        return exportRequest;
+    }
+
+    public final void setApplicationExportRequest(String applicationExportRequest) {
+        this.exportRequest = applicationExportRequest;
+    }
+
     public String getExportReference() {
         return exportReference;
     }
@@ -585,6 +596,11 @@ public class Comment {
         return this;
     }
 
+    public Comment withExportRequest(String exportRequest) {
+        this.exportRequest = exportRequest;
+        return this;
+    }
+    
     public Comment withExportReference(String exportReference) {
         this.exportReference = exportReference;
         return this;

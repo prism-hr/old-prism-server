@@ -3,9 +3,13 @@ package com.zuehlke.pgadmissions.services;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Properties;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.io.FileUtils;
@@ -103,9 +107,9 @@ public class ApplicationExportService {
         String exportUserId = null;
         String exportException = null;
         OutputStream outputStream = null;
+        SubmitAdmissionsApplicationRequest exportRequest = buildDataExportRequest(application);
 
         try {
-            SubmitAdmissionsApplicationRequest exportRequest = buildDataExportRequest(application);
             AdmissionsApplicationResponse exportResponse = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(exportRequest,
                     new WebServiceMessageCallback() {
                         public void doWithMessage(WebServiceMessage webServiceMessage) throws IOException, TransformerException {
@@ -127,7 +131,7 @@ public class ApplicationExportService {
             IOUtils.closeQuietly(outputStream);
         }
 
-        executeExportAction(application, exportId, exportUserId, exportException);
+        executeExportAction(application, exportRequest, exportId, exportUserId, exportException);
     }
 
     protected SubmitAdmissionsApplicationRequest buildDataExportRequest(Application application) throws ApplicationExportException {
@@ -158,13 +162,13 @@ public class ApplicationExportService {
         return outputStream;
     }
 
-    protected void executeExportAction(Application application, String exportId, String exportUserId, String exportException) throws DeduplicationException,
-            InstantiationException, IllegalAccessException {
+    protected void executeExportAction(Application application, SubmitAdmissionsApplicationRequest exportRequest, String exportId, String exportUserId, String exportException)
+            throws DeduplicationException, InstantiationException, IllegalAccessException, JAXBException {
         Action exportAction = actionService.getById(PrismAction.APPLICATION_EXPORT);
         Institution exportInstitution = application.getInstitution();
 
         Comment comment = new Comment().withUser(exportInstitution.getUser()).withAction(exportAction).withDeclinedResponse(false)
-                .withExportReference(exportId).withExportException(exportException).withCreatedTimestamp(new DateTime());
+                .withExportRequest(getRequestContent(exportRequest)).withExportReference(exportId).withExportException(exportException).withCreatedTimestamp(new DateTime());
         actionService.executeAction(application, exportAction, comment);
 
         if (exportUserId != null) {
@@ -197,6 +201,14 @@ public class ApplicationExportService {
         config.put("StrictHostKeyChecking", "no");
         session.setConfig(config);
         return session;
+    }
+
+    private String getRequestContent(SubmitAdmissionsApplicationRequest request) throws JAXBException {
+        final Marshaller marshaller = JAXBContext.newInstance(SubmitAdmissionsApplicationRequest.class).createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        final StringWriter w = new StringWriter();
+        marshaller.marshal(request, w);
+        return w.toString();
     }
 
 }

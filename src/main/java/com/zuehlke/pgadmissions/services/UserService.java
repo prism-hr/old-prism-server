@@ -190,7 +190,7 @@ public class UserService {
         }
     }
 
-    public void linkUsers(UserAccountDTO linkFromUserDTO, UserAccountDTO linkIntoUserDTO) {
+    public void linkUsers(UserAccountDTO linkIntoUserDTO, UserAccountDTO linkFromUserDTO) {
         User linkFromUser = userDAO.getAuthenticatedUser(linkFromUserDTO.getEmail(), linkFromUserDTO.getPassword());
         User linkIntoUser = userDAO.getAuthenticatedUser(linkIntoUserDTO.getEmail(), linkIntoUserDTO.getPassword());
 

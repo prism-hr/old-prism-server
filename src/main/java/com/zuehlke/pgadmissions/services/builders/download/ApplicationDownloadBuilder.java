@@ -173,6 +173,8 @@ public class ApplicationDownloadBuilder {
                     studyDetail == null ? null : studyDetail.getStudyArea(), body);
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_APPLICATION_ID), studyDetail.getStudyApplicationId(),
                     body);
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_START_DATE),
+                    studyDetail.getStudyStartDateDisplay(propertyLoader.load(SYSTEM_DATE_FORMAT)), body);
         }
     }
 

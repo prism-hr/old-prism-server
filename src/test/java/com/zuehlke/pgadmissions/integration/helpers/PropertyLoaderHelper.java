@@ -38,7 +38,7 @@ public class PropertyLoaderHelper {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public void verifyPropertyLoader() throws WorkflowConfigurationException, DeduplicationException, CustomizationException {
+    public void verifyPropertyLoader() throws WorkflowConfigurationException, DeduplicationException, CustomizationException, InstantiationException, IllegalAccessException {
         System system = systemService.getSystem();
 
         PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(system, system.getUser());

@@ -27,6 +27,8 @@ public class ApplicationExportServiceDevelopment extends ApplicationExportServic
         SubmitAdmissionsApplicationRequest dataExportRequest = null;
         
         try {
+            localize(application);  
+            
             String exportId = applicationService.getApplicationExportReference(application);
             if (exportId == null) {
                 dataExportRequest = buildDataExportRequest(application);

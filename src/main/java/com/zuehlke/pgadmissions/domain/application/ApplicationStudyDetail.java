@@ -21,7 +21,7 @@ public class ApplicationStudyDetail {
     @Column(name = "study_application_id")
     private String studyApplicationId;
     
-    @Column(name = "due_date")
+    @Column(name = "study_start_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate studyStartDate;
 
@@ -57,6 +57,14 @@ public class ApplicationStudyDetail {
         this.studyApplicationId = studyApplicationId;
     }
     
+    public final LocalDate getStudyStartDate() {
+        return studyStartDate;
+    }
+
+    public final void setStudyStartDate(LocalDate studyStartDate) {
+        this.studyStartDate = studyStartDate;
+    }
+    
     public ApplicationStudyDetail withStudyLocation(String studyLocation) {
         this.studyLocation = studyLocation;
         return this;
@@ -76,13 +84,14 @@ public class ApplicationStudyDetail {
         this.studyApplicationId = studyApplicationId;
         return this;
     }
-
-    public final LocalDate getStudyStartDate() {
-        return studyStartDate;
-    }
-
-    public final void setStudyStartDate(LocalDate studyStartDate) {
+    
+    public ApplicationStudyDetail withStudyStartDate(LocalDate studyStartDate) {
         this.studyStartDate = studyStartDate;
+        return this;
+    }
+    
+    public String getStudyStartDateDisplay(String dateFormat) {
+        return studyStartDate.toString(dateFormat);
     }
     
 }

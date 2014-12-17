@@ -26,7 +26,6 @@ public class ApplicationDownloadEquivalentExperienceBuilder {
 
     public byte[] build(final Application application) {
         try {
-
             Document pdfDocument = applicationDownloadBuilderHelper.startDocument();
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             applicationDownloadBuilderHelper.startDocumentWriter(outputStream, pdfDocument);

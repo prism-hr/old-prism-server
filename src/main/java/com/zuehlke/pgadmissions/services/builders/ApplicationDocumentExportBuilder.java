@@ -104,7 +104,8 @@ public class ApplicationDocumentExportBuilder {
                 zos.closeEntry();
                 int qualificationNumberId = i + 1;
                 contentsProperties.put("transcript." + qualificationNumberId + ".serverFilename", filename);
-                contentsProperties.put("transcript." + qualificationNumberId + ".applicationFilename", document.getFileName());
+                contentsProperties.put("transcript." + qualificationNumberId + ".applicationFilename",
+                        document == null ? "ExplanationOfMissingQualifications.pdf" : document.getFileName());
             }
         } else {
             String filename = getRandomFilename();

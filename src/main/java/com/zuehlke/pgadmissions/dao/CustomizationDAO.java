@@ -262,7 +262,9 @@ public class CustomizationDAO {
     }
 
     private String getProgramTypeCriterionUpdate(PrismProgramType programType) {
-        return programType == null ? "and programType is null " : "and programType = :programType ";
+        return programType == null ? "and programType is null " : "and programType in ("
+                + "from ProgramType "
+                + "where code like :programType) ";
     }
 
     private void addActiveVersionCriterion(PrismConfiguration configurationType, Criteria criteria) {
@@ -288,7 +290,7 @@ public class CustomizationDAO {
         }
 
         if (programType != null) {
-            query.setParameter("programType", programType);
+            query.setParameter("programType",  programType.name());
         }
     }
 

@@ -197,7 +197,7 @@ public class RoleDAO {
 
     public Integer getPermissionPrecedence(User user) {
         return (Integer) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("role.precedence")) //
+                .setProjection(Projections.groupProperty("scope.precedence")) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user", user)) //

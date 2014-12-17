@@ -101,29 +101,23 @@ public class ApplicationExportService {
 
     public void submitExportRequest(Integer applicationId) throws Exception {
         Application application = applicationService.getById(applicationId);
-        String applicationCode = application.getCode();
 
         String exportId = null;
         String exportUserId = null;
         String exportException = null;
         OutputStream outputStream = null;
-        SubmitAdmissionsApplicationRequest exportRequest = buildDataExportRequest(application);
+        SubmitAdmissionsApplicationRequest exportRequest = null;
 
         try {
-            AdmissionsApplicationResponse exportResponse = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(exportRequest,
-                    new WebServiceMessageCallback() {
-                        public void doWithMessage(WebServiceMessage webServiceMessage) throws IOException, TransformerException {
-                            webServiceMessage.writeTo(new ByteArrayOutputStream(5000));
-                        }
-                    });
-
-            if (exportResponse == null) {
-                throw new ApplicationExportException("No response to export request for application " + applicationCode);
+            exportId = applicationService.getApplicationExportReference(application);
+            if (exportId == null) {
+                exportRequest = buildDataExportRequest(application);
+                AdmissionsApplicationResponse exportResponse = sendDataExportRequest(application, exportRequest);
+                
+                ReferenceTp exportReference = exportResponse.getReference();
+                exportId = exportReference.getApplicationID();
+                exportUserId = exportReference.getApplicantID();
             }
-
-            ReferenceTp exportReference = exportResponse.getReference();
-            exportId = exportReference.getApplicationID();
-            exportUserId = exportReference.getApplicantID();
             outputStream = sendDocumentExportRequest(application, exportId);
         } catch (Exception e) {
             exportException = ExceptionUtils.getStackTrace(e);
@@ -162,13 +156,14 @@ public class ApplicationExportService {
         return outputStream;
     }
 
-    protected void executeExportAction(Application application, SubmitAdmissionsApplicationRequest exportRequest, String exportId, String exportUserId, String exportException)
-            throws DeduplicationException, InstantiationException, IllegalAccessException, JAXBException {
+    protected void executeExportAction(Application application, SubmitAdmissionsApplicationRequest exportRequest, String exportId, String exportUserId,
+            String exportException) throws DeduplicationException, InstantiationException, IllegalAccessException, JAXBException {
         Action exportAction = actionService.getById(PrismAction.APPLICATION_EXPORT);
         Institution exportInstitution = application.getInstitution();
 
         Comment comment = new Comment().withUser(exportInstitution.getUser()).withAction(exportAction).withDeclinedResponse(false)
-                .withExportRequest(getRequestContent(exportRequest)).withExportReference(exportId).withExportException(exportException).withCreatedTimestamp(new DateTime());
+                .withExportRequest(exportRequest == null ? null : getRequestContent(exportRequest)).withExportReference(exportId)
+                .withExportException(exportException).withCreatedTimestamp(new DateTime());
         actionService.executeAction(application, exportAction, comment);
 
         if (exportUserId != null) {
@@ -176,6 +171,20 @@ public class ApplicationExportService {
         }
     }
 
+    private AdmissionsApplicationResponse sendDataExportRequest(Application application, SubmitAdmissionsApplicationRequest exportRequest) {
+        AdmissionsApplicationResponse exportResponse = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(exportRequest,
+                new WebServiceMessageCallback() {
+                    public void doWithMessage(WebServiceMessage webServiceMessage) throws IOException, TransformerException {
+                        webServiceMessage.writeTo(new ByteArrayOutputStream(5000));
+                    }
+                });
+   
+        if (exportResponse == null) {
+            throw new ApplicationExportException("No response to export request for application " + application.getCode());
+        }
+        return exportResponse;
+    }
+    
     private OutputStream sendDocumentExportRequest(Application application, String exportId) throws SftpException, IOException, ResourceNotFoundException,
             JSchException {
         Session session = getSftpSession();
@@ -206,9 +215,9 @@ public class ApplicationExportService {
     private String getRequestContent(SubmitAdmissionsApplicationRequest request) throws JAXBException {
         final Marshaller marshaller = JAXBContext.newInstance(SubmitAdmissionsApplicationRequest.class).createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        final StringWriter w = new StringWriter();
-        marshaller.marshal(request, w);
-        return w.toString();
+        final StringWriter writer = new StringWriter();
+        marshaller.marshal(request, writer);
+        return writer.toString();
     }
 
 }

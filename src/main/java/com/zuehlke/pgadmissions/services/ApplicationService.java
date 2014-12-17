@@ -585,6 +585,10 @@ public class ApplicationService {
         }
         return configurations;
     }
+    
+    public String getApplicationExportReference(Application application) {
+        return applicationDAO.getApplicationExportReference(application);
+    }
 
     private List<ApplicationReportListRowDTO> getApplicationReport(Set<Integer> assignedApplications) {
         return assignedApplications.isEmpty() ? new ArrayList<ApplicationReportListRowDTO>() : applicationDAO.getApplicationReport(assignedApplications);

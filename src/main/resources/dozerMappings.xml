@@ -259,6 +259,10 @@
 			<a>latestCreationScope.id</a>
 			<b>latestCreationScope</b>
 		</field>
+		<field>
+			<a>userAccount.sendApplicationRecommendationNotification</a>
+			<b>sendApplicationRecommendationNotification</b>
+		</field>	
 	</mapping>
 
 	<mapping>

@@ -44,6 +44,7 @@ import com.zuehlke.pgadmissions.rest.validation.validator.UserRegistrationValida
 import com.zuehlke.pgadmissions.security.AuthenticationTokenHelper;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ResourceListFilterService;
+import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
@@ -61,6 +62,9 @@ public class UserResource {
 
     @Autowired
     private UserRegistrationValidator userRegistrationValidator;
+
+    @Autowired
+    private RoleService roleService;
 
     @Autowired
     private UserService userService;
@@ -82,7 +86,7 @@ public class UserResource {
     public UserExtendedRepresentation getUser() {
         User user = userService.getCurrentUser();
         UserExtendedRepresentation userRepresentation = dozerBeanMapper.map(user, UserExtendedRepresentation.class);
-        userRepresentation.setSendApplicationRecommendationNotification(user.getUserAccount().getSendApplicationRecommendationNotification());
+        userRepresentation.setPermissionPrecedence(roleService.getPermissionPrecedence(user));
         return userRepresentation;
     }
 
@@ -95,7 +99,7 @@ public class UserResource {
     @PreAuthorize("permitAll")
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public Map<String, String> authenticate(@RequestParam(required = false, value = "username") String username,
-                                            @RequestParam(required = false, value = "password") String password) {
+            @RequestParam(required = false, value = "password") String password) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
         Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -106,7 +110,7 @@ public class UserResource {
     @PreAuthorize("permitAll")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public void submitRegistration(@RequestHeader(value = "referer", required = false) String referrer,
-                                   @Valid @RequestBody UserRegistrationDTO userRegistrationDTO) throws Exception {
+            @Valid @RequestBody UserRegistrationDTO userRegistrationDTO) throws Exception {
         userService.registerUser(userRegistrationDTO, referrer);
     }
 

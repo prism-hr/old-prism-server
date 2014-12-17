@@ -51,12 +51,15 @@ public class ApplicationDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-
+    
     public String getApplicationExportReference(Application application) {
         return (String) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.property("exportReference")) //
                 .add(Restrictions.eq("application", application)) //
                 .add(Restrictions.isNotNull("exportReference")) //
+                .addOrder(Order.desc("createdTimestamp")) //
+                .addOrder(Order.desc("id")) //
+                .setMaxResults(1) //
                 .uniqueResult();
     }
 
@@ -246,16 +249,6 @@ public class ApplicationDAO {
                 .setParameter("approvalStateGroup", PrismStateGroup.APPLICATION_APPROVAL) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationReportListRowDTO.class)) //
                 .list();
-    }
-    
-    public String getExportReference(Application application) {
-        return (String) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.property("exportReference")) //
-                .add(Restrictions.eq("application", application)) //
-                .add(Restrictions.isNotNull("exportReference")) //
-                .addOrder(Order.desc("createdTimestamp")) //
-                .addOrder(Order.desc("id")) //
-                .uniqueResult();
     }
 
 }

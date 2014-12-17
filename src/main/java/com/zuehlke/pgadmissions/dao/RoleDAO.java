@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.dao;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -193,4 +194,16 @@ public class RoleDAO {
                 .add(Restrictions.eq("transitionRole.scope.id", scopeId)) //
                 .list();
     }
+
+    public Integer getPermissionPrecedence(User user) {
+        return (Integer) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("role.precedence")) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.scope", "scope", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("user", user)) //
+                .addOrder(Order.asc("scope.precedence")) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
+
 }

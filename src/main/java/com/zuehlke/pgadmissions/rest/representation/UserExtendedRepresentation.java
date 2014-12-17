@@ -17,6 +17,8 @@ public class UserExtendedRepresentation extends UserRepresentation {
     private Boolean sendApplicationRecommendationNotification;
     
     private PrismScope latestCreationScope;
+    
+    private Integer permissionPrecedence;
 
     public PrismLocale getLocale() {
         return locale;
@@ -64,6 +66,14 @@ public class UserExtendedRepresentation extends UserRepresentation {
 
     public final void setLatestCreationScope(PrismScope latestCreationScope) {
         this.latestCreationScope = latestCreationScope;
+    }
+
+    public final Integer getPermissionPrecedence() {
+        return permissionPrecedence;
+    }
+
+    public final void setPermissionPrecedence(Integer permissionPrecedence) {
+        this.permissionPrecedence = permissionPrecedence;
     }
 
 }

@@ -185,7 +185,6 @@ public class CommentService {
                 }
 
                 timeline.addCommentGroup(commentGroup);
-
                 stateGroupId = close == null ? null : close.getTransitionState().getStateGroup().getId();
                 previousStateComments = stateComments;
             }

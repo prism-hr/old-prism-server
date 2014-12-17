@@ -180,6 +180,7 @@ public class CommentDAO {
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.eq("action.actionCategory", ESCALATE_RESOURCE)) //
                                 .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id")))) //
+                .add(Restrictions.eq("action.visibleAction", true)) //
                 .addOrder(Order.asc("createdTimestamp")) //
                 .addOrder(Order.asc("id")) //
                 .list();

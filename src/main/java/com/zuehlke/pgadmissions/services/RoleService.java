@@ -182,6 +182,10 @@ public class RoleService {
         List<PrismRole> roles = roleDAO.getUserRoles(resource, user);
         updateUserRole(resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
     }
+    
+    public Integer getPermissionPrecedence(User user) {
+        return roleDAO.getPermissionPrecedence(user);
+    }
 
     private void executeRoleTransitions(Resource resource, Comment comment, List<RoleTransition> roleTransitions) {
         for (RoleTransition roleTransition : roleTransitions) {

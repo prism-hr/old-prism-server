@@ -209,6 +209,10 @@ public class ApplicationService {
         LocalDate latestStartDate = closeDate.withDayOfWeek(DateTimeConstants.MONDAY);
         return latestStartDate.isAfter(closeDate) ? latestStartDate.minusWeeks(1) : latestStartDate;
     }
+    
+    public String getApplicationExportReference(Application application) {
+        return applicationDAO.getApplicationExportReference(application);
+    }
 
     public String getApplicationCreatorIpAddress(Application application) {
         return applicationDAO.getApplicationCreatorIpAddress(application);
@@ -584,10 +588,6 @@ public class ApplicationService {
             }
         }
         return configurations;
-    }
-    
-    public String getApplicationExportReference(Application application) {
-        return applicationDAO.getApplicationExportReference(application);
     }
 
     private List<ApplicationReportListRowDTO> getApplicationReport(Set<Integer> assignedApplications) {

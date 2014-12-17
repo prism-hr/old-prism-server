@@ -177,7 +177,7 @@ public class CustomizationDAO {
         query.executeUpdate();
     }
 
-    public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismScope definitionScope, PrismLocale locale,
+    public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
             PrismProgramType programType) {
         PrismScope resourceScope = resource.getResourceScope();
 
@@ -203,7 +203,7 @@ public class CustomizationDAO {
         }
 
         query.setParameter(resourceScope.getLowerCaseName(), resource) //
-                .setParameter("definitionScope", definitionScope);
+                .setParameter("scope", scope);
 
         applyLocalizationConstraints(locale, programType, query);
         query.executeUpdate();

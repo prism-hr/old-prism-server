@@ -247,5 +247,15 @@ public class ApplicationDAO {
                 .setResultTransformer(Transformers.aliasToBean(ApplicationReportListRowDTO.class)) //
                 .list();
     }
+    
+    public String getExportReference(Application application) {
+        return (String) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .setProjection(Projections.property("exportReference")) //
+                .add(Restrictions.eq("application", application)) //
+                .add(Restrictions.isNotNull("exportReference")) //
+                .addOrder(Order.desc("createdTimestamp")) //
+                .addOrder(Order.desc("id")) //
+                .uniqueResult();
+    }
 
 }

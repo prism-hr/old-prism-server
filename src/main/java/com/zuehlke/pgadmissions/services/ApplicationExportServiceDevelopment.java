@@ -22,10 +22,16 @@ public class ApplicationExportServiceDevelopment extends ApplicationExportServic
     @Override
     public void submitExportRequest(Integer applicationId) throws Exception {
         Application application = applicationService.getById(applicationId);
-        SubmitAdmissionsApplicationRequest dataExportRequest = buildDataExportRequest(application);
         
         OutputStream outputStream = null;
+        SubmitAdmissionsApplicationRequest dataExportRequest = null;
+        
         try {
+            String exportId = applicationService.getApplicationExportReference(application);
+            if (exportId == null) {
+                dataExportRequest = buildDataExportRequest(application);
+            }
+            
             outputStream = buildDocumentExportRequest(application, application.getCode(), new ByteArrayOutputStream());
             ByteArrayOutputStream byteOutputStream = (ByteArrayOutputStream) outputStream;
 

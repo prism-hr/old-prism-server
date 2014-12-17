@@ -72,6 +72,9 @@ public class ImportedEntityService {
     private ActionService actionService;
 
     @Autowired
+    private CommentService commentService;
+
+    @Autowired
     private EntityService entityService;
 
     @Autowired
@@ -346,7 +349,8 @@ public class ImportedEntityService {
 
     private void executeProgramImportAction(Program program, DateTime baselineTime) throws DeduplicationException, InstantiationException,
             IllegalAccessException {
-        Action action = actionService.getById(PrismAction.INSTITUTION_IMPORT_PROGRAM);
+        Comment lastImportComment = commentService.getLatestComment(program, PrismAction.INSTITUTION_IMPORT_PROGRAM);
+        Action action = actionService.getById(lastImportComment == null ? PrismAction.INSTITUTION_CREATE_PROGRAM : PrismAction.INSTITUTION_IMPORT_PROGRAM);
 
         User invoker = program.getUser();
         Role invokerRole = roleService.getCreatorRole(program);

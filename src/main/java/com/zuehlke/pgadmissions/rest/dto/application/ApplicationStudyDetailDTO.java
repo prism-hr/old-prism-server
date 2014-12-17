@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.rest.dto.application;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.joda.time.LocalDate;
+
 public class ApplicationStudyDetailDTO {
 
     @NotNull
@@ -19,6 +21,8 @@ public class ApplicationStudyDetailDTO {
     
     @Size(max = 255)
     private String studyApplicationId;
+    
+    private LocalDate studyStartDate;
 
     public final String getStudyLocation() {
         return studyLocation;
@@ -50,6 +54,14 @@ public class ApplicationStudyDetailDTO {
 
     public final void setStudyApplicationId(String studyApplicationId) {
         this.studyApplicationId = studyApplicationId;
+    }
+
+    public final LocalDate getStudyStartDate() {
+        return studyStartDate;
+    }
+
+    public final void setStudyStartDate(LocalDate studyStartDate) {
+        this.studyStartDate = studyStartDate;
     }
 
 }

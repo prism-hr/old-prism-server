@@ -20,20 +20,17 @@ public class LifeCycleService implements InitializingBean {
 
     @Value("${startup.workflow.initialize}")
     private Boolean initializeWorkflow;
-    
+
     @Value("${startup.import.system.data}")
     private Boolean initializeData;
-    
-    @Value("${startup.hibernate.search.initialize}")
-    private Boolean initializeSearch;
 
     @Autowired
     private ImportedEntityServiceHelperSystem importedEntityServiceHelperSystem;
 
     @Autowired
     private SystemService systemService;
-    
-    @Autowired 
+
+    @Autowired
     private MaintenanceService maintenanceService;
 
     @Override
@@ -46,11 +43,6 @@ public class LifeCycleService implements InitializingBean {
         if (BooleanUtils.isTrue(initializeData)) {
             importedEntityServiceHelperSystem.execute();
         }
-
-        if (BooleanUtils.isTrue(initializeSearch)) {
-            systemService.initializeSearchIndex();
-        }
     }
 
 }
-

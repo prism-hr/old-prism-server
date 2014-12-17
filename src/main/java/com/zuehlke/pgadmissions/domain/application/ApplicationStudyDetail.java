@@ -3,6 +3,9 @@ package com.zuehlke.pgadmissions.domain.application;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
+
 @Embeddable
 public class ApplicationStudyDetail {
 
@@ -16,7 +19,11 @@ public class ApplicationStudyDetail {
     private String studyArea;
     
     @Column(name = "study_application_id")
-    private String studyApplicationId;    
+    private String studyApplicationId;
+    
+    @Column(name = "due_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate studyStartDate;
 
     public final String getStudyLocation() {
         return studyLocation;
@@ -68,6 +75,14 @@ public class ApplicationStudyDetail {
     public ApplicationStudyDetail withStudyApplicationId(String studyApplicationId) {
         this.studyApplicationId = studyApplicationId;
         return this;
+    }
+
+    public final LocalDate getStudyStartDate() {
+        return studyStartDate;
+    }
+
+    public final void setStudyStartDate(LocalDate studyStartDate) {
+        this.studyStartDate = studyStartDate;
     }
     
 }

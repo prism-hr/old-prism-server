@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
+import org.joda.time.LocalDate;
+
 public class ApplicationStudyDetailRepresentation {
 
     private String studyLocation;
@@ -9,6 +11,8 @@ public class ApplicationStudyDetailRepresentation {
     private String studyArea;
     
     private String studyApplicationId;
+    
+    private LocalDate studyStartDate;
 
     public final String getStudyLocation() {
         return studyLocation;
@@ -40,6 +44,14 @@ public class ApplicationStudyDetailRepresentation {
 
     public final void setStudyApplicationId(String studyApplicationId) {
         this.studyApplicationId = studyApplicationId;
+    }
+
+    public final LocalDate getStudyStartDate() {
+        return studyStartDate;
+    }
+
+    public final void setStudyStartDate(LocalDate studyStartDate) {
+        this.studyStartDate = studyStartDate;
     }
 
 }

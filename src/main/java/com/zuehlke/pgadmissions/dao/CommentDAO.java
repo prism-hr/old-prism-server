@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
 
 import java.util.Arrays;
 import java.util.List;
@@ -178,9 +179,8 @@ public class CommentDAO {
                                                 .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id"))) //
                                         .add(Restrictions.isNotNull("action.creationScope")))) //
                         .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq("action.actionCategory", ESCALATE_RESOURCE)) //
+                                .add(Restrictions.in("action.actionCategory", Arrays.asList(ESCALATE_RESOURCE, IMPORT_RESOURCE))) //
                                 .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id")))) //
-                .add(Restrictions.eq("action.visibleAction", true)) //
                 .addOrder(Order.asc("createdTimestamp")) //
                 .addOrder(Order.asc("id")) //
                 .list();
@@ -193,8 +193,7 @@ public class CommentDAO {
                 .createAlias("transitionState", "transitionState", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("action.visibleAction", true))
-                        .add(Restrictions.neProperty("state.stateGroup", "transitionState.stateGroup"))) //
+                        .add(Restrictions.eq("action.visibleAction", true)).add(Restrictions.neProperty("state.stateGroup", "transitionState.stateGroup"))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("state.stateGroup.id", stateGroupId)) //
                         .add(Restrictions.isNull("state"))) //

@@ -225,12 +225,6 @@ public class SystemService {
     }
 
     @Transactional
-    public void initializeSearchIndex() throws InterruptedException {
-        // TODO drop it
-        systemDAO.initializeSearchIndex();
-    }
-
-    @Transactional
     public void setLastDataImportDate(LocalDate baseline) {
         getSystem().setLastDataImportDate(baseline);
     }
@@ -397,7 +391,7 @@ public class SystemService {
         return system;
     }
 
-    private void initializeStateDurationConfigurations(System system) throws DeduplicationException, CustomizationException {
+    private void initializeStateDurationConfigurations(System system) throws DeduplicationException, CustomizationException, InstantiationException, IllegalAccessException {
         for (PrismScope prismScope : scopeService.getScopesDescending()) {
             StateDurationConfigurationDTO configurationDTO = new StateDurationConfigurationDTO();
             for (PrismStateDurationDefinition prismStateDuration : PrismStateDurationDefinition.values()) {
@@ -410,7 +404,7 @@ public class SystemService {
         }
     }
 
-    private void initializeDisplayPropertyConfigurations(System system) throws DeduplicationException, CustomizationException {
+    private void initializeDisplayPropertyConfigurations(System system) throws DeduplicationException, CustomizationException, InstantiationException, IllegalAccessException {
         for (PrismScope prismScope : scopeService.getScopesDescending()) {
             DisplayPropertyConfigurationDTO configurationDTO = new DisplayPropertyConfigurationDTO();
             for (PrismDisplayPropertyDefinition prismDisplayPropertyDefinition : PrismDisplayPropertyDefinition.values()) {
@@ -423,7 +417,7 @@ public class SystemService {
         }
     }
 
-    private void initializeWorkflowPropertyConfigurations(System system) throws DeduplicationException, CustomizationException {
+    private void initializeWorkflowPropertyConfigurations(System system) throws DeduplicationException, CustomizationException, InstantiationException, IllegalAccessException {
         for (PrismScope prismScope : scopeService.getScopesDescending()) {
             WorkflowPropertyConfigurationDTO configurationDTO = new WorkflowPropertyConfigurationDTO();
             for (PrismWorkflowPropertyDefinition prismWorkflowProperty : PrismWorkflowPropertyDefinition.values()) {
@@ -445,7 +439,7 @@ public class SystemService {
         }
     }
 
-    private void initializeNotificationConfigurations(System system) throws DeduplicationException, CustomizationException {
+    private void initializeNotificationConfigurations(System system) throws DeduplicationException, CustomizationException, InstantiationException, IllegalAccessException {
         for (PrismNotificationDefinition prismNotificationDefinition : PrismNotificationDefinition.values()) {
             String subject = FileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationDefinition.getInitialTemplateSubject());
             String content = FileUtils.getContent(defaultEmailContentDirectory + prismNotificationDefinition.getInitialTemplateContent());
@@ -564,7 +558,7 @@ public class SystemService {
     }
 
     private void persistConfigurations(PrismConfiguration configurationType, System system, PrismScope prismScope,
-                                       List<? extends WorkflowConfigurationDTO> configurationDTO) throws CustomizationException {
+            List<? extends WorkflowConfigurationDTO> configurationDTO) throws CustomizationException, DeduplicationException, InstantiationException, IllegalAccessException {
         if (configurationDTO.size() > 0) {
             customizationService.createConfigurationGroup(configurationType, system, prismScope, getSystemLocale(),
                     prismScope.getPrecedence() > PrismScope.INSTITUTION.getPrecedence() ? getSystemProgramType() : null, configurationDTO);

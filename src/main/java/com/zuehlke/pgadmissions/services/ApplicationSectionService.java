@@ -135,7 +135,7 @@ public class ApplicationSectionService {
         if (studyDetailDTO != null) {
             application.setStudyDetail(new ApplicationStudyDetail().withStudyLocation(studyDetailDTO.getStudyLocation())
                     .withStudyDivision(studyDetailDTO.getStudyDivision()).withStudyArea(studyDetailDTO.getStudyArea())
-                    .withStudyApplicationId(studyDetailDTO.getStudyApplicationId()));
+                    .withStudyApplicationId(studyDetailDTO.getStudyApplicationId()).withStudyStartDate(studyDetailDTO.getStudyStartDate()));
         }
 
         StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, institution, programDetailDTO.getStudyOption().name());
@@ -211,7 +211,7 @@ public class ApplicationSectionService {
         Gender gender = importedEntityService.getById(Gender.class, institution, personalDetailDTO.getGender());
         Country country = importedEntityService.getById(Country.class, institution, personalDetailDTO.getCountry());
         Language firstNationality = importedEntityService.getById(Language.class, institution, personalDetailDTO.getFirstNationality());
-        Language secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.<Language>getById(Language.class, institution,
+        Language secondNationality = personalDetailDTO.getSecondNationality() != null ? importedEntityService.<Language> getById(Language.class, institution,
                 personalDetailDTO.getSecondNationality()) : null;
         Domicile residenceCountry = importedEntityService.getById(Domicile.class, institution, personalDetailDTO.getDomicile());
 
@@ -336,7 +336,7 @@ public class ApplicationSectionService {
     }
 
     public ApplicationEmploymentPosition updateEmploymentPosition(Integer applicationId, Integer employmentPositionId,
-                                                                  ApplicationEmploymentPositionDTO employmentPositionDTO) throws DeduplicationException, InstantiationException, IllegalAccessException {
+            ApplicationEmploymentPositionDTO employmentPositionDTO) throws DeduplicationException, InstantiationException, IllegalAccessException {
         Application application = applicationService.getById(applicationId);
 
         ApplicationEmploymentPosition employmentPosition;
@@ -503,10 +503,13 @@ public class ApplicationSectionService {
             application.setDocument(document);
         }
 
-        Document personalStatement = documentDTO.getPersonalStatement() != null ? documentService.getById(documentDTO.getPersonalStatement().getId(), FileCategory.DOCUMENT) : null;
+        Document personalStatement = documentDTO.getPersonalStatement() != null ? documentService.getById(documentDTO.getPersonalStatement().getId(),
+                FileCategory.DOCUMENT) : null;
         Document cv = documentDTO.getCv() != null ? documentService.getById(documentDTO.getCv().getId(), FileCategory.DOCUMENT) : null;
-        Document researchStatement = documentDTO.getResearchStatement() != null ? documentService.getById(documentDTO.getResearchStatement().getId(), FileCategory.DOCUMENT) : null;
-        Document coveringLetter = documentDTO.getCoveringLetter() != null ? documentService.getById(documentDTO.getCoveringLetter().getId(), FileCategory.DOCUMENT) : null;
+        Document researchStatement = documentDTO.getResearchStatement() != null ? documentService.getById(documentDTO.getResearchStatement().getId(),
+                FileCategory.DOCUMENT) : null;
+        Document coveringLetter = documentDTO.getCoveringLetter() != null ? documentService.getById(documentDTO.getCoveringLetter().getId(),
+                FileCategory.DOCUMENT) : null;
         document.setCv(cv);
         document.setPersonalStatement(personalStatement);
         document.setResearchStatement(researchStatement);

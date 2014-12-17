@@ -461,7 +461,6 @@ public class CommentService {
     public void appendRejectionReason(Comment comment, CommentDTO commentDTO) {
         RejectionReason rejectionReason = entityService.getById(RejectionReason.class, commentDTO.getRejectionReason());
         comment.setRejectionReason(rejectionReason);
-        comment.setContent(rejectionReason.getName());
     }
 
     public void appendCommentProperties(Comment comment, CommentDTO commentDTO) {

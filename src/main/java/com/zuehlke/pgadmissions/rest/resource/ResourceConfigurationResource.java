@@ -138,7 +138,7 @@ public class ResourceConfigurationResource {
             @Valid @RequestBody NotificationConfigurationDTO notificationConfigurationDTO) throws CustomizationException, DeduplicationException,
             InstantiationException, IllegalAccessException {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        customizationService.createOrUpdateConfiguration(configurationType, resource, locale, programType, notificationConfigurationDTO);
+        customizationService.createOrUpdateConfigurationUser(configurationType, resource, locale, programType, notificationConfigurationDTO);
     }
 
     @PreAuthorize("isAuthenticated()")

@@ -129,7 +129,7 @@ public class ApplicationExportService {
     }
 
     protected SubmitAdmissionsApplicationRequest buildDataExportRequest(Application application) throws ApplicationExportException {
-        propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(application, application.getSystem().getUser());
+        localize(application);
 
         String creatorExportId = userService.getUserInstitutionId(application.getUser(), application.getInstitution(), PrismUserIdentity.STUDY_APPLICANT);
         String creatorIpAddress = applicationService.getApplicationCreatorIpAddress(application);
@@ -169,6 +169,10 @@ public class ApplicationExportService {
         if (exportUserId != null) {
             userService.createOrUpdateUserInstitutionIdentity(application, exportUserId);
         }
+    }
+    
+    protected void localize(Application application) {
+        propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(application, application.getSystem().getUser());
     }
 
     private AdmissionsApplicationResponse sendDataExportRequest(Application application, SubmitAdmissionsApplicationRequest exportRequest) {

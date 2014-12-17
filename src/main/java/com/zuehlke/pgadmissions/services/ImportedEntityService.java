@@ -217,7 +217,7 @@ public class ImportedEntityService {
         transientEntity.setCode((String) ReflectionUtils.getProperty(entityDefinition, "code"));
 
         String name = (String) ReflectionUtils.getProperty(entityDefinition, "name");
-        String nameClean = name.replace("\n", "").replace("\r", "").replace("\t", "");
+        String nameClean = name.replace("\n", " ").replace("\r", " ").replace("\t", " ").replaceAll(" +", " ");
         transientEntity.setName(nameClean);
 
         transientEntity.setEnabled(true);

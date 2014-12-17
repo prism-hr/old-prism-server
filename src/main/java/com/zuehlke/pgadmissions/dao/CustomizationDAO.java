@@ -171,7 +171,7 @@ public class CustomizationDAO {
         }
 
         query.setParameter(resourceScope.getLowerCaseName(), resource) //
-                .setParameter("definition", definitionId);
+                .setParameter("definitionId", definitionId);
 
         applyLocalizationConstraints(locale, programType, query);
         query.executeUpdate();

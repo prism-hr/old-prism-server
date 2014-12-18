@@ -197,14 +197,14 @@ public class CustomizationService {
 
     public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
             Enum<?> definitionId) throws DeduplicationException, InstantiationException, IllegalAccessException {
-        customizationDAO.restoreGlobalConfiguration(configurationType, resource, locale, getConfiguredProgramTypeGlobalDefault(resource, programType), definitionId);
+        customizationDAO.restoreGlobalConfiguration(configurationType, resource, locale, programType, definitionId);
         resourceService.executeUpdate(resource,
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
     }
 
     public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
             PrismProgramType programType) throws DeduplicationException, InstantiationException, IllegalAccessException {
-        customizationDAO.restoreGlobalConfiguration(configurationType, resource, scope, locale, getConfiguredProgramTypeGlobalDefault(resource, programType));
+        customizationDAO.restoreGlobalConfiguration(configurationType, resource, scope, locale, programType);
         resourceService.executeUpdate(resource,
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
     }
@@ -429,10 +429,6 @@ public class CustomizationService {
 
     private PrismProgramType getConfiguredProgramTypeRestoreDefault(Resource resource, PrismProgramType programType) {
         return resource.getResourceScope() == PrismScope.PROGRAM ? null : programType;
-    }
-    
-    private PrismProgramType getConfiguredProgramTypeGlobalDefault(Resource resource, PrismProgramType programType) {
-        return resource.getResourceScope() == PrismScope.INSTITUTION ? null : programType;
     }
 
 }

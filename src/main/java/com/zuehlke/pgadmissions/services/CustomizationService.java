@@ -187,12 +187,12 @@ public class CustomizationService {
     
     public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
             Enum<?> definitionId) {
-        customizationDAO.restoreDefaultConfiguration(configurationType, resource, locale, getConfiguredProgramTypeRestoreDefault(resource, programType), definitionId);
+        customizationDAO.restoreDefaultConfiguration(configurationType, resource, locale, programType, definitionId);
     }
 
     public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
             PrismProgramType programType) {
-        customizationDAO.restoreDefaultConfiguration(configurationType, resource, scope, locale, getConfiguredProgramTypeRestoreDefault(resource, programType));
+        customizationDAO.restoreDefaultConfiguration(configurationType, resource, scope, locale, programType);
     }
 
     public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
@@ -425,10 +425,6 @@ public class CustomizationService {
 
     private PrismProgramType getConfiguredProgramType(Resource resource, PrismProgramType programType) {
         return resource.getResourceScope() == PrismScope.PROGRAM ? resource.getProgram().getProgramType().getPrismProgramType() : programType;
-    }
-
-    private PrismProgramType getConfiguredProgramTypeRestoreDefault(Resource resource, PrismProgramType programType) {
-        return resource.getResourceScope() == PrismScope.PROGRAM ? null : programType;
     }
 
 }

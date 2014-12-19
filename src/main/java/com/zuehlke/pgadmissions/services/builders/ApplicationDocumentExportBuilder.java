@@ -59,7 +59,6 @@ public class ApplicationDocumentExportBuilder {
         ZipOutputStream zos = null;
         try {
             zos = new ZipOutputStream(outputStream);
-            buildContentsFile(application, exportReference, contentsProperties, zos);
             buildAcademicQualifications(application, contentsProperties, zos);
             buildLanguageQualification(application, contentsProperties, zos);
             buildPersonalStatement(application, contentsProperties, zos);
@@ -67,6 +66,7 @@ public class ApplicationDocumentExportBuilder {
             buildReferences(application, contentsProperties, zos);
             buildStandaloneApplication(application, exportReference, contentsProperties, zos);
             buildMergedApplication(application, exportReference, contentsProperties, zos);
+            buildContentsFile(application, exportReference, contentsProperties, zos);
         } finally {
             IOUtils.closeQuietly(zos);
         }

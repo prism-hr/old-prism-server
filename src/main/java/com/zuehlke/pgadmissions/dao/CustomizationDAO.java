@@ -263,9 +263,8 @@ public class CustomizationDAO {
 
     private String getProgramTypeCriterionUpdate(PrismProgramType programType) {
         return programType == null ? "and programType is null " : //
-                "and (programType in (" //
-                        + "from ProgramType " //
-                        + "where code like :programType) " //
+                "and (program is not null and " //
+                        + "programType is null " //
                         + "or programType like :programType) ";
     }
 
@@ -304,7 +303,8 @@ public class CustomizationDAO {
                 + programTypeCriterion //
                 + "or program in (" //
                 + "from Program " //
-                + "where system = :system) " //
+                + "where system = :system " //
+                + "and programType in (" + "from ProgramType " + "where code like :programType)) " //
                 + localeCriterion //
                 + programTypeCriterion + ")";
     }
@@ -312,7 +312,7 @@ public class CustomizationDAO {
     private static String getInstitionInheritanceCriterion(String localeCriterion, String programTypeCriterion) {
         return "and (program in (" //
                 + "from Program " //
-                + "where institution = :institution) " //
+                + "where institution = :institution " + "and programType in (" + "from ProgramType " + "where code like :programType)) " //
                 + localeCriterion //
                 + programTypeCriterion + ")";
     }

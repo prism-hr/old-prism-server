@@ -76,7 +76,6 @@ public class FileResource {
     @RequestMapping(value = "/images/{fileId}", method = RequestMethod.GET)
     public void downloadImage(@PathVariable(value = "fileId") Integer fileId, HttpServletResponse response) throws IOException {
         Document file = documentService.getById(fileId, FileCategory.IMAGE);
-
         sendFileToClient(response, file);
     }
 

@@ -29998,7 +29998,7 @@
 	<institution>
 		<code>CUST000172</code>
 		<name>ENSEA</name>
-		<domicile>FR/domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000173</code>
@@ -30813,7 +30813,7 @@
 	<institution>
 		<code>CUST000335</code>
 		<name>McMaster University</name>
-		<domicile>CA<domicile>
+		<domicile>CA</domicile>
 	</institution>
 	<institution>
 		<code>CUST000336</code>
@@ -31903,7 +31903,7 @@
 	<institution>
 		<code>CUST000553</code>
 		<name>University of Eastern Finland</name>
-		<domicile>FI<domicile>
+		<domicile>FI</domicile>
 	</institution>
 	<institution>
 		<code>CUST000554</code>

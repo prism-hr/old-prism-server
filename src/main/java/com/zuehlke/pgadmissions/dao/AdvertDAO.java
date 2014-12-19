@@ -40,8 +40,9 @@ public class AdvertDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public List<Advert> getActiveAdverts(List<PrismState> activeProgramStates, List<PrismState> activeProjectStates, OpportunitiesQueryDTO queryDTO) {
+    public List<Integer> getActiveAdverts(List<PrismState> activeProgramStates, List<PrismState> activeProjectStates, OpportunitiesQueryDTO queryDTO) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .setProjection(Projections.groupProperty("id")) //
                 .createAlias("address", "address", JoinType.INNER_JOIN) //
                 .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program.institution", "institution", JoinType.LEFT_OUTER_JOIN) //
@@ -85,9 +86,15 @@ public class AdvertDAO {
             criteria.add(Restrictions.lt("sequenceIdentifier", lastSequenceIdentifier));
         }
 
-        return criteria.addOrder(Order.desc("sequenceIdentifier")) //
+        return (List<Integer>) criteria.addOrder(Order.desc("sequenceIdentifier")) //
                 .setMaxResults(25) //
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY) //
+                .list();
+    }
+
+    public List<Advert> getActiveAdverts(List<Integer> adverts) {
+        return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .add(Restrictions.in("id", adverts)) //
+                .addOrder(Order.desc("sequenceIdentifier")) //
                 .list();
     }
 

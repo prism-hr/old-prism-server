@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
@@ -105,7 +106,13 @@ public class AdvertService {
     public List<Advert> getActiveAdverts(OpportunitiesQueryDTO queryDTO) {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        return advertDAO.getActiveAdverts(activeProgramStates, activeProjectStates, queryDTO);
+        
+        List<Integer> adverts = advertDAO.getActiveAdverts(activeProgramStates, activeProjectStates, queryDTO);
+        if (adverts.isEmpty()) {
+            return Lists.newArrayList();
+        } else {
+            return advertDAO.getActiveAdverts(adverts);
+        } 
     }
 
     public List<Advert> getRecommendedAdverts(User user) {

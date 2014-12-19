@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-
 import java.math.BigDecimal;
 import java.util.List;
+
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 
 public class ApplicationSummaryRepresentation {
 

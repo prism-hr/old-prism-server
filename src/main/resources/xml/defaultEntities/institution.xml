@@ -7853,22 +7853,22 @@
 	<institution>
 		<code>FR0429</code>
 		<name>Université Denis Diderot (Paris VII), Paris</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>FR0443</code>
 		<name>Université Jean Moulin (Lyon III)</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>FR0457</code>
 		<name>Université Panthéon-Sorbonne (Paris I)</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>FR0474</code>
 		<name>Université Pierre et Marie Curie (Paris VI)</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>GE0001</code>
@@ -29183,7 +29183,7 @@
 	<institution>
 		<code>CUST000009</code>
 		<name>Agro ParisTech</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000010</code>
@@ -29748,7 +29748,7 @@
 	<institution>
 		<code>CUST000122</code>
 		<name>Cyprus international university</name>
-		<domicile>MA</domicile>
+		<domicile>XA</domicile>
 	</institution>
 	<institution>
 		<code>CUST000123</code>
@@ -29818,62 +29818,62 @@
 	<institution>
 		<code>CUST000136</code>
 		<name>Ecole Centrale de Marseille</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000137</code>
 		<name>Ecole Centrale de Nantes</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000138</code>
 		<name>Ecole Centrale Marseille</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000139</code>
 		<name>Ecole Centrale Paris</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000140</code>
 		<name>Ecole Nationale des Ponts et Chaussees</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000141</code>
 		<name>Ecole Nationale Superieure d'Electronique, Informatique et Telecommunications de Bordeaux</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000142</code>
 		<name>Ecole Nationale Supérieure des Mines de Saint Etienne (ENSMSE)</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000143</code>
 		<name>Ecole Polytechnique, Palaiseau</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000144</code>
 		<name>Ecole Polytechnique, Paris</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000145</code>
 		<name>Ecole Supérieur d'Electricité (Supélec)</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000146</code>
 		<name>Ecole Polytechnique (l'X)</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000147</code>
 		<name>Ecole polytechnique de l'universite de Nantes</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000148</code>
@@ -29883,27 +29883,27 @@
 	<institution>
 		<code>CUST000149</code>
 		<name>Education Test Service</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000150</code>
 		<name>Educational Testing Service</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000151</code>
 		<name>Educational Testing Service (ETS)</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000152</code>
 		<name>Ecole Supérieure D'Ingénieur de Luminy</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000153</code>
 		<name>Ecole Supérieure de Commerce de Paris</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000154</code>
@@ -29943,12 +29943,12 @@
 	<institution>
 		<code>CUST000161</code>
 		<name>EEIGM (European School of Materials Science Engineering)</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000162</code>
 		<name>EISTI</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000163</code>
@@ -29973,47 +29973,47 @@
 	<institution>
 		<code>CUST000167</code>
 		<name>ENSTA</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000168</code>
 		<name>ENS Cachan / Paris VII</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000169</code>
 		<name>ENSAM ( Arts et Métiers )</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000170</code>
 		<name>ENSAM ( Arts et Métiers ParisTech )</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000171</code>
 		<name>Escuela de la Salud colombo Americana (ESCA)</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000172</code>
 		<name>ENSEA</name>
-		<domicile>MA</domicile>
+		<domicile>FR/domicile>
 	</institution>
 	<institution>
 		<code>CUST000173</code>
 		<name>Eurocentre Lee Green</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000174</code>
 		<name>EPF - �cole d'ing�nieurs</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000175</code>
 		<name>ESCP Europe</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000176</code>
@@ -30048,7 +30048,7 @@
 	<institution>
 		<code>CUST000182</code>
 		<name>European School of Medical Physics</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000183</code>
@@ -30278,7 +30278,7 @@
 	<institution>
 		<code>CUST000228</code>
 		<name>Grenoble INP - ENSIMAG</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000229</code>
@@ -30463,17 +30463,17 @@
 	<institution>
 		<code>CUST000265</code>
 		<name>Institute of Occupational Safety and Health</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000266</code>
 		<name>Institute of Physics &amp; Engineering in Medicine</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000267</code>
 		<name>Institut National des Sciences Appliquées de Rennes</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000268</code>
@@ -30483,7 +30483,7 @@
 	<institution>
 		<code>CUST000269</code>
 		<name>Institution of Civil Engineers(UK)</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000270</code>
@@ -30798,7 +30798,7 @@
 	<institution>
 		<code>CUST000332</code>
 		<name>Massachusetts Institute of Technology (MIT), MA, USA</name>
-		<domicile>MA</domicile>
+		<domicile>US</domicile>
 	</institution>
 	<institution>
 		<code>CUST000333</code>
@@ -30808,22 +30808,22 @@
 	<institution>
 		<code>CUST000334</code>
 		<name>MBM Government Engineering College, JNVU, Jodhpur, Rajasthan</name>
-		<domicile>MA</domicile>
+		<domicile>IN</domicile>
 	</institution>
 	<institution>
 		<code>CUST000335</code>
 		<name>McMaster University</name>
-		<domicile>MA</domicile>
+		<domicile>CA<domicile>
 	</institution>
 	<institution>
 		<code>CUST000336</code>
 		<name>Medical Laboratory Council- (Formerly Institute Of Medical Laboratory Science and Tech., ), Nigeria</name>
-		<domicile>MA</domicile>
+		<domicile>NG</domicile>
 	</institution>
 	<institution>
 		<code>CUST000337</code>
 		<name>Medizinische Universität Wien (MUW)</name>
-		<domicile>MA</domicile>
+		<domicile>AT</domicile>
 	</institution>
 	<institution>
 		<code>CUST000338</code>
@@ -31238,12 +31238,12 @@
 	<institution>
 		<code>CUST000420</code>
 		<name>Rashtreeya Vidyalaya College of Engineering</name>
-		<domicile>MA</domicile>
+		<domicile>IN</domicile>
 	</institution>
 	<institution>
 		<code>CUST000421</code>
 		<name>Paris- Sud University</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000422</code>
@@ -31498,7 +31498,7 @@
 	<institution>
 		<code>CUST000472</code>
 		<name>Tahzib High School</name>
-		<domicile>MA</domicile>
+		<domicile>IQ</domicile>
 	</institution>
 	<institution>
 		<code>CUST000473</code>
@@ -31568,12 +31568,12 @@
 	<institution>
 		<code>CUST000486</code>
 		<name>The Association of Chartered Certified Accountants</name>
-		<domicile>MA</domicile>
+		<domicile>XK</domicile>
 	</institution>
 	<institution>
 		<code>CUST000487</code>
 		<name>Supelec (Ecole Superieure d'Electricite)</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000488</code>
@@ -31623,17 +31623,17 @@
 	<institution>
 		<code>CUST000497</code>
 		<name>Télécom Bretagne</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000498</code>
 		<name>the University of Karachi</name>
-		<domicile>MA</domicile>
+		<domicile>IN</domicile>
 	</institution>
 	<institution>
 		<code>CUST000499</code>
 		<name>Télécom Paristech</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000500</code>
@@ -31643,7 +31643,7 @@
 	<institution>
 		<code>CUST000501</code>
 		<name>Tianjing Chengjian University (former Tianjin Institue of Urban Construction)</name>
-		<domicile>MA</domicile>
+		<domicile>CN</domicile>
 	</institution>
 	<institution>
 		<code>CUST000502</code>
@@ -31803,12 +31803,12 @@
 	<institution>
 		<code>CUST000533</code>
 		<name>Université Paris sud (XI)</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000534</code>
 		<name>Université Paris Sud XI</name>
-		<domicile>XK</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000535</code>
@@ -31883,77 +31883,77 @@
 	<institution>
 		<code>CUST000549</code>
 		<name>University Of Cambridge, England, United Kingdom</name>
-		<domicile>MA</domicile>
+		<domicile>XK</domicile>
 	</institution>
 	<institution>
 		<code>CUST000550</code>
 		<name>Université de Bretagne-Sud</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000551</code>
 		<name>University of Cologne</name>
-		<domicile>MA</domicile>
+		<domicile>DE</domicile>
 	</institution>
 	<institution>
 		<code>CUST000552</code>
 		<name>University of Detroit Mercy</name>
-		<domicile>MA</domicile>
+		<domicile>US</domicile>
 	</institution>
 	<institution>
 		<code>CUST000553</code>
 		<name>University of Eastern Finland</name>
-		<domicile>MA</domicile>
+		<domicile>FI<domicile>
 	</institution>
 	<institution>
 		<code>CUST000554</code>
 		<name>Universite Jean Monnet</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000555</code>
 		<name>Université Joseph Fourier (Grenoble 1)</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000556</code>
 		<name>Université Nanterre Paris X</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000557</code>
 		<name>Université Panthéon-Assas (Paris 2)</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000558</code>
 		<name>Université Paris Dauphine (Paris IX)</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000559</code>
 		<name>university of london external</name>
-		<domicile>MA</domicile>
+		<domicile>XK</domicile>
 	</institution>
 	<institution>
 		<code>CUST000560</code>
 		<name>Université Paris Sud XI</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000561</code>
 		<name>Université Paris-Dauphine, France</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000562</code>
 		<name>Université Paris-Sud (Paris XI)</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000563</code>
 		<name>Universite Toulouse 1</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000564</code>
@@ -32113,17 +32113,17 @@
 	<institution>
 		<code>CUST000595</code>
 		<name>Xavier Institute of Management (XLRI)</name>
-		<domicile>MA</domicile>
+		<domicile>IN</domicile>
 	</institution>
 	<institution>
 		<code>CUST000596</code>
 		<name>Xi'an Jiaotong Liverpool University</name>
-		<domicile>MA</domicile>
+		<domicile>CN</domicile>
 	</institution>
 	<institution>
 		<code>CUST000597</code>
 		<name>Xi'an Jiaotong-Liverpool University</name>
-		<domicile>US</domicile>
+		<domicile>CN</domicile>
 	</institution>
 	<institution>
 		<code>CUST000598</code>
@@ -32198,7 +32198,7 @@
 	<institution>
 		<code>CUST000612</code>
 		<name>University Paris-Sud 11 - Orsay</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000613</code>
@@ -32303,7 +32303,7 @@
 	<institution>
 		<code>CUST000633</code>
 		<name>�cole Nationale Sup�rieure des T�l�communications, Paris</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000063</code>
@@ -33173,92 +33173,92 @@
 	<institution>
 		<code>CUST000165</code>
 		<name>ENSAM (Arts et Metiers ParisTech )</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000254</code>
 		<name>Institut d' Etudes Politiques de Paris</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000255</code>
 		<name>Institut National des Sciences Appliquées de Lyon (INSA), Villeurbanne</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000258</code>
 		<name>Institut supérieur d'électronique de Paris</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000317</code>
 		<name>Lycée des Loges</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000319</code>
 		<name>Lycee Henri IV and Ecole Polytechnique</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000320</code>
 		<name>Lycée Marie Reynoard, Villard Bonnot</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000321</code>
 		<name>Lycee Sainte-Genevieve</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000322</code>
 		<name>Lycee Villa Pia</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000401</code>
 		<name>Paris Dauphine University</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000452</code>
 		<name>Skema Business School</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000465</code>
 		<name>Supélec</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000477</code>
 		<name>Telecom Bretagne ( anciennement ENST Bretagne)</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000479</code>
 		<name>Télécom SudParis</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000524</code>
 		<name>Universite de Bourgogne</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000526</code>
 		<name>Universite de Lorraine</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000527</code>
 		<name>Universite de Poitier</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000528</code>
 		<name>Université de Technologie de Compiègne</name>
-		<domicile>MA</domicile>
+		<domicile>FR</domicile>
 	</institution>
 	<institution>
 		<code>CUST000453</code>

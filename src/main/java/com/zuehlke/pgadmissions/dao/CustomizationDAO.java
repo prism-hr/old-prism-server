@@ -266,7 +266,7 @@ public class CustomizationDAO {
                 "and (programType in (" //
                         + "from ProgramType " //
                         + "where code like :programType) " //
-                        + "or programType is null) ";
+                        + "or programType like :programType) ";
     }
 
     private void addActiveVersionCriterion(PrismConfiguration configurationType, Criteria criteria) {

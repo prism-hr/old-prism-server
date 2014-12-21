@@ -1,29 +1,15 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 
+import javax.persistence.*;
+import java.util.Set;
+
 @Entity
 @Table(name = "ACTION")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Action extends WorkflowDefinition {
 
     @Id
@@ -53,7 +39,7 @@ public class Action extends WorkflowDefinition {
 
     @Column(name = "emphasized_action", nullable = false)
     private Boolean emphasizedAction;
-    
+
     @Column(name = "conclude_parent_action", nullable = false)
     private Boolean concludeParentAction;
 
@@ -143,7 +129,7 @@ public class Action extends WorkflowDefinition {
     public final void setEmphasizedAction(Boolean emphasizedAction) {
         this.emphasizedAction = emphasizedAction;
     }
-    
+
     public final Boolean getConcludeParentAction() {
         return concludeParentAction;
     }
@@ -237,7 +223,7 @@ public class Action extends WorkflowDefinition {
         this.emphasizedAction = emphasizedAction;
         return this;
     }
-    
+
     public Action withConcludeParentAction(Boolean concludeParentAction) {
         this.concludeParentAction = concludeParentAction;
         return this;
@@ -262,7 +248,7 @@ public class Action extends WorkflowDefinition {
         this.creationScope = creationScope;
         return this;
     }
-    
+
     public boolean isCustomizableAction() {
         return actionCustomQuestionDefinition != null;
     }

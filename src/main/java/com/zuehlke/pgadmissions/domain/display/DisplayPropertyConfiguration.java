@@ -1,19 +1,5 @@
 package com.zuehlke.pgadmissions.domain.display;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -23,12 +9,13 @@ import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 
+import javax.persistence.*;
+
 @Entity
 @Table(name = "DISPLAY_PROPERTY_CONFIGURATION", uniqueConstraints = {
         @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "display_property_definition_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "program_type", "display_property_definition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "display_property_definition_id" }) })
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class DisplayPropertyConfiguration extends WorkflowConfiguration {
 
     @Id

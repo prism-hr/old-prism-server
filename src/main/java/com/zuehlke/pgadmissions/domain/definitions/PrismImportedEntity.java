@@ -1,42 +1,13 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.imported.Country;
-import com.zuehlke.pgadmissions.domain.imported.Disability;
-import com.zuehlke.pgadmissions.domain.imported.Domicile;
-import com.zuehlke.pgadmissions.domain.imported.Ethnicity;
-import com.zuehlke.pgadmissions.domain.imported.FundingSource;
-import com.zuehlke.pgadmissions.domain.imported.Gender;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.imported.Language;
-import com.zuehlke.pgadmissions.domain.imported.ProgramType;
-import com.zuehlke.pgadmissions.domain.imported.QualificationType;
-import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
-import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
-import com.zuehlke.pgadmissions.domain.imported.Title;
+import com.zuehlke.pgadmissions.domain.imported.*;
 import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Countries;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Disabilities;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Domiciles;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Ethnicities;
-import com.zuehlke.pgadmissions.referencedata.jaxb.FundingSources;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Genders;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Institutions;
-import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Nationalities;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgramTypes;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Qualifications;
-import com.zuehlke.pgadmissions.referencedata.jaxb.RejectionReasons;
-import com.zuehlke.pgadmissions.referencedata.jaxb.SourcesOfInterest;
-import com.zuehlke.pgadmissions.referencedata.jaxb.StudyOptions;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Titles;
+import com.zuehlke.pgadmissions.referencedata.jaxb.*;
+
+import java.util.List;
+import java.util.Map;
 
 public enum PrismImportedEntity {
 

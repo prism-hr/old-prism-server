@@ -13,7 +13,7 @@
 
     <context:component-scan base-package="com.zuehlke.pgadmissions"/>
     <context:annotation-config/>
-    <cache:annotation-driven />
+    <cache:annotation-driven cache-manager="cacheManager" />
 
     <bean id="simplerHandlerMapping" class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
 
@@ -69,7 +69,8 @@
     <bean id="applicationExportService" class="${xml.export.exporter}"/>
 
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager" p:cacheManager-ref="ehcache"/>
-    <bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" p:configLocation="classpath:ehcache.xml"/>
+    <bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
+          p:configLocation="classpath:ehcache.xml"/>
 
     <import resource="data-context.xml"/>
     <import resource="ucl-context.xml"/>

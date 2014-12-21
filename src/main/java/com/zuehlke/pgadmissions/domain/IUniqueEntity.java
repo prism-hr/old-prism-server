@@ -1,15 +1,14 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashMap;
-import java.util.List;
-
-import org.apache.commons.beanutils.PropertyUtils;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import org.apache.commons.beanutils.PropertyUtils;
+
+import java.util.HashMap;
+import java.util.List;
 
 public interface IUniqueEntity {
 

@@ -1,22 +1,11 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "STATE_DURATION_DEFINITION")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class StateDurationDefinition extends WorkflowDefinition {
 
     @Id
@@ -26,7 +15,7 @@ public class StateDurationDefinition extends WorkflowDefinition {
 
     @Column(name = "escalation", nullable = false)
     private Boolean escalation;
-    
+
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
@@ -39,7 +28,7 @@ public class StateDurationDefinition extends WorkflowDefinition {
     public void setId(PrismStateDurationDefinition id) {
         this.id = id;
     }
-    
+
     public final Boolean getEscalation() {
         return escalation;
     }
@@ -67,7 +56,7 @@ public class StateDurationDefinition extends WorkflowDefinition {
         this.escalation = escalation;
         return this;
     }
-    
+
     public StateDurationDefinition withScope(Scope scope) {
         this.scope = scope;
         return this;

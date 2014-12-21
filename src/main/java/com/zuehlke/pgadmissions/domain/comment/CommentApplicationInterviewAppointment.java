@@ -1,12 +1,11 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
-import java.util.TimeZone;
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDateTime;
+import java.util.TimeZone;
 
 @Embeddable
 public class CommentApplicationInterviewAppointment {
@@ -44,17 +43,17 @@ public class CommentApplicationInterviewAppointment {
     public final void setInterviewDuration(Integer interviewDuration) {
         this.interviewDuration = interviewDuration;
     }
-    
+
     public CommentApplicationInterviewAppointment withInterviewDateTime(LocalDateTime interviewDateTime) {
         this.interviewDateTime = interviewDateTime;
         return this;
     }
-    
+
     public CommentApplicationInterviewAppointment withInterviewTimezone(TimeZone interviewTimeZone) {
         this.interviewTimeZone = interviewTimeZone;
         return this;
     }
-    
+
     public CommentApplicationInterviewAppointment withInterviewDuration(Integer interviewDuration) {
         this.interviewDuration = interviewDuration;
         return this;

@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
+
+import java.util.List;
 
 public enum SocialPresence {
 
@@ -13,7 +13,7 @@ public enum SocialPresence {
     FACEBOOK("https://www.facebook.com/", "014399221313847880480:wzhqxjux4rk", new Class[] { Institution.class });
 
     private String searchEngineUri;
-    
+
     private String searchEngineKey;
 
     private Class<?>[] subscriptions;

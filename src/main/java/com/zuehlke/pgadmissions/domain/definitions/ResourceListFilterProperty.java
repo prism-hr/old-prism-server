@@ -1,26 +1,16 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.FilterExpression.BETWEEN;
-import static com.zuehlke.pgadmissions.domain.definitions.FilterExpression.CONTAIN;
-import static com.zuehlke.pgadmissions.domain.definitions.FilterExpression.EQUAL;
-import static com.zuehlke.pgadmissions.domain.definitions.FilterExpression.GREATER;
-import static com.zuehlke.pgadmissions.domain.definitions.FilterExpression.LESSER;
-import static com.zuehlke.pgadmissions.domain.definitions.FilterPropertyType.DATE;
-import static com.zuehlke.pgadmissions.domain.definitions.FilterPropertyType.NUMBER;
-import static com.zuehlke.pgadmissions.domain.definitions.FilterPropertyType.STATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.FilterPropertyType.STRING;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.rest.dto.FilterProperty;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.rest.dto.FilterProperty;
+import static com.zuehlke.pgadmissions.domain.definitions.FilterExpression.*;
+import static com.zuehlke.pgadmissions.domain.definitions.FilterPropertyType.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 public enum ResourceListFilterProperty implements FilterProperty {
 

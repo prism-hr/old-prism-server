@@ -1,14 +1,14 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
+import com.zuehlke.pgadmissions.domain.institution.Institution;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-
-import com.zuehlke.pgadmissions.domain.institution.Institution;
 
 @Entity
 @DiscriminatorValue("DOMICILE")
 public class Domicile extends SimpleImportedEntity {
-    
+
     public Domicile withInstitution(Institution institution) {
         setInstitution(institution);
         return this;
@@ -23,7 +23,7 @@ public class Domicile extends SimpleImportedEntity {
         setName(name);
         return this;
     }
-    
+
     public Domicile withEnabled(Boolean enabled) {
         setEnabled(enabled);
         return this;

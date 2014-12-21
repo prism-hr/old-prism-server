@@ -1,23 +1,15 @@
 package com.zuehlke.pgadmissions.domain.user;
 
-import java.util.Map;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.MapKeyJoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.resource.ResourceListFilter;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import javax.persistence.*;
+import java.util.Map;
 
 @Entity
 @Table(name = "USER_ACCOUNT")
@@ -37,10 +29,10 @@ public class UserAccount {
     @Column(name = "temporary_password_expiry_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime temporaryPasswordExpiryTimestamp;
-    
+
     @Column(name = "send_application_recommendation_notification", nullable = false)
     private Boolean sendApplicationRecommendationNotification;
-    
+
     @Column(name = "last_notified_date_application_recommendation")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedDateApplicationRecommendation;
@@ -113,7 +105,7 @@ public class UserAccount {
         this.sendApplicationRecommendationNotification = sendApplicationRecommendationNotification;
         return this;
     }
-    
+
     public UserAccount withEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;

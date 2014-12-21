@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
+import com.google.common.collect.Maps;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
-import com.google.common.collect.Maps;
 
 public enum PrismCustomQuestionType {
 

@@ -1,12 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.states;
 
-import java.util.Arrays;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
+import java.util.Arrays;
 
 public class PrismApplicationWithdrawnUnsubmittedPurged extends PrismWorkflowState {
 
@@ -17,9 +13,9 @@ public class PrismApplicationWithdrawnUnsubmittedPurged extends PrismWorkflowSta
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(true) //
                 .withAssignments(Arrays.asList( //
-                    new PrismStateActionAssignment() // 
+                    new PrismStateActionAssignment() //
                         .withRole(PrismRole.APPLICATION_CREATOR) //
                         .withActionEnhancement(PrismActionEnhancement.APPLICATION_VIEW_AS_CREATOR)))); //
     }
-    
+
 }

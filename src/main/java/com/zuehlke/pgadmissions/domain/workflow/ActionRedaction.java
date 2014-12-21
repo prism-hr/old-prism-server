@@ -1,25 +1,12 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "ACTION_REDACTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "action_id", "role_id" }) })
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Table(name = "ACTION_REDACTION", uniqueConstraints = {@UniqueConstraint(columnNames = {"action_id", "role_id"})})
 public class ActionRedaction implements IUniqueEntity {
 
     @Id
@@ -74,12 +61,12 @@ public class ActionRedaction implements IUniqueEntity {
         this.action = action;
         return this;
     }
-    
+
     public ActionRedaction withRole(Role role) {
         this.role = role;
         return this;
     }
-    
+
     public ActionRedaction withRedactionType(PrismActionRedactionType redactionType) {
         this.redactionType = redactionType;
         return this;

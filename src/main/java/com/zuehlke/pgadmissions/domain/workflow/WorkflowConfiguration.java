@@ -1,18 +1,18 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 public abstract class WorkflowConfiguration extends WorkflowResource {
 
     public abstract PrismLocale getLocale();
 
     public abstract void setLocale(PrismLocale locale);
-    
+
     public abstract PrismProgramType getProgramType();
 
     public abstract void setProgramType(PrismProgramType programType);

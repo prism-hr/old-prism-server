@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import java.util.List;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
+
+import java.util.List;
 
 public class PrismStateTransition {
 
@@ -67,7 +67,7 @@ public class PrismStateTransition {
         this.propagatedActions = propagatedActions == null ? this.propagatedActions : propagatedActions;
         return this;
     }
-    
+
     public PrismStateTransition withStateTerminations(List<PrismState> stateTerminations) {
         this.stateTerminations = stateTerminations == null ? this.stateTerminations : stateTerminations;
         return this;

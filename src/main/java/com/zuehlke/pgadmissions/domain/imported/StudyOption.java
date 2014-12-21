@@ -1,15 +1,15 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
+
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("STUDY_OPTION")
 public class StudyOption extends SimpleImportedEntity {
-    
+
     public StudyOption withInstitution(Institution institution) {
         setInstitution(institution);
         return this;
@@ -29,7 +29,7 @@ public class StudyOption extends SimpleImportedEntity {
         setEnabled(enabled);
         return this;
     }
-    
+
     public PrismStudyOption getPrismStudyOption() {
         return PrismStudyOption.valueOf(getCode());
     }

@@ -1,18 +1,18 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
+
+import java.util.List;
 
 public enum ApplicationListFilterCategory {
 
-    APPLICATION_NUMBER("Application number", CategoryType.TEXT), 
-    APPLICANT_NAME("Applicant", CategoryType.TEXT), 
-    PROGRAMME_NAME("Programme", CategoryType.TEXT), 
-    PROJECT_TITLE("Project title", CategoryType.TEXT), 
-    APPLICATION_STATUS("Status", CategoryType.TEXT), 
-    SUBMISSION_DATE("Submission date", CategoryType.DATE), 
-    SUPERVISOR("Supervisor", CategoryType.TEXT), 
+    APPLICATION_NUMBER("Application number", CategoryType.TEXT),
+    APPLICANT_NAME("Applicant", CategoryType.TEXT),
+    PROGRAMME_NAME("Programme", CategoryType.TEXT),
+    PROJECT_TITLE("Project title", CategoryType.TEXT),
+    APPLICATION_STATUS("Status", CategoryType.TEXT),
+    SUBMISSION_DATE("Submission date", CategoryType.DATE),
+    SUPERVISOR("Supervisor", CategoryType.TEXT),
     LAST_EDITED_DATE("Last edited date", CategoryType.DATE),
     CLOSING_DATE("Closing date", CategoryType.DATE);
 
@@ -28,7 +28,7 @@ public enum ApplicationListFilterCategory {
     public String displayValue() {
         return displayValue;
     }
-    
+
     public CategoryType getType() {
         return type;
     }
@@ -43,7 +43,7 @@ public enum ApplicationListFilterCategory {
     }
 
     public static enum CategoryType {
-        TEXT, 
+        TEXT,
         DATE
     }
 }

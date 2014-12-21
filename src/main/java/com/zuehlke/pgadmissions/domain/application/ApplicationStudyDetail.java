@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
 @Embeddable
 public class ApplicationStudyDetail {
@@ -17,10 +17,10 @@ public class ApplicationStudyDetail {
 
     @Column(name = "study_area")
     private String studyArea;
-    
+
     @Column(name = "study_application_id")
     private String studyApplicationId;
-    
+
     @Column(name = "study_start_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate studyStartDate;
@@ -56,7 +56,7 @@ public class ApplicationStudyDetail {
     public final void setStudyApplicationId(String studyApplicationId) {
         this.studyApplicationId = studyApplicationId;
     }
-    
+
     public final LocalDate getStudyStartDate() {
         return studyStartDate;
     }
@@ -64,7 +64,7 @@ public class ApplicationStudyDetail {
     public final void setStudyStartDate(LocalDate studyStartDate) {
         this.studyStartDate = studyStartDate;
     }
-    
+
     public ApplicationStudyDetail withStudyLocation(String studyLocation) {
         this.studyLocation = studyLocation;
         return this;
@@ -79,19 +79,19 @@ public class ApplicationStudyDetail {
         this.studyArea = studyArea;
         return this;
     }
-    
+
     public ApplicationStudyDetail withStudyApplicationId(String studyApplicationId) {
         this.studyApplicationId = studyApplicationId;
         return this;
     }
-    
+
     public ApplicationStudyDetail withStudyStartDate(LocalDate studyStartDate) {
         this.studyStartDate = studyStartDate;
         return this;
     }
-    
+
     public String getStudyStartDateDisplay(String dateFormat) {
         return studyStartDate.toString(dateFormat);
     }
-    
+
 }

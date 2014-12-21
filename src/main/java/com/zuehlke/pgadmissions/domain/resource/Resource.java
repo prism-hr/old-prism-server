@@ -1,10 +1,5 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
-import java.util.Set;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -18,6 +13,10 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import java.util.Set;
 
 public abstract class Resource implements IUniqueEntity {
 
@@ -88,9 +87,9 @@ public abstract class Resource implements IUniqueEntity {
     public abstract LocalDate getLastNotifiedUpdateSyndicated();
 
     public abstract void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated);
-    
+
     public abstract Integer getWorkflowPropertyConfigurationVersion();
-    
+
     public abstract void setWorkflowPropertyConfigurationVersion(Integer workflowResourceConfigurationVersion);
 
     public abstract String getSequenceIdentifier();

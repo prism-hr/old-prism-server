@@ -1,12 +1,11 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-import java.math.BigDecimal;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
+import java.math.BigDecimal;
 
 @Embeddable
 public class AdvertFinancialDetail {
@@ -33,7 +32,7 @@ public class AdvertFinancialDetail {
     private BigDecimal yearMinimumAtLocale;
 
     private BigDecimal yearMaximumAtLocale;
-    
+
     private Boolean converted;
 
     public PrismDurationUnit getInterval() {

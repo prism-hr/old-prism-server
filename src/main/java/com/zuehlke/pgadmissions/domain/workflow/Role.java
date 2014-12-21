@@ -1,32 +1,16 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.security.core.GrantedAuthority;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
+import org.springframework.security.core.GrantedAuthority;
+
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "ROLE")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Role extends WorkflowDefinition implements GrantedAuthority {
 
     private static final long serialVersionUID = 4265990408553249748L;
@@ -43,7 +27,7 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
     private Scope scope;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "ROLE_EXCLUSION", joinColumns = { @JoinColumn(name = "role_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "excluded_role_id", nullable = false) })
+    @JoinTable(name = "ROLE_EXCLUSION", joinColumns = {@JoinColumn(name = "role_id", nullable = false)}, inverseJoinColumns = {@JoinColumn(name = "excluded_role_id", nullable = false)})
     private Set<Role> excludedRoles = Sets.newHashSet();
 
     @OneToMany(mappedBy = "role")

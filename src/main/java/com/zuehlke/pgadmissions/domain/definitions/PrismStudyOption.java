@@ -1,12 +1,10 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_STUDY_OPTION_FULL_TIME;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_STUDY_OPTION_MODULAR_FLEXIBLE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_STUDY_OPTION_PART_TIME;
+import com.google.common.collect.Lists;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
 
 public enum PrismStudyOption {
 

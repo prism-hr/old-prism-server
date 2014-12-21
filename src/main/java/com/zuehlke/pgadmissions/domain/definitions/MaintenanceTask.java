@@ -1,18 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.AbstractServiceHelper;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.AdvertServiceHelperClosingDate;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.AdvertServiceHelperExchangeRate;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.ApplicationExportServiceHelper;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.DocumentServiceHelper;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperInstitution;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperSystem;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.InstitutionServiceHelper;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.NotificationServiceHelperRecommendation;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.NotificationServiceHelperWorkflow;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.ProgramServiceHelper;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperEscalation;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperPropagation;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.*;
 
 public enum MaintenanceTask {
 
@@ -28,9 +16,9 @@ public enum MaintenanceTask {
     SYSTEM_SEND_DEFERRED_WORKFLOW_NOTIFICATION(NotificationServiceHelperWorkflow.class, false), //
     SYSTEM_SEND_RECOMMENDATION_NOTIFICATION(NotificationServiceHelperRecommendation.class, true), //
     SYSTEM_DELETE_UNUSED_DOCUMENT(DocumentServiceHelper.class, true);
-    
+
     private Class<? extends AbstractServiceHelper> executor;
-    
+
     boolean parallelize;
 
     private MaintenanceTask(Class<? extends AbstractServiceHelper> executor, boolean parallelize) {
@@ -45,5 +33,5 @@ public enum MaintenanceTask {
     public final boolean isParallelize() {
         return parallelize;
     }
-    
+
 }

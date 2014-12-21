@@ -1,25 +1,12 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "ROLE_TRANSITION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_transition_id", "role_id", "role_transition_type" }) })
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Table(name = "ROLE_TRANSITION", uniqueConstraints = {@UniqueConstraint(columnNames = {"state_transition_id", "role_id", "role_transition_type"})})
 public class RoleTransition implements IUniqueEntity {
 
     @Id
@@ -161,7 +148,7 @@ public class RoleTransition implements IUniqueEntity {
         this.maximumPermitted = maximumPermitted;
         return this;
     }
-    
+
     public RoleTransition withWorkflowPropertyDefinition(WorkflowPropertyDefinition workflowPropertyDefinition) {
         this.workflowPropertyDefinition = workflowPropertyDefinition;
         return this;

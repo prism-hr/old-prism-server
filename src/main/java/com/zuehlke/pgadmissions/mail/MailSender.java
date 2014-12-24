@@ -63,9 +63,6 @@ public class MailSender {
     @Value("${email.address.from}")
     private String emailAddressFrom;
 
-    @Value("${email.location}")
-    private String emailTemplateLocation;
-
     @Value("${application.url}")
     private String applicationUrl;
 
@@ -140,7 +137,7 @@ public class MailSender {
         Template template = new Template(templateId.name(), new StringReader(templateValue), freemarkerConfig.getConfiguration());
         String content = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
 
-        String emailTemplate = Resources.toString(Resources.getResource(emailTemplateLocation), Charsets.UTF_8);
+        String emailTemplate = Resources.toString(Resources.getResource("email/email_template.ftl"), Charsets.UTF_8);
         template = new Template("Email template", emailTemplate, freemarkerConfig.getConfiguration());
 
         String imagesPath = applicationUrl + "/images/email";

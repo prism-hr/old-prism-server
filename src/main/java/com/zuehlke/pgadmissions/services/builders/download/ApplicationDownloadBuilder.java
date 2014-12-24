@@ -204,7 +204,7 @@ public class ApplicationDownloadBuilder {
             } else {
                 int counter = 1;
                 for (ApplicationSupervisor supervisor : supervisors) {
-                    PdfPTable subBody = applicationDownloadBuilderHelper.startSubection(pdfDocument, subheader + "(" + counter++ + ")");
+                    PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(subheader + "(" + counter++ + ")");
 
                     User user = supervisor.getUser();
 
@@ -382,7 +382,7 @@ public class ApplicationDownloadBuilder {
 
                 int counter = 1;
                 for (ApplicationQualification qualification : qualifications) {
-                    PdfPTable subBody = applicationDownloadBuilderHelper.startSubection(pdfDocument, propertyLoader.load(APPLICATION_QUALIFICATION_SUBHEADER)
+                    PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.load(APPLICATION_QUALIFICATION_SUBHEADER)
                             + "(" + counter++ + ")");
 
                     String dateFormat = propertyLoader.load(SYSTEM_DATE_FORMAT);
@@ -440,7 +440,7 @@ public class ApplicationDownloadBuilder {
             } else {
                 int counter = 1;
                 for (ApplicationEmploymentPosition position : positions) {
-                    PdfPTable subBody = applicationDownloadBuilderHelper.startSubection(pdfDocument,
+                    PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(
                             propertyLoader.load(APPLICATION_EMPLOYMENT_POSITION_SUBHEADER) + "(" + counter++ + ")");
 
                     String dateFormat = propertyLoader.load(SYSTEM_DATE_FORMAT);
@@ -478,7 +478,7 @@ public class ApplicationDownloadBuilder {
 
                 int counter = 1;
                 for (ApplicationFunding funding : fundings) {
-                    PdfPTable subBody = applicationDownloadBuilderHelper.startSubection(pdfDocument, propertyLoader.load(APPLICATION_FUNDING_SUBHEADER) + "("
+                    PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.load(APPLICATION_FUNDING_SUBHEADER) + "("
                             + counter++ + ")");
                     applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_FUNDING_TYPE), funding.getFundingSourceDisplay(),
                             subBody);
@@ -512,7 +512,7 @@ public class ApplicationDownloadBuilder {
             } else {
                 int counter = 1;
                 for (ApplicationPrize prize : prizes) {
-                    PdfPTable subBody = applicationDownloadBuilderHelper.startSubection(pdfDocument, propertyLoader.load(APPLICATION_PRIZE_SUBHEADER) + "("
+                    PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.load(APPLICATION_PRIZE_SUBHEADER) + "("
                             + counter++ + ")");
                     applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PRIZE_PROVIDER), prize.getProvider(), subBody);
                     applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PRIZE_TITLE), prize.getTitle(), subBody);
@@ -536,7 +536,7 @@ public class ApplicationDownloadBuilder {
         } else {
             int counter = 1;
             for (ApplicationReferee referee : referees) {
-                PdfPTable subBody = applicationDownloadBuilderHelper.startSubection(pdfDocument, propertyLoader.load(APPLICATION_REFEREE_SUBHEADER) + "("
+                PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.load(APPLICATION_REFEREE_SUBHEADER) + "("
                         + counter++ + ")");
 
                 User user = referee.getUser();
@@ -658,7 +658,7 @@ public class ApplicationDownloadBuilder {
                     pdfDocument.add(applicationDownloadBuilderHelper.newSectionSeparator());
 
                     PdfPTable subBody = applicationDownloadBuilderHelper
-                            .startSubection(pdfDocument, propertyLoader.load(APPLICATION_REFEREE_REFERENCE_COMMENT));
+                            .startSubSection(propertyLoader.load(APPLICATION_REFEREE_REFERENCE_COMMENT));
                     applicationContext.getBean(ApplicationDownloadReferenceBuilder.class).localize(propertyLoader, applicationDownloadBuilderHelper)
                             .addReferenceComment(pdfDocument, subBody, pdfWriter, applicationDownloadDTO.getApplication(), referenceComment);
 

@@ -1,26 +1,7 @@
 package com.zuehlke.pgadmissions.services.builders.download;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_PROVIDED;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import com.google.common.io.Resources;
-import com.itextpdf.text.Anchor;
-import com.itextpdf.text.BadElementException;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
+import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -28,6 +9,16 @@ import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBu
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_PROVIDED;
 
 @Component
 public class ApplicationDownloadBuilderHelper {
@@ -57,7 +48,7 @@ public class ApplicationDownloadBuilderHelper {
         return newSectionBody();
     }
 
-    public PdfPTable startSubection(Document pdfDocument, String title) throws DocumentException {
+    public PdfPTable startSubSection(String title) throws DocumentException {
         PdfPTable subBody = newSectionBody();
         PdfPCell header = new PdfPCell(newSubsectionHeader(title));
         header.setColspan(2);
@@ -100,40 +91,16 @@ public class ApplicationDownloadBuilderHelper {
         return table;
     }
 
-    public PdfPCell newTitleCellSmall(String content) {
-        return newTitleCell(content, ApplicationDownloadBuilderFontSize.SMALL);
-    }
-
     public PdfPCell newTitleCellMedium(String content) {
         return newTitleCell(content, ApplicationDownloadBuilderFontSize.MEDIUM);
-    }
-
-    public PdfPCell newTitleCellLarge(String content) {
-        return newTitleCell(content, ApplicationDownloadBuilderFontSize.LARGE);
-    }
-
-    public PdfPCell newContentCellSmall(String content) {
-        return newContentCell(content, ApplicationDownloadBuilderFontSize.SMALL);
     }
 
     public PdfPCell newContentCellMedium(String content) {
         return newContentCell(content, ApplicationDownloadBuilderFontSize.MEDIUM);
     }
 
-    public PdfPCell newContentCellLarge(String content) {
-        return newContentCell(content, ApplicationDownloadBuilderFontSize.LARGE);
-    }
-
-    public PdfPCell newBookmarkCellSmall(String content, int index) {
-        return newBookmarkCell(content, ApplicationDownloadBuilderFontSize.SMALL, index);
-    }
-
     public PdfPCell newBookmarkCellMedium(String content, int index) {
         return newBookmarkCell(content, ApplicationDownloadBuilderFontSize.MEDIUM, index);
-    }
-
-    public PdfPCell newBookmarkCellLarge(String content, int index) {
-        return newBookmarkCell(content, ApplicationDownloadBuilderFontSize.LARGE, index);
     }
 
     public PdfPCell newContentCell(String content, ApplicationDownloadBuilderFontSize fontSize) {
@@ -146,10 +113,6 @@ public class ApplicationDownloadBuilderHelper {
 
     public PdfPCell newBookmarkCell(String content, ApplicationDownloadBuilderFontSize fontSize, int bookmarkIndex) {
         return newTableCell(content, fontSize, bookmarkIndex);
-    }
-
-    public void addContentRowSmall(String title, String content, PdfPTable table) {
-        addContentRow(title, content, ApplicationDownloadBuilderFontSize.SMALL, table);
     }
 
     public void addContentRowMedium(String title, String content, PdfPTable table) {

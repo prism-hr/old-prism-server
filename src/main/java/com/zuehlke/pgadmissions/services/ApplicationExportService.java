@@ -1,36 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringWriter;
-import java.util.List;
-import java.util.Properties;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.transform.TransformerException;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ws.WebServiceMessage;
-import org.springframework.ws.client.core.WebServiceMessageCallback;
-import org.springframework.ws.client.core.WebServiceTemplate;
-
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpException;
+import com.jcraft.jsch.*;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResponse;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.ReferenceTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
@@ -50,6 +20,30 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.builders.ApplicationDocumentExportBuilder;
 import com.zuehlke.pgadmissions.services.builders.ApplicationExportBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ws.WebServiceMessage;
+import org.springframework.ws.client.core.WebServiceMessageCallback;
+import org.springframework.ws.client.core.WebServiceTemplate;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.transform.TransformerException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.StringWriter;
+import java.util.List;
+import java.util.Properties;
 
 @Service
 @Transactional
@@ -113,7 +107,7 @@ public class ApplicationExportService {
             if (exportId == null) {
                 exportRequest = buildDataExportRequest(application);
                 AdmissionsApplicationResponse exportResponse = sendDataExportRequest(application, exportRequest);
-                
+
                 ReferenceTp exportReference = exportResponse.getReference();
                 exportId = exportReference.getApplicationID();
                 exportUserId = exportReference.getApplicantID();
@@ -170,7 +164,7 @@ public class ApplicationExportService {
             userService.createOrUpdateUserInstitutionIdentity(application, exportUserId);
         }
     }
-    
+
     protected void localize(Application application) {
         propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(application, application.getSystem().getUser());
     }
@@ -182,13 +176,13 @@ public class ApplicationExportService {
                         webServiceMessage.writeTo(new ByteArrayOutputStream(5000));
                     }
                 });
-   
+
         if (exportResponse == null) {
             throw new ApplicationExportException("No response to export request for application " + application.getCode());
         }
         return exportResponse;
     }
-    
+
     private OutputStream sendDocumentExportRequest(Application application, String exportId) throws SftpException, IOException, ResourceNotFoundException,
             JSchException {
         Session session = getSftpSession();

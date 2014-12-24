@@ -35,7 +35,7 @@
         <property name="dateFormat">
             <bean class="com.fasterxml.jackson.databind.util.ISO8601DateFormat"/>
         </property>
-        <property name="indentOutput" value="${json.pretty.print}"/>
+        <property name="indentOutput" value="true"/>
         <property name="featuresToEnable">
             <array>
                 <util:constant static-field="com.fasterxml.jackson.databind.DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT"/>

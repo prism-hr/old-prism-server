@@ -41,7 +41,6 @@
                 <prop key="mail.smtp.quitwait">${mail.smtp.quitwait}</prop>
                 <prop key="mail.smtp.connectiontimeout">${mail.smtp.connectiontimeout}</prop>
                 <prop key="mail.smtp.timeout">${mail.smtp.timeout}</prop>
-                <prop key="mail.debug">${mail.debug}</prop>
             </props>
         </property>
     </bean>

@@ -2,26 +2,17 @@ package com.zuehlke.pgadmissions.domain.institution;
 
 import com.zuehlke.pgadmissions.domain.location.GeocodableLocation;
 import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
-import org.apache.solr.analysis.*;
-import org.hibernate.search.annotations.*;
-import org.hibernate.search.annotations.Parameter;
 
 import javax.persistence.*;
 
-@AnalyzerDef(name = "institutionDomicileNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
-        @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
-        @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
-        @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class)})
 @Entity
 @Table(name = "INSTITUTION_DOMICILE")
-@Indexed
 public class InstitutionDomicile extends GeocodableLocation {
 
     @Id
     private String id;
 
     @Column(name = "name", nullable = false, unique = true)
-    @Field(analyzer = @Analyzer(definition = "institutionDomicileNameAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String name;
 
     @Column(name = "currency", nullable = false)

@@ -28,6 +28,7 @@
                 <prop key="javax.persistence.validation.mode">NONE</prop>
                 <prop key="hibernate.jdbc.batch_size">20</prop>
                 <prop key="order_inserts">true</prop>
+                <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
             </props>
         </property>
     </bean>

@@ -18,12 +18,9 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.ResourceAction;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import org.apache.solr.analysis.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
-import org.hibernate.search.annotations.*;
-import org.hibernate.search.annotations.Parameter;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -31,13 +28,8 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Set;
 
-@AnalyzerDef(name = "institutionNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
-        @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
-        @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
-        @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class) })
 @Entity
 @Table(name = "INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_domicile_id", "title", "google_id" }) })
-@Indexed
 public class Institution extends ResourceParent {
 
     @Id
@@ -65,7 +57,6 @@ public class Institution extends ResourceParent {
     private InstitutionDomicile domicile;
 
     @Column(name = "title", nullable = false, unique = true)
-    @Field(analyzer = @Analyzer(definition = "institutionNameAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String title;
 
     @Column(name = "locale", nullable = false)

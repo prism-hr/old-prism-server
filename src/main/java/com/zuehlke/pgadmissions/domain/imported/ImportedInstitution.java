@@ -2,19 +2,11 @@ package com.zuehlke.pgadmissions.domain.imported;
 
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
-import org.apache.solr.analysis.*;
-import org.hibernate.search.annotations.*;
-import org.hibernate.search.annotations.Parameter;
 
 import javax.persistence.*;
 
-@AnalyzerDef(name = "importedInstitutionNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
-        @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
-        @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
-        @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class) })
 @Entity
 @Table(name = "IMPORTED_INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "domicile_id", "code" }) })
-@Indexed
 public class ImportedInstitution extends ImportedEntity {
 
     @Id
@@ -33,7 +25,6 @@ public class ImportedInstitution extends ImportedEntity {
     private String code;
 
     @Column(name = "name", nullable = false)
-    @Field(analyzer = @Analyzer(definition = "importedInstitutionNameAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String name;
 
     @Column(name = "enabled", nullable = false)

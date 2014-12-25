@@ -104,6 +104,13 @@
             <version>${spring.security.version}</version>
         </dependency>
 
+        <!-- Cache -->
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>2.9.0</version>
+        </dependency>
+
         <!-- Dozer -->
         <dependency>
             <groupId>net.sf.dozer</groupId>

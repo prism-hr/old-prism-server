@@ -1,13 +1,28 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import com.google.common.base.Joiner;
-import com.zuehlke.pgadmissions.domain.imported.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.Size;
+
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import javax.persistence.*;
-import javax.validation.constraints.Size;
+import com.google.common.base.Joiner;
+import com.zuehlke.pgadmissions.domain.imported.Country;
+import com.zuehlke.pgadmissions.domain.imported.Disability;
+import com.zuehlke.pgadmissions.domain.imported.Domicile;
+import com.zuehlke.pgadmissions.domain.imported.Ethnicity;
+import com.zuehlke.pgadmissions.domain.imported.Gender;
+import com.zuehlke.pgadmissions.domain.imported.Language;
+import com.zuehlke.pgadmissions.domain.imported.Title;
 
 @Entity
 @Table(name = "APPLICATION_PERSONAL_DETAIL")

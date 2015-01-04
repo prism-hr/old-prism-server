@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.states;
 
+import java.util.HashMap;
+import java.util.List;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
-
-import java.util.HashMap;
-import java.util.List;
 
 public abstract class PrismWorkflowState {
 

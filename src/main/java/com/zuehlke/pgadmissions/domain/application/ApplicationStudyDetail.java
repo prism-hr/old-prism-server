@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
 
 @Embeddable
 public class ApplicationStudyDetail {

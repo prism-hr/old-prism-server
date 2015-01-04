@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
+import java.util.List;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
-
-import java.util.List;
 
 public class PrismStateTransition {
 

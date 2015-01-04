@@ -49,7 +49,7 @@ import java.util.Properties;
 @Transactional
 public class ApplicationExportService {
 
-    private PropertyLoader propertyLoader;
+    private PropertyLoader propertyLoader = null;
 
     @Value("${xml.data.export.sftp.privatekeyfile}")
     private Resource privateKeyFile;
@@ -146,6 +146,7 @@ public class ApplicationExportService {
     }
 
     protected OutputStream buildDocumentExportRequest(Application application, String exportReference, OutputStream outputStream) throws IOException {
+        localize(application);
         applicationDocumentExportBuilder.localize(propertyLoader).getDocuments(application, exportReference, outputStream);
         return outputStream;
     }
@@ -166,7 +167,9 @@ public class ApplicationExportService {
     }
 
     protected void localize(Application application) {
-        propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(application, application.getSystem().getUser());
+        if (propertyLoader == null) {
+            propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(application, application.getSystem().getUser());
+        }
     }
 
     private AdmissionsApplicationResponse sendDataExportRequest(Application application, SubmitAdmissionsApplicationRequest exportRequest) {

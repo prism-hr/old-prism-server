@@ -222,7 +222,6 @@ public class ResourceService {
 
         insertResourceStates(resource, resource.getResourcePreviousStates(), comment.getCommentStates(), ResourcePreviousState.class);
         insertResourceStates(resource, resource.getResourceStates(), comment.getCommentTransitionStates(), ResourceState.class);
-
         entityService.flush();
     }
 

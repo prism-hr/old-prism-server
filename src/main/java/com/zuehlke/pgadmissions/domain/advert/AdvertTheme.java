@@ -1,6 +1,13 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "ADVERT_THEME", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "theme" }),

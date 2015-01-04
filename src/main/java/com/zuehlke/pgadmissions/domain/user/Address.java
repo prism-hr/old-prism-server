@@ -1,10 +1,16 @@
 package com.zuehlke.pgadmissions.domain.user;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import com.google.common.base.Joiner;
 import com.zuehlke.pgadmissions.domain.imported.Domicile;
 import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
-
-import javax.persistence.*;
 
 @Entity
 @Table(name = "ADDRESS")

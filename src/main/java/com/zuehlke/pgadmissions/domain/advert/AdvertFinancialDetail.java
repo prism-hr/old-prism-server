@@ -1,11 +1,12 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
+import java.math.BigDecimal;
 
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import java.math.BigDecimal;
+
+import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 
 @Embeddable
 public class AdvertFinancialDetail {

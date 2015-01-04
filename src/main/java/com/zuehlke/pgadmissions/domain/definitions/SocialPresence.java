@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
+import java.util.List;
+
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
-
-import java.util.List;
 
 public enum SocialPresence {
 

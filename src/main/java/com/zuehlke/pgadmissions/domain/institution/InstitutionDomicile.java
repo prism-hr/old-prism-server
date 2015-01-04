@@ -1,9 +1,13 @@
 package com.zuehlke.pgadmissions.domain.institution;
 
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import com.zuehlke.pgadmissions.domain.location.GeocodableLocation;
 import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
-
-import javax.persistence.*;
 
 @Entity
 @Table(name = "INSTITUTION_DOMICILE")

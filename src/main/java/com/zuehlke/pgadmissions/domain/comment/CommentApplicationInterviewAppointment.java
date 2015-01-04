@@ -1,11 +1,12 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDateTime;
+import java.util.TimeZone;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import java.util.TimeZone;
+
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDateTime;
 
 @Embeddable
 public class CommentApplicationInterviewAppointment {

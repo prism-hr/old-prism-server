@@ -1,8 +1,14 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
-import javax.persistence.*;
+import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 
 @Entity
 @Table(name = "STATE_ACTION_NOTIFICATION", uniqueConstraints = {@UniqueConstraint(columnNames = {"state_action_id", "role_id"})})

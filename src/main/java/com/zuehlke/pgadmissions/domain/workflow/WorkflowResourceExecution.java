@@ -1,9 +1,10 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import org.apache.commons.lang3.ObjectUtils;
 
 public abstract class WorkflowResourceExecution extends WorkflowResource {
 

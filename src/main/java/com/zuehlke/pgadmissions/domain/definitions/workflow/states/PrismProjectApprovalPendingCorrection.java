@@ -1,8 +1,16 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.states;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
-
 import java.util.Arrays;
+
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
 public class PrismProjectApprovalPendingCorrection extends PrismWorkflowState {
 

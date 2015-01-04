@@ -1,5 +1,23 @@
 package com.zuehlke.pgadmissions.domain.document;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.bouncycastle.util.Arrays;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
@@ -8,12 +26,6 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
-import org.bouncycastle.util.Arrays;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.persistence.*;
 
 @Entity
 @Table(name = "DOCUMENT")

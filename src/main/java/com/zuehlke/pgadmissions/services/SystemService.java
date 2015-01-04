@@ -167,11 +167,7 @@ public class SystemService {
         LOGGER.info("Initialising state group definitions");
         verifyBackwardCompatibility(StateGroup.class);
         initializeStateGroups();
-
-        LOGGER.info("Initialising state definitions");
-        verifyBackwardCompatibility(State.class);
-        initializeStates();
-
+        
         LOGGER.info("Initialising state transition evaluation definitions");
         verifyBackwardCompatibility(StateTransitionEvaluation.class);
         initializeStateTransitionEvaluations();
@@ -179,6 +175,10 @@ public class SystemService {
         LOGGER.info("Initialising state duration definitions");
         verifyBackwardCompatibility(StateDurationDefinition.class);
         initializeStateDurationDefinitions();
+
+        LOGGER.info("Initialising state definitions");
+        verifyBackwardCompatibility(State.class);
+        initializeStates();
 
         LOGGER.info("Initialising display property definitions");
         verifyBackwardCompatibility(DisplayPropertyDefinition.class);

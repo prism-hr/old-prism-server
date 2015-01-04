@@ -233,7 +233,7 @@ public class ApplicationCopyHelper {
                 applicationDocument.setApplication(to);
 
                 if (personalStatementEnabled) {
-                    applicationDocument.setPersonalStatement(copyDocument(from.getDocument().getCoveringLetter()));
+                    applicationDocument.setPersonalStatement(copyDocument(from.getDocument().getPersonalStatement()));
                 }
 
                 if (cvEnabled) {
@@ -247,6 +247,7 @@ public class ApplicationCopyHelper {
                 if (coveringLetterEnabled) {
                     applicationDocument.setCoveringLetter(copyDocument(from.getDocument().getCoveringLetter()));
                 }
+                
                 applicationDocument.setLastEditedTimestamp(new DateTime());
             }
         }

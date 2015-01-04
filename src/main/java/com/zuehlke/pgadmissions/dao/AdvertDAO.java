@@ -91,10 +91,20 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<Advert> getActiveAdverts(List<Integer> adverts) {
-        return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
-                .add(Restrictions.in("id", adverts)) //
-                .addOrder(Order.desc("sequenceIdentifier")) //
+    public List<Advert> getActiveAdverts(List<Integer> adverts, boolean prioritizeProgram) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class);
+       
+        if (prioritizeProgram) {
+            criteria.createAlias("program", "program", JoinType.LEFT_OUTER_JOIN);
+        }
+         
+        criteria.add(Restrictions.in("id", adverts));
+
+        if (prioritizeProgram) {
+            criteria.addOrder(Order.desc("program.id"));
+        }
+
+        return (List<Advert>) criteria.addOrder(Order.desc("sequenceIdentifier")) //
                 .list();
     }
 

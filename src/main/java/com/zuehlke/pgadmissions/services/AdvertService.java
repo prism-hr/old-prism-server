@@ -111,7 +111,8 @@ public class AdvertService {
         if (adverts.isEmpty()) {
             return Lists.newArrayList();
         } else {
-            return advertDAO.getActiveAdverts(adverts);
+            List<Integer> programs = queryDTO.getPrograms();
+            return advertDAO.getActiveAdverts(adverts, programs != null && programs.size() == 1);
         } 
     }
 

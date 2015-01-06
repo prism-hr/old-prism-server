@@ -488,17 +488,6 @@
                             <goal>xjc</goal>
                         </goals>
                         <configuration>
-                            <packageName>com.zuehlke.pgadmissions.scoring.jaxb</packageName>
-                            <outputDirectory>${project.build.directory}/generated-sources/jaxb/scoringConfig</outputDirectory>
-                            <schemaDirectory>${project.basedir}/src/main/resources/xsd/scoring</schemaDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>xjc-4</id>
-                        <goals>
-                            <goal>xjc</goal>
-                        </goals>
-                        <configuration>
                             <packageName>com.zuehlke.pgadmissions.iso.jaxb</packageName>
                             <outputDirectory>${project.build.directory}/generated-sources/jaxb/isoCountryCodes</outputDirectory>
                             <schemaDirectory>${project.basedir}/src/main/resources/xsd/isoCountryCodes</schemaDirectory>

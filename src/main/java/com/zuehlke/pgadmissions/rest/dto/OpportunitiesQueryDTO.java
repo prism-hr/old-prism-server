@@ -32,11 +32,11 @@ public class OpportunitiesQueryDTO {
 
     private Integer maxDuration;
 
-    private List<Integer> institutions;
+    private Integer[] institutions;
 
-    private List<Integer> programs;
+    private Integer[] programs;
 
-    private List<Integer> projects;
+    private Integer[] projects;
 
     private BigDecimal neLat;
 
@@ -128,27 +128,27 @@ public class OpportunitiesQueryDTO {
         this.maxDuration = maxDuration;
     }
 
-    public List<Integer> getInstitutions() {
+    public final Integer[] getInstitutions() {
         return institutions;
     }
 
-    public void setInstitutions(List<Integer> institutions) {
+    public final void setInstitutions(Integer[] institutions) {
         this.institutions = institutions;
     }
 
-    public List<Integer> getPrograms() {
+    public final Integer[] getPrograms() {
         return programs;
     }
 
-    public void setPrograms(List<Integer> programs) {
+    public final void setPrograms(Integer[] programs) {
         this.programs = programs;
     }
 
-    public List<Integer> getProjects() {
+    public final Integer[] getProjects() {
         return projects;
     }
 
-    public void setProjects(List<Integer> projects) {
+    public final void setProjects(Integer[] projects) {
         this.projects = projects;
     }
 

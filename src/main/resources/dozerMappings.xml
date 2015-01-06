@@ -86,7 +86,6 @@
 				<class-b>com.zuehlke.pgadmissions.domain.definitions.PrismProgramType
 				</class-b>
 			</converter>
-
 			<converter
 				type="com.zuehlke.pgadmissions.rest.converter.WorkflowDefinitionConverter">
 				<class-a>com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionDefinition
@@ -141,6 +140,13 @@
 				<class-a>com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO
 				</class-a>
 				<class-b>com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration
+				</class-b>
+			</converter>
+			<converter
+				type="com.zuehlke.pgadmissions.rest.converter.CommentCustomResponseConverter">
+				<class-a>com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse
+				</class-a>
+				<class-b>com.zuehlke.pgadmissions.rest.representation.comment.CommentCustomResponseRepresentation
 				</class-b>
 			</converter>
 		</custom-converters>
@@ -301,17 +307,6 @@
 			<a>assignedUsers</a>
 			<b>assignedUsers</b>
 		</field-exclude>
-	</mapping>
-
-	<mapping>
-		<class-a>com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse
-		</class-a>
-		<class-b>com.zuehlke.pgadmissions.rest.representation.comment.CommentCustomResponseRepresentation
-		</class-b>
-		<field>
-			<a>actionCustomQuestionConfiguration.label</a>
-			<b>label</b>
-		</field>
 	</mapping>
 
 	<mapping>

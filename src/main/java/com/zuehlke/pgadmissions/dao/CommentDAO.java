@@ -168,6 +168,10 @@ public class CommentDAO {
                 .createAlias("transitionState", "transitionState", JoinType.INNER_JOIN) //
                 .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
+                .add(Restrictions.not( //
+                        Restrictions.conjunction() //
+                                .add(Restrictions.in("action.actionCategory", Arrays.asList(ESCALATE_RESOURCE, IMPORT_RESOURCE))) //
+                                .add(Restrictions.eqProperty("stateGroup.id", "transitionStateGroup.id")))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.eq("action.transitionAction", true)) //
@@ -177,10 +181,7 @@ public class CommentDAO {
                                                 .add(Restrictions.isNotNull("stateGroup.id")) //
                                                 .add(Restrictions.isNotNull("transitionStateGroup.id")) //
                                                 .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id"))) //
-                                        .add(Restrictions.isNotNull("action.creationScope")))) //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.in("action.actionCategory", Arrays.asList(ESCALATE_RESOURCE, IMPORT_RESOURCE))) //
-                                .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id")))) //
+                                        .add(Restrictions.isNotNull("action.creationScope"))))) //
                 .addOrder(Order.asc("createdTimestamp")) //
                 .addOrder(Order.asc("id")) //
                 .list();

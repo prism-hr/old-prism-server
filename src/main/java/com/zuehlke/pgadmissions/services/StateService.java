@@ -331,17 +331,11 @@ public class StateService {
     }
 
     public StateTransition getApplicationReferencedOutcome(Resource resource, Comment comment) throws DeduplicationException {
-        PrismStateGroup stateGroupId = resource.getState().getStateGroup().getId();
-        if (stateGroupId == PrismStateGroup.APPLICATION_REFERENCE) {
-            if (roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_REFEREE)).size() == 1) {
-                return stateDAO.getStateTransition(resource, comment.getAction(), PrismState.APPLICATION_REFERENCE_PENDING_COMPLETION);
-            }
-        } else {
-            if (roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_REFEREE)).size() == 1) {
-                return stateDAO.getStateTransition(resource, comment.getAction(), null);
-            }
+        PrismState transitionState = PrismState.APPLICATION_REFERENCE;
+        if (roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_REFEREE)).size() == 1) {
+            transitionState = PrismState.APPLICATION_REFERENCE_PENDING_COMPLETION;
         }
-        return null;
+        return stateDAO.getStateTransition(resource, comment.getAction(), transitionState);
     }
 
     public StateTransition getApplicationReferenceCompletedOutcome(Resource resource, Comment comment) {

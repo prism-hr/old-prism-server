@@ -21,4 +21,10 @@ public class CommentCustomResponseRepresentation {
     public void setLabel(String label) {
         this.label = label;
     }
+    
+    public CommentCustomResponseRepresentation withLabel(String label) {
+        this.label = label;
+        return this;
+    }
+    
 }

@@ -278,8 +278,8 @@ public class AdvertDAO {
     }
 
     private void appendInstitutionsConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
-        List<Integer> institutions = queryDTO.getInstitutions();
-        if (institutions != null) {
+        Integer[] institutions = queryDTO.getInstitutions();
+        if (institutions != null && institutions.length > 0) {
             criteria.add(Restrictions.disjunction() //
                     .add(Restrictions.in("institution.id", institutions)) //
                     .add(Restrictions.in("projectInstitution.id", institutions))); //
@@ -287,8 +287,8 @@ public class AdvertDAO {
     }
 
     private void appendProgramsConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
-        List<Integer> programs = queryDTO.getPrograms();
-        if (programs != null && !programs.isEmpty()) {
+        Integer[] programs = queryDTO.getPrograms();
+        if (programs != null && programs.length > 0) {
             criteria.add(Restrictions.disjunction() //
                     .add(Restrictions.in("program.id", programs)) //
                     .add(Restrictions.in("projectProgram.id", programs)));
@@ -296,8 +296,8 @@ public class AdvertDAO {
     }
 
     private void appendProjectsConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
-        List<Integer> projects = queryDTO.getProjects();
-        if (projects != null && !projects.isEmpty()) {
+        Integer[] projects = queryDTO.getProjects();
+        if (projects != null && projects.length > 0) {
             criteria.add(Restrictions.in("project.id", projects));
         }
     }

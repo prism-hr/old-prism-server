@@ -226,6 +226,10 @@
 		<class-b>com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation
 		</class-b>
 		<field>
+			<a>state.id</a>
+			<b>state</b>
+		</field>
+		<field>
 			<a>state.stateGroup.id</a>
 			<b>stateGroup</b>
 		</field>

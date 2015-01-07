@@ -17,6 +17,8 @@ public class AbstractResourceRepresentation {
     private Integer id;
 
     private String code;
+    
+    private PrismState state;
 
     private PrismStateGroup stateGroup;
 
@@ -56,6 +58,14 @@ public class AbstractResourceRepresentation {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public final PrismState getState() {
+        return state;
+    }
+
+    public final void setState(PrismState state) {
+        this.state = state;
     }
 
     public final PrismStateGroup getStateGroup() {

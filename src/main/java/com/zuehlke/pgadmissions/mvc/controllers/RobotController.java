@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.redirect;
+package com.zuehlke.pgadmissions.mvc.controllers;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;

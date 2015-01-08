@@ -58,26 +58,32 @@ public class RobotController {
         if (queryMap.containsKey("institution")) {
             resourceId = Integer.parseInt(queryMap.get("institution"));
             Institution institution = resourceService.getById(Institution.class, resourceId);
-            title = institution.getTitle();
-            description = institution.getDescription();
-            if(institution.getLogoDocument() != null) {
-                imageUrl = applicationApiUrl + "/images/" + institution.getLogoDocument().getId();
+            if (institution != null) {
+                title = institution.getTitle();
+                description = institution.getDescription();
+                if (institution.getLogoDocument() != null) {
+                    imageUrl = applicationApiUrl + "/images/" + institution.getLogoDocument().getId();
+                }
             }
         } else if (queryMap.containsKey("program")) {
             resourceId = Integer.parseInt(queryMap.get("program"));
             Program program = resourceService.getById(Program.class, resourceId);
-            title = program.getTitle();
-            description = program.getAdvert().getDescription();
-            if(program.getInstitution().getLogoDocument() != null) {
-                imageUrl = applicationApiUrl + "/images/" + program.getInstitution().getLogoDocument().getId();
+            if (program != null) {
+                title = program.getTitle();
+                description = program.getAdvert().getDescription();
+                if (program.getInstitution().getLogoDocument() != null) {
+                    imageUrl = applicationApiUrl + "/images/" + program.getInstitution().getLogoDocument().getId();
+                }
             }
         } else if (queryMap.containsKey("project")) {
             resourceId = Integer.parseInt(queryMap.get("project"));
             Project project = resourceService.getById(Project.class, resourceId);
-            title = project.getTitle();
-            description = project.getAdvert().getDescription();
-            if(project.getInstitution().getLogoDocument() != null) {
-                imageUrl = applicationApiUrl + "/images/" + project.getInstitution().getLogoDocument().getId();
+            if (project != null) {
+                title = project.getTitle();
+                description = project.getAdvert().getDescription();
+                if (project.getInstitution().getLogoDocument() != null) {
+                    imageUrl = applicationApiUrl + "/images/" + project.getInstitution().getLogoDocument().getId();
+                }
             }
         }
 

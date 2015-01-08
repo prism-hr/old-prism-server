@@ -116,7 +116,7 @@ public class ProgramService {
         program.getInstitution().setUpdatedTimestampSitemap(updatedTimestamp);
 
         if (comment.isProgramApproveOrDeactivateComment()) {
-            projectService.sychronizeProjects(program);
+            projectService.synchronizeProjects(program);
             if (comment.isProgramRestoreComment()) {
                 projectService.restoreProjects(program, comment.getCreatedTimestamp().toLocalDate());
             }

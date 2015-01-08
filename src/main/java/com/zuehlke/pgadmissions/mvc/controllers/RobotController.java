@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.mvc.controllers;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -48,41 +47,43 @@ public class RobotController {
         Map<String, Object> model = Maps.newHashMap();
         String title = "PRiSM";
         String description = "The Opportunity Portal";
-        String imageUrl = "http://www.prism.ucl.ac.uk/images/fbimg.jpg";
+        String imageUrl = applicationUrl + "/images/fbimg.jpg";
+        String ogUrl = applicationUrl;
 
         String fragment = URLDecoder.decode(escapedFragment, Charsets.UTF_8.name());
         int questionMarkIndex = fragment.lastIndexOf("?");
         String query = questionMarkIndex > -1 ? fragment.substring(questionMarkIndex + 1) : "";
         Map<String, String> queryMap = getQueryMap(query);
 
-        PrismScope resourceScope = null;
-        Integer resourceId = null;
         if (queryMap.containsKey("institution")) {
-            resourceId = Integer.parseInt(queryMap.get("institution"));
+            int resourceId = Integer.parseInt(queryMap.get("institution"));
             Institution institution = resourceService.getById(Institution.class, resourceId);
             if (institution != null) {
                 title = institution.getTitle();
                 description = institution.getDescription();
+                ogUrl = applicationUrl + "/#!/?institution=" + resourceId;
                 if (institution.getLogoDocument() != null) {
                     imageUrl = applicationApiUrl + "/images/" + institution.getLogoDocument().getId();
                 }
             }
         } else if (queryMap.containsKey("program")) {
-            resourceId = Integer.parseInt(queryMap.get("program"));
+            int resourceId = Integer.parseInt(queryMap.get("program"));
             Program program = resourceService.getById(Program.class, resourceId);
             if (program != null) {
                 title = program.getTitle();
                 description = program.getAdvert().getDescription();
+                ogUrl = applicationUrl + "/#!/?program=" + resourceId;
                 if (program.getInstitution().getLogoDocument() != null) {
                     imageUrl = applicationApiUrl + "/images/" + program.getInstitution().getLogoDocument().getId();
                 }
             }
         } else if (queryMap.containsKey("project")) {
-            resourceId = Integer.parseInt(queryMap.get("project"));
+            int resourceId = Integer.parseInt(queryMap.get("project"));
             Project project = resourceService.getById(Project.class, resourceId);
             if (project != null) {
                 title = project.getTitle();
                 description = project.getAdvert().getDescription();
+                ogUrl = applicationUrl + "/#!/?project=" + resourceId;
                 if (project.getInstitution().getLogoDocument() != null) {
                     imageUrl = applicationApiUrl + "/images/" + project.getInstitution().getLogoDocument().getId();
                 }

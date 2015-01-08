@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
@@ -113,32 +114,11 @@ public class ProjectService {
         return actionService.executeUserAction(project, action, comment);
     }
 
-    private void update(Integer projectId, ProjectDTO projectDTO) {
-        Project project = entityService.getById(Project.class, projectId);
-        copyProjectDetails(project, projectDTO);
-    }
-
-    private void copyProjectDetails(Project project, ProjectDTO projectDTO) {
-        Advert advert;
-        if (project.getAdvert() == null) {
-            advert = new Advert();
-            advert.setAddress(advertService.createAddressCopy(project.getInstitution().getAddress()));
-            project.setAdvert(advert);
-        } else {
-            advert = project.getAdvert();
-        }
-
-        String title = projectDTO.getTitle();
-        project.setEndDate(projectDTO.getEndDate());
-        project.setTitle(title);
-        advert.setTitle(title);
-        advert.setSummary(projectDTO.getSummary());
-        advert.setApplyHomepage(projectDTO.getApplyHomepage());
-        advert.setStudyDurationMinimum(projectDTO.getStudyDurationMinimum());
-        advert.setStudyDurationMaximum(projectDTO.getStudyDurationMaximum());
-    }
-
     public void postProcessProject(Project project, Comment comment) {
+        DateTime updatedTimestamp = project.getUpdatedTimestamp();
+        project.setUpdatedTimestampSitemap(updatedTimestamp);
+        project.getProgram().setUpdatedTimestampSitemap(updatedTimestamp);
+        project.getInstitution().setUpdatedTimestampSitemap(updatedTimestamp);
         advertService.setSequenceIdentifier(project.getAdvert(), project.getSequenceIdentifier().substring(0, 13));
     }
 
@@ -174,6 +154,40 @@ public class ProjectService {
         }
         Long count = projectDAO.getActiveProjectCount(resource);
         return count == null ? null : count.intValue();
+    }
+
+    public DateTime getLatestUpdatedTimestampSitemap(List<PrismState> states) {
+        return projectDAO.getLatestUpdatedTimestampSitemap(states);
+    }
+
+    public List<SitemapEntryDTO> getSitemapEntries() {
+        List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
+        return projectDAO.getSitemapEntries(activeProjectStates);
+    }
+
+    private void update(Integer projectId, ProjectDTO projectDTO) {
+        Project project = entityService.getById(Project.class, projectId);
+        copyProjectDetails(project, projectDTO);
+    }
+
+    private void copyProjectDetails(Project project, ProjectDTO projectDTO) {
+        Advert advert;
+        if (project.getAdvert() == null) {
+            advert = new Advert();
+            advert.setAddress(advertService.createAddressCopy(project.getInstitution().getAddress()));
+            project.setAdvert(advert);
+        } else {
+            advert = project.getAdvert();
+        }
+
+        String title = projectDTO.getTitle();
+        project.setEndDate(projectDTO.getEndDate());
+        project.setTitle(title);
+        advert.setTitle(title);
+        advert.setSummary(projectDTO.getSummary());
+        advert.setApplyHomepage(projectDTO.getApplyHomepage());
+        advert.setStudyDurationMinimum(projectDTO.getStudyDurationMinimum());
+        advert.setStudyDurationMaximum(projectDTO.getStudyDurationMaximum());
     }
 
 }

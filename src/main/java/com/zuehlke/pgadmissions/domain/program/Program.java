@@ -140,6 +140,10 @@ public class Program extends ResourceParent {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
 
+    @Column(name = "updated_timestamp_sitemap", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime updatedTimestampSitemap;
+    
     @Column(name = "last_reminded_request_individual")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastRemindedRequestIndividual;
@@ -452,6 +456,14 @@ public class Program extends ResourceParent {
     @Override
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
+    }
+
+    public final DateTime getUpdatedTimestampSitemap() {
+        return updatedTimestampSitemap;
+    }
+
+    public final void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap) {
+        this.updatedTimestampSitemap = updatedTimestampSitemap;
     }
 
     @Override

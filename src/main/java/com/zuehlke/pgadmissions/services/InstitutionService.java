@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.document.FileCategory;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -29,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
@@ -240,6 +242,16 @@ public class InstitutionService {
 
     public boolean hasAuthenticatedFeeds(Institution institution) {
         return institutionDAO.getAuthenticatedFeedCount(institution) > 0;
+    }
+
+    public DateTime getLatestUpdatedTimestampSitemap(List<PrismState> programStates, List<PrismState> projectStates) {
+        return institutionDAO.getLatestUpdatedTimestampSitemap(programStates, projectStates);
+    }
+
+    public List<SitemapEntryDTO> getSitemapEntries() {
+        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
+        List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
+        return institutionDAO.getSitemapEntries(activeProgramStates, activeProjectStates);
     }
 
 }

@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ProgramType;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -25,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
@@ -109,12 +111,17 @@ public class ProgramService {
     }
 
     public void postProcessProgram(Program program, Comment comment) {
+        DateTime updatedTimestamp = program.getUpdatedTimestamp();
+        program.setUpdatedTimestampSitemap(updatedTimestamp);
+        program.getInstitution().setUpdatedTimestampSitemap(updatedTimestamp);
+
         if (comment.isProgramApproveOrDeactivateComment()) {
             projectService.synchronizeProjects(program);
             if (comment.isProgramRestoreComment()) {
                 projectService.restoreProjects(program, comment.getCreatedTimestamp().toLocalDate());
             }
         }
+
         advertService.setSequenceIdentifier(program.getAdvert(), program.getSequenceIdentifier().substring(0, 13));
     }
 
@@ -196,6 +203,15 @@ public class ProgramService {
     public Integer getActiveProgramCount(Institution institution) {
         Long count = programDAO.getActiveProgramCount(institution);
         return count == null ? null : count.intValue();
+    }
+
+    public DateTime getLatestUpdatedTimestampSitemap(List<PrismState> states) {
+        return programDAO.getLatestUpdatedTimestampSitemap(states);
+    }
+
+    public List<SitemapEntryDTO> getSitemapEntries() {
+        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
+        return programDAO.getSitemapEntries(activeProgramStates);
     }
 
     private void update(Integer programId, ProgramDTO programDTO) {

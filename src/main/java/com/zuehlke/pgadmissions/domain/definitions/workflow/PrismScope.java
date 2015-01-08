@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import java.util.HashMap;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -11,6 +9,8 @@ import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 
+import java.util.HashMap;
+
 public enum PrismScope {
 
     SYSTEM(System.class, 1, "SM", null, null, null), //
@@ -19,20 +19,7 @@ public enum PrismScope {
     PROJECT(Project.class, 4, "PT", 50, new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null), //
     APPLICATION(Application.class, 5, "AN", 50, new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null);
 
-    private Class<? extends Resource> resourceClass;
-
-    private Integer precedence;
-
-    private String shortCode;
-
-    private Integer maxConsoleListRecords;
-
-    private HashMultimap<String, String> consoleListCustomColumns;
-
-    private HashMultimap<String, String> reportListCustomColumns;
-
     private static final HashMap<Class<? extends Resource>, PrismScope> resourceScopes = Maps.newHashMap();
-
     static {
         resourceScopes.put(System.class, SYSTEM);
         resourceScopes.put(Institution.class, INSTITUTION);
@@ -40,15 +27,25 @@ public enum PrismScope {
         resourceScopes.put(Project.class, PROJECT);
         resourceScopes.put(Application.class, APPLICATION);
     }
+    private Class<? extends Resource> resourceClass;
+    private Integer precedence;
+    private String shortCode;
+    private Integer maxConsoleListRecords;
+    private HashMultimap<String, String> consoleListCustomColumns;
+    private HashMultimap<String, String> reportListCustomColumns;
 
     private PrismScope(Class<? extends Resource> resourceClass, int precedence, String shortCode, Integer maxConsoleListRecords,
-            HashMultimap<String, String> consoleListColumns, HashMultimap<String, String> reportListColumns) {
+                       HashMultimap<String, String> consoleListColumns, HashMultimap<String, String> reportListColumns) {
         this.resourceClass = resourceClass;
         this.precedence = precedence;
         this.shortCode = shortCode;
         this.maxConsoleListRecords = maxConsoleListRecords;
         this.consoleListCustomColumns = consoleListColumns;
         this.reportListCustomColumns = reportListColumns;
+    }
+
+    public static PrismScope getResourceScope(Class<? extends Resource> resourceClass) {
+        return resourceScopes.get(resourceClass);
     }
 
     public Class<? extends Resource> getResourceClass() {
@@ -73,10 +70,6 @@ public enum PrismScope {
 
     public final HashMultimap<String, String> getReportListCustomColumns() {
         return reportListCustomColumns;
-    }
-
-    public static PrismScope getResourceScope(Class<? extends Resource> resourceClass) {
-        return resourceScopes.get(resourceClass);
     }
 
     public String getLowerCaseName() {

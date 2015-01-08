@@ -1,54 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDITIONAL_INFORMATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDRESS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_DOCUMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_EMPLOYMENT_POSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FUNDING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_LANGUAGE_QUALIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PASSPORT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PERSONAL_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PRIZE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_QUALIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REPORT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_STATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_STATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_WORKFLOW;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_STATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_STATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_STATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_STATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_STATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_STATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 import java.util.Set;
 
-import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 public enum PrismDisplayPropertyDefinition {
 
@@ -300,7 +258,7 @@ public enum PrismDisplayPropertyDefinition {
     APPLICATION_PRIZE_PROVIDER(APPLICATION_PRIZE, "Awarding Body", APPLICATION), //
     APPLICATION_PRIZE_TITLE(APPLICATION_PRIZE, "Title", APPLICATION), //
     APPLICATION_PRIZE_DESCRIPTION(APPLICATION_PRIZE, "Description", APPLICATION), //
-    APPLICATION_PRIZE_AWARD_DATE(APPLICATION_PRIZE, "Award Dateo", APPLICATION), //
+    APPLICATION_PRIZE_AWARD_DATE(APPLICATION_PRIZE, "Award Date", APPLICATION), //
     APPLICATION_REFEREE_HEADER(APPLICATION_REFEREE, "Referees", APPLICATION), //
     APPLICATION_REFEREE_SUBHEADER(APPLICATION_REFEREE, "Referee", APPLICATION), //
     APPLICATION_REFEREE_REFERENCE_APPENDIX(APPLICATION_REFEREE, "Reference", APPLICATION), //
@@ -334,7 +292,7 @@ public enum PrismDisplayPropertyDefinition {
     APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION(APPLICATION_COMMENT, "Updated the additional information section", APPLICATION), APPLICATION_CONFIRM_ELIGIBILITY_DURATION_LABEL(
             APPLICATION_STATE_DURATION, "Eligibility Confirmation Duration", APPLICATION), //
     APPLICATION_CONFIRM_ELIGIBILITY_DURATION_TOOLTIP(APPLICATION_STATE_DURATION,
-            "The length of time you expect it to take to confirm the elibility of an applicant", APPLICATION), //
+            "The length of time you expect it to take to confirm the eligibility of an applicant", APPLICATION), //
     APPLICATION_PROVIDE_REFERENCE_DURATION_LABEL(APPLICATION_STATE_DURATION, "Reference Duration", APPLICATION), //
     APPLICATION_PROVIDE_REFERENCE_DURATION_TOOLTIP(APPLICATION_STATE_DURATION, "The length of time you expect it to take to collect applicant references",
             APPLICATION), //
@@ -356,7 +314,7 @@ public enum PrismDisplayPropertyDefinition {
             APPLICATION), //
     APPLICATION_PURGE_DURATION_LABEL(APPLICATION_STATE_DURATION, "Expiry Duration", APPLICATION), //
     APPLICATION_PURGE_DURATION_TOOLTIP(APPLICATION_STATE_DURATION,
-            "The length of time you wish to keep information about a rejected or widthrawn application on record", APPLICATION), //
+            "The length of time you wish to keep information about a rejected or withdrawn application on record", APPLICATION), //
     PROJECT_ESCALATE_DURATION_LABEL(PROJECT_STATE_DURATION, "Escalation Duration", APPLICATION), //
     PROJECT_ESCALATE_DURATION_TOOLTIP(
             PROJECT_STATE_DURATION,
@@ -530,7 +488,7 @@ public enum PrismDisplayPropertyDefinition {
     APPLICATION_APPROVAL_INSTANCE_DURATION_AVERAGE(APPLICATION_REPORT, "Approval State Duration Average", APPLICATION), //
     APPLICATION_UNSUBMITTED_STATE_GROUP(APPLICATION_STATE_GROUP, "Unsubmitted", APPLICATION), //
     APPLICATION_VALIDATION_STATE_GROUP(APPLICATION_STATE_GROUP, "Validation", APPLICATION), //
-    APPLICATION_VERIFICATION_STATE_GROUP(APPLICATION_STATE_GROUP, "Eligibity Confirmation", APPLICATION), //
+    APPLICATION_VERIFICATION_STATE_GROUP(APPLICATION_STATE_GROUP, "Eligibility Confirmation", APPLICATION), //
     APPLICATION_REFERENCE_STATE_GROUP(APPLICATION_STATE_GROUP, "Reference", APPLICATION), //
     APPLICATION_REVIEW_STATE_GROUP(APPLICATION_STATE_GROUP, "Review", APPLICATION), //
     APPLICATION_INTERVIEW_STATE_GROUP(APPLICATION_STATE_GROUP, "Interview", APPLICATION), //

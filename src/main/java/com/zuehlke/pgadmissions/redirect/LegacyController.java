@@ -1,8 +1,10 @@
-package com.zuehlke.pgadmissions.legacy;
+package com.zuehlke.pgadmissions.redirect;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,17 +13,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.ProgramService;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("api/pgadmissions")
-public class RedirectionController {
+public class LegacyController {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(RedirectionController.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(LegacyController.class);
 
     @Value("${application.url}")
     private String applicationUrl;

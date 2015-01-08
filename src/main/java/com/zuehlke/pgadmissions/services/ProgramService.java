@@ -110,7 +110,7 @@ public class ProgramService {
 
     public void postProcessProgram(Program program, Comment comment) {
         if (comment.isProgramApproveOrDeactivateComment()) {
-            projectService.sychronizeProjects(program);
+            projectService.synchronizeProjects(program);
             if (comment.isProgramRestoreComment()) {
                 projectService.restoreProjects(program, comment.getCreatedTimestamp().toLocalDate());
             }

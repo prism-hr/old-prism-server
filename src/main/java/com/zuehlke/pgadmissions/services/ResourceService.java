@@ -164,7 +164,7 @@ public class ResourceService {
         resource.setCreatedTimestamp(baseline);
         resource.setUpdatedTimestamp(baseline);
         
-        if (resource.getClass().isAssignableFrom(ResourceParent.class)) {
+        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
             ReflectionUtils.setProperty(resource, "updatedTimestampSitemap", baseline);
         }
 

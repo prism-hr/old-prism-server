@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
@@ -99,10 +100,10 @@ public class StaticDataService {
 
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     public Map<String, Object> getActions() {
         Map<String, Object> staticData = Maps.newHashMap();
-        
+
         List<Action> actions = entityService.list(Action.class);
         List<ActionRepresentation> actionRepresentations = Lists.newArrayListWithExpectedSize(actions.size());
         for (Action action : actions) {
@@ -110,31 +111,31 @@ public class StaticDataService {
                     .getActionCustomQuestionDefinition().getId() : null;
             actionRepresentations.add(new ActionRepresentation(action.getId(), action.getActionCategory(), customQuestionDefinitionId));
         }
-        
+
         staticData.put("actions", actionRepresentations);
         return staticData;
     }
 
     public Map<String, Object> getStates() {
         Map<String, Object> staticData = Maps.newHashMap();
-        
+
         List<State> states = entityService.list(State.class);
         List<StateRepresentation> stateRepresentations = Lists.newArrayListWithExpectedSize(states.size());
         for (State state : states) {
             stateRepresentations.add(new StateRepresentation(state.getId(), state.getStateGroup().getId()));
         }
-        
+
         staticData.put("states", stateRepresentations);
         return staticData;
     }
-    
+
     public Map<String, Object> getStateGroups() {
         Map<String, Object> staticData = Maps.newHashMap();
         List<StateGroup> stateGroups = entityService.list(StateGroup.class);
         staticData.put("stateGroups", Lists.newArrayList(Iterables.transform(stateGroups, toIdFunction)));
         return staticData;
     }
-    
+
     public Map<String, Object> getRoles() {
         Map<String, Object> staticData = Maps.newHashMap();
         List<Role> roles = entityService.list(Role.class);
@@ -144,22 +145,22 @@ public class StaticDataService {
 
     public Map<String, Object> getInstitutionDomiciles() {
         Map<String, Object> staticData = Maps.newHashMap();
-        
+
         List<InstitutionDomicile> institutionDomiciles = institutionService.getDomiciles();
         List<InstitutionDomicileRepresentation> institutionDomicileRepresentations = Lists.newArrayListWithExpectedSize(institutionDomiciles.size());
         for (InstitutionDomicile institutionDomicile : institutionDomiciles) {
             institutionDomicileRepresentations.add(mapper.map(institutionDomicile, InstitutionDomicileRepresentation.class));
         }
-        
+
         staticData.put("institutionDomiciles", institutionDomicileRepresentations);
         return staticData;
     }
 
     public Map<String, Object> getSimpleProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
-        
+
         for (Class<?> enumClass : new Class[] { PrismProgramType.class, PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class,
-                PrismAdvertDomain.class, PrismAdvertFunction.class, PrismAdvertIndustry.class }) {
+                PrismAdvertDomain.class, PrismAdvertFunction.class, PrismAdvertIndustry.class, PrismRefereeType.class }) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = WordUtils.uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
@@ -169,26 +170,26 @@ public class StaticDataService {
         staticData.put("currencies", institutionService.listAvailableCurrencies());
         staticData.put("locales", PrismLocale.values());
         staticData.put("googleApiKey", googleApiKey);
-        
+
         return staticData;
     }
 
     public Map<String, Object> getFilterProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
-        
+
         List<FilterRepresentation> filters = Lists.newArrayListWithCapacity(ResourceListFilterProperty.values().length);
         for (ResourceListFilterProperty filterProperty : ResourceListFilterProperty.values()) {
             filters.add(new FilterRepresentation(filterProperty, filterProperty.getPermittedExpressions(), filterProperty.getPropertyType(), filterProperty
                     .getPermittedScopes()));
         }
-        
+
         staticData.put("filters", filters);
         return staticData;
     }
 
     public Map<String, Object> getConfigurations() {
         Map<String, Object> staticData = Maps.newHashMap();
-        
+
         Map<String, Object> configurations = Maps.newHashMap();
         for (PrismConfiguration prismConfiguration : PrismConfiguration.values()) {
             String name = pluralize(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, prismConfiguration.name()));
@@ -210,7 +211,6 @@ public class StaticDataService {
         return staticData;
     }
 
-    // TODO: pass selected locale to the property loader when it is possible to select locale on the homepage
     public Map<String, Object> getProgramCategories() {
         Map<String, Object> staticData = Maps.newHashMap();
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem(), userService.getCurrentUser());
@@ -233,11 +233,10 @@ public class StaticDataService {
             }
             programCategories.add(category);
         }
-        
+
         staticData.put("programCategories", programCategories);
         return staticData;
     }
-
 
     @SuppressWarnings("unchecked")
     public Map<String, Object> getImportedData(Integer institutionId) {

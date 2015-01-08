@@ -6,6 +6,6 @@ public abstract class ApplicationSection {
 
     public abstract DateTime getLastUpdatedTimestamp();
 
-    public abstract void setLastEditedTimestamp(DateTime lastUpdatedTimestamp);
+    public abstract void setLastUpdatedTimestamp(DateTime lastUpdatedTimestamp);
 
 }

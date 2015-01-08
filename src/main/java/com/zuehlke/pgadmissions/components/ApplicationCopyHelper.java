@@ -59,7 +59,7 @@ public class ApplicationCopyHelper {
         copyApplicationAdditionalInformation(to, from);
 
         for (ApplicationSection sectionWithError : sectionsWithErrors) {
-            sectionWithError.setLastEditedTimestamp(null);
+            sectionWithError.setLastUpdatedTimestamp(null);
         }
     }
 
@@ -95,7 +95,7 @@ public class ApplicationCopyHelper {
                 personalDetail.setPassport(copyPassport(from.getPersonalDetail().getPassport()));
             }
 
-            personalDetail.setLastEditedTimestamp(new DateTime());
+            personalDetail.setLastUpdatedTimestamp(new DateTime());
         }
     }
 
@@ -107,7 +107,7 @@ public class ApplicationCopyHelper {
             Institution toInstitution = to.getInstitution();
             applicationAddress.setCurrentAddress(copyAddress(toInstitution, from.getAddress().getCurrentAddress(), applicationAddress));
             applicationAddress.setContactAddress(copyAddress(toInstitution, from.getAddress().getContactAddress(), applicationAddress));
-            applicationAddress.setLastEditedTimestamp(new DateTime());
+            applicationAddress.setLastUpdatedTimestamp(new DateTime());
         }
     }
 
@@ -248,7 +248,7 @@ public class ApplicationCopyHelper {
                     applicationDocument.setCoveringLetter(copyDocument(from.getDocument().getCoveringLetter()));
                 }
                 
-                applicationDocument.setLastEditedTimestamp(new DateTime());
+                applicationDocument.setLastUpdatedTimestamp(new DateTime());
             }
         }
     }
@@ -260,7 +260,7 @@ public class ApplicationCopyHelper {
             to.setAdditionalInformation(additionalInformation);
             additionalInformation.setApplication(to);
             additionalInformation.setConvictionsText(from.getAdditionalInformation().getConvictionsText());
-            additionalInformation.setLastEditedTimestamp(new DateTime());
+            additionalInformation.setLastUpdatedTimestamp(new DateTime());
         }
     }
 
@@ -272,7 +272,7 @@ public class ApplicationCopyHelper {
         to.setPhone(from.getPhone());
         to.setSkype(from.getSkype());
         to.setAddress(copyAddress(toInstitution, from.getAddress(), to));
-        to.setLastEditedTimestamp(new DateTime());
+        to.setLastUpdatedTimestamp(new DateTime());
     }
 
     public void copyFunding(ApplicationFunding to, ApplicationFunding from, boolean documentEnabled) {
@@ -288,7 +288,7 @@ public class ApplicationCopyHelper {
             to.setDocument(copyDocument(from.getDocument()));
         }
 
-        to.setLastEditedTimestamp(new DateTime());
+        to.setLastUpdatedTimestamp(new DateTime());
     }
 
     public void copyPrize(ApplicationPrize to, ApplicationPrize from) {
@@ -296,7 +296,7 @@ public class ApplicationCopyHelper {
         to.setTitle(from.getTitle());
         to.setDescription(from.getDescription());
         to.setAwardDate(from.getAwardDate());
-        to.setLastEditedTimestamp(new DateTime());
+        to.setLastUpdatedTimestamp(new DateTime());
     }
 
     public void copyEmploymentPosition(ApplicationEmploymentPosition to, ApplicationEmploymentPosition from) {
@@ -308,7 +308,7 @@ public class ApplicationCopyHelper {
         to.setCurrent(from.getCurrent());
         to.setEndDate(from.getEndDate());
         to.setEmployerAddress(copyAddress(toInstitution, from.getEmployerAddress(), to));
-        to.setLastEditedTimestamp(new DateTime());
+        to.setLastUpdatedTimestamp(new DateTime());
     }
 
     public void copyQualification(ApplicationQualification to, ApplicationQualification from, boolean documentEnabled) {
@@ -327,7 +327,7 @@ public class ApplicationCopyHelper {
             to.setDocument(copyDocument(from.getDocument()));
         }
 
-        to.setLastEditedTimestamp(new DateTime());
+        to.setLastUpdatedTimestamp(new DateTime());
     }
 
     private Address copyAddress(Institution toInstitution, Address fromAddress, ApplicationSection toSection) {
@@ -377,7 +377,7 @@ public class ApplicationCopyHelper {
             to.setDocument(copyDocument(from.getDocument()));
         }
 
-        to.setLastEditedTimestamp(new DateTime());
+        to.setLastUpdatedTimestamp(new DateTime());
         return to;
     }
 
@@ -390,7 +390,7 @@ public class ApplicationCopyHelper {
         to.setName(from.getName());
         to.setIssueDate(from.getIssueDate());
         to.setExpiryDate(from.getExpiryDate());
-        to.setLastEditedTimestamp(new DateTime());
+        to.setLastUpdatedTimestamp(new DateTime());
         return to;
     }
 

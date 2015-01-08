@@ -94,6 +94,7 @@ public class RobotController {
         model.put("title", title);
         model.put("description", description);
         model.put("imageUrl", imageUrl);
+        model.put("ogUrl", ogUrl);
         model.put("hostname", applicationUrl);
 
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);

@@ -10,7 +10,7 @@
     <!-- <meta name="google-site-verification" content="" /> -->
     <meta name="author" content="Wujek Zenon"/>
     <meta property="fb:app_id" content="172294119620634"/>
-    <meta property="og:url" content="${hostname}"/>
+    <meta property="og:url" content="${ogUrl}"/>
     <meta property="og:title" content="${title?html}"/>
     <meta property="og:description" content="${description?html}"/>
     <meta property="og:image" content="${imageUrl}"/>

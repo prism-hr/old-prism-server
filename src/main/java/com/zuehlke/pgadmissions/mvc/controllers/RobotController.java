@@ -15,7 +15,7 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 import java.io.StringReader;
@@ -23,7 +23,6 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestController
 @RequestMapping("api/robots")
 public class RobotController {
 
@@ -39,7 +38,8 @@ public class RobotController {
     @Value("${application.api.url}")
     private String applicationApiUrl;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.GET, produces = "text/html")
     public String serve(@RequestParam String escapedFragment) throws Exception {
         String templateContent = Resources.toString(Resources.getResource("template/robot_representation.ftl"), Charsets.UTF_8);
         Template template = new Template("robot_representation", new StringReader(templateContent), freemarkerConfig.getConfiguration());

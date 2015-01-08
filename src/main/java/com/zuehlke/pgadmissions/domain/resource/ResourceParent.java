@@ -2,8 +2,10 @@ package com.zuehlke.pgadmissions.domain.resource;
 
 import java.math.BigDecimal;
 
-public abstract class ResourceParent extends Resource {
+import org.joda.time.DateTime;
 
+public abstract class ResourceParent extends Resource {
+    
     public abstract Integer getApplicationCreatedCount();
     
     public abstract void setApplicationCreatedCount(Integer applicationCreatedCount);
@@ -35,5 +37,9 @@ public abstract class ResourceParent extends Resource {
     public abstract BigDecimal getApplicationRatingAverage();
     
     public abstract void setApplicationRatingAverage(BigDecimal applicationRatingAverage);
+    
+    public abstract DateTime getUpdatedTimestampSitemap();
+    
+    public abstract void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap);
 
 }

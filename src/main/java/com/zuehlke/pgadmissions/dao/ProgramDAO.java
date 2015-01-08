@@ -18,6 +18,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -32,6 +35,7 @@ import com.zuehlke.pgadmissions.domain.program.ProgramLocation;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
 
 @Repository
@@ -210,5 +214,26 @@ public class ProgramDAO {
                 .add(Restrictions.eq("stateAction.action.id", PrismAction.PROGRAM_CREATE_APPLICATION)) //
                 .uniqueResult();
     }
-    
+
+    public DateTime getLatestUpdatedTimestampSitemap(List<PrismState> states) {
+        return (DateTime) sessionFactory.getCurrentSession().createCriteria(Program.class) //
+                .setProjection(Projections.property("updatedTimestampSitemap")) //
+                .add(Restrictions.in("state.id", states)) //
+                .addOrder(Order.desc("updatedTimestampSitemap")) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
+
+    public List<SitemapEntryDTO> getSitemapEntries(List<PrismState> states) {
+        return (List<SitemapEntryDTO>) sessionFactory.getCurrentSession().createCriteria(Program.class, "program") //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("id"), "resourceId") //
+                        .add(Projections.property("updatedTimestampSitemap"), "lastModifiedTimestamp")) //
+                .add(Restrictions.in("state.id", states)) //
+                .addOrder(Order.desc("updatedTimestampSitemap")) //
+                .setMaxResults(50000) //
+                .setResultTransformer(Transformers.aliasToBean(SitemapEntryDTO.class)) //
+                .list();
+    }
+
 }

@@ -13,15 +13,19 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -83,6 +87,27 @@ public class ProjectDAO {
                 .add(Restrictions.eq("program", program)) //
                 .add(Restrictions.eq("state.id", PROJECT_DISABLED_PENDING_REACTIVATION)) //
                 .add(Restrictions.ge("endDate", baseline)) //
+                .list();
+    }
+
+    public DateTime getLatestUpdatedTimestampSitemap(List<PrismState> states) {
+        return (DateTime) sessionFactory.getCurrentSession().createCriteria(Project.class) //
+                .setProjection(Projections.property("updatedTimestampSitemap")) //
+                .add(Restrictions.in("state.id", states)) //
+                .addOrder(Order.desc("updatedTimestampSitemap")) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
+
+    public List<SitemapEntryDTO> getSitemapEntries(List<PrismState> states) {
+        return (List<SitemapEntryDTO>) sessionFactory.getCurrentSession().createCriteria(Project.class, "project") //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("id"), "resourceId") //
+                        .add(Projections.property("updatedTimestampSitemap"), "lastModifiedTimestamp")) //
+                .add(Restrictions.in("state.id", states)) //
+                .addOrder(Order.desc("updatedTimestampSitemap")) //
+                .setMaxResults(50000) //
+                .setResultTransformer(Transformers.aliasToBean(SitemapEntryDTO.class)) //
                 .list();
     }
 

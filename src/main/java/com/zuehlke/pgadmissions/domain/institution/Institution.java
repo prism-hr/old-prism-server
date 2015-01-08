@@ -167,6 +167,10 @@ public class Institution extends ResourceParent {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
+    
+    @Column(name = "updated_timestamp_sitemap", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime updatedTimestampSitemap;
 
     @Column(name = "last_reminded_request_individual")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -696,6 +700,14 @@ public class Institution extends ResourceParent {
     @Override
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
+    }
+
+    public final DateTime getUpdatedTimestampSitemap() {
+        return updatedTimestampSitemap;
+    }
+
+    public final void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap) {
+        this.updatedTimestampSitemap = updatedTimestampSitemap;
     }
 
     @Override

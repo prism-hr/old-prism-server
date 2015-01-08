@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.legacy;
+package com.zuehlke.pgadmissions.mvc.controllers;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

@@ -177,8 +177,13 @@ public class ResourceService {
     }
 
     public void persistResource(Resource resource, Action action) throws WorkflowEngineException {
-        resource.setCreatedTimestamp(new DateTime());
-        resource.setUpdatedTimestamp(new DateTime());
+        DateTime baseline = new DateTime();
+        resource.setCreatedTimestamp(baseline);
+        resource.setUpdatedTimestamp(baseline);
+        
+        if (resource.getClass().isAssignableFrom(ResourceParent.class)) {
+            ReflectionUtils.setProperty(resource, "updatedTimestampSitemap", baseline);
+        }
 
         switch (resource.getResourceScope()) {
         case INSTITUTION:

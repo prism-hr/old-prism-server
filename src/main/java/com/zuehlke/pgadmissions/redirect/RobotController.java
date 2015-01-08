@@ -29,9 +29,11 @@ public class RobotController {
     private String applicationUrl;
 
     @RequestMapping(method = RequestMethod.GET)
-    public String serve(@RequestParam) throws IOException, TemplateException {
+    public String serve(@RequestParam String escapedFragment) throws IOException, TemplateException {
         String templateContent = Resources.toString(Resources.getResource("template/robot_representation.ftl"), Charsets.UTF_8);
         Template template = new Template("robot_representation", new StringReader(templateContent), freemarkerConfig.getConfiguration());
+
+        System.out.println("Escaped fragment: " + escapedFragment);
 
         Map<String, Object> model = Maps.newHashMap();
         model.put("title", "ttt");

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 
 public class RefereeRepresentation extends ApplicationSectionRepresentation {
@@ -8,15 +9,17 @@ public class RefereeRepresentation extends ApplicationSectionRepresentation {
 
     private UserRepresentation user;
 
-    private String phone;
-
-    private String skype;
-
+    private PrismRefereeType refereeType;
+    
     private String jobEmployer;
 
     private String jobTitle;
 
     private AddressRepresentation address;
+    
+    private String phone;
+
+    private String skype;
     
     private Integer commentId;
 
@@ -35,21 +38,13 @@ public class RefereeRepresentation extends ApplicationSectionRepresentation {
     public void setUser(UserRepresentation user) {
         this.user = user;
     }
-
-    public String getPhone() {
-        return phone;
+    
+    public final PrismRefereeType getRefereeType() {
+        return refereeType;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getSkype() {
-        return skype;
-    }
-
-    public void setSkype(String skype) {
-        this.skype = skype;
+    public final void setRefereeType(PrismRefereeType refereeType) {
+        this.refereeType = refereeType;
     }
 
     public String getJobEmployer() {
@@ -76,6 +71,22 @@ public class RefereeRepresentation extends ApplicationSectionRepresentation {
         this.address = address;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getSkype() {
+        return skype;
+    }
+
+    public void setSkype(String skype) {
+        this.skype = skype;
+    }
+    
     public final Integer getCommentId() {
         return commentId;
     }

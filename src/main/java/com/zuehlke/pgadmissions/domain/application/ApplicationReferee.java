@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.domain.application;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -15,11 +17,12 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
 import com.zuehlke.pgadmissions.domain.user.Address;
 import com.zuehlke.pgadmissions.domain.user.User;
 
 @Entity
-@Table(name = "APPLICATION_REFEREE", uniqueConstraints = {@UniqueConstraint(columnNames = {"application_id", "user_id"})})
+@Table(name = "APPLICATION_REFEREE", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "user_id" }) })
 public class ApplicationReferee extends ApplicationSection {
 
     @Id
@@ -38,11 +41,9 @@ public class ApplicationReferee extends ApplicationSection {
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    @Column(name = "phone", nullable = false)
-    private String phone;
-
-    @Column(name = "skype")
-    private String skype;
+    @Column(name = "referee_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismRefereeType refereeType;
 
     @Column(name = "job_employer")
     private String jobEmployer;
@@ -53,6 +54,12 @@ public class ApplicationReferee extends ApplicationSection {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
+
+    @Column(name = "phone", nullable = false)
+    private String phone;
+
+    @Column(name = "skype")
+    private String skype;
 
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -72,6 +79,14 @@ public class ApplicationReferee extends ApplicationSection {
 
     public void setComment(Comment comment) {
         this.comment = comment;
+    }
+
+    public final PrismRefereeType getRefereeType() {
+        return refereeType;
+    }
+
+    public final void setRefereeType(PrismRefereeType refereeType) {
+        this.refereeType = refereeType;
     }
 
     public String getJobEmployer() {
@@ -136,7 +151,7 @@ public class ApplicationReferee extends ApplicationSection {
     }
 
     @Override
-    public void setLastEditedTimestamp(DateTime lastUpdatedTimestamp) {
+    public void setLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
         this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
 

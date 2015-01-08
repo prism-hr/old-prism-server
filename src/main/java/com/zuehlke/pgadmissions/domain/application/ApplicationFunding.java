@@ -135,7 +135,7 @@ public class ApplicationFunding extends ApplicationSection {
     }
 
     @Override
-    public void setLastEditedTimestamp(DateTime lastUpdatedTimestamp) {
+    public void setLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
         this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
 

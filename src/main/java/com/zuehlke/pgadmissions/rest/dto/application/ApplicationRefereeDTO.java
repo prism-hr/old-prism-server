@@ -7,6 +7,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
 import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
 
 public class ApplicationRefereeDTO {
@@ -17,13 +18,9 @@ public class ApplicationRefereeDTO {
     @Valid
     private AssignedUserDTO user;
 
-    @NotEmpty
-    @Size(max = 50)
-    private String phone;
-
-    @Size(min = 6, max = 32)
-    private String skype;
-
+    @NotNull
+    private PrismRefereeType refereeType;
+    
     @NotEmpty
     @Size(max = 200)
     private String jobEmployer;
@@ -34,6 +31,13 @@ public class ApplicationRefereeDTO {
 
     @NotNull
     private AddressDTO address;
+    
+    @NotEmpty
+    @Size(max = 50)
+    private String phone;
+
+    @Size(min = 6, max = 32)
+    private String skype;
 
     public Integer getId() {
         return id;
@@ -51,20 +55,12 @@ public class ApplicationRefereeDTO {
         this.user = user;
     }
 
-    public String getPhone() {
-        return phone;
+    public final PrismRefereeType getRefereeType() {
+        return refereeType;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getSkype() {
-        return skype;
-    }
-
-    public void setSkype(String skype) {
-        this.skype = skype;
+    public final void setRefereeType(PrismRefereeType refereeType) {
+        this.refereeType = refereeType;
     }
 
     public String getJobEmployer() {
@@ -90,4 +86,21 @@ public class ApplicationRefereeDTO {
     public void setAddress(AddressDTO address) {
         this.address = address;
     }
+    
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getSkype() {
+        return skype;
+    }
+
+    public void setSkype(String skype) {
+        this.skype = skype;
+    }
+    
 }

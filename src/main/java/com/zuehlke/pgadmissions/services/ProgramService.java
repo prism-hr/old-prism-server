@@ -1,17 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
-
-import java.util.List;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
@@ -38,6 +26,17 @@ import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
 
 @Service
 @Transactional
@@ -224,14 +223,16 @@ public class ProgramService {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         AdvertSearchEngineDTO searchEngineDTO = programDAO.getSearchEngineAdvert(programId, activeProgramStates);
 
-        searchEngineDTO.setRelatedProjects(projectService.getActiveProjectsByProgram(programId));
+        if (searchEngineDTO != null) {
+            searchEngineDTO.setRelatedProjects(projectService.getActiveProjectsByProgram(programId));
 
-        List<String> relatedUsers = Lists.newArrayList();
-        List<User> programAcademics = userService.getUsersForResourceAndRoles(getById(programId), PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR);
-        for (User programAcademic : programAcademics) {
-            relatedUsers.add(programAcademic.getSearchEngineRepresentation());
+            List<String> relatedUsers = Lists.newArrayList();
+            List<User> programAcademics = userService.getUsersForResourceAndRoles(getById(programId), PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR);
+            for (User programAcademic : programAcademics) {
+                relatedUsers.add(programAcademic.getSearchEngineRepresentation());
+            }
+            searchEngineDTO.setRelatedUsers(relatedUsers);
         }
-        searchEngineDTO.setRelatedUsers(relatedUsers);
 
         return searchEngineDTO;
     }

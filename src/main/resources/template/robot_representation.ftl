@@ -25,7 +25,7 @@
         <p>Related Institutions:</p>
         <ul>
             <#list advert.relatedInstitutions as relatedInstitution>
-                <li><a href="${applicationUrl}/#!/?institution=${relatedInstitution.id}">${relatedInstitution.title}</a></li>
+                <li><a href="${applicationUrl}/#!/?institution=${relatedInstitution.id?c}">${relatedInstitution.title}</a></li>
             </#list>
         </ul>
     </div>
@@ -49,7 +49,7 @@
             <p>Related Programs:</p>
             <ul>
                 <#list advert.relatedPrograms as relatedProgram>
-                    <li><a href="${applicationUrl}/#!/?program=${relatedProgram.id}">${relatedProgram.title}</a></li>
+                    <li><a href="${applicationUrl}/#!/?program=${relatedProgram.id?c}">${relatedProgram.title}</a></li>
                 </#list>
             </ul>
                 </div>
@@ -59,7 +59,7 @@
 	            <p>Related Projects:</p>
 	            <ul>
 	                <#list advert.relatedProjects as relatedProject>
-	                    <li><a href="${applicationUrl}/#!/?project=${relatedProject.id}">${relatedProject.title}</a></li>
+	                    <li><a href="${applicationUrl}/#!/?project=${relatedProject.id?c}">${relatedProject.title}</a></li>
 	                </#list>
 	            </ul>
 	        </div>

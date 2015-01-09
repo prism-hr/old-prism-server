@@ -1,70 +1,7 @@
 package com.zuehlke.pgadmissions.services.builders;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PREFERRED_START_DATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_IP_PLACEHOLDER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NONE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OTHER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_REFER_TO_DOCUMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_TELEPHONE_PLACEHOLDER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_PROVIDED;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
-import javax.xml.datatype.XMLGregorianCalendar;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.LocalDate;
-import org.owasp.esapi.ESAPI;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.AddressTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.ApplicantTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.ApplicationTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.AppointmentTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.ContactDtlsTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.CountryTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.CourseApplicationTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.DisabilityTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.DomicileTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.EmployerTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.EmploymentDetailsTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.EnglishLanguageQualificationDetailsTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.EnglishLanguageScoreTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.EnglishLanguageTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.EthnicityTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.GenderTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.InstitutionTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.LanguageBandScoreTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.ModeofattendanceTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.NameTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.NationalityTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.PassportTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.ProgrammeOccurrenceTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationDetailsTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationsTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationsinEnglishTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.RefereeListTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.RefereeTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.SourceOfInterestTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.*;
+import com.zuehlke.pgadmissions.domain.application.*;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
@@ -77,6 +14,21 @@ import com.zuehlke.pgadmissions.domain.user.Address;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationExportDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -482,10 +434,6 @@ public class ApplicationExportBuilder {
             ContactDtlsTp contactDtlsTp = objectFactory.createContactDtlsTp();
             contactDtlsTp.setEmail(referee.getUser().getEmail());
             contactDtlsTp.setLandline(applicationExportBuilderHelper.cleanPhoneNumber(referee.getPhone()));
-
-            if (StringUtils.isBlank(referee.getPhone()) || !ESAPI.validator().isValidInput("PhoneNumber", referee.getPhone(), "PhoneNumber", 25, false)) {
-                contactDtlsTp.setLandline(propertyLoader.load(SYSTEM_TELEPHONE_PLACEHOLDER));
-            }
 
             AddressTp addressTp = objectFactory.createAddressTp();
             addressTp.setAddressLine1(referee.getAddress().getAddressLine1());

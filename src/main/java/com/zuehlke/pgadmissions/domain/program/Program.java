@@ -1,28 +1,5 @@
 package com.zuehlke.pgadmissions.domain.program;
 
-import java.math.BigDecimal;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -39,7 +16,16 @@ import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
+import org.apache.commons.lang.BooleanUtils;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Set;
 
 @Entity
 @Table(name = "PROGRAM")
@@ -82,7 +68,6 @@ public class Program extends ResourceParent {
     @JoinColumn(name = "program_type_id", nullable = false)
     private ProgramType programType;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
     @Column(name = "title", nullable = false)
     private String title;
 
@@ -143,7 +128,7 @@ public class Program extends ResourceParent {
     @Column(name = "updated_timestamp_sitemap", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestampSitemap;
-    
+
     @Column(name = "last_reminded_request_individual")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastRemindedRequestIndividual;

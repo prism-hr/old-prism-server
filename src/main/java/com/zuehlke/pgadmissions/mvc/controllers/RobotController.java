@@ -1,14 +1,10 @@
 package com.zuehlke.pgadmissions.mvc.controllers;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.Maps;
-import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
-import com.zuehlke.pgadmissions.services.ResourceService;
-import freemarker.template.Template;
+import java.io.StringReader;
+import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
@@ -18,10 +14,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import java.io.StringReader;
-import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Map;
+import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.services.ResourceService;
+
+import freemarker.template.Template;
 
 @RestController
 @RequestMapping("api/robots")
@@ -53,7 +54,6 @@ public class RobotController {
         String query = questionMarkIndex > -1 ? fragment.substring(questionMarkIndex + 1) : "";
         Map<String, String> queryMap = getQueryMap(query);
 
-        PrismScope resourceScope = null;
         Integer resourceId = null;
         if (queryMap.containsKey("institution")) {
             resourceId = Integer.parseInt(queryMap.get("institution"));

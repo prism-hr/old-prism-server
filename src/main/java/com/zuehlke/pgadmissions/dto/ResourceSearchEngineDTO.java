@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.dto;
 
 public class ResourceSearchEngineDTO {
-    
+
     private Integer id;
-    
-    private Integer title;
+
+    private String title;
 
     public final Integer getId() {
         return id;
@@ -14,12 +14,12 @@ public class ResourceSearchEngineDTO {
         this.id = id;
     }
 
-    public final Integer getTitle() {
+    public final String getTitle() {
         return title;
     }
 
-    public final void setTitle(Integer title) {
+    public final void setTitle(String title) {
         this.title = title;
     }
-        
+
 }

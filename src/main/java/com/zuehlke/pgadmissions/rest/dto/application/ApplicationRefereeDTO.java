@@ -1,14 +1,14 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
+import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
+import com.zuehlke.pgadmissions.rest.validation.annotation.PhoneNumber;
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotEmpty;
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
-import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
 
 public class ApplicationRefereeDTO {
 
@@ -20,7 +20,7 @@ public class ApplicationRefereeDTO {
 
     @NotNull
     private PrismRefereeType refereeType;
-    
+
     @NotEmpty
     @Size(max = 200)
     private String jobEmployer;
@@ -31,9 +31,9 @@ public class ApplicationRefereeDTO {
 
     @NotNull
     private AddressDTO address;
-    
+
     @NotEmpty
-    @Size(max = 50)
+    @PhoneNumber
     private String phone;
 
     @Size(min = 6, max = 32)
@@ -86,7 +86,7 @@ public class ApplicationRefereeDTO {
     public void setAddress(AddressDTO address) {
         this.address = address;
     }
-    
+
     public String getPhone() {
         return phone;
     }
@@ -102,5 +102,5 @@ public class ApplicationRefereeDTO {
     public void setSkype(String skype) {
         this.skype = skype;
     }
-    
+
 }

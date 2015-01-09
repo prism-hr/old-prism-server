@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
+import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -107,9 +108,9 @@ public class RobotController {
 
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
     }
-    
+
     private String getPageBody(String url) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
-        WebClient client = new WebClient();
+        WebClient client = new WebClient(BrowserVersion.CHROME);
         HtmlPage content = client.getPage(url);
         client.waitForBackgroundJavaScript(2000);
         return content.getElementByName("body").asXml();

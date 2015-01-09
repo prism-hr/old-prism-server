@@ -19,5 +19,6 @@
     <meta property="og:locale" content="en_GB"/>
 </head>
 <body>
+	${body?html}
 </body>
 </html>

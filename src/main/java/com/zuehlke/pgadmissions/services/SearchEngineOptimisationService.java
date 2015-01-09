@@ -136,7 +136,7 @@ public class SearchEngineOptimisationService {
             Element location = document.createElement("loc");
             url.appendChild(location);
 
-            Text locationString = document.createTextNode(applicationUrl + "/#/?" + scope.getLowerCaseName() + "=" + sitemapEntryDTO.getResourceId());
+            Text locationString = document.createTextNode(applicationUrl + "/#!?" + scope.getLowerCaseName() + "=" + sitemapEntryDTO.getResourceId());
             location.appendChild(locationString);
 
             Element lastModifiedTimestamp = document.createElement("lastmod");

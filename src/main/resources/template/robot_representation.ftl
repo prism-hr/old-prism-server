@@ -20,16 +20,15 @@
 </head>
 <body>
 <#if advert??>
-    <#if advert.relatedInstitutions?size > 0>
+    <#if advert.relatedInstitutions?has_content>
     <div>
         <p>Related Institutions:</p>
-        <li>
+        <ul>
             <#list advert.relatedInstitutions as relatedInstitution>
-                <ul><a href="${applicationUrl}/!#/?institution=${relatedInstitution.id}">${relatedInstitution.title}</a>
-                </ul>
+                <li><a href="${applicationUrl}/#!/?institution=${relatedInstitution.id}">${relatedInstitution.title}</a></li>
             </#list>
-        </li>
-    </div
+        </ul>
+    </div>
     <#else>
     <div>
         <h3>${advert.title}</h3>
@@ -37,35 +36,35 @@
     <div>
     ${advert.description}
     </div>
-        <#if advert.relatedPrograms?size > 0>
+        <#if advert.relatedPrograms?has_content>
         <div>
             <p>Related Programs:</p>
-            <li>
+            <ul>
                 <#list advert.relatedPrograms as relatedProgram>
-                    <ul><a href="${applicationUrl}/!#/?program=${relatedProgram.id}">${relatedProgram.title}</a></ul>
+                    <li><a href="${applicationUrl}/#!/?program=${relatedProgram.id}">${relatedProgram.title}</a></li>
                 </#list>
-            </li>
-                </div
+            </ul>
+                </div>
         </#if>
-        <#if advert.relatedProjects?size > 0>
-        <div>
-            <p>Related Projects:</p>
-            <li>
-                <#list advert.relatedProjects as relatedProject>
-                    <ul><a href="${applicationUrl}/!#/?project=${relatedProject.id}">${relatedProject.title}</a></ul>
-                </#list>
-            </li>
-                </div
+        <#if advert.relatedProjects?has_content>
+	        <div>
+	            <p>Related Projects:</p>
+	            <ul>
+	                <#list advert.relatedProjects as relatedProject>
+	                    <li><a href="${applicationUrl}/#!/?project=${relatedProject.id}">${relatedProject.title}</a></li>
+	                </#list>
+	            </ul>
+	        </div>
         </#if>
-        <#if advert.relatedUsers?size > 0>
-        <div>
-            <p>Related Users:</p>
-            <li>
-                <#list advert.relatedUsers as relatedUser>
-                    <ul>${relatedUser}</ul>
-                </#list>
-            </li>
-        </div
+        <#if advert.relatedUsers?has_content>
+	        <div>
+	            <p>Related Users:</p>
+	            <ul>
+	                <#list advert.relatedUsers as relatedUser>
+	                    <li>${relatedUser}</li>
+	                </#list>
+	            </ul>
+	        </div>
         </#if>
     </#if>
 </#if>

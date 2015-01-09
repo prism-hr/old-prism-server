@@ -1,23 +1,14 @@
 package com.zuehlke.pgadmissions.domain.user;
 
-import java.util.Map;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.MapKeyJoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.resource.ResourceListFilter;
+import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.resource.ResourceListFilter;
-import com.zuehlke.pgadmissions.domain.workflow.Scope;
-import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
+import javax.persistence.*;
+import java.util.Map;
 
 @Entity
 @Table(name = "USER_ACCOUNT")
@@ -27,7 +18,6 @@ public class UserAccount {
     @GeneratedValue
     private Integer id;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
     @Column(name = "password", nullable = false)
     private String password;
 

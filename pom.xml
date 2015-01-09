@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <name>UCL Postgraduate Admissions</name>
@@ -313,6 +314,11 @@
             <version>${spring.version}</version>
         </dependency>
         <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.34</version>
@@ -430,7 +436,8 @@
                         </goals>
                         <configuration>
                             <packageName>com.zuehlke.pgadmissions.iso.jaxb</packageName>
-                            <outputDirectory>${project.build.directory}/generated-sources/jaxb/isoCountryCodes</outputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-sources/jaxb/isoCountryCodes
+                            </outputDirectory>
                             <schemaDirectory>${project.basedir}/src/main/resources/xsd/isoCountryCodes</schemaDirectory>
                         </configuration>
                     </execution>
@@ -496,7 +503,7 @@
                     <formats>
                         <format>html</format>
                     </formats>
-                    <check />
+                    <check/>
                 </configuration>
             </plugin>
 
@@ -538,8 +545,9 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <delete file="${project.build.outputDirectory}/environment.properties" />
-                                        <copy file="src/environments/environment.sit.properties" tofile="${project.build.outputDirectory}/environment.properties" />
+                                        <delete file="${project.build.outputDirectory}/environment.properties"/>
+                                        <copy file="src/environments/environment.sit.properties"
+                                              tofile="${project.build.outputDirectory}/environment.properties"/>
                                     </tasks>
                                 </configuration>
                             </execution>
@@ -567,8 +575,9 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <delete file="${project.build.outputDirectory}/environment.properties" />
-                                        <copy file="src/environments/environment.uat.properties" tofile="${project.build.outputDirectory}/environment.properties" />
+                                        <delete file="${project.build.outputDirectory}/environment.properties"/>
+                                        <copy file="src/environments/environment.uat.properties"
+                                              tofile="${project.build.outputDirectory}/environment.properties"/>
                                     </tasks>
                                 </configuration>
                             </execution>
@@ -596,8 +605,9 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <delete file="${project.build.outputDirectory}/environment.properties" />
-                                        <copy file="src/environments/environment.ucl.prod.properties" tofile="${project.build.outputDirectory}/environment.properties" />
+                                        <delete file="${project.build.outputDirectory}/environment.properties"/>
+                                        <copy file="src/environments/environment.ucl.prod.properties"
+                                              tofile="${project.build.outputDirectory}/environment.properties"/>
                                     </tasks>
                                 </configuration>
                             </execution>

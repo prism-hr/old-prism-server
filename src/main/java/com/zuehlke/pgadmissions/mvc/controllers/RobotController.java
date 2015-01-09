@@ -1,20 +1,5 @@
 package com.zuehlke.pgadmissions.mvc.controllers;
 
-import java.io.StringReader;
-import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
-
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
@@ -25,8 +10,21 @@ import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.dto.AdvertSearchEngineDTO;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.SearchEngineOptimisationService;
-
 import freemarker.template.Template;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
+
+import java.io.StringReader;
+import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("api/robots")
@@ -37,7 +35,7 @@ public class RobotController {
 
     @Autowired
     private ResourceService resourceService;
-    
+
     @Autowired
     private SearchEngineOptimisationService searchEngineOptimsationService;
 
@@ -86,7 +84,7 @@ public class RobotController {
                 if (program.getInstitution().getLogoDocument() != null) {
                     imageUrl = applicationApiUrl + "/images/" + program.getInstitution().getLogoDocument().getId();
                 }
-                searchEngineAdvert = searchEngineOptimsationService.getInstitutionAdvert(resourceId);
+                searchEngineAdvert = searchEngineOptimsationService.getProgramAdvert(resourceId);
             }
         } else if (queryMap.containsKey("project")) {
             int resourceId = Integer.parseInt(queryMap.get("project"));
@@ -98,7 +96,7 @@ public class RobotController {
                 if (project.getInstitution().getLogoDocument() != null) {
                     imageUrl = applicationApiUrl + "/images/" + project.getInstitution().getLogoDocument().getId();
                 }
-                searchEngineAdvert = searchEngineOptimsationService.getInstitutionAdvert(resourceId);
+                searchEngineAdvert = searchEngineOptimsationService.getProjectAdvert(resourceId);
             }
         } else {
             searchEngineAdvert = searchEngineOptimsationService.getSystemAdvert();

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.mvc.controllers;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -90,9 +91,8 @@ public class RobotController {
             }
         }
 
-        System.out.println("Escaped query: " + query);
-        model.put("title", title);
-        model.put("description", description);
+        model.put("title", Strings.nullToEmpty(title));
+        model.put("description", Strings.nullToEmpty(description));
         model.put("imageUrl", imageUrl);
         model.put("ogUrl", ogUrl);
         model.put("hostname", applicationUrl);

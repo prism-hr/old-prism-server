@@ -167,7 +167,7 @@ public class AdvertSearchEngineDTO {
         String projectDescriptionCleaned = Joiner.on("").skipNulls().join(wrapString(projectSummary), wrapString(projectDescription));
         String programDescriptionCleaned = Joiner.on("").skipNulls().join(wrapString(programSummary), wrapString(programDescription));
         String institutionDescriptionCleaned = Joiner.on("").skipNulls()
-                .join(wrapString(institutionSummary), wrapString(buildHyperLink(institutionHomepage, "Institution Homepage")));
+                .join(wrapString(institutionSummary), wrapString(buildHyperLink(institutionHomepage, "External Homepage")));
         return Joiner.on("").skipNulls().join(projectDescriptionCleaned, programDescriptionCleaned, institutionDescriptionCleaned);
     }
 
@@ -181,7 +181,7 @@ public class AdvertSearchEngineDTO {
     }
 
     private String buildHyperLink(String url, String title) throws UnsupportedEncodingException {
-        return institutionHomepage == null ? null : "<a href=\"" + URLEncoder.encode(url, "UTF-8") + "\">" + title + "</a>";
+        return institutionHomepage == null ? null : "<a href=\"" + url + "\">" + title + "</a>";
     }
 
 }

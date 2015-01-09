@@ -1,5 +1,18 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
+
+import java.util.List;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -16,19 +29,13 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.AdvertSearchEngineDTO;
+import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional
@@ -163,6 +170,30 @@ public class ProjectService {
     public List<SitemapEntryDTO> getSitemapEntries() {
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         return projectDAO.getSitemapEntries(activeProjectStates);
+    }
+
+    public AdvertSearchEngineDTO getSearchEngineAdvert(Integer projectId) {
+        List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
+        AdvertSearchEngineDTO searchEngineDTO = projectDAO.getSearchEngineAdvert(projectId, activeProjectStates);
+
+        List<String> relatedUsers = Lists.newArrayList();
+        List<User> projectAcademics = userService.getUsersForResourceAndRoles(getById(projectId), PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR);
+        for (User projectAcademic : projectAcademics) {
+            relatedUsers.add(projectAcademic.getSearchEngineRepresentation());
+        }
+
+        searchEngineDTO.setRelatedUsers(relatedUsers);
+        return searchEngineDTO;
+    }
+
+    public List<ResourceSearchEngineDTO> getActiveProjectsByProgram(Integer programId) {
+        List<PrismState> activeStates = stateService.getActiveProjectStates();
+        return projectDAO.getActiveProjectsByProgram(programId, activeStates);
+    }
+
+    public List<ResourceSearchEngineDTO> getActiveProjectsByInstitution(Integer institutionId) {
+        List<PrismState> activeStates = stateService.getActiveProjectStates();
+        return projectDAO.getActiveProjectsByInstitution(institutionId, activeStates);
     }
 
     private void update(Integer projectId, ProjectDTO projectDTO) {

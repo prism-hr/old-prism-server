@@ -1,18 +1,10 @@
 package com.zuehlke.pgadmissions.mvc.controllers;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.google.common.base.Charsets;
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
-import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
-import com.zuehlke.pgadmissions.services.ResourceService;
-import freemarker.template.Template;
+import java.io.StringReader;
+import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -23,12 +15,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.net.MalformedURLException;
-import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Map;
+import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.dto.AdvertSearchEngineDTO;
+import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.services.SearchEngineOptimisationService;
+
+import freemarker.template.Template;
 
 @Controller
 @RequestMapping("api/robots")
@@ -39,6 +37,9 @@ public class RobotController {
 
     @Autowired
     private ResourceService resourceService;
+    
+    @Autowired
+    private SearchEngineOptimisationService searchEngineOptimsationService;
 
     @Value("${application.url}")
     private String applicationUrl;
@@ -56,6 +57,7 @@ public class RobotController {
         String description = "The Opportunity Portal";
         String imageUrl = applicationUrl + "/images/fbimg.jpg";
         String ogUrl = applicationUrl;
+        AdvertSearchEngineDTO searchEngineAdvert = new AdvertSearchEngineDTO();
 
         String fragment = URLDecoder.decode(escapedFragment, Charsets.UTF_8.name());
         int questionMarkIndex = fragment.lastIndexOf("?");
@@ -72,6 +74,7 @@ public class RobotController {
                 if (institution.getLogoDocument() != null) {
                     imageUrl = applicationApiUrl + "/images/" + institution.getLogoDocument().getId();
                 }
+                searchEngineAdvert = searchEngineOptimsationService.getInstitutionAdvert(resourceId);
             }
         } else if (queryMap.containsKey("program")) {
             int resourceId = Integer.parseInt(queryMap.get("program"));
@@ -83,6 +86,7 @@ public class RobotController {
                 if (program.getInstitution().getLogoDocument() != null) {
                     imageUrl = applicationApiUrl + "/images/" + program.getInstitution().getLogoDocument().getId();
                 }
+                searchEngineAdvert = searchEngineOptimsationService.getInstitutionAdvert(resourceId);
             }
         } else if (queryMap.containsKey("project")) {
             int resourceId = Integer.parseInt(queryMap.get("project"));
@@ -94,24 +98,21 @@ public class RobotController {
                 if (project.getInstitution().getLogoDocument() != null) {
                     imageUrl = applicationApiUrl + "/images/" + project.getInstitution().getLogoDocument().getId();
                 }
+                searchEngineAdvert = searchEngineOptimsationService.getInstitutionAdvert(resourceId);
             }
+        } else {
+            searchEngineAdvert = searchEngineOptimsationService.getSystemAdvert();
         }
 
         model.put("title", Strings.nullToEmpty(title));
         model.put("description", Strings.nullToEmpty(description));
+        model.put("applicationUrl", applicationUrl);
         model.put("imageUrl", imageUrl);
         model.put("ogUrl", ogUrl);
         model.put("hostname", applicationUrl);
-        model.put("body", getPageBody(ogUrl));
+        model.put("advert", searchEngineAdvert);
 
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
-    }
-
-    private String getPageBody(String url) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
-        WebClient client = new WebClient(BrowserVersion.FIREFOX_24);
-        HtmlPage content = client.getPage(url);
-        client.waitForBackgroundJavaScript(2000);
-        return content.getElementsByTagName("body").get(0).asXml();
     }
 
     private Map<String, String> getQueryMap(String query) {

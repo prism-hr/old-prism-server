@@ -63,6 +63,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.AdvertSearchEngineDTO;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
@@ -136,6 +137,9 @@ public class SystemService {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private InstitutionService institutionService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -220,6 +224,11 @@ public class SystemService {
     @Transactional
     public void setLastDataImportDate(LocalDate baseline) {
         getSystem().setLastDataImportDate(baseline);
+    }
+    
+    @Transactional
+    public AdvertSearchEngineDTO getSystemAdvert() {
+        return new AdvertSearchEngineDTO().withRelatedInstitutions(institutionService.getActiveInstitions());
     }
 
     private void initializeScopes() throws DeduplicationException {

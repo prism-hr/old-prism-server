@@ -35,6 +35,8 @@ import com.zuehlke.pgadmissions.domain.program.ProgramLocation;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.dto.AdvertSearchEngineDTO;
+import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
 
@@ -233,6 +235,35 @@ public class ProgramDAO {
                 .addOrder(Order.desc("updatedTimestampSitemap")) //
                 .setMaxResults(50000) //
                 .setResultTransformer(Transformers.aliasToBean(SitemapEntryDTO.class)) //
+                .list();
+    }
+
+    public AdvertSearchEngineDTO getSearchEngineAdvert(Integer programId, List<PrismState> states) {
+        return (AdvertSearchEngineDTO) sessionFactory.getCurrentSession().createCriteria(Program.class, "program") //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("advert.title"), "programTitle") //
+                        .add(Projections.property("advert.summary"), "programSummary") //
+                        .add(Projections.property("advert.description"), "programDescription") //
+                        .add(Projections.property("institution.title"), "institutionTitle") //
+                        .add(Projections.property("institution.summary"), "institutionSummary") //
+                        .add(Projections.property("institution.homepage"), "institutionHomepage")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("id", programId)) //
+                .add(Restrictions.in("state.id", states)) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertSearchEngineDTO.class)) //
+                .uniqueResult();
+    }
+
+    public List<ResourceSearchEngineDTO> getActiveProgramsByInstitution(Integer institutionId, List<PrismState> states) {
+        return (List<ResourceSearchEngineDTO>) sessionFactory.getCurrentSession().createCriteria(Program.class, "program") //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("id"), "id") //
+                        .add(Projections.property("title"), "title")) //
+                .add(Restrictions.eq("institution.id", institutionId)) //
+                .add(Restrictions.in("state.id", states)) //
+                .addOrder(Order.desc("updatedTimestampSitemap")) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceSearchEngineDTO.class)) //
                 .list();
     }
 

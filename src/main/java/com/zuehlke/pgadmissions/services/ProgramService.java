@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
+
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -9,6 +12,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -26,6 +30,8 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.AdvertSearchEngineDTO;
+import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
@@ -212,6 +218,27 @@ public class ProgramService {
     public List<SitemapEntryDTO> getSitemapEntries() {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         return programDAO.getSitemapEntries(activeProgramStates);
+    }
+
+    public AdvertSearchEngineDTO getSearchEngineAdvert(Integer programId) {
+        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
+        AdvertSearchEngineDTO searchEngineDTO = programDAO.getSearchEngineAdvert(programId, activeProgramStates);
+
+        searchEngineDTO.setRelatedProjects(projectService.getActiveProjectsByProgram(programId));
+
+        List<String> relatedUsers = Lists.newArrayList();
+        List<User> programAcademics = userService.getUsersForResourceAndRoles(getById(programId), PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR);
+        for (User programAcademic : programAcademics) {
+            relatedUsers.add(programAcademic.getSearchEngineRepresentation());
+        }
+        searchEngineDTO.setRelatedUsers(relatedUsers);
+
+        return searchEngineDTO;
+    }
+
+    public List<ResourceSearchEngineDTO> getActiveProgramsByInstitution(Integer institutionId) {
+        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
+        return programDAO.getActiveProgramsByInstitution(institutionId, activeProgramStates);
     }
 
     private void update(Integer programId, ProgramDTO programDTO) {

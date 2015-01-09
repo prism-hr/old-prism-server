@@ -4,6 +4,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_STARTUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_VIEW_EDIT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
@@ -30,6 +33,8 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.AdvertSearchEngineDTO;
+import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
@@ -75,6 +80,12 @@ public class InstitutionService {
 
     @Autowired
     private SocialPresenceService socialPresenceService;
+
+    @Autowired
+    private ProgramService programService;
+
+    @Autowired
+    private ProjectService projectService;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -252,6 +263,31 @@ public class InstitutionService {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         return institutionDAO.getSitemapEntries(activeProgramStates, activeProjectStates);
+    }
+
+    public AdvertSearchEngineDTO getSearchEngineAdvert(Integer institutionId) {
+        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
+        List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
+        AdvertSearchEngineDTO searchEngineDTO = institutionDAO.getSearchEngineAdverts(institutionId, activeProgramStates, activeProjectStates);
+
+        searchEngineDTO.setRelatedPrograms(programService.getActiveProgramsByInstitution(institutionId));
+        searchEngineDTO.setRelatedProjects(projectService.getActiveProjectsByInstitution(institutionId));
+
+        List<String> relatedUsers = Lists.newArrayList();
+        List<User> institutionAcademics = userService.getUsersForResourceAndRoles(getById(institutionId), PROJECT_PRIMARY_SUPERVISOR,
+                PROJECT_SECONDARY_SUPERVISOR);
+        for (User institutionAcademic : institutionAcademics) {
+            relatedUsers.add(institutionAcademic.getSearchEngineRepresentation());
+        }
+        searchEngineDTO.setRelatedUsers(relatedUsers);
+
+        return searchEngineDTO;
+    }
+
+    public List<ResourceSearchEngineDTO> getActiveInstitions() {
+        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
+        List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
+        return institutionDAO.getRelatedInstitutions(activeProgramStates, activeProjectStates);
     }
 
 }

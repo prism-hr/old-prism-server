@@ -218,7 +218,7 @@ public class NotificationService {
 
     public void sendDataImportErrorNotifications(Institution institution, String errorMessage) {
         System system = systemService.getSystem();
-        for (User user : userService.getUsersForResourceAndRole(institution, INSTITUTION_ADMINISTRATOR)) {
+        for (User user : userService.getUsersForResourceAndRoles(institution, INSTITUTION_ADMINISTRATOR)) {
             NotificationDefinition template = getById(INSTITUTION_IMPORT_ERROR_NOTIFICATION);
             sendNotification(template, new NotificationDefinitionModelDTO().withUser(user).withAuthor(system.getUser()).withResource(institution)
                     .withDataImportErrorMessage(errorMessage));

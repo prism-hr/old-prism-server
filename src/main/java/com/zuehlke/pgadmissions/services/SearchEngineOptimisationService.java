@@ -30,6 +30,7 @@ import org.w3c.dom.Text;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.dto.AdvertSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 
 @Service
@@ -46,6 +47,9 @@ public class SearchEngineOptimisationService {
 
     @Value("${application.url}")
     private String applicationUrl;
+
+    @Autowired
+    private SystemService systemService;
 
     @Autowired
     private InstitutionService institutionService;
@@ -112,6 +116,22 @@ public class SearchEngineOptimisationService {
     public String getInstitutionSitemap() throws UnsupportedEncodingException, TransformerException, ParserConfigurationException {
         List<SitemapEntryDTO> sitemapEntries = institutionService.getSitemapEntries();
         return buildSitemap(INSTITUTION, sitemapEntries);
+    }
+
+    public AdvertSearchEngineDTO getSystemAdvert() {
+        return systemService.getSystemAdvert();
+    }
+
+    public AdvertSearchEngineDTO getInstitutionAdvert(Integer institutionId) {
+        return institutionService.getSearchEngineAdvert(institutionId);
+    }
+
+    public AdvertSearchEngineDTO getProgramAdvert(Integer programId) {
+        return programService.getSearchEngineAdvert(programId);
+    }
+
+    public AdvertSearchEngineDTO getProjectAdvert(Integer projectId) {
+        return projectService.getSearchEngineAdvert(projectId);
     }
 
     private String buildSitemap(PrismScope scope, List<SitemapEntryDTO> sitemapEntries) throws ParserConfigurationException, TransformerException,

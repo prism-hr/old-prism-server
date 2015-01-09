@@ -1,13 +1,12 @@
 package com.zuehlke.pgadmissions.mvc.controllers;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.Maps;
-import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
-import com.zuehlke.pgadmissions.services.ResourceService;
-import freemarker.template.Template;
+import java.io.IOException;
+import java.io.StringReader;
+import java.net.MalformedURLException;
+import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -18,10 +17,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import java.io.StringReader;
-import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Map;
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.services.ResourceService;
+
+import freemarker.template.Template;
 
 @Controller
 @RequestMapping("api/robots")
@@ -90,14 +97,21 @@ public class RobotController {
             }
         }
 
-        System.out.println("Escaped query: " + query);
         model.put("title", title);
         model.put("description", description);
         model.put("imageUrl", imageUrl);
         model.put("ogUrl", ogUrl);
         model.put("hostname", applicationUrl);
+        model.put("body", getPageBody(ogUrl));
 
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+    }
+
+    private String getPageBody(String url) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
+        WebClient client = new WebClient();
+        HtmlPage content = client.getPage(url);
+        client.waitForBackgroundJavaScript(2000);
+        return content.getElementByName("body").asXml();
     }
 
     private Map<String, String> getQueryMap(String query) {

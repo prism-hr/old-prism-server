@@ -270,16 +270,18 @@ public class InstitutionService {
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         AdvertSearchEngineDTO searchEngineDTO = institutionDAO.getSearchEngineAdverts(institutionId, activeProgramStates, activeProjectStates);
 
-        searchEngineDTO.setRelatedPrograms(programService.getActiveProgramsByInstitution(institutionId));
-        searchEngineDTO.setRelatedProjects(projectService.getActiveProjectsByInstitution(institutionId));
-
-        List<String> relatedUsers = Lists.newArrayList();
-        List<User> institutionAcademics = userService.getUsersForResourceAndRoles(getById(institutionId), PROJECT_PRIMARY_SUPERVISOR,
-                PROJECT_SECONDARY_SUPERVISOR);
-        for (User institutionAcademic : institutionAcademics) {
-            relatedUsers.add(institutionAcademic.getSearchEngineRepresentation());
+        if (searchEngineDTO != null) {
+            searchEngineDTO.setRelatedPrograms(programService.getActiveProgramsByInstitution(institutionId));
+            searchEngineDTO.setRelatedProjects(projectService.getActiveProjectsByInstitution(institutionId));
+    
+            List<String> relatedUsers = Lists.newArrayList();
+            List<User> institutionAcademics = userService.getUsersForResourceAndRoles(getById(institutionId), PROJECT_PRIMARY_SUPERVISOR,
+                    PROJECT_SECONDARY_SUPERVISOR);
+            for (User institutionAcademic : institutionAcademics) {
+                relatedUsers.add(institutionAcademic.getSearchEngineRepresentation());
+            }
+            searchEngineDTO.setRelatedUsers(relatedUsers);
         }
-        searchEngineDTO.setRelatedUsers(relatedUsers);
 
         return searchEngineDTO;
     }

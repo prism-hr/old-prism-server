@@ -224,15 +224,17 @@ public class ProgramService {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         AdvertSearchEngineDTO searchEngineDTO = programDAO.getSearchEngineAdvert(programId, activeProgramStates);
 
-        searchEngineDTO.setRelatedProjects(projectService.getActiveProjectsByProgram(programId));
-
-        List<String> relatedUsers = Lists.newArrayList();
-        List<User> programAcademics = userService.getUsersForResourceAndRoles(getById(programId), PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR);
-        for (User programAcademic : programAcademics) {
-            relatedUsers.add(programAcademic.getSearchEngineRepresentation());
+        if (searchEngineDTO != null) {
+            searchEngineDTO.setRelatedProjects(projectService.getActiveProjectsByProgram(programId));
+    
+            List<String> relatedUsers = Lists.newArrayList();
+            List<User> programAcademics = userService.getUsersForResourceAndRoles(getById(programId), PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR);
+            for (User programAcademic : programAcademics) {
+                relatedUsers.add(programAcademic.getSearchEngineRepresentation());
+            }
+            searchEngineDTO.setRelatedUsers(relatedUsers);
         }
-        searchEngineDTO.setRelatedUsers(relatedUsers);
-
+        
         return searchEngineDTO;
     }
 

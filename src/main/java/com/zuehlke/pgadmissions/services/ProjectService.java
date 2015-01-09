@@ -175,14 +175,17 @@ public class ProjectService {
     public AdvertSearchEngineDTO getSearchEngineAdvert(Integer projectId) {
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         AdvertSearchEngineDTO searchEngineDTO = projectDAO.getSearchEngineAdvert(projectId, activeProjectStates);
-
-        List<String> relatedUsers = Lists.newArrayList();
-        List<User> projectAcademics = userService.getUsersForResourceAndRoles(getById(projectId), PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR);
-        for (User projectAcademic : projectAcademics) {
-            relatedUsers.add(projectAcademic.getSearchEngineRepresentation());
+        
+        if (searchEngineDTO != null) {
+            List<String> relatedUsers = Lists.newArrayList();
+            List<User> projectAcademics = userService.getUsersForResourceAndRoles(getById(projectId), PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR);
+            for (User projectAcademic : projectAcademics) {
+                relatedUsers.add(projectAcademic.getSearchEngineRepresentation());
+            }
+    
+            searchEngineDTO.setRelatedUsers(relatedUsers);
         }
-
-        searchEngineDTO.setRelatedUsers(relatedUsers);
+        
         return searchEngineDTO;
     }
 

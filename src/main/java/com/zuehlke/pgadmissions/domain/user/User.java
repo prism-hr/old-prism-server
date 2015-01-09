@@ -349,6 +349,10 @@ public class User implements UserDetails, IUniqueEntity {
     public <T extends Resource> void setLastNotifiedDate(Class<T> resourceClass, LocalDate lastNotifiedDate) {
         ReflectionUtils.setProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName(), lastNotifiedDate);
     }
+    
+    public String getSearchEngineRepresentation() {
+        return fullName + " " + email.replace("@", " ").replace(".", " ");
+    }
 
     @Override
     public boolean isEnabled() {

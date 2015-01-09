@@ -48,17 +48,18 @@ public class UserDAO {
                 .uniqueResult();
     }
 
-    public List<User> getUsersForResourceAndRole(Resource resource, PrismRole authority) {
+    public List<User> getUsersForResourceAndRoles(Resource resource, PrismRole... roleIds) {
         return sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN).add(Restrictions.disjunction() //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("application", resource.getApplication())) //
                         .add(Restrictions.eq("project", resource.getProject())) //
                         .add(Restrictions.eq("program", resource.getProgram())) //
                         .add(Restrictions.eq("institution", resource.getInstitution())) //
                         .add(Restrictions.eq("system", resource.getSystem()))) //
-                .add(Restrictions.eq("role.id", authority)) //
+                .add(Restrictions.in("role.id", roleIds)) //
                 .list();
     }
 

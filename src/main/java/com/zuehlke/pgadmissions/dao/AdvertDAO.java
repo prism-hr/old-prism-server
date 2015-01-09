@@ -229,8 +229,10 @@ public class AdvertDAO {
                     .add(Restrictions.ilike("project.title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("program.title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("institution.title", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("institution.summary", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("projectProgram.title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("projectInstitution.title", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("projectInstitution.summary", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("user.firstName", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("user.lastName", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("user.email", keyword, MatchMode.ANYWHERE))); //

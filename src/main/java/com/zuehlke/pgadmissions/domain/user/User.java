@@ -1,35 +1,21 @@
 package com.zuehlke.pgadmissions.domain.user;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
-import com.zuehlke.pgadmissions.rest.validation.annotation.ESAPIConstraint;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import javax.persistence.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
 @Entity
 @Table(name = "USER")
@@ -41,26 +27,21 @@ public class User implements UserDetails, IUniqueEntity {
     @GeneratedValue
     private Integer id;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
     @Column(name = "first_name_2")
     private String firstName2;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
     @Column(name = "first_name_3")
     private String firstName3;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
-    @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 

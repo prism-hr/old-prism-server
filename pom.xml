@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <name>UCL Postgraduate Admissions</name>
@@ -25,18 +26,6 @@
         <connection>scm:hg:http://mercurial.alumeni.co.uk/mercurial/pgadmissions/</connection>
         <tag>HEAD</tag>
     </scm>
-
-	<!-- Repository for Scribe - OAuth Support -->
-	<repositories>
-	  <repository>
-	    <id>scribe-java-mvn-repo</id>
-	    <url>https://raw.github.com/fernandezpablo85/scribe-java/mvn-repo/</url>
-	    <snapshots>
-	      <enabled>true</enabled>
-	      <updatePolicy>always</updatePolicy>
-	    </snapshots>
-	  </repository>
-	</repositories>
 
     <dependencies>
 
@@ -127,20 +116,7 @@
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
-            <version>2.3.20</version>
-        </dependency>
-
-        <!-- Validation -->
-        <dependency>
-            <groupId>org.owasp.esapi</groupId>
-            <artifactId>esapi</artifactId>
-            <version>2.1.0</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>log4j</artifactId>
-                    <groupId>log4j</groupId>
-                </exclusion>
-            </exclusions>
+            <version>2.3.21</version>
         </dependency>
 
         <!-- WebService & Portico SFTP upload -->
@@ -202,14 +178,14 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.3</version>
+            <version>2.3.1</version>
         </dependency>
 
         <!-- PDF generator -->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
-            <version>5.5.3</version>
+            <version>5.5.4</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
@@ -221,7 +197,7 @@
         <dependency>
             <groupId>org.jboss.spec</groupId>
             <artifactId>jboss-javaee-6.0</artifactId>
-            <version>3.0.2.Final</version>
+            <version>3.0.3.Final</version>
             <type>pom</type>
             <scope>provided</scope>
         </dependency>
@@ -260,12 +236,12 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-exec</artifactId>
-            <version>1.1</version>
+            <version>1.3</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <version>2.5</version>
+            <version>2.6</version>
         </dependency>
         <dependency>
             <groupId>org.jadira.usertype</groupId>
@@ -287,30 +263,24 @@
             <artifactId>opencsv</artifactId>
             <version>2.3</version>
         </dependency>
-       	<dependency>
-			<groupId>org.apache.oltu.oauth2</groupId>
-			<artifactId>org.apache.oltu.oauth2.client</artifactId>
-			<version>1.0.0</version>
-		</dependency>
         <dependency>
             <groupId>org.imgscalr</groupId>
             <artifactId>imgscalr-lib</artifactId>
             <version>4.2</version>
         </dependency>
 
-
         <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.7</version>
+            <version>1.7.9</version>
         </dependency>
 
         <!-- Testing -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.7</version>
+            <version>1.7.9</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -328,13 +298,13 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>3.2</version>
+            <version>3.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -347,25 +317,14 @@
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
             <version>1.4</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.33</version>
+            <version>5.1.34</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.4.181</version>
-            <scope>test</scope>
-        </dependency>
-		<dependency>
-		  <groupId>org.scribe</groupId>
-		  <artifactId>scribe</artifactId>
-		  <version>1.3.6</version>
-		</dependency>
 
     </dependencies>
 
@@ -473,7 +432,8 @@
                         </goals>
                         <configuration>
                             <packageName>com.zuehlke.pgadmissions.iso.jaxb</packageName>
-                            <outputDirectory>${project.build.directory}/generated-sources/jaxb/isoCountryCodes</outputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-sources/jaxb/isoCountryCodes
+                            </outputDirectory>
                             <schemaDirectory>${project.basedir}/src/main/resources/xsd/isoCountryCodes</schemaDirectory>
                         </configuration>
                     </execution>
@@ -539,7 +499,7 @@
                     <formats>
                         <format>html</format>
                     </formats>
-                    <check />
+                    <check/>
                 </configuration>
             </plugin>
 
@@ -581,8 +541,9 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <delete file="${project.build.outputDirectory}/environment.properties" />
-                                        <copy file="src/environments/environment.sit.properties" tofile="${project.build.outputDirectory}/environment.properties" />
+                                        <delete file="${project.build.outputDirectory}/environment.properties"/>
+                                        <copy file="src/environments/environment.sit.properties"
+                                              tofile="${project.build.outputDirectory}/environment.properties"/>
                                     </tasks>
                                 </configuration>
                             </execution>
@@ -610,8 +571,9 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <delete file="${project.build.outputDirectory}/environment.properties" />
-                                        <copy file="src/environments/environment.uat.properties" tofile="${project.build.outputDirectory}/environment.properties" />
+                                        <delete file="${project.build.outputDirectory}/environment.properties"/>
+                                        <copy file="src/environments/environment.uat.properties"
+                                              tofile="${project.build.outputDirectory}/environment.properties"/>
                                     </tasks>
                                 </configuration>
                             </execution>
@@ -639,8 +601,9 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <delete file="${project.build.outputDirectory}/environment.properties" />
-                                        <copy file="src/environments/environment.ucl.prod.properties" tofile="${project.build.outputDirectory}/environment.properties" />
+                                        <delete file="${project.build.outputDirectory}/environment.properties"/>
+                                        <copy file="src/environments/environment.ucl.prod.properties"
+                                              tofile="${project.build.outputDirectory}/environment.properties"/>
                                     </tasks>
                                 </configuration>
                             </execution>

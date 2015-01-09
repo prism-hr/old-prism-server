@@ -1,13 +1,13 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
+import com.zuehlke.pgadmissions.rest.validation.annotation.DatePast;
+import com.zuehlke.pgadmissions.rest.validation.annotation.PhoneNumber;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.rest.validation.annotation.DatePast;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class ApplicationPersonalDetailDTO {
 
@@ -19,7 +19,7 @@ public class ApplicationPersonalDetailDTO {
     private String skype;
 
     @NotEmpty
-    @Size(max = 50)
+    @PhoneNumber
     private String phone;
 
     private Boolean firstLanguageLocale;

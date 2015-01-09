@@ -34,7 +34,15 @@
         <h3>${advert.title}</h3>
     </div>
     <div>
-    ${advert.description}
+    	${advert.description}
+    </div>
+    	<#if advert.parentInstitution??>
+    		<p><a href="${applicationUrl}/#!/?institution=${parentInstitution}">Parent Institution</a></p>
+    	</#if>
+    	<#if advert.parentProgram??>
+    		<p><a href="${applicationUrl}/#!/?program=${parentProgram}">Parent Program</a></p>
+    	</#if>
+    <div>
     </div>
         <#if advert.relatedPrograms?has_content>
         <div>

@@ -246,7 +246,8 @@ public class ProgramDAO {
                         .add(Projections.property("advert.description"), "programDescription") //
                         .add(Projections.property("institution.title"), "institutionTitle") //
                         .add(Projections.property("institution.summary"), "institutionSummary") //
-                        .add(Projections.property("institution.homepage"), "institutionHomepage")) //
+                        .add(Projections.property("institution.homepage"), "institutionHomepage")
+                        .add(Projections.property("institution.id"), "parentInstitution")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("institution", "institution", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("id", programId)) //

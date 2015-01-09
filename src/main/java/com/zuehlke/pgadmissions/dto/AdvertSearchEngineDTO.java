@@ -26,6 +26,10 @@ public class AdvertSearchEngineDTO {
     private String institutionSummary;
 
     private String institutionHomepage;
+    
+    private Integer parentProgram;
+    
+    private Integer parentInstitution;
 
     private List<ResourceSearchEngineDTO> relatedProjects = Lists.newLinkedList();
 
@@ -107,6 +111,22 @@ public class AdvertSearchEngineDTO {
         this.institutionHomepage = institutionHomepage;
     }
 
+    public final Integer getParentProgram() {
+        return parentProgram;
+    }
+
+    public final void setParentProgram(Integer parentProgram) {
+        this.parentProgram = parentProgram;
+    }
+
+    public final Integer getParentInstitution() {
+        return parentInstitution;
+    }
+
+    public final void setParentInstitution(Integer parentInstitution) {
+        this.parentInstitution = parentInstitution;
+    }
+
     public final List<ResourceSearchEngineDTO> getRelatedProjects() {
         return relatedProjects;
     }
@@ -147,7 +167,7 @@ public class AdvertSearchEngineDTO {
         String projectDescriptionCleaned = Joiner.on("").skipNulls().join(wrapString(projectSummary), wrapString(projectDescription));
         String programDescriptionCleaned = Joiner.on("").skipNulls().join(wrapString(programSummary), wrapString(programDescription));
         String institutionDescriptionCleaned = Joiner.on("").skipNulls()
-                .join(wrapString(institutionSummary), wrapString(buildHyperLink(institutionHomepage, "homepage")));
+                .join(wrapString(institutionSummary), wrapString(buildHyperLink(institutionHomepage, "Institution Homepage")));
         return Joiner.on("").skipNulls().join(projectDescriptionCleaned, programDescriptionCleaned, institutionDescriptionCleaned);
     }
 

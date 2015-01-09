@@ -124,7 +124,9 @@ public class ProjectDAO {
                         .add(Projections.property("programAdvert.description"), "programDescription") //
                         .add(Projections.property("institution.title"), "institutionTitle") //
                         .add(Projections.property("institution.summary"), "institutionSummary") //
-                        .add(Projections.property("institution.homepage"), "institutionHomepage")) //
+                        .add(Projections.property("institution.homepage"), "institutionHomepage") //
+                        .add(Projections.property("program.id"), "parentProgram") //
+                        .add(Projections.property("institution.id"), "parentInstitution")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("program", "program", JoinType.INNER_JOIN) //
                 .createAlias("program.advert", "programAdvert", JoinType.INNER_JOIN) //

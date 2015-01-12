@@ -18,6 +18,7 @@ import javax.xml.validation.SchemaFactory;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
@@ -35,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
@@ -146,7 +148,7 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
     }
 
     private void mergeImportedPrograms(Institution institution, List<ProgrammeOccurrence> programDefinitions) throws DeduplicationException,
-            DataImportException, InstantiationException, IllegalAccessException {
+            DataImportException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         DateTime baselineTime = new DateTime();
         LocalDate baseline = baselineTime.toLocalDate();
 

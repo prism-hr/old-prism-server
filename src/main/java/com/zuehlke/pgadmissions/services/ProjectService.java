@@ -3,10 +3,12 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,7 @@ import com.zuehlke.pgadmissions.dto.AdvertSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -90,7 +93,7 @@ public class ProjectService {
     }
 
     public ActionOutcomeDTO executeAction(Integer programId, CommentDTO commentDTO) throws DeduplicationException, InstantiationException,
-            IllegalAccessException {
+            IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         User user = userService.getById(commentDTO.getUser());
         Project project = getById(programId);
 
@@ -175,17 +178,17 @@ public class ProjectService {
     public AdvertSearchEngineDTO getSearchEngineAdvert(Integer projectId) {
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         AdvertSearchEngineDTO searchEngineDTO = projectDAO.getSearchEngineAdvert(projectId, activeProjectStates);
-        
+
         if (searchEngineDTO != null) {
             List<String> relatedUsers = Lists.newArrayList();
             List<User> projectAcademics = userService.getUsersForResourceAndRoles(getById(projectId), PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR);
             for (User projectAcademic : projectAcademics) {
                 relatedUsers.add(projectAcademic.getSearchEngineRepresentation());
             }
-    
+
             searchEngineDTO.setRelatedUsers(relatedUsers);
         }
-        
+
         return searchEngineDTO;
     }
 

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
+import java.util.HashMap;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -8,8 +10,6 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
-
-import java.util.HashMap;
 
 public enum PrismScope {
 

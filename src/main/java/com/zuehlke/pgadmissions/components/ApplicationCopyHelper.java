@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.components;
 
+import java.io.IOException;
 import java.util.Set;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -32,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.Address;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.services.CustomizationService;
+import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 
 @Component
@@ -43,11 +45,14 @@ public class ApplicationCopyHelper {
 
     @Autowired
     private CustomizationService customizationService;
+    
+    @Autowired
+    private DocumentService documentService;
 
     private final Set<ApplicationSection> sectionsWithErrors = Sets.newHashSet();
 
     @Transactional
-    public void copyApplication(Application to, Application from) {
+    public void copyApplication(Application to, Application from) throws IOException {
         copyApplicationPersonalDetail(to, from);
         copyApplicationAddress(to, from);
         copyApplicationQualifications(to, from);
@@ -63,7 +68,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    private void copyApplicationPersonalDetail(Application to, Application from) {
+    private void copyApplicationPersonalDetail(Application to, Application from) throws IOException {
         if (from.getPersonalDetail() != null) {
             ApplicationPersonalDetail personalDetail = new ApplicationPersonalDetail();
             to.setPersonalDetail(personalDetail);
@@ -111,7 +116,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    private void copyApplicationQualifications(Application to, Application from) {
+    private void copyApplicationQualifications(Application to, Application from) throws IOException {
         WorkflowPropertyConfiguration qualificationConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
                 PrismConfiguration.WORKFLOW_PROPERTY, PrismWorkflowPropertyDefinition.APPLICATION_QUALIFICATION, to.getWorkflowPropertyConfigurationVersion());
 
@@ -153,7 +158,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    private void copyApplicationFundings(Application to, Application from) {
+    private void copyApplicationFundings(Application to, Application from) throws IOException {
         WorkflowPropertyConfiguration fundingConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
                 PrismConfiguration.WORKFLOW_PROPERTY, PrismWorkflowPropertyDefinition.APPLICATION_FUNDING, to.getWorkflowPropertyConfigurationVersion());
 
@@ -213,7 +218,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    private void copyApplicationDocument(Application to, Application from) {
+    private void copyApplicationDocument(Application to, Application from) throws IOException {
         boolean personalStatementEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
                 PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_PERSONAL_STATEMENT);
 
@@ -276,7 +281,7 @@ public class ApplicationCopyHelper {
         to.setLastUpdatedTimestamp(new DateTime());
     }
 
-    public void copyFunding(ApplicationFunding to, ApplicationFunding from, boolean documentEnabled) {
+    public void copyFunding(ApplicationFunding to, ApplicationFunding from, boolean documentEnabled) throws IOException {
         Institution toInstitution = to.getApplication().getInstitution();
         to.setSponsor(from.getSponsor());
         to.setFundingSource(getEnabledImportedObject(toInstitution, from.getFundingSource(), to));
@@ -312,7 +317,7 @@ public class ApplicationCopyHelper {
         to.setLastUpdatedTimestamp(new DateTime());
     }
 
-    public void copyQualification(ApplicationQualification to, ApplicationQualification from, boolean documentEnabled) {
+    public void copyQualification(ApplicationQualification to, ApplicationQualification from, boolean documentEnabled) throws IOException {
         Institution toInstitution = to.getApplication().getInstitution();
         to.setInstitution(getEnabledImportedObject(toInstitution, from.getInstitution(), to));
         to.setType(getEnabledImportedObject(toInstitution, from.getType(), to));
@@ -345,7 +350,7 @@ public class ApplicationCopyHelper {
         return toAddress;
     }
 
-    private Document copyDocument(Document from) {
+    private Document copyDocument(Document from) throws IOException {
         if (from == null) {
             return null;
         }
@@ -353,14 +358,14 @@ public class ApplicationCopyHelper {
         to.setContentType(from.getContentType());
         to.setFileName(from.getFileName());
         to.setCategory(from.getCategory());
-        to.setContent(from.getContent());
+        to.setContent(documentService.getContent(from));
         to.setUser(from.getUser());
         to.setCreatedTimestamp(new DateTime());
         return to;
     }
 
     private ApplicationLanguageQualification copyLanguageQualification(Institution toInstitution, ApplicationLanguageQualification from,
-            Application toApplication) {
+            Application toApplication) throws IOException {
         if (from == null) {
             return null;
         }

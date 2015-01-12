@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -125,7 +127,7 @@ public class ResourceService {
     }
 
     public ActionOutcomeDTO executeAction(Integer resourceId, CommentDTO commentDTO) throws DeduplicationException, InstantiationException,
-            IllegalAccessException {
+            IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         switch (commentDTO.getAction().getScope()) {
         case APPLICATION:
             return applicationService.executeAction(resourceId, commentDTO);
@@ -176,7 +178,7 @@ public class ResourceService {
         return actionService.executeUserAction(resource, action, comment);
     }
 
-    public void persistResource(Resource resource, Action action) throws WorkflowEngineException {
+    public void persistResource(Resource resource, Action action) throws WorkflowEngineException, BeansException, IOException {
         DateTime baseline = new DateTime();
         resource.setCreatedTimestamp(baseline);
         resource.setUpdatedTimestamp(baseline);
@@ -287,12 +289,12 @@ public class ResourceService {
     }
 
     public void executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex) throws DeduplicationException, InstantiationException,
-            IllegalAccessException {
+            IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         executeUpdate(resource, messageIndex, null);
     }
 
     public void executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser assignee) throws DeduplicationException,
-            InstantiationException, IllegalAccessException {
+            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         User user = userService.getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
 

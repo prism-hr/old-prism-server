@@ -1,14 +1,15 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
-import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
-import com.zuehlke.pgadmissions.rest.validation.annotation.PhoneNumber;
-import org.hibernate.validator.constraints.NotEmpty;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
+import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
+import com.zuehlke.pgadmissions.rest.validation.annotation.PhoneNumber;
 
 public class ApplicationRefereeDTO {
 

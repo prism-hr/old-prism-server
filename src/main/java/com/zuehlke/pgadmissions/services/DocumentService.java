@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
+import java.util.Properties;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.Part;
@@ -17,11 +19,22 @@ import org.bouncycastle.util.io.Streams;
 import org.imgscalr.Scalr;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.amazonaws.auth.PropertiesCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ListObjectsRequest;
+import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.itextpdf.text.pdf.PdfReader;
@@ -30,6 +43,7 @@ import com.zuehlke.pgadmissions.dao.DocumentDAO;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.document.FileCategory;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
@@ -37,6 +51,15 @@ import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
 @Service
 @Transactional
 public class DocumentService {
+
+    @Value("${amazon.bucket}")
+    private String amazonBucket;
+
+    @Value("${amazon.access.key.id}")
+    private String amazonAccessKeyId;
+
+    @Value("${amazon.secret.access.key}")
+    private String amazonSecretAccessKey;
 
     @Autowired
     private DocumentDAO documentDAO;
@@ -48,10 +71,17 @@ public class DocumentService {
     private EntityService entityService;
 
     @Autowired
+    private SystemService systemService;
+
+    @Autowired
     private UserService userService;
 
+    public Document getById(Integer id) {
+        return entityService.getById(Document.class, id);
+    }
+
     public Document getById(Integer id, FileCategory category) {
-        return entityService.getByProperties(Document.class, ImmutableMap.<String, Object>of("id", id, "category", category));
+        return entityService.getByProperties(Document.class, ImmutableMap.<String, Object> of("id", id, "category", category));
     }
 
     public Document create(FileCategory category, Part uploadStream) throws IOException {
@@ -63,7 +93,7 @@ public class DocumentService {
 
         if (category == FileCategory.IMAGE) {
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(content));
-            if(image == null){
+            if (image == null) {
                 throw new PrismBadRequestException("Uploaded file is not valid image file");
             }
             image = Scalr.resize(image, Scalr.Mode.AUTOMATIC, 340, 240);
@@ -87,8 +117,8 @@ public class DocumentService {
                 throw new PrismBadRequestException("You cannot upload an encrypted file");
             }
         }
-        Document document = new Document().withContent(content).withContentType(contentType).withFileName(fileName).withUser(userService.getCurrentUser())
-                .withCreatedTimestamp(new DateTime()).withCategory(category);
+        Document document = new Document().withContent(content).withContentType(contentType).withExported(false).withFileName(fileName)
+                .withUser(userService.getCurrentUser()).withCreatedTimestamp(new DateTime()).withCategory(category);
         entityService.save(document);
         return document;
     }
@@ -103,8 +133,14 @@ public class DocumentService {
         return create(fileCategory, fileName, content, contentType);
     }
 
-    public void deleteOrphanDocuments() {
-        documentDAO.deleteOrphanDocuments();
+    public void deleteOrphanDocuments() throws IOException {
+        DateTime baseline = new DateTime();
+        documentDAO.deleteOrphanDocuments(baseline);
+        
+        System system = systemService.getSystem();
+        if (system.getLastAmazonCleanupDate().isBefore(baseline.toLocalDate())) {   
+            cleanupAmazon();
+        }
     }
 
     public void validateDownload(Document document) {
@@ -119,6 +155,68 @@ public class DocumentService {
             Action viewEditAction = actionService.getViewEditAction(resource);
             actionService.validateUserAction(resource, viewEditAction, user);
         }
+    }
+
+    public byte[] getContent(Document document) throws IOException {
+        if (document.getExported() == true) {
+            AmazonS3 amazonClient = getAmazonClient();
+            GetObjectRequest amazonRequest = new GetObjectRequest(amazonBucket, getAmazonObjectKey(document));
+            S3Object amazonObject = amazonClient.getObject(amazonRequest);
+            return IOUtils.toByteArray(amazonObject.getObjectContent());
+        }
+        return document.getContent();
+    }
+
+    public List<Integer> getDocumentsForExport() {
+        return documentDAO.getDocumentsForExport();
+    }
+
+    public void exportDocument(Integer documentId) throws IOException {
+        Document document = getById(documentId);
+        AmazonS3 amazonClient = getAmazonClient();
+
+        ObjectMetadata amazonMetadata = new ObjectMetadata();
+        amazonMetadata.setContentType(document.getContentType());
+        byte[] content = document.getContent();
+        amazonMetadata.setContentLength(content.length);
+        PutObjectRequest amazonRequest = new PutObjectRequest(amazonBucket, getAmazonObjectKey(document), new ByteArrayInputStream(content), amazonMetadata);
+        amazonClient.putObject(amazonRequest);
+
+        document.setContent(null);
+        document.setExported(true);
+    }
+
+    private String getAmazonObjectKey(Document document) {
+        return String.format("%10d", document.getId());
+    }
+    
+    private void cleanupAmazon() throws IOException {
+        AmazonS3 amazonClient = getAmazonClient();
+        ListObjectsRequest amazonRequest = new ListObjectsRequest().withBucketName(amazonBucket);
+        ObjectListing amazonObjects = amazonClient.listObjects(amazonRequest);
+   
+        for (S3ObjectSummary amazonObject : amazonObjects.getObjectSummaries()) {
+            String amazonObjectKey = amazonObject.getKey();
+            Document document = getById(Integer.parseInt(amazonObjectKey));
+   
+            if (document == null) {
+                amazonClient.deleteObject(amazonBucket, amazonObjectKey);
+            }
+        }
+    }
+    
+    private AmazonS3 getAmazonClient() throws IOException {
+        System system = systemService.getSystem();
+
+        Properties amazonCredentials = new Properties();
+        amazonCredentials.setProperty("amazonKey", system.getAmazonAccessKey());
+        amazonCredentials.setProperty("secretKey", system.getAmazonSecretKey());
+
+        ByteArrayOutputStream amazonCredentialsOutputStream = new ByteArrayOutputStream();
+        amazonCredentials.store(amazonCredentialsOutputStream, null);
+        ByteArrayInputStream amazonCredentialsInputStream = new ByteArrayInputStream(amazonCredentialsOutputStream.toByteArray());
+
+        return new AmazonS3Client(new PropertiesCredentials(amazonCredentialsInputStream));
     }
 
     private String getFileName(Part upload) {

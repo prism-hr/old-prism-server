@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,6 +11,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +49,7 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.InstitutionDomicileImportDTO;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.iso.jaxb.CategoryNameType;
 import com.zuehlke.pgadmissions.iso.jaxb.CategoryType;
 import com.zuehlke.pgadmissions.iso.jaxb.CountryType;
@@ -133,7 +136,7 @@ public class ImportedEntityService {
     }
 
     public void mergeImportedProgram(Institution institution, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline, DateTime baselineTime)
-            throws DeduplicationException, DataImportException, InstantiationException, IllegalAccessException {
+            throws DeduplicationException, DataImportException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         Programme programDefinition = programInstanceDefinitions.iterator().next().getProgramme();
         Program persistentProgram = mergeProgram(institution, programDefinition, baseline);
 
@@ -348,7 +351,7 @@ public class ImportedEntityService {
     }
 
     private void executeProgramImportAction(Program program, DateTime baselineTime) throws DeduplicationException, InstantiationException,
-            IllegalAccessException {
+            IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         Comment lastImportComment = commentService.getLatestComment(program, PrismAction.INSTITUTION_IMPORT_PROGRAM);
         Action action = actionService.getById(lastImportComment == null ? PrismAction.INSTITUTION_CREATE_PROGRAM : PrismAction.INSTITUTION_IMPORT_PROGRAM);
 

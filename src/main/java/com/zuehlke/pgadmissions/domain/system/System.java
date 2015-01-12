@@ -97,6 +97,16 @@ public class System extends Resource {
     @Column(name = "cipher_salt", nullable = false)
     private String cipherSalt;
 
+    @Column(name = "amazon_access_key")
+    private String amazonAccessKey;
+
+    @Column(name = "amazon_secret_key")
+    private String amazonSecretKey;
+    
+    @Column(name = "last_amazon_cleanup_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastAmazonCleanupDate;
+
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
 
@@ -325,6 +335,30 @@ public class System extends Resource {
         this.cipherSalt = cipherSalt;
     }
 
+    public final String getAmazonAccessKey() {
+        return amazonAccessKey;
+    }
+
+    public final void setAmazonAccessKey(String amazonAccessKey) {
+        this.amazonAccessKey = amazonAccessKey;
+    }
+
+    public final String getAmazonSecretKey() {
+        return amazonSecretKey;
+    }
+
+    public final void setAmazonSecretKey(String amazonSecretKey) {
+        this.amazonSecretKey = amazonSecretKey;
+    }
+
+    public final LocalDate getLastAmazonCleanupDate() {
+        return lastAmazonCleanupDate;
+    }
+
+    public final void setLastAmazonCleanupDate(LocalDate lastAmazonCleanupDate) {
+        this.lastAmazonCleanupDate = lastAmazonCleanupDate;
+    }
+
     @Override
     public String getSequenceIdentifier() {
         return sequenceIdentifier;
@@ -424,6 +458,10 @@ public class System extends Resource {
     public System withCipherSalt(String cipherSalt) {
         this.cipherSalt = cipherSalt;
         return this;
+    }
+    
+    public boolean isDocumentExportEnabled() {
+        return !(amazonAccessKey == null || amazonSecretKey == null);
     }
 
     @Override

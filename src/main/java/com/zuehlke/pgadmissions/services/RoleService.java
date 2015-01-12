@@ -2,9 +2,11 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -90,7 +92,7 @@ public class RoleService {
     }
 
     public void updateUserRole(Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) throws DeduplicationException,
-            InstantiationException, IllegalAccessException {
+            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         if (roles.length > 0) {
             User invoker = userService.getCurrentUser();
             Action action = actionService.getViewEditAction(resource);
@@ -178,7 +180,7 @@ public class RoleService {
         entityService.flush();
     }
 
-    public void deleteUserRoles(Resource resource, User user) throws DeduplicationException, InstantiationException, IllegalAccessException {
+    public void deleteUserRoles(Resource resource, User user) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         List<PrismRole> roles = roleDAO.getUserRoles(resource, user);
         updateUserRole(resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
     }

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +12,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -67,6 +69,7 @@ import com.zuehlke.pgadmissions.dto.AdvertSearchEngineDTO;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO.DisplayPropertyConfigurationValueDTO;
 import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
@@ -137,7 +140,7 @@ public class SystemService {
 
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private InstitutionService institutionService;
 
@@ -151,7 +154,7 @@ public class SystemService {
 
     @Transactional(timeout = 600)
     public void initializeSystem() throws WorkflowConfigurationException, DeduplicationException, CustomizationException, InstantiationException,
-            IllegalAccessException {
+            IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         LOGGER.info("Initialising scope definitions");
         verifyBackwardCompatibility(Scope.class);
         initializeScopes();
@@ -171,7 +174,7 @@ public class SystemService {
         LOGGER.info("Initialising state group definitions");
         verifyBackwardCompatibility(StateGroup.class);
         initializeStateGroups();
-        
+
         LOGGER.info("Initialising state transition evaluation definitions");
         verifyBackwardCompatibility(StateTransitionEvaluation.class);
         initializeStateTransitionEvaluations();
@@ -225,7 +228,7 @@ public class SystemService {
     public void setLastDataImportDate(LocalDate baseline) {
         getSystem().setLastDataImportDate(baseline);
     }
-    
+
     @Transactional
     public AdvertSearchEngineDTO getSystemAdvert() {
         return new AdvertSearchEngineDTO().withRelatedInstitutions(institutionService.getActiveInstitions());
@@ -385,15 +388,16 @@ public class SystemService {
         User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail, PrismLocale.getSystemLocale());
         State systemRunning = stateService.getById(PrismState.SYSTEM_RUNNING);
         DateTime startupTimestamp = new DateTime();
-        System transientSystem = new System().withId(systemId).withTitle(systemName).withLocale(PrismLocale.getSystemLocale())
-                .withHelpdesk(systemHelpdesk).withUser(systemUser).withState(systemRunning).withCipherSalt(EncryptionUtils.getUUID())
-                .withCreatedTimestamp(startupTimestamp).withUpdatedTimestamp(startupTimestamp);
+        System transientSystem = new System().withId(systemId).withTitle(systemName).withLocale(PrismLocale.getSystemLocale()).withHelpdesk(systemHelpdesk)
+                .withUser(systemUser).withState(systemRunning).withCipherSalt(EncryptionUtils.getUUID()).withCreatedTimestamp(startupTimestamp)
+                .withUpdatedTimestamp(startupTimestamp);
         System system = entityService.createOrUpdate(transientSystem);
         system.setCode(resourceService.generateResourceCode(system));
         return system;
     }
 
-    private void initializeStateDurationConfigurations(System system) throws DeduplicationException, CustomizationException, InstantiationException, IllegalAccessException {
+    private void initializeStateDurationConfigurations(System system) throws DeduplicationException, CustomizationException, InstantiationException,
+            IllegalAccessException {
         for (PrismScope prismScope : scopeService.getScopesDescending()) {
             StateDurationConfigurationDTO configurationDTO = new StateDurationConfigurationDTO();
             for (PrismStateDurationDefinition prismStateDuration : PrismStateDurationDefinition.values()) {
@@ -406,7 +410,8 @@ public class SystemService {
         }
     }
 
-    private void initializeDisplayPropertyConfigurations(System system) throws DeduplicationException, CustomizationException, InstantiationException, IllegalAccessException {
+    private void initializeDisplayPropertyConfigurations(System system) throws DeduplicationException, CustomizationException, InstantiationException,
+            IllegalAccessException {
         for (PrismScope prismScope : scopeService.getScopesDescending()) {
             DisplayPropertyConfigurationDTO configurationDTO = new DisplayPropertyConfigurationDTO();
             for (PrismDisplayPropertyDefinition prismDisplayPropertyDefinition : PrismDisplayPropertyDefinition.values()) {
@@ -419,7 +424,8 @@ public class SystemService {
         }
     }
 
-    private void initializeWorkflowPropertyConfigurations(System system) throws DeduplicationException, CustomizationException, InstantiationException, IllegalAccessException {
+    private void initializeWorkflowPropertyConfigurations(System system) throws DeduplicationException, CustomizationException, InstantiationException,
+            IllegalAccessException {
         for (PrismScope prismScope : scopeService.getScopesDescending()) {
             WorkflowPropertyConfigurationDTO configurationDTO = new WorkflowPropertyConfigurationDTO();
             for (PrismWorkflowPropertyDefinition prismWorkflowProperty : PrismWorkflowPropertyDefinition.values()) {
@@ -441,7 +447,8 @@ public class SystemService {
         }
     }
 
-    private void initializeNotificationConfigurations(System system) throws DeduplicationException, CustomizationException, InstantiationException, IllegalAccessException {
+    private void initializeNotificationConfigurations(System system) throws DeduplicationException, CustomizationException, InstantiationException,
+            IllegalAccessException {
         for (PrismNotificationDefinition prismNotificationDefinition : PrismNotificationDefinition.values()) {
             String subject = FileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationDefinition.getInitialTemplateSubject());
             String content = FileUtils.getContent(defaultEmailContentDirectory + prismNotificationDefinition.getInitialTemplateContent());
@@ -546,7 +553,8 @@ public class SystemService {
         }
     }
 
-    private void initializeSystemUser(System system) throws DeduplicationException, InstantiationException, IllegalAccessException {
+    private void initializeSystemUser(System system) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException,
+            WorkflowEngineException, IOException {
         User user = system.getUser();
         if (user.getUserAccount() == null) {
             Action action = actionService.getById(PrismAction.SYSTEM_STARTUP);
@@ -560,7 +568,8 @@ public class SystemService {
     }
 
     private void persistConfigurations(PrismConfiguration configurationType, System system, PrismScope prismScope,
-            List<? extends WorkflowConfigurationDTO> configurationDTO) throws CustomizationException, DeduplicationException, InstantiationException, IllegalAccessException {
+            List<? extends WorkflowConfigurationDTO> configurationDTO) throws CustomizationException, DeduplicationException, InstantiationException,
+            IllegalAccessException {
         if (configurationDTO.size() > 0) {
             customizationService.createConfigurationGroup(configurationType, system, prismScope, getSystemLocale(),
                     prismScope.getPrecedence() > PrismScope.INSTITUTION.getPrecedence() ? getSystemProgramType() : null, configurationDTO);

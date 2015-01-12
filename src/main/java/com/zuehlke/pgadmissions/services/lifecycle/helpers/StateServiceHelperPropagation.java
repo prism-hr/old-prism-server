@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.ScopeService;
@@ -31,7 +34,7 @@ public class StateServiceHelperPropagation extends AbstractServiceHelper {
     private ResourceService resourceService;
     
     @Override
-    public void execute() throws DeduplicationException, InstantiationException, IllegalAccessException {
+    public void execute() throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         List<PrismScope> scopeIds = scopeService.getScopesDescending();
         for (PrismScope scopeId : scopeIds) {
             List<StateTransitionPendingDTO> stateTransitionPendingDTOs = stateService.getStateTransitionsPending(scopeId);

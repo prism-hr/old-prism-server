@@ -23,6 +23,7 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -48,6 +49,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.AdvertCategoriesDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertClosingDateDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDetailsDTO;
@@ -169,7 +171,7 @@ public class AdvertService {
 
     @SuppressWarnings("unchecked")
     public void updateCategories(Class<? extends Resource> resourceClass, Integer resourceId, AdvertCategoriesDTO categoriesDTO) throws DeduplicationException,
-            InstantiationException, IllegalAccessException {
+            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
 
@@ -194,7 +196,7 @@ public class AdvertService {
     }
 
     public AdvertClosingDate addClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, AdvertClosingDateDTO advertClosingDateDTO)
-            throws DeduplicationException, InstantiationException, IllegalAccessException {
+            throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
 
@@ -211,7 +213,7 @@ public class AdvertService {
     }
 
     public void updateClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, Integer closingDateId, AdvertClosingDateDTO advertClosingDateDTO)
-            throws DeduplicationException, InstantiationException, IllegalAccessException {
+            throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
         AdvertClosingDate advertClosingDate = getClosingDateById(closingDateId);
@@ -227,7 +229,7 @@ public class AdvertService {
     }
 
     public void deleteClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, Integer closingDateId) throws DeduplicationException,
-            InstantiationException, IllegalAccessException {
+            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
         AdvertClosingDate advertClosingDate = getClosingDateById(closingDateId);

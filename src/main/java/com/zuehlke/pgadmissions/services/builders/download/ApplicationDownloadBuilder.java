@@ -63,6 +63,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.services.CustomizationService;
+import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
@@ -81,6 +82,9 @@ public class ApplicationDownloadBuilder {
 
     @Autowired
     private CustomizationService customizationService;
+    
+    @Autowired
+    private DocumentService documentService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -677,7 +681,7 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addDocument(Document pdfDocument, com.zuehlke.pgadmissions.domain.document.Document document, PdfWriter pdfWriter) throws IOException {
-        PdfReader pdfReader = new PdfReader(document.getContent());
+        PdfReader pdfReader = new PdfReader(documentService.getContent(document));
         PdfContentByte cb = pdfWriter.getDirectContent();
         for (int i = 1; i <= pdfReader.getNumberOfPages(); i++) {
             PdfImportedPage page = pdfWriter.getImportedPage(pdfReader, i);

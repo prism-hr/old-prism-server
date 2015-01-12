@@ -1,12 +1,9 @@
 package com.zuehlke.pgadmissions.services.builders;
 
-import org.apache.commons.lang3.text.WordUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
-import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -26,7 +23,7 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
             criteria.add(conditions);
         }
     }
-    
+
     public static Criteria appendLimitCriterion(Criteria criteria, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords) {
         FilterSortOrder sortOrder = filter.getSortOrder();
 
@@ -41,13 +38,6 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
         }
 
         return criteria;
-    }
-
-    public static void appendClosingDateFilterCriterion(Junction conditions, String property, FilterExpression expression, LocalDate valueDateStart,
-            LocalDate valueDateClose, boolean negated) {
-        Junction restriction = Restrictions.disjunction().add(getRangeFilterCriterion(property, expression, valueDateStart, valueDateClose))
-                .add(getRangeFilterCriterion("previous" + WordUtils.capitalize(property), expression, valueDateStart, valueDateClose));
-        applyOrNegateFilterCriterion(conditions, restriction, negated);
     }
 
     public static <T extends Resource> void throwResourceFilterListMissingPropertyError(PrismScope scopeId, ResourceListFilterProperty property) {

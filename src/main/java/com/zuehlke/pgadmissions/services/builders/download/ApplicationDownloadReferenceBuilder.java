@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentCustomResponseRepresentation;
+import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Component
@@ -37,6 +38,9 @@ public class ApplicationDownloadReferenceBuilder {
     private PropertyLoader propertyLoader;
 
     private ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper;
+    
+    @Autowired
+    private DocumentService documentService;
     
     @Autowired
     private Mapper mapper;
@@ -89,9 +93,9 @@ public class ApplicationDownloadReferenceBuilder {
     private void addReferenceDocument(Document pdfDocument, PdfWriter pdfWriter, Comment referenceComment) {
         if (referenceComment != null) {
             PdfContentByte content = pdfWriter.getDirectContent();
-            for (com.zuehlke.pgadmissions.domain.document.Document input : referenceComment.getDocuments()) {
+            for (com.zuehlke.pgadmissions.domain.document.Document document : referenceComment.getDocuments()) {
                 try {
-                    PdfReader reader = new PdfReader(input.getContent());
+                    PdfReader reader = new PdfReader(documentService.getContent(document));
                     for (int i = 1; i <= reader.getNumberOfPages(); i++) {
                         pdfDocument.newPage();
                         PdfImportedPage page = pdfWriter.getImportedPage(reader, i);

@@ -49,6 +49,9 @@ public class Document {
 
     @Column(name = "content_type", nullable = false)
     private String contentType;
+    
+    @Column(name = "exported", nullable = false)
+    private Boolean exported;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -132,6 +135,14 @@ public class Document {
 
     public void setContentType(String contentType) {
         this.contentType = contentType;
+    }
+
+    public final Boolean getExported() {
+        return exported;
+    }
+
+    public final void setExported(Boolean exported) {
+        this.exported = exported;
     }
 
     public User getUser() {
@@ -228,6 +239,11 @@ public class Document {
 
     public Document withContentType(String contentType) {
         this.contentType = contentType;
+        return this;
+    }
+    
+    public Document withExported(Boolean exported) {
+        this.exported = exported;
         return this;
     }
 

@@ -26,8 +26,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDef
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
-import com.zuehlke.pgadmissions.exceptions.CustomizationException;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestApiUtils;
 import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionConfigurationDTO;
@@ -135,8 +133,7 @@ public class ResourceConfigurationResource {
     public void updateNotificationConfiguration(@ModelAttribute PrismConfiguration configurationType, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @PathVariable Integer resourceId, @RequestParam PrismScope scope, @RequestParam(required = false) PrismLocale locale,
             @RequestParam(required = false) PrismProgramType programType, @PathVariable PrismNotificationDefinition id,
-            @Valid @RequestBody NotificationConfigurationDTO notificationConfigurationDTO) throws CustomizationException, DeduplicationException,
-            InstantiationException, IllegalAccessException {
+            @Valid @RequestBody NotificationConfigurationDTO notificationConfigurationDTO) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         customizationService.createOrUpdateConfigurationUser(configurationType, resource, locale, programType, notificationConfigurationDTO);
     }

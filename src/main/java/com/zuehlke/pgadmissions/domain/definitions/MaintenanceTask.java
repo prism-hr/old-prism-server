@@ -4,7 +4,8 @@ import com.zuehlke.pgadmissions.services.lifecycle.helpers.AbstractServiceHelper
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.AdvertServiceHelperClosingDate;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.AdvertServiceHelperExchangeRate;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.ApplicationExportServiceHelper;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.DocumentServiceHelper;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.DocumentServiceHelperDelete;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.DocumentServiceHelperExport;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperInstitution;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperSystem;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.InstitutionServiceHelper;
@@ -27,7 +28,8 @@ public enum MaintenanceTask {
     SYSTEM_UPDATE_ADVERT_EXCHANGE_RATE(AdvertServiceHelperExchangeRate.class, true), //
     SYSTEM_SEND_DEFERRED_WORKFLOW_NOTIFICATION(NotificationServiceHelperWorkflow.class, false), //
     SYSTEM_SEND_RECOMMENDATION_NOTIFICATION(NotificationServiceHelperRecommendation.class, true), //
-    SYSTEM_DELETE_UNUSED_DOCUMENT(DocumentServiceHelper.class, true);
+    SYSTEM_EXPORT_DOCUMENT(DocumentServiceHelperExport.class, true), //
+    SYSTEM_DELETE_UNUSED_DOCUMENT(DocumentServiceHelperDelete.class, true);
 
     private Class<? extends AbstractServiceHelper> executor;
 

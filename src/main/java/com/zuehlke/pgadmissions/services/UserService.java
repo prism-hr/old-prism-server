@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
@@ -7,6 +8,7 @@ import java.util.TreeMap;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -37,6 +39,7 @@ import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.UserAccountDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
@@ -125,7 +128,7 @@ public class UserService {
     }
 
     public User getOrCreateUserWithRoles(String firstName, String lastName, String email, PrismLocale locale, Resource resource, Set<PrismRole> roles)
-            throws DeduplicationException, InstantiationException, IllegalAccessException {
+            throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         User user = getOrCreateUser(firstName, lastName, email, locale);
         roleService.updateUserRole(resource, user, PrismRoleTransitionType.CREATE, roles.toArray(new PrismRole[roles.size()]));
         return user;

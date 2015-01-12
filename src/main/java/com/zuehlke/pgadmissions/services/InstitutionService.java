@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,7 @@ import com.zuehlke.pgadmissions.dto.AdvertSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
@@ -185,7 +187,8 @@ public class InstitutionService {
         return socialPresenceService.getPotentialInstitutionProfiles(institutionTitle);
     }
 
-    public void initializeInstitution(Integer institutionId) throws DeduplicationException, InstantiationException, IllegalAccessException {
+    public void initializeInstitution(Integer institutionId) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException,
+            WorkflowEngineException, IOException {
         Institution institution = getById(institutionId);
         User user = systemService.getSystem().getUser();
         Action action = actionService.getById(INSTITUTION_STARTUP);
@@ -228,7 +231,7 @@ public class InstitutionService {
     }
 
     public ActionOutcomeDTO executeAction(Integer institutionId, CommentDTO commentDTO) throws DeduplicationException, InstantiationException,
-            IllegalAccessException {
+            IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         User user = userService.getById(commentDTO.getUser());
         Institution institution = getById(institutionId);
 
@@ -273,7 +276,7 @@ public class InstitutionService {
         if (searchEngineDTO != null) {
             searchEngineDTO.setRelatedPrograms(programService.getActiveProgramsByInstitution(institutionId));
             searchEngineDTO.setRelatedProjects(projectService.getActiveProjectsByInstitution(institutionId));
-    
+
             List<String> relatedUsers = Lists.newArrayList();
             List<User> institutionAcademics = userService.getUsersForResourceAndRoles(getById(institutionId), PROJECT_PRIMARY_SUPERVISOR,
                     PROJECT_SECONDARY_SUPERVISOR);

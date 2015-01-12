@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.services.ApplicationDownloadService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
+import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderHelper;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadEquivalentExperienceBuilder;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadReferenceBuilder;
@@ -50,6 +51,9 @@ public class ApplicationDocumentExportBuilder {
 
     @Autowired
     private CommentService commentService;
+    
+    @Autowired
+    private DocumentService documentService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -213,9 +217,9 @@ public class ApplicationDocumentExportBuilder {
         return UUID.randomUUID() + ".pdf";
     }
 
-    private byte[] getFileContents(Application application, Document document) {
+    private byte[] getFileContents(Application application, Document document) throws IOException {
         if (document != null) {
-            return document.getContent();
+            return documentService.getContent(document);
         }
         throw new Error("Document was missing for export of application: " + application.getCode());
     }

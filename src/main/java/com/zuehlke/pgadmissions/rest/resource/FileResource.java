@@ -83,9 +83,10 @@ public class FileResource {
         response.setHeader("Content-Disposition", "attachment; filename=\"" + document.getFileName() + "\"");
         response.setHeader("File-Name", document.getFileName());
         response.setContentType(document.getContentType());
-        response.setContentLength(document.getContent().length);
+        byte[] content = documentService.getContent(document);
+        response.setContentLength(content.length);
         ServletOutputStream outputStream = response.getOutputStream();
-        outputStream.write(document.getContent());
+        outputStream.write(content);
     }
 
     @PreAuthorize("isAuthenticated()")

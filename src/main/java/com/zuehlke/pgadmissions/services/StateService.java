@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -9,6 +10,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +48,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.NextStateRepresentation;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
@@ -141,7 +144,7 @@ public class StateService {
     }
 
     public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) throws DeduplicationException, InstantiationException,
-            IllegalAccessException {
+            IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         comment.setResource(resource);
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
@@ -403,7 +406,7 @@ public class StateService {
     }
 
     public <T extends Resource> void executeDeferredStateTransition(Class<T> resourceClass, Integer resourceId, PrismAction actionId)
-            throws DeduplicationException, InstantiationException, IllegalAccessException {
+            throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Action action = actionService.getById(actionId);
         Comment comment = new Comment().withResource(resource).withUser(systemService.getSystem().getUser()).withAction(action).withDeclinedResponse(false)

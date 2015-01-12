@@ -1,8 +1,9 @@
 package com.zuehlke.pgadmissions.rest.validation.annotation;
 
+import java.util.regex.Pattern;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.regex.Pattern;
 
 public class PhoneNumberValidator implements ConstraintValidator<PhoneNumber, String> {
 

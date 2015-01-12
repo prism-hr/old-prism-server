@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
 
 import java.beans.IntrospectionException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -72,6 +74,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentApplicationOfferDetailDTO;
@@ -157,7 +160,7 @@ public class ApplicationService {
         return application;
     }
 
-    public void save(Application application) {
+    public void save(Application application) throws BeansException, IOException {
         prepopulateApplication(application);
         entityService.save(application);
     }
@@ -209,7 +212,7 @@ public class ApplicationService {
         LocalDate latestStartDate = closeDate.withDayOfWeek(DateTimeConstants.MONDAY);
         return latestStartDate.isAfter(closeDate) ? latestStartDate.minusWeeks(1) : latestStartDate;
     }
-    
+
     public String getApplicationExportReference(Application application) {
         return applicationDAO.getApplicationExportReference(application);
     }
@@ -316,7 +319,7 @@ public class ApplicationService {
     }
 
     public ActionOutcomeDTO executeAction(@PathVariable Integer applicationId, @Valid @RequestBody CommentDTO commentDTO) throws DeduplicationException,
-            InstantiationException, IllegalAccessException {
+            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         Application application = entityService.getById(Application.class, applicationId);
         PrismAction actionId = commentDTO.getAction();
 
@@ -667,7 +670,7 @@ public class ApplicationService {
         return errors;
     }
 
-    private void prepopulateApplication(Application application) {
+    private void prepopulateApplication(Application application) throws BeansException, IOException {
         Application previousApplication = applicationDAO.getPreviousSubmittedApplication(application);
         if (previousApplication != null) {
             applicationContext.getBean(ApplicationCopyHelper.class).copyApplication(application, previousApplication);

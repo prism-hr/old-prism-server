@@ -1,10 +1,12 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -160,13 +162,13 @@ public class ActionService {
     }
 
     public ActionOutcomeDTO executeUserAction(Resource resource, Action action, Comment comment) throws DeduplicationException, InstantiationException,
-            IllegalAccessException {
+            IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         validateInvokeAction(resource, action, comment);
         return executeAction(resource, action, comment);
     }
 
     public ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment) throws DeduplicationException, InstantiationException,
-            IllegalAccessException {
+            IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         User actionOwner = comment.getUser();
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE || action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE) {

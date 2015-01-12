@@ -1,5 +1,20 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang.BooleanUtils;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
@@ -12,11 +27,22 @@ import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
-import com.zuehlke.pgadmissions.domain.resource.*;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStateDefinition;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -26,7 +52,12 @@ import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.dto.*;
+import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
+import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
@@ -34,20 +65,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepr
 import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.Restrictions;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
 
 @Service
 @Transactional
@@ -163,7 +180,7 @@ public class ResourceService {
         DateTime baseline = new DateTime();
         resource.setCreatedTimestamp(baseline);
         resource.setUpdatedTimestamp(baseline);
-        
+
         if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
             ReflectionUtils.setProperty(resource, "updatedTimestampSitemap", baseline);
         }
@@ -430,17 +447,14 @@ public class ResourceService {
                     Boolean negated = BooleanUtils.toBoolean(constraint.getNegated());
                     switch (property) {
                     case CLOSING_DATE:
-                        ResourceListConstraintBuilder.appendClosingDateFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
+                    case CONFIRMED_START_DATE:
+                    case DUE_DATE:
+                        ResourceListConstraintBuilder.appendDateFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
                                 constraint.getValueDateStart(), constraint.getValueDateClose(), negated);
                         break;
                     case CODE:
                     case REFERRER:
                         ResourceListConstraintBuilder.appendStringFilterCriterion(conditions, propertyName, constraint.getValueString(), negated);
-                        break;
-                    case CONFIRMED_START_DATE:
-                    case DUE_DATE:
-                        ResourceListConstraintBuilder.appendDateFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
-                                constraint.getValueDateStart(), constraint.getValueDateClose(), negated);
                         break;
                     case CREATED_TIMESTAMP:
                     case UPDATED_TIMESTAMP:

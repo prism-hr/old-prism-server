@@ -291,7 +291,7 @@ public class CustomizationDAO {
         }
 
         if (programType != null) {
-            query.setParameter("programType", programType);
+            query.setParameter("programType", programType.name());
         }
     }
 

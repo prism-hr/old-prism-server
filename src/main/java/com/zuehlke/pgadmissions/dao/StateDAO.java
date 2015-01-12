@@ -34,11 +34,20 @@ public class StateDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public List<StateTransition> getStateTransitions(State state, Action action) {
+    public List<StateTransition> getPotentialStateTransitions(Resource resource, Action action) {
         return (List<StateTransition>) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("stateAction.state", state)) //
+                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("resourceState." + resource.getResourceScope().getLowerCaseName() + ".id", resource.getId())) //
                 .add(Restrictions.eq("stateAction.action", action)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.eq("resourceState.primaryState", true)) //
+                                .add(Restrictions.isNotNull("transitionState"))) //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.eq("resourceState.primaryState", false)) //
+                                .add(Restrictions.isNull("transitionState")))) //
                 .list();
     }
 
@@ -153,14 +162,6 @@ public class StateDAO {
                 .uniqueResult();
     }
 
-    public List<State> getResourceStates(Resource resource) {
-        return (List<State>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.property("state")) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
-                .addOrder(Order.desc("primaryState")) //
-                .list();
-    }
-
     public List<PrismStateGroup> getSecondaryResourceStateGroups(PrismScope resourceScope, Integer resourceId) {
         return (List<PrismStateGroup>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("state.stateGroup.id")) //
@@ -183,9 +184,9 @@ public class StateDAO {
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
                 .add(Restrictions.eq("stateTransitionEvaluation.nextStateSelection", true)) //
                 .add(Restrictions.isNotNull("transitionState"));
-        
+
         appendImportedResourceConstraint(criteria, importedResource);
-        
+
         return (List<NextStateRepresentation>) criteria.addOrder(Order.asc("transitionStateGroup.sequenceOrder")) //
                 .setResultTransformer(Transformers.aliasToBean(NextStateRepresentation.class)) //
                 .list();

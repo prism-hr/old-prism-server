@@ -267,6 +267,7 @@ public class ApplicationCopyHelper {
     public void copyReferee(ApplicationReferee to, ApplicationReferee from) {
         Institution toInstitution = to.getApplication().getInstitution();
         to.setUser(from.getUser());
+        to.setRefereeType(from.getRefereeType());
         to.setJobEmployer(from.getJobEmployer());
         to.setJobTitle(from.getJobTitle());
         to.setPhone(from.getPhone());

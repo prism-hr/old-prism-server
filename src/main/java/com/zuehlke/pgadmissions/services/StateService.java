@@ -1,9 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -25,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -196,7 +192,6 @@ public class StateService {
         Resource operative = resourceService.getOperativeResource(resource, action);
 
         List<StateTransition> potentialStateTransitions = getPotentialStateTransitions(operative, action);
-
         if (potentialStateTransitions.size() > 1) {
             PrismStateTransitionEvaluation transitionEvaluation = potentialStateTransitions.get(0).getStateTransitionEvaluation().getId();
             return (StateTransition) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(transitionEvaluation), operative, comment);
@@ -464,6 +459,10 @@ public class StateService {
     public List<NextStateRepresentation> getSelectableTransitionStates(State state, PrismAction actionId, boolean importedResource) {
         return stateDAO.getSelectableTransitionStates(state, actionId, importedResource);
     }
+    
+    private List<StateTransition> getPotentialStateTransitions(Resource resource, Action action) {
+        return stateDAO.getPotentialStateTransitions(resource, action);
+    }
 
     private StateTransition getViewEditNextState(Resource resource, Comment comment) {
         if (comment.getTransitionState() == null) {
@@ -479,25 +478,7 @@ public class StateService {
         PrismState transitionStateId = comment.getTransitionState().getId();
         return stateDAO.getStateTransition(resource, comment.getAction(), transitionStateId);
     }
-
-    private List<StateTransition> getPotentialStateTransitions(Resource resource, Action action) {
-        if (action.getActionType() == PrismActionType.USER_INVOCATION) {
-            Map<SimpleEntry<Action, State>, StateTransition> potentialStateTransitions = Maps.newLinkedHashMap();
-            for (State state : stateDAO.getResourceStates(resource)) {
-                for (StateTransition stateTransition : stateDAO.getStateTransitions(state, action)) {
-                    SimpleEntry<Action, State> key = stateTransition.getStateTransitionEvaluation() == null ? new SimpleEntry<Action, State>(action, null)
-                            : new SimpleEntry<Action, State>(action, stateTransition.getTransitionState());
-                    if (!potentialStateTransitions.containsKey(key)) {
-                        potentialStateTransitions.put(key, stateTransition);
-                    }
-                }
-            }
-            return Lists.newLinkedList(potentialStateTransitions.values());
-        } else {
-            return Lists.newLinkedList(stateDAO.getStateTransitions(resource.getState(), action));
-        }
-    }
-
+    
     private StateTransition getApplicationRejectedOutcome(Resource resource, Comment comment) {
         if (BooleanUtils.isTrue(resource.getInstitution().getUclInstitution())) {
             return stateDAO.getStateTransition(resource, comment.getAction(), PrismState.APPLICATION_REJECTED_PENDING_EXPORT);

@@ -1,5 +1,27 @@
 package com.zuehlke.pgadmissions.domain.user;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
@@ -7,15 +29,6 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import javax.persistence.*;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
 
 @Entity
 @Table(name = "USER")
@@ -93,13 +106,13 @@ public class User implements UserDetails, IUniqueEntity {
     @ManyToOne
     @JoinColumn(name = "parent_user_id")
     private User parentUser;
-
+    
     @OneToMany(mappedBy = "user")
     private Set<UserRole> userRoles = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
     private Set<Document> documents = Sets.newHashSet();
-
+    
     public Integer getId() {
         return id;
     }
@@ -330,7 +343,7 @@ public class User implements UserDetails, IUniqueEntity {
     public <T extends Resource> void setLastNotifiedDate(Class<T> resourceClass, LocalDate lastNotifiedDate) {
         ReflectionUtils.setProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName(), lastNotifiedDate);
     }
-    
+
     public String getSearchEngineRepresentation() {
         return fullName + " " + email.replace("@", " ").replace(".", " ");
     }
@@ -383,4 +396,5 @@ public class User implements UserDetails, IUniqueEntity {
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addProperty("email", email);
     }
+    
 }

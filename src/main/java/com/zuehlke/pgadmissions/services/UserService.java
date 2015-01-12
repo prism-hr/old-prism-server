@@ -82,7 +82,7 @@ public class UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof User) {
             User user = (User) authentication.getPrincipal();
-            return entityService.getById(User.class, user.getId()); // reload user
+            return entityService.getById(User.class, user.getId());
         }
         return null;
     }
@@ -278,11 +278,6 @@ public class UserService {
         UserInstitutionIdentity transientUserInstitutionIdentity = new UserInstitutionIdentity().withUser(application.getUser())
                 .withInstitution(application.getInstitution()).withIdentityType(PrismUserIdentity.STUDY_APPLICANT).withIdentitier(exportUserId);
         entityService.createOrUpdate(transientUserInstitutionIdentity);
-    }
-    
-    public void mergeUsers(Integer oldUserId, Integer newUserId) {
-        User oldUser = getById(oldUserId);
-        User newUser = getById(newUserId);
     }
 
 }

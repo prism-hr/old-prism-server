@@ -279,5 +279,10 @@ public class UserService {
                 .withInstitution(application.getInstitution()).withIdentityType(PrismUserIdentity.STUDY_APPLICANT).withIdentitier(exportUserId);
         entityService.createOrUpdate(transientUserInstitutionIdentity);
     }
+    
+    public void mergeUsers(Integer oldUserId, Integer newUserId) {
+        User oldUser = getById(oldUserId);
+        User newUser = getById(newUserId);
+    }
 
 }

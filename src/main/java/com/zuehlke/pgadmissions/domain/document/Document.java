@@ -13,7 +13,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.bouncycastle.util.Arrays;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,7 +42,7 @@ public class Document {
     private String fileName;
 
     @Lob
-    @Column(name = "file_content", nullable = false)
+    @Column(name = "file_content")
     @Type(type = "binary")
     private byte[] content;
 
@@ -57,13 +56,13 @@ public class Document {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "comment_id", insertable = false, updatable = false)
-    private Comment comment;
-
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
+    
+    @OneToOne
+    @JoinColumn(name = "comment_id", insertable = false, updatable = false)
+    private Comment comment;
 
     @OneToOne(mappedBy = "document")
     private ApplicationLanguageQualification applicationLanguageQualification;
@@ -124,9 +123,7 @@ public class Document {
     }
 
     public void setContent(byte[] content) {
-        if (content != null) {
-            this.content = Arrays.copyOf(content, content.length);
-        }
+        this.content = content;
     }
 
     public String getContentType() {

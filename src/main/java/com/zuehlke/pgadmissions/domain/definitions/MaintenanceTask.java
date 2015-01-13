@@ -17,19 +17,19 @@ import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperPro
 
 public enum MaintenanceTask {
 
-    SYSTEM_EXPORT_APPLICATION(ApplicationExportServiceHelper.class, false), //
-    SYSTEM_EXECUTE_ESCALATED_STATE_TRANSITION(StateServiceHelperEscalation.class, false), //
-    SYSTEM_EXECUTE_PROPAGATED_STATE_TRANSITION(StateServiceHelperPropagation.class, false), //
-    SYSTEM_IMPORT_SYSTEM_REFERENCE_DATA(ImportedEntityServiceHelperSystem.class, true), //
-    SYSTEM_IMPORT_INSTITUTION_REFERENCE_DATA(ImportedEntityServiceHelperInstitution.class, false), //
-    SYSTEM_STARTUP_INSTITUTION(InstitutionServiceHelper.class, true), //
-    SYSTEM_UPDATE_PROGRAM_STUDY_OPTION(ProgramServiceHelper.class, true), //
-    SYSTEM_UPDATE_ADVERT_CLOSING_DATE(AdvertServiceHelperClosingDate.class, true), //
-    SYSTEM_UPDATE_ADVERT_EXCHANGE_RATE(AdvertServiceHelperExchangeRate.class, true), //
-    SYSTEM_SEND_DEFERRED_WORKFLOW_NOTIFICATION(NotificationServiceHelperWorkflow.class, false), //
-    SYSTEM_SEND_RECOMMENDATION_NOTIFICATION(NotificationServiceHelperRecommendation.class, true), //
-    SYSTEM_EXPORT_DOCUMENT(DocumentServiceHelperExport.class, true), //
-    SYSTEM_DELETE_UNUSED_DOCUMENT(DocumentServiceHelperDelete.class, true);
+//    SYSTEM_EXPORT_APPLICATION(ApplicationExportServiceHelper.class, false), //
+//    SYSTEM_EXECUTE_ESCALATED_STATE_TRANSITION(StateServiceHelperEscalation.class, false), //
+//    SYSTEM_EXECUTE_PROPAGATED_STATE_TRANSITION(StateServiceHelperPropagation.class, false), //
+//    SYSTEM_IMPORT_SYSTEM_REFERENCE_DATA(ImportedEntityServiceHelperSystem.class, true), //
+//    SYSTEM_IMPORT_INSTITUTION_REFERENCE_DATA(ImportedEntityServiceHelperInstitution.class, false), //
+//    SYSTEM_STARTUP_INSTITUTION(InstitutionServiceHelper.class, true), //
+//    SYSTEM_UPDATE_PROGRAM_STUDY_OPTION(ProgramServiceHelper.class, true), //
+//    SYSTEM_UPDATE_ADVERT_CLOSING_DATE(AdvertServiceHelperClosingDate.class, true), //
+//    SYSTEM_UPDATE_ADVERT_EXCHANGE_RATE(AdvertServiceHelperExchangeRate.class, true), //
+//    SYSTEM_SEND_DEFERRED_WORKFLOW_NOTIFICATION(NotificationServiceHelperWorkflow.class, false), //
+//    SYSTEM_SEND_RECOMMENDATION_NOTIFICATION(NotificationServiceHelperRecommendation.class, true), //
+    SYSTEM_EXPORT_DOCUMENT(DocumentServiceHelperExport.class, true); //
+//    SYSTEM_DELETE_UNUSED_DOCUMENT(DocumentServiceHelperDelete.class, true);
 
     private Class<? extends AbstractServiceHelper> executor;
 

@@ -681,7 +681,7 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addDocument(Document pdfDocument, com.zuehlke.pgadmissions.domain.document.Document document, PdfWriter pdfWriter) throws IOException {
-        PdfReader pdfReader = new PdfReader(documentService.getContent(document));
+        PdfReader pdfReader = new PdfReader(documentService.getDocumentContent(document));
         PdfContentByte cb = pdfWriter.getDirectContent();
         for (int i = 1; i <= pdfReader.getNumberOfPages(); i++) {
             PdfImportedPage page = pdfWriter.getImportedPage(pdfReader, i);

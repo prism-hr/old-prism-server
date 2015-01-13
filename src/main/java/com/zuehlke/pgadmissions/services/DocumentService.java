@@ -60,9 +60,6 @@ public class DocumentService {
     @Value("${context.environment}")
     private String contextEnvironment;
 
-    @Value("${integration.amazon.on}")
-    private Boolean amazonOn;
-
     @Value("${integration.amazon.bucket}")
     private String amazonBucket;
 
@@ -138,19 +135,10 @@ public class DocumentService {
         return create(fileCategory, fileName, content, contentType);
     }
 
-    public void deleteOrphanDocuments() throws IOException {
-        DateTime baselineTime = new DateTime();
-        LocalDate baselineDate = baselineTime.toLocalDate();
-
-        documentDAO.deleteOrphanDocuments(baselineTime);
-
-        if (amazonOn) {
-            System system = systemService.getSystem();
-            LocalDate lastAmazonCleanupDate = system.getLastAmazonCleanupDate();
-
-            if (lastAmazonCleanupDate == null || lastAmazonCleanupDate.isBefore(baselineDate)) {
-                cleanupAmazon(baselineDate);
-            }
+    public void deleteOrphanDocuments(DateTime baselineTime) throws IOException {  
+        List<Integer> documentIds = documentDAO.getOrphanDocuments(baselineTime);
+        if (!documentIds.isEmpty()) {
+            documentDAO.deleteOrphanDocuments(documentIds);
         }
     }
 
@@ -168,10 +156,10 @@ public class DocumentService {
         }
     }
 
-    public byte[] getContent(Document document) throws IOException {
+    public byte[] getDocumentContent(Document document) throws IOException {
         if (document.getExported() == true) {
             AmazonS3 amazonClient = getAmazonClient();
-            GetObjectRequest amazonRequest = new GetObjectRequest(amazonBucket, getAmazonObjectKey(document));
+            GetObjectRequest amazonRequest = new GetObjectRequest(amazonBucket, document.getId().toString());
 
             try {
                 S3Object amazonObject = amazonClient.getObject(amazonRequest);
@@ -196,11 +184,20 @@ public class DocumentService {
         return document.getContent();
     }
 
-    public List<Integer> getDocumentsForExport() {
-        return documentDAO.getDocumentsForExport();
+    public List<Integer> getExportDocuments() {
+        return documentDAO.getExportDocuments();
     }
 
-    public void exportDocument(Integer documentId) throws IOException {
+    public List<Integer> getOrphanDocuments(DateTime baselineTime) {
+        return documentDAO.getOrphanDocuments(baselineTime);
+    }
+
+    public void deleteDocument(Integer documentId) {
+        Document document = getById(documentId);
+        entityService.delete(document);
+    }
+
+    public void exportDocumentToAmazon(Integer documentId) throws IOException {
         Document document = getById(documentId);
         AmazonS3 amazonClient = getAmazonClient();
 
@@ -208,56 +205,71 @@ public class DocumentService {
         amazonMetadata.setContentType(document.getContentType());
         byte[] content = document.getContent();
         amazonMetadata.setContentLength(content.length);
-        PutObjectRequest amazonRequest = new PutObjectRequest(amazonBucket, getAmazonObjectKey(document), new ByteArrayInputStream(content), amazonMetadata);
-        amazonClient.putObject(amazonRequest);
 
-        document.setContent(null);
-        document.setExported(true);
+        ByteArrayInputStream amazonStream = null;
+
+        try {
+            amazonStream = new ByteArrayInputStream(content);
+            PutObjectRequest amazonRequest = new PutObjectRequest(amazonBucket, documentId.toString(), amazonStream, amazonMetadata);
+            amazonClient.putObject(amazonRequest);
+            document.setContent(null);
+            document.setExported(true);
+        } finally {
+            IOUtils.closeQuietly(amazonStream);
+        }
     }
 
     public byte[] getSystemDocument(String path) throws IOException {
         return Resources.toByteArray(Resources.getResource(path));
     }
 
-    private String getAmazonObjectKey(Document document) {
-        return String.format("%10d", document.getId());
-    }
-
-    private void cleanupAmazon(LocalDate baseline) throws IOException {
-        AmazonS3 amazonClient = getAmazonClient();
-        ListObjectsRequest amazonRequest = new ListObjectsRequest().withBucketName(amazonBucket);
-        ObjectListing amazonObjects = amazonClient.listObjects(amazonRequest);
-
-        for (S3ObjectSummary amazonObject : amazonObjects.getObjectSummaries()) {
-            String amazonObjectKey = amazonObject.getKey();
-            Document document = getById(Integer.parseInt(amazonObjectKey));
-
-            if (document == null) {
-                amazonClient.deleteObject(amazonBucket, amazonObjectKey);
-            }
-        }
-
+    public void deleteAmazonDocuments(DateTime baselineTime) throws IOException {
+        LocalDate baselineDate = baselineTime.toLocalDate();
         System system = systemService.getSystem();
-        system.setLastAmazonCleanupDate(baseline);
+        LocalDate lastAmazonCleanupDate = system.getLastAmazonCleanupDate();
+        if (lastAmazonCleanupDate == null || lastAmazonCleanupDate.isBefore(baselineDate)) {
+            AmazonS3 amazonClient = getAmazonClient();
+            ListObjectsRequest amazonRequest = new ListObjectsRequest().withBucketName(amazonBucket);
+            ObjectListing amazonObjects = amazonClient.listObjects(amazonRequest);
+
+            for (S3ObjectSummary amazonObject : amazonObjects.getObjectSummaries()) {
+                String amazonObjectKey = amazonObject.getKey();
+                Document document = getById(Integer.parseInt(amazonObjectKey));
+
+                if (document == null) {
+                    amazonClient.deleteObject(amazonBucket, amazonObjectKey);
+                }
+            }
+            
+            system.setLastAmazonCleanupDate(baselineDate);
+        }
     }
 
     private AmazonS3 getAmazonClient() throws IOException {
         System system = systemService.getSystem();
 
         Properties amazonProperties = new Properties();
-        amazonProperties.setProperty("amazonKey", system.getAmazonAccessKey());
+        amazonProperties.setProperty("accessKey", system.getAmazonAccessKey());
         amazonProperties.setProperty("secretKey", system.getAmazonSecretKey());
 
-        ByteArrayOutputStream amazonCredentialsOutputStream = new ByteArrayOutputStream();
-        amazonProperties.store(amazonCredentialsOutputStream, null);
-        ByteArrayInputStream amazonCredentialsInputStream = new ByteArrayInputStream(amazonCredentialsOutputStream.toByteArray());
+        ByteArrayOutputStream amazonCredentialsOutputStream = null;
+        ByteArrayInputStream amazonCredentialsInputStream = null;
 
-        PropertiesCredentials amazonCredentials = new PropertiesCredentials(amazonCredentialsInputStream);
+        try {
+            amazonCredentialsOutputStream = new ByteArrayOutputStream();
+            amazonProperties.store(amazonCredentialsOutputStream, null);
+            amazonCredentialsInputStream = new ByteArrayInputStream(amazonCredentialsOutputStream.toByteArray());
 
-        IOUtils.closeQuietly(amazonCredentialsOutputStream);
-        IOUtils.closeQuietly(amazonCredentialsInputStream);
+            PropertiesCredentials amazonCredentials = new PropertiesCredentials(amazonCredentialsInputStream);
 
-        return new AmazonS3Client(amazonCredentials);
+            IOUtils.closeQuietly(amazonCredentialsOutputStream);
+            IOUtils.closeQuietly(amazonCredentialsInputStream);
+
+            return new AmazonS3Client(amazonCredentials);
+        } finally {
+            IOUtils.closeQuietly(amazonCredentialsOutputStream);
+            IOUtils.closeQuietly(amazonCredentialsInputStream);
+        }
     }
 
     private String getFileName(Part upload) {

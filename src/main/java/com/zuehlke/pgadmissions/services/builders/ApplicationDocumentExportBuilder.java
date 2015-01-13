@@ -219,7 +219,7 @@ public class ApplicationDocumentExportBuilder {
 
     private byte[] getFileContents(Application application, Document document) throws IOException {
         if (document != null) {
-            return documentService.getContent(document);
+            return documentService.getDocumentContent(document);
         }
         throw new Error("Document was missing for export of application: " + application.getCode());
     }

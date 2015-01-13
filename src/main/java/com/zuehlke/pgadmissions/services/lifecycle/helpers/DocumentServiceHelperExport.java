@@ -5,11 +5,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
+@Component
 public class DocumentServiceHelperExport extends AbstractServiceHelper {
 
     @Value("${integration.amazon.on}")
@@ -25,9 +27,9 @@ public class DocumentServiceHelperExport extends AbstractServiceHelper {
     public void execute() throws IOException {
         System system = systemService.getSystem();
         if (amazonOn && system.isDocumentExportEnabled()) {
-            List<Integer> documentIds = documentService.getDocumentsForExport();
+            List<Integer> documentIds = documentService.getExportDocuments();
             for (Integer documentId : documentIds) {
-                documentService.exportDocument(documentId);
+                documentService.exportDocumentToAmazon(documentId);
             }
         }
     }

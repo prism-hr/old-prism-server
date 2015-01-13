@@ -95,7 +95,7 @@ public class ApplicationDownloadReferenceBuilder {
             PdfContentByte content = pdfWriter.getDirectContent();
             for (com.zuehlke.pgadmissions.domain.document.Document document : referenceComment.getDocuments()) {
                 try {
-                    PdfReader reader = new PdfReader(documentService.getContent(document));
+                    PdfReader reader = new PdfReader(documentService.getDocumentContent(document));
                     for (int i = 1; i <= reader.getNumberOfPages(); i++) {
                         pdfDocument.newPage();
                         PdfImportedPage page = pdfWriter.getImportedPage(reader, i);

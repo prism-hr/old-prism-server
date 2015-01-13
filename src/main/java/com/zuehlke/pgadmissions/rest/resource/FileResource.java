@@ -82,7 +82,7 @@ public class FileResource {
         response.setHeader("Content-Disposition", "attachment; filename=\"" + document.getFileName() + "\"");
         response.setHeader("File-Name", document.getFileName());
         response.setContentType(document.getContentType());
-        byte[] content = documentService.getContent(document);
+        byte[] content = documentService.getDocumentContent(document);
         response.setContentLength(content.length);
         ServletOutputStream outputStream = response.getOutputStream();
         outputStream.write(content);

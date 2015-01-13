@@ -18,6 +18,7 @@ import org.apache.commons.io.IOUtils;
 import org.bouncycastle.util.io.Streams;
 import org.imgscalr.Scalr;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -52,14 +53,11 @@ import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
 @Transactional
 public class DocumentService {
 
-    @Value("${amazon.bucket}")
+    @Value("${integration.amazon.on}")
+    private Boolean amazonOn;
+
+    @Value("${integration.amazon.bucket}")
     private String amazonBucket;
-
-    @Value("${amazon.access.key.id}")
-    private String amazonAccessKeyId;
-
-    @Value("${amazon.secret.access.key}")
-    private String amazonSecretAccessKey;
 
     @Autowired
     private DocumentDAO documentDAO;
@@ -134,12 +132,18 @@ public class DocumentService {
     }
 
     public void deleteOrphanDocuments() throws IOException {
-        DateTime baseline = new DateTime();
-        documentDAO.deleteOrphanDocuments(baseline);
-        
-        System system = systemService.getSystem();
-        if (system.getLastAmazonCleanupDate().isBefore(baseline.toLocalDate())) {   
-            cleanupAmazon();
+        DateTime baselineTime = new DateTime();
+        LocalDate baselineDate = baselineTime.toLocalDate();
+
+        documentDAO.deleteOrphanDocuments(baselineTime);
+
+        if (amazonOn) {
+            System system = systemService.getSystem();
+            LocalDate lastAmazonCleanupDate = system.getLastAmazonCleanupDate();
+
+            if (lastAmazonCleanupDate == null || lastAmazonCleanupDate.isBefore(baselineDate)) {
+                cleanupAmazon(baselineDate);
+            }
         }
     }
 
@@ -189,22 +193,25 @@ public class DocumentService {
     private String getAmazonObjectKey(Document document) {
         return String.format("%10d", document.getId());
     }
-    
-    private void cleanupAmazon() throws IOException {
+
+    private void cleanupAmazon(LocalDate baseline) throws IOException {
         AmazonS3 amazonClient = getAmazonClient();
         ListObjectsRequest amazonRequest = new ListObjectsRequest().withBucketName(amazonBucket);
         ObjectListing amazonObjects = amazonClient.listObjects(amazonRequest);
-   
+
         for (S3ObjectSummary amazonObject : amazonObjects.getObjectSummaries()) {
             String amazonObjectKey = amazonObject.getKey();
             Document document = getById(Integer.parseInt(amazonObjectKey));
-   
+
             if (document == null) {
                 amazonClient.deleteObject(amazonBucket, amazonObjectKey);
             }
         }
+
+        System system = systemService.getSystem();
+        system.setLastAmazonCleanupDate(baseline);
     }
-    
+
     private AmazonS3 getAmazonClient() throws IOException {
         System system = systemService.getSystem();
 

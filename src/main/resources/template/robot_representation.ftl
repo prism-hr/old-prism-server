@@ -36,11 +36,11 @@
     <div>
     	${advert.description}
     </div>
-    	<#if advert.parentInstitution??>
-    		<p><a href="${applicationUrl}/#!/?institution=${advert.parentInstitution?c}">Parent Institution</a></p>
+    	<#if advert.programId?? || advert.projectId??>
+    		<p><a href="${applicationUrl}/#!/?institution=${advert.institutionId?c}">Parent Institution</a></p>
     	</#if>
-    	<#if advert.parentProgram??>
-    		<p><a href="${applicationUrl}/#!/?program=${advert.parentProgram?c}">Parent Program</a></p>
+    	<#if advert.projectId??>
+    		<p><a href="${applicationUrl}/#!/?program=${advert.programId?c}">Parent Program</a></p>
     	</#if>
     <div>
     </div>

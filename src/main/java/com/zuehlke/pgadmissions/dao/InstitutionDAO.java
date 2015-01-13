@@ -143,6 +143,7 @@ public class InstitutionDAO {
     public AdvertSearchEngineDTO getSearchEngineAdverts(Integer institutionId, List<PrismState> programStates, List<PrismState> projectStates) {
         return (AdvertSearchEngineDTO) sessionFactory.getCurrentSession().createCriteria(Institution.class, "institution") //
                 .setProjection(Projections.projectionList() //
+                        .add(Projections.property("institution.id"), "institutionId") //
                         .add(Projections.property("institution.title"), "institutionTitle") //
                         .add(Projections.property("institution.summary"), "institutionSummary") //
                         .add(Projections.property("institution.homepage"), "institutionHomepage")) //

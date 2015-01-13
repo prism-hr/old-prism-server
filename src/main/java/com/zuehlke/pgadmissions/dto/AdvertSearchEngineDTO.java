@@ -7,18 +7,24 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 public class AdvertSearchEngineDTO {
-
+    
+    private Integer projectId;
+    
     private String projectTitle;
 
     private String projectSummary;
 
     private String projectDescription;
 
+    private Integer programId;
+    
     private String programTitle;
 
     private String programSummary;
 
     private String programDescription;
+    
+    private Integer institutionId;
 
     private String institutionTitle;
 
@@ -26,10 +32,6 @@ public class AdvertSearchEngineDTO {
 
     private String institutionHomepage;
     
-    private Integer parentProgram;
-    
-    private Integer parentInstitution;
-
     private List<ResourceSearchEngineDTO> relatedProjects = Lists.newLinkedList();
 
     private List<ResourceSearchEngineDTO> relatedPrograms = Lists.newLinkedList();
@@ -37,6 +39,14 @@ public class AdvertSearchEngineDTO {
     private List<ResourceSearchEngineDTO> relatedInstitutions = Lists.newLinkedList();
 
     private List<String> relatedUsers = Lists.newLinkedList();
+    
+    public final Integer getProjectId() {
+        return projectId;
+    }
+
+    public final void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
 
     public final String getProjectTitle() {
         return projectTitle;
@@ -60,6 +70,14 @@ public class AdvertSearchEngineDTO {
 
     public final void setProjectDescription(String projectDescription) {
         this.projectDescription = projectDescription;
+    }
+    
+    public final Integer getProgramId() {
+        return programId;
+    }
+
+    public final void setProgramId(Integer programId) {
+        this.programId = programId;
     }
 
     public final String getProgramTitle() {
@@ -85,6 +103,14 @@ public class AdvertSearchEngineDTO {
     public final void setProgramDescription(String programDescription) {
         this.programDescription = programDescription;
     }
+    
+    public final Integer getInstitutionId() {
+        return institutionId;
+    }
+
+    public final void setInstitutionId(Integer institutionId) {
+        this.institutionId = institutionId;
+    }
 
     public final String getInstitutionTitle() {
         return institutionTitle;
@@ -108,22 +134,6 @@ public class AdvertSearchEngineDTO {
 
     public final void setInstitutionHomepage(String institutionHomepage) {
         this.institutionHomepage = institutionHomepage;
-    }
-
-    public final Integer getParentProgram() {
-        return parentProgram;
-    }
-
-    public final void setParentProgram(Integer parentProgram) {
-        this.parentProgram = parentProgram;
-    }
-
-    public final Integer getParentInstitution() {
-        return parentInstitution;
-    }
-
-    public final void setParentInstitution(Integer parentInstitution) {
-        this.parentInstitution = parentInstitution;
     }
 
     public final List<ResourceSearchEngineDTO> getRelatedProjects() {

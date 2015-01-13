@@ -241,13 +241,14 @@ public class ProgramDAO {
     public AdvertSearchEngineDTO getSearchEngineAdvert(Integer programId, List<PrismState> states) {
         return (AdvertSearchEngineDTO) sessionFactory.getCurrentSession().createCriteria(Program.class, "program") //
                 .setProjection(Projections.projectionList() //
+                        .add(Projections.property("id"), "programId") //
                         .add(Projections.property("advert.title"), "programTitle") //
                         .add(Projections.property("advert.summary"), "programSummary") //
                         .add(Projections.property("advert.description"), "programDescription") //
+                        .add(Projections.property("institution.id"), "institutionId") //
                         .add(Projections.property("institution.title"), "institutionTitle") //
                         .add(Projections.property("institution.summary"), "institutionSummary") //
-                        .add(Projections.property("institution.homepage"), "institutionHomepage")
-                        .add(Projections.property("institution.id"), "parentInstitution")) //
+                        .add(Projections.property("institution.homepage"), "institutionHomepage")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("institution", "institution", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("id", programId)) //

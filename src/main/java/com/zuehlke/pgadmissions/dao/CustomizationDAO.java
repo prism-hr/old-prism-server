@@ -127,7 +127,7 @@ public class CustomizationDAO {
                         + getProgramTypeCriterionUpdate(programType)) //
                 .setParameter("resource", resource) //
                 .setParameter("definitionId", definitionId);
-        applyLocalizationConstraints(locale, programType, query);
+        applyLocalizationConstraintsRestoreDefault(locale, programType, query);
         query.executeUpdate();
     }
 
@@ -141,7 +141,7 @@ public class CustomizationDAO {
                         + getProgramTypeCriterionUpdate(programType)) //
                 .setParameter("resource", resource) //
                 .setParameter("scope", scope);
-        applyLocalizationConstraints(locale, programType, query);
+        applyLocalizationConstraintsRestoreDefault(locale, programType, query);
         query.executeUpdate();
     }
 
@@ -173,7 +173,7 @@ public class CustomizationDAO {
         query.setParameter(resourceScope.getLowerCaseName(), resource) //
                 .setParameter("definitionId", definitionId);
 
-        applyLocalizationConstraints(locale, programType, query);
+        applyLocalizationConstraintsRestoreGlobal(locale, programType, query);
         query.executeUpdate();
     }
 
@@ -205,7 +205,7 @@ public class CustomizationDAO {
         query.setParameter(resourceScope.getLowerCaseName(), resource) //
                 .setParameter("scope", scope);
 
-        applyLocalizationConstraints(locale, programType, query);
+        applyLocalizationConstraintsRestoreGlobal(locale, programType, query);
         query.executeUpdate();
     }
 
@@ -285,13 +285,21 @@ public class CustomizationDAO {
                 + "where scope.id = :scope) ";
     }
 
-    private void applyLocalizationConstraints(PrismLocale locale, PrismProgramType programType, Query query) {
+    private void applyLocalizationConstraintsRestoreDefault(PrismLocale locale, PrismProgramType programType, Query query) {
         if (locale != null) {
             query.setParameter("locale", locale);
         }
 
         if (programType != null) {
-            query.setParameter("programType", programType.name());
+            query.setParameter("programType", programType);
+        }
+    }
+    
+    private void applyLocalizationConstraintsRestoreGlobal(PrismLocale locale, PrismProgramType programType, Query query) {
+        applyLocalizationConstraintsRestoreDefault(locale, programType, query);
+        
+        if (programType != null) {
+            query.setParameter("programTypeName", programType.name());
         }
     }
 
@@ -304,7 +312,7 @@ public class CustomizationDAO {
                 + "or program in (" //
                 + "from Program " //
                 + "where system = :system " //
-                + "and programType in (" + "from ProgramType " + "where code like :programType)) " //
+                + "and programType in (" + "from ProgramType " + "where code like :programTypeName)) " //
                 + localeCriterion //
                 + programTypeCriterion + ")";
     }
@@ -312,7 +320,7 @@ public class CustomizationDAO {
     private static String getInstitionInheritanceCriterion(String localeCriterion, String programTypeCriterion) {
         return "and (program in (" //
                 + "from Program " //
-                + "where institution = :institution " + "and programType in (" + "from ProgramType " + "where code like :programType)) " //
+                + "where institution = :institution " + "and programType in (" + "from ProgramType " + "where code like :programTypeName)) " //
                 + localeCriterion //
                 + programTypeCriterion + ")";
     }

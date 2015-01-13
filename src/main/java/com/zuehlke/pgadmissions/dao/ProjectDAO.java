@@ -116,17 +116,18 @@ public class ProjectDAO {
     public AdvertSearchEngineDTO getSearchEngineAdvert(Integer projectId, List<PrismState> states) {
         return (AdvertSearchEngineDTO) sessionFactory.getCurrentSession().createCriteria(Project.class, "project") //
                 .setProjection(Projections.projectionList() //
+                        .add(Projections.property("id"), "projectId") //
                         .add(Projections.property("advert.title"), "projectTitle") //
                         .add(Projections.property("advert.summary"), "projectSummary") //
                         .add(Projections.property("advert.description"), "projectDescription") //
+                        .add(Projections.property("program.id"), "programId") //
                         .add(Projections.property("programAdvert.title"), "programTitle") //
                         .add(Projections.property("programAdvert.summary"), "programSummary") //
                         .add(Projections.property("programAdvert.description"), "programDescription") //
+                        .add(Projections.property("institution.id"), "institutionId") //
                         .add(Projections.property("institution.title"), "institutionTitle") //
                         .add(Projections.property("institution.summary"), "institutionSummary") //
-                        .add(Projections.property("institution.homepage"), "institutionHomepage") //
-                        .add(Projections.property("program.id"), "parentProgram") //
-                        .add(Projections.property("institution.id"), "parentInstitution")) //
+                        .add(Projections.property("institution.homepage"), "institutionHomepage")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("program", "program", JoinType.INNER_JOIN) //
                 .createAlias("program.advert", "programAdvert", JoinType.INNER_JOIN) //

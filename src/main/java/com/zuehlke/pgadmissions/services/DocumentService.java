@@ -22,10 +22,12 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
@@ -35,9 +37,11 @@ import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Resources;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.dao.DocumentDAO;
@@ -52,6 +56,9 @@ import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
 @Service
 @Transactional
 public class DocumentService {
+
+    @Value("${context.environment}")
+    private String contextEnvironment;
 
     @Value("${integration.amazon.on}")
     private Boolean amazonOn;
@@ -165,9 +172,27 @@ public class DocumentService {
         if (document.getExported() == true) {
             AmazonS3 amazonClient = getAmazonClient();
             GetObjectRequest amazonRequest = new GetObjectRequest(amazonBucket, getAmazonObjectKey(document));
-            S3Object amazonObject = amazonClient.getObject(amazonRequest);
-            return IOUtils.toByteArray(amazonObject.getObjectContent());
+
+            try {
+                S3Object amazonObject = amazonClient.getObject(amazonRequest);
+                S3ObjectInputStream amazonStream = null;
+
+                try {
+                    amazonStream = amazonObject.getObjectContent();
+                    byte[] amazonByteArray = IOUtils.toByteArray(amazonStream);
+                    IOUtils.closeQuietly(amazonStream);
+                    return amazonByteArray;
+                } finally {
+                    IOUtils.closeQuietly(amazonStream);
+                }
+            } catch (AmazonServiceException e) {
+                if (contextEnvironment == "dev" && e.getStatusCode() == HttpStatus.NOT_FOUND.value()) {
+                    return getSystemDocument("document/" + (document.getCategory() == FileCategory.DOCUMENT ? "document_exported.pdf" : "image_exported.jpg"));
+                }
+                throw e;
+            }
         }
+
         return document.getContent();
     }
 
@@ -188,6 +213,10 @@ public class DocumentService {
 
         document.setContent(null);
         document.setExported(true);
+    }
+
+    public byte[] getSystemDocument(String path) throws IOException {
+        return Resources.toByteArray(Resources.getResource(path));
     }
 
     private String getAmazonObjectKey(Document document) {
@@ -215,15 +244,20 @@ public class DocumentService {
     private AmazonS3 getAmazonClient() throws IOException {
         System system = systemService.getSystem();
 
-        Properties amazonCredentials = new Properties();
-        amazonCredentials.setProperty("amazonKey", system.getAmazonAccessKey());
-        amazonCredentials.setProperty("secretKey", system.getAmazonSecretKey());
+        Properties amazonProperties = new Properties();
+        amazonProperties.setProperty("amazonKey", system.getAmazonAccessKey());
+        amazonProperties.setProperty("secretKey", system.getAmazonSecretKey());
 
         ByteArrayOutputStream amazonCredentialsOutputStream = new ByteArrayOutputStream();
-        amazonCredentials.store(amazonCredentialsOutputStream, null);
+        amazonProperties.store(amazonCredentialsOutputStream, null);
         ByteArrayInputStream amazonCredentialsInputStream = new ByteArrayInputStream(amazonCredentialsOutputStream.toByteArray());
 
-        return new AmazonS3Client(new PropertiesCredentials(amazonCredentialsInputStream));
+        PropertiesCredentials amazonCredentials = new PropertiesCredentials(amazonCredentialsInputStream);
+
+        IOUtils.closeQuietly(amazonCredentialsOutputStream);
+        IOUtils.closeQuietly(amazonCredentialsInputStream);
+
+        return new AmazonS3Client(amazonCredentials);
     }
 
     private String getFileName(Part upload) {

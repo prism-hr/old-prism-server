@@ -20,7 +20,6 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.io.Resources;
 import com.google.common.primitives.Ints;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -60,7 +59,7 @@ public class FileResource {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/documents/blank", method = RequestMethod.GET)
     public void downloadFile(HttpServletResponse response) throws IOException {
-        byte[] content = Resources.toByteArray(Resources.getResource("document/blank_qualification_explanation.pdf"));
+        byte[] content = documentService.getSystemDocument("document/blank_qualification_explanation.pdf");
         sendFileToClient(response, new Document().withContent(content).withContentType("application/pdf").withFileName("explanation.pdf"));
     }
 

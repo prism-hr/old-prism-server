@@ -41,10 +41,12 @@ public class MaintenanceService {
     public void maintain() {
         if (BooleanUtils.isTrue(maintenanceRun)) {
             for (MaintenanceTask task : MaintenanceTask.values()) {
-                if (task.isParallelize()) {
-                    submit(task);
-                } else {
-                    execute(task);
+                if (task.isExecute()) {
+                    if (task.isParallelize()) {
+                        submit(task);
+                    } else {
+                        execute(task);
+                    }
                 }
             }  
         }

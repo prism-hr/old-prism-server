@@ -1,22 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
-import org.dozer.Mapper;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.ValidationUtils;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
@@ -24,25 +7,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewAppointment;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewInstruction;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
-import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
-import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
-import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
-import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
+import com.zuehlke.pgadmissions.domain.comment.*;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.document.FileCategory;
 import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
@@ -58,25 +25,33 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentApplicationInterviewAppointmentDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentApplicationInterviewInstructionDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentAssignedUserDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentCustomResponseDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.comment.*;
 import com.zuehlke.pgadmissions.rest.representation.TimelineRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.TimelineRepresentation.TimelineCommentGroupRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.AppointmentTimeslotRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentApplicationInterviewAppointmentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentApplicationInterviewInstructionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentAssignedUserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.*;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedSupervisorRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.InterviewRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.OfferRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.UserAppointmentPreferencesRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.comment.CommentValidator;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import org.dozer.Mapper;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.ValidationUtils;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -204,13 +179,13 @@ public class CommentService {
         }
         InterviewRepresentation interview = new InterviewRepresentation();
 
-        interview.setAppointmentTimeslots(Lists.<AppointmentTimeslotRepresentation> newLinkedList());
+        interview.setAppointmentTimeslots(Lists.<AppointmentTimeslotRepresentation>newLinkedList());
         for (CommentAppointmentTimeslot schedulingOption : commentDAO.getAppointmentTimeslots(schedulingComment)) {
             interview.getAppointmentTimeslots().add(
                     new AppointmentTimeslotRepresentation().withId(schedulingOption.getId()).withDateTime(schedulingOption.getDateTime()));
         }
 
-        interview.setAppointmentPreferences(Lists.<UserAppointmentPreferencesRepresentation> newLinkedList());
+        interview.setAppointmentPreferences(Lists.<UserAppointmentPreferencesRepresentation>newLinkedList());
         for (User invitee : commentDAO.getAppointmentInvitees(schedulingComment)) {
             UserRepresentation inviteeRepresentation = userService.getUserRepresentation(invitee);
             UserAppointmentPreferencesRepresentation preferenceRepresentation = new UserAppointmentPreferencesRepresentation().withUser(inviteeRepresentation);
@@ -613,20 +588,22 @@ public class CommentService {
     }
 
     private void buildAggregatedRating(Comment comment) {
-        BigDecimal aggregatedRating = new BigDecimal(0.00);
-        for (CommentCustomResponse customResponse : comment.getCustomResponses()) {
-            switch (customResponse.getActionCustomQuestionConfiguration().getCustomQuestionType()) {
-            case RATING_NORMAL:
-                aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(customResponse, 5));
-                break;
-            case RATING_WEIGHTED:
-                aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(customResponse, 8));
-                break;
-            default:
-                continue;
+        if (!comment.getCustomResponses().isEmpty()) {
+            BigDecimal aggregatedRating = new BigDecimal(0.00);
+            for (CommentCustomResponse customResponse : comment.getCustomResponses()) {
+                switch (customResponse.getActionCustomQuestionConfiguration().getCustomQuestionType()) {
+                    case RATING_NORMAL:
+                        aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(customResponse, 5));
+                        break;
+                    case RATING_WEIGHTED:
+                        aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(customResponse, 8));
+                        break;
+                    default:
+                        continue;
+                }
             }
+            comment.setApplicationRating(aggregatedRating);
         }
-        comment.setApplicationRating(aggregatedRating);
     }
 
     private BigDecimal getWeightedRatingComponent(CommentCustomResponse customResponse, Integer denominator) {

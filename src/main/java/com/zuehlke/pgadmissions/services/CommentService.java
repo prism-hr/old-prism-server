@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -294,11 +293,6 @@ public class CommentService {
     }
 
     public void create(Comment comment) {
-        Resource resource = comment.getResource();
-        Action action = comment.getAction();
-
-        setCommentAuthorRoles(comment, resource, action);
-
         Set<CommentAssignedUser> transientAssignees = comment.getAssignedUsers();
         Set<CommentAssignedUser> persistentAssignees = Sets.newHashSet(transientAssignees);
         transientAssignees.clear();
@@ -487,21 +481,6 @@ public class CommentService {
                 .withAppointmentConditions(offerDetailNull ? null : offerDetail.getAppointmentConditions());
     }
 
-    private void setCommentAuthorRoles(Comment comment, Resource resource, Action action) {
-        if (action.getActionType() == PrismActionType.SYSTEM_INVOCATION) {
-            comment.setRole(PrismRole.SYSTEM_ADMINISTRATOR.toString());
-        } else {
-            if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
-                comment.setRole(roleService.getCreatorRole(resource).getId().toString());
-            } else {
-                comment.setRole(Joiner.on(", ").join(roleService.getActionOwnerRoles(comment.getUser(), resource, action)));
-                if (comment.getDelegateUser() != null) {
-                    comment.setDelegateRole(Joiner.on(", ").join(roleService.getActionOwnerRoles(comment.getDelegateUser(), resource, action)));
-                }
-            }
-        }
-    }
-
     private Set<ApplicationAssignedSupervisorRepresentation> buildApplicationSupervisorRepresentation(Comment assignmentComment) {
         Set<ApplicationAssignedSupervisorRepresentation> supervisors = Sets.newLinkedHashSet();
 
@@ -622,8 +601,8 @@ public class CommentService {
         for (CommentAssignedUser assignee : comment.getAssignedUsers()) {
             PrismRole roleId = assignee.getRole().getId();
             if (Arrays.asList(PrismRole.APPLICATION_INTERVIEWEE, PrismRole.APPLICATION_INTERVIEWER).contains(roleId)) {
-                Comment preference = new Comment().withResource(resource).withAction(action).withUser(assignee.getUser()).withRole(roleId.name())
-                        .withDeclinedResponse(false).withState(resource.getState()).withTransitionState(resource.getState()).withCreatedTimestamp(baseline);
+                Comment preference = new Comment().withResource(resource).withAction(action).withUser(assignee.getUser()).withDeclinedResponse(false)
+                        .withState(resource.getState()).withTransitionState(resource.getState()).withCreatedTimestamp(baseline);
                 preference.getAppointmentPreferences().add(new CommentAppointmentPreference().withDateTime(interviewDateTime));
                 create(preference);
                 resource.addComment(preference);

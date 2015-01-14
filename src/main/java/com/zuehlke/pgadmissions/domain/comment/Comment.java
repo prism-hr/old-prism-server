@@ -86,15 +86,9 @@ public class Comment {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "role_id", nullable = false)
-    private String role;
-
     @ManyToOne
     @JoinColumn(name = "delegate_user_id")
     private User delegateUser;
-
-    @Column(name = "delegate_role_id")
-    private String delegateRole;
 
     @ManyToOne
     @JoinColumn(name = "action_id", nullable = false)
@@ -259,28 +253,12 @@ public class Comment {
         this.user = user;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
     public User getDelegateUser() {
         return delegateUser;
     }
 
     public void setDelegateUser(User delegateUser) {
         this.delegateUser = delegateUser;
-    }
-
-    public String getDelegateRole() {
-        return delegateRole;
-    }
-
-    public void setDelegateRole(String delegateRole) {
-        this.delegateRole = delegateRole;
     }
 
     public Action getAction() {
@@ -551,18 +529,8 @@ public class Comment {
         return this;
     }
 
-    public Comment withRole(String role) {
-        this.role = role;
-        return this;
-    }
-
     public Comment withDelegateUser(User delegateUser) {
         this.delegateUser = delegateUser;
-        return this;
-    }
-
-    public Comment withDelegateRole(String delegateRole) {
-        this.delegateRole = delegateRole;
         return this;
     }
 

@@ -135,7 +135,7 @@ public class DocumentService {
         return create(fileCategory, fileName, content, contentType);
     }
 
-    public void deleteOrphanDocuments(DateTime baselineTime) throws IOException {  
+    public void deleteOrphanDocuments(DateTime baselineTime) throws IOException {
         List<Integer> documentIds = documentDAO.getOrphanDocuments(baselineTime);
         if (!documentIds.isEmpty()) {
             documentDAO.deleteOrphanDocuments(documentIds);
@@ -199,23 +199,25 @@ public class DocumentService {
 
     public void exportDocumentToAmazon(Integer documentId) throws IOException {
         Document document = getById(documentId);
-        AmazonS3 amazonClient = getAmazonClient();
+        if (!document.getExported()) {
+            AmazonS3 amazonClient = getAmazonClient();
 
-        ObjectMetadata amazonMetadata = new ObjectMetadata();
-        amazonMetadata.setContentType(document.getContentType());
-        byte[] content = document.getContent();
-        amazonMetadata.setContentLength(content.length);
+            ObjectMetadata amazonMetadata = new ObjectMetadata();
+            amazonMetadata.setContentType(document.getContentType());
+            byte[] content = document.getContent();
+            amazonMetadata.setContentLength(content.length);
 
-        ByteArrayInputStream amazonStream = null;
+            ByteArrayInputStream amazonStream = null;
 
-        try {
-            amazonStream = new ByteArrayInputStream(content);
-            PutObjectRequest amazonRequest = new PutObjectRequest(amazonBucket, documentId.toString(), amazonStream, amazonMetadata);
-            amazonClient.putObject(amazonRequest);
-            document.setContent(null);
-            document.setExported(true);
-        } finally {
-            IOUtils.closeQuietly(amazonStream);
+            try {
+                amazonStream = new ByteArrayInputStream(content);
+                PutObjectRequest amazonRequest = new PutObjectRequest(amazonBucket, documentId.toString(), amazonStream, amazonMetadata);
+                amazonClient.putObject(amazonRequest);
+                document.setContent(null);
+                document.setExported(true);
+            } finally {
+                IOUtils.closeQuietly(amazonStream);
+            }
         }
     }
 
@@ -240,7 +242,7 @@ public class DocumentService {
                     amazonClient.deleteObject(amazonBucket, amazonObjectKey);
                 }
             }
-            
+
             system.setLastAmazonCleanupDate(baselineDate);
         }
     }

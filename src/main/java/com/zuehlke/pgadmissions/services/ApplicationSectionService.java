@@ -52,6 +52,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.document.FileCategory;
 import com.zuehlke.pgadmissions.domain.imported.Country;
@@ -185,7 +186,8 @@ public class ApplicationSectionService {
         return supervisor;
     }
 
-    public void deleteSupervisor(Integer applicationId, Integer supervisorId) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+    public void deleteSupervisor(Integer applicationId, Integer supervisorId) throws DeduplicationException, InstantiationException, IllegalAccessException,
+            BeansException, WorkflowEngineException, IOException {
         Application application = applicationService.getById(applicationId);
 
         ApplicationSupervisor supervisor = entityService.getByProperties(ApplicationSupervisor.class,
@@ -339,7 +341,8 @@ public class ApplicationSectionService {
     }
 
     public ApplicationEmploymentPosition updateEmploymentPosition(Integer applicationId, Integer employmentPositionId,
-            ApplicationEmploymentPositionDTO employmentPositionDTO) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            ApplicationEmploymentPositionDTO employmentPositionDTO) throws DeduplicationException, InstantiationException, IllegalAccessException,
+            BeansException, WorkflowEngineException, IOException {
         Application application = applicationService.getById(applicationId);
 
         ApplicationEmploymentPosition employmentPosition;
@@ -413,7 +416,8 @@ public class ApplicationSectionService {
         return funding;
     }
 
-    public void deleteFunding(Integer applicationId, Integer fundingId) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+    public void deleteFunding(Integer applicationId, Integer fundingId) throws DeduplicationException, InstantiationException, IllegalAccessException,
+            BeansException, WorkflowEngineException, IOException {
         Application application = applicationService.getById(applicationId);
         ApplicationFunding funding = entityService.getByProperties(ApplicationFunding.class, ImmutableMap.of("application", application, "id", fundingId));
         application.getFundings().remove(funding);
@@ -442,7 +446,8 @@ public class ApplicationSectionService {
         return prize;
     }
 
-    public void deletePrize(Integer applicationId, Integer prizeId) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+    public void deletePrize(Integer applicationId, Integer prizeId) throws DeduplicationException, InstantiationException, IllegalAccessException,
+            BeansException, WorkflowEngineException, IOException {
         Application application = applicationService.getById(applicationId);
         ApplicationPrize prize = entityService.getByProperties(ApplicationPrize.class, ImmutableMap.of("application", application, "id", prizeId));
         application.getPrizes().remove(prize);
@@ -461,9 +466,10 @@ public class ApplicationSectionService {
             referee = entityService.getByProperties(ApplicationReferee.class, ImmutableMap.of("application", application, "id", refereeId));
         }
 
+        User oldUser = referee.getUser();
         AssignedUserDTO userDTO = refereeDTO.getUser();
-        User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), application.getLocale());
-        referee.setUser(user);
+        User newUser = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), application.getLocale());
+        referee.setUser(newUser);
 
         referee.setRefereeType(refereeDTO.getRefereeType());
 
@@ -482,16 +488,20 @@ public class ApplicationSectionService {
         referee.setSkype(Strings.emptyToNull(refereeDTO.getSkype()));
         referee.setLastUpdatedTimestamp(DateTime.now());
 
-        CommentAssignedUser assignee = null;
+        List<CommentAssignedUser> assignees = Lists.newArrayList();
         if (application.isSubmitted()) {
-            assignee = new CommentAssignedUser().withUser(user).withRole(roleService.getById(APPLICATION_REFEREE)).withRoleTransitionType(CREATE);
+            assignees.add(new CommentAssignedUser().withUser(newUser).withRole(roleService.getById(APPLICATION_REFEREE)).withRoleTransitionType(CREATE));
+            if (newUser.getId().equals(oldUser.getId())) {
+                assignees.add(new CommentAssignedUser().withUser(oldUser).withRole(roleService.getById(APPLICATION_REFEREE)).withRoleTransitionType(DELETE));
+            }
         }
 
-        executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE, assignee);
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE, assignees.toArray(new CommentAssignedUser[assignees.size()]));
         return referee;
     }
 
-    public void deleteReferee(Integer applicationId, Integer refereeId) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+    public void deleteReferee(Integer applicationId, Integer refereeId) throws DeduplicationException, InstantiationException, IllegalAccessException,
+            BeansException, WorkflowEngineException, IOException {
         Application application = applicationService.getById(applicationId);
         ApplicationReferee referee = entityService.getByProperties(ApplicationReferee.class, ImmutableMap.of("application", application, "id", refereeId));
         application.getReferees().remove(referee);
@@ -609,19 +619,16 @@ public class ApplicationSectionService {
         to.setAddressCode(Strings.emptyToNull(from.getAddressCode()));
     }
 
-    private void executeUpdate(Application application, PrismDisplayPropertyDefinition messageIndex) throws DeduplicationException, InstantiationException,
-            IllegalAccessException, BeansException, WorkflowEngineException, IOException {
-        executeUpdate(application, messageIndex, null);
-    }
-
-    private void executeUpdate(Application application, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser assignee)
+    private void executeUpdate(Application application, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees)
             throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         User userCurrent = userService.getCurrentUser();
         List<PrismActionEnhancement> userEnhancements = actionService.getPermittedActionEnhancements(application, userCurrent);
         List<PrismActionEnhancement> permittedEnhancements = Lists.newArrayList(APPLICATION_VIEW_EDIT_AS_CREATOR, APPLICATION_VIEW_EDIT_AS_ADMITTER);
 
-        if (assignee != null && assignee.getRole().getId() == PrismRole.APPLICATION_REFEREE) {
-            permittedEnhancements.add(APPLICATION_VIEW_EDIT_AS_RECRUITER);
+        for (CommentAssignedUser assignee : assignees) {
+            if (assignee.getRole().getId() == PrismRole.APPLICATION_REFEREE && assignee.getRoleTransitionType() == PrismRoleTransitionType.CREATE) {
+                permittedEnhancements.add(APPLICATION_VIEW_EDIT_AS_RECRUITER);
+            }
         }
 
         if (Collections.disjoint(userEnhancements, permittedEnhancements)) {
@@ -630,7 +637,7 @@ public class ApplicationSectionService {
         }
 
         if (application.isSubmitted()) {
-            resourceService.executeUpdate(application, messageIndex, assignee);
+            resourceService.executeUpdate(application, messageIndex, assignees);
         }
     }
 

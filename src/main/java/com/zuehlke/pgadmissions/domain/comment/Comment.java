@@ -677,7 +677,7 @@ public class Comment {
     }
 
     public boolean isApplicationRatingComment() {
-        return action.getRatingAction() && !declinedResponse;
+        return action.getRatingAction() && !(declinedResponse || applicationRating == null);
     }
 
     public boolean isApplicationCompletionComment() {

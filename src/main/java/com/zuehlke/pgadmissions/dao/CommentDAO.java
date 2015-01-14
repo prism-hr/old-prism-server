@@ -194,7 +194,8 @@ public class CommentDAO {
                 .createAlias("transitionState", "transitionState", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("action.visibleAction", true)).add(Restrictions.neProperty("state.stateGroup", "transitionState.stateGroup"))) //
+                        .add(Restrictions.eq("action.visibleAction", true)) //
+                        .add(Restrictions.neProperty("state.stateGroup", "transitionState.stateGroup"))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("state.stateGroup.id", stateGroupId)) //
                         .add(Restrictions.isNull("state"))) //

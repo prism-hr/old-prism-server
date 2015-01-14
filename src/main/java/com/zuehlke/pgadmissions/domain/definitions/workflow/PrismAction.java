@@ -43,6 +43,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionVa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldRestriction.SIZE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -63,7 +64,8 @@ public enum PrismAction {
 
     APPLICATION_ASSIGN_INTERVIEWERS(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, false, null, APPLICATION, null, Arrays.asList(
             new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_ASSESSMENT_CONTENT),
-            new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
+            new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT),
+            new PrismActionRedaction().withRole(APPLICATION_VIEWER_REFEREE).withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
             .addResolution(ASSIGNED_USERS).addResolution(INTERVIEW_TIME_ZONE, NOT_NULL).addResolution(INTERVIEW_DURATION, NOT_NULL)
             .addResolution(INTERVIEW_DATE_TIME).addResolution(APPOINTMENT_TIMESLOTS).addResolution(INTERVIEWER_INSTRUCTIONS)
             .addResolution(INTERVIEWEE_INSTRUCTIONS).addResolution(INTERVIEW_LOCATION).setCustomValidator(new CommentAssignInterviewersCustomValidator())
@@ -110,7 +112,8 @@ public enum PrismAction {
             .addResolution(DOCUMENTS, new PrismActionValidationFieldResolution(SIZE, "min", 0)).addResolution(APPLICATION_ELIGIBLE, NOT_NULL).build()), //
     APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, false, null, APPLICATION, null, Arrays
             .asList(new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_ASSESSMENT_CONTENT),
-                    new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
+                    new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT),
+                    new PrismActionRedaction().withRole(APPLICATION_VIEWER_REFEREE).withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
             .addResolution(INTERVIEW_DATE_TIME, NOT_NULL).addResolution(INTERVIEWER_INSTRUCTIONS, NOT_EMPTY).addResolution(INTERVIEWEE_INSTRUCTIONS)
             .addResolution(INTERVIEW_LOCATION).build()), //
     APPLICATION_CONFIRM_OFFER_RECOMMENDATION(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, true, null, APPLICATION, null, null,
@@ -123,7 +126,8 @@ public enum PrismAction {
             .addResolution(CONTENT).addResolution(ASSIGNED_USERS).setCustomValidator(new CommentConfirmSupervisionCustomValidator()).build()), //
     APPLICATION_CONFIRM_SECONDARY_SUPERVISION(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, false, null, APPLICATION, null, Arrays
             .asList(new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT),
-                    new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
+                    new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT),
+                    new PrismActionRedaction().withRole(APPLICATION_VIEWER_REFEREE).withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
             .addResolution(RECRUITER_ACCEPT_APPOINTMENT, NOT_NULL).build()), //
     APPLICATION_CORRECT(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, false, null, APPLICATION, null, null, null), //
     APPLICATION_EMAIL_CREATOR(USER_INVOCATION, EMAIL_RESOURCE_CREATOR, false, false, false, false, false, false, null, APPLICATION, null, null, null), //
@@ -135,28 +139,32 @@ public enum PrismAction {
             .addResolution(DOCUMENTS, new PrismActionValidationFieldResolution(SIZE, "min", 0)).addResolution(TRANSITION_STATE, NOT_NULL).build()), //
     APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, false, null, APPLICATION, null, Arrays
             .asList(new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT),
-                    new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
+                    new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT),
+                    new PrismActionRedaction().withRole(APPLICATION_VIEWER_REFEREE).withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
             .addResolution(APPOINTMENT_PREFERENCES, new PrismActionValidationFieldResolution(SIZE, "min", 0)).build()), //
     APPLICATION_PROVIDE_INTERVIEW_FEEDBACK(USER_INVOCATION, PROCESS_RESOURCE, true, false, false, true, false, false,
             APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_CUSTOM, APPLICATION, null, Arrays.asList(new PrismActionRedaction().withRole(APPLICATION_CREATOR)
-                    .withRedactionType(ALL_CONTENT), new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT)),
-            PrismActionValidationDefinition.builder().addResolution(CONTENT, NOT_EMPTY)
-                    .addResolution(DOCUMENTS, new PrismActionValidationFieldResolution(SIZE, "min", 0)).addResolution(APPLICATION_RATING, NOT_NULL)
-                    .addResolution(APPLICATION_INTERESTED, NOT_NULL).build()), //
+                    .withRedactionType(ALL_CONTENT), new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT),
+                    new PrismActionRedaction().withRole(APPLICATION_VIEWER_REFEREE).withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
+                    .addResolution(CONTENT, NOT_EMPTY).addResolution(DOCUMENTS, new PrismActionValidationFieldResolution(SIZE, "min", 0))
+                    .addResolution(APPLICATION_RATING, NOT_NULL).addResolution(APPLICATION_INTERESTED, NOT_NULL).build()), //
     APPLICATION_PROVIDE_REFERENCE(USER_INVOCATION, PROCESS_RESOURCE, true, false, true, true, true, false, APPLICATION_PROVIDE_REFERENCE_CUSTOM, APPLICATION,
             null, Arrays.asList(new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT),
-                    new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
+                    new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT),
+                    new PrismActionRedaction().withRole(APPLICATION_VIEWER_REFEREE).withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
                     .addResolution(CONTENT, NOT_EMPTY).addResolution(DOCUMENTS, new PrismActionValidationFieldResolution(SIZE, "max", 1))
                     .addResolution(APPLICATION_RATING, NOT_NULL).build()), //
     APPLICATION_PROVIDE_REVIEW(USER_INVOCATION, PROCESS_RESOURCE, true, false, false, true, false, false, APPLICATION_PROVIDE_REVIEW_CUSTOM, APPLICATION, null,
             Arrays.asList(new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT),
-                    new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
+                    new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT),
+                    new PrismActionRedaction().withRole(APPLICATION_VIEWER_REFEREE).withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
                     .addResolution(CONTENT, NOT_EMPTY).addResolution(DOCUMENTS, new PrismActionValidationFieldResolution(SIZE, "min", 0))
                     .addResolution(APPLICATION_RATING, NOT_NULL).addResolution(APPLICATION_INTERESTED, NOT_NULL).build()), //
     APPLICATION_PURGE(SYSTEM_INVOCATION, PURGE_RESOURCE, false, false, false, true, false, false, null, APPLICATION, null, null, null), //
     APPLICATION_UPDATE_INTERVIEW_AVAILABILITY(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, false, null, APPLICATION, null, Arrays
             .asList(new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT),
-                    new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
+                    new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT),
+                    new PrismActionRedaction().withRole(APPLICATION_VIEWER_REFEREE).withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
             .addResolution(APPOINTMENT_PREFERENCES, new PrismActionValidationFieldResolution(SIZE, "min", 0)).build()), //
     APPLICATION_VIEW_EDIT(USER_INVOCATION, VIEW_EDIT_RESOURCE, false, false, false, true, false, false, null, APPLICATION, null, Arrays.asList(
             new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT), new PrismActionRedaction().withRole(APPLICATION_REFEREE)

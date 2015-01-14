@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.mvc.controllers;
 
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.services.ResourceService;
+import freemarker.template.Template;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -17,17 +19,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.Maps;
-import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.services.ResourceService;
-
-import freemarker.template.Template;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("api/robots")
 public class RobotController {
+
+    private static final Logger log = LoggerFactory.getLogger(RobotController.class);
 
     @Value("${application.url}")
     private String applicationUrl;
@@ -68,9 +70,14 @@ public class RobotController {
         String[] params = query.split("&");
         Map<String, String> map = new HashMap<String, String>();
         for (String param : params) {
-            String name = param.split("=")[0];
-            String value = param.split("=")[1];
+            String[] split = param.split("=");
+            if(split.length == 2){
+            String name = split[0];
+            String value = split[1];
             map.put(name, value);
+            } else {
+                log.error("Unexpected robot controller parameter: " + param + " in query: " + query);
+            }
         }
         return map;
     }

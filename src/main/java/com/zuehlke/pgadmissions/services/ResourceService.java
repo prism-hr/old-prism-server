@@ -306,12 +306,7 @@ public class ResourceService {
         return "PRiSM-" + PrismScope.getResourceScope(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId());
     }
 
-    public void executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex) throws DeduplicationException, InstantiationException,
-            IllegalAccessException, BeansException, WorkflowEngineException, IOException {
-        executeUpdate(resource, messageIndex, null);
-    }
-
-    public void executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser assignee) throws DeduplicationException,
+    public void executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees) throws DeduplicationException,
             InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
         User user = userService.getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
@@ -320,7 +315,7 @@ public class ResourceService {
                 .withContent(applicationContext.getBean(PropertyLoader.class).localize(resource, user).load(messageIndex)).withDeclinedResponse(false)
                 .withCreatedTimestamp(new DateTime());
 
-        if (assignee != null) {
+        for (CommentAssignedUser assignee : assignees) {
             comment.addAssignedUser(assignee.getUser(), assignee.getRole(), assignee.getRoleTransitionType());
             entityService.evict(assignee);
         }
@@ -507,7 +502,7 @@ public class ResourceService {
     public String getSocialResourceUrl(Resource resource) {
         return applicationUrl + "/" + Constants.ANGULAR_HASH + "/?" + resource.getResourceScope().getLowerCaseName() + "=" + resource.getId();
     }
-    
+
     public PrismLocale getOperativeLocale(Resource resource) {
         if (resource.getResourceScope() == PrismScope.SYSTEM) {
             User currentUser = userService.getCurrentUser();

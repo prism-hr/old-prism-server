@@ -32,9 +32,10 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.AdvertSearchEngineDTO;
+import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
+import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
@@ -223,13 +224,17 @@ public class ProgramService {
         return programDAO.getSitemapEntries(activeProgramStates);
     }
 
-    public AdvertSearchEngineDTO getSearchEngineAdvert(Integer programId) {
+    public SocialMetadataDTO getSocialMetadata(Program program) {
+        return advertService.getSocialMetadata(program.getAdvert());
+    }
+    
+    public SearchEngineAdvertDTO getSearchEngineAdvert(Integer programId) {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
-        AdvertSearchEngineDTO searchEngineDTO = programDAO.getSearchEngineAdvert(programId, activeProgramStates);
+        SearchEngineAdvertDTO searchEngineDTO = programDAO.getSearchEngineAdvert(programId, activeProgramStates);
 
         if (searchEngineDTO != null) {
             searchEngineDTO.setRelatedProjects(projectService.getActiveProjectsByProgram(programId));
-    
+
             List<String> relatedUsers = Lists.newArrayList();
             List<User> programAcademics = userService.getUsersForResourceAndRoles(getById(programId), PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR);
             for (User programAcademic : programAcademics) {
@@ -237,7 +242,7 @@ public class ProgramService {
             }
             searchEngineDTO.setRelatedUsers(relatedUsers);
         }
-        
+
         return searchEngineDTO;
     }
 

@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.services.helpers;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 import java.util.Arrays;
@@ -23,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.services.DisplayPropertyService;
+import com.zuehlke.pgadmissions.services.ResourceService;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
@@ -38,6 +38,9 @@ public class PropertyLoader {
 
     @Autowired
     private DisplayPropertyService displayPropertyService;
+    
+    @Autowired
+    private ResourceService resourceService;
 
     public String load(PrismDisplayPropertyDefinition property) {
         String value = properties.get(property);
@@ -52,12 +55,8 @@ public class PropertyLoader {
     public String load(PrismDisplayPropertyDefinition trueIndex, PrismDisplayPropertyDefinition falseIndex, boolean evaluation) {
         return evaluation ? load(trueIndex) : load(falseIndex);
     }
-
+    
     public PropertyLoader localize(Resource resource, User user) {
-        return localize(resource, user == null ? null : user.getLocale());
-    }
-
-    public PropertyLoader localize(Resource resource, PrismLocale locale) {
         PrismScope resourceScope = resource.getResourceScope();
         if (Arrays.asList(PROGRAM, PROJECT, APPLICATION).contains(resourceScope)) {
             Program program = resource.getProgram();
@@ -67,7 +66,7 @@ public class PropertyLoader {
             this.resource = resource;
             this.programType = null;
         }
-        this.locale = resourceScope == SYSTEM ? locale == null ? resource.getLocale() : locale : resource.getLocale();
+        this.locale = resourceService.getOperativeLocale(resource);
         return this;
     }
 

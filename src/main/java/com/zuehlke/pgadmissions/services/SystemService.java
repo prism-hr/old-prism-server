@@ -65,7 +65,8 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.AdvertSearchEngineDTO;
+import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
+import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
@@ -229,9 +230,18 @@ public class SystemService {
         getSystem().setLastDataImportDate(baseline);
     }
 
+    public SocialMetadataDTO getSocialMetadata() {
+        System system = getSystem();
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(system, userService.getCurrentUser());
+        return new SocialMetadataDTO().withAuthor(system.getUser().getFullName()).withTitle(system.getTitle())
+                .withDescription(loader.load(PrismDisplayPropertyDefinition.SYSTEM_DESCRIPTION))
+                .withThumbnailUrl(resourceService.getSocialThumbnailUrl(system)).withResourceUrl(resourceService.getSocialResourceUrl(system))
+                .withLocale(resourceService.getOperativeLocale(system).toString());
+    }
+
     @Transactional
-    public AdvertSearchEngineDTO getSystemAdvert() {
-        return new AdvertSearchEngineDTO().withRelatedInstitutions(institutionService.getActiveInstitions());
+    public SearchEngineAdvertDTO getSearchEngineAdvert() {
+        return new SearchEngineAdvertDTO().withRelatedInstitutions(institutionService.getActiveInstitions());
     }
 
     private void initializeScopes() throws DeduplicationException {

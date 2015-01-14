@@ -1,19 +1,13 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.dto.AdvertSearchEngineDTO;
-import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
-import com.zuehlke.pgadmissions.utils.Constants;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -23,12 +17,21 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
+import com.zuehlke.pgadmissions.utils.Constants;
 
 @Service
 @Transactional
@@ -44,6 +47,9 @@ public class SearchEngineOptimisationService {
 
     @Value("${application.url}")
     private String applicationUrl;
+
+    @Value("${application.api.url}")
+    private String applicationApiUrl;
 
     @Autowired
     private SystemService systemService;
@@ -84,7 +90,7 @@ public class SearchEngineOptimisationService {
             Element location = document.createElement("loc");
             sitemap.appendChild(location);
 
-            Text locationString = document.createTextNode(applicationUrl + "/api/sitemap/" + scope.getLowerCaseName() + "_sitemap.xml");
+            Text locationString = document.createTextNode(applicationApiUrl + "/sitemap/" + scope.getLowerCaseName() + "_sitemap.xml");
             location.appendChild(locationString);
 
             Element lastModifiedDateTime = document.createElement("lastmod");
@@ -115,22 +121,6 @@ public class SearchEngineOptimisationService {
         return buildSitemap(INSTITUTION, sitemapEntries);
     }
 
-    public AdvertSearchEngineDTO getSystemAdvert() {
-        return systemService.getSystemAdvert();
-    }
-
-    public AdvertSearchEngineDTO getInstitutionAdvert(Integer institutionId) {
-        return institutionService.getSearchEngineAdvert(institutionId);
-    }
-
-    public AdvertSearchEngineDTO getProgramAdvert(Integer programId) {
-        return programService.getSearchEngineAdvert(programId);
-    }
-
-    public AdvertSearchEngineDTO getProjectAdvert(Integer projectId) {
-        return projectService.getSearchEngineAdvert(projectId);
-    }
-
     private String buildSitemap(PrismScope scope, List<SitemapEntryDTO> sitemapEntries) throws ParserConfigurationException, TransformerException,
             UnsupportedEncodingException {
         Document document = createXmlDocument();
@@ -153,7 +143,8 @@ public class SearchEngineOptimisationService {
             Element location = document.createElement("loc");
             url.appendChild(location);
 
-            Text locationString = document.createTextNode(applicationUrl + "/" + Constants.ANGULAR_HASH + "/?" + scope.getLowerCaseName() + "=" + sitemapEntryDTO.getResourceId());
+            Text locationString = document.createTextNode(applicationUrl + "/" + Constants.ANGULAR_HASH + "/?" + scope.getLowerCaseName() + "="
+                    + sitemapEntryDTO.getResourceId());
             location.appendChild(locationString);
 
             Element lastModifiedTimestamp = document.createElement("lastmod");

@@ -5,7 +5,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
-import com.zuehlke.pgadmissions.dto.AdvertSearchEngineDTO;
+import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionSuggestionDTO;
@@ -140,10 +140,10 @@ public class InstitutionDAO {
                 .list();
     }
 
-    public AdvertSearchEngineDTO getSearchEngineAdverts(Integer institutionId, List<PrismState> programStates, List<PrismState> projectStates) {
-        return (AdvertSearchEngineDTO) sessionFactory.getCurrentSession().createCriteria(Institution.class, "institution") //
+    public SearchEngineAdvertDTO getSearchEngineAdvert(Integer institutionId, List<PrismState> programStates, List<PrismState> projectStates) {
+        return (SearchEngineAdvertDTO) sessionFactory.getCurrentSession().createCriteria(Institution.class, "institution") //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.property("institution.id"), "institutionId") //
+                        .add(Projections.groupProperty("institution.id"), "institutionId") //
                         .add(Projections.property("institution.title"), "institutionTitle") //
                         .add(Projections.property("institution.summary"), "institutionSummary") //
                         .add(Projections.property("institution.homepage"), "institutionHomepage")) //
@@ -155,7 +155,7 @@ public class InstitutionDAO {
                                 .add(Restrictions.isNull("project.id")))) //
                 .addOrder(Order.desc("updatedTimestampSitemap")) //
                 .add(Restrictions.eq("id", institutionId)) //
-                .setResultTransformer(Transformers.aliasToBean(AdvertSearchEngineDTO.class)) //
+                .setResultTransformer(Transformers.aliasToBean(SearchEngineAdvertDTO.class)) //
                 .uniqueResult();
     }
 

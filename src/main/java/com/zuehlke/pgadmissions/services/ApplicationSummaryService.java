@@ -34,7 +34,7 @@ public class ApplicationSummaryService {
 
     public void summariseApplication(Application application, Comment comment) {
         Integer currentRatingCount = application.getApplicationRatingCount();
-        application.setApplicationRatingCount(SummaryUtils.incrementRunningCount(currentRatingCount));
+        application.setApplicationRatingCount(SummaryUtils.incrementRunningCount(currentRatingCount));        
         application.setApplicationRatingAverage(SummaryUtils.computeRunningAverage(currentRatingCount, application.getApplicationRatingAverage(),
                 comment.getApplicationRating()));
 

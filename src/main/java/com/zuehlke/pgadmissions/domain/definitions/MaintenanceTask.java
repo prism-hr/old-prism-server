@@ -1,19 +1,7 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.AbstractServiceHelper;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.AdvertServiceHelperClosingDate;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.AdvertServiceHelperExchangeRate;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.ApplicationExportServiceHelper;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.DocumentServiceHelperDelete;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.DocumentServiceHelperExport;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperInstitution;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperSystem;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.InstitutionServiceHelper;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.NotificationServiceHelperRecommendation;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.NotificationServiceHelperWorkflow;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.ProgramServiceHelper;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperEscalation;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperPropagation;
 
 public enum MaintenanceTask {
 

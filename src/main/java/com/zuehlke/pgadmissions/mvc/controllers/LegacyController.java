@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.mvc.controllers;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.zuehlke.pgadmissions.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class LegacyController {
 
     @RequestMapping(method = RequestMethod.GET)
     public void redirect(HttpServletRequest request, HttpServletResponse response) {
-        String redirectionPrefix = applicationUrl + "/#/";
+        String redirectionPrefix = applicationUrl + "/" + Constants.ANGULAR_HASH + "/";
         response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
         try {
 

@@ -1,17 +1,16 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProjectRepresentation;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public class ApplicationExtendedRepresentation extends AbstractResourceRepresentation {
 
@@ -22,9 +21,9 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
     private LocalDate closingDate;
 
     private DateTime submittedTimestamp;
-    
+
     private Boolean previousApplication;
-    
+
     private ApplicationStudyDetailRepresentation studyDetail;
 
     private ProgramDetailRepresentation programDetail;
@@ -71,7 +70,7 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
 
     private BigDecimal applicationRatingAverage;
 
-    private ApplicationSummaryRepresentation applicationSummary;
+    private ApplicationSummaryRepresentation resourceSummary;
 
     public ProgramRepresentation getProgram() {
         return program;
@@ -104,7 +103,7 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
     public void setSubmittedTimestamp(DateTime submittedTimestamp) {
         this.submittedTimestamp = submittedTimestamp;
     }
-    
+
     public final Boolean getPreviousApplication() {
         return previousApplication;
     }
@@ -297,12 +296,12 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
         this.applicationRatingAverage = applicationRatingAverage;
     }
 
-    public ApplicationSummaryRepresentation getApplicationSummary() {
-        return applicationSummary;
+    public ApplicationSummaryRepresentation getResourceSummary() {
+        return resourceSummary;
     }
 
-    public void setApplicationSummary(ApplicationSummaryRepresentation applicationSummary) {
-        this.applicationSummary = applicationSummary;
+    public void setResourceSummary(ApplicationSummaryRepresentation resourceSummary) {
+        this.resourceSummary = resourceSummary;
     }
 
 }

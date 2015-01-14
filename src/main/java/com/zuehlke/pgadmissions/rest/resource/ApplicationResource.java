@@ -273,9 +273,9 @@ public class ApplicationResource {
         for (ProgramStudyOption studyOption : enabledProgramStudyOptions) {
             availableStudyOptions.add(studyOption.getStudyOption().getPrismStudyOption());
         }
-        
+
         representation.setAvailableStudyOptions(availableStudyOptions);
-        representation.setApplicationSummary(applicationService.getApplicationSummary(application.getId()));
+        representation.setResourceSummary(applicationService.getApplicationSummary(application.getId()));
     }
 
 }

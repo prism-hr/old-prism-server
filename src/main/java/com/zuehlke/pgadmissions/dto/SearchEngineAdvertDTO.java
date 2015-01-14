@@ -3,13 +3,15 @@ package com.zuehlke.pgadmissions.dto;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
-public class AdvertSearchEngineDTO {
-    
+public class SearchEngineAdvertDTO {
+
     private Integer projectId;
-    
+
     private String projectTitle;
 
     private String projectSummary;
@@ -17,13 +19,13 @@ public class AdvertSearchEngineDTO {
     private String projectDescription;
 
     private Integer programId;
-    
+
     private String programTitle;
 
     private String programSummary;
 
     private String programDescription;
-    
+
     private Integer institutionId;
 
     private String institutionTitle;
@@ -31,7 +33,7 @@ public class AdvertSearchEngineDTO {
     private String institutionSummary;
 
     private String institutionHomepage;
-    
+
     private List<ResourceSearchEngineDTO> relatedProjects = Lists.newLinkedList();
 
     private List<ResourceSearchEngineDTO> relatedPrograms = Lists.newLinkedList();
@@ -39,7 +41,7 @@ public class AdvertSearchEngineDTO {
     private List<ResourceSearchEngineDTO> relatedInstitutions = Lists.newLinkedList();
 
     private List<String> relatedUsers = Lists.newLinkedList();
-    
+
     public final Integer getProjectId() {
         return projectId;
     }
@@ -71,7 +73,7 @@ public class AdvertSearchEngineDTO {
     public final void setProjectDescription(String projectDescription) {
         this.projectDescription = projectDescription;
     }
-    
+
     public final Integer getProgramId() {
         return programId;
     }
@@ -103,7 +105,7 @@ public class AdvertSearchEngineDTO {
     public final void setProgramDescription(String programDescription) {
         this.programDescription = programDescription;
     }
-    
+
     public final Integer getInstitutionId() {
         return institutionId;
     }
@@ -173,14 +175,16 @@ public class AdvertSearchEngineDTO {
     }
 
     public String getDescription() throws UnsupportedEncodingException {
-        String projectDescriptionCleaned = Joiner.on("").skipNulls().join(wrapString(projectSummary), wrapString(projectDescription));
-        String programDescriptionCleaned = Joiner.on("").skipNulls().join(wrapString(programSummary), wrapString(programDescription));
+        String projectDescriptionCleaned = Joiner.on("").skipNulls()
+                .join(wrapString(StringEscapeUtils.escapeHtml(projectSummary)), wrapString(projectDescription));
+        String programDescriptionCleaned = Joiner.on("").skipNulls()
+                .join(wrapString(StringEscapeUtils.escapeHtml(programSummary)), wrapString(programDescription));
         String institutionDescriptionCleaned = Joiner.on("").skipNulls()
-                .join(wrapString(institutionSummary), wrapString(buildHyperLink(institutionHomepage, "External Homepage")));
+                .join(wrapString(StringEscapeUtils.escapeHtml(institutionSummary)), wrapString(buildHyperLink(institutionHomepage, "External Homepage")));
         return Joiner.on("").skipNulls().join(projectDescriptionCleaned, programDescriptionCleaned, institutionDescriptionCleaned);
     }
 
-    public AdvertSearchEngineDTO withRelatedInstitutions(List<ResourceSearchEngineDTO> relatedInstitutions) {
+    public SearchEngineAdvertDTO withRelatedInstitutions(List<ResourceSearchEngineDTO> relatedInstitutions) {
         setRelatedInstitutions(relatedInstitutions);
         return this;
     }

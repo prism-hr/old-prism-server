@@ -9,7 +9,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.zuehlke.pgadmissions.integration.helpers.PropertyLoaderHelper;
-import com.zuehlke.pgadmissions.integration.helpers.SocialPresenceHelper;
 import com.zuehlke.pgadmissions.integration.helpers.SystemDataImportHelper;
 import com.zuehlke.pgadmissions.integration.helpers.SystemInitialisationHelper;
 import com.zuehlke.pgadmissions.integration.helpers.WorkflowConfigurationHelper;
@@ -21,28 +20,25 @@ import com.zuehlke.pgadmissions.services.SystemService;
 @ContextConfiguration("/testWorkflowContext.xml")
 @Service
 public class LifecycleTest {
-    
+
     @Autowired
     private SystemService systemService;
 
     @Autowired
     private EntityService entityService;
-    
+
     @Autowired
     private MailSenderMock mailSenderMock;
-    
+
     @Autowired
     private SystemInitialisationHelper systemInitialisationHelper;
-    
+
     @Autowired
     private SystemDataImportHelper systemDataImportHelper;
-    
+
     @Autowired
     private PropertyLoaderHelper propertyLoaderHelper;
-    
-    @Autowired
-    private SocialPresenceHelper socialPresenceHelper;
-    
+
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -72,10 +68,9 @@ public class LifecycleTest {
             mailSenderMock.verify();
             entityService.flush();
         }
-        
+
         systemDataImportHelper.verifyImport();
         propertyLoaderHelper.verifyPropertyLoader();
-        socialPresenceHelper.verifySocialPresenceLookup();
     }
 
 }

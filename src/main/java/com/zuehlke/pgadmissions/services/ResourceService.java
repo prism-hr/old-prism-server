@@ -13,6 +13,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
@@ -36,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionT
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
+import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -52,6 +55,8 @@ import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
+import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
+import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
@@ -66,12 +71,22 @@ import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowProper
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import com.zuehlke.pgadmissions.utils.Constants;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Service
 @Transactional
 @SuppressWarnings("unchecked")
 public class ResourceService {
+
+    @Value("${application.url}")
+    private String applicationUrl;
+
+    @Value("${application.api.url}")
+    private String applicationApiUrl;
+
+    @Value("${system.social.thumbnail}")
+    private String systemSocialThumbnail;
 
     @Autowired
     private ResourceDAO resourceDAO;
@@ -93,6 +108,9 @@ public class ResourceService {
 
     @Autowired
     private InstitutionService institutionService;
+
+    @Autowired
+    private SystemService systemService;
 
     @Autowired
     private EntityService entityService;
@@ -432,6 +450,72 @@ public class ResourceService {
             return (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) customizationService.getConfigurationRepresentationsWithOrWithoutVersion(
                     PrismConfiguration.WORKFLOW_PROPERTY, resource, resource.getWorkflowPropertyConfigurationVersion());
         }
+    }
+
+    public SocialMetadataDTO getSocialMetadata(PrismScope resourceScope, Integer resourceId) {
+        Resource resource = getNotNullResource(resourceScope, resourceId);
+        switch (resourceScope) {
+        case INSTITUTION:
+            return institutionService.getSocialMetadata((Institution) resource);
+        case PROGRAM:
+            return programService.getSocialMetadata((Program) resource);
+        case PROJECT:
+            return projectService.getSocialMetadata((Project) resource);
+        case SYSTEM:
+            return systemService.getSocialMetadata();
+        default:
+            throw new Error();
+        }
+    }
+
+    public SearchEngineAdvertDTO getSearchEngineAdvert(PrismScope resourceScope, Integer resourceId) {
+        switch (resourceScope) {
+        case INSTITUTION:
+            return institutionService.getSearchEngineAdvert(resourceId);
+        case PROGRAM:
+            return programService.getSearchEngineAdvert(resourceId);
+        case PROJECT:
+            return projectService.getSearchEngineAdvert(resourceId);
+        case SYSTEM:
+            return systemService.getSearchEngineAdvert();
+        default:
+            throw new Error();
+        }
+    }
+
+    private Resource getNotNullResource(PrismScope resourceScope, Integer resourceId) throws Error {
+        Resource resource = getById(resourceScope.getResourceClass(), resourceId);
+        if (resource == null) {
+            throw new Error();
+        }
+        return resource;
+    }
+
+    public String getSocialThumbnailUrl(Resource resource) {
+        String applicationImageUrl = applicationApiUrl + "/images/";
+        if (resource.getResourceScope() == PrismScope.SYSTEM) {
+            return applicationImageUrl + systemSocialThumbnail;
+        } else {
+            Document logoDocument = resource.getInstitution().getLogoDocument();
+            if (logoDocument == null) {
+                return applicationImageUrl + systemSocialThumbnail;
+            }
+            return applicationImageUrl + logoDocument.getId().toString();
+        }
+    }
+
+    public String getSocialResourceUrl(Resource resource) {
+        return applicationUrl + "/" + Constants.ANGULAR_HASH + "/?" + resource.getResourceScope().getLowerCaseName() + "=" + resource.getId();
+    }
+    
+    public PrismLocale getOperativeLocale(Resource resource) {
+        if (resource.getResourceScope() == PrismScope.SYSTEM) {
+            User currentUser = userService.getCurrentUser();
+            if (currentUser != null) {
+                return currentUser.getLocale();
+            }
+        }
+        return resource.getLocale();
     }
 
     private Junction getFilterConditions(PrismScope scopeId, ResourceListFilterDTO filter) {

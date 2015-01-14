@@ -47,6 +47,7 @@ import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
@@ -108,14 +109,14 @@ public class AdvertService {
     public List<Advert> getActiveAdverts(OpportunitiesQueryDTO queryDTO) {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        
+
         List<Integer> adverts = advertDAO.getActiveAdverts(activeProgramStates, activeProjectStates, queryDTO);
         if (adverts.isEmpty()) {
             return Lists.newArrayList();
         } else {
             Integer[] programs = queryDTO.getPrograms();
             return advertDAO.getActiveAdverts(adverts, programs != null && programs.length == 1);
-        } 
+        }
     }
 
     public List<Advert> getRecommendedAdverts(User user) {
@@ -302,9 +303,16 @@ public class AdvertService {
             return themes;
         }
     }
-    
+
     public void setSequenceIdentifier(Advert advert, String prefix) {
         advert.setSequenceIdentifier(prefix + String.format("%010d", advert.getId()));
+    }
+
+    public SocialMetadataDTO getSocialMetadata(Advert advert) {
+        Resource parentResource = advert.getParentResource();
+        return new SocialMetadataDTO().withAuthor(parentResource.getUser().getFullName()).withTitle(advert.getTitle()).withDescription(advert.getSummary())
+                .withThumbnailUrl(resourceService.getSocialThumbnailUrl(parentResource)).withResourceUrl(resourceService.getSocialResourceUrl(parentResource))
+                .withLocale(resourceService.getOperativeLocale(parentResource).toString());
     }
 
     private String getCurrencyAtLocale(Advert advert) {

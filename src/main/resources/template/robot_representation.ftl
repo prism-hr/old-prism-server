@@ -2,21 +2,24 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
-    <title>${title?html}</title>
-
-    <meta name="description" content="${description?html}"/>
+    <title>${metadata.title?html}</title>
+    <#if metadata.description??>
+    	<meta name="description" content="${metadata.description?html}"/>
+   	</#if>
     <meta name="keywords"
-          content="opportunities graduates postgraduates scholarships internships jobs courses degrees ucl"/>
+          content="opportunities graduates postgraduates scholarships internships jobs courses degrees"/>
     <!-- <meta name="google-site-verification" content="" /> -->
-    <meta name="author" content="Wujek Zenon"/>
+    <meta name="author" content="${metadata.author?html}"/>
     <meta property="fb:app_id" content="172294119620634"/>
-    <meta property="og:url" content="${ogUrl}"/>
-    <meta property="og:title" content="${title?html}"/>
-    <meta property="og:description" content="${description?html}"/>
-    <meta property="og:image" content="${imageUrl}"/>
+    <meta property="og:url" content="${metadata.resourceUrl}"/>
+    <meta property="og:title" content="${metadata.title?html}"/>
+    <#if metadata.description??>
+    	<meta property="og:description" content="${metadata.description?html}"/>
+   	</#if>
+    <meta property="og:image" content="${metadata.thumbnailUrl}"/>
     <meta property="og:type" content="website"/>
     <meta property="og:site_name" content="PRiSM"/>
-    <meta property="og:locale" content="en_GB"/>
+    <meta property="og:locale" content="${metadata.locale}"/>
 </head>
 <body>
 <#if advert??>

@@ -110,6 +110,7 @@ public enum PrismDisplayPropertyDefinition {
     SYSTEM_USER_ACCOUNT(SYSTEM_GLOBAL, "User Account", SYSTEM), //
     SYSTEM_COMMENT_CONTENT_NOT_PROVIDED(SYSTEM_GLOBAL, "No comment provided", SYSTEM), //
     SYSTEM_APPLY(SYSTEM_GLOBAL, "Apply Now", SYSTEM), //
+    SYSTEM_DESCRIPTION(SYSTEM_GLOBAL, "The Opportunity Portal", SYSTEM), //
     SYSTEM_COMMENT_UPDATED_USER_ROLE(SYSTEM_COMMENT, "Updated system user roles", SYSTEM), //
     SYSTEM_COMMENT_UPDATED_NOTIFICATION(SYSTEM_COMMENT, "Updated system notification configuration", SYSTEM), //
     SYSTEM_COMMENT_RESTORED_NOTIFICATION_GLOBAL(SYSTEM_COMMENT, "Restored system global notification configuration", SYSTEM), //

@@ -1,12 +1,14 @@
 package com.zuehlke.pgadmissions.mvc.controllers;
 
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,15 +18,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
-import com.zuehlke.pgadmissions.dto.AdvertSearchEngineDTO;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.services.ResourceService;
-import com.zuehlke.pgadmissions.services.SearchEngineOptimisationService;
 
 import freemarker.template.Template;
 
@@ -32,90 +29,42 @@ import freemarker.template.Template;
 @RequestMapping("api/robots")
 public class RobotController {
 
-    @Autowired
-    private FreeMarkerConfig freemarkerConfig;
+    @Value("${application.url}")
+    private String applicationUrl;
 
     @Autowired
     private ResourceService resourceService;
 
     @Autowired
-    private SearchEngineOptimisationService searchEngineOptimsationService;
+    private FreeMarkerConfig freemarkerConfig;
 
-    @Value("${application.url}")
-    private String applicationUrl;
-
-    @Value("${application.api.url}")
-    private String applicationApiUrl;
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.GET, produces = "text/html")
     public String serve(@RequestParam String escapedFragment) throws Exception {
+        Map<String, String> queryMap = getQueryMap(escapedFragment);
+
+        PrismScope resourceScope = getQueryResourceScope(queryMap);
+        Integer resourceId = getQueryResourceId(resourceScope, queryMap);
+
+        Map<String, Object> model = Maps.newHashMap();
+        model.put("metadata", resourceService.getSocialMetadata(resourceScope, resourceId));
+        model.put("advert", resourceService.getSearchEngineAdvert(resourceScope, resourceId));
+        model.put("applicationUrl", applicationUrl);
+
         String templateContent = Resources.toString(Resources.getResource("template/robot_representation.ftl"), Charsets.UTF_8);
         Template template = new Template("robot_representation", new StringReader(templateContent), freemarkerConfig.getConfiguration());
-        Map<String, Object> model = Maps.newHashMap();
-        String title = "PRiSM";
-        String description = "The Opportunity Portal";
-        String imageUrl = applicationUrl + "/images/fbimg.jpg";
-        String ogUrl = applicationUrl;
-        AdvertSearchEngineDTO searchEngineAdvert = new AdvertSearchEngineDTO();
-
-        String fragment = URLDecoder.decode(escapedFragment, Charsets.UTF_8.name());
-        int questionMarkIndex = fragment.lastIndexOf("?");
-        String query = questionMarkIndex > -1 ? fragment.substring(questionMarkIndex + 1) : "";
-        Map<String, String> queryMap = getQueryMap(query);
-
-        if (queryMap.containsKey("institution")) {
-            int resourceId = Integer.parseInt(queryMap.get("institution"));
-            Institution institution = resourceService.getById(Institution.class, resourceId);
-            if (institution != null) {
-                title = institution.getTitle();
-                description = institution.getDescription();
-                ogUrl = applicationUrl + "/#!/?institution=" + resourceId;
-                if (institution.getLogoDocument() != null) {
-                    imageUrl = applicationApiUrl + "/images/" + institution.getLogoDocument().getId();
-                }
-                searchEngineAdvert = searchEngineOptimsationService.getInstitutionAdvert(resourceId);
-            }
-        } else if (queryMap.containsKey("program")) {
-            int resourceId = Integer.parseInt(queryMap.get("program"));
-            Program program = resourceService.getById(Program.class, resourceId);
-            if (program != null) {
-                title = program.getTitle();
-                description = program.getAdvert().getDescription();
-                ogUrl = applicationUrl + "/#!/?program=" + resourceId;
-                if (program.getInstitution().getLogoDocument() != null) {
-                    imageUrl = applicationApiUrl + "/images/" + program.getInstitution().getLogoDocument().getId();
-                }
-                searchEngineAdvert = searchEngineOptimsationService.getProgramAdvert(resourceId);
-            }
-        } else if (queryMap.containsKey("project")) {
-            int resourceId = Integer.parseInt(queryMap.get("project"));
-            Project project = resourceService.getById(Project.class, resourceId);
-            if (project != null) {
-                title = project.getTitle();
-                description = project.getAdvert().getDescription();
-                ogUrl = applicationUrl + "/#!/?project=" + resourceId;
-                if (project.getInstitution().getLogoDocument() != null) {
-                    imageUrl = applicationApiUrl + "/images/" + project.getInstitution().getLogoDocument().getId();
-                }
-                searchEngineAdvert = searchEngineOptimsationService.getProjectAdvert(resourceId);
-            }
-        } else {
-            searchEngineAdvert = searchEngineOptimsationService.getSystemAdvert();
-        }
-
-        model.put("title", Strings.nullToEmpty(title));
-        model.put("description", Strings.nullToEmpty(description));
-        model.put("applicationUrl", applicationUrl);
-        model.put("imageUrl", imageUrl);
-        model.put("ogUrl", ogUrl);
-        model.put("hostname", applicationUrl);
-        model.put("advert", searchEngineAdvert);
 
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
     }
 
-    private Map<String, String> getQueryMap(String query) {
+    private Map<String, String> getQueryMap(String escapedFragment) throws UnsupportedEncodingException {
+        String fragment = URLDecoder.decode(escapedFragment, Charsets.UTF_8.name());
+        int questionMarkIndex = fragment.lastIndexOf("?");
+        String query = questionMarkIndex > -1 ? fragment.substring(questionMarkIndex + 1) : "";
+
         String[] params = query.split("&");
         Map<String, String> map = new HashMap<String, String>();
         for (String param : params) {
@@ -124,6 +73,30 @@ public class RobotController {
             map.put(name, value);
         }
         return map;
+    }
+
+    private PrismScope getQueryResourceScope(Map<String, String> queryMap) {
+        if (queryMap.containsKey("institution")) {
+            return PrismScope.INSTITUTION;
+        } else if (queryMap.containsKey("program")) {
+            return PrismScope.PROGRAM;
+        } else if (queryMap.containsKey("project")) {
+            return PrismScope.PROJECT;
+        }
+        return PrismScope.SYSTEM;
+    }
+
+    private Integer getQueryResourceId(PrismScope resourceScope, Map<String, String> queryMap) {
+        switch (resourceScope) {
+        case INSTITUTION:
+        case PROGRAM:
+        case PROJECT:
+            return Integer.parseInt(queryMap.get(resourceScope.getLowerCaseName()));
+        case SYSTEM:
+            return null;
+        default:
+            throw new Error();
+        }
     }
 
 }

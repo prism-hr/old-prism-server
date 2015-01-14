@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.domain.program.ProgramLocation;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.dto.AdvertSearchEngineDTO;
+import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
@@ -238,8 +238,8 @@ public class ProgramDAO {
                 .list();
     }
 
-    public AdvertSearchEngineDTO getSearchEngineAdvert(Integer programId, List<PrismState> states) {
-        return (AdvertSearchEngineDTO) sessionFactory.getCurrentSession().createCriteria(Program.class, "program") //
+    public SearchEngineAdvertDTO getSearchEngineAdvert(Integer programId, List<PrismState> states) {
+        return (SearchEngineAdvertDTO) sessionFactory.getCurrentSession().createCriteria(Program.class, "program") //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("id"), "programId") //
                         .add(Projections.property("advert.title"), "programTitle") //
@@ -253,7 +253,7 @@ public class ProgramDAO {
                 .createAlias("institution", "institution", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("id", programId)) //
                 .add(Restrictions.in("state.id", states)) //
-                .setResultTransformer(Transformers.aliasToBean(AdvertSearchEngineDTO.class)) //
+                .setResultTransformer(Transformers.aliasToBean(SearchEngineAdvertDTO.class)) //
                 .uniqueResult();
     }
 

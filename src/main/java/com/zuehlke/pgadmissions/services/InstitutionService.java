@@ -34,16 +34,16 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.AdvertSearchEngineDTO;
+import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
+import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
-import com.zuehlke.pgadmissions.rest.representation.SocialPresenceRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
@@ -63,6 +63,9 @@ public class InstitutionService {
     private ImportedEntityService importedEntityService;
 
     @Autowired
+    private ResourceService resourceService;
+
+    @Autowired
     private SystemService systemService;
 
     @Autowired
@@ -79,9 +82,6 @@ public class InstitutionService {
 
     @Autowired
     private GeocodableLocationService geocodableLocationService;
-
-    @Autowired
-    private SocialPresenceService socialPresenceService;
 
     @Autowired
     private ProgramService programService;
@@ -183,10 +183,6 @@ public class InstitutionService {
         }
     }
 
-    public SocialPresenceRepresentation getSocialProfiles(String institutionTitle) throws IOException {
-        return socialPresenceService.getPotentialInstitutionProfiles(institutionTitle);
-    }
-
     public void initializeInstitution(Integer institutionId) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException,
             WorkflowEngineException, IOException {
         Institution institution = getById(institutionId);
@@ -200,26 +196,6 @@ public class InstitutionService {
 
     public List<Integer> getInstitutionsToActivate() {
         return institutionDAO.getInstitutionsToActivate();
-    }
-
-    private void setLogoDocument(Institution institution, InstitutionDTO institutionDTO, PrismAction actionId) {
-        FileDTO logoDocumentDTO = institutionDTO.getLogoDocument();
-        String logoDocumentLink = institutionDTO.getLogoUri();
-
-        if (logoDocumentDTO == null && logoDocumentLink == null) {
-            return;
-        } else if (logoDocumentDTO == null) {
-            try {
-                institution.setLogoDocument(documentService.getExternalFile(FileCategory.IMAGE, logoDocumentLink));
-            } catch (IOException e) {
-                Action action = actionService.getById(actionId);
-                actionService.throwWorkflowPermissionException(institution, action);
-            }
-        } else {
-            Document image = documentService.getById(logoDocumentDTO.getId(), FileCategory.IMAGE);
-            Preconditions.checkState(image.getContentType().equals("image/jpeg"), "Unexpected image type: " + image.getContentType());
-            institution.setLogoDocument(image);
-        }
     }
 
     public List<Institution> list() {
@@ -268,10 +244,16 @@ public class InstitutionService {
         return institutionDAO.getSitemapEntries(activeProgramStates, activeProjectStates);
     }
 
-    public AdvertSearchEngineDTO getSearchEngineAdvert(Integer institutionId) {
+    public SocialMetadataDTO getSocialMetadata(Institution institution) {
+        return new SocialMetadataDTO().withAuthor(institution.getUser().getFullName()).withTitle(institution.getTitle())
+                .withDescription(institution.getSummary()).withThumbnailUrl(resourceService.getSocialThumbnailUrl(institution))
+                .withResourceUrl(resourceService.getSocialResourceUrl(institution)).withLocale(resourceService.getOperativeLocale(institution).toString());
+    }
+
+    public SearchEngineAdvertDTO getSearchEngineAdvert(Integer institutionId) {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        AdvertSearchEngineDTO searchEngineDTO = institutionDAO.getSearchEngineAdverts(institutionId, activeProgramStates, activeProjectStates);
+        SearchEngineAdvertDTO searchEngineDTO = institutionDAO.getSearchEngineAdvert(institutionId, activeProgramStates, activeProjectStates);
 
         if (searchEngineDTO != null) {
             searchEngineDTO.setRelatedPrograms(programService.getActiveProgramsByInstitution(institutionId));
@@ -293,6 +275,26 @@ public class InstitutionService {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         return institutionDAO.getRelatedInstitutions(activeProgramStates, activeProjectStates);
+    }
+
+    private void setLogoDocument(Institution institution, InstitutionDTO institutionDTO, PrismAction actionId) {
+        FileDTO logoDocumentDTO = institutionDTO.getLogoDocument();
+        String logoDocumentLink = institutionDTO.getLogoUri();
+
+        if (logoDocumentDTO == null && logoDocumentLink == null) {
+            return;
+        } else if (logoDocumentDTO == null) {
+            try {
+                institution.setLogoDocument(documentService.getExternalFile(FileCategory.IMAGE, logoDocumentLink));
+            } catch (IOException e) {
+                Action action = actionService.getById(actionId);
+                actionService.throwWorkflowPermissionException(institution, action);
+            }
+        } else {
+            Document image = documentService.getById(logoDocumentDTO.getId(), FileCategory.IMAGE);
+            Preconditions.checkState(image.getContentType().equals("image/jpeg"), "Unexpected image type: " + image.getContentType());
+            institution.setLogoDocument(image);
+        }
     }
 
 }

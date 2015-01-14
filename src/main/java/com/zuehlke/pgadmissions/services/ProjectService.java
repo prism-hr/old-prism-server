@@ -31,9 +31,10 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.AdvertSearchEngineDTO;
+import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
+import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
@@ -175,9 +176,13 @@ public class ProjectService {
         return projectDAO.getSitemapEntries(activeProjectStates);
     }
 
-    public AdvertSearchEngineDTO getSearchEngineAdvert(Integer projectId) {
+    public SocialMetadataDTO getSocialMetadata(Project project) {
+        return advertService.getSocialMetadata(project.getAdvert());
+    }
+    
+    public SearchEngineAdvertDTO getSearchEngineAdvert(Integer projectId) {
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        AdvertSearchEngineDTO searchEngineDTO = projectDAO.getSearchEngineAdvert(projectId, activeProjectStates);
+        SearchEngineAdvertDTO searchEngineDTO = projectDAO.getSearchEngineAdvert(projectId, activeProjectStates);
 
         if (searchEngineDTO != null) {
             List<String> relatedUsers = Lists.newArrayList();

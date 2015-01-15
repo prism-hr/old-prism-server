@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTermination;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
@@ -49,6 +50,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
+import com.zuehlke.pgadmissions.domain.workflow.StateTermination;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
@@ -371,8 +373,10 @@ public class SystemInitialisationHelper {
                 prismStateTransition.getPropagatedActions().add(propagatedAction.getId());
             }
 
-            for (State state : stateTransition.getStateTerminations()) {
-                prismStateTransition.getStateTerminations().add(state.getId());
+            for (StateTermination stateTermination : stateTransition.getStateTerminations()) {
+                prismStateTransition.getStateTerminations().add(
+                        new PrismStateTermination().withTerminationState(stateTermination.getTerminationState().getId()).withStateTerminationEvaluation(
+                                stateTermination.getStateTerminationEvaluation()));
             }
 
             assertTrue(prismStateAction.getTransitions().contains(prismStateTransition));

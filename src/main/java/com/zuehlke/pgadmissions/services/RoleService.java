@@ -199,8 +199,8 @@ public class RoleService {
     }
 
     private List<User> getRoleTransitionUsers(Resource resource, Comment comment, RoleTransition roleTransition) throws WorkflowEngineException {
-        User actionOwner = comment.getUser();
-        User restrictedToUser = roleTransition.getRestrictToActionOwner() ? actionOwner : null;
+        User author = comment.getAuthor();
+        User restrictedToUser = roleTransition.getRestrictToActionOwner() ? author : null;
 
         List<User> users;
         if (roleTransition.getRoleTransitionType().isSpecified()) {

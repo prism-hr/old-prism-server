@@ -42,6 +42,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssi
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTermination;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
@@ -61,6 +62,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
+import com.zuehlke.pgadmissions.domain.workflow.StateTermination;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
@@ -201,7 +203,7 @@ public class SystemService {
         initializeNotificationDefinitions();
 
         LOGGER.info("Initialising state action definitions");
-        initializeStateActionDefinitions();
+        initializeStateActions();
 
         LOGGER.info("Initialising system object");
         System system = initializeSystemResource();
@@ -256,7 +258,7 @@ public class SystemService {
         Set<Role> rolesWithExclusions = Sets.newHashSet();
 
         for (PrismRole prismRole : PrismRole.values()) {
-            Scope scope = entityService.getById(Scope.class, prismRole.getScope());
+            Scope scope = scopeService.getById(prismRole.getScope());
             Role transientRole = new Role().withId(prismRole).withScopeCreator(prismRole.isScopeOwner()).withScope(scope);
             Role role = entityService.createOrUpdate(transientRole);
             role.getExcludedRoles().clear();
@@ -276,7 +278,7 @@ public class SystemService {
 
     private void initializeActionCustomQuestionDefinitions() {
         for (PrismActionCustomQuestionDefinition prismActionCustomQuestion : PrismActionCustomQuestionDefinition.values()) {
-            Scope scope = entityService.getById(Scope.class, prismActionCustomQuestion.getScope());
+            Scope scope = scopeService.getById(prismActionCustomQuestion.getScope());
             ActionCustomQuestionDefinition transientActionCustomQuestionDefinition = new ActionCustomQuestionDefinition().withId(prismActionCustomQuestion)
                     .withScope(scope);
             entityService.createOrUpdate(transientActionCustomQuestionDefinition);
@@ -287,10 +289,10 @@ public class SystemService {
         entityService.deleteAll(ActionRedaction.class);
 
         for (PrismAction prismAction : PrismAction.values()) {
-            Scope scope = entityService.getById(Scope.class, prismAction.getScope());
-            Scope creationScope = entityService.getById(Scope.class, prismAction.getCreationScope());
-            ActionCustomQuestionDefinition actionCustomQuestionDefinition = entityService.getById(ActionCustomQuestionDefinition.class,
-                    prismAction.getActionCustomQuestion());
+            Scope scope = scopeService.getById(prismAction.getScope());
+            Scope creationScope = scopeService.getById(prismAction.getCreationScope());
+            ActionCustomQuestionDefinition actionCustomQuestionDefinition = actionService
+                    .getCustomQuestionDefinitionById(prismAction.getActionCustomQuestion());
             Action transientAction = new Action().withId(prismAction).withActionType(prismAction.getActionType())
                     .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
                     .withTransitionAction(prismAction.isTransitionAction()).withDeclinableAction(prismAction.isDeclinableAction())
@@ -318,7 +320,7 @@ public class SystemService {
 
     private void initializeStateGroups() throws DeduplicationException {
         for (PrismStateGroup prismStateGroup : PrismStateGroup.values()) {
-            Scope scope = entityService.getById(Scope.class, prismStateGroup.getScope());
+            Scope scope = scopeService.getById(prismStateGroup.getScope());
             StateGroup transientStateGroup = new StateGroup().withId(prismStateGroup).withSequenceOrder(prismStateGroup.getSequenceOrder())
                     .withRepeatable(prismStateGroup.isRepeatable()).withScope(scope);
             entityService.createOrUpdate(transientStateGroup);
@@ -339,7 +341,7 @@ public class SystemService {
 
     private void initializeStateTransitionEvaluations() throws DeduplicationException {
         for (PrismStateTransitionEvaluation prismTransitionEvaluation : PrismStateTransitionEvaluation.values()) {
-            Scope scope = entityService.getById(Scope.class, prismTransitionEvaluation.getScope());
+            Scope scope = scopeService.getById(prismTransitionEvaluation.getScope());
             StateTransitionEvaluation transientStateTransitionEvaluation = new StateTransitionEvaluation().withId(prismTransitionEvaluation)
                     .withNextStateSelection(prismTransitionEvaluation.isNextStateSelection()).withScope(scope);
             entityService.createOrUpdate(transientStateTransitionEvaluation);
@@ -472,7 +474,7 @@ public class SystemService {
         }
     }
 
-    private void initializeStateActionDefinitions() throws DeduplicationException, WorkflowConfigurationException {
+    private void initializeStateActions() throws DeduplicationException, WorkflowConfigurationException {
         stateService.deleteStateActions();
 
         for (State state : stateService.getStates()) {
@@ -550,8 +552,12 @@ public class SystemService {
     }
 
     private void initializeStateTerminations(PrismStateTransition prismStateTransition, StateTransition stateTransition) {
-        for (PrismState prismState : prismStateTransition.getStateTerminations()) {
-            stateTransition.getStateTerminations().add(stateService.getById(prismState));
+        for (PrismStateTermination prismStateTermination : prismStateTransition.getStateTerminations()) {
+            State state = stateService.getById(prismStateTermination.getTerminationState());
+            StateTermination stateTermination = new StateTermination().withStateTransition(stateTransition).withTerminationState(state)
+                    .withStateTerminationEvaluation(prismStateTermination.getStateTerminationEvaluation());
+            entityService.save(stateTermination);
+            stateTransition.getStateTerminations().add(stateTermination);
         }
     }
 

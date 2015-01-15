@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -30,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationEvaluation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -43,6 +45,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
+import com.zuehlke.pgadmissions.domain.workflow.StateTermination;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
@@ -121,6 +124,7 @@ public class StateService {
 
     public void deleteStateActions() {
         entityService.deleteAll(RoleTransition.class);
+        entityService.deleteAll(StateTermination.class);
         entityService.deleteAll(StateTransition.class);
         entityService.deleteAll(StateActionAssignment.class);
         entityService.deleteAll(StateActionNotification.class);
@@ -168,7 +172,7 @@ public class StateService {
             transitionState = transitionState == null ? state : transitionState;
             state = state == null ? transitionState : state;
 
-            Set<State> stateTerminations = stateTransition.getStateTerminations();
+            Set<State> stateTerminations = getStateTerminations(resource, action, stateTransition);
             commentService.recordStateTransition(comment, state, transitionState, stateTerminations);
             resourceService.recordStateTransition(resource, comment, state, transitionState);
 
@@ -196,11 +200,25 @@ public class StateService {
 
         List<StateTransition> potentialStateTransitions = getPotentialStateTransitions(operative, action);
         if (potentialStateTransitions.size() > 1) {
-            PrismStateTransitionEvaluation transitionEvaluation = potentialStateTransitions.get(0).getStateTransitionEvaluation().getId();
-            return (StateTransition) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(transitionEvaluation), operative, comment);
+            PrismStateTransitionEvaluation evaluation = potentialStateTransitions.get(0).getStateTransitionEvaluation().getId();
+            return (StateTransition) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(evaluation), operative, comment);
         }
 
         return potentialStateTransitions.isEmpty() ? null : potentialStateTransitions.get(0);
+    }
+    
+    private Set<State> getStateTerminations(Resource resource, Action action, StateTransition stateTransition) {
+        Resource operative = resourceService.getOperativeResource(resource, action);
+        
+        Set<State> stateTerminations = Sets.newHashSet();
+        Set<StateTermination> potentialStateTerminations = stateTransition.getStateTerminations();
+        for (StateTermination potentialStateTermination : potentialStateTerminations) {
+            PrismStateTerminationEvaluation evaluation = potentialStateTermination.getStateTerminationEvaluation();
+            if (evaluation == null || BooleanUtils.isTrue((Boolean) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(evaluation), operative))) {
+                stateTerminations.add(potentialStateTermination.getTerminationState());
+            }
+        }
+        return stateTerminations;
     }
 
     public StateTransition getApplicationCompletedOutcome(Resource resource, Comment comment) {
@@ -329,11 +347,16 @@ public class StateService {
     }
 
     public StateTransition getApplicationReferencedOutcome(Resource resource, Comment comment) throws DeduplicationException {
-        PrismState transitionState = PrismState.APPLICATION_REFERENCE;
-        if (roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_REFEREE)).size() == 1) {
-            transitionState = PrismState.APPLICATION_REFERENCE_PENDING_COMPLETION;
+        PrismStateGroup stateGroupId = resource.getState().getStateGroup().getId();
+        if (stateGroupId == PrismStateGroup.APPLICATION_REFERENCE) {  
+            PrismState transitionState = PrismState.APPLICATION_REFERENCE;
+            if (getApplicationReferencedTermination(resource)) {
+                transitionState = PrismState.APPLICATION_REFERENCE_PENDING_COMPLETION;
+            }
+            return stateDAO.getStateTransition(resource, comment.getAction(), transitionState);
+        } else {
+            return stateDAO.getStateTransition(resource, comment.getAction(), null);
         }
-        return stateDAO.getStateTransition(resource, comment.getAction(), transitionState);
     }
 
     public StateTransition getApplicationReferenceCompletedOutcome(Resource resource, Comment comment) {
@@ -403,6 +426,10 @@ public class StateService {
 
     public StateTransition getProjectViewEditOutcome(Resource resource, Comment comment) {
         return getViewEditNextState(resource, comment);
+    }
+    
+    public Boolean getApplicationReferencedTermination(Resource resource) {
+        return roleService.getRoleUsers(resource, roleService.getById(PrismRole.APPLICATION_REFEREE)).size() == 1;
     }
 
     public <T extends Resource> void executeDeferredStateTransition(Class<T> resourceClass, Integer resourceId, PrismAction actionId)

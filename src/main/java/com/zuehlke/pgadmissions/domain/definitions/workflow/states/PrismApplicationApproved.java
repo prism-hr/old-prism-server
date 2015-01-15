@@ -13,6 +13,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTermination;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
@@ -127,8 +128,8 @@ public class PrismApplicationApproved extends PrismWorkflowState {
                             PrismAction.PROGRAM_CONCLUDE,  //
                             PrismAction.PROJECT_CONCLUDE)) //
                         .withStateTerminations(Lists.newArrayList( //
-                            PrismState.APPLICATION_REFERENCE, //
-                            PrismState.APPLICATION_VERIFICATION)), //
+                            new PrismStateTermination().withTerminationState(PrismState.APPLICATION_REFERENCE), //
+                            new PrismStateTermination().withTerminationState(PrismState.APPLICATION_VERIFICATION))),
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_APPROVED_PENDING_EXPORT) //
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) //
@@ -155,8 +156,8 @@ public class PrismApplicationApproved extends PrismWorkflowState {
                             PrismAction.PROGRAM_CONCLUDE,  //
                             PrismAction.PROJECT_CONCLUDE))
                         .withStateTerminations(Lists.newArrayList( //
-                            PrismState.APPLICATION_REFERENCE, //
-                            PrismState.APPLICATION_VERIFICATION))))); //
+                            new PrismStateTermination().withTerminationState(PrismState.APPLICATION_REFERENCE), //
+                            new PrismStateTermination().withTerminationState(PrismState.APPLICATION_VERIFICATION)))))); //
 
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_EMAIL_CREATOR) //
@@ -204,8 +205,8 @@ public class PrismApplicationApproved extends PrismWorkflowState {
                                 .withTransitionRole(PrismRole.APPLICATION_VIEWER_REFEREE) //
                                 .withRestrictToOwner(false)))
                         .withStateTerminations(Lists.newArrayList( //
-                            PrismState.APPLICATION_REFERENCE, //
-                            PrismState.APPLICATION_VERIFICATION)), //
+                            new PrismStateTermination().withTerminationState(PrismState.APPLICATION_REFERENCE), //
+                            new PrismStateTermination().withTerminationState(PrismState.APPLICATION_VERIFICATION))),
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_REJECTED_PENDING_EXPORT) //
                         .withTransitionAction(PrismAction.APPLICATION_ESCALATE) //
@@ -217,8 +218,8 @@ public class PrismApplicationApproved extends PrismWorkflowState {
                                 .withTransitionRole(PrismRole.APPLICATION_VIEWER_REFEREE) //
                                 .withRestrictToOwner(false)))
                         .withStateTerminations(Lists.newArrayList( //
-                            PrismState.APPLICATION_REFERENCE, //
-                            PrismState.APPLICATION_VERIFICATION))))); //
+                            new PrismStateTermination().withTerminationState(PrismState.APPLICATION_REFERENCE), //
+                            new PrismStateTermination().withTerminationState(PrismState.APPLICATION_VERIFICATION)))))); //
 
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_MOVE_TO_DIFFERENT_STAGE) //

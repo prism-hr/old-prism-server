@@ -13,6 +13,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTermination;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 
@@ -121,7 +122,7 @@ public class PrismApplicationVerification extends PrismWorkflowState {
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST)
                         .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_VERIFICATION_COMPLETED_OUTCOME)
                         .withStateTerminations(Lists.newArrayList( //
-                                PrismState.APPLICATION_VERIFICATION))))); //
+                            new PrismStateTermination().withTerminationState(PrismState.APPLICATION_VERIFICATION)))))); //
 
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_CONFIRM_ELIGIBILITY) //
@@ -156,7 +157,7 @@ public class PrismApplicationVerification extends PrismWorkflowState {
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) //
                         .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_VERIFIED_OUTCOME) //
                         .withStateTerminations(Lists.newArrayList( //
-                                PrismState.APPLICATION_VERIFICATION))))); //
+                            new PrismStateTermination().withTerminationState(PrismState.APPLICATION_VERIFICATION)))))); //
 
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_EMAIL_CREATOR) //

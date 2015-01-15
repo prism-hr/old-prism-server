@@ -51,7 +51,7 @@ public class ApplicationDocumentExportBuilder {
 
     @Autowired
     private CommentService commentService;
-    
+
     @Autowired
     private DocumentService documentService;
 
@@ -109,7 +109,7 @@ public class ApplicationDocumentExportBuilder {
                 int qualificationNumberId = i + 1;
                 contentsProperties.put("transcript." + qualificationNumberId + ".serverFilename", filename);
                 contentsProperties.put("transcript." + qualificationNumberId + ".applicationFilename",
-                        document == null ? "ExplanationOfMissingQualifications.pdf" : document.getFileName());
+                        document == null ? "ExplanationOfMissingQualifications.pdf" : document.getExportFilenameSits());
             }
         } else {
             String filename = getRandomFilename();
@@ -137,7 +137,7 @@ public class ApplicationDocumentExportBuilder {
             zos.write(getFileContents(application, document));
             zos.closeEntry();
             contentsProperties.put("englishLanguageTestCertificate.1.serverFilename", filename);
-            contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", document != null ? document.getFileName()
+            contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", document != null ? document.getExportFilenameSits()
                     : "englishLanguageTestCertificate.pdf");
         }
     }
@@ -151,7 +151,7 @@ public class ApplicationDocumentExportBuilder {
             zos.write(getFileContents(application, document));
             zos.closeEntry();
             contentsProperties.put("researchProposal.1.serverFilename", filename);
-            contentsProperties.put("researchProposal.1.applicationFilename", document != null ? document.getFileName() : "researchProposal.pdf");
+            contentsProperties.put("researchProposal.1.applicationFilename", document != null ? document.getExportFilenameSits() : "researchProposal.pdf");
         }
     }
 
@@ -164,7 +164,7 @@ public class ApplicationDocumentExportBuilder {
             zos.write(getFileContents(application, document));
             zos.closeEntry();
             contentsProperties.put("curriculumVitae.1.serverFilename", filename);
-            contentsProperties.put("curriculumVitae.1.applicationFilename", document != null ? document.getFileName() : "curriculumVitae.pdf");
+            contentsProperties.put("curriculumVitae.1.applicationFilename", document != null ? document.getExportFilenameSits() : "curriculumVitae.pdf");
         }
     }
 

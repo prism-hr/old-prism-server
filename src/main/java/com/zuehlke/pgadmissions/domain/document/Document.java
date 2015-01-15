@@ -11,11 +11,9 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
@@ -25,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.utils.Constants;
 
 @Entity
 @Table(name = "DOCUMENT")
@@ -90,9 +89,6 @@ public class Document {
 
     @OneToOne(mappedBy = "logoDocument")
     private Institution institutionLogo;
-
-    @Transient
-    private MultipartFile fileData;
 
     public void setId(Integer id) {
         this.id = id;
@@ -206,14 +202,6 @@ public class Document {
         this.institutionLogo = institutionLogo;
     }
 
-    public MultipartFile getFileData() {
-        return fileData;
-    }
-
-    public void setFileData(MultipartFile fileData) {
-        this.fileData = fileData;
-    }
-
     public Document withId(Integer id) {
         this.id = id;
         return this;
@@ -275,5 +263,13 @@ public class Document {
             return null;
         }
     }
+    
+    public String getExportFilenameAmazon() {
+        return id.toString();
+    }
 
+    public String getExportFilenameSits() {
+        return getExportFilenameAmazon() + Constants.DOT + Constants.FILE_EXTENSION_PDF;
+    }
+    
 }

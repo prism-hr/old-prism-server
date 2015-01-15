@@ -1,5 +1,18 @@
 package com.zuehlke.pgadmissions.services;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import com.google.common.collect.Maps;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -12,18 +25,6 @@ import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilder;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderHelper;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.List;
-
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)

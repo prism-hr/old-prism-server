@@ -67,7 +67,7 @@ public enum PrismAction {
     APPLICATION_COMPLETE_VERIFICATION_STAGE(USER_INVOCATION, PROCESS_RESOURCE, false, true, false, true, false, false, null, APPLICATION, null, Arrays.asList(
             new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT), new PrismActionRedaction().withRole(APPLICATION_REFEREE)
                     .withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder().addResolution(CONTENT, NOT_EMPTY)
-            .addResolution(TRANSITION_STATE).addResolution(DOCUMENTS, new PrismActionValidationFieldResolution(SIZE, "min", 0)).build()), //
+            .addResolution(DOCUMENTS, new PrismActionValidationFieldResolution(SIZE, "min", 0)).build()), //
     APPLICATION_CONFIRM_ELIGIBILITY(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, false, null, APPLICATION, null, Arrays.asList(
             new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_CONTENT), new PrismActionRedaction().withRole(APPLICATION_REFEREE)
                     .withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder().addResolution(CONTENT, NOT_EMPTY)
@@ -76,9 +76,8 @@ public enum PrismAction {
             .asList(new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_ASSESSMENT_CONTENT),
                     new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT),
                     new PrismActionRedaction().withRole(APPLICATION_VIEWER_REFEREE).withRedactionType(ALL_CONTENT)), PrismActionValidationDefinition.builder()
-            .addResolution(INTERVIEW_TIME_ZONE, NOT_NULL).addResolution(INTERVIEW_DURATION, NOT_NULL)
-            .addResolution(INTERVIEW_DATE_TIME, NOT_NULL).addResolution(INTERVIEWER_INSTRUCTIONS, NOT_EMPTY).addResolution(INTERVIEWEE_INSTRUCTIONS)
-            .addResolution(INTERVIEW_LOCATION).build()), //
+            .addResolution(INTERVIEW_TIME_ZONE, NOT_NULL).addResolution(INTERVIEW_DURATION, NOT_NULL).addResolution(INTERVIEW_DATE_TIME, NOT_NULL)
+            .addResolution(INTERVIEWER_INSTRUCTIONS, NOT_EMPTY).addResolution(INTERVIEWEE_INSTRUCTIONS).addResolution(INTERVIEW_LOCATION).build()), //
     APPLICATION_CONFIRM_OFFER_RECOMMENDATION(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, true, null, APPLICATION, null, null,
             PrismActionValidationDefinition.builder().addResolution(ASSIGNED_USERS).build()), //
     APPLICATION_CONFIRM_REJECTION(USER_INVOCATION, PROCESS_RESOURCE, false, false, false, true, false, false, null, APPLICATION, null, null,

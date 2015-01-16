@@ -397,13 +397,26 @@ public class SystemService {
     }
 
     private System initializeSystemResource() throws DeduplicationException {
+        System system = getSystem();
         User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail, PrismLocale.getSystemLocale());
-        State systemRunning = stateService.getById(PrismState.SYSTEM_RUNNING);
-        DateTime startupTimestamp = new DateTime();
-        System transientSystem = new System().withId(systemId).withTitle(systemName).withLocale(PrismLocale.getSystemLocale()).withHelpdesk(systemHelpdesk)
-                .withUser(systemUser).withState(systemRunning).withCipherSalt(EncryptionUtils.getUUID()).withCreatedTimestamp(startupTimestamp)
-                .withUpdatedTimestamp(startupTimestamp);
-        System system = entityService.createOrUpdate(transientSystem);
+        DateTime baseline = new DateTime();
+
+        if (system == null) {
+            State systemRunning = stateService.getById(PrismState.SYSTEM_RUNNING);
+            system = new System().withId(systemId).withTitle(systemName).withLocale(PrismLocale.getSystemLocale()).withHelpdesk(systemHelpdesk)
+                    .withUser(systemUser).withState(systemRunning).withCipherSalt(EncryptionUtils.getUUID()).withCreatedTimestamp(baseline)
+                    .withUpdatedTimestamp(baseline);
+            entityService.save(system);
+
+        } else {
+            system.setId(systemId);
+            system.setTitle(systemName);
+            system.setLocale(PrismLocale.getSystemLocale());
+            system.setHelpdesk(systemHelpdesk);
+            system.setUser(systemUser);
+            system.setUpdatedTimestamp(baseline);
+        }
+
         system.setCode(resourceService.generateResourceCode(system));
         return system;
     }

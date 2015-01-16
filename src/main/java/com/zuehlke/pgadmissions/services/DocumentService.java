@@ -22,15 +22,14 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
@@ -62,6 +61,9 @@ public class DocumentService {
 
     @Value("${integration.amazon.bucket}")
     private String amazonBucket;
+
+    @Value("${integration.amazon.production.bucket}")
+    private String amazonProductionBucket;
 
     @Autowired
     private DocumentDAO documentDAO;
@@ -159,25 +161,20 @@ public class DocumentService {
     public byte[] getDocumentContent(Document document) throws IOException {
         if (document.getExported() == true) {
             AmazonS3 amazonClient = getAmazonClient();
-            GetObjectRequest amazonRequest = new GetObjectRequest(amazonBucket, document.getId().toString());
+            String amazonObjectKey = document.getExportFilenameAmazon();
 
             try {
-                S3Object amazonObject = amazonClient.getObject(amazonRequest);
-                S3ObjectInputStream amazonStream = null;
-
-                try {
-                    amazonStream = amazonObject.getObjectContent();
-                    byte[] amazonByteArray = IOUtils.toByteArray(amazonStream);
-                    IOUtils.closeQuietly(amazonStream);
-                    return amazonByteArray;
-                } finally {
-                    IOUtils.closeQuietly(amazonStream);
+                return getAmazonObject(amazonClient, amazonObjectKey);
+            } catch (AmazonS3Exception e1) {
+                if (!contextEnvironment.equals("prod")) {
+                    try {
+                        amazonClient.copyObject(amazonProductionBucket, amazonObjectKey, amazonBucket, amazonObjectKey);
+                        return getAmazonObject(amazonClient, amazonObjectKey);
+                    } catch (AmazonS3Exception e2) {
+                        return getFallbackDocument(document);
+                    }
                 }
-            } catch (AmazonServiceException e) {
-                if (contextEnvironment == "dev" && e.getStatusCode() == HttpStatus.NOT_FOUND.value()) {
-                    return getSystemDocument("document/" + (document.getCategory() == FileCategory.DOCUMENT ? "document_exported.pdf" : "image_exported.jpg"));
-                }
-                throw e;
+                return getFallbackDocument(document);
             }
         }
 
@@ -211,7 +208,7 @@ public class DocumentService {
 
             try {
                 amazonStream = new ByteArrayInputStream(content);
-                PutObjectRequest amazonRequest = new PutObjectRequest(amazonBucket, documentId.toString(), amazonStream, amazonMetadata);
+                PutObjectRequest amazonRequest = new PutObjectRequest(amazonBucket, document.getExportFilenameAmazon(), amazonStream, amazonMetadata);
                 amazonClient.putObject(amazonRequest);
                 document.setContent(null);
                 document.setExported(true);
@@ -221,8 +218,9 @@ public class DocumentService {
         }
     }
 
-    public byte[] getSystemDocument(String path) throws IOException {
-        return Resources.toByteArray(Resources.getResource(path));
+    public byte[] getFallbackDocument(Document document) throws IOException {
+        return Resources.toByteArray(Resources.getResource("document/"
+                + (document.getCategory() == FileCategory.DOCUMENT ? "document_exported.pdf" : "image_exported.jpg")));
     }
 
     public void deleteAmazonDocuments(DateTime baselineTime) throws IOException {
@@ -271,6 +269,21 @@ public class DocumentService {
         } finally {
             IOUtils.closeQuietly(amazonCredentialsOutputStream);
             IOUtils.closeQuietly(amazonCredentialsInputStream);
+        }
+    }
+
+    private byte[] getAmazonObject(AmazonS3 amazonClient, String amazonObjectKey) throws IOException {
+        GetObjectRequest amazonRequest = new GetObjectRequest(amazonBucket, amazonObjectKey);
+        S3Object amazonObject = amazonClient.getObject(amazonRequest);
+
+        S3ObjectInputStream amazonStream = null;
+        try {
+            amazonStream = amazonObject.getObjectContent();
+            byte[] amazonByteArray = IOUtils.toByteArray(amazonStream);
+            IOUtils.closeQuietly(amazonStream);
+            return amazonByteArray;
+        } finally {
+            IOUtils.closeQuietly(amazonStream);
         }
     }
 

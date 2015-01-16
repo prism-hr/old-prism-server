@@ -1,18 +1,23 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.List;
-import java.util.Properties;
-
-import javax.imageio.ImageIO;
-import javax.servlet.http.Part;
-
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.PropertiesCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.*;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Resources;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.zuehlke.pgadmissions.dao.DocumentDAO;
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.document.FileCategory;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.system.System;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.util.io.Streams;
@@ -27,31 +32,18 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.auth.PropertiesCredentials;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.ListObjectsRequest;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Resources;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.zuehlke.pgadmissions.dao.DocumentDAO;
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.document.FileCategory;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.system.System;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
+import javax.imageio.ImageIO;
+import javax.servlet.http.Part;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.List;
+import java.util.Properties;
 
 @Service
 @Transactional
@@ -83,7 +75,7 @@ public class DocumentService {
     }
 
     public Document getById(Integer id, FileCategory category) {
-        return entityService.getByProperties(Document.class, ImmutableMap.<String, Object> of("id", id, "category", category));
+        return entityService.getByProperties(Document.class, ImmutableMap.<String, Object>of("id", id, "category", category));
     }
 
     public Document create(FileCategory category, Part uploadStream) throws IOException {
@@ -98,10 +90,21 @@ public class DocumentService {
             if (image == null) {
                 throw new PrismBadRequestException("Uploaded file is not valid image file");
             }
-            image = Scalr.resize(image, Scalr.Mode.AUTOMATIC, 340, 240);
+
+            final int SIZE = 600;
+            final int HALF_SIZE = SIZE / 2;
+            image = Scalr.resize(image, Scalr.Mode.AUTOMATIC, SIZE, SIZE);
+
+            BufferedImage paddedImage = new BufferedImage(SIZE, SIZE, BufferedImage.TYPE_INT_RGB);
+            Graphics graphics = paddedImage.getGraphics();
+            graphics.setColor(Color.WHITE);
+            graphics.fillRect(0, 0, SIZE, SIZE);
+            graphics.drawImage(image, HALF_SIZE - image.getWidth() / 2, HALF_SIZE - image.getHeight() / 2, null);
+            graphics.dispose();
+
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(image, contentType.replaceAll("image/", ""), baos);
+            ImageIO.write(paddedImage, contentType.replaceAll("image/", ""), baos);
             baos.flush();
             content = baos.toByteArray();
             baos.close();

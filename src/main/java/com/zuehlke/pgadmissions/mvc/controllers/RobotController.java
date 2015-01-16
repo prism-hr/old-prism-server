@@ -1,11 +1,12 @@
 package com.zuehlke.pgadmissions.mvc.controllers;
 
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.services.ResourceService;
+import freemarker.template.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +20,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.Maps;
-import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.services.ResourceService;
-
-import freemarker.template.Template;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("api/robots")
@@ -53,6 +52,10 @@ public class RobotController {
         PrismScope resourceScope = getQueryResourceScope(queryMap);
         Integer resourceId = getQueryResourceId(resourceScope, queryMap);
 
+        if (resourceScope == null || resourceId == null) {
+            throw new ResourceNotFoundException("Missing resource information");
+        }
+
         Map<String, Object> model = Maps.newHashMap();
         model.put("metadata", resourceService.getSocialMetadata(resourceScope, resourceId));
         model.put("advert", resourceService.getSearchEngineAdvert(resourceScope, resourceId));
@@ -73,12 +76,10 @@ public class RobotController {
         Map<String, String> map = new HashMap<String, String>();
         for (String param : params) {
             String[] split = param.split("=");
-            if(split.length == 2){
-            String name = split[0];
-            String value = split[1];
-            map.put(name, value);
-            } else {
-                log.error("Unexpected robot controller parameter: " + param + " in query: " + query);
+            if (split.length == 2) {
+                String name = split[0];
+                String value = split[1];
+                map.put(name, value);
             }
         }
         return map;
@@ -97,14 +98,14 @@ public class RobotController {
 
     private Integer getQueryResourceId(PrismScope resourceScope, Map<String, String> queryMap) {
         switch (resourceScope) {
-        case INSTITUTION:
-        case PROGRAM:
-        case PROJECT:
-            return Integer.parseInt(queryMap.get(resourceScope.getLowerCaseName()));
-        case SYSTEM:
-            return null;
-        default:
-            throw new Error();
+            case INSTITUTION:
+            case PROGRAM:
+            case PROJECT:
+                return Integer.parseInt(queryMap.get(resourceScope.getLowerCaseName()));
+            case SYSTEM:
+                return null;
+            default:
+                throw new Error();
         }
     }
 

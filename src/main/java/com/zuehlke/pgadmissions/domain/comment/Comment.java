@@ -623,7 +623,7 @@ public class Comment {
         return getApplicationEligible() == PrismYesNoUnsureResponse.UNSURE;
     }
 
-    public User getAuthor() {
+    public User getActionOwner() {
         return delegateUser == null ? user : delegateUser;
     }
 
@@ -748,6 +748,10 @@ public class Comment {
 
     public boolean isSecondaryTransitionComment() {
         return !secondaryTransitionStates.isEmpty();
+    }
+
+    public boolean isDelegateComment() {
+        return delegateUser != null;
     }
 
     public String getApplicationRatingDisplay() {

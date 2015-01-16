@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBElement;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -59,11 +60,13 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.La
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
+import com.zuehlke.pgadmissions.rest.dto.application.ImportedInstitutionDTO;
 import com.zuehlke.pgadmissions.utils.ConversionUtils;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Service
 @Transactional
+@SuppressWarnings("unchecked")
 public class ImportedEntityService {
 
     private static DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("dd-MMM-yy");
@@ -92,7 +95,6 @@ public class ImportedEntityService {
     @Autowired
     private SystemService systemService;
 
-    @SuppressWarnings("unchecked")
     public <T extends ImportedEntity> T getById(Class<? extends ImportedEntity> clazz, Institution institution, Integer id) {
         return (T) entityService.getByProperties(clazz, ImmutableMap.of("institution", institution, "id", id));
     }
@@ -136,7 +138,8 @@ public class ImportedEntityService {
     }
 
     public void mergeImportedProgram(Institution institution, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline, DateTime baselineTime)
-            throws DeduplicationException, DataImportException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            throws DeduplicationException, DataImportException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException,
+            IOException {
         Programme programDefinition = programInstanceDefinitions.iterator().next().getProgramme();
         Program persistentProgram = mergeProgram(institution, programDefinition, baseline);
 
@@ -181,7 +184,7 @@ public class ImportedEntityService {
         String institutionNameClean = institutionDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "");
 
         ImportedInstitution transientImportedInstitution = new ImportedInstitution().withInstitution(institution).withDomicile(domicile)
-                .withCode(institutionDefinition.getCode()).withName(institutionNameClean).withEnabled(true);
+                .withCode(institutionDefinition.getCode()).withName(institutionNameClean).withEnabled(true).withCustom(false);
 
         if (domicile == null) {
             throw new DataImportException("No enabled domicile for Institution " + transientImportedInstitution.getResourceSignature().toString()
@@ -283,6 +286,31 @@ public class ImportedEntityService {
         return importedEntityDAO.getPendingImportedEntityFeeds(institutionId);
     }
 
+    public ImportedInstitution getOrCreateImportedInstitution(Institution institution, ImportedInstitutionDTO importedInstitutionDTO) {
+        Integer importedInstitutionId = importedInstitutionDTO.getId();
+
+        if (importedInstitutionId == null) {
+            ImportedInstitution importedInstitution = importedEntityDAO.getCustomImportedInstitutionByName(importedInstitutionDTO.getDomicile(),
+                    importedInstitutionDTO.getName());
+            if (importedInstitution == null) {
+                return createCustomImportedInstitution(institution, importedInstitutionDTO);
+            } else if (BooleanUtils.isTrue(importedInstitution.getEnabled())) {
+                return importedInstitution;
+            } else {
+                return enableCustomImportedInstitution(importedInstitution);
+            }
+        } else {
+            ImportedInstitution importedInstitution = getById(ImportedInstitution.class, institution, importedInstitutionDTO.getId());
+            if (BooleanUtils.isTrue(importedInstitution.getEnabled())) {
+                return importedInstitution;
+            } else if (BooleanUtils.isTrue(importedInstitution.getCustom())) {
+                return enableCustomImportedInstitution(importedInstitution);
+            }
+        }
+
+        throw new Error();
+    }
+
     private Program mergeProgram(Institution institution, Programme programDefinition, LocalDate baseline) throws DeduplicationException {
         User proxyCreator = institution.getUser();
 
@@ -348,6 +376,20 @@ public class ImportedEntityService {
         StudyOption studyOption = new StudyOption().withInstitution(institution).withCode(studyOptionId.name()).withName(externalCode).withEnabled(true);
         studyOption.setType(PrismImportedEntity.STUDY_OPTION);
         return entityService.createOrUpdate(studyOption);
+    }
+
+    private ImportedInstitution createCustomImportedInstitution(Institution institution, ImportedInstitutionDTO importedInstitutionDTO) {
+        Domicile domicile = getById(Domicile.class, institution, importedInstitutionDTO.getDomicile());
+        ImportedInstitution importedInstitution = new ImportedInstitution().withInstitution(institution).withDomicile(domicile)
+                .withName(importedInstitutionDTO.getName()).withEnabled(true).withCustom(true);
+        entityService.save(importedInstitution);
+        importedInstitution.setCode("CUSTOM_" + Strings.padStart(importedInstitution.getId().toString(), 10, '0'));
+        return importedInstitution;
+    }
+
+    private ImportedInstitution enableCustomImportedInstitution(ImportedInstitution importedInstitution) {
+        importedInstitution.setEnabled(true);
+        return importedInstitution;
     }
 
     private void executeProgramImportAction(Program program, DateTime baselineTime) throws DeduplicationException, InstantiationException,

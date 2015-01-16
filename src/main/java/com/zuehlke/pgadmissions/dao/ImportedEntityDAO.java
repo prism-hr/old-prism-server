@@ -37,17 +37,11 @@ public class ImportedEntityDAO {
                 .uniqueResult();
     }
 
-    public ImportedInstitution getImportedInstitutionByCode(Domicile domicile, String code) {
+    public ImportedInstitution getCustomImportedInstitutionByName(Integer domicileId, String name) {
         return (ImportedInstitution) sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class) //
-                .add(Restrictions.eq("domicile", domicile)) //
-                .add(Restrictions.eq("code", code)) //
-                .uniqueResult();
-    }
-
-    public ImportedInstitution getImportedInstitutionByName(Domicile domicile, String name) {
-        return (ImportedInstitution) sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class) //
-                .add(Restrictions.eq("domicile", domicile)) //
+                .add(Restrictions.eq("domicile.id", domicileId)) //
                 .add(Restrictions.eq("name", name)) //
+                .add(Restrictions.eq("custom", true)) //
                 .uniqueResult();
     }
 

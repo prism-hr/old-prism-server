@@ -28,7 +28,7 @@ public class ImportedInstitution extends ImportedEntity {
     @JoinColumn(name = "domicile_id", nullable = false)
     private Domicile domicile;
 
-    @Column(name = "code", nullable = false)
+    @Column(name = "code")
     private String code;
 
     @Column(name = "name", nullable = false)
@@ -37,6 +37,9 @@ public class ImportedInstitution extends ImportedEntity {
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
+    @Column(name = "custom", nullable = false)
+    private Boolean custom;
+    
     public Integer getId() {
         return id;
     }
@@ -85,6 +88,14 @@ public class ImportedInstitution extends ImportedEntity {
         this.enabled = enabled;
     }
 
+    public final Boolean getCustom() {
+        return custom;
+    }
+
+    public final void setCustom(Boolean custom) {
+        this.custom = custom;
+    }
+
     public ImportedInstitution withInstitution(Institution institution) {
         this.institution = institution;
         return this;
@@ -92,6 +103,11 @@ public class ImportedInstitution extends ImportedEntity {
 
     public ImportedInstitution withDomicile(Domicile domicile) {
         this.domicile = domicile;
+        return this;
+    }
+
+    public ImportedInstitution withCode(String code) {
+        this.code = code;
         return this;
     }
 
@@ -104,9 +120,9 @@ public class ImportedInstitution extends ImportedEntity {
         this.enabled = enabled;
         return this;
     }
-
-    public ImportedInstitution withCode(String code) {
-        this.code = code;
+    
+    public ImportedInstitution withCustom(Boolean custom) {
+        this.custom = custom;
         return this;
     }
 

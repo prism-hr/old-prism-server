@@ -144,23 +144,7 @@ public class ResourceService {
         return resource == null ? null : resource.getId();
     }
 
-    public ActionOutcomeDTO executeAction(Integer resourceId, CommentDTO commentDTO) throws DeduplicationException, InstantiationException,
-            IllegalAccessException, BeansException, WorkflowEngineException, IOException {
-        switch (commentDTO.getAction().getScope()) {
-        case APPLICATION:
-            return applicationService.executeAction(resourceId, commentDTO);
-        case PROJECT:
-            return projectService.executeAction(resourceId, commentDTO);
-        case PROGRAM:
-            return programService.executeAction(resourceId, commentDTO);
-        case INSTITUTION:
-            return institutionService.executeAction(resourceId, commentDTO);
-        default:
-            throw new Error();
-        }
-    }
-
-    public ActionOutcomeDTO createResource(User user, Action action, Object resourceDTO, String referrer, Integer workflowPropertyConfigurationVersion)
+    public ActionOutcomeDTO create(User user, Action action, Object resourceDTO, String referrer, Integer workflowPropertyConfigurationVersion)
             throws Exception {
         Resource resource = null;
         PrismScope resourceScope = action.getCreationScope().getId();
@@ -224,6 +208,22 @@ public class ResourceService {
 
         resource.setCode(generateResourceCode(resource));
         entityService.save(resource);
+    }
+
+    public ActionOutcomeDTO executeAction(Integer resourceId, CommentDTO commentDTO) throws DeduplicationException, InstantiationException,
+            IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+        switch (commentDTO.getAction().getScope()) {
+        case APPLICATION:
+            return applicationService.executeAction(resourceId, commentDTO);
+        case PROJECT:
+            return projectService.executeAction(resourceId, commentDTO);
+        case PROGRAM:
+            return programService.executeAction(resourceId, commentDTO);
+        case INSTITUTION:
+            return institutionService.executeAction(resourceId, commentDTO);
+        default:
+            throw new Error();
+        }
     }
 
     public void preProcessResource(Resource resource, Comment comment) {

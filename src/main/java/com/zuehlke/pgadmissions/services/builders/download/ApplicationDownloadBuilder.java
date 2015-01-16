@@ -82,7 +82,7 @@ public class ApplicationDownloadBuilder {
 
     @Autowired
     private CustomizationService customizationService;
-    
+
     @Autowired
     private DocumentService documentService;
 
@@ -190,7 +190,7 @@ public class ApplicationDownloadBuilder {
 
         if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application, APPLICATION_THEME_SECONDARY)) {
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(PrismDisplayPropertyDefinition.APPLICATION_SECONDARY_THEME),
-                    application.getPrimaryThemeDisplay(), body);
+                    application.getSecondaryThemeDisplay(), body);
         }
     }
 
@@ -386,8 +386,8 @@ public class ApplicationDownloadBuilder {
 
                 int counter = 1;
                 for (ApplicationQualification qualification : qualifications) {
-                    PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.load(APPLICATION_QUALIFICATION_SUBHEADER)
-                            + "(" + counter++ + ")");
+                    PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.load(APPLICATION_QUALIFICATION_SUBHEADER) + "("
+                            + counter++ + ")");
 
                     String dateFormat = propertyLoader.load(SYSTEM_DATE_FORMAT);
 
@@ -444,8 +444,8 @@ public class ApplicationDownloadBuilder {
             } else {
                 int counter = 1;
                 for (ApplicationEmploymentPosition position : positions) {
-                    PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(
-                            propertyLoader.load(APPLICATION_EMPLOYMENT_POSITION_SUBHEADER) + "(" + counter++ + ")");
+                    PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.load(APPLICATION_EMPLOYMENT_POSITION_SUBHEADER) + "("
+                            + counter++ + ")");
 
                     String dateFormat = propertyLoader.load(SYSTEM_DATE_FORMAT);
 
@@ -482,8 +482,8 @@ public class ApplicationDownloadBuilder {
 
                 int counter = 1;
                 for (ApplicationFunding funding : fundings) {
-                    PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.load(APPLICATION_FUNDING_SUBHEADER) + "("
-                            + counter++ + ")");
+                    PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.load(APPLICATION_FUNDING_SUBHEADER) + "(" + counter++
+                            + ")");
                     applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_FUNDING_TYPE), funding.getFundingSourceDisplay(),
                             subBody);
                     applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_FUNDING_SPONSOR), funding.getSponsor(), subBody);
@@ -516,8 +516,8 @@ public class ApplicationDownloadBuilder {
             } else {
                 int counter = 1;
                 for (ApplicationPrize prize : prizes) {
-                    PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.load(APPLICATION_PRIZE_SUBHEADER) + "("
-                            + counter++ + ")");
+                    PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.load(APPLICATION_PRIZE_SUBHEADER) + "(" + counter++
+                            + ")");
                     applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PRIZE_PROVIDER), prize.getProvider(), subBody);
                     applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PRIZE_TITLE), prize.getTitle(), subBody);
                     applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PRIZE_DESCRIPTION), prize.getDescription(), subBody);
@@ -540,8 +540,8 @@ public class ApplicationDownloadBuilder {
         } else {
             int counter = 1;
             for (ApplicationReferee referee : referees) {
-                PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.load(APPLICATION_REFEREE_SUBHEADER) + "("
-                        + counter++ + ")");
+                PdfPTable subBody = applicationDownloadBuilderHelper
+                        .startSubSection(propertyLoader.load(APPLICATION_REFEREE_SUBHEADER) + "(" + counter++ + ")");
 
                 User user = referee.getUser();
                 boolean userNull = user == null;
@@ -549,7 +549,7 @@ public class ApplicationDownloadBuilder {
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_FIRST_NAME), userNull ? null : user.getFirstName(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_LAST_NAME), userNull ? null : user.getLastName(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_EMAIL), userNull ? null : user.getEmail(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_ADDRESS), referee.getAddressDisplay(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_EMPLOYER_ADDRESS), referee.getAddressDisplay(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_TELEPHONE), referee.getPhone(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_SKYPE), referee.getSkype(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_EMPLOYER_NAME), referee.getJobEmployer(), subBody);
@@ -600,7 +600,7 @@ public class ApplicationDownloadBuilder {
                         documentSection == null ? null : documentSection.getResearchStatement(), includeAttachments);
             }
 
-            if (researchStatementEnabled) {
+            if (coveringLetterEnabled) {
                 addDocument(body, propertyLoader.load(APPLICATION_DOCUMENT_COVERING_LETTER_APPENDIX),
                         documentSection == null ? null : documentSection.getCoveringLetter(), includeAttachments);
             }
@@ -661,8 +661,7 @@ public class ApplicationDownloadBuilder {
 
                     pdfDocument.add(applicationDownloadBuilderHelper.newSectionSeparator());
 
-                    PdfPTable subBody = applicationDownloadBuilderHelper
-                            .startSubSection(propertyLoader.load(APPLICATION_REFEREE_REFERENCE_COMMENT));
+                    PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.load(APPLICATION_REFEREE_REFERENCE_COMMENT));
                     applicationContext.getBean(ApplicationDownloadReferenceBuilder.class).localize(propertyLoader, applicationDownloadBuilderHelper)
                             .addReferenceComment(pdfDocument, subBody, pdfWriter, applicationDownloadDTO.getApplication(), referenceComment);
 

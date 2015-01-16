@@ -72,19 +72,17 @@ public class ActionService {
     public Action getById(PrismAction id) {
         return entityService.getById(Action.class, id);
     }
-    
+
     public ActionCustomQuestionDefinition getCustomQuestionDefinitionById(PrismActionCustomQuestionDefinition id) {
         return entityService.getById(ActionCustomQuestionDefinition.class, id);
-    } 
+    }
 
     public void validateInvokeAction(Resource resource, Action action, Comment comment) {
-        User owner = comment.getAuthor();
-        User delegateOwner = comment.getUser();
+        User user = comment.getUser();
 
-        User currentUser = userService.getCurrentUser();
         Boolean isDeclineComment = comment.getDeclinedResponse();
 
-        authenticateActionInvocation(currentUser, action, owner, delegateOwner, isDeclineComment);
+        authenticateActionInvocation(action, user, isDeclineComment);
 
         if (BooleanUtils.toBoolean(isDeclineComment)) {
             return;
@@ -92,11 +90,9 @@ public class ActionService {
 
         Resource operative = resourceService.getOperativeResource(resource, action);
 
-        if (delegateOwner == null && checkActionAvailable(operative, action, owner)) {
+        if (comment.isDelegateComment() && checkDelegateActionAvailable(operative, action, user)) {
             return;
-        } else if (delegateOwner != null && checkActionAvailable(operative, action, delegateOwner)) {
-            return;
-        } else if (delegateOwner != null && checkDelegateActionAvailable(operative, action, delegateOwner)) {
+        } else if (checkActionAvailable(operative, action, user)) {
             return;
         }
 
@@ -106,15 +102,12 @@ public class ActionService {
     public void validateUpdateAction(Comment comment) {
         Action action = comment.getAction();
 
-        User owner = comment.getUser();
-        User delegateOwner = comment.getDelegateUser();
-
-        User currentUser = userService.getCurrentUser();
-        authenticateActionInvocation(currentUser, action, owner, delegateOwner, null);
+        User user = comment.getUser();
+        authenticateActionInvocation(action, user, null);
 
         Resource resource = comment.getResource();
 
-        if (owner == currentUser || checkDelegateActionAvailable(resource, action, delegateOwner)) {
+        if (userService.isCurrentUser(user) || checkDelegateActionAvailable(resource, action, user)) {
             return;
         }
 
@@ -203,8 +196,7 @@ public class ActionService {
         Action action = getById(registrationDTO.getAction().getActionId());
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             Object operativeResourceDTO = registrationDTO.getAction().getOperativeResourceDTO();
-            return resourceService.createResource(user, action, operativeResourceDTO, referrer, registrationDTO.getAction()
-                    .getWorkflowPropertyConfigurationVersion());
+            return resourceService.create(user, action, operativeResourceDTO, referrer, registrationDTO.getAction().getWorkflowPropertyConfigurationVersion());
         } else {
             Resource resource = entityService.getById(action.getScope().getId().getResourceClass(), registrationDTO.getResourceId());
             return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(resource).withTransitionAction(action);
@@ -287,8 +279,8 @@ public class ActionService {
         return creationActions;
     }
 
-    private boolean checkActionAvailable(Resource resource, Action action, User invoker) {
-        return actionDAO.getPermittedAction(resource, action, invoker) != null;
+    private boolean checkActionAvailable(Resource resource, Action action, User user) {
+        return actionDAO.getPermittedAction(resource, action, user) != null;
     }
 
     private boolean checkDelegateActionAvailable(Resource resource, Action action, User invoker) {
@@ -296,14 +288,12 @@ public class ActionService {
         return checkActionAvailable(resource, delegateAction, invoker);
     }
 
-    private void authenticateActionInvocation(User currentUser, Action action, User owner, User delegateOwner, Boolean declinedResponse) {
-        if (action.getDeclinableAction() && BooleanUtils.toBoolean(declinedResponse)) {
+    private void authenticateActionInvocation(Action action, User user, Boolean declineComment) {
+        if (action.getDeclinableAction() && BooleanUtils.toBoolean(declineComment)) {
             return;
         } else if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             return;
-        } else if (owner != null && Objects.equal(owner.getId(), currentUser.getId())) {
-            return;
-        } else if (delegateOwner != null && Objects.equal(delegateOwner.getId(), currentUser.getId())) {
+        } else if (userService.isCurrentUser(user)) {
             return;
         }
         throw new Error();

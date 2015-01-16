@@ -51,7 +51,7 @@ public class ApplicationDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-    
+
     public String getApplicationExportReference(Application application) {
         return (String) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.property("exportReference")) //

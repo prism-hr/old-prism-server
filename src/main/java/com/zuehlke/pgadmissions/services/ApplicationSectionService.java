@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -72,6 +73,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.Address;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
@@ -170,18 +172,15 @@ public class ApplicationSectionService {
             supervisor = entityService.getByProperties(ApplicationSupervisor.class, ImmutableMap.of("application", application, "id", supervisorId));
         }
 
+        User oldUser = supervisor.getUser();
         AssignedUserDTO userDTO = supervisorDTO.getUser();
-        User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), application.getLocale());
+        User newUser = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), application.getLocale());
 
-        supervisor.setUser(user);
+        supervisor.setUser(newUser);
         supervisor.setAcceptedSupervision(supervisorDTO.getAcceptedSupervision());
         supervisor.setLastUpdatedTimestamp(DateTime.now());
 
-        List<CommentAssignedUser> assignees = Lists.newArrayList();
-        if (application.isSubmitted()) {
-            assignees.add(new CommentAssignedUser().withUser(user).withRole(roleService.getById(APPLICATION_SUGGESTED_SUPERVISOR)).withRoleTransitionType(CREATE));
-        }
-
+        List<CommentAssignedUser> assignees = getUserAssignmentsCreate(application, oldUser, newUser, APPLICATION_SUGGESTED_SUPERVISOR);
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_SUPERVISOR, assignees.toArray(new CommentAssignedUser[assignees.size()]));
         return supervisor;
     }
@@ -195,8 +194,7 @@ public class ApplicationSectionService {
         User user = supervisor.getUser();
         application.getSupervisors().remove(supervisor);
 
-        executeUpdate(application, APPLICATION_COMMENT_UPDATED_SUPERVISOR,
-                new CommentAssignedUser().withUser(user).withRole(roleService.getById(APPLICATION_SUGGESTED_SUPERVISOR)).withRoleTransitionType(DELETE));
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_SUPERVISOR, getUserAssignmentDelete(user, APPLICATION_SUGGESTED_SUPERVISOR));
     }
 
     public void updatePersonalDetail(Integer applicationId, ApplicationPersonalDetailDTO personalDetailDTO) throws DeduplicationException,
@@ -295,21 +293,14 @@ public class ApplicationSectionService {
         }
 
         Institution institution = application.getInstitution();
+        
         ImportedInstitutionDTO importedInstitutionDTO = qualificationDTO.getInstitution();
-        ImportedInstitution importedInstitution;
-        if (importedInstitutionDTO.getId() == null) {
-            Domicile domicile = importedEntityService.getById(Domicile.class, institution, importedInstitutionDTO.getDomicile());
-            importedInstitution = new ImportedInstitution().withInstitution(institution).withDomicile(domicile).withEnabled(true).withCode("TEMPORARY_CODE")
-                    .withName(importedInstitutionDTO.getName());
-            entityService.save(importedInstitution);
-            importedInstitution.setCode("CUSTOM_" + Strings.padStart(importedInstitution.getId().toString(), 10, '0'));
-        } else {
-            importedInstitution = importedEntityService.getById(ImportedInstitution.class, institution, importedInstitutionDTO.getId());
-        }
-        QualificationType qualificationType = importedEntityService.getById(QualificationType.class, institution, qualificationDTO.getType());
-
+        ImportedInstitution importedInstitution = importedEntityService.getOrCreateImportedInstitution(institution, importedInstitutionDTO);
         qualification.setInstitution(importedInstitution);
+
+        QualificationType qualificationType = importedEntityService.getById(QualificationType.class, institution, qualificationDTO.getType());
         qualification.setType(qualificationType);
+
         qualification.setTitle(Strings.emptyToNull(qualificationDTO.getTitle()));
         qualification.setSubject(qualificationDTO.getSubject());
         qualification.setLanguage(qualificationDTO.getLanguage());
@@ -488,14 +479,7 @@ public class ApplicationSectionService {
         referee.setSkype(Strings.emptyToNull(refereeDTO.getSkype()));
         referee.setLastUpdatedTimestamp(DateTime.now());
 
-        List<CommentAssignedUser> assignees = Lists.newArrayList();
-        if (application.isSubmitted()) {
-            assignees.add(new CommentAssignedUser().withUser(newUser).withRole(roleService.getById(APPLICATION_REFEREE)).withRoleTransitionType(CREATE));
-            if (newUser.getId().equals(oldUser.getId())) {
-                assignees.add(new CommentAssignedUser().withUser(oldUser).withRole(roleService.getById(APPLICATION_REFEREE)).withRoleTransitionType(DELETE));
-            }
-        }
-
+        List<CommentAssignedUser> assignees = getUserAssignmentsCreate(application, oldUser, newUser, APPLICATION_REFEREE);
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE, assignees.toArray(new CommentAssignedUser[assignees.size()]));
         return referee;
     }
@@ -505,7 +489,7 @@ public class ApplicationSectionService {
         Application application = applicationService.getById(applicationId);
         ApplicationReferee referee = entityService.getByProperties(ApplicationReferee.class, ImmutableMap.of("application", application, "id", refereeId));
         application.getReferees().remove(referee);
-        executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE);
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE, getUserAssignmentDelete(referee.getUser(), APPLICATION_REFEREE));
     }
 
     public void updateDocument(Integer applicationId, ApplicationDocumentDTO documentDTO) throws DeduplicationException, InstantiationException,
@@ -639,6 +623,25 @@ public class ApplicationSectionService {
         if (application.isSubmitted()) {
             resourceService.executeUpdate(application, messageIndex, assignees);
         }
+    }
+
+    private List<CommentAssignedUser> getUserAssignmentsCreate(Application application, User oldUser, User newUser, PrismRole roleId) {
+        List<CommentAssignedUser> assignees = Lists.newArrayList();
+        if (application.isSubmitted()) {
+            Role role = roleService.getById(roleId);
+            if (oldUser == null) {
+                assignees.add(new CommentAssignedUser().withUser(newUser).withRole(role).withRoleTransitionType(CREATE));
+            } else if (!Objects.equal(newUser.getId(), oldUser.getId())) {
+                assignees.add(new CommentAssignedUser().withUser(newUser).withRole(role).withRoleTransitionType(CREATE));
+                assignees.add(new CommentAssignedUser().withUser(oldUser).withRole(role).withRoleTransitionType(DELETE));
+            }
+        }
+        return assignees;
+    }
+
+    private CommentAssignedUser getUserAssignmentDelete(User user, PrismRole roleId) {
+        Role role = roleService.getById(roleId);
+        return new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(DELETE);
     }
 
 }

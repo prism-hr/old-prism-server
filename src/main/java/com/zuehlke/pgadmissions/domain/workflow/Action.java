@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -192,6 +193,10 @@ public class Action extends WorkflowDefinition {
 
     public final void setStateActions(Set<StateAction> stateActions) {
         this.stateActions = stateActions;
+    }
+
+    public final void setRedactions(Set<ActionRedaction> redactions) {
+        this.redactions = redactions;
     }
 
     public Action withId(PrismAction id) {

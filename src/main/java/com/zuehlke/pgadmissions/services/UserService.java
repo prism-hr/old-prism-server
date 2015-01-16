@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -281,6 +282,10 @@ public class UserService {
         UserInstitutionIdentity transientUserInstitutionIdentity = new UserInstitutionIdentity().withUser(application.getUser())
                 .withInstitution(application.getInstitution()).withIdentityType(PrismUserIdentity.STUDY_APPLICANT).withIdentitier(exportUserId);
         entityService.createOrUpdate(transientUserInstitutionIdentity);
+    }
+    
+    public boolean isCurrentUser(User user) {
+        return user != null && Objects.equal(user.getId(), getCurrentUser().getId());
     }
 
 }

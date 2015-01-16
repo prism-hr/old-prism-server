@@ -315,7 +315,7 @@ public class CommentService {
         return new OfferRepresentation();
     }
 
-    public void create(Comment comment) {
+    public void createComment(Comment comment) {
         Set<CommentAssignedUser> transientAssignees = comment.getAssignedUsers();
         Set<CommentAssignedUser> persistentAssignees = Sets.newHashSet(transientAssignees);
         transientAssignees.clear();
@@ -627,7 +627,7 @@ public class CommentService {
                 Comment preference = new Comment().withResource(resource).withAction(action).withUser(assignee.getUser()).withDeclinedResponse(false)
                         .withState(resource.getState()).withTransitionState(resource.getState()).withCreatedTimestamp(baseline);
                 preference.getAppointmentPreferences().add(new CommentAppointmentPreference().withDateTime(interviewDateTime));
-                create(preference);
+                createComment(preference);
                 resource.addComment(preference);
             }
         }

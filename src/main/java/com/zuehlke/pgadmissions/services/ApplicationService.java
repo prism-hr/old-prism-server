@@ -625,7 +625,7 @@ public class ApplicationService {
     }
 
     private void synchroniseReferees(Application application, Comment comment) {
-        ApplicationReferee referee = applicationDAO.getRefereeByUser(application, comment.getAuthor());
+        ApplicationReferee referee = applicationDAO.getRefereeByUser(application, comment.getActionOwner());
         referee.setComment(comment);
     }
 

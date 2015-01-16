@@ -218,11 +218,6 @@ public class DocumentService {
         }
     }
 
-    public byte[] getFallbackDocument(Document document) throws IOException {
-        return Resources.toByteArray(Resources.getResource("document/"
-                + (document.getCategory() == FileCategory.DOCUMENT ? "document_exported.pdf" : "image_exported.jpg")));
-    }
-
     public void deleteAmazonDocuments(DateTime baselineTime) throws IOException {
         LocalDate baselineDate = baselineTime.toLocalDate();
         System system = systemService.getSystem();
@@ -243,6 +238,10 @@ public class DocumentService {
 
             system.setLastAmazonCleanupDate(baselineDate);
         }
+    }
+
+    public byte[] getSystemDocument(String path) throws IOException {
+        return Resources.toByteArray(Resources.getResource(path));
     }
 
     private AmazonS3 getAmazonClient() throws IOException {
@@ -294,6 +293,10 @@ public class DocumentService {
             }
         }
         return null;
+    }
+
+    private byte[] getFallbackDocument(Document document) throws IOException {
+        return getSystemDocument("document/" + (document.getCategory() == FileCategory.DOCUMENT ? "document_exported.pdf" : "image_exported.jpg"));
     }
 
 }

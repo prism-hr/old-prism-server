@@ -155,7 +155,7 @@ public class StateService {
             resourceService.persistResource(resource, action);
         }
 
-        commentService.create(comment);
+        commentService.createComment(comment);
         resource.addComment(comment);
 
         resourceService.preProcessResource(resource, comment);
@@ -164,7 +164,7 @@ public class StateService {
         State state = resource.getState();
         StateTransition stateTransition = getStateTransition(resource, action, comment);
 
-        if (stateTransition == null) {
+        if (stateTransition == null && comment.isDelegateComment()) {
             commentService.recordStateTransition(comment, state, state);
             roleService.executeRoleTransitions(resource, comment);
         } else {
@@ -218,6 +218,7 @@ public class StateService {
                 stateTerminations.add(potentialStateTermination.getTerminationState());
             }
         }
+        
         return stateTerminations;
     }
 

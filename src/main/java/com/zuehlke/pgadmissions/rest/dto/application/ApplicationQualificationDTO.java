@@ -48,8 +48,6 @@ public class ApplicationQualificationDTO {
 
     private Boolean completed;
 
-    private Boolean includeInExport;
-
     public Integer getId() {
         return id;
     }
@@ -138,11 +136,4 @@ public class ApplicationQualificationDTO {
         this.completed = completed;
     }
 
-    public Boolean getIncludeInExport() {
-        return includeInExport;
-    }
-
-    public void setIncludeInExport(Boolean includeInExport) {
-        this.includeInExport = includeInExport;
-    }
 }

@@ -121,7 +121,7 @@ public class ResourceResource {
         Object newResourceDTO = actionDTO.getOperativeResourceDTO();
         Action action = actionService.getById(actionDTO.getActionId());
 
-        ActionOutcomeDTO actionOutcome = resourceService.createResource(user, action, newResourceDTO, referrer,
+        ActionOutcomeDTO actionOutcome = resourceService.create(user, action, newResourceDTO, referrer,
                 actionDTO.getWorkflowPropertyConfigurationVersion());
         return beanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
     }

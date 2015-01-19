@@ -1,22 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.dao.CustomizationDAO;
-import com.zuehlke.pgadmissions.domain.definitions.*;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.*;
-import com.zuehlke.pgadmissions.exceptions.CustomizationException;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.IntegrationException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
-import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
-import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.BeansException;
@@ -25,13 +18,31 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.dao.CustomizationDAO;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfigurationVersioned;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
+import com.zuehlke.pgadmissions.exceptions.CustomizationException;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
+import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Service
 @Transactional

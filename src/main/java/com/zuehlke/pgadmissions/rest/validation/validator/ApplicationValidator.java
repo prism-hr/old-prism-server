@@ -1,6 +1,24 @@
 package com.zuehlke.pgadmissions.rest.validation.validator;
 
-import com.zuehlke.pgadmissions.domain.application.*;
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
+import org.springframework.validation.Validator;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
+import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
+import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
+import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
+import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.Disability;
@@ -13,18 +31,6 @@ import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-
-import java.util.Collection;
-import java.util.List;
 
 @Component
 public class ApplicationValidator extends LocalValidatorFactoryBean implements Validator {
@@ -124,6 +130,8 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
                 break;
             case APPLICATION_THEME_SECONDARY:
                 validateImplodedRangeConstraint(application, "secondaryTheme", configuration, errors);
+                break;
+            default:
                 break;
             }
         }

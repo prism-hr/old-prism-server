@@ -1,16 +1,17 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.domain.application.Application;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.util.HashMap;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.domain.application.Application;
 
 @Service
 @Transactional

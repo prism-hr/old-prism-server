@@ -1,15 +1,13 @@
 package com.zuehlke.pgadmissions.rest.validation.validator.comment;
 
-import com.google.common.base.Preconditions;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
-import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
-import com.zuehlke.pgadmissions.services.CustomizationService;
-import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.APPLICATION_RATING;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,9 +16,21 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import java.util.*;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField.APPLICATION_RATING;
+import com.google.common.base.Preconditions;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentField;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldResolution;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismCustomQuestionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
+import com.zuehlke.pgadmissions.services.CustomizationService;
+import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Component
 @SuppressWarnings("unchecked")

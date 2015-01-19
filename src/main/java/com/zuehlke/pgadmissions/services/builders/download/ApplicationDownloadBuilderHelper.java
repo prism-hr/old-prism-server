@@ -1,7 +1,25 @@
 package com.zuehlke.pgadmissions.services.builders.download;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_PROVIDED;
+
+import java.io.IOException;
+import java.io.OutputStream;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import com.google.common.io.Resources;
-import com.itextpdf.text.*;
+import com.itextpdf.text.Anchor;
+import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -9,15 +27,6 @@ import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBu
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.io.OutputStream;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_PROVIDED;
 
 @Component
 public class ApplicationDownloadBuilderHelper {

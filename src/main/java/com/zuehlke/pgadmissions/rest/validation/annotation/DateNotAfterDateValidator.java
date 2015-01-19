@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.rest.validation.annotation;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.joda.time.LocalDate;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+
+import org.apache.commons.beanutils.PropertyUtils;
+import org.joda.time.LocalDate;
 
 public class DateNotAfterDateValidator implements ConstraintValidator<DateNotAfterDate, Object> {
 

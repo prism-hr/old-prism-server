@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.rest.validation.annotation;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.joda.time.LocalDate;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 public class DateNotAfterDateValidator implements ConstraintValidator<DateNotAfterDate, Object> {
 
@@ -27,11 +27,7 @@ public class DateNotAfterDateValidator implements ConstraintValidator<DateNotAft
             LocalDate start = (LocalDate) PropertyUtils.getSimpleProperty(value, startDate);
             LocalDate end = (LocalDate) PropertyUtils.getSimpleProperty(value, endDate);
 
-            if (start == null || end == null) {
-                return true;
-            } else {
-                return !start.isAfter(end);
-            }
+            return start == null || end == null || !start.isAfter(end);
         } catch (Exception e) {
             throw new Error(e);
         }

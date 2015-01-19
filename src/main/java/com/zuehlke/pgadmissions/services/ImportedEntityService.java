@@ -179,7 +179,7 @@ public class ImportedEntityService {
         String domicileCode = institutionDefinition.getDomicile();
 
         Domicile domicile = entityService.getByProperties(Domicile.class,
-                ImmutableMap.of("institution", (Object) institution, "code", (Object) domicileCode, "enabled", true));
+                ImmutableMap.of("institution", institution, "code", domicileCode, "enabled", true));
 
         String institutionNameClean = institutionDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "");
 

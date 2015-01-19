@@ -4,7 +4,6 @@ public class PrismApplicationRejectedCompletedPurged extends PrismWorkflowState 
 
     @Override
     protected void setStateActions() {
-        return;
     }
 
 }

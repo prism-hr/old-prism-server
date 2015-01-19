@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services.lifecycle;
 
-import javax.annotation.Resource;
-
+import com.zuehlke.pgadmissions.domain.definitions.MaintenanceTask;
 import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,23 +12,15 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-import com.zuehlke.pgadmissions.domain.definitions.MaintenanceTask;
-import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperSystem;
+import javax.annotation.Resource;
 
 @Service
 public class MaintenanceService {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MaintenanceService.class);
-    
+
     @Value("${maintenance.run}")
     private Boolean maintenanceRun;
-    
-    @Autowired
-    private ImportedEntityServiceHelperSystem importedEntityServiceHelperSystem;
-
-    @Autowired
-    private SystemService systemService;
 
     @Autowired
     private AbstractApplicationContext applicationContext;
@@ -48,7 +39,7 @@ public class MaintenanceService {
                         execute(task);
                     }
                 }
-            }  
+            }
         }
     }
 

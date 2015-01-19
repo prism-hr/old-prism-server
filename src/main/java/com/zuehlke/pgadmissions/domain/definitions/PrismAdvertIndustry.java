@@ -148,6 +148,6 @@ public enum PrismAdvertIndustry {
     WHOLESALE,
     WINE_SPIRITS,
     WIRELESS,
-    WRITING_EDITING;
-    
+    WRITING_EDITING
+
 }

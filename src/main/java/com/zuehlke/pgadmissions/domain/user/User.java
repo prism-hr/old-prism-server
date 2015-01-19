@@ -1,27 +1,5 @@
 package com.zuehlke.pgadmissions.domain.user;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
@@ -29,12 +7,21 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import javax.persistence.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
 @Entity
 @Table(name = "USER")
 public class User implements UserDetails, IUniqueEntity {
 
-    private static final long serialVersionUID = 5910410212695389060L;
+    private static long serialVersionUID = 5910410212695389060L;
 
     @Id
     @GeneratedValue
@@ -106,13 +93,13 @@ public class User implements UserDetails, IUniqueEntity {
     @ManyToOne
     @JoinColumn(name = "parent_user_id")
     private User parentUser;
-    
+
+    @OneToMany(mappedBy = "parentUser")
+    private Set<User> childUsers = Sets.newHashSet();
+
     @OneToMany(mappedBy = "user")
     private Set<UserRole> userRoles = Sets.newHashSet();
 
-    @OneToMany(mappedBy = "user")
-    private Set<Document> documents = Sets.newHashSet();
-    
     public Integer getId() {
         return id;
     }
@@ -153,11 +140,11 @@ public class User implements UserDetails, IUniqueEntity {
         this.lastName = lastName;
     }
 
-    public final String getFullName() {
+    public String getFullName() {
         return fullName;
     }
 
-    public final void setFullName(String fullName) {
+    public void setFullName(String fullName) {
         this.fullName = fullName;
     }
 
@@ -169,40 +156,36 @@ public class User implements UserDetails, IUniqueEntity {
         this.email = email;
     }
 
-    public final PrismLocale getLocale() {
+    public PrismLocale getLocale() {
         return locale;
     }
 
-    public final void setLocale(PrismLocale locale) {
+    public void setLocale(PrismLocale locale) {
         this.locale = locale;
     }
 
-    public final Document getPortraitDocument() {
+    public Document getPortraitDocument() {
         return portraitDocument;
     }
 
-    public final void setPortraitDocument(Document portraitDocument) {
+    public void setPortraitDocument(Document portraitDocument) {
         this.portraitDocument = portraitDocument;
     }
 
-    public final String getLinkedinUri() {
+    public String getLinkedinUri() {
         return linkedinUri;
     }
 
-    public final void setLinkedinUri(String linkedinUri) {
+    public void setLinkedinUri(String linkedinUri) {
         this.linkedinUri = linkedinUri;
     }
 
-    public final String getTwitterUri() {
+    public String getTwitterUri() {
         return twitterUri;
     }
 
-    public final void setTwitterUri(String twitterUri) {
+    public void setTwitterUri(String twitterUri) {
         this.twitterUri = twitterUri;
-    }
-
-    public final void setUserRoles(Set<UserRole> userRoles) {
-        this.userRoles = userRoles;
     }
 
     public String getActivationCode() {
@@ -221,64 +204,76 @@ public class User implements UserDetails, IUniqueEntity {
         this.userAccount = account;
     }
 
-    public final LocalDate getLastNotifiedDateSystem() {
+    public LocalDate getLastNotifiedDateSystem() {
         return lastNotifiedDateSystem;
     }
 
-    public final void setLastNotifiedDateSystem(LocalDate lastNotifiedDateSystem) {
+    public void setLastNotifiedDateSystem(LocalDate lastNotifiedDateSystem) {
         this.lastNotifiedDateSystem = lastNotifiedDateSystem;
     }
 
-    public final LocalDate getLastNotifiedDateInstitution() {
+    public LocalDate getLastNotifiedDateInstitution() {
         return lastNotifiedDateInstitution;
     }
 
-    public final void setLastNotifiedDateInstitution(LocalDate lastNotifiedDateInstitution) {
+    public void setLastNotifiedDateInstitution(LocalDate lastNotifiedDateInstitution) {
         this.lastNotifiedDateInstitution = lastNotifiedDateInstitution;
     }
 
-    public final LocalDate getLastNotifiedDateProgram() {
+    public LocalDate getLastNotifiedDateProgram() {
         return lastNotifiedDateProgram;
     }
 
-    public final void setLastNotifiedDateProgram(LocalDate lastNotifiedDateProgram) {
+    public void setLastNotifiedDateProgram(LocalDate lastNotifiedDateProgram) {
         this.lastNotifiedDateProgram = lastNotifiedDateProgram;
     }
 
-    public final LocalDate getLastNotifiedDateProject() {
+    public LocalDate getLastNotifiedDateProject() {
         return lastNotifiedDateProject;
     }
 
-    public final void setLastNotifiedDateProject(LocalDate lastNotifiedDateProject) {
+    public void setLastNotifiedDateProject(LocalDate lastNotifiedDateProject) {
         this.lastNotifiedDateProject = lastNotifiedDateProject;
     }
 
-    public final LocalDate getLastNotifiedDateApplication() {
+    public LocalDate getLastNotifiedDateApplication() {
         return lastNotifiedDateApplication;
     }
 
-    public final void setLastNotifiedDateApplication(LocalDate lastNotifiedDateApplication) {
+    public void setLastNotifiedDateApplication(LocalDate lastNotifiedDateApplication) {
         this.lastNotifiedDateApplication = lastNotifiedDateApplication;
     }
 
-    public final Scope getLatestCreationScope() {
+    public Scope getLatestCreationScope() {
         return latestCreationScope;
     }
 
-    public final void setLatestCreationScope(Scope latestCreationScope) {
+    public void setLatestCreationScope(Scope latestCreationScope) {
         this.latestCreationScope = latestCreationScope;
     }
 
-    public final User getParentUser() {
+    public User getParentUser() {
         return parentUser;
     }
 
-    public final void setParentUser(User parentUser) {
+    public void setParentUser(User parentUser) {
         this.parentUser = parentUser;
+    }
+
+    public Set<User> getChildUsers() {
+        return childUsers;
+    }
+
+    public void setChildUsers(Set<User> childUsers) {
+        this.childUsers = childUsers;
     }
 
     public Set<UserRole> getUserRoles() {
         return userRoles;
+    }
+
+    public void setUserRoles(Set<UserRole> userRoles) {
+        this.userRoles = userRoles;
     }
 
     public User withId(Integer id) {
@@ -396,5 +391,5 @@ public class User implements UserDetails, IUniqueEntity {
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addProperty("email", email);
     }
-    
+
 }

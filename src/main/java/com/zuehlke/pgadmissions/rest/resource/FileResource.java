@@ -59,14 +59,14 @@ public class FileResource {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/documents/blank", method = RequestMethod.GET)
-    public void downloadFile(HttpServletResponse response) throws IOException {
+    public void downloadFile(HttpServletResponse response) throws Exception {
         byte[] content = documentService.getSystemDocument("document/blank_qualification_explanation.pdf");
         sendFileToClient(response, new Document().withContent(content).withContentType("application/pdf").withFileName("explanation.pdf"));
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/documents/{fileId}", method = RequestMethod.GET)
-    public void downloadFile(@PathVariable(value = "fileId") Integer documentId, HttpServletResponse response) throws IOException {
+    public void downloadFile(@PathVariable(value = "fileId") Integer documentId, HttpServletResponse response) throws Exception {
         Document document = documentService.getById(documentId, FileCategory.DOCUMENT);
         documentService.validateDownload(document);
         sendFileToClient(response, document);
@@ -74,7 +74,7 @@ public class FileResource {
 
     @PreAuthorize("permitAll")
     @RequestMapping(value = "/images/{fileId}", method = RequestMethod.GET)
-    public void downloadImage(@PathVariable(value = "fileId") Integer fileId, HttpServletResponse response) throws IOException {
+    public void downloadImage(@PathVariable(value = "fileId") Integer fileId, HttpServletResponse response) throws Exception {
         Document file = documentService.getById(fileId, FileCategory.IMAGE);
         if(file == null){
             throw new ResourceNotFoundException("No image found");
@@ -82,7 +82,7 @@ public class FileResource {
         sendFileToClient(response, file);
     }
 
-    private void sendFileToClient(HttpServletResponse response, Document document) throws IOException {
+    private void sendFileToClient(HttpServletResponse response, Document document) throws Exception {
         response.setHeader("Content-Disposition", "attachment; filename=\"" + document.getFileName() + "\"");
         response.setHeader("File-Name", document.getFileName());
         response.setContentType(document.getContentType());

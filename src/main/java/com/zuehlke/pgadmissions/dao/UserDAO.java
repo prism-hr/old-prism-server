@@ -158,7 +158,8 @@ public class UserDAO {
                 "update User " //
                         + "set parentUser = :user " //
                         + "where parentUser = :parentUser") //
-                .setParameter("user", user).setParameter("parentUser", user.getParentUser()) //
+                .setParameter("user", user) //
+                .setParameter("parentUser", user.getParentUser()) //
                 .executeUpdate();
     }
 

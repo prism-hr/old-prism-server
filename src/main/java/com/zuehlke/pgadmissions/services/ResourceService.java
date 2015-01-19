@@ -58,6 +58,7 @@ import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
@@ -180,7 +181,7 @@ public class ResourceService {
         return actionService.executeUserAction(resource, action, comment);
     }
 
-    public void persistResource(Resource resource, Action action) throws WorkflowEngineException, BeansException, IOException {
+    public void persistResource(Resource resource, Action action) throws WorkflowEngineException, BeansException, IOException, IntegrationException {
         DateTime baseline = new DateTime();
         resource.setCreatedTimestamp(baseline);
         resource.setUpdatedTimestamp(baseline);
@@ -211,7 +212,7 @@ public class ResourceService {
     }
 
     public ActionOutcomeDTO executeAction(Integer resourceId, CommentDTO commentDTO) throws DeduplicationException, InstantiationException,
-            IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         switch (commentDTO.getAction().getScope()) {
         case APPLICATION:
             return applicationService.executeAction(resourceId, commentDTO);
@@ -307,7 +308,7 @@ public class ResourceService {
     }
 
     public void executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees) throws DeduplicationException,
-            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         User user = userService.getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
 

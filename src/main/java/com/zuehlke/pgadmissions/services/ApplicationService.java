@@ -73,6 +73,7 @@ import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
@@ -137,6 +138,9 @@ public class ApplicationService {
 
     @Autowired
     private ResourceService resourceService;
+    
+    @Autowired
+    private ResourceListFilterService resourceListFilterService;
 
     @Autowired
     private ScopeService scopeService;
@@ -160,7 +164,7 @@ public class ApplicationService {
         return application;
     }
 
-    public void save(Application application) throws BeansException, IOException {
+    public void save(Application application) throws BeansException, IOException, IntegrationException {
         prepopulateApplication(application);
         entityService.save(application);
     }
@@ -319,7 +323,7 @@ public class ApplicationService {
     }
 
     public ActionOutcomeDTO executeAction(@PathVariable Integer applicationId, @Valid @RequestBody CommentDTO commentDTO) throws DeduplicationException,
-            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         Application application = entityService.getById(Application.class, applicationId);
         PrismAction actionId = commentDTO.getAction();
 
@@ -513,15 +517,16 @@ public class ApplicationService {
         PrismScope scopeId = PrismScope.APPLICATION;
         List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(PrismScope.APPLICATION);
 
-        User currentUser = userService.getCurrentUser();
-        Set<Integer> assignedApplications = resourceService.getAssignedResources(currentUser, scopeId, parentScopeIds, filter);
+        User user = userService.getCurrentUser();
+        resourceListFilterService.saveOrGetByUserAndScope(user, scopeId, filter);
+        Set<Integer> assignedApplications = resourceService.getAssignedResources(user, scopeId, parentScopeIds, filter);
 
         String dateFormat = loader.load(PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT);
         List<ApplicationReportListRowDTO> reportRows = getApplicationReport(assignedApplications);
 
         for (ApplicationReportListRowDTO reportRow : reportRows) {
             TableRow row = new TableRow();
-            filterReportListData(reportRow, currentUser);
+            filterReportListData(reportRow, user);
 
             row.addCell(reportRow.getIdDisplay());
             row.addCell(reportRow.getNameDisplay());
@@ -670,7 +675,7 @@ public class ApplicationService {
         return errors;
     }
 
-    private void prepopulateApplication(Application application) throws BeansException, IOException {
+    private void prepopulateApplication(Application application) throws BeansException, IOException, IntegrationException {
         Application previousApplication = applicationDAO.getPreviousSubmittedApplication(application);
         if (previousApplication != null) {
             applicationContext.getBean(ApplicationCopyHelper.class).copyApplication(application, previousApplication);

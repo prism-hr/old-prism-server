@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ResourceService;
@@ -29,7 +30,8 @@ public class StateServiceHelperEscalation extends AbstractServiceHelper {
     private StateService stateService;
 
     @Override
-    public void execute() throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+    public void execute() throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException,
+            IntegrationException {
         LocalDate baseline = new LocalDate();
         List<PrismAction> actionIds = actionService.getEscalationActions();
         for (PrismAction actionId : actionIds) {

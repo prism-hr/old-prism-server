@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
@@ -93,7 +94,7 @@ public class RoleService {
     }
 
     public void updateUserRole(Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) throws DeduplicationException,
-            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         if (roles.length > 0) {
             User invoker = userService.getCurrentUser();
             Action action = actionService.getViewEditAction(resource);
@@ -179,7 +180,7 @@ public class RoleService {
     }
 
     public void deleteUserRoles(Resource resource, User user) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException,
-            WorkflowEngineException, IOException {
+            WorkflowEngineException, IOException, IntegrationException {
         List<PrismRole> roles = roleDAO.getUserRoles(resource, user);
         updateUserRole(resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
     }

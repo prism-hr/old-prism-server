@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.services.ApplicationDownloadService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -58,7 +59,7 @@ public class ApplicationDocumentExportBuilder {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public void getDocuments(Application application, String exportReference, OutputStream outputStream) throws IOException {
+    public void getDocuments(Application application, String exportReference, OutputStream outputStream) throws IOException, IntegrationException {
         Properties contentsProperties = new Properties();
         ZipOutputStream zos = null;
         try {
@@ -90,7 +91,7 @@ public class ApplicationDocumentExportBuilder {
         zos.closeEntry();
     }
 
-    private void buildAcademicQualifications(Application application, Properties contentsProperties, ZipOutputStream zos) throws IOException {
+    private void buildAcademicQualifications(Application application, Properties contentsProperties, ZipOutputStream zos) throws IOException, IntegrationException {
         List<ApplicationQualification> qualifications = applicationService.getApplicationExportQualifications(application);
         int qualificationCount = qualifications.size();
         if (qualificationCount > 0) {
@@ -126,7 +127,7 @@ public class ApplicationDocumentExportBuilder {
                 .build(application));
     }
 
-    private void buildLanguageQualification(Application application, Properties contentsProperties, ZipOutputStream zos) throws IOException {
+    private void buildLanguageQualification(Application application, Properties contentsProperties, ZipOutputStream zos) throws IOException, IntegrationException {
         ApplicationPersonalDetail applicationPersonalDetail = application.getPersonalDetail();
         ApplicationLanguageQualification applicationLanguageQualification = applicationPersonalDetail == null ? null : applicationPersonalDetail
                 .getLanguageQualification();
@@ -142,7 +143,7 @@ public class ApplicationDocumentExportBuilder {
         }
     }
 
-    private void buildPersonalStatement(Application application, Properties contentsProperties, ZipOutputStream zos) throws IOException {
+    private void buildPersonalStatement(Application application, Properties contentsProperties, ZipOutputStream zos) throws IOException, IntegrationException {
         ApplicationDocument applicationDocument = application.getDocument();
         Document document = applicationDocument == null ? null : applicationDocument.getPersonalStatement();
         if (document != null) {
@@ -155,7 +156,7 @@ public class ApplicationDocumentExportBuilder {
         }
     }
 
-    private void buildCv(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
+    private void buildCv(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, IntegrationException {
         ApplicationDocument applicationDocument = application.getDocument();
         Document document = applicationDocument == null ? null : applicationDocument.getCv();
         if (document != null) {
@@ -217,7 +218,7 @@ public class ApplicationDocumentExportBuilder {
         return UUID.randomUUID() + ".pdf";
     }
 
-    private byte[] getFileContents(Application application, Document document) throws IOException {
+    private byte[] getFileContents(Application application, Document document) throws IOException, IntegrationException {
         if (document != null) {
             return documentService.getDocumentContent(document);
         }

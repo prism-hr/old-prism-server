@@ -47,6 +47,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ApplicationExportDTO;
 import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.builders.ApplicationDocumentExportBuilder;
@@ -153,7 +154,8 @@ public class ApplicationExportService {
                         .withExportProgramInstance(exportProgramInstance).withApplicationReferees(applicationExportReferees));
     }
 
-    protected OutputStream buildDocumentExportRequest(Application application, String exportReference, OutputStream outputStream) throws IOException {
+    protected OutputStream buildDocumentExportRequest(Application application, String exportReference, OutputStream outputStream) throws IOException,
+            IntegrationException {
         localize(application);
         applicationDocumentExportBuilder.localize(propertyLoader).getDocuments(application, exportReference, outputStream);
         return outputStream;
@@ -161,7 +163,7 @@ public class ApplicationExportService {
 
     protected void executeExportAction(Application application, SubmitAdmissionsApplicationRequest exportRequest, String exportId, String exportUserId,
             String exportException) throws DeduplicationException, InstantiationException, IllegalAccessException, JAXBException, BeansException,
-            WorkflowEngineException, IOException {
+            WorkflowEngineException, IOException, IntegrationException {
         Action exportAction = actionService.getById(PrismAction.APPLICATION_EXPORT);
         Institution exportInstitution = application.getInstitution();
 
@@ -196,7 +198,7 @@ public class ApplicationExportService {
     }
 
     private OutputStream sendDocumentExportRequest(Application application, String exportId) throws SftpException, IOException, ResourceNotFoundException,
-            JSchException {
+            JSchException, IntegrationException {
         Session session = getSftpSession();
         session.connect();
         ChannelSftp sftpChannel = (ChannelSftp) session.openChannel("sftp");

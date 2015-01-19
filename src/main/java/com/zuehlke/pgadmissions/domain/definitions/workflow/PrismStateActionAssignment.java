@@ -31,7 +31,7 @@ public class PrismStateActionAssignment {
         this.actionEnhancement = actionEnhancement;
         return this;
     }
-    
+
     public PrismStateActionAssignment withDelegatedAction(PrismAction delegatedAction) {
         this.delegatedAction = delegatedAction;
         return this;
@@ -54,5 +54,5 @@ public class PrismStateActionAssignment {
         return Objects.equal(role, other.getRole()) && Objects.equal(actionEnhancement, other.getActionEnhancement())
                 && Objects.equal(delegatedAction, other.getDelegatedAction());
     }
-    
+
 }

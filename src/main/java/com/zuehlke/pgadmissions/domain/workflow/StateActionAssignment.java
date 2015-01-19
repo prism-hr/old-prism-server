@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 
 @Entity
-@Table(name = "STATE_ACTION_ASSIGNMENT", uniqueConstraints = {@UniqueConstraint(columnNames = {"state_action_id", "role_id"})})
+@Table(name = "STATE_ACTION_ASSIGNMENT", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "role_id" }) })
 public class StateActionAssignment implements IUniqueEntity {
 
     @Id

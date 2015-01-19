@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
+import java.util.List;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
-
-import java.util.List;
 
 public class UserExtendedRepresentation extends UserRepresentation {
 

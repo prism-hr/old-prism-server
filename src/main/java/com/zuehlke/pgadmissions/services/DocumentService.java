@@ -111,7 +111,7 @@ public class DocumentService {
             baos.close();
             contentType = "image/jpeg";
         } else if (category == FileCategory.DOCUMENT) {
-            PdfReader pdfReader = null;
+            PdfReader pdfReader;
             try {
                 pdfReader = new PdfReader(content);
             } catch (IOException e) {
@@ -154,10 +154,8 @@ public class DocumentService {
             throw new AccessDeniedException("Document unavailable");
         }
 
-        if (resource != null) {
-            Action viewEditAction = actionService.getViewEditAction(resource);
-            actionService.validateUserAction(resource, viewEditAction, user);
-        }
+        Action viewEditAction = actionService.getViewEditAction(resource);
+        actionService.validateUserAction(resource, viewEditAction, user);
     }
 
     public byte[] getDocumentContent(Document document) throws IOException {

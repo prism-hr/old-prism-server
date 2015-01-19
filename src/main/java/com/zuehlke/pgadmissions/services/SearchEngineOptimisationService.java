@@ -95,7 +95,7 @@ public class SearchEngineOptimisationService {
             DateTime updatedTimestamp = latestUpdateTimestamps.get(scope);
             updatedTimestamp = updatedTimestamp == null ? baseline : updatedTimestamp;
 
-            Text lastModifiedDateTimeString = document.createTextNode(latestUpdateTimestamps.get(scope).toString(XML_DATE_FORMAT));
+            Text lastModifiedDateTimeString = document.createTextNode(updatedTimestamp.toString(XML_DATE_FORMAT));
             lastModifiedDateTime.appendChild(lastModifiedDateTimeString);
         }
 

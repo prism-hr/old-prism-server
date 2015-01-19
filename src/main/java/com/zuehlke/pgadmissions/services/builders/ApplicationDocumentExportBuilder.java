@@ -127,8 +127,7 @@ public class ApplicationDocumentExportBuilder {
             zos.write(getFileContents(application, document));
             zos.closeEntry();
             contentsProperties.put("englishLanguageTestCertificate.1.serverFilename", filename);
-            contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", document != null ? document.getExportFilenameSits()
-                    : "englishLanguageTestCertificate.pdf");
+            contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", document.getExportFilenameSits());
         }
     }
 
@@ -141,7 +140,7 @@ public class ApplicationDocumentExportBuilder {
             zos.write(getFileContents(application, document));
             zos.closeEntry();
             contentsProperties.put("researchProposal.1.serverFilename", filename);
-            contentsProperties.put("researchProposal.1.applicationFilename", document != null ? document.getExportFilenameSits() : "researchProposal.pdf");
+            contentsProperties.put("researchProposal.1.applicationFilename", document.getExportFilenameSits());
         }
     }
 
@@ -154,7 +153,7 @@ public class ApplicationDocumentExportBuilder {
             zos.write(getFileContents(application, document));
             zos.closeEntry();
             contentsProperties.put("curriculumVitae.1.serverFilename", filename);
-            contentsProperties.put("curriculumVitae.1.applicationFilename", document != null ? document.getExportFilenameSits() : "curriculumVitae.pdf");
+            contentsProperties.put("curriculumVitae.1.applicationFilename", document.getExportFilenameSits());
         }
     }
 

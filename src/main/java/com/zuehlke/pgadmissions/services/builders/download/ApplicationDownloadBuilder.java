@@ -143,8 +143,8 @@ public class ApplicationDownloadBuilder {
                     studyDetail == null ? null : studyDetail.getStudyDivision(), body);
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_AREA),
                     studyDetail == null ? null : studyDetail.getStudyArea(), body);
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_APPLICATION_ID), studyDetail.getStudyApplicationId(),
-                    body);
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_APPLICATION_ID),
+                    studyDetail == null ? null : studyDetail.getStudyApplicationId(), body);
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_START_DATE),
                     studyDetail.getStudyStartDateDisplay(propertyLoader.load(SYSTEM_DATE_FORMAT)), body);
         }
@@ -242,7 +242,7 @@ public class ApplicationDownloadBuilder {
     }
 
     private void appendEqualOpportunitiesSection(ApplicationDownloadDTO applicationDownloadDTO, PdfPTable body, Application application,
-            ApplicationPersonalDetail personalDetail, boolean personalDetailNull) {
+                                                 ApplicationPersonalDetail personalDetail, boolean personalDetailNull) {
         if (applicationDownloadDTO.isIncludeEqualOpportunitiesData()) {
             if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
                     PrismWorkflowPropertyDefinition.APPLICATION_DEMOGRAPHIC)) {
@@ -300,7 +300,7 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addLanquageQualificationSection(Application application, ApplicationLanguageQualification languageQualification,
-            ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument) throws DocumentException {
+                                                 ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument) throws DocumentException {
         PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_HEADER));
 
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_TYPE), languageQualification.getTypeDisplay(), body);
@@ -390,7 +390,7 @@ public class ApplicationDownloadBuilder {
 
                     if (documentEnabled) {
                         addDocument(subBody, propertyLoader.load(APPLICATION_QUALIFICATION_FINAL_TRANSCRIPT,
-                                PrismDisplayPropertyDefinition.APPLICATION_QUALIFICATION_INTERIM_TRANSCRIPT, completed), qualification.getDocument(),
+                                        PrismDisplayPropertyDefinition.APPLICATION_QUALIFICATION_INTERIM_TRANSCRIPT, completed), qualification.getDocument(),
                                 applicationDownloadDTO.isIncludeAttachments());
                     }
 
@@ -605,25 +605,23 @@ public class ApplicationDownloadBuilder {
 
                 Object object = bookmarks.get(i);
                 pdfDocument.add(new Chunk(propertyLoader.load(SYSTEM_APPENDIX) + "(" + (i + 1) + ")").setLocalDestination(new Integer(i).toString()));
-                if (object.getClass().equals(com.zuehlke.pgadmissions.domain.document.Document.class)) {
+                if (object instanceof com.zuehlke.pgadmissions.domain.document.Document) {
                     com.zuehlke.pgadmissions.domain.document.Document document = (com.zuehlke.pgadmissions.domain.document.Document) object;
 
-                    if (document != null) {
-                        if (document.getApplicationLanguageQualification() != null) {
-                            pdfDocument.add(buildTarget(APPLICATION_LANGUAGE_QUALIFICATION_APPENDIX, anchor));
-                        } else if (document.getApplicationQualification() != null) {
-                            pdfDocument.add(buildTarget(APPLICATION_QUALIFICATION_APPENDIX, anchor));
-                        } else if (document.getApplicationFunding() != null) {
-                            pdfDocument.add(buildTarget(APPLICATION_FUNDING_APPENDIX, anchor));
-                        } else if (document.getApplicationPersonalStatement() != null) {
-                            pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_PERSONAL_STATEMENT_APPENDIX, anchor));
-                        } else if (document.getApplicationCv() != null) {
-                            pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_CV_APPENDIX, anchor));
-                        }
-
-                        addDocument(pdfDocument, document, pdfWriter);
+                    if (document.getApplicationLanguageQualification() != null) {
+                        pdfDocument.add(buildTarget(APPLICATION_LANGUAGE_QUALIFICATION_APPENDIX, anchor));
+                    } else if (document.getApplicationQualification() != null) {
+                        pdfDocument.add(buildTarget(APPLICATION_QUALIFICATION_APPENDIX, anchor));
+                    } else if (document.getApplicationFunding() != null) {
+                        pdfDocument.add(buildTarget(APPLICATION_FUNDING_APPENDIX, anchor));
+                    } else if (document.getApplicationPersonalStatement() != null) {
+                        pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_PERSONAL_STATEMENT_APPENDIX, anchor));
+                    } else if (document.getApplicationCv() != null) {
+                        pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_CV_APPENDIX, anchor));
                     }
-                } else if (object.getClass().equals(Comment.class)) {
+
+                    addDocument(pdfDocument, document, pdfWriter);
+                } else if (object instanceof Comment) {
                     Comment referenceComment = (Comment) object;
                     pdfDocument.add(buildTarget(APPLICATION_REFEREE_REFERENCE_APPENDIX, anchor));
 
@@ -711,6 +709,12 @@ public class ApplicationDownloadBuilder {
         bookmarks.add(object);
     }
 
+    private void addLogoImage(Document pdfDocument) throws IOException, DocumentException {
+        Image logoImage = applicationDownloadBuilderHelper.newLogoImage();
+        logoImage.setAbsolutePosition(pdfDocument.right() - logoImage.getScaledWidth(), pdfDocument.top() + 20f);
+        pdfDocument.add(logoImage);
+    }
+
     private class NewPageEvent extends PdfPageEventHelper {
 
         private Application application;
@@ -764,12 +768,6 @@ public class ApplicationDownloadBuilder {
             return this;
         }
 
-    }
-
-    private void addLogoImage(Document pdfDocument) throws IOException, DocumentException {
-        Image logoImage = applicationDownloadBuilderHelper.newLogoImage();
-        logoImage.setAbsolutePosition(pdfDocument.right() - logoImage.getScaledWidth(), pdfDocument.top() + 20f);
-        pdfDocument.add(logoImage);
     }
 
 }

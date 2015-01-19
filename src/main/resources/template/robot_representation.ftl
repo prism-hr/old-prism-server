@@ -6,8 +6,6 @@
     <#if metadata.description??>
     	<meta name="description" content="${metadata.description?html}"/>
    	</#if>
-    <meta name="keywords"
-          content="opportunities graduates postgraduates scholarships internships jobs courses degrees"/>
     <!-- <meta name="google-site-verification" content="" /> -->
     <meta name="author" content="${metadata.author?html}"/>
     <meta property="fb:app_id" content="172294119620634"/>

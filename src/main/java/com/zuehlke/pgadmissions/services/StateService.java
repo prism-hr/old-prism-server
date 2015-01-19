@@ -182,8 +182,7 @@ public class StateService {
             roleService.executeRoleTransitions(resource, comment, stateTransition);
 
             if (stateTransition.getPropagatedActions().size() > 0) {
-                StateTransitionPending transientTransitionPending = new StateTransitionPending().withResource(resource).withStateTransition(stateTransition);
-                entityService.getOrCreate(transientTransitionPending);
+                getOrCreateStateTransitionPending(resource, stateTransition);
             }
 
             notificationService.sendWorkflowNotifications(resource, comment);
@@ -222,6 +221,11 @@ public class StateService {
         return stateTerminations;
     }
 
+    private void getOrCreateStateTransitionPending(Resource resource, StateTransition stateTransition) {
+        StateTransitionPending transientTransitionPending = new StateTransitionPending().withResource(resource).withStateTransition(stateTransition);
+        entityService.getOrCreate(transientTransitionPending);
+    }
+    
     public StateTransition getApplicationCompletedOutcome(Resource resource, Comment comment) {
         PrismState transitionStateId = PrismState.APPLICATION_VALIDATION;
         LocalDate closingDate = resource.getApplication().getClosingDate();

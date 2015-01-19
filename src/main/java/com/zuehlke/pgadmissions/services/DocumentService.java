@@ -88,41 +88,10 @@ public class DocumentService {
         Preconditions.checkNotNull(category);
 
         if (category == FileCategory.IMAGE) {
-            BufferedImage image = ImageIO.read(new ByteArrayInputStream(content));
-            if (image == null) {
-                throw new PrismBadRequestException("Uploaded file is not valid image file");
-            }
-
-            final int SIZE = 600;
-            final int HALF_SIZE = SIZE / 2;
-            image = Scalr.resize(image, Scalr.Mode.AUTOMATIC, SIZE, SIZE);
-
-            BufferedImage paddedImage = new BufferedImage(SIZE, SIZE, BufferedImage.TYPE_INT_RGB);
-            Graphics graphics = paddedImage.getGraphics();
-            graphics.setColor(Color.WHITE);
-            graphics.fillRect(0, 0, SIZE, SIZE);
-            graphics.drawImage(image, HALF_SIZE - image.getWidth() / 2, HALF_SIZE - image.getHeight() / 2, null);
-            graphics.dispose();
-
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(paddedImage, contentType.replaceAll("image/", ""), baos);
-            baos.flush();
-            content = baos.toByteArray();
-            baos.close();
+            content = createImageDocument(content, contentType);
             contentType = "image/jpeg";
         } else if (category == FileCategory.DOCUMENT) {
-            PdfReader pdfReader;
-            try {
-                pdfReader = new PdfReader(content);
-            } catch (IOException e) {
-                throw new PrismBadRequestException("Uploaded file is not valid PDF file");
-            }
-
-            long permissions = pdfReader.getPermissions();
-            if (pdfReader.isEncrypted() && (permissions & PdfWriter.ALLOW_COPY) == 0) {
-                throw new PrismBadRequestException("You cannot upload an encrypted file");
-            }
+            createPdfDocument(content);
         }
         Document document = new Document().withContent(content).withContentType(contentType).withExported(false).withFileName(fileName)
                 .withUser(userService.getCurrentUser()).withCreatedTimestamp(new DateTime()).withCategory(category);
@@ -243,6 +212,46 @@ public class DocumentService {
 
     public byte[] getSystemDocument(String path) throws IOException {
         return Resources.toByteArray(Resources.getResource(path));
+    }
+    
+    private byte[] createImageDocument(byte[] content, String contentType) throws IOException {
+        BufferedImage image = ImageIO.read(new ByteArrayInputStream(content));
+        if (image == null) {
+            throw new PrismBadRequestException("Uploaded file is not valid image file");
+        }
+
+        final int SIZE = 600;
+        final int HALF_SIZE = SIZE / 2;
+        image = Scalr.resize(image, Scalr.Mode.AUTOMATIC, SIZE, SIZE);
+
+        BufferedImage paddedImage = new BufferedImage(SIZE, SIZE, BufferedImage.TYPE_INT_RGB);
+        Graphics graphics = paddedImage.getGraphics();
+        graphics.setColor(Color.WHITE);
+        graphics.fillRect(0, 0, SIZE, SIZE);
+        graphics.drawImage(image, HALF_SIZE - image.getWidth() / 2, HALF_SIZE - image.getHeight() / 2, null);
+        graphics.dispose();
+
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(paddedImage, contentType.replaceAll("image/", ""), baos);
+        baos.flush();
+        content = baos.toByteArray();
+        baos.close();
+        return content;
+    }
+    
+    private void createPdfDocument(byte[] content) {
+        PdfReader pdfReader;
+        try {
+            pdfReader = new PdfReader(content);
+        } catch (IOException e) {
+            throw new PrismBadRequestException("Uploaded file is not valid PDF file");
+        }
+
+        long permissions = pdfReader.getPermissions();
+        if (pdfReader.isEncrypted() && (permissions & PdfWriter.ALLOW_COPY) == 0) {
+            throw new PrismBadRequestException("You cannot upload an encrypted file");
+        }
     }
 
     private AmazonS3 getAmazonClient() throws IOException, IntegrationException {

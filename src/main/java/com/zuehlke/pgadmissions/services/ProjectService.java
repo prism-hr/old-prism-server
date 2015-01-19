@@ -1,19 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
-
-import java.io.IOException;
-import java.util.List;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
@@ -30,16 +16,25 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
-import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
-import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
-import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
+import com.zuehlke.pgadmissions.dto.*;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
 
 @Service
 @Transactional
@@ -118,9 +113,7 @@ public class ProjectService {
                 .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
         commentService.appendCommentProperties(comment, commentDTO);
 
-        if (projectDTO != null) {
-            update(programId, projectDTO);
-        }
+        update(programId, projectDTO);
 
         return actionService.executeUserAction(project, action, comment);
     }
@@ -179,7 +172,7 @@ public class ProjectService {
     public SocialMetadataDTO getSocialMetadata(Project project) {
         return advertService.getSocialMetadata(project.getAdvert());
     }
-    
+
     public SearchEngineAdvertDTO getSearchEngineAdvert(Integer projectId) {
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         SearchEngineAdvertDTO searchEngineDTO = projectDAO.getSearchEngineAdvert(projectId, activeProjectStates);

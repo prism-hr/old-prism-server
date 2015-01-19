@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
@@ -23,7 +24,7 @@ public class DocumentServiceHelperExport extends AbstractServiceHelper {
     private SystemService systemService;
 
     @Override
-    public void execute() throws IOException {
+    public void execute() throws IOException, IntegrationException {
         if (amazonOn && systemService.getSystem().isDocumentExportEnabled()) {
             List<Integer> documentIds = documentService.getExportDocuments();
             for (Integer documentId : documentIds) {

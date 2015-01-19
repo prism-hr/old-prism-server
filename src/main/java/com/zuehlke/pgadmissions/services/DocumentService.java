@@ -52,6 +52,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
 
 @Service
@@ -171,7 +172,7 @@ public class DocumentService {
         }
     }
 
-    public byte[] getDocumentContent(Document document) throws IOException {
+    public byte[] getDocumentContent(Document document) throws IOException, IntegrationException {
         if (document.getExported() == true) {
             AmazonS3 amazonClient = getAmazonClient();
             String amazonObjectKey = document.getExportFilenameAmazon();
@@ -207,7 +208,7 @@ public class DocumentService {
         entityService.delete(document);
     }
 
-    public void exportDocumentToAmazon(Integer documentId) throws IOException {
+    public void exportDocumentToAmazon(Integer documentId) throws IOException, IntegrationException {
         Document document = getById(documentId);
         if (!document.getExported()) {
             AmazonS3 amazonClient = getAmazonClient();
@@ -231,7 +232,7 @@ public class DocumentService {
         }
     }
 
-    public void deleteAmazonDocuments(DateTime baselineTime) throws IOException {
+    public void deleteAmazonDocuments(DateTime baselineTime) throws IOException, IntegrationException {
         LocalDate baselineDate = baselineTime.toLocalDate();
         System system = systemService.getSystem();
         LocalDate lastAmazonCleanupDate = system.getLastAmazonCleanupDate();
@@ -257,12 +258,9 @@ public class DocumentService {
         return Resources.toByteArray(Resources.getResource(path));
     }
 
-    private AmazonS3 getAmazonClient() throws IOException {
+    private AmazonS3 getAmazonClient() throws IOException, IntegrationException {
         System system = systemService.getSystem();
-
-        Properties amazonProperties = new Properties();
-        amazonProperties.setProperty("accessKey", system.getAmazonAccessKey());
-        amazonProperties.setProperty("secretKey", system.getAmazonSecretKey());
+        Properties amazonProperties = getAmazonProperties(system);
 
         ByteArrayOutputStream amazonCredentialsOutputStream = null;
         ByteArrayInputStream amazonCredentialsInputStream = null;
@@ -282,6 +280,20 @@ public class DocumentService {
             IOUtils.closeQuietly(amazonCredentialsOutputStream);
             IOUtils.closeQuietly(amazonCredentialsInputStream);
         }
+    }
+
+    private Properties getAmazonProperties(System system) throws IntegrationException {
+        String accessKey = system.getAmazonAccessKey();
+        String secretKey = system.getAmazonSecretKey();
+        
+        if (accessKey == null || secretKey == null) {
+            throw new IntegrationException("Amazon credentials not in database");
+        }
+         
+        Properties amazonProperties = new Properties();
+        amazonProperties.setProperty("accessKey", accessKey);
+        amazonProperties.setProperty("secretKey", secretKey);
+        return amazonProperties;
     }
 
     private byte[] getAmazonObject(AmazonS3 amazonClient, String amazonObjectKey) throws IOException {

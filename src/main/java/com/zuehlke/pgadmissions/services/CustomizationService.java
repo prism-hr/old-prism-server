@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
@@ -199,14 +200,14 @@ public class CustomizationService {
     }
 
     public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
-            Enum<?> definitionId) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            Enum<?> definitionId) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         customizationDAO.restoreGlobalConfiguration(configurationType, resource, locale, programType, definitionId);
         resourceService.executeUpdate(resource,
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
     }
 
     public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
-            PrismProgramType programType) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            PrismProgramType programType) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         customizationDAO.restoreGlobalConfiguration(configurationType, resource, scope, locale, programType);
         resourceService.executeUpdate(resource,
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
@@ -214,7 +215,7 @@ public class CustomizationService {
 
     public void createOrUpdateConfigurationGroup(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
             PrismProgramType programType, List<? extends WorkflowConfigurationDTO> workflowConfigurationGroupDTO) throws CustomizationException,
-            DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         List<WorkflowDefinition> definitions = getDefinitions(configurationType, scope);
 
         if (configurationType.isValidateResponseSize()
@@ -229,7 +230,7 @@ public class CustomizationService {
 
     public void createOrUpdateConfigurationGroup(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
             Enum<?> definitionId, List<? extends WorkflowConfigurationDTO> workflowConfigurationGroupDTO) throws CustomizationException,
-            DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
 
         createConfigurationGroup(configurationType, resource, locale, programType, definitionId, workflowConfigurationGroupDTO);
         resourceService.executeUpdate(resource,
@@ -248,7 +249,7 @@ public class CustomizationService {
 
     public void createConfigurationGroup(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
             Enum<?> definitionId, List<? extends WorkflowConfigurationDTO> workflowConfigurationGroupDTO) throws CustomizationException,
-            DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         if (configurationType.isVersioned()) {
             createOrUpdateConfigurationGroupVersion(configurationType, resource, locale, programType, definitionId, workflowConfigurationGroupDTO);
         } else {
@@ -311,7 +312,7 @@ public class CustomizationService {
     
     public WorkflowConfiguration createOrUpdateConfigurationUser(PrismConfiguration configurationType, Resource resource, PrismLocale locale,
             PrismProgramType programType, WorkflowConfigurationDTO workflowConfigurationDTO) throws CustomizationException, DeduplicationException,
-            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         WorkflowConfiguration configuration = createConfiguration(configurationType, resource, locale, programType, workflowConfigurationDTO);
         resourceService.executeUpdate(resource,
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));

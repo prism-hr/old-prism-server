@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
@@ -59,7 +60,8 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
     @Autowired
     private NotificationService notificationService;
 
-    public void execute() throws DeduplicationException, InstantiationException, IllegalAccessException, IOException, JAXBException, SAXException {
+    public void execute() throws DeduplicationException, InstantiationException, IllegalAccessException, IOException, JAXBException, SAXException,
+            BeansException, WorkflowEngineException, IntegrationException {
         institutionService.populateDefaultImportedEntityFeeds();
         for (ImportedEntityFeed importedEntityFeed : importedEntityService.getImportedEntityFeeds()) {
             String maxRedirects = null;
@@ -86,7 +88,7 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
     }
 
     private void importEntities(ImportedEntityFeed importedEntityFeed) throws IOException, JAXBException, SAXException, DataImportException,
-            DeduplicationException, InstantiationException, IllegalAccessException {
+            DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IntegrationException {
         Institution institution = importedEntityFeed.getInstitution();
         if (contextEnvironment.equals("prod") || !institutionService.hasAuthenticatedFeeds(institution)) {
             List unmarshalled = unmarshalEntities(importedEntityFeed);
@@ -148,7 +150,7 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
     }
 
     private void mergeImportedPrograms(Institution institution, List<ProgrammeOccurrence> programDefinitions) throws DeduplicationException,
-            DataImportException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            DataImportException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         DateTime baselineTime = new DateTime();
         LocalDate baseline = baselineTime.toLocalDate();
 

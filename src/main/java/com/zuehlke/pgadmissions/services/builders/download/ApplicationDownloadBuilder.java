@@ -61,6 +61,7 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.DocumentService;
@@ -624,7 +625,7 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addSupportingDocuments(ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument, PdfWriter pdfWriter) throws DocumentException,
-            IOException {
+            IOException, IntegrationException {
         if (applicationDownloadDTO.isIncludeAttachments()) {
             for (int i = 0; i < bookmarks.size(); i++) {
                 pdfDocument.newPage();
@@ -679,7 +680,8 @@ public class ApplicationDownloadBuilder {
         return phrase;
     }
 
-    private void addDocument(Document pdfDocument, com.zuehlke.pgadmissions.domain.document.Document document, PdfWriter pdfWriter) throws IOException {
+    private void addDocument(Document pdfDocument, com.zuehlke.pgadmissions.domain.document.Document document, PdfWriter pdfWriter) throws IOException,
+            IntegrationException {
         PdfReader pdfReader = new PdfReader(documentService.getDocumentContent(document));
         PdfContentByte cb = pdfWriter.getDirectContent();
         for (int i = 1; i <= pdfReader.getNumberOfPages(); i++) {

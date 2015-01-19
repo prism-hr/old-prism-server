@@ -39,6 +39,7 @@ import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
@@ -184,7 +185,7 @@ public class InstitutionService {
     }
 
     public void initializeInstitution(Integer institutionId) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException,
-            WorkflowEngineException, IOException {
+            WorkflowEngineException, IOException, IntegrationException {
         Institution institution = getById(institutionId);
         User user = systemService.getSystem().getUser();
         Action action = actionService.getById(INSTITUTION_STARTUP);
@@ -207,7 +208,7 @@ public class InstitutionService {
     }
 
     public ActionOutcomeDTO executeAction(Integer institutionId, CommentDTO commentDTO) throws DeduplicationException, InstantiationException,
-            IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         User user = userService.getById(commentDTO.getUser());
         Institution institution = getById(institutionId);
 

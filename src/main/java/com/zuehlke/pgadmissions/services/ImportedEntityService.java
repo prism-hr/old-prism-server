@@ -50,6 +50,7 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.InstitutionDomicileImportDTO;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.iso.jaxb.CategoryNameType;
 import com.zuehlke.pgadmissions.iso.jaxb.CategoryType;
@@ -139,7 +140,7 @@ public class ImportedEntityService {
 
     public void mergeImportedProgram(Institution institution, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline, DateTime baselineTime)
             throws DeduplicationException, DataImportException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException,
-            IOException {
+            IOException, IntegrationException {
         Programme programDefinition = programInstanceDefinitions.iterator().next().getProgramme();
         Program persistentProgram = mergeProgram(institution, programDefinition, baseline);
 
@@ -393,7 +394,7 @@ public class ImportedEntityService {
     }
 
     private void executeProgramImportAction(Program program, DateTime baselineTime) throws DeduplicationException, InstantiationException,
-            IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         Comment lastImportComment = commentService.getLatestComment(program, PrismAction.INSTITUTION_IMPORT_PROGRAM);
         Action action = actionService.getById(lastImportComment == null ? PrismAction.INSTITUTION_CREATE_PROGRAM : PrismAction.INSTITUTION_IMPORT_PROGRAM);
 

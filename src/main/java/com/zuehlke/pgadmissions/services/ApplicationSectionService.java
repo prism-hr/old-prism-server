@@ -75,6 +75,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
@@ -125,7 +126,7 @@ public class ApplicationSectionService {
     private DocumentService documentService;
 
     public void updateProgramDetail(Integer applicationId, ApplicationProgramDetailDTO programDetailDTO) throws DeduplicationException, InstantiationException,
-            IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         Application application = applicationService.getById(applicationId);
         Institution institution = application.getInstitution();
 
@@ -161,7 +162,7 @@ public class ApplicationSectionService {
     }
 
     public ApplicationSupervisor updateSupervisor(Integer applicationId, Integer supervisorId, ApplicationSupervisorDTO supervisorDTO)
-            throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         Application application = applicationService.getById(applicationId);
 
         ApplicationSupervisor supervisor;
@@ -186,7 +187,7 @@ public class ApplicationSectionService {
     }
 
     public void deleteSupervisor(Integer applicationId, Integer supervisorId) throws DeduplicationException, InstantiationException, IllegalAccessException,
-            BeansException, WorkflowEngineException, IOException {
+            BeansException, WorkflowEngineException, IOException, IntegrationException {
         Application application = applicationService.getById(applicationId);
 
         ApplicationSupervisor supervisor = entityService.getByProperties(ApplicationSupervisor.class,
@@ -198,7 +199,7 @@ public class ApplicationSectionService {
     }
 
     public void updatePersonalDetail(Integer applicationId, ApplicationPersonalDetailDTO personalDetailDTO) throws DeduplicationException,
-            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         Application application = applicationService.getById(applicationId);
         Institution institution = application.getInstitution();
 
@@ -250,7 +251,7 @@ public class ApplicationSectionService {
     }
 
     public void updateAddress(Integer applicationId, ApplicationAddressDTO addressDTO) throws DeduplicationException, InstantiationException,
-            IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         Application application = applicationService.getById(applicationId);
         Institution institution = application.getInstitution();
 
@@ -281,7 +282,7 @@ public class ApplicationSectionService {
     }
 
     public ApplicationQualification updateQualification(Integer applicationId, Integer qualificationId, ApplicationQualificationDTO qualificationDTO)
-            throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         Application application = applicationService.getById(applicationId);
 
         ApplicationQualification qualification;
@@ -321,7 +322,7 @@ public class ApplicationSectionService {
     }
 
     public void deleteQualification(Integer applicationId, Integer qualificationId) throws DeduplicationException, InstantiationException,
-            IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         Application application = applicationService.getById(applicationId);
 
         ApplicationQualification qualification = entityService.getByProperties(ApplicationQualification.class,
@@ -333,7 +334,7 @@ public class ApplicationSectionService {
 
     public ApplicationEmploymentPosition updateEmploymentPosition(Integer applicationId, Integer employmentPositionId,
             ApplicationEmploymentPositionDTO employmentPositionDTO) throws DeduplicationException, InstantiationException, IllegalAccessException,
-            BeansException, WorkflowEngineException, IOException {
+            BeansException, WorkflowEngineException, IOException, IntegrationException {
         Application application = applicationService.getById(applicationId);
 
         ApplicationEmploymentPosition employmentPosition;
@@ -367,7 +368,7 @@ public class ApplicationSectionService {
     }
 
     public void deleteEmploymentPosition(Integer applicationId, Integer employmentPositionId) throws DeduplicationException, InstantiationException,
-            IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         Application application = applicationService.getById(applicationId);
         ApplicationEmploymentPosition employmentPosition = entityService.getByProperties(ApplicationEmploymentPosition.class,
                 ImmutableMap.of("application", application, "id", employmentPositionId));
@@ -376,7 +377,7 @@ public class ApplicationSectionService {
     }
 
     public ApplicationFunding updateFunding(Integer applicationId, Integer fundingId, ApplicationFundingDTO fundingDTO) throws DeduplicationException,
-            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         Application application = applicationService.getById(applicationId);
 
         ApplicationFunding funding;
@@ -408,7 +409,7 @@ public class ApplicationSectionService {
     }
 
     public void deleteFunding(Integer applicationId, Integer fundingId) throws DeduplicationException, InstantiationException, IllegalAccessException,
-            BeansException, WorkflowEngineException, IOException {
+            BeansException, WorkflowEngineException, IOException, IntegrationException {
         Application application = applicationService.getById(applicationId);
         ApplicationFunding funding = entityService.getByProperties(ApplicationFunding.class, ImmutableMap.of("application", application, "id", fundingId));
         application.getFundings().remove(funding);
@@ -416,7 +417,7 @@ public class ApplicationSectionService {
     }
 
     public ApplicationPrize updatePrize(Integer applicationId, Integer prizeId, ApplicationPrizeDTO prizeDTO) throws DeduplicationException,
-            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         Application application = applicationService.getById(applicationId);
 
         ApplicationPrize prize;
@@ -438,7 +439,7 @@ public class ApplicationSectionService {
     }
 
     public void deletePrize(Integer applicationId, Integer prizeId) throws DeduplicationException, InstantiationException, IllegalAccessException,
-            BeansException, WorkflowEngineException, IOException {
+            BeansException, WorkflowEngineException, IOException, IntegrationException {
         Application application = applicationService.getById(applicationId);
         ApplicationPrize prize = entityService.getByProperties(ApplicationPrize.class, ImmutableMap.of("application", application, "id", prizeId));
         application.getPrizes().remove(prize);
@@ -446,7 +447,7 @@ public class ApplicationSectionService {
     }
 
     public ApplicationReferee updateReferee(Integer applicationId, Integer refereeId, ApplicationRefereeDTO refereeDTO) throws DeduplicationException,
-            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         Application application = applicationService.getById(applicationId);
 
         ApplicationReferee referee;
@@ -485,7 +486,7 @@ public class ApplicationSectionService {
     }
 
     public void deleteReferee(Integer applicationId, Integer refereeId) throws DeduplicationException, InstantiationException, IllegalAccessException,
-            BeansException, WorkflowEngineException, IOException {
+            BeansException, WorkflowEngineException, IOException, IntegrationException {
         Application application = applicationService.getById(applicationId);
         ApplicationReferee referee = entityService.getByProperties(ApplicationReferee.class, ImmutableMap.of("application", application, "id", refereeId));
         application.getReferees().remove(referee);
@@ -493,7 +494,7 @@ public class ApplicationSectionService {
     }
 
     public void updateDocument(Integer applicationId, ApplicationDocumentDTO documentDTO) throws DeduplicationException, InstantiationException,
-            IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         Application application = applicationService.getById(applicationId);
 
         ApplicationDocument document = application.getDocument();
@@ -519,7 +520,7 @@ public class ApplicationSectionService {
     }
 
     public void updateAdditionalInformation(Integer applicationId, ApplicationAdditionalInformationDTO additionalInformationDTO) throws DeduplicationException,
-            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         Application application = applicationService.getById(applicationId);
 
         ApplicationAdditionalInformation additionalInformation = application.getAdditionalInformation();
@@ -604,7 +605,7 @@ public class ApplicationSectionService {
     }
 
     private void executeUpdate(Application application, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees)
-            throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+            throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         User userCurrent = userService.getCurrentUser();
         List<PrismActionEnhancement> userEnhancements = actionService.getPermittedActionEnhancements(application, userCurrent);
         List<PrismActionEnhancement> permittedEnhancements = Lists.newArrayList(APPLICATION_VIEW_EDIT_AS_CREATOR, APPLICATION_VIEW_EDIT_AS_ADMITTER);

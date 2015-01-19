@@ -26,6 +26,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentCustomResponseRepresentation;
 import com.zuehlke.pgadmissions.services.DocumentService;
@@ -90,7 +91,7 @@ public class ApplicationDownloadReferenceBuilder {
         }
     }
 
-    private void addReferenceDocument(Document pdfDocument, PdfWriter pdfWriter, Comment referenceComment) {
+    private void addReferenceDocument(Document pdfDocument, PdfWriter pdfWriter, Comment referenceComment) throws IntegrationException {
         if (referenceComment != null) {
             PdfContentByte content = pdfWriter.getDirectContent();
             for (com.zuehlke.pgadmissions.domain.document.Document document : referenceComment.getDocuments()) {

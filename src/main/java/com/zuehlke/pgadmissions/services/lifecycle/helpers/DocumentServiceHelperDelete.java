@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
@@ -24,7 +25,7 @@ public class DocumentServiceHelperDelete extends AbstractServiceHelper {
     private SystemService systemService;
     
     @Override
-    public void execute() throws DeduplicationException, IOException {
+    public void execute() throws DeduplicationException, IOException, IntegrationException {
         DateTime baselineTime = new DateTime();
         documentService.deleteOrphanDocuments(baselineTime);
         if (amazonOn && systemService.getSystem().isDocumentExportEnabled()) {

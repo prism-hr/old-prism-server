@@ -11,8 +11,7 @@
     <!-- <meta name="google-site-verification" content="" /> -->
     <meta name="author" content="${metadata.author?html}"/>
     <meta property="fb:app_id" content="172294119620634"/>
-    <meta property="og:url" content="${metadata.resourceUrl}"/>
-    <meta property="og:title" content="${metadata.title?html}"/>
+    <meta property="og:url" content="${metadata.resourceUrl}&uuid=${uuid}"/>
     <#if metadata.description??>
     	<meta property="og:description" content="${metadata.description?html}"/>
    	</#if>

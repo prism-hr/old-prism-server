@@ -23,6 +23,7 @@ import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 import freemarker.template.Template;
 
@@ -55,9 +56,11 @@ public class RobotController {
         }
 
         Map<String, Object> model = Maps.newHashMap();
+        
         model.put("metadata", resourceService.getSocialMetadata(resourceScope, resourceId));
         model.put("advert", resourceService.getSearchEngineAdvert(resourceScope, resourceId));
         model.put("applicationUrl", applicationUrl);
+        model.put("uuid", EncryptionUtils.getUUID());
 
         String templateContent = Resources.toString(Resources.getResource("template/robot_representation.ftl"), Charsets.UTF_8);
         Template template = new Template("robot_representation", new StringReader(templateContent), freemarkerConfig.getConfiguration());

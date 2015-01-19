@@ -1,14 +1,11 @@
 package com.zuehlke.pgadmissions.mvc.controllers;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.Maps;
-import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.services.ResourceService;
-import freemarker.template.Template;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -20,17 +17,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Map;
+import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.services.ResourceService;
+
+import freemarker.template.Template;
 
 @Controller
 @RequestMapping("api/robots")
 public class RobotController {
-
-    private static final Logger log = LoggerFactory.getLogger(RobotController.class);
 
     @Value("${application.url}")
     private String applicationUrl;
@@ -98,14 +96,14 @@ public class RobotController {
 
     private Integer getQueryResourceId(PrismScope resourceScope, Map<String, String> queryMap) {
         switch (resourceScope) {
-            case INSTITUTION:
-            case PROGRAM:
-            case PROJECT:
-                return Integer.parseInt(queryMap.get(resourceScope.getLowerCaseName()));
-            case SYSTEM:
-                return null;
-            default:
-                throw new Error();
+        case INSTITUTION:
+        case PROGRAM:
+        case PROJECT:
+            return Integer.parseInt(queryMap.get(resourceScope.getLowerCaseName()));
+        case SYSTEM:
+            return null;
+        default:
+            throw new Error();
         }
     }
 

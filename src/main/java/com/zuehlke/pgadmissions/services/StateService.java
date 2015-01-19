@@ -164,9 +164,11 @@ public class StateService {
         State state = resource.getState();
         StateTransition stateTransition = getStateTransition(resource, action, comment);
 
-        if (stateTransition == null && comment.isDelegateComment()) {
-            commentService.recordDelegatedActionStateTransition(comment, state);
-            roleService.executeDelegatedActionRoleTransitions(resource, comment);
+        if (stateTransition == null) {
+            commentService.recordStateTransition(comment, state);
+            if (comment.isDelegateComment()) {
+                roleService.executeDelegatedRoleTransitions(resource, comment);
+            }
         } else {
             State transitionState = stateTransition.getTransitionState();
             transitionState = transitionState == null ? state : transitionState;

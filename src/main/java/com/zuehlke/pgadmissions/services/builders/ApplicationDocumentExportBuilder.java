@@ -93,7 +93,7 @@ public class ApplicationDocumentExportBuilder {
                 if (document == null) {
                     buildSurrogateAcademicQualificationProofOfAward(application, zos);
                 } else {
-                    zos.write(getFileContents(application, document));
+                    zos.write(documentService.getDocumentContent(document));
                 }
 
                 zos.closeEntry();
@@ -125,7 +125,7 @@ public class ApplicationDocumentExportBuilder {
         if (document != null) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
-            zos.write(getFileContents(application, document));
+            zos.write(documentService.getDocumentContent(document));
             zos.closeEntry();
             contentsProperties.put("englishLanguageTestCertificate.1.serverFilename", filename);
             contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", document.getExportFilenameSits());
@@ -138,7 +138,7 @@ public class ApplicationDocumentExportBuilder {
         if (document != null) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
-            zos.write(getFileContents(application, document));
+            zos.write(documentService.getDocumentContent(document));
             zos.closeEntry();
             contentsProperties.put("researchProposal.1.serverFilename", filename);
             contentsProperties.put("researchProposal.1.applicationFilename", document.getExportFilenameSits());
@@ -151,7 +151,7 @@ public class ApplicationDocumentExportBuilder {
         if (document != null) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
-            zos.write(getFileContents(application, document));
+            zos.write(documentService.getDocumentContent(document));
             zos.closeEntry();
             contentsProperties.put("curriculumVitae.1.serverFilename", filename);
             contentsProperties.put("curriculumVitae.1.applicationFilename", document.getExportFilenameSits());
@@ -205,13 +205,6 @@ public class ApplicationDocumentExportBuilder {
 
     private String getRandomFilename() {
         return UUID.randomUUID() + ".pdf";
-    }
-
-    private byte[] getFileContents(Application application, Document document) throws IOException, IntegrationException {
-        if (document != null) {
-            return documentService.getDocumentContent(document);
-        }
-        throw new Error("Document was missing for export of application: " + application.getCode());
     }
 
 }

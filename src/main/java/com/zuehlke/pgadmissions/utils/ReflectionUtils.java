@@ -58,8 +58,12 @@ public class ReflectionUtils {
     }
 
     public static String getMethodName(Enum<?> definition) {
+        return getMethodName(definition, "get");
+    }
+    
+    public static String getMethodName(Enum<?> definition, String prefix) {
         String[] nameParts = definition.name().split("_");
-        String methodName = "get";
+        String methodName = prefix;
         for (String namePart : nameParts) {
             methodName = methodName + WordUtils.capitalizeFully(namePart);
         }

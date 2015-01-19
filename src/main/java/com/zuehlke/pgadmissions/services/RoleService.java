@@ -33,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Service
 @Transactional
@@ -164,11 +165,8 @@ public class RoleService {
         }
     }
 
-    public void executeRoleTransitions(Resource resource, Comment comment) throws DeduplicationException {
-        for (PrismRoleTransitionType roleTransitionType : PrismRoleTransitionType.values()) {
-            List<RoleTransition> roleTransitions = roleDAO.getRoleTransitions(resource, comment.getAction(), roleTransitionType);
-            executeRoleTransitions(resource, comment, roleTransitions);
-        }
+    public void executeDelegatedActionRoleTransitions(Resource resource, Comment comment) throws DeduplicationException {
+        ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(comment.getAction().getId(), "execute") + "RoleTransition", resource, comment);
         entityService.flush();
     }
 
@@ -180,13 +178,23 @@ public class RoleService {
         entityService.flush();
     }
 
-    public void deleteUserRoles(Resource resource, User user) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException {
+    public void deleteUserRoles(Resource resource, User user) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException,
+            WorkflowEngineException, IOException {
         List<PrismRole> roles = roleDAO.getUserRoles(resource, user);
         updateUserRole(resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
     }
-    
+
     public Integer getPermissionPrecedence(User user) {
         return roleDAO.getPermissionPrecedence(user);
+    }
+
+    public void executeApplicationProvideReferenceRoleTransition(Resource resource, Comment comment) {
+        User user = comment.getDelegateUser();
+        Role referee = getById(PrismRole.APPLICATION_REFEREE);
+        UserRole oldUserRole = new UserRole().withResource(resource).withUser(user).withRole(referee);
+        Role viewer = getById(PrismRole.APPLICATION_VIEWER_REFEREE);
+        UserRole newUserRole = new UserRole().withResource(resource).withUser(user).withRole(viewer);
+        executeUpdateUserRole(oldUserRole, newUserRole, comment);
     }
 
     private void executeRoleTransitions(Resource resource, Comment comment, List<RoleTransition> roleTransitions) {

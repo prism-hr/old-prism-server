@@ -753,6 +753,10 @@ public class Comment {
     public boolean isDelegateComment() {
         return delegateUser != null;
     }
+    
+    public boolean isApplicationProvideReferenceDelegateComment() {
+        return isDelegateComment() && action.getId() == PrismAction.APPLICATION_PROVIDE_REFERENCE;
+    }
 
     public String getApplicationRatingDisplay() {
         return applicationRating == null ? null : applicationRating.toPlainString();

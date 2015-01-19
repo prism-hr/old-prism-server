@@ -112,21 +112,6 @@ public class RoleDAO {
                 .list();
     }
 
-    public List<RoleTransition> getRoleTransitions(Resource resource, Action action, PrismRoleTransitionType roleTransitionType) {
-        return (List<RoleTransition>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
-                .createAlias("stateTransition", "stateTransition", JoinType.INNER_JOIN) //
-                .createAlias("stateTransition.stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.resourceStates", "resourceState", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("resourceState." + resource.getResourceScope().getLowerCaseName(), resource)) //
-                .add(Restrictions.eq("resourceState.primaryState", false)) //
-                .add(Restrictions.eq("stateAction.action", action)) //
-                .add(Restrictions.isNull("stateTransition.transitionState")) //
-                .add(Restrictions.eq("roleTransitionType", roleTransitionType)) //
-                .add(Restrictions.eq("restrictToActionOwner", true)) //
-                .list();
-    }
-
     public List<RoleTransition> getRoleTransitions(StateTransition stateTransition, PrismRoleTransitionType roleTransitionType) {
         return (List<RoleTransition>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
                 .add(Restrictions.eq("stateTransition", stateTransition)) //

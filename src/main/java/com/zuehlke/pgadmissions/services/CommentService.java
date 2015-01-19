@@ -366,6 +366,10 @@ public class CommentService {
         return commentDAO.getRecentComments(resourceClass, resourceId, rangeStart, rangeClose);
     }
 
+    public void recordDelegatedActionStateTransition(Comment comment, State state) {
+        recordStateTransition(comment, state, state, null);
+    }
+    
     public void recordStateTransition(Comment comment, State state, State transitionState) {
         recordStateTransition(comment, state, transitionState, null);
     }

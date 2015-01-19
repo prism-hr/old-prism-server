@@ -1,17 +1,16 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.util.HashMap;
-
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.domain.application.Application;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.domain.application.Application;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
 
 @Service
 @Transactional
@@ -22,18 +21,18 @@ public class ApplicationExportServiceDevelopment extends ApplicationExportServic
     @Override
     public void submitExportRequest(Integer applicationId) throws Exception {
         Application application = applicationService.getById(applicationId);
-        
+
         OutputStream outputStream = null;
         SubmitAdmissionsApplicationRequest dataExportRequest = null;
-        
+
         try {
-            localize(application);  
-            
+            localize(application);
+
             String exportId = applicationService.getApplicationExportReference(application);
             if (exportId == null) {
                 dataExportRequest = buildDataExportRequest(application);
             }
-            
+
             outputStream = buildDocumentExportRequest(application, application.getCode(), new ByteArrayOutputStream());
             ByteArrayOutputStream byteOutputStream = (ByteArrayOutputStream) outputStream;
 

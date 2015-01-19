@@ -165,7 +165,7 @@ public class RoleService {
         }
     }
 
-    public void executeDelegatedActionRoleTransitions(Resource resource, Comment comment) throws DeduplicationException {
+    public void executeDelegatedRoleTransitions(Resource resource, Comment comment) throws DeduplicationException {
         ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(comment.getAction().getId(), "execute") + "RoleTransition", resource, comment);
         entityService.flush();
     }

@@ -14,6 +14,6 @@ public enum PrismActionCategory {
     PURGE_RESOURCE, //
     VIEW_EDIT_RESOURCE, //
     VIEW_RESOURCE_LIST, //
-    WITHDRAW_RESOURCE;
+    WITHDRAW_RESOURCE
 
 }

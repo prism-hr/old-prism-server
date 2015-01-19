@@ -1,68 +1,7 @@
 package com.zuehlke.pgadmissions.services.builders;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PREFERRED_START_DATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_IP_PLACEHOLDER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NONE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OTHER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_REFER_TO_DOCUMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_PROVIDED;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
-import javax.xml.datatype.XMLGregorianCalendar;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.AddressTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.ApplicantTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.ApplicationTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.AppointmentTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.ContactDtlsTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.CountryTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.CourseApplicationTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.DisabilityTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.DomicileTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.EmployerTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.EmploymentDetailsTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.EnglishLanguageQualificationDetailsTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.EnglishLanguageScoreTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.EnglishLanguageTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.EthnicityTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.GenderTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.InstitutionTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.LanguageBandScoreTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.ModeofattendanceTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.NameTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.NationalityTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.PassportTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.ProgrammeOccurrenceTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationDetailsTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationsTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationsinEnglishTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.RefereeListTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.RefereeTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.SourceOfInterestTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.*;
+import com.zuehlke.pgadmissions.domain.application.*;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
@@ -75,15 +14,28 @@ import com.zuehlke.pgadmissions.domain.user.Address;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationExportDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ApplicationExportBuilder {
 
-    private PropertyLoader propertyLoader;
-
     private final ObjectFactory objectFactory = new ObjectFactory();
-
+    private PropertyLoader propertyLoader;
     @Value("${xml.export.source}")
     private String exportSource;
 
@@ -293,19 +245,19 @@ public class ApplicationExportBuilder {
         applicationTp.setRefereeList(buildReferee(applicationExportDTO.getApplicationReferees()));
 
         switch (application.getState().getStateGroup().getId()) {
-        case APPLICATION_WITHDRAWN:
-            applicationTp.setApplicationStatus("WITHDRAWN");
-            break;
-        case APPLICATION_APPROVED:
-            applicationTp.setApplicationStatus("ACTIVE");
-            applicationTp.setDepartmentalDecision("OFFER");
-            break;
-        case APPLICATION_REJECTED:
-            applicationTp.setApplicationStatus("ACTIVE");
-            applicationTp.setDepartmentalDecision("REJECT");
-            break;
-        default:
-            throw new Error("Application in state " + application.getState().getId().name() + " cannot be exported");
+            case APPLICATION_WITHDRAWN:
+                applicationTp.setApplicationStatus("WITHDRAWN");
+                break;
+            case APPLICATION_APPROVED:
+                applicationTp.setApplicationStatus("ACTIVE");
+                applicationTp.setDepartmentalDecision("OFFER");
+                break;
+            case APPLICATION_REJECTED:
+                applicationTp.setApplicationStatus("ACTIVE");
+                applicationTp.setDepartmentalDecision("REJECT");
+                break;
+            default:
+                throw new Error("Application in state " + application.getState().getId().name() + " cannot be exported");
         }
 
         applicationTp.setProgramme(buildProgrammeOccurence(applicationExportDTO));
@@ -321,9 +273,9 @@ public class ApplicationExportBuilder {
                 LocalDate positionProvisionalStartDate = offerDetail.getPositionProvisionalStartDate();
                 String conditions = offerDetail.getAppointmentConditions();
 
-                String offerSummary = propertyLoader.load(APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION) + ": " + conditions == null ? none : conditions
-                        + "\n\n" + propertyLoader.load(APPLICATION_PREFERRED_START_DATE) + ": " + positionProvisionalStartDate == null ? none
-                        : positionProvisionalStartDate.toString(propertyLoader.load(SYSTEM_DATE_FORMAT));
+                String offerSummary = propertyLoader.load(APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION) + ": " + (conditions == null ? none : conditions)
+                        + "\n\n" + propertyLoader.load(APPLICATION_PREFERRED_START_DATE) + ": " + (positionProvisionalStartDate == null ? none
+                        : positionProvisionalStartDate.toString(propertyLoader.load(SYSTEM_DATE_FORMAT)));
                 applicationTp.setDepartmentalOfferConditions(offerSummary);
             }
         }
@@ -526,7 +478,7 @@ public class ApplicationExportBuilder {
             writingScoreTp.setName(LanguageBandScoreTp.WRITING);
             writingScoreTp.setScore(languageQualification.getWritingScore().replace(".0", ""));
 
-            EnglishLanguageScoreTp essayOrSpeakingScoreTp = null;
+            EnglishLanguageScoreTp essayOrSpeakingScoreTp;
             if (StringUtils.equalsIgnoreCase("TOEFL_PAPER", englishLanguageTp.getMethod())) {
                 essayOrSpeakingScoreTp = objectFactory.createEnglishLanguageScoreTp();
                 essayOrSpeakingScoreTp.setName(LanguageBandScoreTp.ESSAY);

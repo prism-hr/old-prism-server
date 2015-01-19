@@ -18,7 +18,7 @@ public class NotificationDefinitionConverter extends DozerConverter<Notification
     public NotificationDefinitionRepresentation convertTo(NotificationDefinition source, NotificationDefinitionRepresentation destination) {
         if (source != null) {
             PrismConfiguration prismConfiguration = PrismConfiguration.NOTIFICATION;
-            PrismNotificationDefinition prismDefinition = (PrismNotificationDefinition) source.getId();
+            PrismNotificationDefinition prismDefinition = source.getId();
             PrismNotificationDefinition prismReminderDefinition = prismDefinition.getReminderDefinition();
             destination = new NotificationDefinitionRepresentation().withId(prismDefinition).withReminderId(prismReminderDefinition)
                     .withMinimumPermitted(prismReminderDefinition == null ? null : prismConfiguration.getMinimumPermitted())

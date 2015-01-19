@@ -28,7 +28,7 @@ public class SeparatedStringToListConverter extends DozerConverter<String, List>
     public String convertFrom(List source, String destination) {
         if(source == null){
             return null;
-        };
+        }
         return Joiner.on("|").join(source);
     }
 

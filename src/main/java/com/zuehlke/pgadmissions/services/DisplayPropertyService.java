@@ -39,7 +39,7 @@ public class DisplayPropertyService {
         List<DisplayPropertyConfiguration> displayValues = customizationService.getDisplayPropertyConfiguration(resource, scope, category, locale, programType);
         HashMap<PrismDisplayPropertyDefinition, String> displayProperties = Maps.newHashMap();
         for (DisplayPropertyConfiguration displayValue : displayValues) {
-            PrismDisplayPropertyDefinition displayPropertyId = (PrismDisplayPropertyDefinition) displayValue.getDisplayPropertyDefinition().getId();
+            PrismDisplayPropertyDefinition displayPropertyId = displayValue.getDisplayPropertyDefinition().getId();
             if (!displayProperties.containsKey(displayPropertyId)) {
                 displayProperties.put(displayPropertyId, displayValue.getValue());
             }

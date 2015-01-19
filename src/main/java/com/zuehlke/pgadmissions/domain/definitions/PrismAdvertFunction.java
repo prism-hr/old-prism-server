@@ -36,6 +36,6 @@ public enum PrismAdvertFunction {
     STRATEGY_PLANNING,
     SUPPLY_CHAIN,
     TRAINING,
-    WRITING_EDITING;
-    
+    WRITING_EDITING
+
 }

@@ -1,13 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
@@ -22,6 +14,13 @@ import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -115,8 +114,8 @@ public class ResourceListFilterService {
 
         if (!Strings.isNullOrEmpty(valueString) && constraintDTOs == null) {
             List<ResourceListFilterConstraintDTO> constraints = Lists.newLinkedList();
+            int displayPosition = 0;
             for (ResourceListFilterProperty property : ResourceListFilterProperty.getPermittedFilterProperties(scope.getId())) {
-                int displayPosition = 0;
                 if (property.getPermittedExpressions().contains(FilterExpression.CONTAIN)) {
                     ResourceListFilterConstraintDTO constraintDTO = new ResourceListFilterConstraintDTO().withFilterProperty(property)
                             .withFilterExpression(FilterExpression.CONTAIN).withNegated(false).withDisplayPosition(displayPosition)

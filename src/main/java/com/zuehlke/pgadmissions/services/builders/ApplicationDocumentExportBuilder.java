@@ -1,6 +1,23 @@
 package com.zuehlke.pgadmissions.services.builders;
 
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import com.zuehlke.pgadmissions.domain.application.*;
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
+import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
+import com.zuehlke.pgadmissions.services.ApplicationDownloadService;
+import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.DocumentService;
+import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderHelper;
+import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadEquivalentExperienceBuilder;
+import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadReferenceBuilder;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -10,31 +27,7 @@ import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
-import com.zuehlke.pgadmissions.exceptions.IntegrationException;
-import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
-import com.zuehlke.pgadmissions.services.ApplicationDownloadService;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.CommentService;
-import com.zuehlke.pgadmissions.services.DocumentService;
-import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderHelper;
-import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadEquivalentExperienceBuilder;
-import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadReferenceBuilder;
-import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
@@ -49,9 +42,6 @@ public class ApplicationDocumentExportBuilder {
 
     @Autowired
     private ApplicationDownloadService applicationDownloadService;
-
-    @Autowired
-    private CommentService commentService;
 
     @Autowired
     private DocumentService documentService;
@@ -138,8 +128,7 @@ public class ApplicationDocumentExportBuilder {
             zos.write(getFileContents(application, document));
             zos.closeEntry();
             contentsProperties.put("englishLanguageTestCertificate.1.serverFilename", filename);
-            contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", document != null ? document.getExportFilenameSits()
-                    : "englishLanguageTestCertificate.pdf");
+            contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", document.getExportFilenameSits());
         }
     }
 
@@ -152,7 +141,7 @@ public class ApplicationDocumentExportBuilder {
             zos.write(getFileContents(application, document));
             zos.closeEntry();
             contentsProperties.put("researchProposal.1.serverFilename", filename);
-            contentsProperties.put("researchProposal.1.applicationFilename", document != null ? document.getExportFilenameSits() : "researchProposal.pdf");
+            contentsProperties.put("researchProposal.1.applicationFilename", document.getExportFilenameSits());
         }
     }
 
@@ -165,7 +154,7 @@ public class ApplicationDocumentExportBuilder {
             zos.write(getFileContents(application, document));
             zos.closeEntry();
             contentsProperties.put("curriculumVitae.1.serverFilename", filename);
-            contentsProperties.put("curriculumVitae.1.applicationFilename", document != null ? document.getExportFilenameSits() : "curriculumVitae.pdf");
+            contentsProperties.put("curriculumVitae.1.applicationFilename", document.getExportFilenameSits());
         }
     }
 

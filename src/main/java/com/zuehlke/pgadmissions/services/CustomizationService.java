@@ -1,40 +1,14 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.dozer.Mapper;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.CustomizationDAO;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.*;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfigurationVersioned;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.workflow.*;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
@@ -43,6 +17,21 @@ import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.dozer.Mapper;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 @Service
 @Transactional
@@ -186,9 +175,9 @@ public class CustomizationService {
     }
 
     public List<WorkflowDefinition> getDefinitions(PrismConfiguration configurationType, PrismScope scope) {
-        return (List<WorkflowDefinition>) customizationDAO.listDefinitions(configurationType, scope);
+        return customizationDAO.listDefinitions(configurationType, scope);
     }
-    
+
     public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
             Enum<?> definitionId) {
         customizationDAO.restoreDefaultConfiguration(configurationType, resource, locale, programType, definitionId);
@@ -309,7 +298,7 @@ public class CustomizationService {
         WorkflowConfiguration configuration = createConfiguration(configurationType, resource, locale, programType, workflowConfigurationDTO);
         entityService.createOrUpdate(configuration);
     }
-    
+
     public WorkflowConfiguration createOrUpdateConfigurationUser(PrismConfiguration configurationType, Resource resource, PrismLocale locale,
             PrismProgramType programType, WorkflowConfigurationDTO workflowConfigurationDTO) throws CustomizationException, DeduplicationException,
             InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
@@ -324,7 +313,7 @@ public class CustomizationService {
         if (WorkflowConfigurationVersioned.class.isAssignableFrom(configurationClass)) {
             WorkflowConfiguration configuration = getConfigurationWithVersion(configurationType, definitionId,
                     resource.getWorkflowPropertyConfigurationVersion());
-            return configuration == null ? false : BooleanUtils.isTrue((Boolean) ReflectionUtils.getProperty(configuration, "enabled"));
+            return configuration != null && BooleanUtils.isTrue((Boolean) ReflectionUtils.getProperty(configuration, "enabled"));
         }
         throw new Error();
     }

@@ -4,6 +4,8 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
 
+import java.util.List;
+
 public class UserExtendedRepresentation extends UserRepresentation {
 
     private PrismLocale locale;
@@ -19,6 +21,8 @@ public class UserExtendedRepresentation extends UserRepresentation {
     private PrismScope latestCreationScope;
 
     private Integer permissionPrecedence;
+
+    private List<String> linkedUsers;
 
     public PrismLocale getLocale() {
         return locale;
@@ -76,4 +80,11 @@ public class UserExtendedRepresentation extends UserRepresentation {
         this.permissionPrecedence = permissionPrecedence;
     }
 
+    public List<String> getLinkedUsers() {
+        return linkedUsers;
+    }
+
+    public void setLinkedUsers(List<String> linkedUsers) {
+        this.linkedUsers = linkedUsers;
+    }
 }

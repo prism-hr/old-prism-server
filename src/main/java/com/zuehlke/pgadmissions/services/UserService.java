@@ -1,21 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -47,6 +31,21 @@ import com.zuehlke.pgadmissions.rest.dto.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
 
 @Service
 @Transactional
@@ -206,6 +205,25 @@ public class UserService {
         }
     }
 
+    public List<String> getLinkedUsers(User user){
+        User parentUser = user.getParentUser();
+        Set<User> childUsers = parentUser.getChildUsers();
+        Set<User> linkedUsers = Sets.newHashSet();
+        linkedUsers.add(parentUser);
+        linkedUsers.addAll(childUsers);
+        for (User iteratedUser : linkedUsers) {
+            if(iteratedUser.getId().equals(user.getId())){
+                linkedUsers.remove(iteratedUser);
+                break;
+            }
+        }
+        List<String> linkedEmails = Lists.newArrayListWithCapacity(linkedUsers.size());
+        for (User linkedUser : linkedUsers) {
+            linkedEmails.add(linkedUser.getEmail());
+        }
+        return linkedEmails;
+    }
+
     public List<User> getUsersForResourceAndRoles(Resource resource, PrismRole... roleIds) {
         return userDAO.getUsersForResourceAndRoles(resource, roleIds);
     }
@@ -285,7 +303,7 @@ public class UserService {
                 .withInstitution(application.getInstitution()).withIdentityType(PrismUserIdentity.STUDY_APPLICANT).withIdentitier(exportUserId);
         entityService.createOrUpdate(transientUserInstitutionIdentity);
     }
-    
+
     public boolean isCurrentUser(User user) {
         return user != null && Objects.equal(user.getId(), getCurrentUser().getId());
     }

@@ -47,6 +47,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -407,7 +408,10 @@ public class SystemService {
                     .withUser(systemUser).withState(systemRunning).withCipherSalt(EncryptionUtils.getUUID()).withCreatedTimestamp(baseline)
                     .withUpdatedTimestamp(baseline);
             entityService.save(system);
-
+            
+            ResourceState systemState = new ResourceState().withResource(system).withState(systemRunning).withPrimaryState(true);
+            entityService.save(systemState);
+            system.getResourceStates().add(systemState);
         } else {
             system.setId(systemId);
             system.setTitle(systemName);

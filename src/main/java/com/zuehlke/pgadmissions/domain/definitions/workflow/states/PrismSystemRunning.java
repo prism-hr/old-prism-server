@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssi
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 
-public class PrismSystemApproved extends PrismWorkflowState {
+public class PrismSystemRunning extends PrismWorkflowState {
 
     @Override
     protected void setStateActions() {

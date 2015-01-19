@@ -85,7 +85,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectD
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectDisabledPendingReactivation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectRejected;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectWithdrawn;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismSystemApproved;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismSystemRunning;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismWorkflowState;
 
 public enum PrismState {
@@ -184,7 +184,7 @@ public enum PrismState {
     INSTITUTION_APPROVED_COMPLETED(PrismStateGroup.INSTITUTION_APPROVED, null, null, false, false, INSTITUTION, PrismInstitutionApprovedCompleted.class), //
     INSTITUTION_REJECTED(PrismStateGroup.INSTITUTION_REJECTED, null, null, false, false, INSTITUTION, PrismInstitutionRejected.class), //
     INSTITUTION_WITHDRAWN(PrismStateGroup.INSTITUTION_WITHDRAWN, null, null, false, false, INSTITUTION, PrismInstitutionWithdrawn.class), //
-    SYSTEM_RUNNING(PrismStateGroup.SYSTEM_RUNNING, null, null, false, false, SYSTEM, PrismSystemApproved.class);
+    SYSTEM_RUNNING(PrismStateGroup.SYSTEM_RUNNING, null, null, false, false, SYSTEM, PrismSystemRunning.class);
 
     private PrismStateGroup stateGroup;
 

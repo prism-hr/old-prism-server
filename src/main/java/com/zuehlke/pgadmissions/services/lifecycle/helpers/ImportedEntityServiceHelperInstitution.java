@@ -91,7 +91,7 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
         if (contextEnvironment.equals("prod") || !institutionService.hasAuthenticatedFeeds(institution)) {
             List unmarshalled = unmarshalEntities(importedEntityFeed);
             if (unmarshalled != null) {
-                Class<ImportedEntity> importedEntityClass = (Class<ImportedEntity>) importedEntityFeed.getImportedEntityType().getEntityClass();
+                Class<?> importedEntityClass = (Class<?>) importedEntityFeed.getImportedEntityType().getEntityClass();
                 if (importedEntityClass.equals(Program.class)) {
                     mergeImportedPrograms(institution, (List<ProgrammeOccurrence>) unmarshalled);
                 } else if (importedEntityClass.equals(ImportedInstitution.class)) {
@@ -100,7 +100,7 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
                     mergeImportedLanguageQualificationTypes(institution,
                             (List<com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType>) unmarshalled);
                 } else {
-                    mergeImportedEntities(importedEntityClass, institution, (List<Object>) unmarshalled);
+                    mergeImportedEntities((Class<ImportedEntity>) importedEntityClass, institution, (List<Object>) unmarshalled);
                 }
                 importedEntityService.setLastImportedTimestamp(importedEntityFeed);
             }

@@ -227,11 +227,15 @@ public class ActionService {
         return actionDAO.getPropagatedActions(stateTransitionPendingId);
     }
 
-    public HashMultimap<PrismAction, PrismActionRedactionType> getRedactions(Resource resource, User user) {
+    public List<PrismActionRedactionType> getRedactions(Resource resource, User user) {
+        return actionDAO.getRedactions(resource, user);
+    }
+
+    public HashMultimap<PrismAction, PrismActionRedactionType> getRedactionsByAction(Resource resource, User user) {
         List<PrismRole> roleIds = roleService.getRoles(resource, user);
         List<ActionRedactionDTO> redactions = Lists.newArrayList();
         if (!roleIds.isEmpty()) {
-            redactions = actionDAO.getRedactions(resource, roleIds);
+            redactions = actionDAO.getRedactionsByAction(resource, roleIds);
         }
         HashMultimap<PrismAction, PrismActionRedactionType> actionRedactions = HashMultimap.create();
         for (ActionRedactionDTO redaction : redactions) {

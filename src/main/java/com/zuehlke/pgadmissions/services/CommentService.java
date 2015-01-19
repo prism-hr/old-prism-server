@@ -145,7 +145,7 @@ public class CommentService {
             List<Comment> previousStateComments = Lists.newArrayList();
 
             List<PrismRole> creatableRoles = roleService.getCreatableRoles(resource.getResourceScope());
-            HashMultimap<PrismAction, PrismActionRedactionType> redactions = actionService.getRedactions(resource, user);
+            HashMultimap<PrismAction, PrismActionRedactionType> redactions = actionService.getRedactionsByAction(resource, user);
 
             for (int i = 0; i < transitionCommentCount; i++) {
                 Comment start = transitionComments.get(i);
@@ -540,6 +540,7 @@ public class CommentService {
         CommentRepresentation representation;
         if (redactions.isEmpty() || userId.equals(author.getId()) || (authorDelegate != null && userId.equals(authorDelegate.getId()))) {
             representation = mapper.map(comment, CommentRepresentation.class);
+            appendCommentAssignedUsers(comment, representation, creatableRoles);
         } else {
 
             UserRepresentation authorRepresentation = new UserRepresentation().withFirstName(author.getFirstName()).withLastName(author.getLastName())
@@ -574,9 +575,7 @@ public class CommentService {
             }
         }
 
-        appendCommentAssignedUsers(comment, representation, creatableRoles);
         representation.setEmphasizedAction(action.getEmphasizedAction());
-
         return representation;
     }
 

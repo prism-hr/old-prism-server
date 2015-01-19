@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -26,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
@@ -161,8 +163,18 @@ public class ActionDAO {
                 .list();
     }
 
-    public List<ActionRedactionDTO> getRedactions(Resource resource, List<PrismRole> roleIds) {
-        return (List<ActionRedactionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class, "comment")
+    public List<PrismActionRedactionType> getRedactions(Resource resource, User user) {
+        return (List<PrismActionRedactionType>) sessionFactory.getCurrentSession().createCriteria(ActionRedaction.class) //
+                .setProjection(Projections.groupProperty("redactionType")) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("userRole." + resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.eq("userRole.user", user)) //
+                .list();
+    }
+    
+    public List<ActionRedactionDTO> getRedactionsByAction(Resource resource, List<PrismRole> roleIds) {
+        return (List<ActionRedactionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class, "comment") //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("action.id"), "actionId") //
                         .add(Projections.groupProperty("redaction.redactionType"), "redactionType")) //

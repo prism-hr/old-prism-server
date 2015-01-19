@@ -237,6 +237,10 @@
 			<a>comments</a>
 			<b>comments</b>
 		</field-exclude>
+		<field-exclude>
+			<a>applicationRatingAverage</a>
+			<b>applicationRatingAverage</b>
+		</field-exclude>
 	</mapping>
 
 	<mapping>

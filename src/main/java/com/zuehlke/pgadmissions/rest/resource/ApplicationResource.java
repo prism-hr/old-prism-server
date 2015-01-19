@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
@@ -49,6 +50,7 @@ import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.RefereeRepresentation;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationSectionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -61,6 +63,9 @@ import com.zuehlke.pgadmissions.services.UserService;
 @PreAuthorize("isAuthenticated()")
 public class ApplicationResource {
 
+    @Autowired
+    private ActionService actionService;
+    
     @Autowired
     private AdvertService advertService;
 
@@ -275,6 +280,13 @@ public class ApplicationResource {
         }
 
         representation.setAvailableStudyOptions(availableStudyOptions);
+        
+        User currentUser = userService.getCurrentUser();
+        List<PrismActionRedactionType> redactions = actionService.getRedactions(application, currentUser); 
+        if (redactions.isEmpty()) {
+            representation.setApplicationRatingAverage(application.getApplicationRatingAverage());
+        }
+        
         representation.setResourceSummary(applicationService.getApplicationSummary(application.getId()));
     }
 

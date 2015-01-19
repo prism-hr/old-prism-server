@@ -572,6 +572,8 @@ public class ResourceService {
                     case STUDY_DIVISION:
                     case STUDY_LOCATION:
                     case STUDY_APPLICATION:
+                    case PRIMARY_THEME:
+                    case SECONDARY_THEME:
                         ResourceListConstraintBuilder.appendStringFilterCriterion(conditions, propertyName, constraint.getValueString(), negated);
                         break;
                     case SUPERVISOR:
@@ -579,9 +581,6 @@ public class ResourceService {
                                 PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.APPLICATION_SUGGESTED_SUPERVISOR, PrismRole.APPLICATION_PRIMARY_SUPERVISOR,
                                 PrismRole.APPLICATION_SECONDARY_SUPERVISOR), negated);
                         break;
-                    case THEME:
-                        ResourceListConstraintBuilder.appendStringFilterCriterion(conditions, "primaryTheme", constraint.getValueString(), negated);
-                        ResourceListConstraintBuilder.appendStringFilterCriterion(conditions, "secondaryTheme", constraint.getValueString(), negated);
                     }
                 } else {
                     ResourceListConstraintBuilder.throwResourceFilterListMissingPropertyError(scopeId, property);

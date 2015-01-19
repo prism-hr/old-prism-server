@@ -131,7 +131,7 @@ public class ApplicationProcessingSummary implements IUniqueEntity {
     }
 
     public Resource getResource() {
-        return (Resource) ObjectUtils.firstNonNull(project, program, institution);
+        return ObjectUtils.firstNonNull(project, program, institution);
     }
 
     public void setResource(Resource resource) {

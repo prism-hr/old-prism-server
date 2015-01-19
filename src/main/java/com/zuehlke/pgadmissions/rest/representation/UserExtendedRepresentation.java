@@ -15,9 +15,9 @@ public class UserExtendedRepresentation extends UserRepresentation {
     private String twitterUri;
 
     private Boolean sendApplicationRecommendationNotification;
-    
+
     private PrismScope latestCreationScope;
-    
+
     private Integer permissionPrecedence;
 
     public PrismLocale getLocale() {
@@ -59,20 +59,20 @@ public class UserExtendedRepresentation extends UserRepresentation {
     public void setSendApplicationRecommendationNotification(Boolean sendApplicationRecommendationNotification) {
         this.sendApplicationRecommendationNotification = sendApplicationRecommendationNotification;
     }
-    
-    public final PrismScope getLatestCreationScope() {
+
+    public PrismScope getLatestCreationScope() {
         return latestCreationScope;
     }
 
-    public final void setLatestCreationScope(PrismScope latestCreationScope) {
+    public void setLatestCreationScope(PrismScope latestCreationScope) {
         this.latestCreationScope = latestCreationScope;
     }
 
-    public final Integer getPermissionPrecedence() {
+    public Integer getPermissionPrecedence() {
         return permissionPrecedence;
     }
 
-    public final void setPermissionPrecedence(Integer permissionPrecedence) {
+    public void setPermissionPrecedence(Integer permissionPrecedence) {
         this.permissionPrecedence = permissionPrecedence;
     }
 

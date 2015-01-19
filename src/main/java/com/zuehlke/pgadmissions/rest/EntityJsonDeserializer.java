@@ -1,12 +1,11 @@
 package com.zuehlke.pgadmissions.rest;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.zuehlke.pgadmissions.services.EntityService;
+
+import java.io.IOException;
 
 public class EntityJsonDeserializer<T> extends JsonDeserializer<T> {
 
@@ -20,7 +19,7 @@ public class EntityJsonDeserializer<T> extends JsonDeserializer<T> {
     }
 
     @Override
-    public T deserialize(JsonParser parser, DeserializationContext context) throws IOException, JsonProcessingException {
+    public T deserialize(JsonParser parser, DeserializationContext context) throws IOException {
         Integer id = parser.getIntValue();
         return entityService.getById(klazz, id);
     }

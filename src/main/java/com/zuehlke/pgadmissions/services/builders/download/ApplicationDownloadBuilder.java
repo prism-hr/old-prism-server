@@ -152,9 +152,6 @@ public class ApplicationDownloadBuilder {
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_START_DATE, APPLICATION_CONFIRMED_START_DATE,
                 confirmedStartDate == null), confirmedStartDate == null ? startDate : confirmedStartDate, body);
 
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_START_DATE, APPLICATION_CONFIRMED_START_DATE,
-                confirmedStartDate == null), confirmedStartDate == null ? startDate : confirmedStartDate, body);
-
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_REFERRAL_SOURCE),
                 programDetailNull ? null : programDetail.getReferralSourceDisplay(), body);
 
@@ -177,7 +174,7 @@ public class ApplicationDownloadBuilder {
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_APPLICATION_ID),
                     studyDetail == null ? null : studyDetail.getStudyApplicationId(), body);
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_START_DATE),
-                    studyDetail.getStudyStartDateDisplay(propertyLoader.load(SYSTEM_DATE_FORMAT)), body);
+                    studyDetail == null ? null : studyDetail.getStudyStartDateDisplay(propertyLoader.load(SYSTEM_DATE_FORMAT)), body);
         }
     }
 
@@ -506,7 +503,7 @@ public class ApplicationDownloadBuilder {
 
     private void addPrizesSection(Application application, Document pdfDocument) throws DocumentException {
         if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application, PrismWorkflowPropertyDefinition.APPLICATION_PRIZE)) {
-            PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_FUNDING_HEADER));
+            PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_PRIZE_HEADER));
             Set<ApplicationPrize> prizes = application.getPrizes();
 
             if (prizes.isEmpty()) {

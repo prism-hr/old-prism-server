@@ -42,6 +42,7 @@ public class ImportedEntityDAO {
                 .add(Restrictions.eq("domicile.id", domicileId)) //
                 .add(Restrictions.eq("name", name)) //
                 .add(Restrictions.eq("custom", true)) //
+                .setMaxResults(1) // FIXME added because of duplicates in db, they should be removed
                 .uniqueResult();
     }
 

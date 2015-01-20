@@ -163,6 +163,7 @@ public class UserService {
         if (userDTO.getPortraitDocument() != null) {
             portraitDocument = documentService.getById(userDTO.getPortraitDocument(), FileCategory.IMAGE);
         }
+        
         user.setPortraitDocument(portraitDocument);
         user.setLinkedinUri(userDTO.getLinkedinUri());
         user.setTwitterUri(userDTO.getTwitterUri());
@@ -170,6 +171,7 @@ public class UserService {
         UserAccount account = user.getUserAccount();
 
         account.setSendApplicationRecommendationNotification(userDTO.getSendApplicationRecommendationNotification());
+        
         String password = userDTO.getPassword();
         if (password != null) {
             account.setPassword(EncryptionUtils.getMD5(password));

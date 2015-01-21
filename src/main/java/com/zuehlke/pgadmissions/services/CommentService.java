@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -538,7 +539,8 @@ public class CommentService {
         User authorDelegate = comment.getDelegateUser();
 
         CommentRepresentation representation;
-        if (redactions.isEmpty() || userId.equals(author.getId()) || (authorDelegate != null && userId.equals(authorDelegate.getId()))) {
+        if (redactions.isEmpty() || userId.equals(author.getId()) || (authorDelegate != null && userId.equals(authorDelegate.getId()))
+                || BooleanUtils.isTrue(roleService.getOverrideRedaction(user, comment.getResource()))) {
             representation = mapper.map(comment, CommentRepresentation.class);
             appendCommentAssignedUsers(comment, representation, creatableRoles);
         } else {

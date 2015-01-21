@@ -34,6 +34,9 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
 
     @Column(name = "scope_creator", nullable = false)
     private Boolean scopeCreator;
+    
+    @Column(name = "override_redaction", nullable = false)
+    private Boolean overrideRedaction;
 
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
@@ -64,6 +67,14 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
 
     public void setScopeCreator(Boolean scopeCreator) {
         this.scopeCreator = scopeCreator;
+    }
+    
+    public final Boolean getOverrideRedaction() {
+        return overrideRedaction;
+    }
+
+    public final void setOverrideRedaction(Boolean overrideRedaction) {
+        this.overrideRedaction = overrideRedaction;
     }
 
     @Override
@@ -98,6 +109,11 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
         return this;
     }
 
+    public Role withOverrideRedaction(Boolean overrideRedaction) {
+        this.overrideRedaction = overrideRedaction;
+        return this;
+    }
+    
     public Role withScope(Scope scope) {
         this.scope = scope;
         return this;

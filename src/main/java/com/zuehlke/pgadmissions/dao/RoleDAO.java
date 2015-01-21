@@ -190,5 +190,14 @@ public class RoleDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
+    
+    public Boolean getOverrideRedaction(User user, Resource resource) {
+        return (Boolean) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.max("role.overrideRedaction")) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.eq("user", user)) //
+                .uniqueResult();
+    }
 
 }

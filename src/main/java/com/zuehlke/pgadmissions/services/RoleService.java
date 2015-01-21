@@ -197,6 +197,10 @@ public class RoleService {
         UserRole newUserRole = new UserRole().withResource(resource).withUser(user).withRole(viewer);
         executeUpdateUserRole(oldUserRole, newUserRole, comment);
     }
+    
+    public Boolean getOverrideRedaction(User user, Resource resource) {
+        return roleDAO.getOverrideRedaction(user, resource);
+    }
 
     private void executeRoleTransitions(Resource resource, Comment comment, List<RoleTransition> roleTransitions) {
         for (RoleTransition roleTransition : roleTransitions) {

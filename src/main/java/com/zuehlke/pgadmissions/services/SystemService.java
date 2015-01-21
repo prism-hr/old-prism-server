@@ -261,7 +261,8 @@ public class SystemService {
 
         for (PrismRole prismRole : PrismRole.values()) {
             Scope scope = scopeService.getById(prismRole.getScope());
-            Role transientRole = new Role().withId(prismRole).withScopeCreator(prismRole.isScopeOwner()).withScope(scope);
+            Role transientRole = new Role().withId(prismRole).withScopeCreator(prismRole.isScopeOwner()).withOverrideRedaction(prismRole.isOverrideRedaction())
+                    .withScope(scope);
             Role role = entityService.createOrUpdate(transientRole);
             role.getExcludedRoles().clear();
 
@@ -409,7 +410,7 @@ public class SystemService {
                     .withUser(systemUser).withState(systemRunning).withCipherSalt(EncryptionUtils.getUUID()).withCreatedTimestamp(baseline)
                     .withUpdatedTimestamp(baseline);
             entityService.save(system);
-            
+
             ResourceState systemState = new ResourceState().withResource(system).withState(systemRunning).withPrimaryState(true);
             entityService.save(systemState);
             system.getResourceStates().add(systemState);

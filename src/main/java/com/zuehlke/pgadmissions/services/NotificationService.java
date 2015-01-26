@@ -312,15 +312,18 @@ public class NotificationService {
     }
 
     private void sendNotification(NotificationDefinition template, NotificationDefinitionModelDTO modelDTO) {
-        NotificationConfiguration configuration = getNotificationConfiguration(modelDTO.getResource(), modelDTO.getUser(), template);
-        MailMessageDTO message = new MailMessageDTO();
-
-        message.setConfiguration(configuration);
-        message.setModelDTO(modelDTO);
-        message.setAttachments(Lists.<AttachmentInputSource> newArrayList());
-
-        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(modelDTO.getResource(), modelDTO.getUser());
-        applicationContext.getBean(MailSender.class).localize(propertyLoader).sendEmail(message);
+        User user = modelDTO.getUser();
+        if (user.getEmailValid()) {
+            NotificationConfiguration configuration = getNotificationConfiguration(modelDTO.getResource(), user, template);
+            MailMessageDTO message = new MailMessageDTO();
+    
+            message.setConfiguration(configuration);
+            message.setModelDTO(modelDTO);
+            message.setAttachments(Lists.<AttachmentInputSource> newArrayList());
+    
+            PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(modelDTO.getResource(), user);
+            applicationContext.getBean(MailSender.class).localize(propertyLoader).sendEmail(message);
+        }
     }
 
 }

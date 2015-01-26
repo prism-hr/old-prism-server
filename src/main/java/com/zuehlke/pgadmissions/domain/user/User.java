@@ -58,6 +58,9 @@ public class User implements UserDetails, IUniqueEntity {
 
     @Column(name = "email", nullable = false, unique = true)
     private String email;
+    
+    @Column(name = "email_valid", nullable = false)
+    private Boolean emailValid;
 
     @Column(name = "locale", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -168,6 +171,14 @@ public class User implements UserDetails, IUniqueEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public final Boolean getEmailValid() {
+        return emailValid;
+    }
+
+    public final void setEmailValid(Boolean emailValid) {
+        this.emailValid = emailValid;
     }
 
     public PrismLocale getLocale() {
@@ -322,6 +333,11 @@ public class User implements UserDetails, IUniqueEntity {
 
     public User withEmail(String email) {
         this.email = email;
+        return this;
+    }
+    
+    public User withEmailValid(Boolean emailValid) {
+        this.emailValid = emailValid;
         return this;
     }
 

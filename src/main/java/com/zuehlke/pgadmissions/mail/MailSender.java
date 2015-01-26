@@ -9,6 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
+import javax.mail.SendFailedException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -34,7 +35,6 @@ import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -89,7 +89,8 @@ public class MailSender {
 
             Institution institution = message.getModelDTO().getResource().getInstitution();
             Document logoDocument = institution != null ? institution.getLogoDocument() : null;
-            final String htmlContent = processContent(configuration.getNotificationDefinition().getId(), configuration.getContent(), model, subject, logoDocument);
+            final String htmlContent = processContent(configuration.getNotificationDefinition().getId(), configuration.getContent(), model, subject,
+                    logoDocument);
             final String plainTextContent = mailToPlainTextConverter.getPlainText(htmlContent) + "\n\n" + propertyLoader.load(SYSTEM_EMAIL_LINK_MESSAGE);
 
             if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat")) {
@@ -113,8 +114,8 @@ public class MailSender {
                 LOGGER.info("Sending Development Email: " + message.toString());
             }
         } catch (Exception e) {
-            if (configuration.getNotificationDefinition().getNotificationType() == PrismNotificationType.INDIVIDUAL) {
-                throw new Error(e);
+            if (e.getClass() == SendFailedException.class) {
+                message.getModelDTO().getUser().setEmailValid(false);
             } else {
                 LOGGER.error(String.format("Failed to send email %s", message.toString()), e);
             }
@@ -132,8 +133,8 @@ public class MailSender {
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
     }
 
-    public String processContent(PrismNotificationDefinition templateId, String templateValue, Map<String, Object> model, String subject, Document logoDocument) throws IOException,
-            TemplateException {
+    public String processContent(PrismNotificationDefinition templateId, String templateValue, Map<String, Object> model, String subject, Document logoDocument)
+            throws IOException, TemplateException {
         Template template = new Template(templateId.name(), new StringReader(templateValue), freemarkerConfig.getConfiguration());
         String content = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
 
@@ -148,7 +149,7 @@ public class MailSender {
             logoUrl = imagesPath + "/prism.png";
         }
 
-        model = ImmutableMap.<String, Object>of("LOGO_URL", logoUrl, "IMAGES_PATH", imagesPath, "SUBJECT", subject, "CONTENT", content);
+        model = ImmutableMap.<String, Object> of("LOGO_URL", logoUrl, "IMAGES_PATH", imagesPath, "SUBJECT", subject, "CONTENT", content);
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
     }
 
@@ -160,7 +161,8 @@ public class MailSender {
         return createNotificationModel(notificationTemplate, modelDTO, false);
     }
 
-    private Map<String, Object> createNotificationModel(NotificationDefinition notificationTemplate, NotificationDefinitionModelDTO modelDTO, boolean validationMode) {
+    private Map<String, Object> createNotificationModel(NotificationDefinition notificationTemplate, NotificationDefinitionModelDTO modelDTO,
+            boolean validationMode) {
         Map<String, Object> model = Maps.newHashMap();
         List<PrismNotificationDefinitionPropertyCategory> categories = notificationTemplate.getId().getPropertyCategories();
         NotificationPropertyLoader loader = applicationContext.getBean(NotificationPropertyLoader.class).localize(modelDTO, propertyLoader);

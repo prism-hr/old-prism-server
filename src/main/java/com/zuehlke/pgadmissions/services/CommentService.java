@@ -202,13 +202,13 @@ public class CommentService {
         }
         InterviewRepresentation interview = new InterviewRepresentation();
 
-        interview.setAppointmentTimeslots(Lists.<AppointmentTimeslotRepresentation>newLinkedList());
+        interview.setAppointmentTimeslots(Lists.<AppointmentTimeslotRepresentation> newLinkedList());
         for (CommentAppointmentTimeslot schedulingOption : commentDAO.getAppointmentTimeslots(schedulingComment)) {
             interview.getAppointmentTimeslots().add(
                     new AppointmentTimeslotRepresentation().withId(schedulingOption.getId()).withDateTime(schedulingOption.getDateTime()));
         }
 
-        interview.setAppointmentPreferences(Lists.<UserAppointmentPreferencesRepresentation>newLinkedList());
+        interview.setAppointmentPreferences(Lists.<UserAppointmentPreferencesRepresentation> newLinkedList());
         for (User invitee : commentDAO.getAppointmentInvitees(schedulingComment)) {
             UserRepresentation inviteeRepresentation = userService.getUserRepresentation(invitee);
             UserAppointmentPreferencesRepresentation preferenceRepresentation = new UserAppointmentPreferencesRepresentation().withUser(inviteeRepresentation);
@@ -599,12 +599,12 @@ public class CommentService {
             BigDecimal aggregatedRating = new BigDecimal(0.00);
             for (CommentCustomResponse customResponse : comment.getCustomResponses()) {
                 switch (customResponse.getActionCustomQuestionConfiguration().getCustomQuestionType()) {
-                    case RATING_NORMAL:
-                        aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(customResponse, 5));
-                        break;
-                    case RATING_WEIGHTED:
-                        aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(customResponse, 8));
-                        break;
+                case RATING_NORMAL:
+                    aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(customResponse, 5));
+                    break;
+                case RATING_WEIGHTED:
+                    aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(customResponse, 8));
+                    break;
                 default:
                     break;
                 }
@@ -614,8 +614,9 @@ public class CommentService {
     }
 
     private BigDecimal getWeightedRatingComponent(CommentCustomResponse customResponse, Integer denominator) {
-        return new BigDecimal(customResponse.getPropertyValue()).divide(new BigDecimal(denominator)).multiply(new BigDecimal(5))
-                .multiply(customResponse.getActionCustomQuestionConfiguration().getWeighting()).setScale(2, RoundingMode.HALF_UP);
+        String propertyValue = customResponse.getPropertyValue();
+        return new BigDecimal(propertyValue == null ? new Integer(3).toString() : propertyValue).divide(new BigDecimal(denominator))
+                .multiply(new BigDecimal(5)).multiply(customResponse.getActionCustomQuestionConfiguration().getWeighting()).setScale(2, RoundingMode.HALF_UP);
     }
 
     private void appendInterviewPreferenceComments(Comment comment) {
@@ -668,9 +669,11 @@ public class CommentService {
 
     private void appendCustomResponses(Comment comment, CommentDTO commentDTO) {
         for (CommentCustomResponseDTO response : commentDTO.getCustomResponses()) {
-            ActionCustomQuestionConfiguration configuration = entityService.getById(ActionCustomQuestionConfiguration.class, response.getId());
-            comment.getCustomResponses().add(
-                    new CommentCustomResponse().withActionCustomQuestionConfiguration(configuration).withPropertyValue(response.getPropertyValue()));
+            if (response.getPropertyValue() != null) {
+                ActionCustomQuestionConfiguration configuration = entityService.getById(ActionCustomQuestionConfiguration.class, response.getId());
+                comment.getCustomResponses().add(
+                        new CommentCustomResponse().withActionCustomQuestionConfiguration(configuration).withPropertyValue(response.getPropertyValue()));
+            }
         }
     }
 

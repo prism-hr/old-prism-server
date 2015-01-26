@@ -148,7 +148,7 @@ public class CommentValidator extends LocalValidatorFactoryBean implements Valid
             List<ActionCustomQuestionConfiguration> configurations = (List<ActionCustomQuestionConfiguration>) (List<?>) customizationService
                     .getConfigurationsWithVersion(PrismConfiguration.CUSTOM_QUESTION, version);
 
-            Preconditions.checkArgument(customResponses.size() == configurations.size());
+            Preconditions.checkArgument(customResponses.size() <= configurations.size());
         }
         return validateRating;
     }

@@ -28,7 +28,7 @@ public class CommentCustomResponse {
     private ActionCustomQuestionConfiguration actionCustomQuestionConfiguration;
 
     @Lob
-    @Column(name = "property_value")
+    @Column(name = "property_value", nullable = false)
     private String propertyValue;
 
     public Integer getId() {

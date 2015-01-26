@@ -399,7 +399,7 @@ public class ApplicationExportBuilder {
                 InstitutionTp institutionTp = objectFactory.createInstitutionTp();
 
                 String institutionCode = qualification.getInstitution().getCode();
-                institutionTp.setCode(institutionCode.startsWith("CUST") ? propertyLoader.load(SYSTEM_OTHER) : institutionCode);
+                institutionTp.setCode(institutionCode.startsWith("CUST") ? "OTHER" : institutionCode);
                 institutionTp.setName(qualification.getInstitution().getName());
 
                 CountryTp countryTp = objectFactory.createCountryTp();

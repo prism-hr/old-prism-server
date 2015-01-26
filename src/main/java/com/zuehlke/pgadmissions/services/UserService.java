@@ -114,7 +114,7 @@ public class UserService {
     public User getOrCreateUser(String firstName, String lastName, String email, PrismLocale locale) throws DeduplicationException {
         User user;
         User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email)
-                .withLocale(locale);
+                .withEmailValid(true).withLocale(locale);
         User duplicateUser = entityService.getDuplicateEntity(transientUser);
         if (duplicateUser == null) {
             user = transientUser;
@@ -163,7 +163,7 @@ public class UserService {
         if (userDTO.getPortraitDocument() != null) {
             portraitDocument = documentService.getById(userDTO.getPortraitDocument(), FileCategory.IMAGE);
         }
-        
+
         user.setPortraitDocument(portraitDocument);
         user.setLinkedinUri(userDTO.getLinkedinUri());
         user.setTwitterUri(userDTO.getTwitterUri());
@@ -171,7 +171,7 @@ public class UserService {
         UserAccount account = user.getUserAccount();
 
         account.setSendApplicationRecommendationNotification(userDTO.getSendApplicationRecommendationNotification());
-        
+
         String password = userDTO.getPassword();
         if (password != null) {
             account.setPassword(EncryptionUtils.getMD5(password));

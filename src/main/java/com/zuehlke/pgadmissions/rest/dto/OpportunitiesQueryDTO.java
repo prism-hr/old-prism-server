@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
 public class OpportunitiesQueryDTO {
 
@@ -37,7 +38,7 @@ public class OpportunitiesQueryDTO {
     private Integer[] programs;
 
     private Integer[] projects;
-
+    
     private BigDecimal neLat;
 
     private BigDecimal neLon;
@@ -47,6 +48,10 @@ public class OpportunitiesQueryDTO {
     private BigDecimal swLon;
     
     private String lastSequenceIdentifier;
+
+    private Integer resourceId;
+    
+    private PrismAction actionId;
 
     public PrismProgramCategory getProgramCategory() {
         return programCategory;
@@ -190,6 +195,26 @@ public class OpportunitiesQueryDTO {
 
     public final void setLastSequenceIdentifier(String lastSequenceIdentifier) {
         this.lastSequenceIdentifier = lastSequenceIdentifier;
+    }
+
+    public final Integer getResourceId() {
+        return resourceId;
+    }
+
+    public final void setResourceId(Integer resourceId) {
+        this.resourceId = resourceId;
+    }
+
+    public final PrismAction getActionId() {
+        return actionId;
+    }
+
+    public final void setActionId(PrismAction actionId) {
+        this.actionId = actionId;
+    }
+    
+    public boolean isResourceAction() {
+        return !(resourceId == null || actionId == null);
     }
     
 }

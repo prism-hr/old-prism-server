@@ -40,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertFilterCategory;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
@@ -111,7 +112,26 @@ public class AdvertService {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
 
+        if (queryDTO.isResourceAction()) {
+            Resource resource = resourceService.getById(queryDTO.getActionId().getScope().getResourceClass(), queryDTO.getResourceId());
+            Resource parentResource = resource.getParentResource();
+            PrismScope parentResourceScope = parentResource.getResourceScope();
+
+            switch (parentResourceScope) {
+            case INSTITUTION:
+            case PROGRAM:
+            case PROJECT:
+                ReflectionUtils.setProperty(queryDTO, parentResourceScope.getLowerCaseName() + "s", new Integer[] { parentResource.getId() });
+                break;
+            case SYSTEM:
+                break;
+            default:
+                throw new Error();
+            }
+        }
+
         List<Integer> adverts = advertDAO.getActiveAdverts(activeProgramStates, activeProjectStates, queryDTO);
+
         if (adverts.isEmpty()) {
             return Lists.newArrayList();
         } else {
@@ -198,7 +218,8 @@ public class AdvertService {
     }
 
     public AdvertClosingDate addClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, AdvertClosingDateDTO advertClosingDateDTO)
-            throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
+            throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException,
+            IntegrationException {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
 
@@ -215,7 +236,8 @@ public class AdvertService {
     }
 
     public void updateClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, Integer closingDateId, AdvertClosingDateDTO advertClosingDateDTO)
-            throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
+            throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException,
+            IntegrationException {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
         AdvertClosingDate advertClosingDate = getClosingDateById(closingDateId);

@@ -61,7 +61,7 @@ public class PrismRoleTransition {
         return this;
     }
 
-    public PrismRoleTransition withRestrictToOwner(boolean restrictToActionOwner) {
+    public PrismRoleTransition withRestrictToOwner(Boolean restrictToActionOwner) {
         this.restrictToActionOwner = restrictToActionOwner;
         return this;
     }

@@ -143,7 +143,7 @@ public class RoleTransition implements IUniqueEntity {
         return this;
     }
 
-    public RoleTransition withRestrictToActionOwner(boolean restrictToActionOwner) {
+    public RoleTransition withRestrictToActionOwner(Boolean restrictToActionOwner) {
         this.restrictToActionOwner = restrictToActionOwner;
         return this;
     }

@@ -94,36 +94,82 @@ public class PrismApplicationReference extends PrismWorkflowState {
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_APPROVAL) //
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_SUPERVISORS) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME), //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME) //
+                        .withRoleTransitions(Arrays.asList( //
+                                new PrismRoleTransition() //
+                                    .withRole(PrismRole.APPLICATION_REFEREE) //
+                                    .withTransitionType(PrismRoleTransitionType.REVIVE) //
+                                    .withTransitionRole(PrismRole.APPLICATION_REFEREE)
+                                    .withRestrictToOwner(false))), //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_APPROVED) //
                         .withTransitionAction(PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME), //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME) //
+                        .withRoleTransitions(Arrays.asList( //
+                                new PrismRoleTransition() //
+                                    .withRole(PrismRole.APPLICATION_REFEREE) //
+                                    .withTransitionType(PrismRoleTransitionType.REVIVE) //
+                                    .withTransitionRole(PrismRole.APPLICATION_REFEREE)
+                                    .withRestrictToOwner(false))), //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_INTERVIEW) //
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_INTERVIEWERS) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME), //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME) //
+                        .withRoleTransitions(Arrays.asList( //
+                                new PrismRoleTransition() //
+                                    .withRole(PrismRole.APPLICATION_REFEREE) //
+                                    .withTransitionType(PrismRoleTransitionType.REVIVE) //
+                                    .withTransitionRole(PrismRole.APPLICATION_REFEREE)
+                                    .withRestrictToOwner(false))), //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_REFERENCE) //
                         .withTransitionAction(PrismAction.APPLICATION_PROVIDE_REFERENCE) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME),
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME) //
+                        .withRoleTransitions(Arrays.asList( //
+                                new PrismRoleTransition() //
+                                    .withRole(PrismRole.APPLICATION_REFEREE) //
+                                    .withTransitionType(PrismRoleTransitionType.REVIVE) //
+                                    .withTransitionRole(PrismRole.APPLICATION_REFEREE)
+                                    .withRestrictToOwner(false))), //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_REJECTED) //
                         .withTransitionAction(PrismAction.APPLICATION_CONFIRM_REJECTION) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME), //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME) //
+                        .withRoleTransitions(Arrays.asList( //
+                                new PrismRoleTransition() //
+                                    .withRole(PrismRole.APPLICATION_REFEREE) //
+                                    .withTransitionType(PrismRoleTransitionType.REVIVE) //
+                                    .withTransitionRole(PrismRole.APPLICATION_REFEREE)
+                                    .withRestrictToOwner(false))), //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_REVIEW) //
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_REVIEWERS) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME),
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME) //
+                        .withRoleTransitions(Arrays.asList( //
+                                new PrismRoleTransition() //
+                                    .withRole(PrismRole.APPLICATION_REFEREE) //
+                                    .withTransitionType(PrismRoleTransitionType.REVIVE) //
+                                    .withTransitionRole(PrismRole.APPLICATION_REFEREE)
+                                    .withRestrictToOwner(false))), //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_VERIFICATION) //
                         .withTransitionAction(PrismAction.APPLICATION_CONFIRM_ELIGIBILITY) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME), //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME) //
+                        .withRoleTransitions(Arrays.asList( //
+                                new PrismRoleTransition() //
+                                    .withRole(PrismRole.APPLICATION_REFEREE) //
+                                    .withTransitionType(PrismRoleTransitionType.REVIVE) //
+                                    .withTransitionRole(PrismRole.APPLICATION_REFEREE)
+                                    .withRestrictToOwner(false))), //
                     new PrismStateTransition() //
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST)
                         .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME) //
-                        .withStateTerminations(Lists.newArrayList( //
-                           new PrismStateTermination().withTerminationState(PrismState.APPLICATION_REFERENCE)))))); //
+                        .withRoleTransitions(Arrays.asList( //
+                                new PrismRoleTransition() //
+                                    .withRole(PrismRole.APPLICATION_REFEREE) //
+                                    .withTransitionType(PrismRoleTransitionType.REVIVE) //
+                                    .withTransitionRole(PrismRole.APPLICATION_REFEREE)
+                                    .withRestrictToOwner(false)))))); //
 
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_EMAIL_CREATOR) //

@@ -175,6 +175,8 @@ public class UserService {
         String password = userDTO.getPassword();
         if (password != null) {
             account.setPassword(EncryptionUtils.getMD5(password));
+            account.setTemporaryPassword(null);
+            account.setTemporaryPasswordExpiryTimestamp(null);
         }
     }
 

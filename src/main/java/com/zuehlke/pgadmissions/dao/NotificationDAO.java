@@ -72,9 +72,7 @@ public class NotificationDAO {
                         .add(Restrictions.eq("userRole.program", resource.getProgram())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.application", resource.getApplication()))) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("userRole.lastNotifiedDate")) //
-                        .add(Restrictions.lt("userRole.lastNotifiedDate", baseline))) //
+                .add(Restrictions.isNull("userRole.lastNotifiedDate")) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }

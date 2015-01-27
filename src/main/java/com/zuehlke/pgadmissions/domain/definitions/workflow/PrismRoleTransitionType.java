@@ -6,8 +6,9 @@ public enum PrismRoleTransitionType {
     RETIRE(false), //
     CREATE(true), //
     BRANCH(false), //
-    UPDATE(false);
-    
+    UPDATE(false), //
+    REVIVE(false);
+
     private boolean specified;
 
     private PrismRoleTransitionType(boolean specified) {
@@ -17,5 +18,5 @@ public enum PrismRoleTransitionType {
     public final boolean isSpecified() {
         return specified;
     }
-    
+
 }

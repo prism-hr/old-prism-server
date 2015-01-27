@@ -412,6 +412,9 @@ public class CommentService {
     public void postProcessComment(Comment comment) {
         if (comment.isApplicationRatingComment() && comment.getApplicationRating() == null) {
             buildAggregatedRating(comment);
+            if (comment.getApplicationRating() == null) {
+                comment.setApplicationRating(new BigDecimal(new Integer(3)));
+            }
         }
 
         if (comment.isInterviewScheduledExpeditedComment()) {

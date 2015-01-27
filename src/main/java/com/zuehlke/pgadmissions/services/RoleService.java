@@ -288,16 +288,19 @@ public class RoleService {
             executeBranchUserRole(transientRole, transientTransitionRole, comment);
             break;
         case CREATE:
-            executeCreateUserRole(transientTransitionRole);
+            executeCreateUserRole(transientRole, transientTransitionRole, comment);
             break;
         case DELETE:
-            executeRemoveUserRole(transientTransitionRole, comment);
+            executeRemoveUserRole(transientRole, transientTransitionRole, comment);
             break;
         case RETIRE:
-            executeRemoveUserRole(transientTransitionRole, comment);
+            executeRemoveUserRole(transientRole, transientTransitionRole, comment);
             break;
         case UPDATE:
             executeUpdateUserRole(transientRole, transientTransitionRole, comment);
+            break;
+        case REVIVE:
+            executeReviveUserRole(transientRole, transientTransitionRole, comment);
             break;
         }
 
@@ -305,36 +308,39 @@ public class RoleService {
 
     private void executeBranchUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
         UserRole persistentRole = entityService.getDuplicateEntity(userRole);
-        if (persistentRole == null) {
-            actionService.throwWorkflowEngineException(comment.getResource(), comment.getAction(), "Found no role of type " + userRole.getRole().getAuthority()
-                    + " for " + userRole.getResource().getCode() + " to branch for user " + userRole.getUser().toString());
+        if (persistentRole != null) {
+            comment.addAssignedUser(transitionUserRole.getUser(), transitionUserRole.getRole(), PrismRoleTransitionType.CREATE);
+            getOrCreateUserRole(transitionUserRole);
         }
-        comment.addAssignedUser(transitionUserRole.getUser(), transitionUserRole.getRole(), PrismRoleTransitionType.CREATE);
+    }
+
+    private void executeCreateUserRole(UserRole userRole, UserRole transitionUserRole, Comment Comment) throws DeduplicationException {
         getOrCreateUserRole(transitionUserRole);
     }
 
-    private void executeCreateUserRole(UserRole userRole) throws DeduplicationException {
-        getOrCreateUserRole(userRole);
-    }
-
-    private void executeRemoveUserRole(UserRole userRole, Comment comment) throws DeduplicationException {
-        UserRole persistentRole = entityService.getDuplicateEntity(userRole);
+    private void executeRemoveUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
+        UserRole persistentRole = entityService.getDuplicateEntity(transitionUserRole);
         if (persistentRole != null) {
             deleteUserRole(persistentRole.getResource(), persistentRole.getUser(), persistentRole.getRole());
-            comment.addAssignedUser(userRole.getUser(), userRole.getRole(), PrismRoleTransitionType.DELETE);
+            comment.addAssignedUser(transitionUserRole.getUser(), transitionUserRole.getRole(), PrismRoleTransitionType.DELETE);
         }
     }
 
     private void executeUpdateUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
         UserRole persistentRole = entityService.getDuplicateEntity(userRole);
-        if (persistentRole == null) {
-            actionService.throwWorkflowEngineException(comment.getResource(), comment.getAction(), "Found no role of type " + userRole.getRole().getAuthority()
-                    + " for " + userRole.getResource().getCode() + " to update for user " + userRole.getUser().toString());
+        if (persistentRole != null) {
+            comment.addAssignedUser(userRole.getUser(), userRole.getRole(), PrismRoleTransitionType.DELETE);
+            comment.addAssignedUser(transitionUserRole.getUser(), transitionUserRole.getRole(), PrismRoleTransitionType.CREATE);
+            deleteUserRole(persistentRole.getResource(), persistentRole.getUser(), persistentRole.getRole());
+            getOrCreateUserRole(transitionUserRole);
         }
-        comment.addAssignedUser(userRole.getUser(), userRole.getRole(), PrismRoleTransitionType.DELETE);
-        comment.addAssignedUser(transitionUserRole.getUser(), transitionUserRole.getRole(), PrismRoleTransitionType.CREATE);
-        deleteUserRole(persistentRole.getResource(), persistentRole.getUser(), persistentRole.getRole());
-        getOrCreateUserRole(transitionUserRole);
+    }
+    
+    private void executeReviveUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
+        UserRole persistentRole = entityService.getDuplicateEntity(userRole);
+        if (persistentRole != null) {
+            persistentRole.setLastNotifiedDate(null);
+        }
     }
 
     private void deleteUserRole(Resource resource, User user, Role role) {

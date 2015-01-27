@@ -114,7 +114,7 @@ public class MailSender {
                 LOGGER.info("Sending Development Email: " + message.toString());
             }
         } catch (Exception e) {
-            if (e.getClass() == SendFailedException.class) {
+            if (SendFailedException.class.isAssignableFrom(e.getClass())) {
                 message.getModelDTO().getUser().setEmailValid(false);
             } else {
                 LOGGER.error(String.format("Failed to send email %s", message.toString()), e);

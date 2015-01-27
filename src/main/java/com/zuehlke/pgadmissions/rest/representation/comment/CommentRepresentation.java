@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.comment;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -46,7 +47,7 @@ public class CommentRepresentation {
 
     private String rejectionReasonSystem;
 
-    private Integer applicationRating;
+    private BigDecimal applicationRating;
 
     private Boolean useCustomRefereeQuestions;
 
@@ -212,11 +213,11 @@ public class CommentRepresentation {
         this.rejectionReasonSystem = rejectionReasonSystem;
     }
 
-    public Integer getApplicationRating() {
+    public final BigDecimal getApplicationRating() {
         return applicationRating;
     }
 
-    public void setApplicationRating(Integer applicationRating) {
+    public final void setApplicationRating(BigDecimal applicationRating) {
         this.applicationRating = applicationRating;
     }
 

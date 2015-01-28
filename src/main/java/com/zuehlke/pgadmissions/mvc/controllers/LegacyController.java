@@ -1,8 +1,11 @@
 package com.zuehlke.pgadmissions.mvc.controllers;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.common.base.Strings;
+import com.google.common.primitives.Ints;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.ProgramService;
+import com.zuehlke.pgadmissions.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.ProgramService;
-import com.zuehlke.pgadmissions.utils.Constants;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("api/pgadmissions")
@@ -31,9 +30,6 @@ public class LegacyController {
     private AdvertService advertService;
 
     @Autowired
-    private ApplicationService applicationService;
-
-    @Autowired
     private ProgramService programService;
 
     @RequestMapping(method = RequestMethod.GET)
@@ -44,17 +40,9 @@ public class LegacyController {
 
             String redirect;
 
-            if (request.getParameter("activationCode") != null && request.getParameter("applicationId") != null) {
-                Application application = applicationService.getByCodeLegacy(request.getParameter("applicationId"));
-                if (application == null) {
-                    redirect = redirectionPrefix;
-                } else {
-                    redirect = redirectionPrefix + "activate?activationCode=" + request.getParameter("activationCode");
-                    redirect += "&resourceId=" + application.getId();
-                    redirect += "&actionId=" + "APPLICATION_VIEW_EDIT";
-                }
-            } else if (request.getParameter("advert") != null) {
-                Advert advert = advertService.getById(Integer.parseInt(request.getParameter("advert")));
+            Integer advertId = Ints.tryParse(Strings.nullToEmpty(request.getParameter("advert")));
+            if (advertId != null) {
+                Advert advert = advertService.getById(advertId);
                 if (advert.isProgramAdvert()) {
                     redirect = redirectionPrefix + "?program=" + advert.getProgram().getId();
                 } else {

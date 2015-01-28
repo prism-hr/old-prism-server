@@ -131,6 +131,10 @@ public class ImportedEntityService {
     public void disableAllEntities(Class<? extends ImportedEntity> entityClass, Institution institution) {
         importedEntityDAO.disableAllEntities(entityClass, institution);
     }
+    
+    public void disableAllInstitutions(Institution institution) {
+        importedEntityDAO.disableAllInstitutions(institution);
+    }
 
     public void disableAllImportedPrograms(Institution institution, LocalDate baseline) {
         importedEntityDAO.disableAllImportedPrograms(institution, baseline);

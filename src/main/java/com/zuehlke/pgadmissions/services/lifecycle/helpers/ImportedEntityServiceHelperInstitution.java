@@ -166,7 +166,7 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
     private void mergeImportedInstitutions(Institution institution,
             List<com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution> institutionDefinitions) throws DataImportException,
             DeduplicationException {
-        importedEntityService.disableAllEntities(ImportedInstitution.class, institution);
+        importedEntityService.disableAllInstitutions(institution);
         for (com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution transientImportedInstitution : institutionDefinitions) {
             importedEntityService.mergeImportedInstitution(institution, transientImportedInstitution);
         }

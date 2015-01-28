@@ -8,6 +8,7 @@
 
     <security:http pattern="/api/static" security="none" disable-url-rewriting="true" create-session="stateless"/>
     <security:http pattern="/api/pgadmissions" security="none" disable-url-rewriting="true" create-session="stateless"/>
+    <security:http pattern="/api/mail" security="none" disable-url-rewriting="true" create-session="stateless"/>
     <security:http pattern="/api/sitemap" security="none" disable-url-rewriting="true" create-session="stateless"/>
     <security:http pattern="/api/robots" security="none" disable-url-rewriting="true" create-session="stateless"/>
 

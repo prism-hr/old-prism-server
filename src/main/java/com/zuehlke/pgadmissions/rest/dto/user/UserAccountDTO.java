@@ -1,9 +1,9 @@
-package com.zuehlke.pgadmissions.rest.dto;
+package com.zuehlke.pgadmissions.rest.dto.user;
 
 public class UserAccountDTO {
-    
+
     private String email;
-    
+
     private String password;
 
     public final String getEmail() {
@@ -21,5 +21,5 @@ public class UserAccountDTO {
     public final void setPassword(String password) {
         this.password = password;
     }
-    
+
 }

@@ -1,23 +1,23 @@
 package com.zuehlke.pgadmissions.rest.validation;
 
-import java.util.Map;
+import java.util.List;
 
 public class ErrorResponseRepresentation {
 
     private String message;
 
-    private Map<String, ValidationErrorRepresentation> fieldErrors;
+    private List<ValidationErrorRepresentation> errors;
 
-    public ErrorResponseRepresentation(String message, Map<String, ValidationErrorRepresentation> fieldErrors) {
+    public ErrorResponseRepresentation(String message, List<ValidationErrorRepresentation> errors) {
         this.message = message;
-        this.fieldErrors = fieldErrors;
+        this.errors = errors;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public Map<String, ValidationErrorRepresentation> getFieldErrors() {
-        return fieldErrors;
+    public List<ValidationErrorRepresentation> getErrors() {
+        return errors;
     }
 }

@@ -1,54 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDITIONAL_INFORMATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDRESS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_DOCUMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_EMPLOYMENT_POSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FUNDING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_LANGUAGE_QUALIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PASSPORT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PERSONAL_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PRIZE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_QUALIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REPORT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_STATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_STATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_WORKFLOW;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_STATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_STATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_STATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_STATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_STATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_STATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 import java.util.Set;
 
-import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 public enum PrismDisplayPropertyDefinition {
 
@@ -125,6 +83,7 @@ public enum PrismDisplayPropertyDefinition {
     SYSTEM_COMMENT_INITIALIZED_SYSTEM(SYSTEM_COMMENT, "System initialised and ready to use", SYSTEM), //
     SYSTEM_COMMENT_INITIALIZED_INSTITUTION(SYSTEM_COMMENT, "Institution initialised and ready to use", SYSTEM), //
     SYSTEM_COMMENT_CUSTOM_FORM_WEIGHT_ERROR(SYSTEM_COMMENT, "The weights for your rating fields must add up to one", SYSTEM), //
+    SYSTEM_USER_ALREADY_LINKED(SYSTEM_VALIDATION_ERROR, "User is already linked", SYSTEM),
     INSTITUTION_HEADER(INSTITUTION_GLOBAL, "Institution", INSTITUTION), //
     INSTITUTION_COMMENT_APPROVED(
             INSTITUTION_COMMENT,

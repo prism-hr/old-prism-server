@@ -30,8 +30,7 @@
           class="com.zuehlke.pgadmissions.security.AuthenticationTokenProcessingFilter">
     </bean>
 
-    <bean id="authenticationProvider" class="com.zuehlke.pgadmissions.security.PrismAuthenticationProvider"
-          autowire-candidate="false"/>
+    <bean id="authenticationProvider" class="com.zuehlke.pgadmissions.security.PrismAuthenticationProvider" />
     <bean id="userDetailsService" class="com.zuehlke.pgadmissions.security.PrismUserDetailsService"/>
     <bean id="authenticationEncryptionUtils" class="com.zuehlke.pgadmissions.utils.EncryptionUtils"
           autowire-candidate="false"/>

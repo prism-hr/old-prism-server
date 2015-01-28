@@ -1,9 +1,6 @@
 package com.zuehlke.pgadmissions.security;
 
-import java.security.NoSuchAlgorithmException;
-
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
+import com.zuehlke.pgadmissions.domain.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import java.security.NoSuchAlgorithmException;
 
 public class PrismAuthenticationProvider implements AuthenticationProvider {
 
@@ -25,6 +21,9 @@ public class PrismAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Autowired
+    private UserAuthenticationService userAuthenticationService;
 
     @Override
     @Transactional
@@ -46,27 +45,19 @@ public class PrismAuthenticationProvider implements AuthenticationProvider {
         String password = (String) preProcessToken.getCredentials();
 
         User user = (User) userDetailsService.loadUserByUsername(username);
-        if (username == null || password == null || user == null || !user.isEnabled() || !checkPassword(user, password)) {
-            throw new BadCredentialsException("Bad login attempt");
+        boolean validCredentials = userAuthenticationService.validateCredentials(user, password);
+        if (!validCredentials) {
+            throw new BadCredentialsException("Bad credentials");
         }
 
         return user;
     }
+
 
     @Override
     public boolean supports(Class<?> clazz) {
         return UsernamePasswordAuthenticationToken.class.isAssignableFrom(clazz);
     }
 
-    private boolean checkPassword(User user, String providedPassword) {
-        return StringUtils.equals(user.getUserAccount().getPassword(), EncryptionUtils.getMD5(providedPassword))
-                || checkTemporaryPassword(user, providedPassword);
-    }
-
-    private boolean checkTemporaryPassword(User user, String providedPassword) {
-        DateTime temporaryPasswordExpiryTimestamp = user.getUserAccount().getTemporaryPasswordExpiryTimestamp();
-        return temporaryPasswordExpiryTimestamp != null && new DateTime().isBefore(temporaryPasswordExpiryTimestamp)
-                && StringUtils.equals(user.getUserAccount().getTemporaryPassword(), EncryptionUtils.getMD5(providedPassword));
-    }
 
 }

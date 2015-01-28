@@ -23,9 +23,8 @@ import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.*;
-import com.zuehlke.pgadmissions.rest.dto.UserAccountDTO;
-import com.zuehlke.pgadmissions.rest.dto.UserDTO;
-import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
@@ -205,10 +204,7 @@ public class UserService {
         }
     }
 
-    public void linkUsers(UserAccountDTO linkIntoUserDTO, UserAccountDTO linkFromUserDTO) {
-        User linkFromUser = userDAO.getAuthenticatedUser(linkFromUserDTO.getEmail(), linkFromUserDTO.getPassword());
-        User linkIntoUser = userDAO.getAuthenticatedUser(linkIntoUserDTO.getEmail(), linkIntoUserDTO.getPassword());
-
+    public void linkUsers(User linkIntoUser, User linkFromUser) {
         if (linkFromUser != null && linkIntoUser != null) {
             userDAO.refreshParentUser(linkIntoUser);
             linkFromUser.setParentUser(linkIntoUser);
@@ -217,10 +213,7 @@ public class UserService {
 
     public List<String> getLinkedUsers(User user) {
         User parentUser = user.getParentUser();
-        Set<User> childUsers = parentUser.getChildUsers();
-        Set<User> linkedUsers = Sets.newHashSet();
-        linkedUsers.add(parentUser);
-        linkedUsers.addAll(childUsers);
+        Set<User> linkedUsers = Sets.newHashSet(parentUser.getChildUsers());
         for (User iteratedUser : linkedUsers) {
             if (iteratedUser.getId().equals(user.getId())) {
                 linkedUsers.remove(iteratedUser);

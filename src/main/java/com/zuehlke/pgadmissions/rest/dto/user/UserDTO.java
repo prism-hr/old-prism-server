@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest.dto;
+package com.zuehlke.pgadmissions.rest.dto.user;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

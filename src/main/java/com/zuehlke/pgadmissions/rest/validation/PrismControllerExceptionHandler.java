@@ -6,8 +6,11 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,6 +43,9 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
 
     @Inject
     private UserService userService;
+
+    @Inject
+    private PropertyLoader propertyLoader;
 
     @ExceptionHandler(value = WorkflowPermissionException.class)
     public final ResponseEntity<Object> handleWorkflowPermissionsException(WorkflowPermissionException ex, ServletWebRequest request) {
@@ -90,12 +96,11 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
 
     protected ResponseEntity<Object> handleValidationErrors(Exception ex, HttpHeaders headers, WebRequest request, Errors errors) {
         List<FieldError> fieldErrors = errors.getFieldErrors();
-        Map<String, ValidationErrorRepresentation> validationErrorRepresentations = Maps.newLinkedHashMap();
+        List<ValidationErrorRepresentation> validationErrorRepresentations = Lists.newLinkedList();
         for (FieldError fieldError : fieldErrors) {
             ValidationErrorRepresentation errorRepresentation = new ValidationErrorRepresentation();
             errorRepresentation.setCode(fieldError.getCode());
-            errorRepresentation.setMessage(fieldError.getDefaultMessage());
-            errorRepresentation.setArguments(fieldError.getArguments());
+            errorRepresentation.setErrorMessage(); // FIXME set only if it exists
             validationErrorRepresentations.put(fieldError.getField(), errorRepresentation);
         }
 

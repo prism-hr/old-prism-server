@@ -42,7 +42,7 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
-import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 
 @Service

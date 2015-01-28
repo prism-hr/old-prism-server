@@ -7,7 +7,7 @@ import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.rest.dto.UserRegistrationDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Component

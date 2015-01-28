@@ -1,8 +1,9 @@
 package com.zuehlke.pgadmissions.mvc.controllers;
 
+import com.google.common.base.Strings;
+import com.google.common.primitives.Ints;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.utils.Constants;
 import org.slf4j.Logger;
@@ -29,9 +30,6 @@ public class LegacyController {
     private AdvertService advertService;
 
     @Autowired
-    private ApplicationService applicationService;
-
-    @Autowired
     private ProgramService programService;
 
     @RequestMapping(method = RequestMethod.GET)
@@ -42,8 +40,9 @@ public class LegacyController {
 
             String redirect;
 
-            if (request.getParameter("advert") != null) {
-                Advert advert = advertService.getById(Integer.parseInt(request.getParameter("advert")));
+            Integer advertId = Ints.tryParse(Strings.nullToEmpty(request.getParameter("advert")));
+            if (advertId != null) {
+                Advert advert = advertService.getById(advertId);
                 if (advert.isProgramAdvert()) {
                     redirect = redirectionPrefix + "?program=" + advert.getProgram().getId();
                 } else {

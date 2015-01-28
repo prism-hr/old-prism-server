@@ -75,6 +75,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.OfferRe
 import com.zuehlke.pgadmissions.rest.representation.resource.application.UserAppointmentPreferencesRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.comment.CommentValidator;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import com.zuehlke.pgadmissions.utils.Constants;
 
 @Service
 @Transactional
@@ -413,7 +414,7 @@ public class CommentService {
         if (comment.isApplicationRatingComment() && comment.getApplicationRating() == null) {
             buildAggregatedRating(comment);
             if (comment.getApplicationRating() == null) {
-                comment.setApplicationRating(new BigDecimal(new Integer(3)));
+                comment.setApplicationRating(new BigDecimal(Constants.DEFAULT_RATING));
             }
         }
 
@@ -618,7 +619,7 @@ public class CommentService {
 
     private BigDecimal getWeightedRatingComponent(CommentCustomResponse customResponse, Integer denominator) {
         String propertyValue = customResponse.getPropertyValue();
-        return new BigDecimal(propertyValue == null ? new Integer(3).toString() : propertyValue).divide(new BigDecimal(denominator))
+        return new BigDecimal(propertyValue == null ? Constants.DEFAULT_RATING.toString() : propertyValue).divide(new BigDecimal(denominator))
                 .multiply(new BigDecimal(5)).multiply(customResponse.getActionCustomQuestionConfiguration().getWeighting()).setScale(2, RoundingMode.HALF_UP);
     }
 

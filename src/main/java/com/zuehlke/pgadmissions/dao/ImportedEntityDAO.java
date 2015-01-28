@@ -42,7 +42,7 @@ public class ImportedEntityDAO {
                 .add(Restrictions.eq("domicile.id", domicileId)) //
                 .add(Restrictions.eq("name", name)) //
                 .add(Restrictions.eq("custom", true)) //
-                .setMaxResults(1) // FIXME added because of duplicates in db, they should be removed
+                .setMaxResults(1) //
                 .uniqueResult();
     }
 
@@ -96,12 +96,25 @@ public class ImportedEntityDAO {
                 .executeUpdate();
     }
 
+    public void disableAllInstitutions(Institution institution) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update ImportedInstitution " //
+                        + "set enabled = false " //
+                        + "where institution = :institution " //
+                        + "and custom is false") //
+                .setParameter("institution", institution) //
+                .executeUpdate();
+    }
+
     public void disableAllImportedPrograms(Institution institution, LocalDate baseline) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update Program " //
                         + "set dueDate = :dueDate " //
                         + "where institution = :institution " //
-                        + "and imported is true").setParameter("institution", institution).setParameter("dueDate", baseline).executeUpdate();
+                        + "and imported is true") //
+                .setParameter("institution", institution) //
+                .setParameter("dueDate", baseline) //
+                .executeUpdate();
     }
 
     public void disableAllImportedProgramStudyOptions(Institution institution) {

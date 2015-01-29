@@ -68,6 +68,7 @@
         <property name="messageConverters">
             <list>
                 <ref bean="jacksonMessageConverter"/>
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
             </list>
         </property>
     </bean>

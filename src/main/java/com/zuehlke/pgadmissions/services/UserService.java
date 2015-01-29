@@ -211,6 +211,10 @@ public class UserService {
         }
     }
 
+    public void selectParentUser(String email) {
+
+    }
+
     public List<String> getLinkedUsers(User user) {
         User parentUser = user.getParentUser();
         Set<User> linkedUsers = Sets.newHashSet(parentUser.getChildUsers());
@@ -310,5 +314,6 @@ public class UserService {
     public boolean isCurrentUser(User user) {
         return user != null && Objects.equal(user.getId(), getCurrentUser().getId());
     }
+
 
 }

@@ -17,6 +17,7 @@
 
     <mvc:annotation-driven>
         <mvc:message-converters>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
             <ref bean="jacksonMessageConverter"/>
         </mvc:message-converters>
     </mvc:annotation-driven>
@@ -67,7 +68,6 @@
     <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
         <property name="messageConverters">
             <list>
-                <ref bean="jacksonMessageConverter"/>
                 <bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
             </list>
         </property>

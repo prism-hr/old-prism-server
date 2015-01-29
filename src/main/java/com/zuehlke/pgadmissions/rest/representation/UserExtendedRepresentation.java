@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
+
+import java.util.List;
 
 public class UserExtendedRepresentation extends UserRepresentation {
 
@@ -21,6 +21,8 @@ public class UserExtendedRepresentation extends UserRepresentation {
     private PrismScope latestCreationScope;
 
     private Integer permissionPrecedence;
+
+    private String parentUser;
 
     private List<String> linkedUsers;
 
@@ -78,6 +80,14 @@ public class UserExtendedRepresentation extends UserRepresentation {
 
     public void setPermissionPrecedence(Integer permissionPrecedence) {
         this.permissionPrecedence = permissionPrecedence;
+    }
+
+    public String getParentUser() {
+        return parentUser;
+    }
+
+    public void setParentUser(String parentUser) {
+        this.parentUser = parentUser;
     }
 
     public List<String> getLinkedUsers() {

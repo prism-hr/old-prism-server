@@ -85,7 +85,7 @@ public class UserResource {
         UserExtendedRepresentation userRepresentation = dozerBeanMapper.map(user, UserExtendedRepresentation.class);
         userRepresentation.setPermissionPrecedence(roleService.getPermissionPrecedence(user));
         userRepresentation.setLinkedUsers(userService.getLinkedUsers(user));
-
+        userRepresentation.setParentUser(user.getParentUser().getEmail());
         return userRepresentation;
     }
 

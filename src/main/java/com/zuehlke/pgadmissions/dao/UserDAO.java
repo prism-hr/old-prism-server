@@ -1,19 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -25,6 +11,19 @@ import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -153,13 +152,15 @@ public class UserDAO {
                 .list();
     }
 
-    public void refreshParentUser(User user) {
+    public void refreshParentUser(User linkIntoUser, User linkFromUser) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update User " //
                         + "set parentUser = :user " //
-                        + "where parentUser = :parentUser") //
-                .setParameter("user", user) //
-                .setParameter("parentUser", user.getParentUser()) //
+                        + "where parentUser = :linkIntoUserParentUser "
+                        + "or parentUser = :linkFromUserParentUser") //
+                .setParameter("user", linkIntoUser) //
+                .setParameter("linkIntoUserParentUser", linkIntoUser.getParentUser()) //
+                .setParameter("linkFromUserParentUser", linkFromUser.getParentUser()) //
                 .executeUpdate();
     }
 
@@ -205,6 +206,16 @@ public class UserDAO {
                         .add(Restrictions.ilike("fullName", searchTerm, MatchMode.ANYWHERE)) //
                         .add(Restrictions.ilike("email", searchTerm, MatchMode.ANYWHERE))) //
                 .list();
+    }
+
+    public void selectParentUser(User newParentUser) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update User " //
+                        + "set parentUser = :newParentUser " //
+                        + "where parentUser = :oldParentUser") //
+                .setParameter("newParentUser", newParentUser) //
+                .setParameter("oldParentUser", newParentUser.getParentUser()) //
+                .executeUpdate();
     }
 
 }

@@ -58,7 +58,7 @@ public class User implements UserDetails, IUniqueEntity {
 
     @Column(name = "email", nullable = false, unique = true)
     private String email;
-    
+
     @Column(name = "email_valid", nullable = false)
     private Boolean emailValid;
 
@@ -335,7 +335,7 @@ public class User implements UserDetails, IUniqueEntity {
         this.email = email;
         return this;
     }
-    
+
     public User withEmailValid(Boolean emailValid) {
         this.emailValid = emailValid;
         return this;

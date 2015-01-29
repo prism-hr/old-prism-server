@@ -25,6 +25,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -105,6 +106,7 @@ public class Application extends Resource {
     @Embedded
     private ApplicationStudyDetail studyDetail;
 
+    @OrderBy(clause = "id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     private Set<ApplicationSupervisor> supervisors = Sets.newHashSet();
@@ -117,22 +119,27 @@ public class Application extends Resource {
     @JoinColumn(name = "application_address_id", unique = true)
     private ApplicationAddress address;
 
+    @OrderBy(clause = "id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     private Set<ApplicationQualification> qualifications = Sets.newHashSet();
 
+    @OrderBy(clause = "id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     private Set<ApplicationEmploymentPosition> employmentPositions = Sets.newHashSet();
 
+    @OrderBy(clause = "id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     private Set<ApplicationFunding> fundings = Sets.newHashSet();
 
+    @OrderBy(clause = "id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     private Set<ApplicationPrize> prizes = Sets.newHashSet();
 
+    @OrderBy(clause = "id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     private Set<ApplicationReferee> referees = Sets.newHashSet();

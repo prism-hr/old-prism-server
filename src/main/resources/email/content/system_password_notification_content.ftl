@@ -2,19 +2,19 @@
     Dear ${TEMPLATE_USER_FIRST_NAME},
 </h1>
 
-<p>
-    Your password has been reset. Your new password is:
+<p>Your temporary password for ${TEMPLATE_USER_EMAIL} is as follows:
     <br/>
     <b>${SYSTEM_USER_NEW_PASSWORD}</b>
 </p>
 
-<p>
-    We recommend that you log in and change your password now.
-</p>
+<p><b>This is valid for a limited time only.</b> In order to retain access to your account <b>you must reset your password immediately.</b></p>
 
-${SYSTEM_USER_ACCOUNT_MANAGEMENT}
+<p>In order to reset your password, go to the profile section:
+	<br/>
+	${SYSTEM_USER_ACCOUNT_MANAGEMENT}
+</p>
 
 <p>
     Yours sincerely,
-    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
+    <br/> ${TEMPLATE_AUTHOR_FULL_name}
 </p>

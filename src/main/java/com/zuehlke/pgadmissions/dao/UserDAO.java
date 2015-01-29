@@ -153,13 +153,25 @@ public class UserDAO {
                 .list();
     }
 
-    public void refreshParentUser(User user) {
+    public void refreshParentUser(User linkIntoUser, User linkFromUser) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update User " //
                         + "set parentUser = :user " //
-                        + "where parentUser = :parentUser") //
-                .setParameter("user", user) //
-                .setParameter("parentUser", user.getParentUser()) //
+                        + "where parentUser = :linkIntoUserParentUser "
+                        + "or parentUser = :linkFromUserParentUser") //
+                .setParameter("user", linkIntoUser) //
+                .setParameter("linkIntoUserParentUser", linkIntoUser.getParentUser()) //
+                .setParameter("linkFromUserParentUser", linkFromUser.getParentUser()) //
+                .executeUpdate();
+    }
+    
+    public void switchParentUser(User oldParentUser, User newParentUser) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update User " //
+                        + "set parentUser = :newParentUser " //
+                        + "where parentUser = :oldParentUser") //
+                .setParameter("newParentUser", newParentUser) //
+                .setParameter("oldParentUser", oldParentUser) //
                 .executeUpdate();
     }
 

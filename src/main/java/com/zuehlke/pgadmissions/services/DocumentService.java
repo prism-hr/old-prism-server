@@ -88,7 +88,7 @@ public class DocumentService {
     }
 
     public Document getById(Integer id, FileCategory category) {
-        return entityService.getByProperties(Document.class, ImmutableMap.<String, Object>of("id", id, "category", category));
+        return entityService.getByProperties(Document.class, ImmutableMap.<String, Object> of("id", id, "category", category));
     }
 
     public Document create(FileCategory category, Part uploadStream) throws IOException {
@@ -151,7 +151,7 @@ public class DocumentService {
                     try {
                         amazonClient.copyObject(amazonProductionBucket, amazonObjectKey, amazonBucket, amazonObjectKey);
                         return getAmazonObject(amazonClient, amazonObjectKey);
-                    } catch (AmazonS3Exception e2) {
+                    } catch (Exception e2) {
                         return getFallbackDocument(document);
                     }
                 }
@@ -224,7 +224,7 @@ public class DocumentService {
     public byte[] getSystemDocument(String path) throws IOException {
         return Resources.toByteArray(Resources.getResource(path));
     }
-    
+
     private byte[] createImageDocument(byte[] content, String contentType) throws IOException {
         BufferedImage image = ImageIO.read(new ByteArrayInputStream(content));
         if (image == null) {
@@ -242,7 +242,6 @@ public class DocumentService {
         graphics.drawImage(image, HALF_SIZE - image.getWidth() / 2, HALF_SIZE - image.getHeight() / 2, null);
         graphics.dispose();
 
-
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(paddedImage, contentType.replaceAll("image/", ""), baos);
         baos.flush();
@@ -250,7 +249,7 @@ public class DocumentService {
         baos.close();
         return content;
     }
-    
+
     private void createPdfDocument(byte[] content) {
         PdfReader pdfReader;
         try {
@@ -292,11 +291,11 @@ public class DocumentService {
     private Properties getAmazonProperties(System system) throws IntegrationException {
         String accessKey = system.getAmazonAccessKey();
         String secretKey = system.getAmazonSecretKey();
-        
+
         if (accessKey == null || secretKey == null) {
             throw new IntegrationException("Amazon credentials not in database");
         }
-         
+
         Properties amazonProperties = new Properties();
         amazonProperties.setProperty("accessKey", accessKey);
         amazonProperties.setProperty("secretKey", secretKey);

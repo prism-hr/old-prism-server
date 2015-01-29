@@ -25,6 +25,15 @@
           class="org.springframework.web.multipart.support.StandardServletMultipartResolver">
     </bean>
 
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="useCodeAsDefaultMessage" value="true"/>
+        <property name="basenames">
+            <list>
+                <value>messages</value>
+            </list>
+        </property>
+    </bean>
+
     <bean id="jacksonObjectMapper" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
         <property name="modules">
             <array>
@@ -38,12 +47,14 @@
         <property name="indentOutput" value="true"/>
         <property name="featuresToEnable">
             <array>
-                <util:constant static-field="com.fasterxml.jackson.databind.DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT"/>
+                <util:constant
+                        static-field="com.fasterxml.jackson.databind.DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT"/>
             </array>
         </property>
         <property name="featuresToDisable">
             <array>
-                <util:constant static-field="com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES"/>
+                <util:constant
+                        static-field="com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES"/>
             </array>
         </property>
     </bean>
@@ -54,11 +65,11 @@
     </bean>
 
     <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
-    	<property name="messageConverters">
-    		<list>
-    			<ref bean="jacksonMessageConverter"/>
-    		</list>
-    	</property>
+        <property name="messageConverters">
+            <list>
+                <ref bean="jacksonMessageConverter"/>
+            </list>
+        </property>
     </bean>
 
     <bean class="org.dozer.spring.DozerBeanMapperFactoryBean">

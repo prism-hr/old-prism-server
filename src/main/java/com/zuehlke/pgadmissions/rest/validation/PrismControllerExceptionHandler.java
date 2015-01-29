@@ -14,6 +14,7 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,6 +32,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @ControllerAdvice
@@ -43,6 +45,9 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
 
     @Inject
     private PropertyLoader propertyLoader;
+
+    @Inject
+    private ApplicationContext applicationContext;
 
     @ExceptionHandler(value = WorkflowPermissionException.class)
     public final ResponseEntity<Object> handleWorkflowPermissionsException(WorkflowPermissionException ex, ServletWebRequest request) {
@@ -97,8 +102,8 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
         for (FieldError fieldError : fieldErrors) {
             ValidationErrorRepresentation errorRepresentation = new ValidationErrorRepresentation();
             errorRepresentation.setCode(fieldError.getCode());
-            errorRepresentation.setErrorMessage(); // FIXME set only if it exists
-            validationErrorRepresentations.put(fieldError.getField(), errorRepresentation);
+            errorRepresentation.setErrorMessage(applicationContext.getMessage(fieldError, Locale.getDefault()));
+            validationErrorRepresentations.add(errorRepresentation);
         }
 
         ErrorResponseRepresentation error = new ErrorResponseRepresentation(ex.getMessage(), validationErrorRepresentations);

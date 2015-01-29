@@ -1,5 +1,34 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.inject.Named;
+import javax.validation.Valid;
+
+import org.dozer.Mapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -20,26 +49,6 @@ import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ResourceListFilterService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
-import org.dozer.Mapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Resource;
-import javax.inject.Named;
-import javax.validation.Valid;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
@@ -84,7 +93,7 @@ public class UserResource {
         User user = userService.getCurrentUser();
         UserExtendedRepresentation userRepresentation = dozerBeanMapper.map(user, UserExtendedRepresentation.class);
         userRepresentation.setPermissionPrecedence(roleService.getPermissionPrecedence(user));
-        userRepresentation.setLinkedUsers(userService.getLinkedUsers(user));
+        userRepresentation.setLinkedUsers(userService.getLinkedUserAccounts(user));
         userRepresentation.setParentUser(user.getParentUser().getEmail());
         return userRepresentation;
     }
@@ -115,6 +124,13 @@ public class UserResource {
     }
 
     @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/linkUsers", method = RequestMethod.DELETE)
+    public void unlinkUsers(@RequestParam Integer userId) {
+        User user = userService.getById(userId);
+        userService.unlinkUser(user);
+    }
+
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/selectParentUser", method = RequestMethod.POST)
     public void selectParentUser(@RequestBody String email) {
         userService.selectParentUser(email);
@@ -124,7 +140,7 @@ public class UserResource {
     @RequestMapping(value = "/switch", method = RequestMethod.POST)
     public Map<String, String> switchUser(@RequestParam String username) {
         User currentUser = userService.getCurrentUser();
-        List<String> linkedUsers = userService.getLinkedUsers(currentUser);
+        List<String> linkedUsers = userService.getLinkedUserAccounts(currentUser);
         if (!linkedUsers.contains(username)) {
             throw new AccessDeniedException("Users are not linked");
         }
@@ -138,7 +154,7 @@ public class UserResource {
     @PreAuthorize("permitAll")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public void submitRegistration(@RequestHeader(value = "referer", required = false) String referrer,
-                                   @Valid @RequestBody UserRegistrationDTO userRegistrationDTO) throws Exception {
+            @Valid @RequestBody UserRegistrationDTO userRegistrationDTO) throws Exception {
         userService.registerUser(userRegistrationDTO, referrer);
     }
 
@@ -201,7 +217,5 @@ public class UserResource {
     public void configureUserLinkingBinding(WebDataBinder binder) {
         binder.setValidator(userLinkingValidator);
     }
-
-
 
 }

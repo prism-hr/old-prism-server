@@ -173,6 +173,16 @@ public class UserDAO {
                 .setParameter("oldParentUser", oldParentUser) //
                 .executeUpdate();
     }
+    
+    public List<String> getLinkedUserAccounts(User user) {
+        return (List<String>) sessionFactory.getCurrentSession().createCriteria(User.class) //
+                .setProjection(Projections.property("email")) //
+                .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("parentUser", user)) //
+                .add(Restrictions.ne("id", user.getId())) //
+                .add(Restrictions.eq("userAccount.enabled", true)) //
+                .list();
+    }
 
     public List<UserRepresentation> getSimilarUsers(String searchTerm) {
         return (List<UserRepresentation>) sessionFactory.getCurrentSession().createCriteria(User.class) //

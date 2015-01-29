@@ -30,10 +30,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.inject.Inject;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 @ControllerAdvice
 public class PrismControllerExceptionHandler extends ResponseEntityExceptionHandler {
@@ -102,7 +99,12 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
         for (FieldError fieldError : fieldErrors) {
             ValidationErrorRepresentation errorRepresentation = new ValidationErrorRepresentation();
             errorRepresentation.setCode(fieldError.getCode());
-            errorRepresentation.setErrorMessage(applicationContext.getMessage(fieldError, Locale.getDefault()));
+            String message = applicationContext.getMessage(fieldError, Locale.getDefault());
+            errorRepresentation.setErrorMessage(message);
+            if(Arrays.asList(fieldError.getCodes()).contains(message)){
+                log.error("Code used as validation message: " + fieldError);
+            }
+            errorRepresentation.setFieldNames(new String[]{fieldError.getField()});
             validationErrorRepresentations.add(errorRepresentation);
         }
 

@@ -107,10 +107,17 @@ public class UserResource {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/linkUsers", method = RequestMethod.POST)
-    public void linkUsers(@RequestBody @Valid UserLinkingDTO userLinkingDTO) {
+    public UserRepresentation linkUsers(@RequestBody @Valid UserLinkingDTO userLinkingDTO) {
         User parentUser = userService.getCurrentUser().getParentUser();
         User otherUser = userService.getUserByEmail(userLinkingDTO.getOtherEmail());
         userService.linkUsers(parentUser, otherUser);
+        return dozerBeanMapper.map(otherUser, UserRepresentation.class);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/selectParentUser", method = RequestMethod.POST)
+    public void selectParentUser(@RequestBody String email) {
+        userService.selectParentUser(email);
     }
 
     @PreAuthorize("isAuthenticated()")

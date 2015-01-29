@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.rest.validation.validator.comment;
 
-import static com.zuehlke.pgadmissions.utils.ValidationUtils.rejectIfNotNull;
-
-import java.util.TimeZone;
-
+import com.google.common.base.Preconditions;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewAppointment;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
@@ -12,10 +12,9 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import com.google.common.base.Preconditions;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewAppointment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import java.util.TimeZone;
+
+import static com.zuehlke.pgadmissions.utils.ValidationUtils.rejectIfNotNull;
 
 @Component
 public class CommentAssignInterviewersCustomValidator implements Validator {
@@ -48,9 +47,7 @@ public class CommentAssignInterviewersCustomValidator implements Validator {
             DateTime interviewDateTime = interviewLocalDateTime.toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone()));
             if (interviewDateTime.isBeforeNow()) {
                 takenPlace = true;
-                rejectIfNotNull(comment, errors, "interviewInstruction.interviewerInstructions", "forbidden");
-                rejectIfNotNull(comment, errors, "interviewInstruction.intervieweeInstructions", "forbidden");
-                rejectIfNotNull(comment, errors, "interviewInstruction.interviewLocation", "forbidden");
+                rejectIfNotNull(comment, errors, "interviewInstruction", "forbidden");
             } else {
                 rejectIfNotNull(comment, errors, "appointmentTimeslots", "forbidden");
             }

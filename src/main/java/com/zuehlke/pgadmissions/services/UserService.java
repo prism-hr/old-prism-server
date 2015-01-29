@@ -206,13 +206,14 @@ public class UserService {
 
     public void linkUsers(User linkIntoUser, User linkFromUser) {
         if (linkFromUser != null && linkIntoUser != null) {
-            userDAO.refreshParentUser(linkIntoUser);
+            userDAO.refreshParentUser(linkIntoUser, linkFromUser);
             linkFromUser.setParentUser(linkIntoUser);
         }
     }
 
     public void selectParentUser(String email) {
-
+        User user = getUserByEmail(email);
+        userDAO.selectParentUser(user);
     }
 
     public List<String> getLinkedUsers(User user) {

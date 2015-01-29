@@ -210,7 +210,7 @@ public class UserService {
         User linkIntoUser = userDAO.getAuthenticatedUser(linkIntoUserDTO.getEmail(), linkIntoUserDTO.getPassword());
 
         if (linkFromUser != null && linkIntoUser != null) {
-            userDAO.refreshParentUser(linkIntoUser);
+            userDAO.refreshParentUser(linkIntoUser, linkFromUser);
             linkFromUser.setParentUser(linkIntoUser);
         }
     }

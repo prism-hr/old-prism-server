@@ -163,6 +163,16 @@ public class UserDAO {
                 .setParameter("linkFromUserParentUser", linkFromUser.getParentUser()) //
                 .executeUpdate();
     }
+    
+    public void switchParentUser(User oldParentUser, User newParentUser) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update User " //
+                        + "set parentUser = :newParentUser " //
+                        + "where parentUser = :oldParentUser") //
+                .setParameter("newParentUser", newParentUser) //
+                .setParameter("oldParentUser", oldParentUser) //
+                .executeUpdate();
+    }
 
     public List<UserRepresentation> getSimilarUsers(String searchTerm) {
         return (List<UserRepresentation>) sessionFactory.getCurrentSession().createCriteria(User.class) //

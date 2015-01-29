@@ -25,6 +25,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -166,30 +167,37 @@ public class Comment {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
 
+    @OrderBy(clause = "role_id, id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
     private Set<CommentAssignedUser> assignedUsers = Sets.newHashSet();
 
+    @OrderBy(clause = "primary_state desc, state_id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
     private Set<CommentState> commentStates = Sets.newHashSet();
 
+    @OrderBy(clause = "primary_state desc, state_id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
     private Set<CommentTransitionState> commentTransitionStates = Sets.newHashSet();
 
+    @OrderBy(clause = "timeslot_datetime")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
     private Set<CommentAppointmentTimeslot> appointmentTimeslots = Sets.newHashSet();
 
+    @OrderBy(clause = "preference_datetime")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
     private Set<CommentAppointmentPreference> appointmentPreferences = Sets.newHashSet();
 
+    @OrderBy(clause = "action_custom_question_configuration_id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
     private Set<CommentCustomResponse> customResponses = Sets.newHashSet();
 
+    @OrderBy(clause = "id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id")
     private Set<Document> documents = Sets.newHashSet();

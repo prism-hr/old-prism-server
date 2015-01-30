@@ -131,6 +131,14 @@ public class RoleService {
         return false;
     }
 
+    public List<PrismRole> getRoles(User user) {
+        return roleDAO.getRoles(user);
+    }
+    
+    public List<PrismRole> getRolesOverridingRedactions(User user) {
+        return roleDAO.getRolesOverridingRedactions(user);
+    }
+    
     public List<PrismRole> getRoles(Resource resource, User user) {
         return roleDAO.getRoles(resource, user);
     }

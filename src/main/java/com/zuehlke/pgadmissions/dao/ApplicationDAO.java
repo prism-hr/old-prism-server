@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +23,14 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.OtherApplicationSummaryRepresentation;
 
@@ -184,62 +189,63 @@ public class ApplicationDAO {
                 .list();
     }
 
-    public List<ApplicationReportListRowDTO> getApplicationReport(Set<Integer> assignedApplications) {
-        return (List<ApplicationReportListRowDTO>) sessionFactory
-                .getCurrentSession()
-                .createQuery( //
-                        "select application.id as id, user.fullName as name, user.email as email, nationality.name as nationality, " //
-                                + "domicile.name as residence, personalDetail.dateOfBirth as dateOfBirth, gender.name as gender, " //
-                                + "institution.title as institution, program.title as program, project.title as project, " //
-                                + "studyOption.code as studyOption, referralSource.name as referralSource, application.referrer as referrer, " //
-                                + "application.createdTimestamp as createdDate, application.closingDate as closingDate, " //
-                                + "application.submittedTimestamp as submittedDate, application.updatedTimestamp as updatedDate, " //
-                                + "application.applicationRatingCount as ratingCount, application.applicationRatingAverage as ratingAverage, "
-                                + "state.stateGroup.id as state, count(provideReferenceComment.id) as providedReferences, " //
-                                + "count(declineReferenceComment.id) as declinedReferences, " //
-                                + "verificationProcessing.instanceCount as verificationInstanceCount, " //
-                                + "verificationProcessing.dayDurationAverage as verificationInstanceDurationAverage, " //
-                                + "referenceProcessing.instanceCount as referenceInstanceCount, " //
-                                + "referenceProcessing.dayDurationAverage as referenceInstanceDurationAverage, " //
-                                + "reviewProcessing.instanceCount as reviewInstanceCount, " //
-                                + "reviewProcessing.dayDurationAverage as reviewInstanceDurationAverage, " //
-                                + "interviewProcessing.instanceCount as interviewInstanceCount, " //
-                                + "interviewProcessing.dayDurationAverage as interviewInstanceDurationAverage, " //
-                                + "approvalProcessing.instanceCount as approvalInstanceCount, " //
-                                + "approvalProcessing.dayDurationAverage as approvalInstanceDurationAverage, "
-                                + "application.confirmedStartDate as confirmedStartDate, application.confirmedOfferType as confirmedOfferType " //
-                                + "from Application as application " + "join application.user as user " //
-                                + "left join application.personalDetail as personalDetail " //
-                                + "left join personalDetail.firstNationality as nationality " //
-                                + "left join personalDetail.domicile as domicile " //
-                                + "left join personalDetail.country as country " //
-                                + "left join personalDetail.gender as gender " //
-                                + "join application.institution as institution " //
-                                + "join application.program as program " //
-                                + "left join application.project as project " //
-                                + "left join application.programDetail as programDetail " //
-                                + "left join programDetail.studyOption as studyOption " //
-                                + "left join programDetail.referralSource as referralSource " //
-                                + "join application.state as state " //
-                                + "left join application.comments as provideReferenceComment " //
-                                + "with provideReferenceComment.action.id = :provideReferenceAction " //
-                                + "and provideReferenceComment.declinedResponse is false " //
-                                + "left join application.comments as declineReferenceComment " //
-                                + "with declineReferenceComment.action.id = :provideReferenceAction " //
-                                + "and declineReferenceComment.declinedResponse is true " //
-                                + "left join application.processings as verificationProcessing " //
-                                + "with verificationProcessing.stateGroup.id = :verificationStateGroup " //
-                                + "left join application.processings as referenceProcessing " //
-                                + "with referenceProcessing.stateGroup.id = :referenceStateGroup " //
-                                + "left join application.processings as reviewProcessing " //
-                                + "with reviewProcessing.stateGroup.id = :reviewStateGroup " //
-                                + "left join application.processings as interviewProcessing " //
-                                + "with interviewProcessing.stateGroup.id = :interviewStateGroup " //
-                                + "left join application.processings as approvalProcessing " //
-                                + "with approvalProcessing.stateGroup.id = :approvalStateGroup " //
-                                + "where application.id in :assignedApplications " //
-                                + "group by application.id " //
-                                + "order by application.sequenceIdentifier desc") //
+    public List<PrismWorkflowPropertyDefinition> getApplicationWorkflowPropertyDefinitions(Set<Integer> applicationIds) {
+        return (List<PrismWorkflowPropertyDefinition>) sessionFactory.getCurrentSession().createCriteria(WorkflowPropertyConfiguration.class) //
+                .setProjection(Projections.groupProperty("workflowPropertyDefinition")) //
+                .add(Subqueries.in("version", //
+                        DetachedCriteria.forClass(Application.class) //
+                                .setProjection(Projections.groupProperty("workflowPropertyConfigurationVersion")) //
+                                .add(Restrictions.in("id", applicationIds)))) //
+                .add(Restrictions.eq("enabled", true)) //
+                .list();
+    }
+    
+    public List<PrismActionRedactionType> getApplicationActionRedactions(Set<Integer> applicationIds, List<PrismRole> roleIds) {
+        return (List<PrismActionRedactionType>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .setProjection(Projections.groupProperty("redaction.redactionType")) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .createAlias("action.redactions", "redaction", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("application.id", applicationIds)) //
+                .add(Restrictions.in("redaction.role.id", roleIds)) //
+                .list();
+    }
+
+    public List<ApplicationReportListRowDTO> getApplicationReport(Set<Integer> assignedApplications, String columns) {
+        return (List<ApplicationReportListRowDTO>) sessionFactory.getCurrentSession().createQuery( //
+                "select " + columns + " " //
+                        + "from Application as application " + "join application.user as user " //
+                        + "left join application.personalDetail as personalDetail " //
+                        + "left join personalDetail.firstNationality as nationality " //
+                        + "left join personalDetail.domicile as domicile " //
+                        + "left join personalDetail.country as country " //
+                        + "left join personalDetail.gender as gender " //
+                        + "join application.institution as institution " //
+                        + "join application.program as program " //
+                        + "left join application.project as project " //
+                        + "left join application.programDetail as programDetail " //
+                        + "left join programDetail.studyOption as studyOption " //
+                        + "left join programDetail.referralSource as referralSource " //
+                        + "join application.state as state " //
+                        + "left join application.applicationReferees as applicationReferee " //
+                        + "left join application.comments as provideReferenceComment " //
+                        + "with provideReferenceComment.action.id = :provideReferenceAction " //
+                        + "and provideReferenceComment.declinedResponse is false " //
+                        + "left join application.comments as declineReferenceComment " //
+                        + "with declineReferenceComment.action.id = :provideReferenceAction " //
+                        + "and declineReferenceComment.declinedResponse is true " //
+                        + "left join application.processings as verificationProcessing " //
+                        + "with verificationProcessing.stateGroup.id = :verificationStateGroup " //
+                        + "left join application.processings as referenceProcessing " //
+                        + "with referenceProcessing.stateGroup.id = :referenceStateGroup " //
+                        + "left join application.processings as reviewProcessing " //
+                        + "with reviewProcessing.stateGroup.id = :reviewStateGroup " //
+                        + "left join application.processings as interviewProcessing " //
+                        + "with interviewProcessing.stateGroup.id = :interviewStateGroup " //
+                        + "left join application.processings as approvalProcessing " //
+                        + "with approvalProcessing.stateGroup.id = :approvalStateGroup " //
+                        + "where application.id in :assignedApplications " //
+                        + "group by application.id " //
+                        + "order by application.sequenceIdentifier desc") //
                 .setParameterList("assignedApplications", assignedApplications) //
                 .setParameter("provideReferenceAction", PrismAction.APPLICATION_PROVIDE_REFERENCE) //
                 .setParameter("verificationStateGroup", PrismStateGroup.APPLICATION_VERIFICATION) //

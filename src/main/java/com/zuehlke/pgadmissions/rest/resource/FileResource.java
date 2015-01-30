@@ -61,9 +61,12 @@ public class FileResource {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/documents/{fileId}", method = RequestMethod.GET)
     public void downloadFile(@PathVariable(value = "fileId") Integer documentId, HttpServletResponse response) throws Exception {
-        Document document = documentService.getById(documentId, FileCategory.DOCUMENT);
-        documentService.validateDownload(document);
-        sendFileToClient(response, document);
+        Document file = documentService.getById(documentId, FileCategory.DOCUMENT);
+        if(file == null){
+            throw new ResourceNotFoundException("No document found");
+        }
+        documentService.validateDownload(file);
+        sendFileToClient(response, file);
     }
 
     @PreAuthorize("permitAll")

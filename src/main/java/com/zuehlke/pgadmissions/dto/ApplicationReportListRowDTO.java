@@ -37,7 +37,19 @@ public class ApplicationReportListRowDTO {
 
     private String referralSource;
 
-    private String referrer;
+    private String primaryTheme;
+
+    private String secondaryTheme;
+
+    private String studyLocation;
+
+    private String studyDivision;
+
+    private String studyArea;
+
+    private String studyApplicationId;
+
+    private LocalDate studyStartDate;
 
     private DateTime createdDate;
 
@@ -52,6 +64,8 @@ public class ApplicationReportListRowDTO {
     private BigDecimal ratingAverage;
 
     private PrismStateGroup state;
+
+    private Long referees;
 
     private Long providedReferences;
 
@@ -185,12 +199,60 @@ public class ApplicationReportListRowDTO {
         this.referralSource = referralSource;
     }
 
-    public final String getReferrer() {
-        return referrer;
+    public final String getPrimaryTheme() {
+        return primaryTheme;
     }
 
-    public final void setReferrer(String referrer) {
-        this.referrer = referrer;
+    public final void setPrimaryTheme(String primaryTheme) {
+        this.primaryTheme = primaryTheme;
+    }
+
+    public final String getSecondaryTheme() {
+        return secondaryTheme;
+    }
+
+    public final void setSecondaryTheme(String secondaryTheme) {
+        this.secondaryTheme = secondaryTheme;
+    }
+
+    public final String getStudyLocation() {
+        return studyLocation;
+    }
+
+    public final void setStudyLocation(String studyLocation) {
+        this.studyLocation = studyLocation;
+    }
+
+    public final String getStudyDivision() {
+        return studyDivision;
+    }
+
+    public final void setStudyDivision(String studyDivision) {
+        this.studyDivision = studyDivision;
+    }
+
+    public final String getStudyArea() {
+        return studyArea;
+    }
+
+    public final void setStudyArea(String studyArea) {
+        this.studyArea = studyArea;
+    }
+
+    public final String getStudyApplicationId() {
+        return studyApplicationId;
+    }
+
+    public final void setStudyApplicationId(String studyApplicationId) {
+        this.studyApplicationId = studyApplicationId;
+    }
+
+    public final LocalDate getStudyStartDate() {
+        return studyStartDate;
+    }
+
+    public final void setStudyStartDate(LocalDate studyStartDate) {
+        this.studyStartDate = studyStartDate;
     }
 
     public final DateTime getCreatedDate() {
@@ -247,6 +309,14 @@ public class ApplicationReportListRowDTO {
 
     public final void setState(PrismStateGroup state) {
         this.state = state;
+    }
+
+    public final Long getReferees() {
+        return referees;
+    }
+
+    public final void setReferees(Long referees) {
+        this.referees = referees;
     }
 
     public final Long getProvidedReferences() {
@@ -409,8 +479,32 @@ public class ApplicationReportListRowDTO {
         return referralSource == null ? "" : referralSource;
     }
 
-    public String getReferrerDisplay() {
-        return referrer == null ? "" : referrer;
+    public String getSecondaryThemeDisplay() {
+        return primaryTheme == null ? "" : primaryTheme.replace("|", ", ");
+    }
+
+    public String getPrimaryThemeDisplay() {
+        return primaryTheme == null ? "" : primaryTheme.replace("|", ", ");
+    }
+
+    public String getStudyLocationDisplay() {
+        return studyLocation == null ? "" : studyLocation;
+    }
+
+    public String getStudyDivisionDisplay() {
+        return studyDivision == null ? "" : studyDivision;
+    }
+
+    public String getStudyAreaDisplay() {
+        return studyArea == null ? "" : studyArea;
+    }
+
+    public String getStudyApplicationIdDisplay() {
+        return studyApplicationId == null ? "" : studyApplicationId;
+    }
+
+    public String getStudyStartDateDisplay(String dateFormat) {
+        return studyStartDate == null ? "" : studyStartDate.toString(dateFormat);
     }
 
     public String getCreatedDateDisplay(String dateFormat) {
@@ -496,6 +590,10 @@ public class ApplicationReportListRowDTO {
 
     public PrismStudyOption getStudyOptionDisplay() {
         return studyOption == null ? null : PrismStudyOption.valueOf(studyOption);
+    }
+
+    public PrismOfferType getConfirmedOfferTypeDisplay() {
+        return confirmedOfferType == null ? null : confirmedOfferType;
     }
 
     public String getConfirmedStartDateDisplay(String dateFormat) {

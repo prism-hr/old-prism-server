@@ -232,7 +232,7 @@ public class CustomizationDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-
+    
     private Junction getResourceLocalizationCriterion(Resource resource, PrismScope scope, PrismLocale locale, PrismProgramType programType) {
         Criterion localeCriterion = getLocaleCriterionSelect(locale);
         Criterion programTypeCriterion = getProgramTypeCriterionSelect(scope, programType);

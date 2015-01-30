@@ -30,6 +30,22 @@ public class RoleDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
+    public List<PrismRole> getRoles(User user) {
+        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("role.id")) //
+                .add(Restrictions.eq("user", user)) //
+                .list();
+    }
+
+    public List<PrismRole> getRolesOverridingRedactions(User user) {
+        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("role.id")) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.eq("role.overrideRedaction", true)) //
+                .list();
+    }
+
     public List<PrismRole> getRoles(Resource resource, User user) {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.property("role.id")) //
@@ -190,7 +206,7 @@ public class RoleDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-    
+
     public Boolean getOverrideRedaction(User user, Resource resource) {
         return (Boolean) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.max("role.overrideRedaction")) //

@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-
 public class UserRepresentation {
 
     private Integer id;

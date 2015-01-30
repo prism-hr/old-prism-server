@@ -1,25 +1,12 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
-import com.google.common.collect.ImmutableMap;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.Scope;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserActivateDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserLinkingDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
-import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.validation.validator.UserLinkingValidator;
-import com.zuehlke.pgadmissions.rest.validation.validator.UserRegistrationValidator;
-import com.zuehlke.pgadmissions.security.AuthenticationTokenHelper;
-import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.ResourceListFilterService;
-import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.UserService;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.inject.Named;
+import javax.validation.Valid;
+
 import org.dozer.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,13 +20,36 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
-import javax.inject.Named;
-import javax.validation.Valid;
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.ImmutableMap;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.workflow.Scope;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.EmailDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserActivateDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserLinkingDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
+import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
+import com.zuehlke.pgadmissions.rest.validation.validator.UserLinkingValidator;
+import com.zuehlke.pgadmissions.rest.validation.validator.UserRegistrationValidator;
+import com.zuehlke.pgadmissions.security.AuthenticationTokenHelper;
+import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.services.ResourceListFilterService;
+import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
 @RequestMapping("/api/user")
@@ -127,8 +137,8 @@ public class UserResource {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/linkedUsers/selectParentUser", method = RequestMethod.POST)
-    public void selectParentUser(@RequestBody String email) {
-        userService.selectParentUser(email);
+    public void selectParentUser(@RequestBody EmailDTO email) {
+        userService.selectParentUser(email.getEmail());
     }
 
     @PreAuthorize("isAuthenticated()")

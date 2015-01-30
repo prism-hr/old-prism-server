@@ -250,7 +250,7 @@ public class PrismApplicationReferencePendingCompletion extends PrismWorkflowSta
                 .withTransitions(Arrays.asList( //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_REFERENCE_PENDING_COMPLETION) //
-                        .withTransitionAction(PrismAction.APPLICATION_COMPLETE_REFERENCE_STAGE) //
+                        .withTransitionAction(PrismAction.APPLICATION_COMMENT) //
                         .withRoleTransitions(Arrays.asList( //
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_REFEREE) //

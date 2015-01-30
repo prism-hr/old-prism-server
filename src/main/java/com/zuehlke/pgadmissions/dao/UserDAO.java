@@ -178,7 +178,7 @@ public class UserDAO {
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .setProjection(Projections.property("email")) //
                 .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("parentUser", user)) //
+                .add(Restrictions.eq("parentUser", user.getParentUser())) //
                 .add(Restrictions.ne("id", user.getId())) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .list();

@@ -8,6 +8,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramS
 import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,7 +16,6 @@ import java.util.Set;
 
 import javax.validation.Valid;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.DateTime;
@@ -491,9 +491,8 @@ public class ApplicationService {
         List<PrismReportColumn> columns = Lists.newLinkedList();
         List<String> columnAccessors = Lists.newLinkedList();
         for (PrismReportColumn column : PrismReportColumn.values()) {
-            if ((column.getWorkflowPropertyDefinitions().isEmpty() || CollectionUtils.containsAny(workflowPropertyDefinitions,
-                    column.getWorkflowPropertyDefinitions()))
-                    && (redactions.isEmpty() || !CollectionUtils.containsAny(redactions, column.getRedactions()))) {
+            if ((column.getDefinitions().isEmpty() || !Collections.disjoint(column.getDefinitions(), workflowPropertyDefinitions))
+                    && (redactions.isEmpty() || Collections.disjoint(redactions, column.getRedactions()))) {
                 headers.add(new ColumnDescription(column.getAccessor(), TEXT, loader.load(column.getTitle())));
                 columns.add(column);
                 columnAccessors.add(column.getColumnAccessor());
@@ -517,7 +516,7 @@ public class ApplicationService {
                     break;
                 case DISPLAY_PROPERTY:
                     Enum<?> index = (Enum<?>) ReflectionUtils.invokeMethod(reportRow, getMethod);
-                    value = loader.load((PrismDisplayPropertyDefinition) ReflectionUtils.getProperty(index, "displayProperty"));
+                    value = index == null ? "" : loader.load((PrismDisplayPropertyDefinition) ReflectionUtils.getProperty(index, "displayProperty"));
                     break;
                 case STRING:
                     value = (String) ReflectionUtils.invokeMethod(reportRow, getMethod);
@@ -525,7 +524,7 @@ public class ApplicationService {
                 }
                 row.addCell(value);
             }
-            row.addCell(applicationUrl + Constants.ANGULAR_HASH + "application/" + reportRow.getIdDisplay() + "/view");
+            row.addCell(applicationUrl + "/" + Constants.ANGULAR_HASH + "/application/" + reportRow.getIdDisplay() + "/view");
             dataTable.addRow(row);
         }
 

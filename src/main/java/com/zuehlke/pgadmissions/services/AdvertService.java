@@ -108,9 +108,13 @@ public class AdvertService {
         return entityService.getById(AdvertClosingDate.class, id);
     }
 
-    public List<Advert> getActiveAdverts(OpportunitiesQueryDTO queryDTO) {
-        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
-        List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
+    public List<Advert> getAdverts(OpportunitiesQueryDTO queryDTO) {
+        List<PrismState> programStates = stateService.getActiveProgramStates();
+        if (queryDTO.getPrograms() != null) {
+            programStates.add(PrismState.PROGRAM_DEACTIVATED);
+        }
+        
+        List<PrismState> projectStates = stateService.getActiveProjectStates();
 
         if (queryDTO.isResourceAction()) {
             Resource resource = resourceService.getById(queryDTO.getActionId().getScope().getResourceClass(), queryDTO.getResourceId());
@@ -130,7 +134,7 @@ public class AdvertService {
             }
         }
 
-        List<Integer> adverts = advertDAO.getActiveAdverts(activeProgramStates, activeProjectStates, queryDTO);
+        List<Integer> adverts = advertDAO.getAdverts(programStates, projectStates, queryDTO);
 
         if (adverts.isEmpty()) {
             return Lists.newArrayList();

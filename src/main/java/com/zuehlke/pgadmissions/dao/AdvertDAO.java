@@ -40,7 +40,7 @@ public class AdvertDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public List<Integer> getActiveAdverts(List<PrismState> activeProgramStates, List<PrismState> activeProjectStates, OpportunitiesQueryDTO queryDTO) {
+    public List<Integer> getAdverts(List<PrismState> programStates, List<PrismState> projectStates, OpportunitiesQueryDTO queryDTO) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("address", "address", JoinType.INNER_JOIN) //
@@ -61,10 +61,10 @@ public class AdvertDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("program")) //
-                                .add(Restrictions.in("program.state.id", activeProgramStates))) //
+                                .add(Restrictions.in("program.state.id", programStates))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("project")) //
-                                .add(Restrictions.in("project.state.id", activeProjectStates))));
+                                .add(Restrictions.in("project.state.id", projectStates))));
 
         appendLocationConstraint(criteria, queryDTO);
         appendKeywordConstraint(queryDTO, criteria);

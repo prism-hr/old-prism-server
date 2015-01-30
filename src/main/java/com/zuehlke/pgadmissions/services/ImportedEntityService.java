@@ -29,7 +29,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.Domicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
@@ -46,7 +45,6 @@ import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
-import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.InstitutionDomicileImportDTO;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -131,7 +129,7 @@ public class ImportedEntityService {
     public void disableAllEntities(Class<? extends ImportedEntity> entityClass, Institution institution) {
         importedEntityDAO.disableAllEntities(entityClass, institution);
     }
-    
+
     public void disableAllInstitutions(Institution institution) {
         importedEntityDAO.disableAllInstitutions(institution);
     }
@@ -183,8 +181,7 @@ public class ImportedEntityService {
             throws DataImportException, DeduplicationException {
         String domicileCode = institutionDefinition.getDomicile();
 
-        Domicile domicile = entityService.getByProperties(Domicile.class,
-                ImmutableMap.of("institution", institution, "code", domicileCode, "enabled", true));
+        Domicile domicile = entityService.getByProperties(Domicile.class, ImmutableMap.of("institution", institution, "code", domicileCode, "enabled", true));
 
         String institutionNameClean = institutionDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "");
 
@@ -405,9 +402,8 @@ public class ImportedEntityService {
         User invoker = program.getUser();
         Role invokerRole = roleService.getCreatorRole(program);
 
-        State importState = stateService.getById(PrismState.PROGRAM_APPROVED);
         Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(baselineTime).withAction(action).withDeclinedResponse(false)
-                .withTransitionState(importState).addAssignedUser(invoker, invokerRole, PrismRoleTransitionType.CREATE);
+                .addAssignedUser(invoker, invokerRole, PrismRoleTransitionType.CREATE);
         actionService.executeAction(program, action, comment);
     }
 

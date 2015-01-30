@@ -191,15 +191,15 @@ public class ApplicationDAO {
 
     public List<PrismWorkflowPropertyDefinition> getApplicationWorkflowPropertyDefinitions(Set<Integer> applicationIds) {
         return (List<PrismWorkflowPropertyDefinition>) sessionFactory.getCurrentSession().createCriteria(WorkflowPropertyConfiguration.class) //
-                .setProjection(Projections.groupProperty("workflowPropertyDefinition")) //
-                .add(Subqueries.in("version", //
+                .setProjection(Projections.groupProperty("workflowPropertyDefinition.id")) //
+                .add(Subqueries.propertyIn("version", //
                         DetachedCriteria.forClass(Application.class) //
                                 .setProjection(Projections.groupProperty("workflowPropertyConfigurationVersion")) //
                                 .add(Restrictions.in("id", applicationIds)))) //
                 .add(Restrictions.eq("enabled", true)) //
                 .list();
     }
-    
+
     public List<PrismActionRedactionType> getApplicationActionRedactions(Set<Integer> applicationIds, List<PrismRole> roleIds) {
         return (List<PrismActionRedactionType>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.groupProperty("redaction.redactionType")) //
@@ -226,7 +226,7 @@ public class ApplicationDAO {
                         + "left join programDetail.studyOption as studyOption " //
                         + "left join programDetail.referralSource as referralSource " //
                         + "join application.state as state " //
-                        + "left join application.applicationReferees as applicationReferee " //
+                        + "left join application.referees as referee " //
                         + "left join application.comments as provideReferenceComment " //
                         + "with provideReferenceComment.action.id = :provideReferenceAction " //
                         + "and provideReferenceComment.declinedResponse is false " //

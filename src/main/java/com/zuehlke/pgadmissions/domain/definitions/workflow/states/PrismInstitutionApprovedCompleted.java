@@ -113,7 +113,7 @@ public class PrismInstitutionApprovedCompleted extends PrismWorkflowState {
                                 .withMinimumPermitted(1) //
                                 .withMaximumPermitted(1))), //
                     new PrismStateTransition() //
-                        .withTransitionState(PrismState.PROGRAM_APPROVED) //
+                        .withTransitionState(PrismState.PROGRAM_DEACTIVATED) //
                         .withTransitionAction(PrismAction.INSTITUTION_IMPORT_PROGRAM) //
                         .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROGRAM_IMPORTED_OUTCOME) //
                         .withRoleTransitions(Arrays.asList( //

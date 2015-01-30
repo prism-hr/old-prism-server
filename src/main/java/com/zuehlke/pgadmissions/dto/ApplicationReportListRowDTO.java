@@ -599,5 +599,13 @@ public class ApplicationReportListRowDTO {
     public String getConfirmedStartDateDisplay(String dateFormat) {
         return confirmedStartDate == null ? "" : confirmedStartDate.toString(dateFormat);
     }
+    
+    public PrismStateGroup getStateDisplay() {
+        return state == null ? null : state;
+    }
+    
+    public String getRefereesDisplay() {
+        return referees == null ? "" : referees.toString();
+    }
 
 }

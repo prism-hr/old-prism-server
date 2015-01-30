@@ -413,6 +413,14 @@ public class StateService {
     public StateTransition getProjectApprovedOutcome(Resource resource, Comment comment) {
         return getUserDefinedNextState(resource, comment);
     }
+    
+    public StateTransition getProgramImportedOutcome(Resource resource, Comment comment) {
+        State state = resource.getState();
+        if (state == null || state.getId() != PrismState.PROGRAM_DEACTIVATED) {
+            return stateDAO.getStateTransition(resource, comment.getAction(), PrismState.PROGRAM_APPROVED);
+        }
+        return stateDAO.getStateTransition(resource, comment.getAction(), PrismState.PROGRAM_DEACTIVATED);
+    }
 
     public StateTransition getInstitutionViewEditOutcome(Resource resource, Comment comment) {
         return getViewEditNextState(resource, comment);

@@ -16,6 +16,8 @@ import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresen
 public class AdvertRepresentation {
 
     private Integer id;
+    
+    private boolean acceptingApplication;
 
     private String title;
 
@@ -77,6 +79,14 @@ public class AdvertRepresentation {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public final boolean isAcceptingApplication() {
+        return acceptingApplication;
+    }
+
+    public final void setAcceptingApplication(boolean acceptingApplication) {
+        this.acceptingApplication = acceptingApplication;
     }
 
     public String getTitle() {

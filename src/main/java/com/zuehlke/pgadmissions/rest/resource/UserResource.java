@@ -36,7 +36,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.EmailDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserEmailDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserActivateDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserLinkingDTO;
@@ -137,7 +137,7 @@ public class UserResource {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/linkedUsers/selectParentUser", method = RequestMethod.POST)
-    public void selectParentUser(@RequestBody EmailDTO email) {
+    public void selectParentUser(@RequestBody UserEmailDTO email) {
         userService.selectParentUser(email.getEmail());
     }
 

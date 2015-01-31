@@ -120,10 +120,24 @@ public class StateDAO {
                 .list();
     }
 
+    public List<PrismState> getProgramStates() {
+        return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(State.class) //
+                .setProjection(Projections.property("id")) //
+                .add(Restrictions.eq("scope.id", PrismScope.PROGRAM)) //
+                .list();
+    }
+
     public List<PrismState> getActiveProgramStates() {
         return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("state.id")) //
                 .add(Restrictions.eq("action.id", PrismAction.PROGRAM_CREATE_APPLICATION)) //
+                .list();
+    }
+
+    public List<PrismState> getProjectStates() {
+        return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(State.class) //
+                .setProjection(Projections.groupProperty("id")) //
+                .add(Restrictions.eq("scope.id", PrismScope.PROJECT)) //
                 .list();
     }
 

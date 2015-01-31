@@ -43,11 +43,13 @@ public class OpportunitiesResource {
     public List<AdvertRepresentation> getAdverts(OpportunitiesQueryDTO query) {
         List<Advert> adverts = advertService.getAdverts(query);
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
+        List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
 
         List<AdvertRepresentation> representations = Lists.newArrayListWithExpectedSize(adverts.size());
         for (Advert advert : adverts) {
             AdvertRepresentation representation = dozerBeanMapper.map(advert, AdvertRepresentation.class);
-            representation.setAcceptingApplication(advert.isProjectAdvert() || activeProgramStates.contains(advert.getProgram().getState().getId()));
+            representation.setAcceptingApplication((advert.isProgramAdvert() && activeProgramStates.contains(advert.getProgram().getState().getId()))
+                    || (advert.isProjectAdvert() && activeProjectStates.contains(advert.getProject().getState().getId())));
 
             Resource resource = advert.getProgram() != null ? advert.getProgram() : advert.getProject();
             representation.setUser(dozerBeanMapper.map(resource.getUser(), UserRepresentation.class));

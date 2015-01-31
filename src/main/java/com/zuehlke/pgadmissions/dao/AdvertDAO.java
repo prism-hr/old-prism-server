@@ -93,11 +93,11 @@ public class AdvertDAO {
 
     public List<Advert> getActiveAdverts(List<Integer> adverts, boolean prioritizeProgram) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class);
-       
+
         if (prioritizeProgram) {
             criteria.createAlias("program", "program", JoinType.LEFT_OUTER_JOIN);
         }
-         
+
         criteria.add(Restrictions.in("id", adverts));
 
         if (prioritizeProgram) {
@@ -281,7 +281,7 @@ public class AdvertDAO {
 
     private void appendInstitutionsConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
         Integer[] institutions = queryDTO.getInstitutions();
-        if (institutions != null && institutions.length > 0) {
+        if (institutions != null) {
             criteria.add(Restrictions.disjunction() //
                     .add(Restrictions.in("institution.id", institutions)) //
                     .add(Restrictions.in("projectInstitution.id", institutions))); //
@@ -290,7 +290,7 @@ public class AdvertDAO {
 
     private void appendProgramsConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
         Integer[] programs = queryDTO.getPrograms();
-        if (programs != null && programs.length > 0) {
+        if (programs != null) {
             criteria.add(Restrictions.disjunction() //
                     .add(Restrictions.in("program.id", programs)) //
                     .add(Restrictions.in("projectProgram.id", programs)));
@@ -299,7 +299,7 @@ public class AdvertDAO {
 
     private void appendProjectsConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
         Integer[] projects = queryDTO.getProjects();
-        if (projects != null && projects.length > 0) {
+        if (projects != null) {
             criteria.add(Restrictions.in("project.id", projects));
         }
     }

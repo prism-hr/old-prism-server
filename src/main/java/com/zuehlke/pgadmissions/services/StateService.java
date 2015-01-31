@@ -465,8 +465,16 @@ public class StateService {
         return stateDAO.getStatesByStateGroup(stateGroupId);
     }
 
+    public List<PrismState> getProgramStates() {
+        return stateDAO.getProgramStates();
+    }
+    
     public List<PrismState> getActiveProgramStates() {
         return stateDAO.getActiveProgramStates();
+    }
+    
+    public List<PrismState> getProjectStates() {
+        return stateDAO.getProjectStates();
     }
 
     public List<PrismState> getActiveProjectStates() {

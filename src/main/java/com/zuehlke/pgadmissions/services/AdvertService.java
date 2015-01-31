@@ -110,11 +110,10 @@ public class AdvertService {
 
     public List<Advert> getAdverts(OpportunitiesQueryDTO queryDTO) {
         List<PrismState> programStates = stateService.getActiveProgramStates();
-        if (queryDTO.getPrograms() != null) {
-            programStates.add(PrismState.PROGRAM_DEACTIVATED);
-        }
+        programStates = queryDTO.getPrograms() == null ? programStates : stateService.getProgramStates();
         
         List<PrismState> projectStates = stateService.getActiveProjectStates();
+        projectStates = queryDTO.getProjects() == null ? projectStates : stateService.getProjectStates();
 
         if (queryDTO.isResourceAction()) {
             Resource resource = resourceService.getById(queryDTO.getActionId().getScope().getResourceClass(), queryDTO.getResourceId());

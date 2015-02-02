@@ -33,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDe
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationEvaluation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -375,11 +376,11 @@ public class StateService {
     }
 
     public StateTransition getProgramCreatedOutcome(Resource resource, Comment comment) {
-        PrismState transitionStateId = PrismState.PROGRAM_APPROVAL;
-        if (roleService.hasUserRole(resource, comment.getUser(), PrismRole.INSTITUTION_ADMINISTRATOR)) {
-            transitionStateId = PrismState.PROGRAM_APPROVED;
+        Program program = (Program) resource;
+        if (roleService.hasUserRole(resource, comment.getUser(), PrismRole.INSTITUTION_ADMINISTRATOR) || BooleanUtils.isTrue(program.getImported())) {
+            return stateDAO.getStateTransition(resource, comment.getAction(), PrismState.PROGRAM_APPROVED);
         }
-        return stateDAO.getStateTransition(resource, comment.getAction(), transitionStateId);
+        return stateDAO.getStateTransition(resource, comment.getAction(), PrismState.PROGRAM_APPROVAL);
     }
 
     public StateTransition getProjectCreatedOutcome(Resource resource, Comment comment) {
@@ -413,7 +414,7 @@ public class StateService {
     public StateTransition getProjectApprovedOutcome(Resource resource, Comment comment) {
         return getUserDefinedNextState(resource, comment);
     }
-    
+
     public StateTransition getProgramImportedOutcome(Resource resource, Comment comment) {
         State state = resource.getState();
         if (state == null || state.getId() != PrismState.PROGRAM_DEACTIVATED) {
@@ -468,11 +469,11 @@ public class StateService {
     public List<PrismState> getProgramStates() {
         return stateDAO.getProgramStates();
     }
-    
+
     public List<PrismState> getActiveProgramStates() {
         return stateDAO.getActiveProgramStates();
     }
-    
+
     public List<PrismState> getProjectStates() {
         return stateDAO.getProjectStates();
     }

@@ -417,10 +417,10 @@ public class StateService {
 
     public StateTransition getProgramImportedOutcome(Resource resource, Comment comment) {
         State state = resource.getState();
-        if (state == null || state.getId() != PrismState.PROGRAM_DEACTIVATED) {
-            return stateDAO.getStateTransition(resource, comment.getAction(), PrismState.PROGRAM_APPROVED);
+        if (state.getId() == PrismState.PROGRAM_DEACTIVATED) {
+            return stateDAO.getStateTransition(resource, comment.getAction(), PrismState.PROGRAM_DEACTIVATED);
         }
-        return stateDAO.getStateTransition(resource, comment.getAction(), PrismState.PROGRAM_DEACTIVATED);
+        return stateDAO.getStateTransition(resource, comment.getAction(), PrismState.PROGRAM_APPROVED);
     }
 
     public StateTransition getInstitutionViewEditOutcome(Resource resource, Comment comment) {

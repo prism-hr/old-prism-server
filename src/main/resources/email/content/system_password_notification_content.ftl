@@ -16,5 +16,5 @@
 
 <p>
     Yours sincerely,
-    <br/> ${TEMPLATE_AUTHOR_FULL_name}
+    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>

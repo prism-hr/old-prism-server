@@ -1,13 +1,12 @@
 package com.zuehlke.pgadmissions.dto;
 
-import java.math.BigDecimal;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import java.math.BigDecimal;
 
 public class ApplicationReportListRowDTO {
 
@@ -480,7 +479,7 @@ public class ApplicationReportListRowDTO {
     }
 
     public String getSecondaryThemeDisplay() {
-        return primaryTheme == null ? "" : primaryTheme.replace("|", ", ");
+        return secondaryTheme == null ? "" : secondaryTheme.replace("|", ", ");
     }
 
     public String getPrimaryThemeDisplay() {
@@ -599,11 +598,11 @@ public class ApplicationReportListRowDTO {
     public String getConfirmedStartDateDisplay(String dateFormat) {
         return confirmedStartDate == null ? "" : confirmedStartDate.toString(dateFormat);
     }
-    
+
     public PrismStateGroup getStateDisplay() {
         return state == null ? null : state;
     }
-    
+
     public String getRefereesDisplay() {
         return referees == null ? "" : referees.toString();
     }

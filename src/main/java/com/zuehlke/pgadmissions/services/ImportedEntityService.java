@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.Domicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
@@ -45,6 +46,7 @@ import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
+import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.InstitutionDomicileImportDTO;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -401,9 +403,17 @@ public class ImportedEntityService {
 
         User invoker = program.getUser();
         Role invokerRole = roleService.getCreatorRole(program);
+        
+        State state = program.getState();
+        PrismState transitionStateId = PrismState.PROGRAM_APPROVED;
+        if (state != null && state.getId() == PrismState.PROGRAM_DEACTIVATED) {
+            transitionStateId = PrismState.PROGRAM_DEACTIVATED;
+        }
 
+        State transitionState = stateService.getById(transitionStateId);
+        
         Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(baselineTime).withAction(action).withDeclinedResponse(false)
-                .addAssignedUser(invoker, invokerRole, PrismRoleTransitionType.CREATE);
+                .withTransitionState(transitionState).addAssignedUser(invoker, invokerRole, PrismRoleTransitionType.CREATE);
         actionService.executeAction(program, action, comment);
     }
 

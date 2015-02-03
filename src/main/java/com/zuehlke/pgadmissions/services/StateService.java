@@ -416,11 +416,7 @@ public class StateService {
     }
 
     public StateTransition getProgramImportedOutcome(Resource resource, Comment comment) {
-        State state = resource.getState();
-        if (state.getId() == PrismState.PROGRAM_DEACTIVATED) {
-            return stateDAO.getStateTransition(resource, comment.getAction(), PrismState.PROGRAM_DEACTIVATED);
-        }
-        return stateDAO.getStateTransition(resource, comment.getAction(), PrismState.PROGRAM_APPROVED);
+        return getUserDefinedNextState(resource, comment);
     }
 
     public StateTransition getInstitutionViewEditOutcome(Resource resource, Comment comment) {
@@ -529,8 +525,7 @@ public class StateService {
         if (comment.getTransitionState() == null) {
             return null;
         }
-        PrismState transitionStateId = comment.getTransitionState().getId();
-        return stateDAO.getStateTransition(resource, comment.getAction(), transitionStateId);
+        return stateDAO.getStateTransition(resource, comment.getAction(), comment.getTransitionState().getId());
     }
 
     private StateTransition getApplicationRejectedOutcome(Resource resource, Comment comment) {

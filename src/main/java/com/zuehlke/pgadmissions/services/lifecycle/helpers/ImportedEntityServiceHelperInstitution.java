@@ -145,8 +145,12 @@ public class ImportedEntityServiceHelperInstitution extends AbstractServiceHelpe
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         unmarshaller.setSchema(schema);
 
-        Object unmarshalled = unmarshaller.unmarshal(fileUrl);
-        return (List<Object>) ReflectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbPropertyName());
+        try {
+            Object unmarshalled = unmarshaller.unmarshal(fileUrl);
+            return (List<Object>) ReflectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbPropertyName());
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private void mergeImportedPrograms(Institution institution, List<ProgrammeOccurrence> programDefinitions) throws DeduplicationException,

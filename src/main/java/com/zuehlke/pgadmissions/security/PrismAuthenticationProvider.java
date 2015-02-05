@@ -58,6 +58,5 @@ public class PrismAuthenticationProvider implements AuthenticationProvider {
     public boolean supports(Class<?> clazz) {
         return UsernamePasswordAuthenticationToken.class.isAssignableFrom(clazz);
     }
-
-
+    
 }

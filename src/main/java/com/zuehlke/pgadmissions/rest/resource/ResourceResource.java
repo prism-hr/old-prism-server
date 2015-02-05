@@ -192,7 +192,7 @@ public class ResourceResource {
         DateTime baseline = new DateTime().minusDays(1);
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
         HashMultimap<PrismState, PrismAction> creationActions = actionService.getCreateResourceActionsByState(resourceScope);
-
+        
         for (ResourceConsoleListRowDTO rowDTO : resourceService.getResourceList(resourceScope, filterDTO, lastSequenceIdentifier)) {
             ResourceListRowRepresentation representation = beanMapper.map(rowDTO, ResourceListRowRepresentation.class);
             representation.setResourceScope(resourceScope);
@@ -207,8 +207,6 @@ public class ResourceResource {
                     PropertyUtils.setSimpleProperty(representation, scopeName, new SimpleResourceRepresentation(id, title));
                 }
             }
-
-            resourceService.filterResourceListData(representation, currentUser);
 
             representation.setRaisesUpdateFlag(rowDTO.getUpdatedTimestamp().isAfter(baseline));
             representation.setSecondaryStateGroups(stateService.getSecondaryResourceStateGroups(resourceScope,

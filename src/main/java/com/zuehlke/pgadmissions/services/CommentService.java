@@ -147,7 +147,7 @@ public class CommentService {
             List<Comment> previousStateComments = Lists.newArrayList();
 
             List<PrismRole> creatableRoles = roleService.getCreatableRoles(resource.getResourceScope());
-            HashMultimap<PrismAction, PrismActionRedactionType> redactions = actionService.getRedactionsByAction(resource, user);
+            HashMultimap<PrismAction, PrismActionRedactionType> redactions = actionService.getRedactions(resource, user);
 
             for (int i = 0; i < transitionCommentCount; i++) {
                 Comment start = transitionComments.get(i);
@@ -156,6 +156,7 @@ public class CommentService {
                 stateGroupId = stateGroupId == null ? start.getState().getStateGroup().getId() : stateGroupId;
                 List<Comment> stateComments = commentDAO.getStateComments(resource, start, close, stateGroupId, previousStateComments);
 
+                List<Integer> batchedViewEditCommentIds = null;
                 CommentRepresentation lastViewEditComment = null;
                 TimelineCommentGroupRepresentation commentGroup = new TimelineCommentGroupRepresentation().withStateGroup(stateGroupId);
 
@@ -165,6 +166,7 @@ public class CommentService {
                             CommentRepresentation representation = getCommentRepresentation(user, comment, redactions.get(comment.getAction().getId()),
                                     creatableRoles);
                             commentGroup.addComment(representation);
+                            batchedViewEditCommentIds = Lists.newArrayList(comment.getId());
                             lastViewEditComment = representation;
                         } else {
                             String contentNew = comment.getContent();
@@ -175,6 +177,8 @@ public class CommentService {
                                 contentExisting = contentExisting + "<br/>" + contentNew;
                                 lastViewEditComment.setContent(contentExisting);
                             }
+                            batchedViewEditCommentIds.add(comment.getId());
+                            lastViewEditComment.setAssignedUsers(commentDAO.getAssignedUsers(batchedViewEditCommentIds, creatableRoles));
                         }
                     } else {
                         CommentRepresentation representation = getCommentRepresentation(user, comment, redactions.get(comment.getAction().getId()),

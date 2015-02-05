@@ -121,7 +121,7 @@ public class ResourceDAO {
     }
 
     public List<ResourceConsoleListRowDTO> getResourceConsoleList(User user, PrismScope scopeId, List<PrismScope> parentScopeIds,
-            Set<Integer> assignedResources, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords) {
+            Set<Integer> assignedResources, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords, boolean hasRedactions) {
         if (assignedResources.isEmpty()) {
             return new ArrayList<ResourceConsoleListRowDTO>(0);
         }
@@ -149,8 +149,11 @@ public class ResourceDAO {
 
         addResourceListCustomColumns(scopeId, projectionList);
 
-        projectionList.add(Projections.property("applicationRatingAverage"), "applicationRatingAverage") //
-                .add(Projections.property("state.id"), "stateId") //
+        if (!hasRedactions) {
+            projectionList.add(Projections.property("applicationRatingAverage"), "applicationRatingAverage");
+        }
+
+        projectionList.add(Projections.property("state.id"), "stateId") //
                 .add(Projections.property("state.stateGroup.id"), "stateGroupId") //
                 .add(Projections.property("user.email"), "creatorEmail") //
                 .add(Projections.property("updatedTimestamp"), "updatedTimestamp") //

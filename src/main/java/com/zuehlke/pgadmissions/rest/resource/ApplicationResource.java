@@ -30,7 +30,6 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
@@ -281,9 +280,7 @@ public class ApplicationResource {
 
         representation.setAvailableStudyOptions(availableStudyOptions);
         
-        User currentUser = userService.getCurrentUser();
-        List<PrismActionRedactionType> redactions = actionService.getRedactions(application, currentUser); 
-        if (redactions.isEmpty()) {
+        if (!actionService.hasRedactions(application, userService.getCurrentUser())) {
             representation.setApplicationRatingAverage(application.getApplicationRatingAverage());
         }
         

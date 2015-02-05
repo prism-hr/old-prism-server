@@ -23,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
@@ -199,17 +198,7 @@ public class ApplicationDAO {
                 .add(Restrictions.eq("enabled", true)) //
                 .list();
     }
-
-    public List<PrismActionRedactionType> getApplicationActionRedactions(Set<Integer> applicationIds, List<PrismRole> roleIds) {
-        return (List<PrismActionRedactionType>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.groupProperty("redaction.redactionType")) //
-                .createAlias("action", "action", JoinType.INNER_JOIN) //
-                .createAlias("action.redactions", "redaction", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("application.id", applicationIds)) //
-                .add(Restrictions.in("redaction.role.id", roleIds)) //
-                .list();
-    }
-
+    
     public List<ApplicationReportListRowDTO> getApplicationReport(Set<Integer> assignedApplications, String columns) {
         return (List<ApplicationReportListRowDTO>) sessionFactory.getCurrentSession().createQuery( //
                 "select " + columns + " " //

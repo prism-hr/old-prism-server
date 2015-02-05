@@ -69,5 +69,9 @@ public class PropertyLoader {
         this.locale = resourceService.getOperativeLocale(resource);
         return this;
     }
+    
+    public Resource getResource() {
+        return resource;
+    }
 
 }

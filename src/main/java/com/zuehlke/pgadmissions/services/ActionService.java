@@ -224,22 +224,37 @@ public class ActionService {
     public List<PrismAction> getPropagatedActions(Integer stateTransitionPendingId) {
         return actionDAO.getPropagatedActions(stateTransitionPendingId);
     }
-
-    public List<PrismActionRedactionType> getRedactions(Resource resource, User user) {
-        return actionDAO.getRedactions(resource, user);
+    
+    public boolean hasRedactions(Resource resource, User user) {
+        return !getRedactions(resource, user).isEmpty();
     }
-
-    public HashMultimap<PrismAction, PrismActionRedactionType> getRedactionsByAction(Resource resource, User user) {
-        List<PrismRole> roleIds = roleService.getRoles(resource, user);
-        List<ActionRedactionDTO> redactions = Lists.newArrayList();
-        if (!roleIds.isEmpty()) {
-            redactions = actionDAO.getRedactionsByAction(resource, roleIds);
-        }
+    
+    public HashMultimap<PrismAction, PrismActionRedactionType> getRedactions(Resource resource, User user) {
         HashMultimap<PrismAction, PrismActionRedactionType> actionRedactions = HashMultimap.create();
-        for (ActionRedactionDTO redaction : redactions) {
-            actionRedactions.put(redaction.getActionId(), redaction.getRedactionType());
+        List<PrismRole> rolesOverridingRedactions = roleService.getRolesOverridingRedactions(resource, user);
+        if (rolesOverridingRedactions.isEmpty()) {
+            List<PrismRole> roleIds = roleService.getRoles(resource, user);
+            if (!roleIds.isEmpty()) {
+                List<ActionRedactionDTO> redactions = actionDAO.getRedactions(resource, roleIds);
+                for (ActionRedactionDTO redaction : redactions) {
+                    actionRedactions.put(redaction.getActionId(), redaction.getRedactionType());
+                }
+            }
         }
         return actionRedactions;
+    }
+    
+    public boolean hasRedactions(PrismScope resourceScope, Set<Integer> resourceIds, User user) {
+        return !getRedactions(resourceScope, resourceIds, user).isEmpty();
+    }
+    
+    public List<PrismActionRedactionType> getRedactions(PrismScope resourceScope, Set<Integer> resourceIds, User user) {
+        List<PrismRole> rolesOverridingRedactions = roleService.getRolesOverridingRedactions(resourceScope, user);
+        if (rolesOverridingRedactions.isEmpty()) {
+            List<PrismRole> roleIds = roleService.getRoles(user);
+            return actionDAO.getRedactions(resourceScope, resourceIds, roleIds);
+        }
+        return Lists.newArrayList();
     }
 
     public void throwWorkflowPermissionException(Resource resource, Action action) {

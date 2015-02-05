@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -27,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
@@ -163,17 +163,7 @@ public class ActionDAO {
                 .list();
     }
 
-    public List<PrismActionRedactionType> getRedactions(Resource resource, User user) {
-        return (List<PrismActionRedactionType>) sessionFactory.getCurrentSession().createCriteria(ActionRedaction.class) //
-                .setProjection(Projections.groupProperty("redactionType")) //
-                .createAlias("role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("userRole." + resource.getResourceScope().getLowerCaseName(), resource)) //
-                .add(Restrictions.eq("userRole.user", user)) //
-                .list();
-    }
-    
-    public List<ActionRedactionDTO> getRedactionsByAction(Resource resource, List<PrismRole> roleIds) {
+    public List<ActionRedactionDTO> getRedactions(Resource resource, List<PrismRole> roleIds) {
         return (List<ActionRedactionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class, "comment") //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("action.id"), "actionId") //
@@ -183,6 +173,16 @@ public class ActionDAO {
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
                 .add(Restrictions.in("redaction.role.id", roleIds)) //
                 .setResultTransformer(Transformers.aliasToBean(ActionRedactionDTO.class)) //
+                .list();
+    }
+    
+    public List<PrismActionRedactionType> getRedactions(PrismScope resourceScope, Set<Integer> resourceIds, List<PrismRole> roleIds) {
+        return (List<PrismActionRedactionType>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .setProjection(Projections.groupProperty("redaction.redactionType")) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .createAlias("action.redactions", "redaction", JoinType.INNER_JOIN) //
+                .add(Restrictions.in(resourceScope.getLowerCaseName() + ".id", resourceIds)) //
+                .add(Restrictions.in("redaction.role.id", roleIds)) //
                 .list();
     }
 

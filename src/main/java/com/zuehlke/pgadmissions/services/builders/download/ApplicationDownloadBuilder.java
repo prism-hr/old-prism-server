@@ -61,8 +61,10 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.DocumentService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
@@ -70,9 +72,9 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ApplicationDownloadBuilder {
 
-    private final List<Object> bookmarks = Lists.newLinkedList();
-
     private PropertyLoader propertyLoader;
+
+    private final List<Object> bookmarks = Lists.newLinkedList();
 
     private ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper;
 
@@ -80,10 +82,16 @@ public class ApplicationDownloadBuilder {
     private Float logoFileWidthPercentage;
 
     @Autowired
+    private ActionService actionService;
+
+    @Autowired
     private CustomizationService customizationService;
 
     @Autowired
     private DocumentService documentService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -129,11 +137,13 @@ public class ApplicationDownloadBuilder {
         PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_HEADER));
 
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_CREATOR), application.getUser().getFullName(), body);
-        applicationDownloadBuilderHelper
-                .addContentRowMedium(propertyLoader.load(SYSTEM_AVERAGE_RATING), application.getApplicationRatingAverageDisplay(), body);
+
+        if (!actionService.hasRedactions(application, userService.getCurrentUser())) {
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_AVERAGE_RATING), application.getApplicationRatingAverageDisplay(),
+                    body);
+        }
 
         addApplicationSummaryExtended(application, body, MEDIUM);
-
         applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         pdfDocument.newPage();
     }
@@ -171,8 +181,8 @@ public class ApplicationDownloadBuilder {
                     studyDetail == null ? null : studyDetail.getStudyDivision(), body);
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_AREA),
                     studyDetail == null ? null : studyDetail.getStudyArea(), body);
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_APPLICATION_ID),
-                    studyDetail == null ? null : studyDetail.getStudyApplicationId(), body);
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_APPLICATION_ID), studyDetail == null ? null
+                    : studyDetail.getStudyApplicationId(), body);
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_START_DATE),
                     studyDetail == null ? null : studyDetail.getStudyStartDateDisplay(propertyLoader.load(SYSTEM_DATE_FORMAT)), body);
         }
@@ -270,7 +280,7 @@ public class ApplicationDownloadBuilder {
     }
 
     private void appendEqualOpportunitiesSection(ApplicationDownloadDTO applicationDownloadDTO, PdfPTable body, Application application,
-                                                 ApplicationPersonalDetail personalDetail, boolean personalDetailNull) {
+            ApplicationPersonalDetail personalDetail, boolean personalDetailNull) {
         if (applicationDownloadDTO.isIncludeEqualOpportunitiesData()) {
             if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
                     PrismWorkflowPropertyDefinition.APPLICATION_DEMOGRAPHIC)) {
@@ -328,7 +338,7 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addLanquageQualificationSection(Application application, ApplicationLanguageQualification languageQualification,
-                                                 ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument) throws DocumentException {
+            ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument) throws DocumentException {
         PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_HEADER));
 
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_TYPE), languageQualification.getTypeDisplay(), body);
@@ -418,7 +428,7 @@ public class ApplicationDownloadBuilder {
 
                     if (documentEnabled) {
                         addDocument(subBody, propertyLoader.load(APPLICATION_QUALIFICATION_FINAL_TRANSCRIPT,
-                                        PrismDisplayPropertyDefinition.APPLICATION_QUALIFICATION_INTERIM_TRANSCRIPT, completed), qualification.getDocument(),
+                                PrismDisplayPropertyDefinition.APPLICATION_QUALIFICATION_INTERIM_TRANSCRIPT, completed), qualification.getDocument(),
                                 applicationDownloadDTO.isIncludeAttachments());
                     }
 

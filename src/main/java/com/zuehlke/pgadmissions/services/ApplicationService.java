@@ -475,15 +475,7 @@ public class ApplicationService {
         Set<Integer> assignedApplications = resourceService.getAssignedResources(user, scopeId, parentScopeIds, filter);
 
         List<PrismWorkflowPropertyDefinition> workflowPropertyDefinitions = applicationDAO.getApplicationWorkflowPropertyDefinitions(assignedApplications);
-        List<PrismRole> assignedRolesOverridingRedactions = roleService.getRolesOverridingRedactions(user);
-
-        List<PrismActionRedactionType> redactions;
-        if (!assignedRolesOverridingRedactions.isEmpty()) {
-            redactions = Lists.newArrayList();
-        } else {
-            List<PrismRole> assignedRoles = roleService.getRoles(user);
-            redactions = applicationDAO.getApplicationActionRedactions(assignedApplications, assignedRoles);
-        }
+        List<PrismActionRedactionType> redactions = actionService.getRedactions(PrismScope.APPLICATION, assignedApplications, user);
 
         DataTable dataTable = new DataTable();
 

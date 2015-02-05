@@ -37,11 +37,27 @@ public class RoleDAO {
                 .list();
     }
 
-    public List<PrismRole> getRolesOverridingRedactions(User user) {
+    public List<PrismRole> getRolesOverridingRedactions(PrismScope resourceScope, User user) {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("role.id")) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.eq("role.scope", resourceScope)) //
+                .add(Restrictions.eq("role.overrideRedaction", true)) //
+                .list();
+    }
+
+    public List<PrismRole> getRolesOverridingRedactions(Resource resource, User user) {
+        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("role.id")) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("system", resource.getSystem())) //
+                        .add(Restrictions.eq("institution", resource.getInstitution())) //
+                        .add(Restrictions.eq("program", resource.getProgram())) //
+                        .add(Restrictions.eq("project", resource.getProject())) //
+                        .add(Restrictions.eq("application", resource.getApplication()))) //
                 .add(Restrictions.eq("role.overrideRedaction", true)) //
                 .list();
     }

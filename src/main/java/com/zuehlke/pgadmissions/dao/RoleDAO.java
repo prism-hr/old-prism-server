@@ -42,7 +42,7 @@ public class RoleDAO {
                 .setProjection(Projections.groupProperty("role.id")) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.eq("role.scope", resourceScope)) //
+                .add(Restrictions.eq("role.scope.id", resourceScope)) //
                 .add(Restrictions.eq("role.overrideRedaction", true)) //
                 .list();
     }

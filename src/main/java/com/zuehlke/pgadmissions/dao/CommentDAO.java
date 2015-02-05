@@ -12,7 +12,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentAssignedUserRepresentation;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -216,16 +214,13 @@ public class CommentDAO {
                 .list();
     }
 
-    public List<CommentAssignedUserRepresentation> getAssignedUsers(List<Integer> commentIds, List<PrismRole> roleIds) {
-        return (List<CommentAssignedUserRepresentation>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.property("user"), "user") //
-                        .add(Projections.property("role"), "role") //
-                        .add(Projections.property("roleTransitionType"), "roleTransitionType")) //
+    public List<CommentAssignedUser> getAssignedUsers(List<Integer> commentIds, List<PrismRole> roleIds) {
+        return (List<CommentAssignedUser>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
+                .add(Restrictions.in("comment.id", commentIds)) //
                 .add(Restrictions.in("role.id", roleIds)) //
+                .add(Restrictions.eq("roleTransitionType", PrismRoleTransitionType.CREATE)) //
                 .addOrder(Order.asc("role.id")) //
                 .addOrder(Order.asc("id")) //
-                .setResultTransformer(Transformers.aliasToBean(CommentAssignedUserRepresentation.class)) //
                 .list();
     }
 

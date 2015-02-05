@@ -178,7 +178,7 @@ public class CommentService {
                                 lastViewEditComment.setContent(contentExisting);
                             }
                             batchedViewEditCommentIds.add(comment.getId());
-                            lastViewEditComment.setAssignedUsers(commentDAO.getAssignedUsers(batchedViewEditCommentIds, creatableRoles));
+                            lastViewEditComment.setAssignedUsers(getAssignedUsers(batchedViewEditCommentIds, creatableRoles));
                         }
                     } else {
                         CommentRepresentation representation = getCommentRepresentation(user, comment, redactions.get(comment.getAction().getId()),
@@ -704,6 +704,14 @@ public class CommentService {
                 .withIntervieweeInstructions(interviewInstructionDTO.getIntervieweeInstructions())
                 .withInterviewerInstructions(interviewInstructionDTO.getInterviewerInstructions())
                 .withInterviewLocation(interviewInstructionDTO.getInterviewLocation()));
+    }
+
+    private List<CommentAssignedUserRepresentation> getAssignedUsers(List<Integer> commentIds, List<PrismRole> roleIds) {
+        List<CommentAssignedUserRepresentation> representations = Lists.newLinkedList();
+        for (CommentAssignedUser assignedUser : commentDAO.getAssignedUsers(commentIds, roleIds)) {
+            representations.add(mapper.map(assignedUser, CommentAssignedUserRepresentation.class));
+        }
+        return representations;
     }
 
 }

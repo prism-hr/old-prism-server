@@ -113,9 +113,8 @@ public class MailSender {
         } catch (Exception e) {
             if (SendFailedException.class.isAssignableFrom(e.getClass())) {
                 message.getModelDTO().getUser().setEmailValid(false);
-            } else {
-                LOGGER.error(String.format("Failed to send email %s", message.toString()), e);
             }
+            LOGGER.error(String.format("Failed to send email %s", message.toString()), e);
         }
 
     }

@@ -51,6 +51,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationStudyDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationDownloadMode;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
@@ -67,6 +68,7 @@ import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -281,7 +283,7 @@ public class ApplicationDownloadBuilder {
 
     private void appendEqualOpportunitiesSection(ApplicationDownloadDTO applicationDownloadDTO, PdfPTable body, Application application,
             ApplicationPersonalDetail personalDetail, boolean personalDetailNull) {
-        if (applicationDownloadDTO.isIncludeEqualOpportunitiesData()) {
+        if (applicationDownloadDTO.isIncludeEqualOpportunities()) {
             if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
                     PrismWorkflowPropertyDefinition.APPLICATION_DEMOGRAPHIC)) {
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_ETHNICITY), personalDetailNull ? null
@@ -357,8 +359,7 @@ public class ApplicationDownloadBuilder {
 
         if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
                 PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE_PROOF_OF_AWARD)) {
-            addDocument(body, propertyLoader.load(APPLICATION_PROOF_OF_AWARD), languageQualification.getDocument(),
-                    applicationDownloadDTO.isIncludeAttachments());
+            addBookmark(body, propertyLoader.load(APPLICATION_PROOF_OF_AWARD), languageQualification.getDocument(), applicationDownloadDTO);
         }
 
         applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
@@ -427,9 +428,9 @@ public class ApplicationDownloadBuilder {
                             qualification.getAwardDateDisplay(dateFormat), subBody);
 
                     if (documentEnabled) {
-                        addDocument(subBody, propertyLoader.load(APPLICATION_QUALIFICATION_FINAL_TRANSCRIPT,
+                        addBookmark(subBody, propertyLoader.load(APPLICATION_QUALIFICATION_FINAL_TRANSCRIPT,
                                 PrismDisplayPropertyDefinition.APPLICATION_QUALIFICATION_INTERIM_TRANSCRIPT, completed), qualification.getDocument(),
-                                applicationDownloadDTO.isIncludeAttachments());
+                                applicationDownloadDTO);
                     }
 
                     applicationDownloadBuilderHelper.closeSection(pdfDocument, subBody);
@@ -501,8 +502,7 @@ public class ApplicationDownloadBuilder {
                     applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_FUNDING_TERMS), funding.getTerms(), subBody);
 
                     if (documentEnabled) {
-                        addDocument(subBody, propertyLoader.load(APPLICATION_PROOF_OF_AWARD), funding.getDocument(),
-                                applicationDownloadDTO.isIncludeAttachments());
+                        addBookmark(subBody, propertyLoader.load(APPLICATION_PROOF_OF_AWARD), funding.getDocument(), applicationDownloadDTO);
                     }
 
                     applicationDownloadBuilderHelper.closeSection(pdfDocument, subBody);
@@ -561,14 +561,11 @@ public class ApplicationDownloadBuilder {
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_EMPLOYER_NAME), referee.getJobEmployer(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_POSITION_TITLE), referee.getJobTitle(), subBody);
 
-                if (applicationDownloadDTO.isIncludeReferences()) {
-                    subBody.addCell(applicationDownloadBuilderHelper.newContentCellMedium(propertyLoader.load(APPLICATION_REFEREE_REFERENCE_APPENDIX)));
-                    Comment referenceComment = referee.getComment();
-                    if (referenceComment == null) {
-                        subBody.addCell(applicationDownloadBuilderHelper.newContentCellMedium(null));
-                    } else {
-                        addBookmark(subBody, referenceComment);
-                    }
+                ApplicationDownloadMode downloadMode = applicationDownloadDTO.getDownloadMode();
+                boolean includeReferences = applicationDownloadDTO.isIncludeReferences();
+                if ((downloadMode == ApplicationDownloadMode.SYSTEM && includeReferences)
+                        || (downloadMode == ApplicationDownloadMode.USER && (includeReferences || userService.isCurrentUser(user)))) {
+                    addBookmark(subBody, propertyLoader.load(APPLICATION_REFEREE_REFERENCE_APPENDIX), referee.getComment(), applicationDownloadDTO);
                 }
 
                 applicationDownloadBuilderHelper.closeSection(pdfDocument, subBody);
@@ -589,26 +586,24 @@ public class ApplicationDownloadBuilder {
             PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_DOCUMENT_HEADER));
             ApplicationDocument documentSection = applicationDownloadDTO.getApplication().getDocument();
 
-            boolean includeAttachments = applicationDownloadDTO.isIncludeAttachments();
-
             if (personalStatementEnabled) {
-                addDocument(body, propertyLoader.load(APPLICATION_DOCUMENT_PERSONAL_STATEMENT_APPENDIX),
-                        documentSection == null ? null : documentSection.getPersonalStatement(), includeAttachments);
+                addBookmark(body, propertyLoader.load(APPLICATION_DOCUMENT_PERSONAL_STATEMENT_APPENDIX),
+                        documentSection == null ? null : documentSection.getPersonalStatement(), applicationDownloadDTO);
             }
 
             if (cvEnabled) {
-                addDocument(body, propertyLoader.load(APPLICATION_DOCUMENT_CV_APPENDIX),
-                        documentSection == null ? null : documentSection.getPersonalStatement(), includeAttachments);
+                addBookmark(body, propertyLoader.load(APPLICATION_DOCUMENT_CV_APPENDIX),
+                        documentSection == null ? null : documentSection.getPersonalStatement(), applicationDownloadDTO);
             }
 
             if (researchStatementEnabled) {
-                addDocument(body, propertyLoader.load(APPLICATION_DOCUMENT_RESEARCH_STATEMENT_APPENDIX),
-                        documentSection == null ? null : documentSection.getResearchStatement(), includeAttachments);
+                addBookmark(body, propertyLoader.load(APPLICATION_DOCUMENT_RESEARCH_STATEMENT_APPENDIX),
+                        documentSection == null ? null : documentSection.getResearchStatement(), applicationDownloadDTO);
             }
 
             if (coveringLetterEnabled) {
-                addDocument(body, propertyLoader.load(APPLICATION_DOCUMENT_COVERING_LETTER_APPENDIX),
-                        documentSection == null ? null : documentSection.getCoveringLetter(), includeAttachments);
+                addBookmark(body, propertyLoader.load(APPLICATION_DOCUMENT_COVERING_LETTER_APPENDIX),
+                        documentSection == null ? null : documentSection.getCoveringLetter(), applicationDownloadDTO);
             }
 
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
@@ -618,7 +613,7 @@ public class ApplicationDownloadBuilder {
     private void addAdditionalInformationSection(Application application, ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument)
             throws DocumentException {
         if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
-                PrismWorkflowPropertyDefinition.APPLICATION_CRIMINAL_CONVICTION) && applicationDownloadDTO.isIncludeEqualOpportunitiesData()) {
+                PrismWorkflowPropertyDefinition.APPLICATION_CRIMINAL_CONVICTION) && applicationDownloadDTO.isIncludeEqualOpportunities()) {
             PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_ADDITIONAL_INFORMATION_HEADER));
             ApplicationAdditionalInformation additionalInformation = application.getAdditionalInformation();
 
@@ -631,47 +626,45 @@ public class ApplicationDownloadBuilder {
 
     private void addSupportingDocuments(ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument, PdfWriter pdfWriter) throws DocumentException,
             IOException, IntegrationException {
-        if (applicationDownloadDTO.isIncludeAttachments()) {
-            for (int i = 0; i < bookmarks.size(); i++) {
-                pdfDocument.newPage();
+        for (int i = 0; i < bookmarks.size(); i++) {
+            pdfDocument.newPage();
 
-                NewPageEvent pageEvent = (NewPageEvent) pdfWriter.getPageEvent();
-                pageEvent.setApplyHeaderFooter(true);
+            NewPageEvent pageEvent = (NewPageEvent) pdfWriter.getPageEvent();
+            pageEvent.setApplyHeaderFooter(true);
 
-                Anchor anchor = new Anchor();
-                anchor.setName(String.valueOf(i));
+            Anchor anchor = new Anchor();
+            anchor.setName(String.valueOf(i));
 
-                Object object = bookmarks.get(i);
-                pdfDocument.add(new Chunk(propertyLoader.load(SYSTEM_APPENDIX) + "(" + (i + 1) + ")").setLocalDestination(new Integer(i).toString()));
-                if (object instanceof com.zuehlke.pgadmissions.domain.document.Document) {
-                    com.zuehlke.pgadmissions.domain.document.Document document = (com.zuehlke.pgadmissions.domain.document.Document) object;
+            Object object = bookmarks.get(i);
+            pdfDocument.add(new Chunk(propertyLoader.load(SYSTEM_APPENDIX) + "(" + (i + 1) + ")").setLocalDestination(new Integer(i).toString()));
+            if (object instanceof com.zuehlke.pgadmissions.domain.document.Document) {
+                com.zuehlke.pgadmissions.domain.document.Document document = (com.zuehlke.pgadmissions.domain.document.Document) object;
 
-                    if (document.getApplicationLanguageQualification() != null) {
-                        pdfDocument.add(buildTarget(APPLICATION_LANGUAGE_QUALIFICATION_APPENDIX, anchor));
-                    } else if (document.getApplicationQualification() != null) {
-                        pdfDocument.add(buildTarget(APPLICATION_QUALIFICATION_APPENDIX, anchor));
-                    } else if (document.getApplicationFunding() != null) {
-                        pdfDocument.add(buildTarget(APPLICATION_FUNDING_APPENDIX, anchor));
-                    } else if (document.getApplicationPersonalStatement() != null) {
-                        pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_PERSONAL_STATEMENT_APPENDIX, anchor));
-                    } else if (document.getApplicationCv() != null) {
-                        pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_CV_APPENDIX, anchor));
-                    }
+                if (document.getApplicationLanguageQualification() != null) {
+                    pdfDocument.add(buildTarget(APPLICATION_LANGUAGE_QUALIFICATION_APPENDIX, anchor));
+                } else if (document.getApplicationQualification() != null) {
+                    pdfDocument.add(buildTarget(APPLICATION_QUALIFICATION_APPENDIX, anchor));
+                } else if (document.getApplicationFunding() != null) {
+                    pdfDocument.add(buildTarget(APPLICATION_FUNDING_APPENDIX, anchor));
+                } else if (document.getApplicationPersonalStatement() != null) {
+                    pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_PERSONAL_STATEMENT_APPENDIX, anchor));
+                } else if (document.getApplicationCv() != null) {
+                    pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_CV_APPENDIX, anchor));
+                }
 
+                addDocument(pdfDocument, document, pdfWriter);
+            } else if (object instanceof Comment) {
+                Comment referenceComment = (Comment) object;
+                pdfDocument.add(buildTarget(APPLICATION_REFEREE_REFERENCE_APPENDIX, anchor));
+
+                pdfDocument.add(applicationDownloadBuilderHelper.newSectionSeparator());
+
+                PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.load(APPLICATION_REFEREE_REFERENCE_COMMENT));
+                applicationContext.getBean(ApplicationDownloadReferenceBuilder.class).localize(propertyLoader, applicationDownloadBuilderHelper)
+                        .addReferenceComment(pdfDocument, subBody, pdfWriter, applicationDownloadDTO.getApplication(), referenceComment);
+
+                for (com.zuehlke.pgadmissions.domain.document.Document document : referenceComment.getDocuments()) {
                     addDocument(pdfDocument, document, pdfWriter);
-                } else if (object instanceof Comment) {
-                    Comment referenceComment = (Comment) object;
-                    pdfDocument.add(buildTarget(APPLICATION_REFEREE_REFERENCE_APPENDIX, anchor));
-
-                    pdfDocument.add(applicationDownloadBuilderHelper.newSectionSeparator());
-
-                    PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.load(APPLICATION_REFEREE_REFERENCE_COMMENT));
-                    applicationContext.getBean(ApplicationDownloadReferenceBuilder.class).localize(propertyLoader, applicationDownloadBuilderHelper)
-                            .addReferenceComment(pdfDocument, subBody, pdfWriter, applicationDownloadDTO.getApplication(), referenceComment);
-
-                    for (com.zuehlke.pgadmissions.domain.document.Document document : referenceComment.getDocuments()) {
-                        addDocument(pdfDocument, document, pdfWriter);
-                    }
                 }
             }
         }
@@ -728,24 +721,24 @@ public class ApplicationDownloadBuilder {
                 fontSize, table);
     }
 
-    private void addDocument(PdfPTable table, String rowTitle, com.zuehlke.pgadmissions.domain.document.Document document, boolean includeAttachments) {
+    private void addBookmark(PdfPTable table, String rowTitle, Object object, ApplicationDownloadDTO applicationDownloadDTO) {
         table.addCell(applicationDownloadBuilderHelper.newTitleCellMedium(rowTitle));
-        if (includeAttachments) {
-            if (document == null) {
+        ApplicationDownloadMode downloadMode = applicationDownloadDTO.getDownloadMode();
+        boolean includeAttachments = applicationDownloadDTO.isIncludeAttachments();
+        if ((downloadMode == ApplicationDownloadMode.SYSTEM && includeAttachments)
+                || (downloadMode == ApplicationDownloadMode.USER && (includeAttachments || userService.isCurrentUser((User) ReflectionUtils.getProperty(object,
+                        "user"))))) {
+            if (object == null) {
                 table.addCell(applicationDownloadBuilderHelper.newContentCellMedium(null));
             } else {
-                addBookmark(table, document);
+                int index = bookmarks.size();
+                table.addCell(applicationDownloadBuilderHelper.newBookmarkCellMedium(
+                        propertyLoader.load(SYSTEM_SEE) + " " + propertyLoader.load(SYSTEM_APPENDIX) + " (" + (index + 1) + ")", index));
+                bookmarks.add(object);
             }
         } else {
-            table.addCell(applicationDownloadBuilderHelper.newContentCellMedium(document == null ? null : propertyLoader.load(SYSTEM_VALUE_PROVIDED)));
+            table.addCell(applicationDownloadBuilderHelper.newContentCellMedium(object == null ? null : propertyLoader.load(SYSTEM_VALUE_PROVIDED)));
         }
-    }
-
-    private void addBookmark(PdfPTable table, Object object) {
-        int index = bookmarks.size();
-        table.addCell(applicationDownloadBuilderHelper.newBookmarkCellMedium(propertyLoader.load(SYSTEM_SEE) + " " + propertyLoader.load(SYSTEM_APPENDIX)
-                + " (" + (index + 1) + ")", index));
-        bookmarks.add(object);
     }
 
     private void addLogoImage(Document pdfDocument) throws IOException, DocumentException {

@@ -14,10 +14,13 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationDownloadMode;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
@@ -95,18 +98,16 @@ public class ApplicationDownloadService {
                 try {
                     List<PrismActionEnhancement> actionEnhancements = actionService.getPermittedActionEnhancements(application, user);
                     if (actionEnhancements.size() > 0) {
-                        boolean includeEqualOpportunitiesData = actionEnhancements.contains(PrismActionEnhancement.APPLICATION_VIEW_AS_CREATOR)
+                        boolean includeEqualOpportunities = actionEnhancements.contains(PrismActionEnhancement.APPLICATION_VIEW_AS_CREATOR)
                                 || actionEnhancements.contains(PrismActionEnhancement.APPLICATION_VIEW_AS_ADMITTER)
                                 || actionEnhancements.contains(PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR)
                                 || actionEnhancements.contains(PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_ADMITTER);
 
-                        boolean includeAttachments = actionEnhancements.contains(PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER)
-                                || actionEnhancements.contains(PrismActionEnhancement.APPLICATION_VIEW_AS_ADMITTER)
-                                || actionEnhancements.contains(PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_RECRUITER)
-                                || actionEnhancements.contains(PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_ADMITTER);
+                        boolean includeReferences = !actionService.hasRedactions(PrismScope.APPLICATION, Sets.newHashSet(applicationIds), user);
 
                         ApplicationDownloadDTO applicationDownloadDTO = new ApplicationDownloadDTO().withApplication(application)
-                                .withIncludeEqualOpportuntiesData(includeEqualOpportunitiesData).withIncludeAttachments(includeAttachments);
+                                .withDownloadMode(ApplicationDownloadMode.USER).withIncludeEqualOpportunties(includeEqualOpportunities)
+                                .withIncludeAttachments(true).withIncludeReferences(includeReferences);
 
                         applicationContext.getBean(ApplicationDownloadBuilder.class)
                                 .localize(specificPropertyLoaders.get(program), specificApplicationDownloadBuilderHelpers.get(program))

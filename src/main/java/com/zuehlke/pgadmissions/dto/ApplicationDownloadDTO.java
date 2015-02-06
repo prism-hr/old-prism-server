@@ -1,12 +1,15 @@
 package com.zuehlke.pgadmissions.dto;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationDownloadMode;
 
 public class ApplicationDownloadDTO {
     
     private Application application;
+    
+    private ApplicationDownloadMode downloadMode;
 
-    private boolean includeEqualOpportunitiesData = false;
+    private boolean includeEqualOpportunities = false;
     
     private boolean includeReferences = false;
 
@@ -20,12 +23,20 @@ public class ApplicationDownloadDTO {
         this.application = application;
     }
 
-    public final boolean isIncludeEqualOpportunitiesData() {
-        return includeEqualOpportunitiesData;
+    public final ApplicationDownloadMode getDownloadMode() {
+        return downloadMode;
     }
 
-    public final void setIncludeEqualOpportunitiesData(boolean includeEqualOpportunitiesData) {
-        this.includeEqualOpportunitiesData = includeEqualOpportunitiesData;
+    public final void setDownloadMode(ApplicationDownloadMode downloadMode) {
+        this.downloadMode = downloadMode;
+    }
+
+    public final boolean isIncludeEqualOpportunities() {
+        return includeEqualOpportunities;
+    }
+
+    public final void setIncludeEqualOpportunities(boolean includeEqualOpportunitiesData) {
+        this.includeEqualOpportunities = includeEqualOpportunitiesData;
     }
 
     public final boolean isIncludeReferences() {
@@ -49,8 +60,13 @@ public class ApplicationDownloadDTO {
         return this;
     }
     
-    public ApplicationDownloadDTO withIncludeEqualOpportuntiesData(boolean includeEqualOpportunitiesData) {
-        this.includeEqualOpportunitiesData = includeEqualOpportunitiesData;
+    public ApplicationDownloadDTO withDownloadMode(ApplicationDownloadMode downloadMode) {
+        this.downloadMode = downloadMode;
+        return this;
+    }
+    
+    public ApplicationDownloadDTO withIncludeEqualOpportunties(boolean includeEqualOpportunities) {
+        this.includeEqualOpportunities = includeEqualOpportunities;
         return this;
     }
     

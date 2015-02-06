@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualificat
 import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationDownloadMode;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
@@ -87,7 +88,8 @@ public class ApplicationDocumentExportBuilder {
         zos.closeEntry();
     }
 
-    private void buildAcademicQualifications(Application application, Properties contentsProperties, ZipOutputStream zos) throws IOException, IntegrationException {
+    private void buildAcademicQualifications(Application application, Properties contentsProperties, ZipOutputStream zos) throws IOException,
+            IntegrationException {
         List<ApplicationQualification> qualifications = applicationService.getApplicationExportQualifications(application);
         int qualificationCount = qualifications.size();
         if (qualificationCount > 0) {
@@ -123,7 +125,8 @@ public class ApplicationDocumentExportBuilder {
                 .build(application));
     }
 
-    private void buildLanguageQualification(Application application, Properties contentsProperties, ZipOutputStream zos) throws IOException, IntegrationException {
+    private void buildLanguageQualification(Application application, Properties contentsProperties, ZipOutputStream zos) throws IOException,
+            IntegrationException {
         ApplicationPersonalDetail applicationPersonalDetail = application.getPersonalDetail();
         ApplicationLanguageQualification applicationLanguageQualification = applicationPersonalDetail == null ? null : applicationPersonalDetail
                 .getLanguageQualification();
@@ -151,7 +154,8 @@ public class ApplicationDocumentExportBuilder {
         }
     }
 
-    private void buildCv(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, IntegrationException {
+    private void buildCv(Application application, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException,
+            IntegrationException {
         ApplicationDocument applicationDocument = application.getDocument();
         Document document = applicationDocument == null ? null : applicationDocument.getCv();
         if (document != null) {
@@ -184,7 +188,8 @@ public class ApplicationDocumentExportBuilder {
         String applicationFilename = "ApplicationForm" + application.getCode() + ".pdf";
         zos.putNextEntry(new ZipEntry(serverfilename));
         try {
-            ApplicationDownloadDTO applicationDownloadDTO = new ApplicationDownloadDTO().withApplication(application).withIncludeEqualOpportuntiesData(true);
+            ApplicationDownloadDTO applicationDownloadDTO = new ApplicationDownloadDTO().withApplication(application)
+                    .withDownloadMode(ApplicationDownloadMode.SYSTEM).withIncludeEqualOpportunties(true);
             applicationDownloadService.build(applicationDownloadDTO, propertyLoader, applicationDownloadBuilderHelper, zos);
         } catch (Exception e) {
             throw new PdfDocumentBuilderException(e);
@@ -199,7 +204,8 @@ public class ApplicationDocumentExportBuilder {
         String applicationFilename = "MergedApplicationForm" + application.getCode() + ".pdf";
         zos.putNextEntry(new ZipEntry(serverfilename));
         try {
-            ApplicationDownloadDTO applicationDownloadDTO = new ApplicationDownloadDTO().withApplication(application).withIncludeReferences(true);
+            ApplicationDownloadDTO applicationDownloadDTO = new ApplicationDownloadDTO().withApplication(application)
+                    .withDownloadMode(ApplicationDownloadMode.SYSTEM).withIncludeReferences(true);
             applicationDownloadService.build(applicationDownloadDTO, propertyLoader, applicationDownloadBuilderHelper, zos);
         } catch (Exception e) {
             throw new PdfDocumentBuilderException(e);

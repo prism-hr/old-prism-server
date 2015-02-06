@@ -2,12 +2,15 @@ package com.zuehlke.pgadmissions.domain.user;
 
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -28,6 +31,10 @@ public class UserAccount {
 
     @Column(name = "password", nullable = false)
     private String password;
+    
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_account_external_id", unique = true)
+    private UserAccountExternal externalAccount;
 
     @Column(name = "temporary_password")
     private String temporaryPassword;
@@ -56,6 +63,14 @@ public class UserAccount {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+    
+    public final UserAccountExternal getExternalAccount() {
+        return externalAccount;
+    }
+
+    public final void setExternalAccount(UserAccountExternal externalAccount) {
+        this.externalAccount = externalAccount;
     }
 
     public String getTemporaryPassword() {

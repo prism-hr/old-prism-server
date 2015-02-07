@@ -252,7 +252,9 @@ public class ActionService {
         List<PrismRole> rolesOverridingRedactions = roleService.getRolesOverridingRedactions(resourceScope, user);
         if (rolesOverridingRedactions.isEmpty()) {
             List<PrismRole> roleIds = roleService.getRoles(user);
-            return actionDAO.getRedactions(resourceScope, resourceIds, roleIds);
+            if (!(resourceIds.isEmpty() || roleIds.isEmpty())) {
+                return actionDAO.getRedactions(resourceScope, resourceIds, roleIds);
+            }
         }
         return Lists.newArrayList();
     }

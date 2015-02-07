@@ -233,7 +233,7 @@ public class PrismApplicationReference extends PrismWorkflowState {
                 .withTransitions(Arrays.asList( //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_REFERENCE) //
-                        .withTransitionAction(PrismAction.APPLICATION_COMMENT) //
+                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) //
                         .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCED_OUTCOME) //
                         .withRoleTransitions(Arrays.asList( //
                             new PrismRoleTransition() //
@@ -243,7 +243,7 @@ public class PrismApplicationReference extends PrismWorkflowState {
                                 .withRestrictToOwner(true))),
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_REFERENCE_PENDING_COMPLETION) //
-                        .withTransitionAction(PrismAction.APPLICATION_COMMENT) //
+                        .withTransitionAction(PrismAction.APPLICATION_COMPLETE_REFERENCE_STAGE) //
                         .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCED_OUTCOME) //
                         .withRoleTransitions(Arrays.asList( //
                             new PrismRoleTransition() //
@@ -252,7 +252,7 @@ public class PrismApplicationReference extends PrismWorkflowState {
                                 .withTransitionRole(PrismRole.APPLICATION_VIEWER_REFEREE) //
                                 .withRestrictToOwner(true))),
                     new PrismStateTransition() //
-                        .withTransitionAction(PrismAction.APPLICATION_COMMENT) //
+                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) //
                         .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCED_OUTCOME) //
                         .withRoleTransitions(Arrays.asList( //
                             new PrismRoleTransition() //

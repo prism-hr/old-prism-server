@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -137,6 +136,12 @@ public class CommentService {
         return commentDAO.getEarliestComment(parentResource, resourceClass, actionId);
     }
 
+    public boolean isCommentOwner(Comment comment, User user) {
+        Integer userId = user.getId();
+        User ownerDelegate = comment.getDelegateUser();
+        return (comment.getUser().getId() == userId || (ownerDelegate != null && ownerDelegate.getId() == userId));
+    }
+
     public TimelineRepresentation getComments(Resource resource, User user) {
         TimelineRepresentation timeline = new TimelineRepresentation();
         List<Comment> transitionComments = commentDAO.getStateGroupTransitionComments(resource);
@@ -146,6 +151,7 @@ public class CommentService {
             PrismStateGroup stateGroupId = null;
             List<Comment> previousStateComments = Lists.newArrayList();
 
+            List<PrismRole> rolesOverridingRedactions = roleService.getRolesOverridingRedactions(resource, user);
             List<PrismRole> creatableRoles = roleService.getCreatableRoles(resource.getResourceScope());
             HashMultimap<PrismAction, PrismActionRedactionType> redactions = actionService.getRedactions(resource, user);
 
@@ -161,9 +167,10 @@ public class CommentService {
                 TimelineCommentGroupRepresentation commentGroup = new TimelineCommentGroupRepresentation().withStateGroup(stateGroupId);
 
                 for (Comment comment : stateComments) {
+                    Set<PrismActionRedactionType> commentRedactions = redactions.get(comment.getAction().getId());
                     if (comment.isViewEditComment()) {
                         if (lastViewEditComment == null || lastViewEditComment.getCreatedTimestamp().plusHours(1).isBefore(comment.getCreatedTimestamp())) {
-                            CommentRepresentation representation = getCommentRepresentation(user, comment, redactions.get(comment.getAction().getId()),
+                            CommentRepresentation representation = getCommentRepresentation(user, comment, rolesOverridingRedactions, commentRedactions,
                                     creatableRoles);
                             commentGroup.addComment(representation);
                             batchedViewEditCommentIds = Lists.newArrayList(comment.getId());
@@ -181,7 +188,7 @@ public class CommentService {
                             lastViewEditComment.setAssignedUsers(getAssignedUsers(batchedViewEditCommentIds, creatableRoles));
                         }
                     } else {
-                        CommentRepresentation representation = getCommentRepresentation(user, comment, redactions.get(comment.getAction().getId()),
+                        CommentRepresentation representation = getCommentRepresentation(user, comment, rolesOverridingRedactions, commentRedactions,
                                 creatableRoles);
                         commentGroup.addComment(representation);
                     }
@@ -539,20 +546,18 @@ public class CommentService {
         }
     }
 
-    private CommentRepresentation getCommentRepresentation(User user, Comment comment, Set<PrismActionRedactionType> redactions, List<PrismRole> creatableRoles) {
+    private CommentRepresentation getCommentRepresentation(User user, Comment comment, List<PrismRole> rolesOverridingRedactions,
+            Set<PrismActionRedactionType> redactions, List<PrismRole> creatableRoles) {
         Action action = comment.getAction();
-        Integer userId = user.getId();
 
         User author = comment.getUser();
         User authorDelegate = comment.getDelegateUser();
 
         CommentRepresentation representation;
-        if (redactions.isEmpty() || userId.equals(author.getId()) || (authorDelegate != null && userId.equals(authorDelegate.getId()))
-                || BooleanUtils.isTrue(roleService.getOverrideRedaction(user, comment.getResource()))) {
+        if (!rolesOverridingRedactions.isEmpty() || redactions.isEmpty() || isCommentOwner(comment, user)) {
             representation = mapper.map(comment, CommentRepresentation.class);
             appendCommentAssignedUsers(comment, representation, creatableRoles);
         } else {
-
             UserRepresentation authorRepresentation = new UserRepresentation().withFirstName(author.getFirstName()).withLastName(author.getLastName())
                     .withEmail(author.getEmail());
             UserRepresentation authorDelegateRepresenation = authorDelegate == null ? null : new UserRepresentation()

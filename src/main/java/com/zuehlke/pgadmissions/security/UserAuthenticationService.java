@@ -1,10 +1,11 @@
 package com.zuehlke.pgadmissions.security;
 
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
+
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
 public class UserAuthenticationService {

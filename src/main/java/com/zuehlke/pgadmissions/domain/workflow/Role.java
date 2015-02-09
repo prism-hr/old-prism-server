@@ -34,9 +34,6 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
 
     @Column(name = "scope_creator", nullable = false)
     private Boolean scopeCreator;
-    
-    @Column(name = "override_redaction", nullable = false)
-    private Boolean overrideRedaction;
 
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
@@ -51,6 +48,9 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
 
     @OneToMany(mappedBy = "role")
     private Set<StateActionAssignment> stateActionAssignments = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "role")
+    private Set<ActionRedaction> actionRedactions = Sets.newHashSet();
 
     @Override
     public PrismRole getId() {
@@ -67,14 +67,6 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
 
     public void setScopeCreator(Boolean scopeCreator) {
         this.scopeCreator = scopeCreator;
-    }
-    
-    public final Boolean getOverrideRedaction() {
-        return overrideRedaction;
-    }
-
-    public final void setOverrideRedaction(Boolean overrideRedaction) {
-        this.overrideRedaction = overrideRedaction;
     }
 
     @Override
@@ -99,6 +91,10 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
         return stateActionAssignments;
     }
 
+    public final Set<ActionRedaction> getActionRedactions() {
+        return actionRedactions;
+    }
+
     public Role withId(PrismRole id) {
         this.id = id;
         return this;
@@ -106,11 +102,6 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
 
     public Role withScopeCreator(Boolean scopeCreator) {
         this.scopeCreator = scopeCreator;
-        return this;
-    }
-
-    public Role withOverrideRedaction(Boolean overrideRedaction) {
-        this.overrideRedaction = overrideRedaction;
         return this;
     }
     

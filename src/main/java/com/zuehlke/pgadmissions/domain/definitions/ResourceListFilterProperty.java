@@ -43,7 +43,10 @@ public enum ResourceListFilterProperty implements FilterProperty {
     CONFIRMED_START_DATE("confirmedStartDate", DATE, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER), Arrays.asList(APPLICATION)), //
     RATING("applicationRatingAverage", NUMBER, Arrays.asList(BETWEEN, GREATER, LESSER), Arrays.asList(APPLICATION, PROJECT, PROGRAM, INSTITUTION)), //
     REFERRER("referrer", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION, PROJECT, PROGRAM, INSTITUTION)), //
-    SUPERVISOR("id", STRING, Arrays.asList(FilterExpression.CONTAIN), Arrays.asList(APPLICATION)), //
+    SUPERVISOR("id", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION)), //
+    PROJECT_USER("id", STRING, Arrays.asList(CONTAIN), Arrays.asList(PROJECT)), //
+    PROGRAM_USER("id", STRING, Arrays.asList(CONTAIN), Arrays.asList(PROGRAM)), //
+    INSTITUTION_USER("id", STRING, Arrays.asList(CONTAIN), Arrays.asList(INSTITUTION)), //
     PRIMARY_THEME("primaryTheme", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION)), //
     SECONDARY_THEME("secondaryTheme", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION));
 

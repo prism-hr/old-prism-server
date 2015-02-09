@@ -568,6 +568,19 @@ public class ResourceService {
                                 PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.APPLICATION_SUGGESTED_SUPERVISOR, PrismRole.APPLICATION_PRIMARY_SUPERVISOR,
                                 PrismRole.APPLICATION_SECONDARY_SUPERVISOR), negated);
                         break;
+                    case PROJECT_USER:
+                        appendUserRoleFilterCriteria(scopeId, conditions, constraint, propertyName,
+                                Arrays.asList(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.PROJECT_ADMINISTRATOR),
+                                negated);
+                        break;
+                    case PROGRAM_USER:
+                        appendUserRoleFilterCriteria(scopeId, conditions, constraint, propertyName,
+                                Arrays.asList(PrismRole.PROGRAM_ADMINISTRATOR, PrismRole.PROGRAM_APPROVER, PrismRole.PROGRAM_VIEWER), negated);
+                        break;
+                    case INSTITUTION_USER:
+                        appendUserRoleFilterCriteria(scopeId, conditions, constraint, propertyName,
+                                Arrays.asList(PrismRole.INSTITUTION_ADMINISTRATOR, PrismRole.INSTITUTION_ADMITTER), negated);
+                        break;
                     }
                 } else {
                     ResourceListConstraintBuilder.throwResourceFilterListMissingPropertyError(scopeId, property);

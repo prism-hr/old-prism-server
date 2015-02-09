@@ -36,14 +36,15 @@ public class RoleDAO {
                 .add(Restrictions.eq("user", user)) //
                 .list();
     }
-
+    
     public List<PrismRole> getRolesOverridingRedactions(PrismScope resourceScope, User user) {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("role.id")) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.actionRedactions", "actionRedaction", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq("role.scope.id", resourceScope)) //
-                .add(Restrictions.eq("role.overrideRedaction", true)) //
+                .add(Restrictions.isNull("actionRedaction.id")) //
                 .list();
     }
 
@@ -52,13 +53,14 @@ public class RoleDAO {
                 .setProjection(Projections.groupProperty("role.id")) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
+                .createAlias("role.actionRedactions", "actionRedaction", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("system", resource.getSystem())) //
                         .add(Restrictions.eq("institution", resource.getInstitution())) //
                         .add(Restrictions.eq("program", resource.getProgram())) //
                         .add(Restrictions.eq("project", resource.getProject())) //
                         .add(Restrictions.eq("application", resource.getApplication()))) //
-                .add(Restrictions.eq("role.overrideRedaction", true)) //
+                .add(Restrictions.isNull("actionRedaction.id")) //
                 .list();
     }
 
@@ -220,15 +222,6 @@ public class RoleDAO {
                 .add(Restrictions.eq("user", user)) //
                 .addOrder(Order.asc("scope.precedence")) //
                 .setMaxResults(1) //
-                .uniqueResult();
-    }
-
-    public Boolean getOverrideRedaction(User user, Resource resource) {
-        return (Boolean) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.max("role.overrideRedaction")) //
-                .createAlias("role", "role", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
-                .add(Restrictions.eq("user", user)) //
                 .uniqueResult();
     }
 

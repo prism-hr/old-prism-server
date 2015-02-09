@@ -63,6 +63,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.services.ActionService;
+import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -85,6 +86,9 @@ public class ApplicationDownloadBuilder {
 
     @Autowired
     private ActionService actionService;
+
+    @Autowired
+    private CommentService commentService;
 
     @Autowired
     private CustomizationService customizationService;
@@ -561,11 +565,15 @@ public class ApplicationDownloadBuilder {
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_EMPLOYER_NAME), referee.getJobEmployer(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_POSITION_TITLE), referee.getJobTitle(), subBody);
 
-                ApplicationDownloadMode downloadMode = applicationDownloadDTO.getDownloadMode();
-                boolean includeReferences = applicationDownloadDTO.isIncludeReferences();
-                if ((downloadMode == ApplicationDownloadMode.SYSTEM && includeReferences)
-                        || (downloadMode == ApplicationDownloadMode.USER && (includeReferences || userService.isCurrentUser(user)))) {
-                    addBookmark(subBody, propertyLoader.load(APPLICATION_REFEREE_REFERENCE_APPENDIX), referee.getComment(), applicationDownloadDTO);
+                Comment referenceComment = referee.getComment();
+                if (referenceComment != null) {
+                    ApplicationDownloadMode downloadMode = applicationDownloadDTO.getDownloadMode();
+                    boolean includeReferences = applicationDownloadDTO.isIncludeReferences();
+                    if ((downloadMode == ApplicationDownloadMode.SYSTEM && includeReferences)
+                            || (downloadMode == ApplicationDownloadMode.USER && (includeReferences || commentService.isCommentOwner(referenceComment,
+                                    userService.getCurrentUser())))) {
+                        addBookmark(subBody, propertyLoader.load(APPLICATION_REFEREE_REFERENCE_APPENDIX), referee.getComment(), applicationDownloadDTO);
+                    }
                 }
 
                 applicationDownloadBuilderHelper.closeSection(pdfDocument, subBody);

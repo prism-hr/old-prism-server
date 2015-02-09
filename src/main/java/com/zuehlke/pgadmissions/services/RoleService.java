@@ -138,11 +138,11 @@ public class RoleService {
     public List<PrismRole> getRolesOverridingRedactions(PrismScope resourceScope, User user) {
         return roleDAO.getRolesOverridingRedactions(resourceScope, user);
     }
-    
+
     public List<PrismRole> getRolesOverridingRedactions(Resource resource, User user) {
         return roleDAO.getRolesOverridingRedactions(resource, user);
     }
-    
+
     public List<PrismRole> getRoles(Resource resource, User user) {
         return roleDAO.getRoles(resource, user);
     }
@@ -208,10 +208,6 @@ public class RoleService {
         Role viewer = getById(PrismRole.APPLICATION_VIEWER_REFEREE);
         UserRole newUserRole = new UserRole().withResource(resource).withUser(user).withRole(viewer);
         executeUpdateUserRole(oldUserRole, newUserRole, comment);
-    }
-    
-    public Boolean getOverrideRedaction(User user, Resource resource) {
-        return roleDAO.getOverrideRedaction(user, resource);
     }
 
     private void executeRoleTransitions(Resource resource, Comment comment, List<RoleTransition> roleTransitions) {
@@ -347,7 +343,7 @@ public class RoleService {
             getOrCreateUserRole(transitionUserRole);
         }
     }
-    
+
     private void executeReviveUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
         UserRole persistentRole = entityService.getDuplicateEntity(userRole);
         if (persistentRole != null) {

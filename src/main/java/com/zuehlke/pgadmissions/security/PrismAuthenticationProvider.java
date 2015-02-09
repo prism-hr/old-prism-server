@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.security;
 
-import com.zuehlke.pgadmissions.domain.user.User;
+import java.security.NoSuchAlgorithmException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.NoSuchAlgorithmException;
+import com.zuehlke.pgadmissions.domain.user.User;
 
 public class PrismAuthenticationProvider implements AuthenticationProvider {
 

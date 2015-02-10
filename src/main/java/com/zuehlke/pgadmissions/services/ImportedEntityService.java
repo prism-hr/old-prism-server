@@ -70,7 +70,7 @@ import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 @SuppressWarnings("unchecked")
 public class ImportedEntityService {
 
-    private static DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("dd-MMM-yy");
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormat.forPattern("dd-MMM-yy");
 
     @Autowired
     private ImportedEntityDAO importedEntityDAO;
@@ -153,8 +153,8 @@ public class ImportedEntityService {
         for (ProgrammeOccurrence occurrence : programInstanceDefinitions) {
             StudyOption studyOption = mergeStudyOption(institution, occurrence.getModeOfAttendance());
 
-            LocalDate transientStartDate = dateFormatter.parseLocalDate(occurrence.getStartDate());
-            LocalDate transientCloseDate = dateFormatter.parseLocalDate(occurrence.getEndDate());
+            LocalDate transientStartDate = DATE_FORMAT.parseLocalDate(occurrence.getStartDate());
+            LocalDate transientCloseDate = DATE_FORMAT.parseLocalDate(occurrence.getEndDate());
 
             ProgramStudyOption transientProgramStudyOption = new ProgramStudyOption().withProgram(persistentProgram).withStudyOption(studyOption)
                     .withApplicationStartDate(transientStartDate).withApplicationCloseDate(transientCloseDate)

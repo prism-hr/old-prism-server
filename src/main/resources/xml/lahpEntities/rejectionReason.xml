@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rejectionReasons>
+	<rejectionReason>
+		<code>INELIGIBLE_ADMISSION</code>
+		<name>Your application was not considered eligible because you have not 
+			been admitted to your chosen study institution.
+		</name>
+	</rejectionReason>
+	<rejectionReason>
+		<code>INELIGIBLE_FEE_STATUS</code>
+		<name>Your application was not considered eligible because your student
+			fee status has been determined to be overseas. This means that we are
+			not able to award you with funding.
+		</name>
+	</rejectionReason>
+	<rejectionReason>
+		<code>INELIGIBLE_REMIT</code>
+		<name>Your application was not considered eligible because the research
+			that you intend to conduct is not within the remit of our funding.
+		</name>
+	</rejectionReason>
+	<rejectionReason>
+		<code>OPPORTUNITY_OVERSUBSCRIBED</code>
+		<name>Although you may be suitable for the funding that we offer,
+			the competition for places was such that we were not able to progress
+			your application on this occasion.
+		</name>
+	</rejectionReason>
+	<rejectionReason>
+		<code>WITHDRAWN</code>
+		<name>You have informed us that you no longer wish to be considered.
+		</name>
+	</rejectionReason>
+</rejectionReasons>

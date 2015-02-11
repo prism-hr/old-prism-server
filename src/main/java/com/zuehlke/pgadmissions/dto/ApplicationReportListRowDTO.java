@@ -29,6 +29,8 @@ public class ApplicationReportListRowDTO {
 
     private String institution;
 
+    private String department;
+
     private String program;
 
     private String project;
@@ -165,6 +167,14 @@ public class ApplicationReportListRowDTO {
 
     public final void setInstitution(String institution) {
         this.institution = institution;
+    }
+
+    public final String getDepartment() {
+        return department;
+    }
+
+    public final void setDepartment(String department) {
+        this.department = department;
     }
 
     public final String getProgram() {
@@ -465,6 +475,10 @@ public class ApplicationReportListRowDTO {
 
     public String getInstitutionDisplay() {
         return institution == null ? "" : institution;
+    }
+
+    public String getDepartmentDisplay() {
+        return department == null ? "" : department;
     }
 
     public String getProgramDisplay() {

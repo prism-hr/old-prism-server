@@ -13,3 +13,15 @@ alter table program
 	add index (department_id, sequence_identifier),
 	add foreign key (department_id) references department (id)
 ;
+
+delete
+from display_property_configuration
+where display_property_definition_id in (
+	select id from display_property_definition
+	where id in ("INSTITUTION_HEADER", "PROGRAM_HEADER", "PROJECT_HEADER"))
+;
+
+delete 
+from display_property_definition
+where id in ("INSTITUTION_HEADER", "PROGRAM_HEADER", "PROJECT_HEADER")
+;

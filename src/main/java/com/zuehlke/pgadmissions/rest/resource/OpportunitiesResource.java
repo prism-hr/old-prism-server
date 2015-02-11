@@ -51,6 +51,8 @@ public class OpportunitiesResource {
             representation.setAcceptingApplication((advert.isProgramAdvert() && activeProgramStates.contains(advert.getProgram().getState().getId()))
                     || (advert.isProjectAdvert() && activeProjectStates.contains(advert.getProject().getState().getId())));
 
+            
+            
             Resource resource = advert.getProgram() != null ? advert.getProgram() : advert.getProject();
             representation.setUser(dozerBeanMapper.map(resource.getUser(), UserRepresentation.class));
             representation.setResourceScope(resource.getResourceScope());

@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -322,6 +323,10 @@ public class Advert {
         return isProjectAdvert() ? project.getInstitution() : program.getInstitution();
     }
 
+    public Department getDepartment() {
+        return isProjectAdvert() ? project.getProgram().getDepartment() : program.getDepartment();
+    }
+    
     public boolean hasConvertedFee() {
         return fee != null && !fee.getCurrencySpecified().equals(fee.getCurrencyAtLocale());
     }

@@ -348,6 +348,7 @@ public class ImportedEntityService {
             entityService.save(transientProgram);
             persistentProgram = transientProgram;
         } else {
+            persistentProgram.setDepartment(department);
             persistentProgram.setTitle(transientTitle);
             persistentProgram.setRequireProjectDefinition(transientRequireProjectDefinition);
         }

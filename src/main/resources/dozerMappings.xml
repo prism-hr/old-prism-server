@@ -364,6 +364,17 @@
 			<b>definitionId</b>
 		</field>
 	</mapping>
+	
+	<mapping>
+		<class-a>com.zuehlke.pgadmissions.domain.advert.Advert
+		</class-a>
+		<class-b>com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation
+		</class-b>
+		<field type="one-way" copy-by-reference="true">
+			<a>department.title</a>
+			<b>department</b>
+		</field>
+	</mapping>
 
 	<mapping>
 		<class-a>com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition

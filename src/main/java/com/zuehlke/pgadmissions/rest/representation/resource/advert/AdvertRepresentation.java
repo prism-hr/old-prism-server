@@ -70,6 +70,8 @@ public class AdvertRepresentation {
     private List<String> locations;
 
     private InstitutionRepresentation institution;
+    
+    private String department;
 
     private String sequenceIdentifier;
 
@@ -295,6 +297,14 @@ public class AdvertRepresentation {
 
     public void setInstitution(InstitutionRepresentation institution) {
         this.institution = institution;
+    }
+
+    public final String getDepartment() {
+        return department;
+    }
+
+    public final void setDepartment(String department) {
+        this.department = department;
     }
 
     public final String getSequenceIdentifier() {

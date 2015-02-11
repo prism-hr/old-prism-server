@@ -46,12 +46,14 @@ public class AdvertDAO {
                 .createAlias("address", "address", JoinType.INNER_JOIN) //
                 .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program.institution", "institution", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("program.department", "department", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program.programType", "programType", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program.studyOptions", "programStudyOption", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("programStudyOption.studyOption", "studyOption", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("project", "project", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("project.program", "projectProgram", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("projectProgram.institution", "projectInstitution", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("projectProgram.department", "projectDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("projectProgram.programType", "projectProgramType", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("projectProgram.studyOptions", "projectProgramStudyOption", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("projectProgramStudyOption.studyOption", "projectStudyOption", JoinType.LEFT_OUTER_JOIN) //
@@ -71,13 +73,12 @@ public class AdvertDAO {
 
         appendProgramTypeConstraint(criteria, queryDTO);
         appendStudyOptionConstraint(queryDTO, criteria);
-
         appendFeeConstraint(criteria, queryDTO);
         appendPayConstraint(criteria, queryDTO);
-
         appendDurationConstraint(criteria, queryDTO);
+        
         appendInstitutionsConstraint(criteria, queryDTO);
-
+        appendDepartmentsConstraint(queryDTO, criteria);
         appendProgramsConstraint(queryDTO, criteria);
         appendProjectsConstraint(queryDTO, criteria);
 
@@ -228,9 +229,11 @@ public class AdvertDAO {
                     .add(Restrictions.ilike("description", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("project.title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("program.title", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("department.title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("institution.title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("institution.summary", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("projectProgram.title", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("projectDepartment.title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("projectInstitution.title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("projectInstitution.summary", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("user.firstName", keyword, MatchMode.ANYWHERE)) //
@@ -288,6 +291,15 @@ public class AdvertDAO {
         }
     }
 
+    private void appendDepartmentsConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
+        Integer[] departments = queryDTO.getDepartments();
+        if (departments != null) {
+            criteria.add(Restrictions.disjunction() //
+                    .add(Restrictions.in("department.id", departments)) //
+                    .add(Restrictions.in("projectDepartment.id", departments)));
+        }
+    }
+    
     private void appendProgramsConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
         Integer[] programs = queryDTO.getPrograms();
         if (programs != null) {

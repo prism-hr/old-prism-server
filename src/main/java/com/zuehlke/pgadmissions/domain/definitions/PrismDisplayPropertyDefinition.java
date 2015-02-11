@@ -21,7 +21,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCa
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_WORKFLOW;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_STATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_STATE_GROUP;
@@ -31,7 +30,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCa
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_STATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_STATE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_STATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_STATE_GROUP;
@@ -55,6 +53,7 @@ public enum PrismDisplayPropertyDefinition {
 
     SYSTEM_SYSTEM(SYSTEM_GLOBAL, "System", SYSTEM), //
     SYSTEM_INSTITUTION(SYSTEM_GLOBAL, "Institution", SYSTEM), //
+    SYSTEM_DEPARTMENT(SYSTEM_GLOBAL, "Department", SYSTEM), //
     SYSTEM_PROGRAM(SYSTEM_GLOBAL, "Program", SYSTEM), //
     SYSTEM_PROJECT(SYSTEM_GLOBAL, "Project", SYSTEM), //
     SYSTEM_APPLICATION(SYSTEM_GLOBAL, "Application", SYSTEM), //
@@ -127,9 +126,7 @@ public enum PrismDisplayPropertyDefinition {
     SYSTEM_COMMENT_INITIALIZED_SYSTEM(SYSTEM_COMMENT, "System initialised and ready to use", SYSTEM), //
     SYSTEM_COMMENT_INITIALIZED_INSTITUTION(SYSTEM_COMMENT, "Institution initialised and ready to use", SYSTEM), //
     SYSTEM_COMMENT_CUSTOM_FORM_WEIGHT_ERROR(SYSTEM_COMMENT, "The weights for your rating fields must add up to one", SYSTEM), //
-    SYSTEM_USER_ALREADY_LINKED(SYSTEM_VALIDATION_ERROR, "User is already linked", SYSTEM),
-    INSTITUTION_HEADER(INSTITUTION_GLOBAL, "Institution", INSTITUTION), //
-    INSTITUTION_COMMENT_APPROVED(
+    SYSTEM_USER_ALREADY_LINKED(SYSTEM_VALIDATION_ERROR, "User is already linked", SYSTEM), INSTITUTION_COMMENT_APPROVED(
             INSTITUTION_COMMENT,
             "We are pleased to tell you that your institution has been approved. We will send you a message with further instructions when your institution is ready to use. If you do not receive this message within 1 hour, please contact our helpdesk",
             INSTITUTION), //
@@ -153,7 +150,6 @@ public enum PrismDisplayPropertyDefinition {
     INSTITUTION_COMMENT_UPDATED_DISPLAY_PROPERTY(INSTITUTION_COMMENT, "Updated institution display property configuration", INSTITUTION), //
     INSTITUTION_COMMENT_RESTORED_DISPLAY_PROPERTY_DEFAULT(INSTITUTION_COMMENT, "Restored system default display property configuration", INSTITUTION), //
     INSTITUTION_COMMENT_RESTORED_DISPLAY_PROPERTY_GLOBAL(INSTITUTION_COMMENT, "Restored institution global display property configuration", INSTITUTION), //
-    PROGRAM_HEADER(PROGRAM_GLOBAL, "Program", PROGRAM), //
     PROGRAM_STUDY_OPTION(PROGRAM_GLOBAL, "Study Option", PROGRAM), //
     PROGRAM_STUDY_OPTION_FULL_TIME(PROGRAM_GLOBAL, "Full Time", PROGRAM), //
     PROGRAM_STUDY_OPTION_PART_TIME(PROGRAM_GLOBAL, "Part Time", PROGRAM), //
@@ -195,7 +191,6 @@ public enum PrismDisplayPropertyDefinition {
     PROGRAM_COMMENT_UPDATED_FEE_AND_PAYMENT(PROGRAM_COMMENT, "Updated program fees and payments", PROGRAM), //
     PROGRAM_COMMENT_UPDATED_CATEGORY(PROGRAM_COMMENT, "Updated program categories", PROGRAM), //
     PROGRAM_COMMENT_UPDATED_CLOSING_DATE(PROGRAM_COMMENT, "Updated program closing dates", PROGRAM), //
-    PROJECT_HEADER(PROJECT_GLOBAL, "Project", PROJECT), //
     PROJECT_COMMENT_APPROVED(PROJECT_COMMENT,
             "We are pleased to tell you that your project has been approved. You may now login to create users and manage your recruitment", PROJECT), //
     PROJECT_COMMENT_CORRECTION(PROJECT_COMMENT, "Further information is required to activate your project. Please login to address the reviewers comments",

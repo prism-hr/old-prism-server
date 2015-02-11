@@ -56,6 +56,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -700,12 +701,18 @@ public class ApplicationDownloadBuilder {
     }
 
     private void addApplicationSummary(Application application, PdfPTable table, ApplicationDownloadBuilderFontSize fontSize) {
-        applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(INSTITUTION_HEADER), application.getInstitutionDisplay(), fontSize, table);
-        applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(PROGRAM_HEADER), application.getProgramDisplay(), fontSize, table);
+        applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(SYSTEM_INSTITUTION), application.getInstitutionDisplay(), fontSize, table);
+        
+        Department department = application.getDepartment();
+        if (department != null) {
+            applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(SYSTEM_DEPARTMENT), application.getDepartmentDisplay(), fontSize, table);
+        }
+        
+        applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(SYSTEM_PROGRAM), application.getProgramDisplay(), fontSize, table);
 
         Project project = application.getProject();
         if (project != null) {
-            applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(PROJECT_HEADER), application.getProjectDisplay(), fontSize, table);
+            applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(SYSTEM_PROJECT), application.getProjectDisplay(), fontSize, table);
         }
 
         applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(APPLICATION_PREVIOUS_APPLICATION),

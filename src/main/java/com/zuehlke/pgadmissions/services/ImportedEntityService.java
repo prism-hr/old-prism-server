@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.imported.Domicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
@@ -80,6 +81,9 @@ public class ImportedEntityService {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private DepartmentService departmentService;
 
     @Autowired
     private EntityService entityService;
@@ -331,7 +335,10 @@ public class ImportedEntityService {
         DateTime baselineDateTime = new DateTime();
 
         ProgramType programType = getImportedEntityByCode(ProgramType.class, institution, programTypeId.name());
-        Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution)
+        Department department = departmentService.getOrCreateDepartment(new Department().withInstitution(institution).withTitle(
+                programDefinition.getDepartment()));
+
+        Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withDepartment(department)
                 .withImportedCode(programDefinition.getCode()).withTitle(transientTitleClean).withRequireProjectDefinition(transientRequireProjectDefinition)
                 .withImported(true).withAdvert(transientAdvert).withProgramType(programType).withUser(proxyCreator).withCreatedTimestamp(baselineDateTime)
                 .withUpdatedTimestamp(baselineDateTime);
@@ -403,7 +410,7 @@ public class ImportedEntityService {
 
         User invoker = program.getUser();
         Role invokerRole = roleService.getCreatorRole(program);
-        
+
         State state = program.getState();
         PrismState transitionStateId = PrismState.PROGRAM_APPROVED;
         if (state != null && state.getId() == PrismState.PROGRAM_DEACTIVATED) {
@@ -411,7 +418,7 @@ public class ImportedEntityService {
         }
 
         State transitionState = stateService.getById(transitionStateId);
-        
+
         Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(baselineTime).withAction(action).withDeclinedResponse(false)
                 .withTransitionState(transitionState).addAssignedUser(invoker, invokerRole, PrismRoleTransitionType.CREATE);
         actionService.executeAction(program, action, comment);

@@ -32,6 +32,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_AVERAGE_RATING;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_CLOSING_DATE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_CREATED_DATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EMAIL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ID;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_INSTITUTION;
@@ -67,6 +68,7 @@ public enum PrismReportColumn {
     USER_DATE_OF_BIRTH(APPLICATION_PERSONAL_DETAIL_DATE_OF_BIRTH, "personalDetail.dateOfBirth", null, null, "dateOfBirth", DATE), //
     USER_GENDER(APPLICATION_PERSONAL_DETAIL_GENDER, "gender.name", null, null, "gender", STRING), //
     INSTITUTION_TITLE(SYSTEM_INSTITUTION, "institution.title", null, null, "institution", STRING), //
+    DEPARMENT_TITLE(SYSTEM_DEPARTMENT, "department.title", null, null, "department", STRING), //
     PROGRAM_TITLE(SYSTEM_PROGRAM, "program.title", null, null, "program", STRING), //
     PROJECT_TITLE(SYSTEM_PROJECT, "project.title", null, null, "project", STRING), //
     STUDY_OPTION(PROGRAM_STUDY_OPTION, "studyOption.code", null, null, "studyOption", DISPLAY_PROPERTY), //

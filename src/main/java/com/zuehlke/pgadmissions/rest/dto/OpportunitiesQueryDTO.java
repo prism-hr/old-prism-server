@@ -34,6 +34,8 @@ public class OpportunitiesQueryDTO {
     private Integer maxDuration;
 
     private Integer[] institutions;
+    
+    private Integer[] departments;
 
     private Integer[] programs;
 
@@ -139,6 +141,14 @@ public class OpportunitiesQueryDTO {
 
     public final void setInstitutions(Integer[] institutions) {
         this.institutions = institutions;
+    }
+    
+    public final Integer[] getDepartments() {
+        return departments;
+    }
+
+    public final void setDepartments(Integer[] departments) {
+        this.departments = departments;
     }
 
     public final Integer[] getPrograms() {

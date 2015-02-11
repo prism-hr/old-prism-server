@@ -210,6 +210,7 @@ public class ApplicationDAO {
                         + "left join personalDetail.gender as gender " //
                         + "join application.institution as institution " //
                         + "join application.program as program " //
+                        + "left join program.department as department " //
                         + "left join application.project as project " //
                         + "left join application.programDetail as programDetail " //
                         + "left join programDetail.studyOption as studyOption " //

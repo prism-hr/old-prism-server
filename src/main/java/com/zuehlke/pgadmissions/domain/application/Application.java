@@ -38,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -743,8 +744,17 @@ public class Application extends Resource {
         return parentResources;
     }
 
+    public Department getDepartment() {
+        return program.getDepartment();
+    }
+
     public String getInstitutionDisplay() {
         return institution == null ? null : institution.getTitle();
+    }
+
+    public String getDepartmentDisplay() {
+        Department department = getDepartment();
+        return department == null ? null : department.getTitle();
     }
 
     public String getProgramDisplay() {

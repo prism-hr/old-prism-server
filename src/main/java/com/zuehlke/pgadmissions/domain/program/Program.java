@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.imported.ProgramType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -73,6 +74,11 @@ public class Program extends ResourceParent {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
+    
+    @ManyToOne
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     @Column(name = "referrer")
     private String referrer;
@@ -217,6 +223,14 @@ public class Program extends ResourceParent {
     @Override
     public void setInstitution(Institution institution) {
         this.institution = institution;
+    }
+    
+    public final Department getDepartment() {
+        return department;
+    }
+
+    public final void setDepartment(Department department) {
+        this.department = department;
     }
 
     @Override
@@ -605,6 +619,11 @@ public class Program extends ResourceParent {
 
     public Program withInstitution(Institution institution) {
         this.institution = institution;
+        return this;
+    }
+    
+    public Program withDepartment(Department department) {
+        this.department = department;
         return this;
     }
 

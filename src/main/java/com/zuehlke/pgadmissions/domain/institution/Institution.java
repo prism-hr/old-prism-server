@@ -1,29 +1,5 @@
 package com.zuehlke.pgadmissions.domain.institution;
 
-import java.math.BigDecimal;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -42,9 +18,18 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.ResourceAction;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Set;
 
 @Entity
-@Table(name = "INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_domicile_id", "title", "google_id" }) })
+@Table(name = "INSTITUTION", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_domicile_id", "title", "google_id"})})
 public class Institution extends ResourceParent {
 
     @Id
@@ -158,7 +143,7 @@ public class Institution extends ResourceParent {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
-    
+
     @Column(name = "updated_timestamp_sitemap", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestampSitemap;
@@ -423,12 +408,12 @@ public class Institution extends ResourceParent {
     }
 
     @Override
-    public final Set<ResourceState> getResourceStates() {
+    public Set<ResourceState> getResourceStates() {
         return resourceStates;
     }
 
     @Override
-    public final Set<ResourcePreviousState> getResourcePreviousStates() {
+    public Set<ResourcePreviousState> getResourcePreviousStates() {
         return resourcePreviousStates;
     }
 
@@ -654,41 +639,41 @@ public class Institution extends ResourceParent {
         this.updatedTimestamp = updatedTimestamp;
     }
 
-    public final DateTime getUpdatedTimestampSitemap() {
+    public DateTime getUpdatedTimestampSitemap() {
         return updatedTimestampSitemap;
     }
 
-    public final void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap) {
+    public void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap) {
         this.updatedTimestampSitemap = updatedTimestampSitemap;
     }
 
     @Override
-    public final LocalDate getLastRemindedRequestIndividual() {
+    public LocalDate getLastRemindedRequestIndividual() {
         return lastRemindedRequestIndividual;
     }
 
     @Override
-    public final void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual) {
+    public void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual) {
         this.lastRemindedRequestIndividual = lastRemindedRequestIndividual;
     }
 
     @Override
-    public final LocalDate getLastRemindedRequestSyndicated() {
+    public LocalDate getLastRemindedRequestSyndicated() {
         return lastRemindedRequestSyndicated;
     }
 
     @Override
-    public final void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated) {
+    public void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated) {
         this.lastRemindedRequestSyndicated = lastRemindedRequestSyndicated;
     }
 
     @Override
-    public final LocalDate getLastNotifiedUpdateSyndicated() {
+    public LocalDate getLastNotifiedUpdateSyndicated() {
         return lastNotifiedUpdateSyndicated;
     }
 
     @Override
-    public final void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
+    public void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
         this.lastNotifiedUpdateSyndicated = lastNotifiedUpdateSyndicated;
     }
 
@@ -703,12 +688,12 @@ public class Institution extends ResourceParent {
     }
 
     @Override
-    public final Integer getWorkflowPropertyConfigurationVersion() {
+    public Integer getWorkflowPropertyConfigurationVersion() {
         return workflowPropertyConfigurationVersion;
     }
 
     @Override
-    public final void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
+    public void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
         this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
     }
 

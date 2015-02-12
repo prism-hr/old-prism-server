@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.integration.helpers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.zuehlke.pgadmissions.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +32,7 @@ public class UserHelper {
     private ResourceService resourceService;
 
     @Autowired
-    private RoleService roleService;
+    private AuthenticationService authenticationService;
 
     @Autowired
     private UserService userService;
@@ -45,10 +46,10 @@ public class UserHelper {
 
         String testContextReferrer = actionId.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? "http://www.testcontextreferrer.com" : null;
 
-        userService.registerUser(
+        authenticationService.registerUser(
                 new UserRegistrationDTO().withFirstName(user.getFirstName()).withLastName(user.getLastName()).withEmail(user.getEmail())
                         .withActivationCode(user.getActivationCode()).withPassword("password").withResourceId(resourceId)
-                        .withAction(new ActionDTO().withAction(actionId)), testContextReferrer);
+                        .withAction(new ActionDTO().withAction(actionId)), null);
 
         mailSenderMock.assertEmailSent(user, PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
 

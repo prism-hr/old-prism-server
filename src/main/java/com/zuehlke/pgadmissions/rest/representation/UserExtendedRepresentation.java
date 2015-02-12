@@ -1,20 +1,16 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
+
+import java.util.List;
 
 public class UserExtendedRepresentation extends UserRepresentation {
 
     private PrismLocale locale;
 
     private FileRepresentation portraitDocument;
-
-    private String linkedinUri;
-
-    private String twitterUri;
 
     private Boolean sendApplicationRecommendationNotification;
 
@@ -25,6 +21,8 @@ public class UserExtendedRepresentation extends UserRepresentation {
     private String parentUser;
 
     private List<String> linkedUsers;
+
+    private List<String> oauthProviders;
 
     public PrismLocale getLocale() {
         return locale;
@@ -40,22 +38,6 @@ public class UserExtendedRepresentation extends UserRepresentation {
 
     public void setPortraitDocument(FileRepresentation portraitDocument) {
         this.portraitDocument = portraitDocument;
-    }
-
-    public String getLinkedinUri() {
-        return linkedinUri;
-    }
-
-    public void setLinkedinUri(String linkedinUri) {
-        this.linkedinUri = linkedinUri;
-    }
-
-    public String getTwitterUri() {
-        return twitterUri;
-    }
-
-    public void setTwitterUri(String twitterUri) {
-        this.twitterUri = twitterUri;
     }
 
     public Boolean getSendApplicationRecommendationNotification() {
@@ -96,5 +78,13 @@ public class UserExtendedRepresentation extends UserRepresentation {
 
     public void setLinkedUsers(List<String> linkedUsers) {
         this.linkedUsers = linkedUsers;
+    }
+
+    public List<String> getOauthProviders() {
+        return oauthProviders;
+    }
+
+    public void setOauthProviders(List<String> oauthProviders) {
+        this.oauthProviders = oauthProviders;
     }
 }

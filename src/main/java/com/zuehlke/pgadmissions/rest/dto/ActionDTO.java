@@ -1,15 +1,14 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.util.Collection;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.List;
 
 public class ActionDTO {
 
@@ -29,6 +28,8 @@ public class ActionDTO {
 
     @Valid
     private ApplicationDTO newApplication;
+
+    private String referer;
 
     public PrismAction getActionId() {
         return actionId;
@@ -76,6 +77,14 @@ public class ActionDTO {
 
     public final void setNewApplication(ApplicationDTO newApplication) {
         this.newApplication = newApplication;
+    }
+
+    public String getReferer() {
+        return referer;
+    }
+
+    public void setReferer(String referer) {
+        this.referer = referer;
     }
 
     public ActionDTO withAction(final PrismAction actionId) {

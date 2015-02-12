@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.rest.dto.auth;
 
+import javax.validation.constraints.Size;
+
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
-
-import javax.validation.constraints.Size;
 
 public class OauthConfirmedUserDTO {
 

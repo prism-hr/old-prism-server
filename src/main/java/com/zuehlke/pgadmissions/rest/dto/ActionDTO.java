@@ -1,14 +1,15 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import java.util.Collection;
+import java.util.List;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.Collection;
-import java.util.List;
 
 public class ActionDTO {
 

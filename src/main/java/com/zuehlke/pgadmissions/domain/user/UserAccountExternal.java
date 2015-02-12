@@ -1,8 +1,17 @@
 package com.zuehlke.pgadmissions.domain.user;
 
-import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
-import javax.persistence.*;
+import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 
 @Entity
 @Table(name = "USER_ACCOUNT_EXTERNAL", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_account_id", "external_account_type"}),

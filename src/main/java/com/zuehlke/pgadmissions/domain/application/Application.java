@@ -677,8 +677,8 @@ public class Application extends Resource {
         return this;
     }
 
-    public Application withDoRetain(Boolean doRetain) {
-        this.retain = doRetain;
+    public Application withRetain(Boolean retain) {
+        this.retain = retain;
         return this;
     }
 

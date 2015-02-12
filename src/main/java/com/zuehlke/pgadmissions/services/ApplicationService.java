@@ -173,7 +173,7 @@ public class ApplicationService {
     public Application create(User user, ApplicationDTO applicationDTO) throws Exception {
         Resource parentResource = entityService.getById(applicationDTO.getResourceScope().getResourceClass(), applicationDTO.getResourceId());
         return new Application().withUser(user).withParentResource(parentResource).withAdvert((Advert) ReflectionUtils.getProperty(parentResource, "advert"))
-                .withDoRetain(false).withCreatedTimestamp(new DateTime());
+                .withRetain(false).withCreatedTimestamp(new DateTime());
     }
 
     public void save(Application application) throws BeansException, IOException, IntegrationException {

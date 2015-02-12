@@ -1,12 +1,11 @@
 package com.zuehlke.pgadmissions.rest.dto.user;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class UserDTO {
 
@@ -32,10 +31,6 @@ public class UserDTO {
     private PrismLocale locale;
 
     private Integer portraitDocument;
-
-    private String linkedinUri;
-
-    private String twitterUri;
 
     private Boolean sendApplicationRecommendationNotification;
 
@@ -96,22 +91,6 @@ public class UserDTO {
 
     public void setPortraitDocument(Integer portraitDocument) {
         this.portraitDocument = portraitDocument;
-    }
-
-    public String getLinkedinUri() {
-        return linkedinUri;
-    }
-
-    public void setLinkedinUri(String linkedinUri) {
-        this.linkedinUri = linkedinUri;
-    }
-
-    public String getTwitterUri() {
-        return twitterUri;
-    }
-
-    public void setTwitterUri(String twitterUri) {
-        this.twitterUri = twitterUri;
     }
 
     public Boolean getSendApplicationRecommendationNotification() {

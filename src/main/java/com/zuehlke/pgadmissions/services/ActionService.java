@@ -1,16 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -18,15 +7,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -44,6 +25,16 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -190,11 +181,11 @@ public class ActionService {
                 .withTransitionAction(transitionAction);
     }
 
-    public ActionOutcomeDTO getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO, String referrer) throws Exception {
+    public ActionOutcomeDTO getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO) throws Exception {
         Action action = getById(registrationDTO.getAction().getActionId());
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
             Object operativeResourceDTO = registrationDTO.getAction().getOperativeResourceDTO();
-            return resourceService.create(user, action, operativeResourceDTO, referrer, registrationDTO.getAction().getWorkflowPropertyConfigurationVersion());
+            return resourceService.create(user, action, operativeResourceDTO, registrationDTO.getAction().getReferer(), registrationDTO.getAction().getWorkflowPropertyConfigurationVersion());
         } else {
             Resource resource = entityService.getById(action.getScope().getId().getResourceClass(), registrationDTO.getResourceId());
             return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(resource).withTransitionAction(action);
@@ -224,11 +215,11 @@ public class ActionService {
     public List<PrismAction> getPropagatedActions(Integer stateTransitionPendingId) {
         return actionDAO.getPropagatedActions(stateTransitionPendingId);
     }
-    
+
     public boolean hasRedactions(Resource resource, User user) {
         return !getRedactions(resource, user).isEmpty();
     }
-    
+
     public HashMultimap<PrismAction, PrismActionRedactionType> getRedactions(Resource resource, User user) {
         HashMultimap<PrismAction, PrismActionRedactionType> actionRedactions = HashMultimap.create();
         List<PrismRole> rolesOverridingRedactions = roleService.getRolesOverridingRedactions(resource, user);
@@ -243,11 +234,11 @@ public class ActionService {
         }
         return actionRedactions;
     }
-    
+
     public boolean hasRedactions(PrismScope resourceScope, Set<Integer> resourceIds, User user) {
         return !getRedactions(resourceScope, resourceIds, user).isEmpty();
     }
-    
+
     public List<PrismActionRedactionType> getRedactions(PrismScope resourceScope, Set<Integer> resourceIds, User user) {
         List<PrismRole> rolesOverridingRedactions = roleService.getRolesOverridingRedactions(resourceScope, user);
         if (rolesOverridingRedactions.isEmpty()) {

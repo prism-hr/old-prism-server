@@ -1,13 +1,13 @@
 package com.zuehlke.pgadmissions.rest.validation;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.exceptions.*;
+import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -15,27 +15,21 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
-import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
-import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
+import javax.inject.Inject;
+import java.util.*;
 
 @ControllerAdvice
 public class PrismControllerExceptionHandler extends ResponseEntityExceptionHandler {
@@ -64,24 +58,19 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
-    @ExceptionHandler(value = PrismBadRequestException.class)
-    public final ResponseEntity<Object> handlePrismValidationException(PrismBadRequestException ex, WebRequest request) {
+    @ExceptionHandler(value = {PrismBadRequestException.class, ResourceNotFoundException.class, AccessDeniedException.class, PrismConflictException.class, BadCredentialsException.class})
+    public final ResponseEntity<Object> handleResourceNotFoundException(Exception ex, WebRequest request) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        Map<String, String> body = null;
-        if (ex.getReason() != null) {
-            body = Collections.singletonMap("reason", ex.getReason());
-        }
-        return handleExceptionInternal(ex, body, headers, HttpStatus.BAD_REQUEST, request);
-    }
+        Map<String, String> body = Collections.singletonMap("reason", ex.getMessage());
 
-    @ExceptionHandler(value = ResourceNotFoundException.class)
-    public final ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        Map<String, String> body;
-        body = Collections.singletonMap("reason", ex.getMessage());
-        return handleExceptionInternal(ex, body, headers, HttpStatus.NOT_FOUND, request);
+        HttpStatus status;
+        if(ex instanceof AccessDeniedException || ex instanceof BadCredentialsException){
+            status = HttpStatus.UNAUTHORIZED;
+        } else {
+            status = ex.getClass().getAnnotation(ResponseStatus.class).value();
+        }
+        return handleExceptionInternal(ex, body, headers, status, request);
     }
 
     @ExceptionHandler(value = PrismValidationException.class)
@@ -103,7 +92,7 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
             errorRepresentation.setCode(fieldError.getCode());
             String message = applicationContext.getMessage(fieldError, Locale.getDefault());
             errorRepresentation.setErrorMessage(message);
-            if(Arrays.asList(fieldError.getCodes()).contains(message)){
+            if (Arrays.asList(fieldError.getCodes()).contains(message)) {
                 log.error("Code used as validation message: " + fieldError);
             }
             errorRepresentation.setFieldNames(new String[]{fieldError.getField()});

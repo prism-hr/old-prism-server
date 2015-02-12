@@ -1,11 +1,12 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import org.hibernate.validator.constraints.NotEmpty;
-
-import javax.validation.constraints.NotNull;
 
 public class InstitutionDTO {
 

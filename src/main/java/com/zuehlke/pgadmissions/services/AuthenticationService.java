@@ -1,21 +1,10 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserAccount;
-import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
-import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.exceptions.PrismConflictException;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.rest.dto.auth.OauthAssociationType;
-import com.zuehlke.pgadmissions.rest.dto.auth.OauthLoginDTO;
-import com.zuehlke.pgadmissions.rest.dto.auth.OauthUserDefinition;
-import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import java.util.ArrayList;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.social.facebook.api.FacebookProfile;
@@ -38,16 +27,31 @@ import org.springframework.social.twitter.connect.TwitterServiceProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAccount;
+import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.exceptions.PrismConflictException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.rest.dto.auth.OauthAssociationType;
+import com.zuehlke.pgadmissions.rest.dto.auth.OauthLoginDTO;
+import com.zuehlke.pgadmissions.rest.dto.auth.OauthUserDefinition;
+import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
 @Transactional
 public class AuthenticationService {
 
     public static final String OAUTH_USER_TO_CONFIRM = "oauthUserToConfirm";
+
     private static final String OAUTH_TOKEN_ATTRIBUTE = "oauthToken";
+
     @Value("${auth.facebook.appSecret}")
     private String facebookAppSecret;
 
@@ -84,34 +88,34 @@ public class AuthenticationService {
     public OauthUserDefinition loadUserDefinition(OauthProvider oauthProvider, OauthLoginDTO oauthLoginDTO, HttpSession session) {
         OauthUserDefinition definition;
         switch (oauthProvider) {
-            case FACEBOOK:
-                definition = loadFacebookUserDefinition(oauthLoginDTO);
-                break;
-            case LINKEDIN:
-                definition = loadLinkedinUserDefinition(oauthLoginDTO);
-                break;
-            case GOOGLE:
-                definition = loadGoogleUserDefinition(oauthLoginDTO);
-                break;
-            case TWITTER:
-                definition = loadTwitterUserDefinition(oauthLoginDTO, session);
-                break;
-            default:
-                throw new Error("Unknown oAuth provider: " + oauthProvider);
+        case FACEBOOK:
+            definition = loadFacebookUserDefinition(oauthLoginDTO);
+            break;
+        case LINKEDIN:
+            definition = loadLinkedinUserDefinition(oauthLoginDTO);
+            break;
+        case GOOGLE:
+            definition = loadGoogleUserDefinition(oauthLoginDTO);
+            break;
+        case TWITTER:
+            definition = loadTwitterUserDefinition(oauthLoginDTO, session);
+            break;
+        default:
+            throw new Error("Unknown oAuth provider: " + oauthProvider);
         }
         return definition.withOauthProvider(oauthProvider);
     }
 
     public String requestToken(HttpSession session, OauthProvider oauthProvider) {
         switch (oauthProvider) {
-            case TWITTER:
-                TwitterServiceProvider twitterServiceProvider = new TwitterServiceProvider(twitterClientId, twitterAppSecret);
-                OAuth1Operations oAuthOperations = twitterServiceProvider.getOAuthOperations();
-                OAuthToken requestToken = oAuthOperations.fetchRequestToken(applicationUrl, null);
-                session.setAttribute(OAUTH_TOKEN_ATTRIBUTE, requestToken);
-                return oAuthOperations.buildAuthorizeUrl(requestToken.getValue(), OAuth1Parameters.NONE);
-            default:
-                throw new Error("Requesting token not supported for: " + oauthProvider);
+        case TWITTER:
+            TwitterServiceProvider twitterServiceProvider = new TwitterServiceProvider(twitterClientId, twitterAppSecret);
+            OAuth1Operations oAuthOperations = twitterServiceProvider.getOAuthOperations();
+            OAuthToken requestToken = oAuthOperations.fetchRequestToken(applicationUrl, null);
+            session.setAttribute(OAUTH_TOKEN_ATTRIBUTE, requestToken);
+            return oAuthOperations.buildAuthorizeUrl(requestToken.getValue(), OAuth1Parameters.NONE);
+        default:
+            throw new Error("Requesting token not supported for: " + oauthProvider);
         }
     }
 
@@ -122,8 +126,8 @@ public class AuthenticationService {
         FacebookTemplate facebookTemplate = new FacebookTemplate(accessGrant.getAccessToken());
         FacebookProfile userProfile = facebookTemplate.userOperations().getUserProfile();
 
-        return new OauthUserDefinition().withExternalId(userProfile.getId()).withEmail(userProfile.getEmail())
-                .withFirstName(userProfile.getFirstName()).withLastName(userProfile.getLastName());
+        return new OauthUserDefinition().withExternalId(userProfile.getId()).withEmail(userProfile.getEmail()).withFirstName(userProfile.getFirstName())
+                .withLastName(userProfile.getLastName());
     }
 
     private OauthUserDefinition loadLinkedinUserDefinition(OauthLoginDTO oauthLoginDTO) {
@@ -133,8 +137,8 @@ public class AuthenticationService {
         LinkedInTemplate linkedInTemplate = new LinkedInTemplate(accessGrant.getAccessToken());
         LinkedInProfile userProfile = linkedInTemplate.profileOperations().getUserProfile();
 
-        return new OauthUserDefinition().withExternalId(userProfile.getId()).withEmail(userProfile.getEmailAddress())
-                .withFirstName(userProfile.getFirstName()).withLastName(userProfile.getLastName());
+        return new OauthUserDefinition().withExternalId(userProfile.getId()).withEmail(userProfile.getEmailAddress()).withFirstName(userProfile.getFirstName())
+                .withLastName(userProfile.getLastName());
     }
 
     private OauthUserDefinition loadGoogleUserDefinition(OauthLoginDTO oauthLoginDTO) {
@@ -144,8 +148,8 @@ public class AuthenticationService {
         GoogleTemplate googleTemplate = new GoogleTemplate(accessGrant.getAccessToken());
         Person person = googleTemplate.plusOperations().getGoogleProfile();
 
-        return new OauthUserDefinition().withExternalId(person.getId()).withEmail(person.getAccountEmail())
-                .withFirstName(person.getGivenName()).withLastName(person.getFamilyName());
+        return new OauthUserDefinition().withExternalId(person.getId()).withEmail(person.getAccountEmail()).withFirstName(person.getGivenName())
+                .withLastName(person.getFamilyName());
     }
 
     private OauthUserDefinition loadTwitterUserDefinition(OauthLoginDTO oauthLoginDTO, HttpSession session) {
@@ -160,15 +164,14 @@ public class AuthenticationService {
         TwitterProfile profile = twitterTemplate.userOperations().getUserProfile();
         ArrayList<String> names = Lists.newArrayList(Splitter.on("\\s+").limit(2).split(profile.getName()));
 
-        return new OauthUserDefinition().withExternalId(Long.toString(profile.getId()))
-                .withFirstName(names.get(0)).withLastName(names.size() > 1 ? names.get(1) : null);
+        return new OauthUserDefinition().withExternalId(Long.toString(profile.getId())).withFirstName(names.get(0))
+                .withLastName(names.size() > 1 ? names.get(1) : null);
     }
 
     public User getOrCreateUser(OauthProvider oauthProvider, OauthLoginDTO oauthLoginDTO, HttpSession session) {
         OauthAssociationType associationType = oauthLoginDTO.getAssociationType();
         OauthUserDefinition userDefinition = loadUserDefinition(oauthProvider, oauthLoginDTO, session);
         User userByExternalAccount = userService.getByExternalAccountId(oauthProvider, userDefinition.getExternalId());
-
 
         User user;
         if (associationType == OauthAssociationType.ONLY_AUTHENTICATE) {
@@ -224,7 +227,8 @@ public class AuthenticationService {
             }
         }
 
-        User user = userService.getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail(), resource.getLocale());
+        User user = userService
+                .getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail(), resource.getLocale());
 
         if (registrationDTO.getPassword() != null) {
             // regular password based registration
@@ -246,8 +250,8 @@ public class AuthenticationService {
     private void createUserAccount(User user, OauthProvider oauthProvider, String externalAccountId, String password, boolean enableAccount) {
         if (user.getUserAccount() == null) {
             String encryptedPassword = password != null ? EncryptionUtils.getMD5(password) : null;
-            UserAccount account = new UserAccount().withSendApplicationRecommendationNotification(false)
-                    .withPassword(encryptedPassword).withEnabled(enableAccount);
+            UserAccount account = new UserAccount().withSendApplicationRecommendationNotification(false).withPassword(encryptedPassword)
+                    .withEnabled(enableAccount);
             user.setUserAccount(account);
             entityService.save(account);
         }
@@ -256,7 +260,8 @@ public class AuthenticationService {
         userAccount.setEnabled(enableAccount);
         entityService.save(user);
         if (oauthProvider != null) {
-            UserAccountExternal externalAccount = new UserAccountExternal().withUserAccount(userAccount).withAccountType(oauthProvider).withAccountIdentifier(externalAccountId);
+            UserAccountExternal externalAccount = new UserAccountExternal().withUserAccount(userAccount).withAccountType(oauthProvider)
+                    .withAccountIdentifier(externalAccountId);
             userAccount.getExternalAccounts().add(externalAccount);
             userAccount.setPrimaryExternalAccount(externalAccount);
             entityService.save(externalAccount);

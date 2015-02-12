@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,6 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -70,12 +72,6 @@ public class User implements UserDetails, IUniqueEntity {
     @JoinColumn(name = "portrait_document_id")
     private Document portraitDocument;
 
-    @Column(name = "linkedin_uri")
-    private String linkedinUri;
-
-    @Column(name = "twitter_uri")
-    private String twitterUri;
-
     @Column(name = "activation_code", nullable = false, unique = true)
     private String activationCode;
 
@@ -111,11 +107,16 @@ public class User implements UserDetails, IUniqueEntity {
     @JoinColumn(name = "parent_user_id")
     private User parentUser;
 
+    @OrderBy(clause = "last_name asc, first_name asc")
     @OneToMany(mappedBy = "parentUser")
     private Set<User> childUsers = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
     private Set<UserRole> userRoles = Sets.newHashSet();
+
+    @OrderBy(clause = "sequence_identifier desc")
+    @OneToMany(mappedBy = "user")
+    private Set<Application> applications = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -197,22 +198,6 @@ public class User implements UserDetails, IUniqueEntity {
         this.portraitDocument = portraitDocument;
     }
 
-    public String getLinkedinUri() {
-        return linkedinUri;
-    }
-
-    public void setLinkedinUri(String linkedinUri) {
-        this.linkedinUri = linkedinUri;
-    }
-
-    public String getTwitterUri() {
-        return twitterUri;
-    }
-
-    public void setTwitterUri(String twitterUri) {
-        this.twitterUri = twitterUri;
-    }
-
     public String getActivationCode() {
         return activationCode;
     }
@@ -289,16 +274,12 @@ public class User implements UserDetails, IUniqueEntity {
         return childUsers;
     }
 
-    public void setChildUsers(Set<User> childUsers) {
-        this.childUsers = childUsers;
-    }
-
     public Set<UserRole> getUserRoles() {
         return userRoles;
     }
 
-    public void setUserRoles(Set<UserRole> userRoles) {
-        this.userRoles = userRoles;
+    public final Set<Application> getApplications() {
+        return applications;
     }
 
     public User withId(Integer id) {

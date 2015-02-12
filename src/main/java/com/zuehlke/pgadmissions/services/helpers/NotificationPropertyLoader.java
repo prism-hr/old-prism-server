@@ -61,7 +61,9 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
+import com.zuehlke.pgadmissions.exceptions.AbortMailSendException;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
@@ -76,7 +78,7 @@ public class NotificationPropertyLoader {
 
     private PropertyLoader propertyLoader;
 
-    private NotificationDefinitionModelDTO templateModelDTO;
+    private NotificationDefinitionModelDTO notificationDefinitionModelDTO;
 
     @Value("${application.url}")
     private String applicationUrl;
@@ -96,47 +98,47 @@ public class NotificationPropertyLoader {
     public String load(PrismNotificationDefinitionProperty property) {
         String value = (String) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(property));
         return value == null ? "[" + propertyLoader.load(SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR) + ". " + propertyLoader.load(SYSTEM_HELPDESK_REPORT)
-                + ": " + templateModelDTO.getResource().getSystem().getHelpdesk() + "]" : value;
+                + ": " + notificationDefinitionModelDTO.getResource().getSystem().getHelpdesk() + "]" : value;
     }
 
     public String getTemplateUserFullName() {
-        return templateModelDTO.getUser().getFullName();
+        return notificationDefinitionModelDTO.getUser().getFullName();
     }
 
     public String getTemplateUserFirstName() {
-        return templateModelDTO.getUser().getFirstName();
+        return notificationDefinitionModelDTO.getUser().getFirstName();
     }
 
     public String getTemplateUserLastName() {
-        return templateModelDTO.getUser().getLastName();
+        return notificationDefinitionModelDTO.getUser().getLastName();
     }
 
     public String getTemplateUserEmail() {
-        return templateModelDTO.getUser().getEmail();
+        return notificationDefinitionModelDTO.getUser().getEmail();
     }
 
     public String getTemplateUserActivationCode() {
-        return templateModelDTO.getUser().getActivationCode();
+        return notificationDefinitionModelDTO.getUser().getActivationCode();
     }
 
     public String getTemplateAuthorFullName() {
-        return templateModelDTO.getAuthor().getFullName();
+        return notificationDefinitionModelDTO.getAuthor().getFullName();
     }
 
     public String getTemplateAuthorEmail() {
-        return templateModelDTO.getAuthor().getEmail();
+        return notificationDefinitionModelDTO.getAuthor().getEmail();
     }
 
     public String getTemplateInvokerFullName() {
-        return templateModelDTO.getInvoker().getFullName();
+        return notificationDefinitionModelDTO.getInvoker().getFullName();
     }
 
     public String getTemplateInvokerEmail() {
-        return templateModelDTO.getInvoker().getEmail();
+        return notificationDefinitionModelDTO.getInvoker().getEmail();
     }
 
     public String getTemplateSystemTitle() {
-        return templateModelDTO.getResource().getSystem().getTitle();
+        return notificationDefinitionModelDTO.getResource().getSystem().getTitle();
     }
 
     public String getTemplateSystemHomepage() throws IOException, TemplateException {
@@ -144,11 +146,11 @@ public class NotificationPropertyLoader {
     }
 
     public String getTemplateHelpdesk() throws IOException, TemplateException {
-        return buildRedirectionControl(templateModelDTO.getResource().getHelpdeskDisplay(), SYSTEM_HELPDESK);
+        return buildRedirectionControl(notificationDefinitionModelDTO.getResource().getHelpdeskDisplay(), SYSTEM_HELPDESK);
     }
 
     public String getActionComplete() throws IOException, TemplateException {
-        return buildRedirectionControl(SYSTEM_PROCEED, templateModelDTO.getTransitionAction().isDeclinableAction() ? SYSTEM_DECLINE : null);
+        return buildRedirectionControl(SYSTEM_PROCEED, notificationDefinitionModelDTO.getTransitionAction().isDeclinableAction() ? SYSTEM_DECLINE : null);
     }
 
     public String getActionViewEdit() throws IOException, TemplateException {
@@ -156,80 +158,80 @@ public class NotificationPropertyLoader {
     }
 
     public String getCommentContent() {
-        String content = templateModelDTO.getComment().getContent();
+        String content = notificationDefinitionModelDTO.getComment().getContent();
         return content == null ? propertyLoader.load(SYSTEM_COMMENT_CONTENT_NOT_PROVIDED) : "\"" + content + "\"";
     }
 
     public String getCommentDateTime() {
-        return templateModelDTO.getComment().getCreatedTimestampDisplay(propertyLoader.load(SYSTEM_DATE_TIME_FORMAT));
+        return notificationDefinitionModelDTO.getComment().getCreatedTimestampDisplay(propertyLoader.load(SYSTEM_DATE_TIME_FORMAT));
     }
 
     public String getCommentTransitionOutcome() {
-        String resourceName = templateModelDTO.getResource().getResourceScope().name();
-        String outcomePostfix = Iterables.getLast(Lists.newArrayList(templateModelDTO.getComment().getTransitionState().getId().name().split("_")));
+        String resourceName = notificationDefinitionModelDTO.getResource().getResourceScope().name();
+        String outcomePostfix = Iterables.getLast(Lists.newArrayList(notificationDefinitionModelDTO.getComment().getTransitionState().getId().name().split("_")));
         return propertyLoader.load(PrismDisplayPropertyDefinition.valueOf(resourceName + "_COMMENT_" + outcomePostfix));
     }
 
     public String getApplicationCreatorFullName() {
-        return templateModelDTO.getResource().getApplication().getUser().getFullName();
+        return notificationDefinitionModelDTO.getResource().getApplication().getUser().getFullName();
     }
 
     public String getApplicationCode() {
-        return templateModelDTO.getResource().getApplication().getCode();
+        return notificationDefinitionModelDTO.getResource().getApplication().getCode();
     }
 
     public String getApplicationProjectOrProgramTitle() {
-        return templateModelDTO.getResource().getApplication().getProjectOrProgramTitleDisplay();
+        return notificationDefinitionModelDTO.getResource().getApplication().getProjectOrProgramTitleDisplay();
     }
 
     public String getApplicationProjectOrProgramCode() {
-        return templateModelDTO.getResource().getApplication().getProjectOrProgramCodeDisplay();
+        return notificationDefinitionModelDTO.getResource().getApplication().getProjectOrProgramCodeDisplay();
     }
 
     public String getApplicationProgramType() {
-        PrismProgramType programType = PrismProgramType.valueOf(templateModelDTO.getResource().getApplication().getProgram().getProgramType().getCode());
+        PrismProgramType programType = PrismProgramType.valueOf(notificationDefinitionModelDTO.getResource().getApplication().getProgram().getProgramType().getCode());
         return propertyLoader.load(programType.getDisplayProperty());
     }
 
     public String getApplicationInterviewDateTime() {
-        return templateModelDTO.getComment().getInterviewDateTimeDisplay(propertyLoader.load(SYSTEM_DATE_TIME_FORMAT));
+        return notificationDefinitionModelDTO.getComment().getInterviewDateTimeDisplay(propertyLoader.load(SYSTEM_DATE_TIME_FORMAT));
     }
 
     public String getApplicationInterviewTimeZone() {
-        return templateModelDTO.getComment().getInterviewTimeZoneDisplay();
+        return notificationDefinitionModelDTO.getComment().getInterviewTimeZoneDisplay();
     }
 
     public String getApplicationInterviewerInstructions() {
-        CommentApplicationInterviewInstruction interviewInstruction = templateModelDTO.getComment().getInterviewInstruction();
+        CommentApplicationInterviewInstruction interviewInstruction = notificationDefinitionModelDTO.getComment().getInterviewInstruction();
         String instructions = interviewInstruction == null ? null : interviewInstruction.getInterviewerInstructions();
         return instructions == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : instructions;
     }
 
     public String getApplicationIntervieweeInstructions() {
-        CommentApplicationInterviewInstruction interviewInstruction = templateModelDTO.getComment().getInterviewInstruction();
+        CommentApplicationInterviewInstruction interviewInstruction = notificationDefinitionModelDTO.getComment().getInterviewInstruction();
         String instructions = interviewInstruction == null ? null : interviewInstruction.getIntervieweeInstructions();
         return instructions == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : instructions;
     }
 
     public String getApplicationInterviewLocation() throws IOException, TemplateException {
-        CommentApplicationInterviewInstruction interviewInstruction = templateModelDTO.getComment().getInterviewInstruction();
+        CommentApplicationInterviewInstruction interviewInstruction = notificationDefinitionModelDTO.getComment().getInterviewInstruction();
         String interviewLocation = interviewInstruction == null ? null : interviewInstruction.getInterviewLocation();
         return interviewLocation == null ? "<p>" + propertyLoader.load(APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED) + "</p>" : buildRedirectionControl(
                 interviewLocation, APPLICATION_COMMENT_DIRECTIONS);
     }
 
     public String getApplicationConfirmedPositionTitle() {
-        CommentApplicationPositionDetail positionDetail = templateModelDTO.getComment().getPositionDetail();
+        CommentApplicationPositionDetail positionDetail = notificationDefinitionModelDTO.getComment().getPositionDetail();
         return positionDetail == null ? null : positionDetail.getPositionTitle();
     }
 
     public String getApplicationConfirmedPositionDescription() {
-        CommentApplicationPositionDetail positionDetail = templateModelDTO.getComment().getPositionDetail();
+        CommentApplicationPositionDetail positionDetail = notificationDefinitionModelDTO.getComment().getPositionDetail();
         return positionDetail == null ? null : positionDetail.getPositionDescription();
     }
 
     public String getApplicationConfirmedStartDate() {
-        return templateModelDTO.getComment().getPositionProvisionalStartDateDisplay(propertyLoader.load(SYSTEM_DATE_FORMAT));
+        return notificationDefinitionModelDTO.getComment().getPositionProvisionalStartDateDisplay(propertyLoader.load(SYSTEM_DATE_FORMAT));
     }
 
     public String getApplicationConfirmedPrimarySupervisor() {
@@ -241,67 +243,75 @@ public class NotificationPropertyLoader {
     }
 
     public String getApplicationConfirmedOfferConditions() {
-        CommentApplicationOfferDetail offerDetail = templateModelDTO.getComment().getOfferDetail();
+        CommentApplicationOfferDetail offerDetail = notificationDefinitionModelDTO.getComment().getOfferDetail();
         return offerDetail == null ? null : offerDetail.getAppointmentConditions();
     }
 
     public String getApplicationRejectionReason() {
-        return templateModelDTO.getComment().getRejectionReasonDisplay();
+        return notificationDefinitionModelDTO.getComment().getRejectionReasonDisplay();
     }
 
     public String getProjectTitle() {
-        return templateModelDTO.getResource().getProject().getTitle();
+        return notificationDefinitionModelDTO.getResource().getProject().getTitle();
     }
 
     public String getProjectCode() {
-        return templateModelDTO.getResource().getProject().getCode();
+        return notificationDefinitionModelDTO.getResource().getProject().getCode();
     }
 
     public String getProgramTitle() {
-        return templateModelDTO.getResource().getProgram().getTitle();
+        return notificationDefinitionModelDTO.getResource().getProgram().getTitle();
     }
 
     public String getProgramCode() {
-        return templateModelDTO.getResource().getProgram().getCode();
+        return notificationDefinitionModelDTO.getResource().getProgram().getCode();
     }
 
     public String getInstitutionTitle() {
-        return templateModelDTO.getResource().getInstitution().getTitle();
+        return notificationDefinitionModelDTO.getResource().getInstitution().getTitle();
     }
 
     public String getInstitutionCode() {
-        return templateModelDTO.getResource().getInstitution().getCode();
+        return notificationDefinitionModelDTO.getResource().getInstitution().getCode();
     }
 
     public String getInstitutionHomepage() {
-        return templateModelDTO.getResource().getInstitution().getHomepage();
+        return notificationDefinitionModelDTO.getResource().getInstitution().getHomepage();
     }
 
     public String getInstitutionDataImportError() {
-        return templateModelDTO.getDataImportErrorMessage();
+        return notificationDefinitionModelDTO.getDataImportErrorMessage();
     }
 
     public String getSystemApplicationHomepage() throws IOException, TemplateException {
         return buildRedirectionControl(SYSTEM_APPLICATION_LIST);
     }
 
-    public String getSystemApplicationRecommendation() throws IOException, TemplateException {
-        List<Advert> adverts = advertService.getRecommendedAdverts(templateModelDTO.getUser());
-        List<String> recommendations = Lists.newLinkedList();
-
-        for (Advert advert : adverts) {
-            Program program = advert.getProgram();
-            Project project = advert.getProject();
-            Resource resource = project == null ? program : project;
-
-            String applyUrl = advert.getApplyHomepage();
-            applyUrl = applyUrl == null ? buildRedirectionUrl(resource, templateModelDTO.getTransitionAction(), templateModelDTO.getUser()) : applyUrl;
-
-            recommendations.add("<p>" + program.getTitle() + (project == null ? "<br/>" : "<br/>") + (project == null ? "" : project.getTitle() + "<br/>")
-                    + buildRedirectionControl(applyUrl, SYSTEM_APPLY) + "</p>");
+    public String getSystemApplicationRecommendation() throws IOException, TemplateException, AbortMailSendException {
+        List<AdvertRecommendationDTO> advertRecommendations = advertService.getRecommendedAdverts(notificationDefinitionModelDTO.getUser());
+        
+        if (!advertRecommendations.isEmpty()) {
+            List<String> recommendations = Lists.newLinkedList();
+    
+            for (AdvertRecommendationDTO advertRecommendation : advertRecommendations) {
+                Advert advert = advertRecommendation.getAdvert();
+    
+                Program program = advert.getProgram();
+                Project project = advert.getProject();
+    
+                String title = "<b>" + advert.getTitle() + "</b>";
+                String summary = advert.getSummary();
+    
+                String applyHomepage = advert.getApplyHomepage();
+                applyHomepage = applyHomepage == null ? buildRedirectionUrl(project == null ? program : project, notificationDefinitionModelDTO.getTransitionAction(),
+                        notificationDefinitionModelDTO.getUser()) : applyHomepage;
+    
+                recommendations.add(Joiner.on("<br/>").skipNulls().join(title, summary, buildRedirectionControl(applyHomepage, SYSTEM_APPLY)));
+            }
+            
+            return "<p>" + Joiner.on("<p></p>").join(recommendations) + "</p>";
         }
-
-        return Joiner.on("").join(recommendations);
+        throw new AbortMailSendException("No recommended adverts found for user: " + notificationDefinitionModelDTO.getUser().getId().toString());
     }
 
     public String getSystemProjectHomepage() throws IOException, TemplateException {
@@ -317,7 +327,7 @@ public class NotificationPropertyLoader {
     }
 
     public String getSystemUserNewPassword() throws IOException, TemplateException {
-        return templateModelDTO.getNewPassword();
+        return notificationDefinitionModelDTO.getNewPassword();
     }
 
     public String getSystemUserAccountManagement() throws IOException, TemplateException {
@@ -330,12 +340,12 @@ public class NotificationPropertyLoader {
     }
 
     public NotificationPropertyLoader localize(NotificationDefinitionModelDTO templateModelDTO, PropertyLoader propertyLoader) {
-        this.templateModelDTO = templateModelDTO;
-        Comment comment = this.templateModelDTO.getComment();
+        this.notificationDefinitionModelDTO = templateModelDTO;
+        Comment comment = this.notificationDefinitionModelDTO.getComment();
         if (comment == null) {
-            this.templateModelDTO.setInvoker(systemService.getSystem().getUser());
+            this.notificationDefinitionModelDTO.setInvoker(systemService.getSystem().getUser());
         } else {
-            this.templateModelDTO.setInvoker(comment.getUser());
+            this.notificationDefinitionModelDTO.setInvoker(comment.getUser());
         }
         this.propertyLoader = propertyLoader;
         return this;
@@ -351,8 +361,8 @@ public class NotificationPropertyLoader {
 
     private String buildRedirectionControl(PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel) throws IOException,
             TemplateException {
-        Resource resource = templateModelDTO.getResource();
-        String url = buildRedirectionUrl(resource, templateModelDTO.getTransitionAction(), templateModelDTO.getUser());
+        Resource resource = notificationDefinitionModelDTO.getResource();
+        String url = buildRedirectionUrl(resource, notificationDefinitionModelDTO.getTransitionAction(), notificationDefinitionModelDTO.getUser());
         return buildRedirectionControl(url, linkLabel, declineLinkLabel);
     }
 
@@ -380,7 +390,7 @@ public class NotificationPropertyLoader {
     }
 
     private String getCommentAssigneesAsString(PrismRole roleId) {
-        Set<CommentAssignedUser> assigneeObjects = templateModelDTO.getComment().getAssignedUsers();
+        Set<CommentAssignedUser> assigneeObjects = notificationDefinitionModelDTO.getComment().getAssignedUsers();
         Set<String> assigneeStrings = Sets.newTreeSet();
         for (CommentAssignedUser assigneeObject : assigneeObjects) {
             if (assigneeObject.getRole().getId() == roleId && assigneeObject.getRoleTransitionType() == CREATE) {

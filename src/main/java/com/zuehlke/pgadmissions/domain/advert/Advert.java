@@ -15,10 +15,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
@@ -104,30 +106,37 @@ public class Advert {
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
 
+    @OrderBy(clause = "domain")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
     private Set<AdvertDomain> domains = Sets.newHashSet();
 
+    @OrderBy(clause = "function")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
     private Set<AdvertFunction> functions = Sets.newHashSet();
 
+    @OrderBy(clause = "industry")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
     private Set<AdvertIndustry> industries = Sets.newHashSet();
 
+    @OrderBy(clause = "competency")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
     private Set<AdvertCompetency> competencies = Sets.newHashSet();
 
+    @OrderBy(clause = "theme")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
     private Set<AdvertTheme> themes = Sets.newHashSet();
 
+    @OrderBy(clause = "id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
     private Set<AdvertInstitution> institutions = Sets.newHashSet();
 
+    @OrderBy(clause = "program_type")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
     private Set<AdvertProgramType> programTypes = Sets.newHashSet();
@@ -138,6 +147,11 @@ public class Advert {
     @OneToOne(mappedBy = "advert")
     private Project project;
 
+    @OrderBy(clause = "sequence_identifier desc")
+    @OneToMany(mappedBy = "advert")
+    private Set<Application> applications = Sets.newHashSet();
+
+    @OrderBy(clause = "closing_date desc")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
     private Set<AdvertClosingDate> closingDates = Sets.newHashSet();
@@ -326,7 +340,7 @@ public class Advert {
     public Department getDepartment() {
         return isProjectAdvert() ? project.getProgram().getDepartment() : program.getDepartment();
     }
-    
+
     public boolean hasConvertedFee() {
         return fee != null && !fee.getCurrencySpecified().equals(fee.getCurrencyAtLocale());
     }

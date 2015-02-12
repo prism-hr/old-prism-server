@@ -24,13 +24,17 @@ public class CommentDTO {
 
     private PrismAction action;
 
+    private Boolean applicationRetain;
+    
+    private Boolean applicationRecommend;
+    
     @Size(max = 50000)
     private String content;
-
+    
     private PrismState transitionState;
-
+    
     private PrismYesNoUnsureResponse applicationEligible;
-
+    
     private Boolean applicationInterested;
 
     private BigDecimal applicationRating;
@@ -97,6 +101,22 @@ public class CommentDTO {
 
     public void setAction(PrismAction action) {
         this.action = action;
+    }
+
+    public final Boolean getApplicationRetain() {
+        return applicationRetain;
+    }
+
+    public final void setApplicationRetain(Boolean applicationRetain) {
+        this.applicationRetain = applicationRetain;
+    }
+
+    public final Boolean getApplicationRecommend() {
+        return applicationRecommend;
+    }
+
+    public final void setApplicationRecommend(Boolean applicationRecommend) {
+        this.applicationRecommend = applicationRecommend;
     }
 
     public String getContent() {

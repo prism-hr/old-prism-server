@@ -14,6 +14,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -31,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 
 @Repository
@@ -76,7 +78,7 @@ public class AdvertDAO {
         appendFeeConstraint(criteria, queryDTO);
         appendPayConstraint(criteria, queryDTO);
         appendDurationConstraint(criteria, queryDTO);
-        
+
         appendInstitutionsConstraint(criteria, queryDTO);
         appendDepartmentsConstraint(queryDTO, criteria);
         appendProgramsConstraint(queryDTO, criteria);
@@ -109,28 +111,50 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<Advert> getRecommendedAdverts(User user, List<PrismState> activeProgramStates, List<PrismState> activeProjectStates) {
-        return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
-                .setProjection(Projections.groupProperty("application.advert")) //
+    public List<AdvertRecommendationDTO> getRecommendedAdverts(User user, List<PrismState> activeProgramStates, List<PrismState> activeProjectStates,
+            List<Integer> advertsRecentlyAppliedFor) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Application.class, "application") //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("otherUserApplication.advert"), "advert") //
+                        .add(Projections.countDistinct("otherUserApplication.user").as("applicationCount"), "applicationCount")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert.applications", "application", JoinType.INNER_JOIN) //
-                .createAlias("application.advert", "recommendedAdvert", JoinType.INNER_JOIN) //
+                .createAlias("advert.applications", "advertApplication", JoinType.INNER_JOIN) //
+                .createAlias("advertApplication.user", "otherUser", JoinType.INNER_JOIN) //
+                .createAlias("otherUser.applications", "otherUserApplication", JoinType.INNER_JOIN) //
+                .createAlias("otherUserApplication.advert", "recommendedAdvert", JoinType.INNER_JOIN) //
                 .createAlias("recommendedAdvert.program", "program", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("recommendedAdvert.project", "project", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.ne("application.user", user)) //
-                .add(Restrictions.isNotNull("application.submittedTimestamp")) //
-                .add(Restrictions.neProperty("advert", "application.advert")) //
+                .add(Restrictions.ne("advertApplication.user", user)) //
+                .add(Restrictions.neProperty("advert", "otherUserApplication.advert")) //
+                .add(Restrictions.isNotNull("otherUserApplication.submittedTimestamp")) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("recommendedAdvert.program")) //
                                 .add(Restrictions.in("program.state.id", activeProgramStates))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("recommendedAdvert.project")) //
-                                .add(Restrictions.in("project.state.id", activeProjectStates)))) //
-                .addOrder(Order.desc("application.submittedTimestamp")) //
+                                .add(Restrictions.in("project.state.id", activeProjectStates))));
+
+        if (!advertsRecentlyAppliedFor.isEmpty()) {
+            criteria.add(Restrictions.not( //
+                    Restrictions.in("recommendedAdvert.id", advertsRecentlyAppliedFor)));
+        }
+
+        return (List<AdvertRecommendationDTO>) criteria.addOrder(Order.desc("applicationCount")) //
                 .addOrder(Order.desc("recommendedAdvert.sequenceIdentifier")) //
-                .setMaxResults(25) //
+                .setMaxResults(10) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertRecommendationDTO.class)) //
+                .list();
+    }
+
+    public List<Integer> getAdvertsRecentlyAppliedFor(User user, LocalDate baseline) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .setProjection(Projections.groupProperty("advert.id")) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("completionDate")) //
+                        .add(Restrictions.ge("completionDate", baseline))) //
+                .add(Restrictions.eq("user", user)) //
                 .list();
     }
 
@@ -299,7 +323,7 @@ public class AdvertDAO {
                     .add(Restrictions.in("projectDepartment.id", departments)));
         }
     }
-    
+
     private void appendProgramsConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
         Integer[] programs = queryDTO.getPrograms();
         if (programs != null) {

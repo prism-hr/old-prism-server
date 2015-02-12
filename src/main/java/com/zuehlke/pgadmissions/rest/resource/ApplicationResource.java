@@ -84,6 +84,9 @@ public class ApplicationResource {
     private UserService userService;
 
     @Autowired
+    private OpportunityResource opportunityResource;
+    
+    @Autowired
     private Mapper beanMapper;
 
     @Autowired
@@ -285,6 +288,7 @@ public class ApplicationResource {
         }
         
         representation.setResourceSummary(applicationService.getApplicationSummary(application.getId()));
+        representation.setRecommendedAdverts(opportunityResource.getRecommendedAdverts(application.getId()));
     }
 
 }

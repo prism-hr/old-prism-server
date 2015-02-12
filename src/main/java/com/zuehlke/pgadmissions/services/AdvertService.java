@@ -48,6 +48,7 @@ import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -108,11 +109,8 @@ public class AdvertService {
         return entityService.getById(AdvertClosingDate.class, id);
     }
 
-    public List<Advert> getAdverts(OpportunitiesQueryDTO queryDTO) {
-        List<PrismState> programStates = stateService.getActiveProgramStates();
+    public List<Advert> getAdverts(OpportunitiesQueryDTO queryDTO, List<PrismState> programStates, List<PrismState> projectStates) {
         programStates = queryDTO.getPrograms() == null ? programStates : stateService.getProgramStates();
-        
-        List<PrismState> projectStates = stateService.getActiveProjectStates();
         projectStates = queryDTO.getProjects() == null ? projectStates : stateService.getProjectStates();
 
         if (queryDTO.isResourceAction()) {
@@ -143,10 +141,11 @@ public class AdvertService {
         }
     }
 
-    public List<Advert> getRecommendedAdverts(User user) {
+    public List<AdvertRecommendationDTO> getRecommendedAdverts(User user) {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        return advertDAO.getRecommendedAdverts(user, activeProgramStates, activeProjectStates);
+        List<Integer> advertsRecentlyAppliedFor = advertDAO.getAdvertsRecentlyAppliedFor(user, new LocalDate().minusYears(1));
+        return advertDAO.getRecommendedAdverts(user, activeProgramStates, activeProjectStates, advertsRecentlyAppliedFor);
     }
 
     public List<Advert> getAdvertsWithElapsedClosingDates(LocalDate baseline) {
@@ -339,6 +338,11 @@ public class AdvertService {
         return new SocialMetadataDTO().withAuthor(parentResource.getUser().getFullName()).withTitle(advert.getTitle()).withDescription(advert.getSummary())
                 .withThumbnailUrl(resourceService.getSocialThumbnailUrl(parentResource)).withResourceUrl(resourceService.getSocialResourceUrl(parentResource))
                 .withLocale(resourceService.getOperativeLocale(parentResource).toString());
+    }
+
+    public boolean getAcceptingApplications(List<PrismState> activeProgramStates, List<PrismState> activeProjectStates, Advert advert) {
+        return (advert.isProgramAdvert() && activeProgramStates.contains(advert.getProgram().getState().getId()))
+                || (advert.isProjectAdvert() && activeProjectStates.contains(advert.getProject().getState().getId()));
     }
 
     private String getCurrencyAtLocale(Advert advert) {

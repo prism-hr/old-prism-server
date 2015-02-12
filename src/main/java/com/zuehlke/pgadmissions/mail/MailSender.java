@@ -42,6 +42,7 @@ import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
+import com.zuehlke.pgadmissions.exceptions.AbortMailSendException;
 import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
 import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -152,12 +153,13 @@ public class MailSender {
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
     }
 
-    public Map<String, Object> createNotificationModel(NotificationDefinition notificationTemplate, NotificationDefinitionModelDTO modelDTO) {
+    public Map<String, Object> createNotificationModel(NotificationDefinition notificationTemplate, NotificationDefinitionModelDTO modelDTO)
+            throws AbortMailSendException {
         return createNotificationModel(notificationTemplate, modelDTO, false);
     }
 
     private Map<String, Object> createNotificationModel(NotificationDefinition notificationTemplate, NotificationDefinitionModelDTO modelDTO,
-            boolean validationMode) {
+            boolean validationMode) throws AbortMailSendException {
         Map<String, Object> model = Maps.newHashMap();
         List<PrismNotificationDefinitionPropertyCategory> categories = notificationTemplate.getId().getPropertyCategories();
         NotificationPropertyLoader loader = applicationContext.getBean(NotificationPropertyLoader.class).localize(modelDTO, propertyLoader);

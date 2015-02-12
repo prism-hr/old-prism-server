@@ -90,6 +90,11 @@ public class Application extends Resource {
     @JoinColumn(name = "project_id")
     private Project project;
 
+    @ManyToOne
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "advert_id")
+    private Advert advert;
+    
     @Column(name = "referrer")
     private String referrer;
 
@@ -203,7 +208,7 @@ public class Application extends Resource {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
-
+    
     @Column(name = "last_reminded_request_individual")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastRemindedRequestIndividual;
@@ -321,6 +326,14 @@ public class Application extends Resource {
     @Override
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public final Advert getAdvert() {
+        return advert;
+    }
+
+    public final void setAdvert(Advert advert) {
+        this.advert = advert;
     }
 
     @Override
@@ -609,6 +622,11 @@ public class Application extends Resource {
         return this;
     }
 
+    public Application withAdvert(Advert advert) {
+        this.advert = advert;
+        return this;
+    }
+    
     public Application withUser(User user) {
         this.user = user;
         return this;
@@ -815,10 +833,6 @@ public class Application extends Resource {
 
     public boolean isProgramApplication() {
         return project == null;
-    }
-
-    public Advert getAdvert() {
-        return isProgramApplication() ? program.getAdvert() : project.getAdvert();
     }
 
     @Override

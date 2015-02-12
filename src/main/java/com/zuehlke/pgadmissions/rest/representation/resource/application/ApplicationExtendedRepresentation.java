@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresenta
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProjectRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 
 public class ApplicationExtendedRepresentation extends AbstractResourceRepresentation {
 
@@ -72,6 +73,8 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
     private BigDecimal applicationRatingAverage;
 
     private ApplicationSummaryRepresentation resourceSummary;
+    
+    private List<AdvertRepresentation> recommendedAdverts;
 
     public ProgramRepresentation getProgram() {
         return program;
@@ -303,6 +306,14 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
 
     public void setResourceSummary(ApplicationSummaryRepresentation resourceSummary) {
         this.resourceSummary = resourceSummary;
+    }
+
+    public final List<AdvertRepresentation> getRecommendedAdverts() {
+        return recommendedAdverts;
+    }
+
+    public final void setRecommendedAdverts(List<AdvertRepresentation> recommendedAdverts) {
+        this.recommendedAdverts = recommendedAdverts;
     }
 
 }

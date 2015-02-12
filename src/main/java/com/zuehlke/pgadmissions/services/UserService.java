@@ -169,11 +169,8 @@ public class UserService {
         }
 
         user.setPortraitDocument(portraitDocument);
-        user.setLinkedinUri(userDTO.getLinkedinUri());
-        user.setTwitterUri(userDTO.getTwitterUri());
-
+        
         UserAccount account = user.getUserAccount();
-
         account.setSendApplicationRecommendationNotification(userDTO.getSendApplicationRecommendationNotification());
 
         String password = userDTO.getPassword();

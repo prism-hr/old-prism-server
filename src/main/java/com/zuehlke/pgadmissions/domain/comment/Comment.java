@@ -669,15 +669,15 @@ public class Comment {
     }
 
     public boolean isApplicationApprovedComment() {
-        return transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED && transitionState.getId() != PrismState.APPLICATION_APPROVED;
+        return isStateGroupTransitionComment() && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED;
     }
 
     public boolean isApplicationRejectedComment() {
-        return transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED && transitionState.getId() != PrismState.APPLICATION_REJECTED;
+        return isStateGroupTransitionComment() && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED;
     }
 
     public boolean isApplicationWithdrawnComment() {
-        return this.transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_WITHDRAWN;
+        return isStateGroupTransitionComment() && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_WITHDRAWN;
     }
 
     public boolean isApplicationPurgeComment() {
@@ -690,7 +690,7 @@ public class Comment {
 
     public boolean isApplicationCompletionComment() {
         return Arrays.asList(PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION, PrismAction.APPLICATION_CONFIRM_REJECTION, PrismAction.APPLICATION_WITHDRAW)
-                .contains(action.getId());
+                .contains(action.getId()) || isApplicationAutomatedRejectionComment() || isApplicationAutomatedWithdrawalComment();
     }
 
     public boolean isApplicationReferenceComment() {
@@ -698,8 +698,13 @@ public class Comment {
     }
 
     public boolean isApplicationAutomatedRejectionComment() {
-        return action.getId() == PrismAction.APPLICATION_ESCALATE && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED
-                && rejectionReason == null;
+        return action.getId() == PrismAction.APPLICATION_ESCALATE && state.getStateGroup().getId() != PrismStateGroup.APPLICATION_REJECTED
+                && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED;
+    }
+
+    public boolean isApplicationAutomatedWithdrawalComment() {
+        return action.getId() == PrismAction.APPLICATION_ESCALATE && state.getStateGroup().getId() != PrismStateGroup.APPLICATION_WITHDRAWN
+                && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_WITHDRAWN;
     }
 
     public boolean isApplicationInterviewPendingInterviewComment() {
@@ -761,7 +766,7 @@ public class Comment {
     public boolean isDelegateComment() {
         return delegateUser != null;
     }
-    
+
     public boolean isApplicationProvideReferenceDelegateComment() {
         return isDelegateComment() && action.getId() == PrismAction.APPLICATION_PROVIDE_REFERENCE;
     }

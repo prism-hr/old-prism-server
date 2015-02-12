@@ -127,7 +127,7 @@ public class InstitutionService {
                 .withTitle(institutionDTO.getTitle()).withLocale(institutionDTO.getLocale()).withSummary(institutionDTO.getSummary())
                 .withHomepage(institutionDTO.getHomepage()).withUclInstitution(false).withDefaultProgramType(institutionDTO.getDefaultProgramType())
                 .withDefaultStudyOption(institutionDTO.getDefaultStudyOption()).withGoogleId(institutionDTO.getGoogleIdentifier())
-                .withLinkedinUri(institutionDTO.getLinkedinIdentifier()).withCurrency(institutionDTO.getCurrency()).withUser(user);
+                .withCurrency(institutionDTO.getCurrency()).withUser(user);
 
         address.setInstitution(institution);
         setLogoDocument(institution, institutionDTO, PrismAction.SYSTEM_CREATE_INSTITUTION);
@@ -157,7 +157,6 @@ public class InstitutionService {
 
         institution.setCurrency(institutionDTO.getCurrency());
         institution.setHomepage(institutionDTO.getHomepage());
-        institution.setLinkedinUri(institutionDTO.getLinkedinIdentifier());
 
         institution.setDefaultProgramType(institutionDTO.getDefaultProgramType());
         institution.setDefaultStudyOption(institutionDTO.getDefaultStudyOption());

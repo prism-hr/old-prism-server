@@ -42,6 +42,7 @@ import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.TableRow;
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
@@ -171,7 +172,8 @@ public class ApplicationService {
 
     public Application create(User user, ApplicationDTO applicationDTO) throws Exception {
         Resource parentResource = entityService.getById(applicationDTO.getResourceScope().getResourceClass(), applicationDTO.getResourceId());
-        return new Application().withUser(user).withParentResource(parentResource).withDoRetain(false).withCreatedTimestamp(new DateTime());
+        return new Application().withUser(user).withParentResource(parentResource).withAdvert((Advert) ReflectionUtils.getProperty(parentResource, "advert"))
+                .withDoRetain(false).withCreatedTimestamp(new DateTime());
     }
 
     public void save(Application application) throws BeansException, IOException, IntegrationException {
@@ -337,12 +339,14 @@ public class ApplicationService {
         Application application = entityService.getById(Application.class, applicationId);
         PrismAction actionId = commentDTO.getAction();
 
+        User user = userService.getById(commentDTO.getUser());
         if (actionId == PrismAction.APPLICATION_COMPLETE) {
             validateApplicationAndThrowException(application);
+            application.setRetain(commentDTO.getApplicationRetain());
+            user.getUserAccount().setSendApplicationRecommendationNotification(commentDTO.getApplicationRecommend());
         }
 
         Action action = actionService.getById(actionId);
-        User user = userService.getById(commentDTO.getUser());
         User delegateUser = userService.getById(commentDTO.getDelegateUser());
         State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
 
@@ -549,8 +553,6 @@ public class ApplicationService {
 
     private void purgeApplication(Application application, Comment comment) {
         if (!application.getRetain()) {
-            application.setApplicationRatingCount(null);
-            application.setApplicationRatingAverage(null);
             application.setProgramDetail(null);
             application.getSupervisors().clear();
             application.setPersonalDetail(null);
@@ -562,6 +564,9 @@ public class ApplicationService {
             application.setDocument(null);
             application.setAdditionalInformation(null);
         }
+        
+        application.setApplicationRatingCount(null);
+        application.setApplicationRatingAverage(null);
         commentService.delete(application, comment);
     }
 

@@ -96,15 +96,6 @@ public class Institution extends ResourceParent {
     @Column(name = "google_id")
     private String googleId;
 
-    @Column(name = "linkedin_uri")
-    private String linkedinUri;
-
-    @Column(name = "twitter_uri")
-    private String twitterUri;
-
-    @Column(name = "facebook_uri")
-    private String facebookUri;
-
     @Column(name = "default_program_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismProgramType defaultProgramType;
@@ -313,30 +304,6 @@ public class Institution extends ResourceParent {
         this.googleId = googleId;
     }
 
-    public String getLinkedinUri() {
-        return linkedinUri;
-    }
-
-    public void setLinkedinUri(String linkedinUri) {
-        this.linkedinUri = linkedinUri;
-    }
-
-    public String getTwitterUri() {
-        return twitterUri;
-    }
-
-    public void setTwitterUri(String twitterUri) {
-        this.twitterUri = twitterUri;
-    }
-
-    public String getFacebookUri() {
-        return facebookUri;
-    }
-
-    public void setFacebookUri(String facebookUri) {
-        this.facebookUri = facebookUri;
-    }
-
     public PrismProgramType getDefaultProgramType() {
         return defaultProgramType;
     }
@@ -536,21 +503,6 @@ public class Institution extends ResourceParent {
 
     public Institution withGoogleId(String googleId) {
         this.googleId = googleId;
-        return this;
-    }
-
-    public Institution withLinkedinUri(String linkedinUri) {
-        this.linkedinUri = linkedinUri;
-        return this;
-    }
-
-    public Institution withTwitterUri(String twitterUri) {
-        this.twitterUri = twitterUri;
-        return this;
-    }
-
-    public Institution withFacebookUri(String facebookUri) {
-        this.facebookUri = facebookUri;
         return this;
     }
 

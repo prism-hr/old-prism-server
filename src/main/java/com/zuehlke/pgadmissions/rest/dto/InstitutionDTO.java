@@ -42,8 +42,6 @@ public class InstitutionDTO {
 
     private String googleIdentifier;
 
-    private String linkedinIdentifier;
-
     @NotNull
     private InstitutionAddressDTO address;
 
@@ -141,14 +139,6 @@ public class InstitutionDTO {
 
     public final void setGoogleIdentifier(String googleIdentifier) {
         this.googleIdentifier = googleIdentifier;
-    }
-
-    public final String getLinkedinIdentifier() {
-        return linkedinIdentifier;
-    }
-
-    public final void setLinkedinIdentifier(String linkedinIdentifier) {
-        this.linkedinIdentifier = linkedinIdentifier;
     }
 
     public InstitutionAddressDTO getAddress() {

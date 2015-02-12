@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.rest.resource;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;

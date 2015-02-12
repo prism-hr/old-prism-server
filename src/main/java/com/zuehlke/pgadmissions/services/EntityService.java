@@ -1,17 +1,16 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -89,7 +88,7 @@ public class EntityService {
     public void evict(Object entity) {
         entityDAO.evict(entity);
     }
-    
+
     public <T> void deleteAll(Class<T> classReference) {
         entityDAO.deleteAll(classReference);
     }

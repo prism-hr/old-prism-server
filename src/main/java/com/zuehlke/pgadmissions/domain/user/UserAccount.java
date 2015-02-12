@@ -1,25 +1,16 @@
 package com.zuehlke.pgadmissions.domain.user;
 
-import java.util.Map;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapKeyJoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.resource.ResourceListFilter;
+import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.resource.ResourceListFilter;
-import com.zuehlke.pgadmissions.domain.workflow.Scope;
+import javax.persistence.*;
+import java.util.Map;
+import java.util.Set;
 
 @Entity
 @Table(name = "USER_ACCOUNT")
@@ -29,12 +20,12 @@ public class UserAccount {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     private String password;
-    
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_account_external_id", unique = true)
-    private UserAccountExternal externalAccount;
+    private UserAccountExternal primaryExternalAccount;
 
     @Column(name = "temporary_password")
     private String temporaryPassword;
@@ -57,6 +48,9 @@ public class UserAccount {
     @MapKeyJoinColumn(name = "scope_id")
     private Map<Scope, ResourceListFilter> filters = Maps.newHashMap();
 
+    @OneToMany(mappedBy = "userAccount")
+    private Set<UserAccountExternal> externalAccounts = Sets.newHashSet();
+
     public String getPassword() {
         return password;
     }
@@ -64,13 +58,13 @@ public class UserAccount {
     public void setPassword(String password) {
         this.password = password;
     }
-    
-    public final UserAccountExternal getExternalAccount() {
-        return externalAccount;
+
+    public UserAccountExternal getPrimaryExternalAccount() {
+        return primaryExternalAccount;
     }
 
-    public final void setExternalAccount(UserAccountExternal externalAccount) {
-        this.externalAccount = externalAccount;
+    public void setPrimaryExternalAccount(UserAccountExternal externalAccount) {
+        this.primaryExternalAccount = externalAccount;
     }
 
     public String getTemporaryPassword() {
@@ -97,24 +91,28 @@ public class UserAccount {
         this.enabled = enabled;
     }
 
-    public final Boolean getSendApplicationRecommendationNotification() {
+    public Boolean getSendApplicationRecommendationNotification() {
         return sendApplicationRecommendationNotification;
     }
 
-    public final void setSendApplicationRecommendationNotification(Boolean sendApplicationRecommendationNotification) {
+    public void setSendApplicationRecommendationNotification(Boolean sendApplicationRecommendationNotification) {
         this.sendApplicationRecommendationNotification = sendApplicationRecommendationNotification;
     }
 
-    public final LocalDate getLastNotifiedDateApplicationRecommendation() {
+    public LocalDate getLastNotifiedDateApplicationRecommendation() {
         return lastNotifiedDateApplicationRecommendation;
     }
 
-    public final void setLastNotifiedDateApplicationRecommendation(LocalDate lastNotifiedDateApplicationRecommendation) {
+    public void setLastNotifiedDateApplicationRecommendation(LocalDate lastNotifiedDateApplicationRecommendation) {
         this.lastNotifiedDateApplicationRecommendation = lastNotifiedDateApplicationRecommendation;
     }
 
     public Map<Scope, ResourceListFilter> getFilters() {
         return filters;
+    }
+
+    public Set<UserAccountExternal> getExternalAccounts() {
+        return externalAccounts;
     }
 
     public UserAccount withPassword(String password) {
@@ -131,4 +129,5 @@ public class UserAccount {
         this.enabled = enabled;
         return this;
     }
+
 }

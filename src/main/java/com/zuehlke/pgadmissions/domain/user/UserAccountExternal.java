@@ -1,21 +1,12 @@
 package com.zuehlke.pgadmissions.domain.user;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 
-import com.zuehlke.pgadmissions.domain.definitions.AuthenticationProvider;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "USER_ACCOUNT_EXTERNAL", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_account_id", "external_account_type" }),
-        @UniqueConstraint(columnNames = { "external_account_type", "external_account_identifier" }) })
+@Table(name = "USER_ACCOUNT_EXTERNAL", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_account_id", "external_account_type"}),
+        @UniqueConstraint(columnNames = {"external_account_type", "external_account_identifier"})})
 public class UserAccountExternal {
 
     @Id
@@ -28,41 +19,57 @@ public class UserAccountExternal {
 
     @Column(name = "external_account_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    private AuthenticationProvider accountType;
+    private OauthProvider accountType;
 
     @Column(name = "external_account_identifier", nullable = false)
     private String accountIdentifier;
 
-    public final Integer getId() {
+    public Integer getId() {
         return id;
     }
 
-    public final void setId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public final UserAccount getUserAccount() {
+    public UserAccount getUserAccount() {
         return userAccount;
     }
 
-    public final void setUserAccount(UserAccount userAccount) {
+    public void setUserAccount(UserAccount userAccount) {
         this.userAccount = userAccount;
     }
 
-    public final AuthenticationProvider getAccountType() {
+    public OauthProvider getAccountType() {
         return accountType;
     }
 
-    public final void setAccountType(AuthenticationProvider accountType) {
+    public void setAccountType(OauthProvider accountType) {
         this.accountType = accountType;
     }
 
-    public final String getAccountIdentifier() {
+    public String getAccountIdentifier() {
         return accountIdentifier;
     }
 
-    public final void setAccountIdentifier(String accountIdentifier) {
+    public void setAccountIdentifier(String accountIdentifier) {
         this.accountIdentifier = accountIdentifier;
     }
+
+    public UserAccountExternal withUserAccount(final UserAccount userAccount) {
+        this.userAccount = userAccount;
+        return this;
+    }
+
+    public UserAccountExternal withAccountType(final OauthProvider accountType) {
+        this.accountType = accountType;
+        return this;
+    }
+
+    public UserAccountExternal withAccountIdentifier(final String accountIdentifier) {
+        this.accountIdentifier = accountIdentifier;
+        return this;
+    }
+
 
 }

@@ -1,27 +1,5 @@
 package com.zuehlke.pgadmissions.domain.user;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
@@ -29,10 +7,19 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import javax.persistence.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
 @Entity
 @Table(name = "USER")
-@SuppressWarnings({ "serial", "unused" })
+@SuppressWarnings({"serial", "unused"})
 public class User implements UserDetails, IUniqueEntity {
 
     private static long serialVersionUID = 5910410212695389060L;
@@ -69,12 +56,6 @@ public class User implements UserDetails, IUniqueEntity {
     @OneToOne
     @JoinColumn(name = "portrait_document_id")
     private Document portraitDocument;
-
-    @Column(name = "linkedin_uri")
-    private String linkedinUri;
-
-    @Column(name = "twitter_uri")
-    private String twitterUri;
 
     @Column(name = "activation_code", nullable = false, unique = true)
     private String activationCode;
@@ -173,11 +154,11 @@ public class User implements UserDetails, IUniqueEntity {
         this.email = email;
     }
 
-    public final Boolean getEmailValid() {
+    public Boolean getEmailValid() {
         return emailValid;
     }
 
-    public final void setEmailValid(Boolean emailValid) {
+    public void setEmailValid(Boolean emailValid) {
         this.emailValid = emailValid;
     }
 
@@ -195,22 +176,6 @@ public class User implements UserDetails, IUniqueEntity {
 
     public void setPortraitDocument(Document portraitDocument) {
         this.portraitDocument = portraitDocument;
-    }
-
-    public String getLinkedinUri() {
-        return linkedinUri;
-    }
-
-    public void setLinkedinUri(String linkedinUri) {
-        this.linkedinUri = linkedinUri;
-    }
-
-    public String getTwitterUri() {
-        return twitterUri;
-    }
-
-    public void setTwitterUri(String twitterUri) {
-        this.twitterUri = twitterUri;
     }
 
     public String getActivationCode() {

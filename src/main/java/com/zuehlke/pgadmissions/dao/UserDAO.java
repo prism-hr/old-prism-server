@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -240,12 +239,4 @@ public class UserDAO {
                 .executeUpdate();
     }
 
-    public User getByExternalAccountId(OauthProvider oauthProvider, String externalId) {
-        return (User) sessionFactory.getCurrentSession().createCriteria(User.class)
-                .createAlias("userAccount", "userAccount") //
-                .createAlias("userAccount.externalAccounts", "externalAccount")
-                .add(Restrictions.eq("externalAccount.accountType", oauthProvider))
-                .add(Restrictions.eq("externalAccount.accountIdentifier", externalId))
-                .uniqueResult();
-    }
 }

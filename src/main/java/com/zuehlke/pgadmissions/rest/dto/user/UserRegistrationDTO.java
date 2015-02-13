@@ -25,6 +25,7 @@ public class UserRegistrationDTO {
 
     private String activationCode;
 
+    @NotEmpty
     @Size(min = 8, max = 15)
     private String password;
 

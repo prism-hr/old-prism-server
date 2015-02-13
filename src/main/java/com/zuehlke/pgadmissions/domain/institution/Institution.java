@@ -44,7 +44,7 @@ import com.zuehlke.pgadmissions.domain.workflow.ResourceAction;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
-@Table(name = "INSTITUTION", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_domicile_id", "title", "google_id"})})
+@Table(name = "INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_domicile_id", "title", "google_id" }) })
 public class Institution extends ResourceParent {
 
     @Id
@@ -158,7 +158,7 @@ public class Institution extends ResourceParent {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
-
+    
     @Column(name = "updated_timestamp_sitemap", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestampSitemap;
@@ -423,12 +423,12 @@ public class Institution extends ResourceParent {
     }
 
     @Override
-    public Set<ResourceState> getResourceStates() {
+    public final Set<ResourceState> getResourceStates() {
         return resourceStates;
     }
 
     @Override
-    public Set<ResourcePreviousState> getResourcePreviousStates() {
+    public final Set<ResourcePreviousState> getResourcePreviousStates() {
         return resourcePreviousStates;
     }
 
@@ -654,41 +654,41 @@ public class Institution extends ResourceParent {
         this.updatedTimestamp = updatedTimestamp;
     }
 
-    public DateTime getUpdatedTimestampSitemap() {
+    public final DateTime getUpdatedTimestampSitemap() {
         return updatedTimestampSitemap;
     }
 
-    public void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap) {
+    public final void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap) {
         this.updatedTimestampSitemap = updatedTimestampSitemap;
     }
 
     @Override
-    public LocalDate getLastRemindedRequestIndividual() {
+    public final LocalDate getLastRemindedRequestIndividual() {
         return lastRemindedRequestIndividual;
     }
 
     @Override
-    public void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual) {
+    public final void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual) {
         this.lastRemindedRequestIndividual = lastRemindedRequestIndividual;
     }
 
     @Override
-    public LocalDate getLastRemindedRequestSyndicated() {
+    public final LocalDate getLastRemindedRequestSyndicated() {
         return lastRemindedRequestSyndicated;
     }
 
     @Override
-    public void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated) {
+    public final void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated) {
         this.lastRemindedRequestSyndicated = lastRemindedRequestSyndicated;
     }
 
     @Override
-    public LocalDate getLastNotifiedUpdateSyndicated() {
+    public final LocalDate getLastNotifiedUpdateSyndicated() {
         return lastNotifiedUpdateSyndicated;
     }
 
     @Override
-    public void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
+    public final void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
         this.lastNotifiedUpdateSyndicated = lastNotifiedUpdateSyndicated;
     }
 
@@ -703,12 +703,12 @@ public class Institution extends ResourceParent {
     }
 
     @Override
-    public Integer getWorkflowPropertyConfigurationVersion() {
+    public final Integer getWorkflowPropertyConfigurationVersion() {
         return workflowPropertyConfigurationVersion;
     }
 
     @Override
-    public void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
+    public final void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
         this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
     }
 

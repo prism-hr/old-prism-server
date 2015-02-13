@@ -30,8 +30,6 @@ public class ActionDTO {
     @Valid
     private ApplicationDTO newApplication;
 
-    private String referer;
-
     public PrismAction getActionId() {
         return actionId;
     }
@@ -78,14 +76,6 @@ public class ActionDTO {
 
     public final void setNewApplication(ApplicationDTO newApplication) {
         this.newApplication = newApplication;
-    }
-
-    public String getReferer() {
-        return referer;
-    }
-
-    public void setReferer(String referer) {
-        this.referer = referer;
     }
 
     public ActionDTO withAction(final PrismAction actionId) {

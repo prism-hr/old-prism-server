@@ -1,22 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rejectionReasons>
 	<rejectionReason>
-		<code>INELIGIBLE_ADMISSION</code>
-		<name>Your application was not considered eligible because you have not 
-			been admitted to your chosen study institution.
+		<code>APPLICATION_INCOMPLETE</code>
+		<name>We are unable to form a judgement on your suitability based upon
+			the information that you have supplied in your application.
 		</name>
 	</rejectionReason>
 	<rejectionReason>
-		<code>INELIGIBLE_FEE_STATUS</code>
-		<name>Your application was not considered eligible because your student
-			fee status has been determined to be overseas. This means that we are
-			not able to award you with funding.
-		</name>
-	</rejectionReason>
-	<rejectionReason>
-		<code>INELIGIBLE_REMIT</code>
-		<name>Your application was not considered eligible because the research
-			that you intend to conduct is not within the remit of our funding.
+		<code>INELIGIBLE</code>
+		<name>Your application was not considered eligible. This will be because: (a) 
+			your application for PhD study at your chosen institution was not successful; (b) 
+			your fee status has been determined as Overseas, and/or; (c) Your research falls 
+			outside of our funding remit.
 		</name>
 	</rejectionReason>
 	<rejectionReason>

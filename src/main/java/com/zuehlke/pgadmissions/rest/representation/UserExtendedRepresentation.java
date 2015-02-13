@@ -12,6 +12,10 @@ public class UserExtendedRepresentation extends UserRepresentation {
 
     private FileRepresentation portraitDocument;
 
+    private String linkedinUri;
+
+    private String twitterUri;
+
     private Boolean sendApplicationRecommendationNotification;
 
     private PrismScope latestCreationScope;
@@ -21,8 +25,6 @@ public class UserExtendedRepresentation extends UserRepresentation {
     private String parentUser;
 
     private List<String> linkedUsers;
-
-    private List<String> oauthProviders;
 
     public PrismLocale getLocale() {
         return locale;
@@ -38,6 +40,22 @@ public class UserExtendedRepresentation extends UserRepresentation {
 
     public void setPortraitDocument(FileRepresentation portraitDocument) {
         this.portraitDocument = portraitDocument;
+    }
+
+    public String getLinkedinUri() {
+        return linkedinUri;
+    }
+
+    public void setLinkedinUri(String linkedinUri) {
+        this.linkedinUri = linkedinUri;
+    }
+
+    public String getTwitterUri() {
+        return twitterUri;
+    }
+
+    public void setTwitterUri(String twitterUri) {
+        this.twitterUri = twitterUri;
     }
 
     public Boolean getSendApplicationRecommendationNotification() {
@@ -78,13 +96,5 @@ public class UserExtendedRepresentation extends UserRepresentation {
 
     public void setLinkedUsers(List<String> linkedUsers) {
         this.linkedUsers = linkedUsers;
-    }
-
-    public List<String> getOauthProviders() {
-        return oauthProviders;
-    }
-
-    public void setOauthProviders(List<String> oauthProviders) {
-        this.oauthProviders = oauthProviders;
     }
 }

@@ -31,7 +31,7 @@ public class UserHelper {
     private ResourceService resourceService;
 
     @Autowired
-    private AuthenticationService authenticationService;
+    private RoleService roleService;
 
     @Autowired
     private UserService userService;
@@ -45,10 +45,10 @@ public class UserHelper {
 
         String testContextReferrer = actionId.getActionCategory() == PrismActionCategory.CREATE_RESOURCE ? "http://www.testcontextreferrer.com" : null;
 
-        authenticationService.registerUser(
+        userService.registerUser(
                 new UserRegistrationDTO().withFirstName(user.getFirstName()).withLastName(user.getLastName()).withEmail(user.getEmail())
                         .withActivationCode(user.getActivationCode()).withPassword("password").withResourceId(resourceId)
-                        .withAction(new ActionDTO().withAction(actionId)), null);
+                        .withAction(new ActionDTO().withAction(actionId)), testContextReferrer);
 
         mailSenderMock.assertEmailSent(user, PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
 

@@ -89,7 +89,7 @@ public class EntityService {
     public void evict(Object entity) {
         entityDAO.evict(entity);
     }
-
+    
     public <T> void deleteAll(Class<T> classReference) {
         entityDAO.deleteAll(classReference);
     }

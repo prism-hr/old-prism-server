@@ -16,8 +16,8 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.mail.MailSenderMock;
 import com.zuehlke.pgadmissions.rest.dto.ActionDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
+import com.zuehlke.pgadmissions.services.AuthenticationService;
 import com.zuehlke.pgadmissions.services.ResourceService;
-import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Service

@@ -191,8 +191,7 @@ public class AuthenticationService {
             } else {
                 if (userService.getUserByEmail(userDefinition.getEmail()) != null) {
                     throw new PrismConflictException("User with given email already exists");
-                }
-                // user details need confirmation, storing current details in session
+                } // user details need confirmation, storing current details in session
                 session.setAttribute(OAUTH_USER_TO_CONFIRM, userDefinition);
                 return null;
             }
@@ -204,8 +203,7 @@ public class AuthenticationService {
             throw new AccessDeniedException("Given " + oauthProvider.getName() + " account is already associated with another account");
         }
 
-        if (userByExternalAccount == null) {
-            // create association (and account if not there yet)
+        if (userByExternalAccount == null) { // create association (and account if not there yet)
             createUserAccount(user, oauthProvider, userDefinition.getExternalId(), null, true);
         }
 
@@ -217,8 +215,7 @@ public class AuthenticationService {
 
         User existingUser = userService.getUserByEmail(registrationDTO.getEmail());
         boolean userAlreadyExists = existingUser != null;
-        if (userAlreadyExists) {
-            // if user has been already created means that email is already confirmed (user knew activation code), we can activate the user straight away
+        if (userAlreadyExists) { // if user has been already created means that email is already confirmed (user knew activation code), we can activate the user straight away
             if (!existingUser.getActivationCode().equals(registrationDTO.getActivationCode())) {
                 throw new ResourceNotFoundException("Incorrect code");
             }
@@ -230,11 +227,9 @@ public class AuthenticationService {
         User user = userService
                 .getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail(), resource.getLocale());
 
-        if (registrationDTO.getPassword() != null) {
-            // regular password based registration
+        if (registrationDTO.getPassword() != null) { // regular password based registration
             createUserAccount(user, null, null, registrationDTO.getPassword(), userAlreadyExists);
-        } else {
-            // Oauth registration, user details confirmed
+        } else { // Oauth registration, user details confirmed
             OauthUserDefinition userDefinition = (OauthUserDefinition) session.getAttribute(OAUTH_USER_TO_CONFIRM);
             if (userDefinition == null) {
                 throw new Error("User definition not found in session");

@@ -1,5 +1,22 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
+
+import javax.inject.Inject;
+
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.BeansException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -8,6 +25,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -21,60 +39,36 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
-import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.exceptions.*;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
+import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BeanPropertyBindingResult;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
 
 @Service
 @Transactional
 public class UserService {
 
-    @Autowired
+    @Inject
     private UserDAO userDAO;
 
-    @Autowired
-    private ActionService actionService;
-
-    @Autowired
+    @Inject
     private RoleService roleService;
 
-    @Autowired
+    @Inject
     private NotificationService notificationService;
 
-    @Autowired
+    @Inject
     private EntityService entityService;
 
-    @Autowired
+    @Inject
     private CommentService commentService;
 
-    @Autowired
-    private ResourceService resourceService;
-
-    @Autowired
+    @Inject
     private DocumentService documentService;
-
-    @Value("${system.user.email}")
-    private String systemUserEmail;
 
     public User getById(Integer id) {
         return entityService.getById(User.class, id);
@@ -92,22 +86,6 @@ public class UserService {
     public UserRepresentation getUserRepresentation(User user) {
         return new UserRepresentation().withFirstName(user.getFirstName()).withFirstName2(user.getFirstName2()).withFirstName3(user.getFirstName3())
                 .withLastName(user.getLastName()).withEmail(user.getEmail());
-    }
-
-    public User registerUser(UserRegistrationDTO registrationDTO, String referrer) throws Exception {
-        Resource resource = resourceService.getById(registrationDTO.getAction().getActionId().getScope().getResourceClass(), registrationDTO.getResourceId());
-        User user = getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail(), resource.getLocale());
-        if ((registrationDTO.getActivationCode() != null && !user.getActivationCode().equals(registrationDTO.getActivationCode()))
-                || user.getUserAccount() != null) {
-            throw new ResourceNotFoundException("Incorrect code or user already exists");
-        }
-
-        user.setUserAccount(new UserAccount().withPassword(EncryptionUtils.getMD5(registrationDTO.getPassword()))
-                .withSendApplicationRecommendationNotification(false).withEnabled(false));
-
-        ActionOutcomeDTO outcome = actionService.getRegistrationOutcome(user, registrationDTO, referrer);
-        notificationService.sendRegistrationNotification(user, outcome);
-        return user;
     }
 
     public User getOrCreateUser(String firstName, String lastName, String email, PrismLocale locale) throws DeduplicationException {
@@ -182,6 +160,10 @@ public class UserService {
 
     public User getUserByActivationCode(String activationCode) {
         return userDAO.getUserByActivationCode(activationCode);
+    }
+
+    public User getByExternalAccountId(OauthProvider oauthProvider, String externalId) {
+        return userDAO.getByExternalAccountId(oauthProvider, externalId);
     }
 
     public void resetPassword(String email) {
@@ -304,6 +286,5 @@ public class UserService {
     public boolean isCurrentUser(User user) {
         return user != null && Objects.equal(user.getId(), getCurrentUser().getId());
     }
-
 
 }

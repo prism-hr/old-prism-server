@@ -1,12 +1,14 @@
 package com.zuehlke.pgadmissions.services.builders.pdf.mail;
 
-import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class AttachmentInputSourceFactoryTest {
 

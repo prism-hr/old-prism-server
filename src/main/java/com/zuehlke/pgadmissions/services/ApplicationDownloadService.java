@@ -114,7 +114,7 @@ public class ApplicationDownloadService {
                                 .build(applicationDownloadDTO, pdfDocument, pdfWriter);
                     }
                 } catch (PdfDocumentBuilderException e) {
-                    LOGGER.warn("Error building download for application " + application.getCode(), e);
+                    LOGGER.error("Error building download for application " + application.getCode(), e);
                 }
                 pdfDocument.newPage();
             }

@@ -5,7 +5,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflow
 import static com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize.MEDIUM;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -16,7 +16,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.itextpdf.text.Anchor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -31,10 +31,10 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfImportedPage;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
+import com.itextpdf.text.pdf.events.PdfPageEventForwarder;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
@@ -78,7 +78,7 @@ public class ApplicationDownloadBuilder {
 
     private PropertyLoader propertyLoader;
 
-    private final List<Object> bookmarks = Lists.newLinkedList();
+    private final Map<String, Object> bookmarks = Maps.newLinkedHashMap();
 
     private ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper;
 
@@ -635,19 +635,21 @@ public class ApplicationDownloadBuilder {
 
     private void addSupportingDocuments(ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument, PdfWriter pdfWriter) throws DocumentException,
             IOException, IntegrationException {
-        for (int i = 0; i < bookmarks.size(); i++) {
+        int index = 0;
+        for (Map.Entry<String, Object> bookmark : bookmarks.entrySet()) {
             pdfDocument.newPage();
-
+            
             NewPageEvent pageEvent = (NewPageEvent) pdfWriter.getPageEvent();
             pageEvent.setApplyHeaderFooter(true);
-
+            
+            String bookmarkKey = bookmark.getKey();
             Anchor anchor = new Anchor();
-            anchor.setName(String.valueOf(i));
+            anchor.setName(bookmarkKey);
 
-            Object object = bookmarks.get(i);
-            pdfDocument.add(new Chunk(propertyLoader.load(SYSTEM_APPENDIX) + "(" + (i + 1) + ")").setLocalDestination(new Integer(i).toString()));
-            if (object instanceof com.zuehlke.pgadmissions.domain.document.Document) {
-                com.zuehlke.pgadmissions.domain.document.Document document = (com.zuehlke.pgadmissions.domain.document.Document) object;
+            Object content = bookmark.getValue();
+            pdfDocument.add(new Chunk(propertyLoader.load(SYSTEM_APPENDIX) + "(" + (index + 1) + ")").setLocalDestination(bookmarkKey));
+            if (content instanceof com.zuehlke.pgadmissions.domain.document.Document) {
+                com.zuehlke.pgadmissions.domain.document.Document document = (com.zuehlke.pgadmissions.domain.document.Document) content;
 
                 if (document.getApplicationLanguageQualification() != null) {
                     pdfDocument.add(buildTarget(APPLICATION_LANGUAGE_QUALIFICATION_APPENDIX, anchor));
@@ -659,11 +661,15 @@ public class ApplicationDownloadBuilder {
                     pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_PERSONAL_STATEMENT_APPENDIX, anchor));
                 } else if (document.getApplicationCv() != null) {
                     pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_CV_APPENDIX, anchor));
+                } else if (document.getApplicationResearchStatement() != null) {
+                    pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_RESEARCH_STATEMENT_APPENDIX, anchor));
+                } else if (document.getApplicationCoveringLetter() != null) {
+                    pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_COVERING_LETTER_APPENDIX, anchor));
                 }
 
                 addDocument(pdfDocument, document, pdfWriter);
-            } else if (object instanceof Comment) {
-                Comment referenceComment = (Comment) object;
+            } else if (content instanceof Comment) {
+                Comment referenceComment = (Comment) content;
                 pdfDocument.add(buildTarget(APPLICATION_REFEREE_REFERENCE_APPENDIX, anchor));
 
                 pdfDocument.add(applicationDownloadBuilderHelper.newSectionSeparator());
@@ -676,6 +682,8 @@ public class ApplicationDownloadBuilder {
                     addDocument(pdfDocument, document, pdfWriter);
                 }
             }
+            
+            index++;
         }
     }
 
@@ -702,12 +710,12 @@ public class ApplicationDownloadBuilder {
 
     private void addApplicationSummary(Application application, PdfPTable table, ApplicationDownloadBuilderFontSize fontSize) {
         applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(SYSTEM_INSTITUTION), application.getInstitutionDisplay(), fontSize, table);
-        
+
         Department department = application.getDepartment();
         if (department != null) {
             applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(SYSTEM_DEPARTMENT), application.getDepartmentDisplay(), fontSize, table);
         }
-        
+
         applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(SYSTEM_PROGRAM), application.getProgramDisplay(), fontSize, table);
 
         Project project = application.getProject();
@@ -736,23 +744,24 @@ public class ApplicationDownloadBuilder {
                 fontSize, table);
     }
 
-    private void addBookmark(PdfPTable table, String rowTitle, Object object, ApplicationDownloadDTO applicationDownloadDTO) {
+    private void addBookmark(PdfPTable table, String rowTitle, Object content, ApplicationDownloadDTO applicationDownloadDTO) {
         table.addCell(applicationDownloadBuilderHelper.newTitleCellMedium(rowTitle));
         ApplicationDownloadMode downloadMode = applicationDownloadDTO.getDownloadMode();
         boolean includeAttachments = applicationDownloadDTO.isIncludeAttachments();
         if ((downloadMode == ApplicationDownloadMode.SYSTEM && includeAttachments)
-                || (downloadMode == ApplicationDownloadMode.USER && (includeAttachments || userService.isCurrentUser((User) ReflectionUtils.getProperty(object,
+                || (downloadMode == ApplicationDownloadMode.USER && (includeAttachments || userService.isCurrentUser((User) ReflectionUtils.getProperty(content,
                         "user"))))) {
-            if (object == null) {
+            if (content == null) {
                 table.addCell(applicationDownloadBuilderHelper.newContentCellMedium(null));
             } else {
                 int index = bookmarks.size();
+                String anchor = applicationDownloadDTO.getApplication().getCode() + "-" + index;
                 table.addCell(applicationDownloadBuilderHelper.newBookmarkCellMedium(
-                        propertyLoader.load(SYSTEM_SEE) + " " + propertyLoader.load(SYSTEM_APPENDIX) + " (" + (index + 1) + ")", index));
-                bookmarks.add(object);
+                        propertyLoader.load(SYSTEM_SEE) + " " + propertyLoader.load(SYSTEM_APPENDIX) + " (" + (index + 1) + ")", anchor));
+                bookmarks.put(anchor, content);
             }
         } else {
-            table.addCell(applicationDownloadBuilderHelper.newContentCellMedium(object == null ? null : propertyLoader.load(SYSTEM_VALUE_PROVIDED)));
+            table.addCell(applicationDownloadBuilderHelper.newContentCellMedium(content == null ? null : propertyLoader.load(SYSTEM_VALUE_PROVIDED)));
         }
     }
 
@@ -762,7 +771,7 @@ public class ApplicationDownloadBuilder {
         pdfDocument.add(logoImage);
     }
 
-    private class NewPageEvent extends PdfPageEventHelper {
+    private class NewPageEvent extends PdfPageEventForwarder {
 
         private Application application;
 

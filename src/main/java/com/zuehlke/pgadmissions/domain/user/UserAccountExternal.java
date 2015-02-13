@@ -11,7 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
+import com.zuehlke.pgadmissions.domain.definitions.AuthenticationProvider;
 
 @Entity
 @Table(name = "USER_ACCOUNT_EXTERNAL", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_account_id", "external_account_type"}),
@@ -28,7 +28,7 @@ public class UserAccountExternal {
 
     @Column(name = "external_account_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    private OauthProvider accountType;
+    private AuthenticationProvider accountType;
 
     @Column(name = "external_account_identifier", nullable = false)
     private String accountIdentifier;
@@ -49,11 +49,11 @@ public class UserAccountExternal {
         this.userAccount = userAccount;
     }
 
-    public OauthProvider getAccountType() {
+    public AuthenticationProvider getAccountType() {
         return accountType;
     }
 
-    public void setAccountType(OauthProvider accountType) {
+    public void setAccountType(AuthenticationProvider accountType) {
         this.accountType = accountType;
     }
 
@@ -70,7 +70,7 @@ public class UserAccountExternal {
         return this;
     }
 
-    public UserAccountExternal withAccountType(final OauthProvider accountType) {
+    public UserAccountExternal withAccountType(final AuthenticationProvider accountType) {
         this.accountType = accountType;
         return this;
     }

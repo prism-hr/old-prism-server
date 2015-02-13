@@ -107,7 +107,7 @@ public class ApplicationDownloadBuilderHelper {
         return newContentCell(content, ApplicationDownloadBuilderFontSize.MEDIUM);
     }
 
-    public PdfPCell newBookmarkCellMedium(String content, int index) {
+    public PdfPCell newBookmarkCellMedium(String content, String index) {
         return newBookmarkCell(content, ApplicationDownloadBuilderFontSize.MEDIUM, index);
     }
 
@@ -119,8 +119,8 @@ public class ApplicationDownloadBuilderHelper {
         return newTableCell(content, fontSize, null);
     }
 
-    public PdfPCell newBookmarkCell(String content, ApplicationDownloadBuilderFontSize fontSize, int bookmarkIndex) {
-        return newTableCell(content, fontSize, bookmarkIndex);
+    public PdfPCell newBookmarkCell(String content, ApplicationDownloadBuilderFontSize fontSize, String index) {
+        return newTableCell(content, fontSize, index);
     }
 
     public void addContentRowMedium(String title, String content, PdfPTable table) {
@@ -141,15 +141,15 @@ public class ApplicationDownloadBuilderHelper {
         return table;
     }
 
-    private PdfPCell newTableCell(String content, ApplicationDownloadBuilderFontSize fontSize, Integer bookmarkIndex) {
+    private PdfPCell newTableCell(String content, ApplicationDownloadBuilderFontSize fontSize, String index) {
         Phrase phrase;
         if (StringUtils.isBlank(content)) {
             phrase = new Phrase(propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED), ApplicationDownloadBuilderConfiguration.getEmptyFont(fontSize));
-        } else if (bookmarkIndex == null) {
+        } else if (index == null) {
             phrase = new Phrase(content, ApplicationDownloadBuilderConfiguration.getFont(fontSize));
         } else {
             Anchor anchor = new Anchor(content, ApplicationDownloadBuilderConfiguration.getLinkFont(fontSize));
-            anchor.setReference("#" + bookmarkIndex.toString());
+            anchor.setReference("#" + index);
             phrase = new Phrase();
             phrase.add(anchor);
         }

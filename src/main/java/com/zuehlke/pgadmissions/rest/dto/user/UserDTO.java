@@ -33,10 +33,6 @@ public class UserDTO {
 
     private Integer portraitDocument;
 
-    private String linkedinUri;
-
-    private String twitterUri;
-
     private Boolean sendApplicationRecommendationNotification;
 
     @Size(min = 8, max = 15)
@@ -96,22 +92,6 @@ public class UserDTO {
 
     public void setPortraitDocument(Integer portraitDocument) {
         this.portraitDocument = portraitDocument;
-    }
-
-    public String getLinkedinUri() {
-        return linkedinUri;
-    }
-
-    public void setLinkedinUri(String linkedinUri) {
-        this.linkedinUri = linkedinUri;
-    }
-
-    public String getTwitterUri() {
-        return twitterUri;
-    }
-
-    public void setTwitterUri(String twitterUri) {
-        this.twitterUri = twitterUri;
     }
 
     public Boolean getSendApplicationRecommendationNotification() {

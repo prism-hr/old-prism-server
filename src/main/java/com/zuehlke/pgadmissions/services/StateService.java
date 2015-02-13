@@ -376,7 +376,7 @@ public class StateService {
     }
 
     public StateTransition getProgramCreatedOutcome(Resource resource, Comment comment) {
-        Program program = (Program) resource;
+        Program program = comment.getProgram();
         if (roleService.hasUserRole(resource, comment.getUser(), PrismRole.INSTITUTION_ADMINISTRATOR) || BooleanUtils.isTrue(program.getImported())) {
             return stateDAO.getStateTransition(resource, comment.getAction(), PrismState.PROGRAM_APPROVED);
         }

@@ -69,27 +69,27 @@ public class InstitutionDTO {
         this.title = title;
     }
 
-    public final PrismLocale getLocale() {
+    public  PrismLocale getLocale() {
         return locale;
     }
 
-    public final void setLocale(PrismLocale locale) {
+    public  void setLocale(PrismLocale locale) {
         this.locale = locale;
     }
 
-    public final String getSummary() {
+    public  String getSummary() {
         return summary;
     }
 
-    public final void setSummary(String summary) {
+    public  void setSummary(String summary) {
         this.summary = summary;
     }
 
-    public final String getDescription() {
+    public  String getDescription() {
         return description;
     }
 
-    public final void setDescription(String description) {
+    public  void setDescription(String description) {
         this.description = description;
     }
 
@@ -101,43 +101,43 @@ public class InstitutionDTO {
         this.homepage = homepage;
     }
 
-    public final PrismProgramType getDefaultProgramType() {
+    public  PrismProgramType getDefaultProgramType() {
         return defaultProgramType;
     }
 
-    public final void setDefaultProgramType(PrismProgramType defaultProgramType) {
+    public  void setDefaultProgramType(PrismProgramType defaultProgramType) {
         this.defaultProgramType = defaultProgramType;
     }
 
-    public final PrismStudyOption getDefaultStudyOption() {
+    public  PrismStudyOption getDefaultStudyOption() {
         return defaultStudyOption;
     }
 
-    public final void setDefaultStudyOption(PrismStudyOption defaultStudyOption) {
+    public  void setDefaultStudyOption(PrismStudyOption defaultStudyOption) {
         this.defaultStudyOption = defaultStudyOption;
     }
 
-    public final FileDTO getLogoDocument() {
+    public  FileDTO getLogoDocument() {
         return logoDocument;
     }
 
-    public final void setLogoDocument(FileDTO logoDocument) {
+    public  void setLogoDocument(FileDTO logoDocument) {
         this.logoDocument = logoDocument;
     }
 
-    public final String getLogoUri() {
+    public  String getLogoUri() {
         return logoUri;
     }
 
-    public final void setLogoUri(String logoUri) {
+    public  void setLogoUri(String logoUri) {
         this.logoUri = logoUri;
     }
 
-    public final String getGoogleIdentifier() {
+    public  String getGoogleIdentifier() {
         return googleIdentifier;
     }
 
-    public final void setGoogleIdentifier(String googleIdentifier) {
+    public  void setGoogleIdentifier(String googleIdentifier) {
         this.googleIdentifier = googleIdentifier;
     }
 

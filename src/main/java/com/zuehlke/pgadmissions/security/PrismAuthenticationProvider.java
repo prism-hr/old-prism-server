@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -45,10 +46,17 @@ public class PrismAuthenticationProvider implements AuthenticationProvider {
         String username = (String) preProcessToken.getPrincipal();
         String password = (String) preProcessToken.getCredentials();
 
-        User user = (User) userDetailsService.loadUserByUsername(username);
-        boolean validCredentials = userAuthenticationService.validateCredentials(user, password);
+        User user = null;
+        boolean validCredentials;
+        try {
+            user = (User) userDetailsService.loadUserByUsername(username);
+            validCredentials = userAuthenticationService.validateCredentials(user, password);
+        } catch (UsernameNotFoundException e){
+            validCredentials = false;
+        }
+
         if (!validCredentials) {
-            throw new BadCredentialsException("Bad credentials");
+            throw new BadCredentialsException("Invalid Username or Password.");
         }
 
         return user;
@@ -59,5 +67,5 @@ public class PrismAuthenticationProvider implements AuthenticationProvider {
     public boolean supports(Class<?> clazz) {
         return UsernamePasswordAuthenticationToken.class.isAssignableFrom(clazz);
     }
-    
+
 }

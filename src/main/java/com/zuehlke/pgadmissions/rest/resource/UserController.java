@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.rest.resource;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -15,7 +16,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,15 +23,17 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -40,7 +42,6 @@ import com.zuehlke.pgadmissions.rest.dto.user.UserActivateDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserEmailDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserLinkingDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.UserLinkingValidator;
@@ -53,9 +54,9 @@ import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
 @RequestMapping("/api/user")
-public class UserResource {
+public class UserController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserResource.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     @Resource(name = "prismUserDetailsService")
     private UserDetailsService userDetailsService;
@@ -96,6 +97,14 @@ public class UserResource {
         userRepresentation.setPermissionPrecedence(roleService.getPermissionPrecedence(user));
         userRepresentation.setLinkedUsers(userService.getLinkedUserAccounts(user));
         userRepresentation.setParentUser(user.getParentUser().getEmail());
+
+        Set<UserAccountExternal> externalAccounts = user.getUserAccount().getExternalAccounts();
+        List<String> oauthProviders = Lists.newArrayListWithCapacity(externalAccounts.size());
+        for (UserAccountExternal externalAccount : externalAccounts) {
+            oauthProviders.add(externalAccount.getAccountType().getName());
+        }
+        userRepresentation.setOauthProviders(oauthProviders);
+
         return userRepresentation;
     }
 
@@ -103,16 +112,6 @@ public class UserResource {
     @RequestMapping(method = RequestMethod.PUT)
     public void updateUser(@RequestBody UserDTO userDTO) {
         userService.updateUser(userDTO);
-    }
-
-    @PreAuthorize("permitAll")
-    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-    public Map<String, String> authenticate(@RequestParam String username, @RequestParam String password) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
-        Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-        return ImmutableMap.of("token", authenticationTokenHelper.createToken(userDetails));
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -157,13 +156,6 @@ public class UserResource {
     }
 
     @PreAuthorize("permitAll")
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public void submitRegistration(@RequestHeader(value = "referer", required = false) String referrer,
-            @Valid @RequestBody UserRegistrationDTO userRegistrationDTO) throws Exception {
-        userService.registerUser(userRegistrationDTO, referrer);
-    }
-
-    @PreAuthorize("permitAll")
     @RequestMapping(value = "/activate", method = RequestMethod.PUT)
     public Map<String, Object> activateAccount(@RequestBody UserActivateDTO activateDTO) {
         User user = userService.getUserByActivationCode(activateDTO.getActivationCode());
@@ -171,14 +163,24 @@ public class UserResource {
             throw new ResourceNotFoundException("User not found");
         }
         String status;
+        String loginProvider = null;
         if (user.getUserAccount() == null) {
             status = "NOT_REGISTERED";
         } else {
             userService.activateUser(user.getId(), activateDTO.getActionId(), activateDTO.getResourceId());
             status = "ACTIVATED";
+            UserAccountExternal primaryExternalAccount = user.getUserAccount().getPrimaryExternalAccount();
+            loginProvider = primaryExternalAccount != null ? primaryExternalAccount.getAccountType().getName() : null;
         }
         UserRepresentation userRepresentation = dozerBeanMapper.map(user, UserRepresentation.class);
-        return ImmutableMap.of("status", status, "user", userRepresentation);
+
+        Map<String, Object> result = Maps.newHashMap();
+        result.put("status", status);
+        result.put("user", userRepresentation);
+        if (loginProvider != null) {
+            result.put("loginProvider", loginProvider);
+        }
+        return result;
     }
 
     @PreAuthorize("permitAll")

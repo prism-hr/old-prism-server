@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Entity
 @Table(name = "USER")
-@SuppressWarnings({ "serial", "unused" })
+@SuppressWarnings({"serial", "unused"})
 public class User implements UserDetails, IUniqueEntity {
 
     private static long serialVersionUID = 5910410212695389060L;
@@ -174,11 +174,11 @@ public class User implements UserDetails, IUniqueEntity {
         this.email = email;
     }
 
-    public final Boolean getEmailValid() {
+    public Boolean getEmailValid() {
         return emailValid;
     }
 
-    public final void setEmailValid(Boolean emailValid) {
+    public void setEmailValid(Boolean emailValid) {
         this.emailValid = emailValid;
     }
 

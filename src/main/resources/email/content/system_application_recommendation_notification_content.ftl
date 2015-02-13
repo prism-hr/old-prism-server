@@ -9,6 +9,12 @@
 ${SYSTEM_APPLICATION_RECOMMENDATION}
 
 <p>
+	If you do not wish to receive these messages any more, login to update your user preferences:
+	<br/>
+	${SYSTEM_USER_ACCOUNT_MANAGEMENT}
+</p>
+
+<p>
     Yours sincerely,
     <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>

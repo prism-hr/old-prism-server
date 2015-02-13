@@ -702,12 +702,12 @@ public class ApplicationDownloadBuilder {
 
     private void addApplicationSummary(Application application, PdfPTable table, ApplicationDownloadBuilderFontSize fontSize) {
         applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(SYSTEM_INSTITUTION), application.getInstitutionDisplay(), fontSize, table);
-        
+
         Department department = application.getDepartment();
         if (department != null) {
             applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(SYSTEM_DEPARTMENT), application.getDepartmentDisplay(), fontSize, table);
         }
-        
+
         applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(SYSTEM_PROGRAM), application.getProgramDisplay(), fontSize, table);
 
         Project project = application.getProject();
@@ -748,7 +748,8 @@ public class ApplicationDownloadBuilder {
             } else {
                 int index = bookmarks.size();
                 table.addCell(applicationDownloadBuilderHelper.newBookmarkCellMedium(
-                        propertyLoader.load(SYSTEM_SEE) + " " + propertyLoader.load(SYSTEM_APPENDIX) + " (" + (index + 1) + ")", index));
+                        propertyLoader.load(SYSTEM_SEE) + " " + propertyLoader.load(SYSTEM_APPENDIX) + " (" + (index + 1) + ")", applicationDownloadDTO
+                                .getApplication().getCode() + "-" + index));
                 bookmarks.add(object);
             }
         } else {

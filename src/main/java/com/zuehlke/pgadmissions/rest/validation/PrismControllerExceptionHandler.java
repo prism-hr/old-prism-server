@@ -68,14 +68,15 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
-    @ExceptionHandler(value = {PrismBadRequestException.class, ResourceNotFoundException.class, AccessDeniedException.class, PrismConflictException.class, BadCredentialsException.class})
+    @ExceptionHandler(value = { PrismBadRequestException.class, ResourceNotFoundException.class, AccessDeniedException.class, PrismConflictException.class,
+            BadCredentialsException.class })
     public final ResponseEntity<Object> handleResourceNotFoundException(Exception ex, WebRequest request) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         Map<String, String> body = Collections.singletonMap("reason", ex.getMessage());
 
         HttpStatus status;
-        if(ex instanceof AccessDeniedException || ex instanceof BadCredentialsException){
+        if (ex instanceof AccessDeniedException || ex instanceof BadCredentialsException) {
             status = HttpStatus.UNAUTHORIZED;
         } else {
             status = ex.getClass().getAnnotation(ResponseStatus.class).value();
@@ -105,7 +106,7 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
             if (Arrays.asList(fieldError.getCodes()).contains(message)) {
                 log.error("Code used as validation message: " + fieldError);
             }
-            errorRepresentation.setFieldNames(new String[]{fieldError.getField()});
+            errorRepresentation.setFieldNames(new String[] { fieldError.getField() });
             validationErrorRepresentations.add(errorRepresentation);
         }
 

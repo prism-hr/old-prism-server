@@ -80,5 +80,4 @@ public class UserAccountExternal {
         return this;
     }
 
-
 }

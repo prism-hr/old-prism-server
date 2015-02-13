@@ -15,15 +15,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -34,7 +31,6 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
-import com.zuehlke.pgadmissions.exceptions.PrismConflictException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
@@ -68,19 +64,24 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
-    @ExceptionHandler(value = {PrismBadRequestException.class, ResourceNotFoundException.class, AccessDeniedException.class, PrismConflictException.class, BadCredentialsException.class})
-    public final ResponseEntity<Object> handleResourceNotFoundException(Exception ex, WebRequest request) {
+    @ExceptionHandler(value = PrismBadRequestException.class)
+    public final ResponseEntity<Object> handlePrismValidationException(PrismBadRequestException ex, WebRequest request) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        Map<String, String> body = Collections.singletonMap("reason", ex.getMessage());
-
-        HttpStatus status;
-        if(ex instanceof AccessDeniedException || ex instanceof BadCredentialsException){
-            status = HttpStatus.UNAUTHORIZED;
-        } else {
-            status = ex.getClass().getAnnotation(ResponseStatus.class).value();
+        Map<String, String> body = null;
+        if (ex.getReason() != null) {
+            body = Collections.singletonMap("reason", ex.getReason());
         }
-        return handleExceptionInternal(ex, body, headers, status, request);
+        return handleExceptionInternal(ex, body, headers, HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(value = ResourceNotFoundException.class)
+    public final ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        Map<String, String> body;
+        body = Collections.singletonMap("reason", ex.getMessage());
+        return handleExceptionInternal(ex, body, headers, HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler(value = PrismValidationException.class)
@@ -102,7 +103,7 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
             errorRepresentation.setCode(fieldError.getCode());
             String message = applicationContext.getMessage(fieldError, Locale.getDefault());
             errorRepresentation.setErrorMessage(message);
-            if (Arrays.asList(fieldError.getCodes()).contains(message)) {
+            if(Arrays.asList(fieldError.getCodes()).contains(message)){
                 log.error("Code used as validation message: " + fieldError);
             }
             errorRepresentation.setFieldNames(new String[]{fieldError.getField()});

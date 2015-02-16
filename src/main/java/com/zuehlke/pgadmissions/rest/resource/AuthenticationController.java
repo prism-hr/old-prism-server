@@ -72,9 +72,8 @@ public class AuthenticationController {
     @PreAuthorize("permitAll")
     @RequestMapping(value = "/oauth/{provider}", method = RequestMethod.POST)
     public Map<String, Object> oauthLogin(@PathVariable String provider, @Valid @RequestBody OauthLoginDTO oauthLoginDTO, HttpServletRequest request,
-                                          HttpServletResponse response) {
+            HttpServletResponse response) {
         OauthProvider oauthProvider = OauthProvider.getByName(provider);
-
         User user = authenticationService.getOrCreateUserAccountExternal(oauthProvider, oauthLoginDTO, request.getSession());
         return generateTokenOrSuggestedDetails(user, request, response);
     }
@@ -82,14 +81,14 @@ public class AuthenticationController {
     @PreAuthorize("permitAll")
     @RequestMapping(value = "/oauth/twitter", method = RequestMethod.GET)
     public Map<String, Object> oauthRequestToken(@RequestParam(required = false) OauthAssociationType associationType,
-                                                 @RequestParam(value = "oauth_token", required = false) String oAuthToken,
-                                                 @RequestParam(value = "oauth_verifier", required = false) String oAuthVerifier, HttpServletRequest request, HttpServletResponse response)
+            @RequestParam(value = "oauth_token", required = false) String oAuthToken,
+            @RequestParam(value = "oauth_verifier", required = false) String oAuthVerifier, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        if (oAuthToken == null) { // first step
+        if (oAuthToken == null) {
             String authorizeUrl = authenticationService.requestToken(request.getSession(), OauthProvider.TWITTER);
             response.sendRedirect(authorizeUrl);
             return null;
-        } else { // second step
+        } else {
             OauthLoginDTO oauthLoginDTO = new OauthLoginDTO();
             oauthLoginDTO.setAssociationType(associationType);
             oauthLoginDTO.setOauthToken(oAuthToken);
@@ -102,14 +101,12 @@ public class AuthenticationController {
 
     private Map<String, Object> generateTokenOrSuggestedDetails(User user, HttpServletRequest request, HttpServletResponse response) {
         if (user == null) {
-            // user not created, need to confirm details
             OauthUserDefinition userDefinition = (OauthUserDefinition) request.getSession().getAttribute(AuthenticationService.OAUTH_USER_TO_CONFIRM);
             UserRepresentation suggestedDetails = new UserRepresentation().withFirstName(userDefinition.getFirstName())
                     .withLastName(userDefinition.getLastName()).withEmail(userDefinition.getEmail());
             response.setStatus(HttpStatus.I_AM_A_TEAPOT.value());
             return ImmutableMap.of("suggestedUserDetails", (Object) suggestedDetails);
         }
-
         return ImmutableMap.of("token", (Object) authenticationTokenHelper.createToken(user));
     }
 

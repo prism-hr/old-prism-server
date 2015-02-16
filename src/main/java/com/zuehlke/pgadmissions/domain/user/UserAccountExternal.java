@@ -32,6 +32,12 @@ public class UserAccountExternal {
 
     @Column(name = "external_account_identifier", nullable = false)
     private String accountIdentifier;
+    
+    @Column(name = "external_account_profile_url")
+    private String accountProfileUrl;
+    
+    @Column(name = "external_account_image_url")
+    private String accountImageUrl;    
 
     public Integer getId() {
         return id;
@@ -65,6 +71,22 @@ public class UserAccountExternal {
         this.accountIdentifier = accountIdentifier;
     }
 
+    public final String getAccountProfileUrl() {
+        return accountProfileUrl;
+    }
+
+    public final void setAccountProfileUrl(String accountProfileUrl) {
+        this.accountProfileUrl = accountProfileUrl;
+    }
+
+    public final String getAccountImageUrl() {
+        return accountImageUrl;
+    }
+
+    public final void setAccountImageUrl(String accountImageUrl) {
+        this.accountImageUrl = accountImageUrl;
+    }
+
     public UserAccountExternal withUserAccount(final UserAccount userAccount) {
         this.userAccount = userAccount;
         return this;
@@ -77,6 +99,16 @@ public class UserAccountExternal {
 
     public UserAccountExternal withAccountIdentifier(final String accountIdentifier) {
         this.accountIdentifier = accountIdentifier;
+        return this;
+    }
+    
+    public UserAccountExternal withAccountProfileUrl(String accountProfileUrl) {
+        this.accountProfileUrl = accountProfileUrl;
+        return this;
+    }
+    
+    public UserAccountExternal withAccountImageUrl(String accountImageUrl) {
+        this.accountImageUrl = accountImageUrl;
         return this;
     }
 

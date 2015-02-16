@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -9,6 +10,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.exceptions.PrismForbiddenException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthAssociationType;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthLoginDTO;
@@ -40,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -262,4 +265,29 @@ public class AuthenticationService {
         }
     }
 
+    /**
+     *
+     * @return new primary external account
+     */
+    public UserAccountExternal unlinkExternalAccount(OauthProvider oauthProvider) {
+        User currentUser = userService.getCurrentUser();
+        UserAccount userAccount = currentUser.getUserAccount();
+        Set<UserAccountExternal> externalAccounts = userAccount.getExternalAccounts();
+        UserAccountExternal accountToUnlink = null;
+        for (UserAccountExternal externalAccount : externalAccounts) {
+            if (externalAccount.getAccountType() == oauthProvider) {
+                accountToUnlink = externalAccount;
+            }
+        }
+        if (accountToUnlink == null) {
+            throw new PrismForbiddenException("Account is not associated with given provider.");
+        }
+
+        externalAccounts.remove(accountToUnlink);
+        if(userAccount.getPrimaryExternalAccount().getId().equals(accountToUnlink.getId())){
+            userAccount.setPrimaryExternalAccount(Iterables.getFirst(externalAccounts, null));
+        }
+        entityService.delete(accountToUnlink);
+        return userAccount.getPrimaryExternalAccount();
+    }
 }

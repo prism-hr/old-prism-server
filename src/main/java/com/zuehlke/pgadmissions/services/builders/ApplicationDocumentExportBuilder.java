@@ -205,7 +205,7 @@ public class ApplicationDocumentExportBuilder {
         zos.putNextEntry(new ZipEntry(serverfilename));
         try {
             ApplicationDownloadDTO applicationDownloadDTO = new ApplicationDownloadDTO().withApplication(application)
-                    .withDownloadMode(ApplicationDownloadMode.SYSTEM).withIncludeReferences(true);
+                    .withDownloadMode(ApplicationDownloadMode.SYSTEM).withIncludeAssessments(true);
             applicationDownloadService.build(applicationDownloadDTO, propertyLoader, applicationDownloadBuilderHelper, zos);
         } catch (Exception e) {
             throw new PdfDocumentBuilderException(e);

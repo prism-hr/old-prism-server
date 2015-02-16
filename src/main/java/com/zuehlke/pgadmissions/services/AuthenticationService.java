@@ -121,10 +121,10 @@ public class AuthenticationService {
 
         boolean enableAccount = user != null;
         if (enableAccount) {
-            if (!user.getActivationCode().equals(registrationDTO.getActivationCode())) {
-                throw new ResourceNotFoundException("Incorrect activation code");
-            } else if (user.getUserAccount() != null) {
-                throw new ResourceNotFoundException("User already registered");
+            if (user.getUserAccount() != null) {
+                throw new ResourceNotFoundException("User is already registered");
+            } else if (!user.getActivationCode().equals(registrationDTO.getActivationCode())) {
+                throw new Error();
             }
         }
 
@@ -132,9 +132,9 @@ public class AuthenticationService {
 
         if (registrationDTO.getPassword() == null) {
             OauthUserDefinition oauthUserDefinition = (OauthUserDefinition) session.getAttribute(OAUTH_USER_TO_CONFIRM);
-            createUserAccount(user, oauthUserDefinition.getOauthProvider(), oauthUserDefinition.getExternalId(), null, enableAccount);
+            getOrCreateUserAccount(user, oauthUserDefinition.getOauthProvider(), oauthUserDefinition.getExternalId(), enableAccount);
         } else {
-            createUserAccount(user, null, null, registrationDTO.getPassword(), enableAccount);
+            getOrCreateUserAccount(user, registrationDTO.getPassword(), enableAccount);
         }
 
         ActionOutcomeDTO outcome = actionService.getRegistrationOutcome(user, registrationDTO);
@@ -212,44 +212,29 @@ public class AuthenticationService {
                 .withLastName(names.size() > 1 ? names.get(1) : null);
     }
 
-    private void createUserAccount(User user, OauthProvider oauthProvider, String externalAccountId, String password, boolean enableAccount) {
-        UserAccount userAccount = user.getUserAccount();
-        if (userAccount == null) {
-            String encryptedPassword = password != null ? EncryptionUtils.getMD5(password) : null;
-            userAccount = new UserAccount().withSendApplicationRecommendationNotification(false).withPassword(encryptedPassword).withEnabled(enableAccount);
-            entityService.save(userAccount);
-            user.setUserAccount(userAccount);
-        }
-
-        userAccount.setEnabled(enableAccount);
-
-        if (oauthProvider != null) {
-            createExternalUserAccount(userAccount, oauthProvider, externalAccountId);
-        }
-    }
-
     private User oauthAssociateUser(User user, OauthProvider oauthProvider, OauthUserDefinition oauthUserDefinition) {
         Preconditions.checkNotNull(user);
-        User oathUser = userService.getByExternalAccountId(oauthProvider, oauthUserDefinition.getExternalId());
+        User oauthUser = userService.getByExternalAccountId(oauthProvider, oauthUserDefinition.getExternalId());
 
-        if (oathUser == null) {
-            createExternalUserAccount(user.getUserAccount(), oauthProvider, oauthUserDefinition.getExternalId());
-        } else if (!user.getId().equals(oathUser.getId())) {
-            throw new AccessDeniedException("Oauth credentials associated with another user");
+        if (oauthUser == null) {
+            oauthUser = user;
+            getOrCreateUserAccount(oauthUser, oauthProvider, oauthUserDefinition.getExternalId(), true);
+        } else if (!user.getId().equals(oauthUser.getId())) {
+            throw new AccessDeniedException("Account associated with another user");
         }
 
-        return user;
+        return oauthUser;
     }
 
     private User oauthAssociateNewUser(OauthProvider oauthProvider, OauthUserDefinition oauthUserDefinition, HttpSession session) {
         User oauthUser = userService.getByExternalAccountId(oauthProvider, oauthUserDefinition.getExternalId());
         if (oauthUser == null) {
-            User user = userService.getUserByEmail(oauthUserDefinition.getEmail());
-            if (user == null) {
+            oauthUser = userService.getUserByEmail(oauthUserDefinition.getEmail());
+            if (oauthUser == null) {
                 session.setAttribute(OAUTH_USER_TO_CONFIRM, oauthUserDefinition);
                 return null;
             }
-            createExternalUserAccount(user.getUserAccount(), oauthProvider, oauthUserDefinition.getExternalId());
+            createExternalUserAccount(oauthUser.getUserAccount(), oauthProvider, oauthUserDefinition.getExternalId());
         }
         return oauthUser;
     }
@@ -257,19 +242,47 @@ public class AuthenticationService {
     private User oauthAuthenticate(OauthProvider oauthProvider, OauthUserDefinition oauthUserDefinition) {
         User oauthUser = userService.getByExternalAccountId(oauthProvider, oauthUserDefinition.getExternalId());
         if (oauthUser == null) {
-            throw new AccessDeniedException("Oauth credentials not associated with user");
+            throw new AccessDeniedException("Account associated with another user");
         }
         return oauthUser;
     }
+    
+    private void getOrCreateUserAccount(User user, String password, boolean enableAccount) {
+        getOrCreateUserAccount(user, null, null, password, enableAccount);
+    }
+    
+    private void getOrCreateUserAccount(User user, OauthProvider oauthProvider, String externalAccountId, boolean enableAccount) {
+        getOrCreateUserAccount(user, oauthProvider, externalAccountId, null, enableAccount);
+    }
+    
+    private void getOrCreateUserAccount(User user, OauthProvider oauthProvider, String externalAccountId, String password, boolean enableAccount) {
+        UserAccount userAccount = user.getUserAccount();
+        if (userAccount == null) {
+            userAccount = createUserAccount(user, password, enableAccount);
+        } else {
+            userAccount.setEnabled(enableAccount);
+        }
+
+        if (oauthProvider != null) {
+            createExternalUserAccount(userAccount, oauthProvider, externalAccountId);
+        }
+    }
+
+    private UserAccount createUserAccount(User user, String password, boolean enableAccount) {
+        UserAccount userAccount;
+        String encryptedPassword = password != null ? EncryptionUtils.getMD5(password) : null;
+        userAccount = new UserAccount().withSendApplicationRecommendationNotification(false).withPassword(encryptedPassword).withEnabled(enableAccount);
+        entityService.save(userAccount);
+        user.setUserAccount(userAccount);
+        return userAccount;
+    }
 
     private void createExternalUserAccount(UserAccount userAccount, OauthProvider oauthProvider, String oauthAccountId) {
-        if (userAccount != null) {
-            UserAccountExternal externalAccount = new UserAccountExternal().withUserAccount(userAccount).withAccountType(oauthProvider)
-                    .withAccountIdentifier(oauthAccountId);
-            entityService.save(externalAccount);
-            userAccount.getExternalAccounts().add(externalAccount);
-            userAccount.setPrimaryExternalAccount(externalAccount);
-        }
+        UserAccountExternal externalAccount = new UserAccountExternal().withUserAccount(userAccount).withAccountType(oauthProvider)
+                .withAccountIdentifier(oauthAccountId);
+        entityService.save(externalAccount);
+        userAccount.getExternalAccounts().add(externalAccount);
+        userAccount.setPrimaryExternalAccount(externalAccount);
     }
 
 }

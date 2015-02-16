@@ -195,8 +195,8 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
     private void validateDocumentConstraint(Application application, String propertyDocument, WorkflowPropertyConfiguration configuration, Errors errors)
             throws Error {
         ApplicationDocument documents = application.getDocument();
-        Document cv = documents == null ? null : (Document) ReflectionUtils.getProperty(documents, propertyDocument);
-        validateRequiredConstraint(cv, "document", propertyDocument, configuration, errors);
+        Document document = documents == null ? null : (Document) ReflectionUtils.getProperty(documents, propertyDocument);
+        validateRequiredConstraint(document, "document", propertyDocument, configuration, errors);
     }
 
     private void validateDemographicConstraint(Application application, WorkflowPropertyConfiguration configuration, Errors errors) {

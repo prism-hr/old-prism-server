@@ -118,7 +118,7 @@ public class UserService {
         user.getUserAccount().setEnabled(true);
         return !wasEnabled;
     }
-
+    
     public void updateUser(UserDTO userDTO) {
         User user = getCurrentUser();
         User userByEmail = getUserByEmail(userDTO.getEmail());

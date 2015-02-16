@@ -1,20 +1,10 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserAccount;
-import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
-import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.rest.dto.auth.OauthAssociationType;
-import com.zuehlke.pgadmissions.rest.dto.auth.OauthLoginDTO;
-import com.zuehlke.pgadmissions.rest.dto.auth.OauthUserDefinition;
-import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import java.util.ArrayList;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.social.facebook.api.FacebookProfile;
@@ -37,9 +27,21 @@ import org.springframework.social.twitter.connect.TwitterServiceProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAccount;
+import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.rest.dto.auth.OauthAssociationType;
+import com.zuehlke.pgadmissions.rest.dto.auth.OauthLoginDTO;
+import com.zuehlke.pgadmissions.rest.dto.auth.OauthUserDefinition;
+import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
 @Transactional
@@ -82,41 +84,86 @@ public class AuthenticationService {
     @Inject
     private EntityService entityService;
 
-    public OauthUserDefinition loadUserDefinition(OauthProvider oauthProvider, OauthLoginDTO oauthLoginDTO, HttpSession session) {
+    public String requestToken(HttpSession session, OauthProvider oauthProvider) {
+        switch (oauthProvider) {
+        case TWITTER:
+            TwitterServiceProvider twitterServiceProvider = new TwitterServiceProvider(twitterClientId, twitterAppSecret);
+            OAuth1Operations oAuthOperations = twitterServiceProvider.getOAuthOperations();
+            OAuthToken requestToken = oAuthOperations.fetchRequestToken(applicationUrl, null);
+            session.setAttribute(OAUTH_TOKEN_ATTRIBUTE, requestToken);
+            return oAuthOperations.buildAuthorizeUrl(requestToken.getValue(), OAuth1Parameters.NONE);
+        default:
+            throw new Error("Requesting token not supported for: " + oauthProvider);
+        }
+    }
+
+    public User getOrCreateUserAccountExternal(OauthProvider oauthProvider, OauthLoginDTO oauthLoginDTO, HttpSession session) {
+        OauthAssociationType oauthAssociationType = oauthLoginDTO.getAssociationType();
+        OauthUserDefinition oauthUserDefinition = getOauthUserDefinition(oauthProvider, oauthLoginDTO, session);
+
+        switch (oauthAssociationType) {
+        case ASSOCIATE_CURRENT_USER:
+            return oauthAssociateUser(userService.getCurrentUser(), oauthProvider, oauthUserDefinition);
+        case ASSOCIATE_NEW_USER:
+            return oauthAssociateNewUser(oauthProvider, oauthUserDefinition, session);
+        case ASSOCIATE_SPECIFIED_USER:
+            return oauthAssociateUser(userService.getUserByActivationCode(oauthLoginDTO.getActivationCode()), oauthProvider, oauthUserDefinition);
+        case AUTHENTICATE:
+            return oauthAuthenticate(oauthProvider, oauthUserDefinition);
+        default:
+            throw new UnsupportedOperationException("Unsupported Oauth association type: " + oauthAssociationType);
+        }
+    }
+
+    public User registerUser(UserRegistrationDTO registrationDTO, HttpSession session) throws Exception {
+        User user = userService.getUserByEmail(registrationDTO.getEmail());
+        Resource resource = resourceService.getById(registrationDTO.getAction().getActionId().getScope().getResourceClass(), registrationDTO.getResourceId());
+
+        boolean enableAccount = user != null;
+        if (enableAccount) {
+            if (!user.getActivationCode().equals(registrationDTO.getActivationCode())) {
+                throw new ResourceNotFoundException("Incorrect activation code");
+            } else if (user.getUserAccount() != null) {
+                throw new ResourceNotFoundException("User already registered");
+            }
+        }
+
+        user = userService.getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail(), resource.getLocale());
+
+        if (registrationDTO.getPassword() == null) {
+            OauthUserDefinition oauthUserDefinition = (OauthUserDefinition) session.getAttribute(OAUTH_USER_TO_CONFIRM);
+            createUserAccount(user, oauthUserDefinition.getOauthProvider(), oauthUserDefinition.getExternalId(), null, enableAccount);
+        } else {
+            createUserAccount(user, null, null, registrationDTO.getPassword(), enableAccount);
+        }
+
+        ActionOutcomeDTO outcome = actionService.getRegistrationOutcome(user, registrationDTO);
+        notificationService.sendRegistrationNotification(user, outcome);
+        return user;
+    }
+
+    private OauthUserDefinition getOauthUserDefinition(OauthProvider oauthProvider, OauthLoginDTO oauthLoginDTO, HttpSession session) {
         OauthUserDefinition definition;
         switch (oauthProvider) {
-            case FACEBOOK:
-                definition = loadFacebookUserDefinition(oauthLoginDTO);
-                break;
-            case LINKEDIN:
-                definition = loadLinkedinUserDefinition(oauthLoginDTO);
-                break;
-            case GOOGLE:
-                definition = loadGoogleUserDefinition(oauthLoginDTO);
-                break;
-            case TWITTER:
-                definition = loadTwitterUserDefinition(oauthLoginDTO, session);
-                break;
-            default:
-                throw new Error("Unknown oAuth provider: " + oauthProvider);
+        case FACEBOOK:
+            definition = getFacebookUserDefinition(oauthLoginDTO);
+            break;
+        case LINKEDIN:
+            definition = getLinkedinUserDefinition(oauthLoginDTO);
+            break;
+        case GOOGLE:
+            definition = getGoogleUserDefinition(oauthLoginDTO);
+            break;
+        case TWITTER:
+            definition = getTwitterUserDefinition(oauthLoginDTO, session);
+            break;
+        default:
+            throw new UnsupportedOperationException("Unknown Oauth provider: " + oauthProvider);
         }
         return definition.withOauthProvider(oauthProvider);
     }
 
-    public String requestToken(HttpSession session, OauthProvider oauthProvider) {
-        switch (oauthProvider) {
-            case TWITTER:
-                TwitterServiceProvider twitterServiceProvider = new TwitterServiceProvider(twitterClientId, twitterAppSecret);
-                OAuth1Operations oAuthOperations = twitterServiceProvider.getOAuthOperations();
-                OAuthToken requestToken = oAuthOperations.fetchRequestToken(applicationUrl, null);
-                session.setAttribute(OAUTH_TOKEN_ATTRIBUTE, requestToken);
-                return oAuthOperations.buildAuthorizeUrl(requestToken.getValue(), OAuth1Parameters.NONE);
-            default:
-                throw new Error("Requesting token not supported for: " + oauthProvider);
-        }
-    }
-
-    private OauthUserDefinition loadFacebookUserDefinition(OauthLoginDTO oauthLoginDTO) {
+    private OauthUserDefinition getFacebookUserDefinition(OauthLoginDTO oauthLoginDTO) {
         FacebookOAuth2Template facebookOAuth2Template = new FacebookOAuth2Template(oauthLoginDTO.getClientId(), facebookAppSecret);
         AccessGrant accessGrant = facebookOAuth2Template.exchangeForAccess(oauthLoginDTO.getCode(), oauthLoginDTO.getRedirectUri(), null);
 
@@ -127,7 +174,7 @@ public class AuthenticationService {
                 .withLastName(userProfile.getLastName());
     }
 
-    private OauthUserDefinition loadLinkedinUserDefinition(OauthLoginDTO oauthLoginDTO) {
+    private OauthUserDefinition getLinkedinUserDefinition(OauthLoginDTO oauthLoginDTO) {
         LinkedInServiceProvider linkedInServiceProvider = new LinkedInServiceProvider(oauthLoginDTO.getClientId(), linkedinAppSecret);
         AccessGrant accessGrant = linkedInServiceProvider.getOAuthOperations().exchangeForAccess(oauthLoginDTO.getCode(), oauthLoginDTO.getRedirectUri(), null);
 
@@ -138,7 +185,7 @@ public class AuthenticationService {
                 .withLastName(userProfile.getLastName());
     }
 
-    private OauthUserDefinition loadGoogleUserDefinition(OauthLoginDTO oauthLoginDTO) {
+    private OauthUserDefinition getGoogleUserDefinition(OauthLoginDTO oauthLoginDTO) {
         GoogleOAuth2Template googleOAuth2Template = new GoogleOAuth2Template(oauthLoginDTO.getClientId(), googleAppSecret);
         AccessGrant accessGrant = googleOAuth2Template.exchangeForAccess(oauthLoginDTO.getCode(), oauthLoginDTO.getRedirectUri(), null);
 
@@ -149,7 +196,7 @@ public class AuthenticationService {
                 .withLastName(person.getFamilyName());
     }
 
-    private OauthUserDefinition loadTwitterUserDefinition(OauthLoginDTO oauthLoginDTO, HttpSession session) {
+    private OauthUserDefinition getTwitterUserDefinition(OauthLoginDTO oauthLoginDTO, HttpSession session) {
         OAuthToken requestToken = (OAuthToken) session.getAttribute(OAUTH_TOKEN_ATTRIBUTE);
         session.removeAttribute(OAUTH_TOKEN_ATTRIBUTE);
 
@@ -165,100 +212,63 @@ public class AuthenticationService {
                 .withLastName(names.size() > 1 ? names.get(1) : null);
     }
 
-    public User getOrCreateUser(OauthProvider oauthProvider, OauthLoginDTO oauthLoginDTO, HttpSession session) {
-        OauthAssociationType associationType = oauthLoginDTO.getAssociationType();
-        OauthUserDefinition userDefinition = loadUserDefinition(oauthProvider, oauthLoginDTO, session);
-        User userByExternalAccount = userService.getByExternalAccountId(oauthProvider, userDefinition.getExternalId());
-
-        User user;
-        if (associationType == OauthAssociationType.ONLY_AUTHENTICATE) {
-            if (userByExternalAccount == null) {
-                throw new AccessDeniedException("Account not associated");
-            }
-            return userByExternalAccount;
-        }
-
-        if (associationType == OauthAssociationType.ASSOCIATE_WITH_CURRENT_USER) {
-            user = Preconditions.checkNotNull(userService.getCurrentUser());
-        } else if (associationType == OauthAssociationType.ASSOCIATE_WITH_PROVIDED_USER) {
-            user = Preconditions.checkNotNull(userService.getUserByActivationCode(oauthLoginDTO.getActivationCode()));
-        } else if (associationType == OauthAssociationType.CREATE_NEW_USER) {
-            if (userByExternalAccount != null) { // user exists, no need to create
-                user = userByExternalAccount;
-            } else {
-                User userByEmail = userService.getUserByEmail(userDefinition.getEmail());
-                if (userByEmail != null) {
-                    user = userByEmail;
-                } else { // user details need confirmation, storing current details in session
-                    session.setAttribute(OAUTH_USER_TO_CONFIRM, userDefinition);
-                    return null;
-                }
-            }
-        } else {
-            throw new Error("Unknown association type: " + associationType);
-        }
-
-        if (userByExternalAccount != null && !userByExternalAccount.getId().equals(user.getId())) {
-            throw new AccessDeniedException("Given " + oauthProvider.getName() + " account is already associated with another account");
-        }
-
-        if (userByExternalAccount == null) { // create association (and account if not there yet)
-            createUserAccount(user, oauthProvider, userDefinition.getExternalId(), null, true);
-        }
-
-        return user;
-    }
-
-    public User registerUser(UserRegistrationDTO registrationDTO, HttpSession session) throws Exception {
-        Resource resource = resourceService.getById(registrationDTO.getAction().getActionId().getScope().getResourceClass(), registrationDTO.getResourceId());
-
-        User existingUser = userService.getUserByEmail(registrationDTO.getEmail());
-        boolean userAlreadyExists = existingUser != null;
-        if (userAlreadyExists) { // if user has been already created means that email is already confirmed (user knew activation code), we can activate the user straight away
-            if (!existingUser.getActivationCode().equals(registrationDTO.getActivationCode())) {
-                throw new ResourceNotFoundException("Incorrect code");
-            }
-            if (existingUser.getUserAccount() != null) {
-                throw new ResourceNotFoundException("User is already registered");
-            }
-        }
-
-        User user = userService
-                .getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail(), resource.getLocale());
-
-        if (registrationDTO.getPassword() != null) { // regular password based registration
-            createUserAccount(user, null, null, registrationDTO.getPassword(), userAlreadyExists);
-        } else { // Oauth registration, user details confirmed
-            OauthUserDefinition userDefinition = (OauthUserDefinition) session.getAttribute(OAUTH_USER_TO_CONFIRM);
-            if (userDefinition == null) {
-                throw new Error("User definition not found in session");
-            }
-            createUserAccount(user, userDefinition.getOauthProvider(), userDefinition.getExternalId(), null, userAlreadyExists);
-
-        }
-        ActionOutcomeDTO outcome = actionService.getRegistrationOutcome(user, registrationDTO);
-        notificationService.sendRegistrationNotification(user, outcome);
-        return user;
-    }
-
     private void createUserAccount(User user, OauthProvider oauthProvider, String externalAccountId, String password, boolean enableAccount) {
-        if (user.getUserAccount() == null) {
+        UserAccount userAccount = user.getUserAccount();
+        if (userAccount == null) {
             String encryptedPassword = password != null ? EncryptionUtils.getMD5(password) : null;
-            UserAccount account = new UserAccount().withSendApplicationRecommendationNotification(false).withPassword(encryptedPassword)
-                    .withEnabled(enableAccount);
-            user.setUserAccount(account);
-            entityService.save(account);
+            userAccount = new UserAccount().withSendApplicationRecommendationNotification(false).withPassword(encryptedPassword).withEnabled(enableAccount);
+            entityService.save(userAccount);
+            user.setUserAccount(userAccount);
         }
 
-        UserAccount userAccount = user.getUserAccount();
         userAccount.setEnabled(enableAccount);
-        entityService.save(user);
+
         if (oauthProvider != null) {
+            createExternalUserAccount(userAccount, oauthProvider, externalAccountId);
+        }
+    }
+
+    private User oauthAssociateUser(User user, OauthProvider oauthProvider, OauthUserDefinition oauthUserDefinition) {
+        Preconditions.checkNotNull(user);
+        User oathUser = userService.getByExternalAccountId(oauthProvider, oauthUserDefinition.getExternalId());
+
+        if (oathUser == null) {
+            createExternalUserAccount(user.getUserAccount(), oauthProvider, oauthUserDefinition.getExternalId());
+        } else if (!user.getId().equals(oathUser.getId())) {
+            throw new AccessDeniedException("Oauth credentials associated with another user");
+        }
+
+        return user;
+    }
+
+    private User oauthAssociateNewUser(OauthProvider oauthProvider, OauthUserDefinition oauthUserDefinition, HttpSession session) {
+        User oauthUser = userService.getByExternalAccountId(oauthProvider, oauthUserDefinition.getExternalId());
+        if (oauthUser == null) {
+            User user = userService.getUserByEmail(oauthUserDefinition.getEmail());
+            if (user == null) {
+                session.setAttribute(OAUTH_USER_TO_CONFIRM, oauthUserDefinition);
+                return null;
+            }
+            createExternalUserAccount(user.getUserAccount(), oauthProvider, oauthUserDefinition.getExternalId());
+        }
+        return oauthUser;
+    }
+
+    private User oauthAuthenticate(OauthProvider oauthProvider, OauthUserDefinition oauthUserDefinition) {
+        User oauthUser = userService.getByExternalAccountId(oauthProvider, oauthUserDefinition.getExternalId());
+        if (oauthUser == null) {
+            throw new AccessDeniedException("Oauth credentials not associated with user");
+        }
+        return oauthUser;
+    }
+
+    private void createExternalUserAccount(UserAccount userAccount, OauthProvider oauthProvider, String oauthAccountId) {
+        if (userAccount != null) {
             UserAccountExternal externalAccount = new UserAccountExternal().withUserAccount(userAccount).withAccountType(oauthProvider)
-                    .withAccountIdentifier(externalAccountId);
+                    .withAccountIdentifier(oauthAccountId);
+            entityService.save(externalAccount);
             userAccount.getExternalAccounts().add(externalAccount);
             userAccount.setPrimaryExternalAccount(externalAccount);
-            entityService.save(externalAccount);
         }
     }
 

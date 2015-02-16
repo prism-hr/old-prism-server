@@ -75,7 +75,7 @@ public class AuthenticationController {
                                           HttpServletResponse response) {
         OauthProvider oauthProvider = OauthProvider.getByName(provider);
 
-        User user = authenticationService.getOrCreateUser(oauthProvider, oauthLoginDTO, request.getSession());
+        User user = authenticationService.getOrCreateUserAccountExternal(oauthProvider, oauthLoginDTO, request.getSession());
         return generateTokenOrSuggestedDetails(user, request, response);
     }
 
@@ -95,8 +95,7 @@ public class AuthenticationController {
             oauthLoginDTO.setOauthToken(oAuthToken);
             oauthLoginDTO.setOauthVerifier(oAuthVerifier);
 
-            User user = authenticationService.getOrCreateUser(OauthProvider.TWITTER, oauthLoginDTO, request.getSession());
-
+            User user = authenticationService.getOrCreateUserAccountExternal(OauthProvider.TWITTER, oauthLoginDTO, request.getSession());
             return generateTokenOrSuggestedDetails(user, request, response);
         }
     }

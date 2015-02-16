@@ -75,7 +75,7 @@ public class AuthenticationController {
             HttpServletResponse response) {
         OauthProvider oauthProvider = OauthProvider.getByName(provider);
 
-        User user = authenticationService.getOrCreateUser(oauthProvider, oauthLoginDTO, request.getSession());
+        User user = authenticationService.getOrCreateUserAccountExternal(oauthProvider, oauthLoginDTO, request.getSession());
         if (user == null) {
             // user not created, need to confirm details
             OauthUserDefinition userDefinition = (OauthUserDefinition) request.getSession().getAttribute(AuthenticationService.OAUTH_USER_TO_CONFIRM);
@@ -83,7 +83,6 @@ public class AuthenticationController {
                     .withLastName(userDefinition.getLastName()).withEmail(userDefinition.getEmail());
             response.setStatus(HttpStatus.I_AM_A_TEAPOT.value());
             return ImmutableMap.of("suggestedUserDetails", (Object) suggestedDetails);
-
         }
 
         return ImmutableMap.of("token", (Object) authenticationTokenHelper.createToken(user));
@@ -105,8 +104,7 @@ public class AuthenticationController {
             oauthLoginDTO.setOauthToken(oAuthToken);
             oauthLoginDTO.setOauthVerifier(oAuthVerifier);
 
-            User user = authenticationService.getOrCreateUser(OauthProvider.TWITTER, oauthLoginDTO, request.getSession());
-
+            User user = authenticationService.getOrCreateUserAccountExternal(OauthProvider.TWITTER, oauthLoginDTO, request.getSession());
             return ImmutableMap.of("token", authenticationTokenHelper.createToken(user));
         }
     }

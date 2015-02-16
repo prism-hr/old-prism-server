@@ -158,7 +158,7 @@ public class UserDAO {
         sessionFactory.getCurrentSession().createQuery( //
                 "update User " //
                         + "set parentUser = :user " //
-                        + "where parentUser = :linkIntoUserParentUser "
+                        + "where parentUser = :linkIntoUserParentUser " //
                         + "or parentUser = :linkFromUserParentUser") //
                 .setParameter("user", linkIntoUser) //
                 .setParameter("linkIntoUserParentUser", linkIntoUser.getParentUser()) //
@@ -241,11 +241,11 @@ public class UserDAO {
     }
 
     public User getByExternalAccountId(OauthProvider oauthProvider, String externalId) {
-        return (User) sessionFactory.getCurrentSession().createCriteria(User.class)
-                .createAlias("userAccount", "userAccount") //
-                .createAlias("userAccount.externalAccounts", "externalAccount")
-                .add(Restrictions.eq("externalAccount.accountType", oauthProvider))
-                .add(Restrictions.eq("externalAccount.accountIdentifier", externalId))
+        return (User) sessionFactory.getCurrentSession().createCriteria(User.class) //
+                .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("userAccount.externalAccounts", "externalAccount", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("externalAccount.accountType", oauthProvider)) //
+                .add(Restrictions.eq("externalAccount.accountIdentifier", externalId)) //
                 .uniqueResult();
     }
 }

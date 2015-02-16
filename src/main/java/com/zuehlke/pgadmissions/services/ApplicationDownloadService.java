@@ -107,7 +107,7 @@ public class ApplicationDownloadService {
 
                         ApplicationDownloadDTO applicationDownloadDTO = new ApplicationDownloadDTO().withApplication(application)
                                 .withDownloadMode(ApplicationDownloadMode.USER).withIncludeEqualOpportunties(includeEqualOpportunities)
-                                .withIncludeAttachments(true).withIncludeReferences(includeReferences);
+                                .withIncludeAttachments(true).withIncludeAssessments(includeReferences);
 
                         applicationContext.getBean(ApplicationDownloadBuilder.class)
                                 .localize(specificPropertyLoaders.get(program), specificApplicationDownloadBuilderHelpers.get(program))

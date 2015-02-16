@@ -63,7 +63,6 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
-import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.DocumentService;
@@ -86,9 +85,6 @@ public class ApplicationDownloadBuilder {
     private Float logoFileWidthPercentage;
 
     @Autowired
-    private ActionService actionService;
-
-    @Autowired
     private CommentService commentService;
 
     @Autowired
@@ -106,7 +102,7 @@ public class ApplicationDownloadBuilder {
     public void build(ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument, PdfWriter writer) throws PdfDocumentBuilderException {
         try {
             Application application = applicationDownloadDTO.getApplication();
-            addCoverPage(application, pdfDocument, writer);
+            addCoverPage(application, applicationDownloadDTO, pdfDocument, writer);
             writer.setPageEvent(new NewPageEvent().withApplication(application));
             addProgramSection(application, pdfDocument);
             addSupervisorSection(application, pdfDocument);
@@ -131,7 +127,8 @@ public class ApplicationDownloadBuilder {
         return this;
     }
 
-    private void addCoverPage(Application application, Document pdfDocument, PdfWriter writer) throws IOException, DocumentException {
+    private void addCoverPage(Application application, ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument, PdfWriter writer)
+            throws IOException, DocumentException {
         pdfDocument.newPage();
         addLogoImage(pdfDocument);
 
@@ -145,7 +142,7 @@ public class ApplicationDownloadBuilder {
 
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_CREATOR), application.getUser().getFullName(), body);
 
-        if (!actionService.hasRedactions(application, userService.getCurrentUser())) {
+        if (applicationDownloadDTO.isIncludeAssessments()) {
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_AVERAGE_RATING), application.getApplicationRatingAverageDisplay(),
                     body);
         }
@@ -569,7 +566,7 @@ public class ApplicationDownloadBuilder {
                 Comment referenceComment = referee.getComment();
                 if (referenceComment != null) {
                     ApplicationDownloadMode downloadMode = applicationDownloadDTO.getDownloadMode();
-                    boolean includeReferences = applicationDownloadDTO.isIncludeReferences();
+                    boolean includeReferences = applicationDownloadDTO.isIncludeAssessments();
                     if ((downloadMode == ApplicationDownloadMode.SYSTEM && includeReferences)
                             || (downloadMode == ApplicationDownloadMode.USER && (includeReferences || commentService.isCommentOwner(referenceComment,
                                     userService.getCurrentUser())))) {
@@ -638,10 +635,10 @@ public class ApplicationDownloadBuilder {
         int index = 0;
         for (Map.Entry<String, Object> bookmark : bookmarks.entrySet()) {
             pdfDocument.newPage();
-            
+
             NewPageEvent pageEvent = (NewPageEvent) pdfWriter.getPageEvent();
             pageEvent.setApplyHeaderFooter(true);
-            
+
             String bookmarkKey = bookmark.getKey();
             Anchor anchor = new Anchor();
             anchor.setName(bookmarkKey);
@@ -682,7 +679,7 @@ public class ApplicationDownloadBuilder {
                     addDocument(pdfDocument, document, pdfWriter);
                 }
             }
-            
+
             index++;
         }
     }
@@ -749,8 +746,8 @@ public class ApplicationDownloadBuilder {
         ApplicationDownloadMode downloadMode = applicationDownloadDTO.getDownloadMode();
         boolean includeAttachments = applicationDownloadDTO.isIncludeAttachments();
         if ((downloadMode == ApplicationDownloadMode.SYSTEM && includeAttachments)
-                || (downloadMode == ApplicationDownloadMode.USER && (includeAttachments || userService.isCurrentUser((User) ReflectionUtils.getProperty(content,
-                        "user"))))) {
+                || (downloadMode == ApplicationDownloadMode.USER && (includeAttachments || userService.isCurrentUser((User) ReflectionUtils.getProperty(
+                        content, "user"))))) {
             if (content == null) {
                 table.addCell(applicationDownloadBuilderHelper.newContentCellMedium(null));
             } else {

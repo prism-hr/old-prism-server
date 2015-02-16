@@ -11,7 +11,7 @@ public class ApplicationDownloadDTO {
 
     private boolean includeEqualOpportunities = false;
     
-    private boolean includeReferences = false;
+    private boolean includeAssessments = false;
 
     private boolean includeAttachments = false;
 
@@ -39,12 +39,12 @@ public class ApplicationDownloadDTO {
         this.includeEqualOpportunities = includeEqualOpportunitiesData;
     }
 
-    public final boolean isIncludeReferences() {
-        return includeReferences;
+    public final boolean isIncludeAssessments() {
+        return includeAssessments;
     }
 
-    public final void setIncludeReferences(boolean includeReferences) {
-        this.includeReferences = includeReferences;
+    public final void setIncludeAssessments(boolean includeAssessments) {
+        this.includeAssessments = includeAssessments;
     }
     
     public final boolean isIncludeAttachments() {
@@ -70,8 +70,8 @@ public class ApplicationDownloadDTO {
         return this;
     }
     
-    public ApplicationDownloadDTO withIncludeReferences(boolean includeReferences) {
-        this.includeReferences = includeReferences;
+    public ApplicationDownloadDTO withIncludeAssessments(boolean includeAssessments) {
+        this.includeAssessments = includeAssessments;
         return this;
     }
     

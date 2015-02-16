@@ -41,9 +41,10 @@ public class RoleDAO {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("role.id")) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.scope", "scope", JoinType.INNER_JOIN) //
                 .createAlias("role.actionRedactions", "actionRedaction", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.eq("role.scope.id", resourceScope)) //
+                .add(Restrictions.le("scope.precedence", resourceScope.getPrecedence())) //
                 .add(Restrictions.isNull("actionRedaction.id")) //
                 .list();
     }

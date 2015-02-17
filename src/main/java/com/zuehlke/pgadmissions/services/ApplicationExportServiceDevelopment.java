@@ -42,6 +42,8 @@ public class ApplicationExportServiceDevelopment extends ApplicationExportServic
             exportRequests.put(application, exportRequest);
 
             executeExportAction(application, dataExportRequest, "TEST EXPORT", "TEST EXPORT USER ID", null);
+        } catch (RuntimeException e) {
+          throw e;  
         } catch (Exception e) {
             executeExportAction(application, dataExportRequest, null, null, ExceptionUtils.getStackTrace(e));
         } finally {

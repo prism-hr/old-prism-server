@@ -36,15 +36,19 @@ public class RoleDAO {
                 .add(Restrictions.eq("user", user)) //
                 .list();
     }
-    
+
     public List<PrismRole> getRolesOverridingRedactions(PrismScope resourceScope, User user) {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("role.id")) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.scope", "scope", JoinType.INNER_JOIN) //
+                .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .createAlias("role.actionRedactions", "actionRedaction", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.le("scope.precedence", resourceScope.getPrecedence())) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("action.scope.id", resourceScope)) //
+                        .add(Restrictions.eq("action.creationScope.id", resourceScope))) //
                 .add(Restrictions.isNull("actionRedaction.id")) //
                 .list();
     }

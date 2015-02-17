@@ -1,17 +1,23 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringWriter;
-import java.util.List;
-import java.util.Properties;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.transform.TransformerException;
-
+import com.jcraft.jsch.*;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResponse;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.ReferenceTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.dto.ApplicationExportDTO;
+import com.zuehlke.pgadmissions.exceptions.*;
+import com.zuehlke.pgadmissions.services.builders.ApplicationDocumentExportBuilder;
+import com.zuehlke.pgadmissions.services.builders.ApplicationExportBuilder;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -27,63 +33,38 @@ import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpException;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResponse;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.ReferenceTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.dto.ApplicationExportDTO;
-import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.IntegrationException;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.services.builders.ApplicationDocumentExportBuilder;
-import com.zuehlke.pgadmissions.services.builders.ApplicationExportBuilder;
-import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.transform.TransformerException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.StringWriter;
+import java.util.List;
+import java.util.Properties;
 
 @Service
 @Transactional
 public class ApplicationExportService {
 
-    private PropertyLoader propertyLoader = null;
-
-    @Value("${xml.data.export.sftp.privatekeyfile}")
-    private Resource privateKeyFile;
-
-    @Value("${xml.data.export.sftp.host}")
-    private String sftpHost;
-
-    @Value("${xml.data.export.sftp.port}")
-    private String sftpPort;
-
-    @Value("${xml.data.export.sftp.username}")
-    private String sftpUsername;
-
-    @Value("${xml.data.export.sftp.password}")
-    private String sftpPassword;
-
-    @Value("${xml.data.export.sftp.folder}")
-    private String targetFolder;
-
     @Autowired
     protected ApplicationService applicationService;
-
     @Autowired
     protected ActionService actionService;
-
+    private PropertyLoader propertyLoader = null;
+    @Value("${xml.data.export.sftp.privatekeyfile}")
+    private Resource privateKeyFile;
+    @Value("${xml.data.export.sftp.host}")
+    private String sftpHost;
+    @Value("${xml.data.export.sftp.port}")
+    private String sftpPort;
+    @Value("${xml.data.export.sftp.username}")
+    private String sftpUsername;
+    @Value("${xml.data.export.sftp.password}")
+    private String sftpPassword;
+    @Value("${xml.data.export.sftp.folder}")
+    private String targetFolder;
     @Autowired
     private WebServiceTemplate webServiceTemplate;
 
@@ -122,6 +103,8 @@ public class ApplicationExportService {
                 exportUserId = exportReference.getApplicantID();
             }
             outputStream = sendDocumentExportRequest(application, exportId);
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             exportException = ExceptionUtils.getStackTrace(e);
         } finally {
@@ -162,7 +145,7 @@ public class ApplicationExportService {
     }
 
     protected void executeExportAction(Application application, SubmitAdmissionsApplicationRequest exportRequest, String exportId, String exportUserId,
-            String exportException) throws DeduplicationException, InstantiationException, IllegalAccessException, JAXBException, BeansException,
+                                       String exportException) throws DeduplicationException, InstantiationException, IllegalAccessException, JAXBException, BeansException,
             WorkflowEngineException, IOException, IntegrationException {
         Action exportAction = actionService.getById(PrismAction.APPLICATION_EXPORT);
         Institution exportInstitution = application.getInstitution();

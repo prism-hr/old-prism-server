@@ -1,25 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.lang.WordUtils;
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -31,6 +13,20 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
+import org.apache.commons.lang.WordUtils;
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.*;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -90,7 +86,7 @@ public class ResourceDAO {
     }
 
     public <T extends Resource> List<Integer> getResourceRequiringSyndicatedUpdates(Class<T> resourceClass, LocalDate baseline, DateTime rangeStart,
-            DateTime rangeClose) {
+                                                                                    DateTime rangeClose) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.disjunction() //
@@ -121,7 +117,7 @@ public class ResourceDAO {
     }
 
     public List<ResourceConsoleListRowDTO> getResourceConsoleList(User user, PrismScope scopeId, List<PrismScope> parentScopeIds,
-            Set<Integer> assignedResources, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords, boolean hasRedactions) {
+                                                                  Set<Integer> assignedResources, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords, boolean hasRedactions) {
         if (assignedResources.isEmpty()) {
             return new ArrayList<ResourceConsoleListRowDTO>(0);
         }
@@ -145,6 +141,8 @@ public class ResourceDAO {
                 .add(Projections.property("user.firstName3"), "creatorFirstName3") //
                 .add(Projections.property("user.lastName"), "creatorLastName") //
                 .add(Projections.property("user.email"), "creatorEmail") //
+                .add(Projections.property("primaryExternalAccount.accountImageUrl"), "creatorAccountImageUrl")
+                .add(Projections.property("externalAccount.accountProfileUrl"), "creatorLinkedinProfileUrl")
                 .add(Projections.property("code"), "code");
 
         addResourceListCustomColumns(scopeId, projectionList);
@@ -161,11 +159,17 @@ public class ResourceDAO {
 
         criteria.setProjection(projectionList) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN);
+                .createAlias("state", "state", JoinType.INNER_JOIN)
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN)
+                .createAlias("userAccount.primaryExternalAccount", "primaryExternalAccount", JoinType.LEFT_OUTER_JOIN)
+                .createAlias("userAccount.externalAccounts", "externalAccount", JoinType.LEFT_OUTER_JOIN);
 
         addResourceListCustomJoins(scopeId, resourceReference, criteria);
 
-        criteria.add(Restrictions.in("id", assignedResources));
+        criteria.add(Restrictions.in("id", assignedResources))
+                .add(Restrictions.disjunction()
+                        .add(Restrictions.isNull("externalAccount.id"))
+                        .add(Restrictions.eq("externalAccount.accountType", OauthProvider.LINKEDIN)));
 
         return ResourceListConstraintBuilder.appendLimitCriterion(criteria, filter, lastSequenceIdentifier, maxRecords)
                 .setResultTransformer(Transformers.aliasToBean(ResourceConsoleListRowDTO.class)) //
@@ -173,7 +177,7 @@ public class ResourceDAO {
     }
 
     public List<Integer> getAssignedResources(User user, PrismScope scopeId, ResourceListFilterDTO filter, Junction conditions, String lastIdentifier,
-            Integer recordsToRetrieve) {
+                                              Integer recordsToRetrieve) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("userRoles", "userRole", JoinType.INNER_JOIN) //
@@ -192,7 +196,7 @@ public class ResourceDAO {
     }
 
     public List<Integer> getAssignedResources(User user, PrismScope scopeId, PrismScope parentScopeId, ResourceListFilterDTO filter, Junction conditions,
-            String lastIdentifier, Integer recordsToRetrieve) {
+                                              String lastIdentifier, Integer recordsToRetrieve) {
         String parentResourceReference = parentScopeId.getLowerCaseName();
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //

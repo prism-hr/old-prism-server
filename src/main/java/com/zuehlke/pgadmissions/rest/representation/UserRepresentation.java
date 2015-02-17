@@ -14,7 +14,7 @@ public class UserRepresentation {
 
     private String email;
 
-    private String accountProfileUrl;
+    private String linkedinProfileUrl;
 
     private String accountImageUrl;
 
@@ -66,12 +66,12 @@ public class UserRepresentation {
         this.email = email;
     }
 
-    public String getAccountProfileUrl() {
-        return accountProfileUrl;
+    public String getLinkedinProfileUrl() {
+        return linkedinProfileUrl;
     }
 
-    public void setAccountProfileUrl(String accountProfileUrl) {
-        this.accountProfileUrl = accountProfileUrl;
+    public void setLinkedinProfileUrl(String linkedinProfileUrl) {
+        this.linkedinProfileUrl = linkedinProfileUrl;
     }
 
     public String getAccountImageUrl() {
@@ -113,7 +113,7 @@ public class UserRepresentation {
     }
 
     public UserRepresentation withAccountProfileUrl(final String accountProfileUrl) {
-        this.accountProfileUrl = accountProfileUrl;
+        this.linkedinProfileUrl = accountProfileUrl;
         return this;
     }
 

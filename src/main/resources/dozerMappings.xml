@@ -188,9 +188,20 @@
 			<b>user.email</b>
 		</field>
 		<field>
+			<a>creatorAccountImageUrl</a>
+			<b>user.accountImageUrl</b>
+		</field>
+		<field>
+			<a>creatorLinkedinProfileUrl</a>
+			<b>user.linkedinProfileUrl</b>
+		</field>
+		<field>
 			<a>stateGroupId</a>
 			<b>stateGroup</b>
 		</field>
+
+
+
 	</mapping>
 
 	<mapping>
@@ -330,9 +341,9 @@
     <mapping>
         <class-a>com.zuehlke.pgadmissions.domain.user.User</class-a>
         <class-b>com.zuehlke.pgadmissions.rest.representation.UserRepresentation</class-b>
-        <field>
-            <a>userAccount.primaryExternalAccount.accountProfileUrl</a>
-            <b>accountProfileUrl</b>
+        <field custom-converter="com.zuehlke.pgadmissions.rest.converter.UserAccountToLinkedinProfileUrlConverter">
+            <a>userAccount</a>
+            <b>linkedinProfileUrl</b>
         </field>
         <field>
             <a>userAccount.primaryExternalAccount.accountImageUrl</a>

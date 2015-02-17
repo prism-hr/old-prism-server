@@ -1,11 +1,10 @@
 package com.zuehlke.pgadmissions.dto;
 
-import java.math.BigDecimal;
-
-import org.joda.time.DateTime;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import org.joda.time.DateTime;
+
+import java.math.BigDecimal;
 
 public class ResourceConsoleListRowDTO {
 
@@ -18,7 +17,7 @@ public class ResourceConsoleListRowDTO {
     private Integer projectId;
 
     private Integer applicationId;
-    
+
     private Integer creatorId;
 
     private String creatorFirstName;
@@ -30,6 +29,10 @@ public class ResourceConsoleListRowDTO {
     private String creatorLastName;
 
     private String creatorEmail;
+
+    private String creatorLinkedinProfileUrl;
+
+    private String creatorAccountImageUrl;
 
     private String code;
 
@@ -49,155 +52,171 @@ public class ResourceConsoleListRowDTO {
 
     private String sequenceIdentifier;
 
-    public final Integer getSystemId() {
+    public Integer getSystemId() {
         return systemId;
     }
 
-    public final void setSystemId(Integer systemId) {
+    public void setSystemId(Integer systemId) {
         this.systemId = systemId;
     }
 
-    public final Integer getInstitutionId() {
+    public Integer getInstitutionId() {
         return institutionId;
     }
 
-    public final void setInstitutionId(Integer institutionId) {
+    public void setInstitutionId(Integer institutionId) {
         this.institutionId = institutionId;
     }
 
-    public final Integer getProgramId() {
+    public Integer getProgramId() {
         return programId;
     }
 
-    public final void setProgramId(Integer programId) {
+    public void setProgramId(Integer programId) {
         this.programId = programId;
     }
 
-    public final Integer getProjectId() {
+    public Integer getProjectId() {
         return projectId;
     }
 
-    public final void setProjectId(Integer projectId) {
+    public void setProjectId(Integer projectId) {
         this.projectId = projectId;
     }
 
-    public final Integer getApplicationId() {
+    public Integer getApplicationId() {
         return applicationId;
     }
 
-    public final void setApplicationId(Integer applicationId) {
+    public void setApplicationId(Integer applicationId) {
         this.applicationId = applicationId;
     }
 
-    public final Integer getCreatorId() {
+    public Integer getCreatorId() {
         return creatorId;
     }
 
-    public final void setCreatorId(Integer creatorId) {
+    public void setCreatorId(Integer creatorId) {
         this.creatorId = creatorId;
     }
 
-    public final String getCreatorFirstName() {
+    public String getCreatorFirstName() {
         return creatorFirstName;
     }
 
-    public final void setCreatorFirstName(String creatorFirstName) {
+    public void setCreatorFirstName(String creatorFirstName) {
         this.creatorFirstName = creatorFirstName;
     }
 
-    public final String getCreatorFirstName2() {
+    public String getCreatorFirstName2() {
         return creatorFirstName2;
     }
 
-    public final void setCreatorFirstName2(String creatorFirstName2) {
+    public void setCreatorFirstName2(String creatorFirstName2) {
         this.creatorFirstName2 = creatorFirstName2;
     }
 
-    public final String getCreatorFirstName3() {
+    public String getCreatorFirstName3() {
         return creatorFirstName3;
     }
 
-    public final void setCreatorFirstName3(String creatorFirstName3) {
+    public void setCreatorFirstName3(String creatorFirstName3) {
         this.creatorFirstName3 = creatorFirstName3;
     }
 
-    public final String getCreatorLastName() {
+    public String getCreatorLastName() {
         return creatorLastName;
     }
 
-    public final void setCreatorLastName(String creatorLastName) {
+    public void setCreatorLastName(String creatorLastName) {
         this.creatorLastName = creatorLastName;
     }
 
-    public final String getCode() {
+    public String getCode() {
         return code;
     }
 
-    public final void setCode(String code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
-    public final String getInstitutionTitle() {
+    public String getInstitutionTitle() {
         return institutionTitle;
     }
 
-    public final void setInstitutionTitle(String institutionTitle) {
+    public void setInstitutionTitle(String institutionTitle) {
         this.institutionTitle = institutionTitle;
     }
 
-    public final String getProgramTitle() {
+    public String getProgramTitle() {
         return programTitle;
     }
 
-    public final void setProgramTitle(String programTitle) {
+    public void setProgramTitle(String programTitle) {
         this.programTitle = programTitle;
     }
 
-    public final String getProjectTitle() {
+    public String getProjectTitle() {
         return projectTitle;
     }
 
-    public final void setProjectTitle(String projectTitle) {
+    public void setProjectTitle(String projectTitle) {
         this.projectTitle = projectTitle;
     }
 
-    public final BigDecimal getApplicationRatingAverage() {
+    public BigDecimal getApplicationRatingAverage() {
         return applicationRatingAverage;
     }
 
-    public final void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
     }
 
-    public final PrismState getStateId() {
+    public PrismState getStateId() {
         return stateId;
     }
 
-    public final void setStateId(PrismState stateId) {
+    public void setStateId(PrismState stateId) {
         this.stateId = stateId;
     }
 
-    public final PrismStateGroup getStateGroupId() {
+    public PrismStateGroup getStateGroupId() {
         return stateGroupId;
     }
 
-    public final void setStateGroupId(PrismStateGroup stateGroupId) {
+    public void setStateGroupId(PrismStateGroup stateGroupId) {
         this.stateGroupId = stateGroupId;
     }
 
-    public final String getCreatorEmail() {
+    public String getCreatorEmail() {
         return creatorEmail;
     }
 
-    public final void setCreatorEmail(String creatorEmail) {
+    public void setCreatorEmail(String creatorEmail) {
         this.creatorEmail = creatorEmail;
     }
 
-    public final DateTime getUpdatedTimestamp() {
+    public String getCreatorLinkedinProfileUrl() {
+        return creatorLinkedinProfileUrl;
+    }
+
+    public void setCreatorLinkedinProfileUrl(String creatorLinkedinProfileUrl) {
+        this.creatorLinkedinProfileUrl = creatorLinkedinProfileUrl;
+    }
+
+    public String getCreatorAccountImageUrl() {
+        return creatorAccountImageUrl;
+    }
+
+    public void setCreatorAccountImageUrl(String creatorAccountImageUrl) {
+        this.creatorAccountImageUrl = creatorAccountImageUrl;
+    }
+
+    public DateTime getUpdatedTimestamp() {
         return updatedTimestamp;
     }
 
-    public final void setUpdatedTimestamp(DateTime updatedTimestamp) {
+    public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
     }
 

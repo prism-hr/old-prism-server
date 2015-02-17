@@ -1,0 +1,31 @@
+package com.zuehlke.pgadmissions.rest.converter;
+
+import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
+import com.zuehlke.pgadmissions.domain.user.UserAccount;
+import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
+import org.dozer.DozerConverter;
+
+public class UserAccountToLinkedinProfileUrlConverter extends DozerConverter<UserAccount, String> {
+
+    public UserAccountToLinkedinProfileUrlConverter() {
+        super(UserAccount.class, String.class);
+    }
+
+    @Override
+    public String convertTo(UserAccount source, String destination) {
+        UserAccountExternal externalAccount = null;
+        for (UserAccountExternal external : source.getExternalAccounts()) {
+            if (external.getAccountType() == OauthProvider.LINKEDIN) {
+                externalAccount = external;
+            }
+        }
+
+        return externalAccount != null ? externalAccount.getAccountProfileUrl() : null;
+    }
+
+    @Override
+    public UserAccount convertFrom(String source, UserAccount destination) {
+        throw new UnsupportedOperationException();
+    }
+
+}

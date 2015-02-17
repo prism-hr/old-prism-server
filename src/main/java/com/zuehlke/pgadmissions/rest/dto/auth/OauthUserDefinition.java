@@ -14,6 +14,10 @@ public class OauthUserDefinition {
 
     private String email;
 
+    private String accountProfileUrl;
+
+    private String accountImageUrl;
+
     public OauthProvider getOauthProvider() {
         return oauthProvider;
     }
@@ -32,6 +36,14 @@ public class OauthUserDefinition {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getAccountProfileUrl() {
+        return accountProfileUrl;
+    }
+
+    public String getAccountImageUrl() {
+        return accountImageUrl;
     }
 
     public OauthUserDefinition withOauthProvider(final OauthProvider oauthProvider) {
@@ -59,5 +71,14 @@ public class OauthUserDefinition {
         return this;
     }
 
+    public OauthUserDefinition withAccountProfileUrl(final String accountProfileUrl) {
+        this.accountProfileUrl = accountProfileUrl;
+        return this;
+    }
+
+    public OauthUserDefinition withAccountImageUrl(final String accountImageUrl) {
+        this.accountImageUrl = accountImageUrl;
+        return this;
+    }
 
 }

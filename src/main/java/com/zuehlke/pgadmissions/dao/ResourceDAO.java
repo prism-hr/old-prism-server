@@ -1,5 +1,24 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang.WordUtils;
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -13,20 +32,6 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
-import org.apache.commons.lang.WordUtils;
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.*;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -162,14 +167,11 @@ public class ResourceDAO {
                 .createAlias("state", "state", JoinType.INNER_JOIN)
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN)
                 .createAlias("userAccount.primaryExternalAccount", "primaryExternalAccount", JoinType.LEFT_OUTER_JOIN)
-                .createAlias("userAccount.externalAccounts", "externalAccount", JoinType.LEFT_OUTER_JOIN);
+                .createAlias("userAccount.externalAccounts", "externalAccount", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.eq("externalAccount.accountType", OauthProvider.LINKEDIN));
 
         addResourceListCustomJoins(scopeId, resourceReference, criteria);
-
-        criteria.add(Restrictions.in("id", assignedResources))
-                .add(Restrictions.disjunction()
-                        .add(Restrictions.isNull("externalAccount.id"))
-                        .add(Restrictions.eq("externalAccount.accountType", OauthProvider.LINKEDIN)));
+        criteria.add(Restrictions.in("id", assignedResources));
 
         return ResourceListConstraintBuilder.appendLimitCriterion(criteria, filter, lastSequenceIdentifier, maxRecords)
                 .setResultTransformer(Transformers.aliasToBean(ResourceConsoleListRowDTO.class)) //

@@ -14,6 +14,8 @@ public class UserAccountToLinkedinProfileUrlConverter extends DozerConverter<Use
 
     @Override
     public String convertTo(UserAccount source, String destination) {
+        if (source == null) return null;
+
         UserAccountExternal externalAccount = null;
         for (UserAccountExternal external : source.getExternalAccounts()) {
             if (external.getAccountType() == OauthProvider.LINKEDIN) {

@@ -14,6 +14,10 @@ public class UserRepresentation {
 
     private String email;
 
+    private String accountProfileUrl;
+
+    private String accountImageUrl;
+
     public Integer getId() {
         return id;
     }
@@ -62,6 +66,22 @@ public class UserRepresentation {
         this.email = email;
     }
 
+    public String getAccountProfileUrl() {
+        return accountProfileUrl;
+    }
+
+    public void setAccountProfileUrl(String accountProfileUrl) {
+        this.accountProfileUrl = accountProfileUrl;
+    }
+
+    public String getAccountImageUrl() {
+        return accountImageUrl;
+    }
+
+    public void setAccountImageUrl(String accountImageUrl) {
+        this.accountImageUrl = accountImageUrl;
+    }
+
     public UserRepresentation withFirstName(String firstName) {
         this.firstName = firstName;
         return this;
@@ -84,6 +104,16 @@ public class UserRepresentation {
 
     public UserRepresentation withEmail(String email) {
         this.email = email;
+        return this;
+    }
+
+    public UserRepresentation withAccountImageUrl(final String accountImageUrl) {
+        this.accountImageUrl = accountImageUrl;
+        return this;
+    }
+
+    public UserRepresentation withAccountProfileUrl(final String accountProfileUrl) {
+        this.accountProfileUrl = accountProfileUrl;
         return this;
     }
 

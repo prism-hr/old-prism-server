@@ -1,9 +1,10 @@
 package com.zuehlke.pgadmissions.rest.converter;
 
+import org.dozer.DozerConverter;
+
 import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
-import org.dozer.DozerConverter;
 
 public class UserAccountToLinkedinProfileUrlConverter extends DozerConverter<UserAccount, String> {
 

@@ -192,8 +192,8 @@ public class UserDAO {
                         .add(Projections.property("firstName"), "firstName") //
                         .add(Projections.property("lastName"), "lastName") //
                         .add(Projections.groupProperty("email"), "email")) //
-                .createAlias("userRoles", "userRole", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("userRoles", "userRole", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eqProperty("id", "parentUser.id")) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .add(Restrictions.disjunction() //

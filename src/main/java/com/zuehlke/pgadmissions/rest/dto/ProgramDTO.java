@@ -28,7 +28,6 @@ public class ProgramDTO {
     @Size(min = 1)
     private PrismStudyOption[] studyOptions;
 
-    @NotNull
     private LocalDate endDate;
 
     @NotEmpty

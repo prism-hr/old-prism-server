@@ -276,7 +276,7 @@
 		<field>
 			<a>userAccount.sendApplicationRecommendationNotification</a>
 			<b>sendApplicationRecommendationNotification</b>
-		</field>	
+		</field>
 	</mapping>
 
 	<mapping>
@@ -327,6 +327,19 @@
 		</field>
 	</mapping>
 
+    <mapping>
+        <class-a>com.zuehlke.pgadmissions.domain.user.User</class-a>
+        <class-b>com.zuehlke.pgadmissions.rest.representation.UserRepresentation</class-b>
+        <field>
+            <a>userAccount.primaryExternalAccount.accountProfileUrl</a>
+            <b>accountProfileUrl</b>
+        </field>
+        <field>
+            <a>userAccount.primaryExternalAccount.accountImageUrl</a>
+            <b>accountImageUrl</b>
+        </field>
+    </mapping>
+
 	<mapping>
 		<class-a>com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser
 		</class-a>
@@ -364,7 +377,7 @@
 			<b>definitionId</b>
 		</field>
 	</mapping>
-	
+
 	<mapping>
 		<class-a>com.zuehlke.pgadmissions.domain.advert.Advert
 		</class-a>

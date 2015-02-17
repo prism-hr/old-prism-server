@@ -91,6 +91,7 @@ public class ProjectService {
         Program program = entityService.getById(Program.class, projectDTO.getProgramId());
         Project project = new Project().withUser(user).withSystem(systemService.getSystem()).withInstitution(program.getInstitution()).withProgram(program);
         copyProjectDetails(project, projectDTO);
+        project.setEndDate(new LocalDate().plusMonths(3));
         return project;
     }
 

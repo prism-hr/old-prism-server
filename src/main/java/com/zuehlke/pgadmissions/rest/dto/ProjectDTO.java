@@ -17,7 +17,6 @@ public class ProjectDTO {
     @Size(max = 255)
     private String title;
 
-    @NotNull
     private LocalDate endDate;
 
     @NotEmpty

@@ -117,6 +117,7 @@ public class ProgramService {
         Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withInstitution(institution).withImported(false)
                 .withRequireProjectDefinition(false);
         copyProgramDetails(program, programDTO);
+        program.setEndDate(new LocalDate().plusMonths(3));
         copyStudyOptions(program, programDTO);
         return program;
     }
@@ -249,7 +250,7 @@ public class ProgramService {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         return programDAO.getActiveProgramsByInstitution(institutionId, activeProgramStates);
     }
-    
+
     public List<Integer> getProgramsInDepartment(String departmentTitle) {
         return programDAO.getProgramsInDepartment(departmentTitle);
     }
@@ -280,14 +281,11 @@ public class ProgramService {
         }
 
         if (!program.getImported()) {
-            ProgramType programType = importedEntityService.getImportedEntityByCode(ProgramType.class, program.getInstitution(), programDTO.getProgramType()
-                    .name());
             String title = programDTO.getTitle();
-
-            program.setProgramType(programType);
             program.setTitle(title);
             advert.setTitle(title);
-
+            program.setProgramType((ProgramType) importedEntityService.getImportedEntityByCode(ProgramType.class, program.getInstitution(), programDTO
+                    .getProgramType().name()));
             program.setEndDate(programDTO.getEndDate());
         }
 
@@ -300,9 +298,9 @@ public class ProgramService {
 
         advert.setSummary(programDTO.getSummary());
         advert.setApplyHomepage(programDTO.getApplyHomepage());
+        
         advert.setStudyDurationMinimum(programDTO.getStudyDurationMinimum());
         advert.setStudyDurationMaximum(programDTO.getStudyDurationMaximum());
-
     }
 
     private void copyStudyOptions(Program program, ProgramDTO programDTO) {

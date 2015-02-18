@@ -89,14 +89,14 @@ public class AuthenticationService {
 
     public String requestToken(HttpSession session, OauthProvider oauthProvider) {
         switch (oauthProvider) {
-            case TWITTER:
-                TwitterServiceProvider twitterServiceProvider = new TwitterServiceProvider(twitterClientId, twitterAppSecret);
-                OAuth1Operations oAuthOperations = twitterServiceProvider.getOAuthOperations();
-                OAuthToken requestToken = oAuthOperations.fetchRequestToken(applicationUrl, null);
-                session.setAttribute(OAUTH_TOKEN_ATTRIBUTE, requestToken);
-                return oAuthOperations.buildAuthorizeUrl(requestToken.getValue(), OAuth1Parameters.NONE);
-            default:
-                throw new Error("Requesting token not supported for: " + oauthProvider);
+        case TWITTER:
+            TwitterServiceProvider twitterServiceProvider = new TwitterServiceProvider(twitterClientId, twitterAppSecret);
+            OAuth1Operations oAuthOperations = twitterServiceProvider.getOAuthOperations();
+            OAuthToken requestToken = oAuthOperations.fetchRequestToken(applicationUrl, null);
+            session.setAttribute(OAUTH_TOKEN_ATTRIBUTE, requestToken);
+            return oAuthOperations.buildAuthorizeUrl(requestToken.getValue(), OAuth1Parameters.NONE);
+        default:
+            throw new Error("Requesting token not supported for: " + oauthProvider);
         }
     }
 
@@ -105,16 +105,16 @@ public class AuthenticationService {
         OauthUserDefinition oauthUserDefinition = getOauthUserDefinition(oauthProvider, oauthLoginDTO, session);
 
         switch (oauthAssociationType) {
-            case ASSOCIATE_CURRENT_USER:
-                return oauthAssociateUser(userService.getCurrentUser(), oauthProvider, oauthUserDefinition);
-            case ASSOCIATE_NEW_USER:
-                return oauthAssociateNewUser(oauthProvider, oauthUserDefinition, session);
-            case ASSOCIATE_SPECIFIED_USER:
-                return oauthAssociateUser(userService.getUserByActivationCode(oauthLoginDTO.getActivationCode()), oauthProvider, oauthUserDefinition);
-            case AUTHENTICATE:
-                return oauthAuthenticate(oauthProvider, oauthUserDefinition);
-            default:
-                throw new UnsupportedOperationException("Unsupported Oauth association type: " + oauthAssociationType);
+        case ASSOCIATE_CURRENT_USER:
+            return oauthAssociateUser(userService.getCurrentUser(), oauthProvider, oauthUserDefinition);
+        case ASSOCIATE_NEW_USER:
+            return oauthAssociateNewUser(oauthProvider, oauthUserDefinition, session);
+        case ASSOCIATE_SPECIFIED_USER:
+            return oauthAssociateUser(userService.getUserByActivationCode(oauthLoginDTO.getActivationCode()), oauthProvider, oauthUserDefinition);
+        case AUTHENTICATE:
+            return oauthAuthenticate(oauthProvider, oauthUserDefinition);
+        default:
+            throw new UnsupportedOperationException("Unsupported Oauth association type: " + oauthAssociationType);
         }
     }
 
@@ -173,20 +173,20 @@ public class AuthenticationService {
     private OauthUserDefinition getOauthUserDefinition(OauthProvider oauthProvider, OauthLoginDTO oauthLoginDTO, HttpSession session) {
         OauthUserDefinition definition;
         switch (oauthProvider) {
-            case FACEBOOK:
-                definition = getFacebookUserDefinition(oauthLoginDTO);
-                break;
-            case LINKEDIN:
-                definition = getLinkedinUserDefinition(oauthLoginDTO);
-                break;
-            case GOOGLE:
-                definition = getGoogleUserDefinition(oauthLoginDTO);
-                break;
-            case TWITTER:
-                definition = getTwitterUserDefinition(oauthLoginDTO, session);
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown Oauth provider: " + oauthProvider);
+        case FACEBOOK:
+            definition = getFacebookUserDefinition(oauthLoginDTO);
+            break;
+        case LINKEDIN:
+            definition = getLinkedinUserDefinition(oauthLoginDTO);
+            break;
+        case GOOGLE:
+            definition = getGoogleUserDefinition(oauthLoginDTO);
+            break;
+        case TWITTER:
+            definition = getTwitterUserDefinition(oauthLoginDTO, session);
+            break;
+        default:
+            throw new UnsupportedOperationException("Unknown Oauth provider: " + oauthProvider);
         }
         return definition.withOauthProvider(oauthProvider);
     }
@@ -214,7 +214,8 @@ public class AuthenticationService {
         LinkedInProfile userProfile = linkedInTemplate.profileOperations().getUserProfile();
 
         return new OauthUserDefinition().withExternalId(userProfile.getId()).withEmail(userProfile.getEmailAddress()).withFirstName(userProfile.getFirstName())
-                .withLastName(userProfile.getLastName()).withAccountProfileUrl(userProfile.getPublicProfileUrl()).withAccountImageUrl(userProfile.getProfilePictureUrl());
+                .withLastName(userProfile.getLastName()).withAccountProfileUrl(userProfile.getPublicProfileUrl())
+                .withAccountImageUrl(userProfile.getProfilePictureUrl());
     }
 
     private OauthUserDefinition getGoogleUserDefinition(OauthLoginDTO oauthLoginDTO) {
@@ -277,6 +278,7 @@ public class AuthenticationService {
         if (oauthUser == null) {
             throw new AccessDeniedException("Account associated with another user");
         }
+        createOrUpdateUserAccountExternal(oauthUser.getUserAccount(), oauthUserDefinition);
         return oauthUser;
     }
 
@@ -311,12 +313,15 @@ public class AuthenticationService {
     }
 
     private void createExternalUserAccount(UserAccount userAccount, OauthUserDefinition oauthUserDefinition) {
-        UserAccountExternal externalAccount = new UserAccountExternal().withUserAccount(userAccount).withAccountType(oauthUserDefinition.getOauthProvider())
-                .withAccountIdentifier(oauthUserDefinition.getExternalId()).withAccountProfileUrl(oauthUserDefinition.getAccountProfileUrl())
-                .withAccountImageUrl(oauthUserDefinition.getAccountImageUrl());
-        entityService.save(externalAccount);
+        UserAccountExternal externalAccount = createOrUpdateUserAccountExternal(userAccount, oauthUserDefinition);
         userAccount.getExternalAccounts().add(externalAccount);
         userAccount.setPrimaryExternalAccount(externalAccount);
+    }
+
+    private UserAccountExternal createOrUpdateUserAccountExternal(UserAccount userAccount, OauthUserDefinition oauthUserDefinition) {
+        return entityService.createOrUpdate(new UserAccountExternal().withUserAccount(userAccount).withAccountType(oauthUserDefinition.getOauthProvider())
+                .withAccountIdentifier(oauthUserDefinition.getExternalId()).withAccountProfileUrl(oauthUserDefinition.getAccountProfileUrl())
+                .withAccountImageUrl(oauthUserDefinition.getAccountImageUrl()));
     }
 
 }

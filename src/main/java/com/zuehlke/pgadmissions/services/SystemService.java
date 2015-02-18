@@ -236,7 +236,7 @@ public class SystemService {
 
     public SocialMetadataDTO getSocialMetadata() {
         System system = getSystem();
-        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(system, userService.getCurrentUser());
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(system);
         return new SocialMetadataDTO().withAuthor(system.getUser().getFullName()).withTitle(system.getTitle())
                 .withDescription(loader.load(PrismDisplayPropertyDefinition.SYSTEM_DESCRIPTION))
                 .withThumbnailUrl(resourceService.getSocialThumbnailUrl(system)).withResourceUrl(resourceService.getSocialResourceUrl(system))
@@ -592,7 +592,7 @@ public class SystemService {
         User user = system.getUser();
         if (user.getUserAccount() == null) {
             Action action = actionService.getById(PrismAction.SYSTEM_STARTUP);
-            String content = applicationContext.getBean(PropertyLoader.class).localize(system, user)
+            String content = applicationContext.getBean(PropertyLoader.class).localize(system)
                     .load(PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_SYSTEM);
             Comment comment = new Comment().withAction(action).withContent(content).withDeclinedResponse(false).withUser(user)
                     .withCreatedTimestamp(new DateTime()).addAssignedUser(user, roleService.getCreatorRole(system), PrismRoleTransitionType.CREATE);

@@ -312,7 +312,7 @@ public class ResourceService {
         Action action = actionService.getViewEditAction(resource);
 
         Comment comment = new Comment().withUser(user).withAction(action)
-                .withContent(applicationContext.getBean(PropertyLoader.class).localize(resource, user).load(messageIndex)).withDeclinedResponse(false)
+                .withContent(applicationContext.getBean(PropertyLoader.class).localize(resource).load(messageIndex)).withDeclinedResponse(false)
                 .withCreatedTimestamp(new DateTime());
 
         for (CommentAssignedUser assignee : assignees) {

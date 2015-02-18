@@ -7,6 +7,7 @@ public enum PrismRoleTransitionType {
     CREATE(true), //
     BRANCH(false), //
     UPDATE(false), //
+    EXHUME(true), //
     REVIVE(false);
 
     private boolean specified;

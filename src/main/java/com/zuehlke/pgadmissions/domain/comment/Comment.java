@@ -710,6 +710,10 @@ public class Comment {
     public boolean isApplicationInterviewPendingInterviewComment() {
         return transitionState.getId() == PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
     }
+    
+    public boolean isApplicationReverseRejectionComment() {
+        return action.getId() == PrismAction.APPLICATION_REVERSE_REJECTION;
+    }
 
     public boolean isInterviewScheduledExpeditedComment() {
         return action.getId() == PrismAction.APPLICATION_ASSIGN_INTERVIEWERS

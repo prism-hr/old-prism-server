@@ -118,7 +118,7 @@ public class InstitutionService {
 
         InstitutionAddress address = new InstitutionAddress().withAddressLine1(institutionAddressDTO.getAddressLine1())
                 .withAddressLine2(institutionAddressDTO.getAddressLine2()).withAddressTown(institutionAddressDTO.getAddressTown())
-                .withAddressDistrict(institutionAddressDTO.getAddressDistrict()).withAddressCode(institutionAddressDTO.getAddressCode())
+                .withAddressRegion(institutionAddressDTO.getAddressDistrict()).withAddressCode(institutionAddressDTO.getAddressCode())
                 .withDomicile(institutionAddressCountry);
 
         InstitutionDomicile institutionCountry = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
@@ -150,7 +150,7 @@ public class InstitutionService {
         address.setAddressLine1(addressDTO.getAddressLine1());
         address.setAddressLine2(addressDTO.getAddressLine2());
         address.setAddressTown(addressDTO.getAddressTown());
-        address.setAddressDistrict(addressDTO.getAddressDistrict());
+        address.setAddressRegion(addressDTO.getAddressDistrict());
         address.setAddressCode(addressDTO.getAddressCode());
 
         geocodableLocationService.setLocation(address);
@@ -189,7 +189,7 @@ public class InstitutionService {
         User user = systemService.getSystem().getUser();
         Action action = actionService.getById(INSTITUTION_STARTUP);
         Comment comment = new Comment().withAction(action)
-                .withContent(applicationContext.getBean(PropertyLoader.class).localize(institution, user).load(SYSTEM_COMMENT_INITIALIZED_INSTITUTION))
+                .withContent(applicationContext.getBean(PropertyLoader.class).localize(institution).load(SYSTEM_COMMENT_INITIALIZED_INSTITUTION))
                 .withDeclinedResponse(false).withUser(user).withCreatedTimestamp(new DateTime());
         actionService.executeAction(institution, action, comment);
     }
@@ -214,7 +214,7 @@ public class InstitutionService {
         PrismAction actionId = commentDTO.getAction();
         Action action = actionService.getById(actionId);
 
-        String commentContent = actionId == INSTITUTION_VIEW_EDIT ? applicationContext.getBean(PropertyLoader.class).localize(institution, user)
+        String commentContent = actionId == INSTITUTION_VIEW_EDIT ? applicationContext.getBean(PropertyLoader.class).localize(institution)
                 .load(INSTITUTION_COMMENT_UPDATED) : commentDTO.getContent();
 
         State transitionState = stateService.getById(commentDTO.getTransitionState());

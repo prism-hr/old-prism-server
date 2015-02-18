@@ -105,7 +105,7 @@ public class ProjectService {
 
         boolean viewEditAction = actionId == PrismAction.PROJECT_VIEW_EDIT;
 
-        String commentContent = viewEditAction ? applicationContext.getBean(PropertyLoader.class).localize(project, user)
+        String commentContent = viewEditAction ? applicationContext.getBean(PropertyLoader.class).localize(project)
                 .load(PrismDisplayPropertyDefinition.PROJECT_COMMENT_UPDATED) : commentDTO.getContent();
 
         ProjectDTO projectDTO = (ProjectDTO) commentDTO.fetchResourceDTO();

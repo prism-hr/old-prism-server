@@ -11,12 +11,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 
 @Entity
-@Table(name = "USER_ACCOUNT_EXTERNAL", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_account_id", "external_account_type"}),
-        @UniqueConstraint(columnNames = {"external_account_type", "external_account_identifier"})})
-public class UserAccountExternal {
+@Table(name = "USER_ACCOUNT_EXTERNAL", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_account_id", "external_account_type" }) })
+public class UserAccountExternal implements IUniqueEntity {
 
     @Id
     @GeneratedValue
@@ -32,12 +32,12 @@ public class UserAccountExternal {
 
     @Column(name = "external_account_identifier", nullable = false)
     private String accountIdentifier;
-    
+
     @Column(name = "external_account_profile_url")
     private String accountProfileUrl;
-    
+
     @Column(name = "external_account_image_url")
-    private String accountImageUrl;    
+    private String accountImageUrl;
 
     public Integer getId() {
         return id;
@@ -101,15 +101,20 @@ public class UserAccountExternal {
         this.accountIdentifier = accountIdentifier;
         return this;
     }
-    
+
     public UserAccountExternal withAccountProfileUrl(String accountProfileUrl) {
         this.accountProfileUrl = accountProfileUrl;
         return this;
     }
-    
+
     public UserAccountExternal withAccountImageUrl(String accountImageUrl) {
         this.accountImageUrl = accountImageUrl;
         return this;
+    }
+
+    @Override
+    public ResourceSignature getResourceSignature() {
+        return new ResourceSignature().addProperty("userAccount", userAccount).addProperty("accountType", accountType);
     }
 
 }

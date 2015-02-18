@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropert
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
+import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.OtherApplicationSummaryRepresentation;
 
@@ -83,13 +84,27 @@ public class ApplicationDAO {
                 .uniqueResult();
     }
 
-    public List<ApplicationReferee> getApplicationRefereesResponded(Application application) {
-        return (List<ApplicationReferee>) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
+    public List<ApplicationReferenceDTO> getApplicationRefereesResponded(Application application) {
+        return (List<ApplicationReferenceDTO>) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class, "applicationReferee") //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("user"), "user") //
+                        .add(Projections.property("jobTitle"), "jobTitle") //
+                        .add(Projections.property("address.addressLine1"), "addressLine1") //
+                        .add(Projections.property("address.addressLine2"), "addressLine2") //
+                        .add(Projections.property("address.addressTown"), "addressTown") //
+                        .add(Projections.property("address.addressRegion"), "addressRegion") //
+                        .add(Projections.property("address.addressCode"), "addressCode") //
+                        .add(Projections.property("domicile.code"), "addressDomicile") //
+                        .add(Projections.property("phone"), "phone") //
+                        .add(Projections.property("comment"), "comment")) //
+                .createAlias("address", "address", JoinType.INNER_JOIN) //
+                .createAlias("address.domicile", "domicile", JoinType.INNER_JOIN) //
                 .createAlias("comment", "comment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("application", application)) //
                 .addOrder(Order.desc("comment.applicationRating")) //
                 .addOrder(Order.asc("comment.createdTimestamp")) //
                 .addOrder(Order.asc("comment.id")) //
+                .setResultTransformer(Transformers.aliasToBean(ApplicationReferenceDTO.class)) //
                 .list();
     }
 
@@ -97,7 +112,6 @@ public class ApplicationDAO {
         return (List<ApplicationReferee>) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
                 .add(Restrictions.eq("application", application)) //
                 .add(Restrictions.isNull("comment")) //
-                .addOrder(Order.asc("id")) //
                 .list();
     }
 
@@ -198,7 +212,7 @@ public class ApplicationDAO {
                 .add(Restrictions.eq("enabled", true)) //
                 .list();
     }
-    
+
     public List<ApplicationReportListRowDTO> getApplicationReport(Set<Integer> assignedApplications, String columns) {
         return (List<ApplicationReportListRowDTO>) sessionFactory.getCurrentSession().createQuery( //
                 "select " + columns + " " //

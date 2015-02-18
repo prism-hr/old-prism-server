@@ -176,7 +176,7 @@ public class ProgramService {
 
         boolean viewEditAction = actionId == PrismAction.PROGRAM_VIEW_EDIT;
 
-        String commentContent = viewEditAction ? applicationContext.getBean(PropertyLoader.class).localize(program, user)
+        String commentContent = viewEditAction ? applicationContext.getBean(PropertyLoader.class).localize(program)
                 .load(PrismDisplayPropertyDefinition.PROGRAM_COMMENT_UPDATED) : commentDTO.getContent();
 
         ProgramDTO programDTO = (ProgramDTO) commentDTO.fetchResourceDTO();

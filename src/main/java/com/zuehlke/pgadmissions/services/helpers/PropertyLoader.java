@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.services.DisplayPropertyService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 
@@ -56,7 +55,7 @@ public class PropertyLoader {
         return evaluation ? load(trueIndex) : load(falseIndex);
     }
     
-    public PropertyLoader localize(Resource resource, User user) {
+    public PropertyLoader localize(Resource resource) {
         PrismScope resourceScope = resource.getResourceScope();
         if (Arrays.asList(PROGRAM, PROJECT, APPLICATION).contains(resourceScope)) {
             Program program = resource.getProgram();

@@ -36,7 +36,6 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResp
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.ReferenceTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -45,6 +44,7 @@ import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ApplicationExportDTO;
+import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
@@ -59,25 +59,25 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 public class ApplicationExportService {
 
     private PropertyLoader propertyLoader = null;
-    
+
     @Value("${xml.data.export.sftp.privatekeyfile}")
     private Resource privateKeyFile;
-    
+
     @Value("${xml.data.export.sftp.host}")
     private String sftpHost;
-    
+
     @Value("${xml.data.export.sftp.port}")
     private String sftpPort;
-    
+
     @Value("${xml.data.export.sftp.username}")
     private String sftpUsername;
-    
+
     @Value("${xml.data.export.sftp.password}")
     private String sftpPassword;
-    
+
     @Value("${xml.data.export.sftp.folder}")
     private String targetFolder;
-    
+
     @Autowired
     private WebServiceTemplate webServiceTemplate;
 
@@ -92,10 +92,10 @@ public class ApplicationExportService {
 
     @Autowired
     private ApplicationDocumentExportBuilder applicationDocumentExportBuilder;
-    
+
     @Autowired
     protected ApplicationService applicationService;
-   
+
     @Autowired
     protected ActionService actionService;
 
@@ -107,7 +107,6 @@ public class ApplicationExportService {
 
         String exportId = null;
         String exportUserId = null;
-        String exportException = null;
         OutputStream outputStream = null;
         SubmitAdmissionsApplicationRequest exportRequest = null;
 
@@ -123,14 +122,12 @@ public class ApplicationExportService {
             }
             outputStream = sendDocumentExportRequest(application, exportId);
         } catch (RuntimeException e) {
-            throw e;
+            throw new Exception(e);
         } catch (Exception e) {
-            exportException = ExceptionUtils.getStackTrace(e);
+            executeExportAction(application, exportRequest, exportId, exportUserId, ExceptionUtils.getStackTrace(e));
         } finally {
             IOUtils.closeQuietly(outputStream);
         }
-
-        executeExportAction(application, exportRequest, exportId, exportUserId, exportException);
     }
 
     protected SubmitAdmissionsApplicationRequest buildDataExportRequest(Application application) throws ApplicationExportException {
@@ -142,7 +139,7 @@ public class ApplicationExportService {
         User primarySupervisor = applicationService.getPrimarySupervisor(offerRecommendationComment);
         ProgramStudyOptionInstance exportProgramInstance = programService.getFirstEnabledProgramStudyOptionInstance(application.getProgram(), application
                 .getProgramDetail().getStudyOption());
-        List<ApplicationReferee> applicationExportReferees = applicationService.getApplicationExportReferees(application);
+        List<ApplicationReferenceDTO> applicationExportReferences = applicationService.getApplicationExportReferees(application);
 
         if (exportProgramInstance == null) {
             throw new ApplicationExportException("No export program instance for application " + application.getCode());
@@ -153,7 +150,7 @@ public class ApplicationExportService {
                 .localize(propertyLoader)
                 .build(new ApplicationExportDTO().withApplication(application).withCreatorExportId(creatorExportId).withCreatorIpAddress(creatorIpAddress)
                         .withOfferRecommendationComment(offerRecommendationComment).withPrimarySupervisor(primarySupervisor)
-                        .withExportProgramInstance(exportProgramInstance).withApplicationReferees(applicationExportReferees));
+                        .withExportProgramInstance(exportProgramInstance).withApplicationReferences(applicationExportReferences));
     }
 
     protected OutputStream buildDocumentExportRequest(Application application, String exportReference, OutputStream outputStream) throws IOException,
@@ -164,7 +161,7 @@ public class ApplicationExportService {
     }
 
     protected void executeExportAction(Application application, SubmitAdmissionsApplicationRequest exportRequest, String exportId, String exportUserId,
-                                       String exportException) throws DeduplicationException, InstantiationException, IllegalAccessException, JAXBException, BeansException,
+            String exportException) throws DeduplicationException, InstantiationException, IllegalAccessException, JAXBException, BeansException,
             WorkflowEngineException, IOException, IntegrationException {
         Action exportAction = actionService.getById(PrismAction.APPLICATION_EXPORT);
         Institution exportInstitution = application.getInstitution();
@@ -180,9 +177,7 @@ public class ApplicationExportService {
     }
 
     protected void localize(Application application) {
-        if (propertyLoader == null) {
-            propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(application, application.getSystem().getUser());
-        }
+        propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(application);
     }
 
     private AdmissionsApplicationResponse sendDataExportRequest(Application application, SubmitAdmissionsApplicationRequest exportRequest) {

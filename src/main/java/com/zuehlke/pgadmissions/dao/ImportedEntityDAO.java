@@ -7,6 +7,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -18,6 +19,8 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.user.Address;
+import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -152,6 +155,20 @@ public class ImportedEntityDAO {
                 .add(Restrictions.ne("importedEntityType", PrismImportedEntity.PROGRAM)) //
                 .add(Restrictions.isNull("lastImportedTimestamp")) //
                 .list();
+    }
+
+    public DomicileUseDTO getMostUsedEnabledDomicile(Institution institution) {
+        return (DomicileUseDTO) sessionFactory.getCurrentSession().createCriteria(Address.class, "address") //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("domicile.code"), "code") //
+                        .add(Projections.count("id").as("useCount"), "useCount")) //
+                .createAlias("domicile", "domicile", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("domicile.institution", institution)) //
+                .add(Restrictions.eq("domicile.enabled", true)) //
+                .addOrder(Order.desc("useCount")) //
+                .setMaxResults(1) //
+                .setResultTransformer(Transformers.aliasToBean(DomicileUseDTO.class)) //
+                .uniqueResult();
     }
 
 }

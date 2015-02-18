@@ -67,7 +67,7 @@ public class ApplicationDownloadService {
     public void build(OutputStream oStream, Integer... applicationIds) {
         User user = userService.getCurrentUser();
 
-        PropertyLoader generalPropertyLoader = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem(), user);
+        PropertyLoader generalPropertyLoader = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem());
         ApplicationDownloadBuilderHelper generalApplicationDownloadBuilderHelper = applicationContext.getBean(ApplicationDownloadBuilderHelper.class).localize(
                 generalPropertyLoader);
 
@@ -85,7 +85,7 @@ public class ApplicationDownloadService {
 
                 PropertyLoader propertyLoader = specificPropertyLoaders.get(program);
                 if (propertyLoader == null) {
-                    propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(application, user);
+                    propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(application);
                 }
                 specificPropertyLoaders.put(program, propertyLoader);
 

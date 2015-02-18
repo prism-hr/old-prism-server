@@ -161,6 +161,8 @@ public class StateService {
         resource.addComment(comment);
 
         resourceService.preProcessResource(resource, comment);
+        commentService.preProcessComment(comment);
+        
         entityService.flush();
 
         State state = resource.getState();

@@ -95,7 +95,6 @@ public class ApplicationDAO {
                         .add(Projections.property("address.addressRegion"), "addressRegion") //
                         .add(Projections.property("address.addressCode"), "addressCode") //
                         .add(Projections.property("domicile.code"), "addressDomicile") //
-                        .add(Projections.property("phone"), "phone") //
                         .add(Projections.property("comment"), "comment")) //
                 .createAlias("address", "address", JoinType.INNER_JOIN) //
                 .createAlias("address.domicile", "domicile", JoinType.INNER_JOIN) //

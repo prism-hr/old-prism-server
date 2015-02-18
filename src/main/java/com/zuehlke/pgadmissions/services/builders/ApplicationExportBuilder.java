@@ -6,6 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_IP_PLACEHOLDER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NONE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OTHER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PHONE_MOCK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_REFER_TO_DOCUMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_PROVIDED;
 
@@ -80,10 +81,12 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ApplicationExportBuilder {
 
-    private final ObjectFactory objectFactory = new ObjectFactory();
-    private PropertyLoader propertyLoader;
     @Value("${xml.export.source}")
     private String exportSource;
+    
+    private final ObjectFactory objectFactory = new ObjectFactory();
+    
+    private PropertyLoader propertyLoader;
 
     @Autowired
     private ApplicationExportBuilderHelper applicationExportBuilderHelper;
@@ -235,7 +238,6 @@ public class ApplicationExportBuilder {
     }
 
     private ContactDtlsTp buildHomeAddress(Application application) {
-        ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         ContactDtlsTp contactDtlsTp = objectFactory.createContactDtlsTp();
         AddressTp addressTp = objectFactory.createAddressTp();
         Address currentAddress = application.getAddress().getCurrentAddress();
@@ -250,7 +252,7 @@ public class ApplicationExportBuilder {
         addressTp.setCountry(currentAddress.getDomicile().getCode());
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(application.getUser().getEmail());
-        contactDtlsTp.setLandline(applicationExportBuilderHelper.cleanPhoneNumber(personalDetail.getPhone()));
+        contactDtlsTp.setLandline(propertyLoader.load(SYSTEM_PHONE_MOCK));
         return contactDtlsTp;
     }
 
@@ -269,7 +271,7 @@ public class ApplicationExportBuilder {
         addressTp.setCountry(contactAddress.getDomicile().getCode());
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(application.getUser().getEmail());
-        contactDtlsTp.setLandline(applicationExportBuilderHelper.cleanPhoneNumber(application.getPersonalDetail().getPhone()));
+        contactDtlsTp.setLandline(propertyLoader.load(SYSTEM_PHONE_MOCK));
         return contactDtlsTp;
     }
 
@@ -477,7 +479,7 @@ public class ApplicationExportBuilder {
 
             ContactDtlsTp contactDtlsTp = objectFactory.createContactDtlsTp();
             contactDtlsTp.setEmail(reference.getUser().getEmail());
-            contactDtlsTp.setLandline(applicationExportBuilderHelper.cleanPhoneNumber(reference.getPhone()));
+            contactDtlsTp.setLandline(propertyLoader.load(SYSTEM_PHONE_MOCK));
 
             AddressTp addressTp = objectFactory.createAddressTp();
             addressTp.setAddressLine1(reference.getAddressLine1());

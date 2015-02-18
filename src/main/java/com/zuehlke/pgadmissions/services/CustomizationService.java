@@ -117,7 +117,7 @@ public class CustomizationService {
         WorkflowConfigurationRepresentation representation = mapper.map(configuration, configurationType.getConfigurationRepresentationClass());
 
         if (configurationType.isLocalizable()) {
-            PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource, userService.getCurrentUser());
+            PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
             localizeConfiguration(representation, definition, loader);
         }
 
@@ -200,14 +200,16 @@ public class CustomizationService {
     }
 
     public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
-            Enum<?> definitionId) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
+            Enum<?> definitionId) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException,
+            IOException, IntegrationException {
         customizationDAO.restoreGlobalConfiguration(configurationType, resource, locale, programType, definitionId);
         resourceService.executeUpdate(resource,
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
     }
 
     public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
-            PrismProgramType programType) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
+            PrismProgramType programType) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException,
+            WorkflowEngineException, IOException, IntegrationException {
         customizationDAO.restoreGlobalConfiguration(configurationType, resource, scope, locale, programType);
         resourceService.executeUpdate(resource,
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
@@ -304,8 +306,8 @@ public class CustomizationService {
         return entityService.list(DisplayPropertyConfiguration.class);
     }
 
-    public void createOrUpdateConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale,
-            PrismProgramType programType, WorkflowConfigurationDTO workflowConfigurationDTO) throws CustomizationException {
+    public void createOrUpdateConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
+            WorkflowConfigurationDTO workflowConfigurationDTO) throws CustomizationException {
         WorkflowConfiguration configuration = createConfiguration(configurationType, resource, locale, programType, workflowConfigurationDTO);
         entityService.createOrUpdate(configuration);
     }
@@ -349,7 +351,7 @@ public class CustomizationService {
     private List<WorkflowConfigurationRepresentation> parseRepresentations(Resource resource, PrismConfiguration configurationType,
             List<WorkflowConfiguration> configurations) {
         List<WorkflowConfigurationRepresentation> representations = Lists.newLinkedList();
-        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource, userService.getCurrentUser());
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
 
         if (configurations.isEmpty()) {
             return representations;

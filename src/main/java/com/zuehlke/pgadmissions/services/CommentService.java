@@ -23,6 +23,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewAppointment;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewInstruction;
@@ -85,6 +86,9 @@ public class CommentService {
 
     @Autowired
     private ActionService actionService;
+
+    @Autowired
+    private ApplicationService applicationService;
 
     @Autowired
     private CustomizationService customizationService;
@@ -413,9 +417,18 @@ public class CommentService {
         }
     }
 
+    public void preProcessComment(Comment comment) {
+        if (comment.isApplicationReverseRejectionComment()) {
+            Role refereeRole = roleService.getById(PrismRole.APPLICATION_REFEREE);
+            for (ApplicationReferee referee : applicationService.getApplicationRefereesNotResponded(comment.getApplication())) {
+                comment.addAssignedUser(referee.getUser(), refereeRole, PrismRoleTransitionType.EXHUME);
+            }
+        }
+    }
+
     public void processComment(Comment comment) {
         if (comment.isApplicationAutomatedRejectionComment()) {
-            PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(comment.getApplication(), comment.getUser());
+            PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(comment.getApplication());
             comment.setRejectionReasonSystem(propertyLoader.load(PrismDisplayPropertyDefinition.APPLICATION_COMMENT_REJECTION_SYSTEM));
         }
         entityService.flush();

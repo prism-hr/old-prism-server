@@ -168,7 +168,7 @@ public class AdvertService {
         address.setAddressLine1(addressDTO.getAddressLine1());
         address.setAddressLine2(addressDTO.getAddressLine2());
         address.setAddressTown(addressDTO.getAddressTown());
-        address.setAddressDistrict(addressDTO.getAddressDistrict());
+        address.setAddressRegion(addressDTO.getAddressDistrict());
         address.setAddressCode(addressDTO.getAddressCode());
 
         geocodableLocationService.setLocation(address);
@@ -299,7 +299,7 @@ public class AdvertService {
     public InstitutionAddress createAddressCopy(InstitutionAddress address) {
         InstitutionAddress newAddress = new InstitutionAddress().withDomicile(address.getDomicile()).withInstitution(address.getInstitution())
                 .withAddressLine1(address.getAddressLine1()).withAddressLine2(address.getAddressLine2()).withAddressTown(address.getAddressTown())
-                .withAddressDistrict(address.getAddressDistrict()).withAddressCode(address.getAddressCode());
+                .withAddressRegion(address.getAddressRegion()).withAddressCode(address.getAddressCode());
 
         GeographicLocation oldLocation = address.getLocation();
         if (oldLocation != null) {

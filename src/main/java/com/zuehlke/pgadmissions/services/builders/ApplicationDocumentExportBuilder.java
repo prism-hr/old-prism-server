@@ -22,10 +22,10 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.definitions.ApplicationDownloadMode;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.dto.ApplicationDownloadDTO;
+import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.services.ApplicationDownloadService;
@@ -169,12 +169,12 @@ public class ApplicationDocumentExportBuilder {
     }
 
     private void buildReferences(Application application, Properties contentsProperties, ZipOutputStream zos) throws IOException {
-        List<ApplicationReferee> referees = applicationService.getApplicationExportReferees(application);
+        List<ApplicationReferenceDTO> references = applicationService.getApplicationExportReferees(application);
         for (int i = 0; i < 2; i++) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
             zos.write(applicationContext.getBean(ApplicationDownloadReferenceBuilder.class).localize(propertyLoader, applicationDownloadBuilderHelper)
-                    .build(application, referees.get(i).getComment()));
+                    .build(application, references.get(i).getComment()));
             zos.closeEntry();
             int referenceNumberId = i + 1;
             contentsProperties.put("reference." + referenceNumberId + ".serverFilename", filename);

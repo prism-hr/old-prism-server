@@ -475,6 +475,7 @@ public class ApplicationSectionService {
             address = new Address();
             referee.setAddress(address);
         }
+        
         copyAddress(application.getInstitution(), address, addressDTO);
         referee.setPhone(refereeDTO.getPhone());
         referee.setSkype(Strings.emptyToNull(refereeDTO.getSkype()));

@@ -1,5 +1,17 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ROLE_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ROLE_ADMITTER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ROLE_APPROVER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ROLE_CREATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ROLE_INTERVIEWEE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ROLE_INTERVIEWER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ROLE_PRIMARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ROLE_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ROLE_REVIEWER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ROLE_SECONDARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ROLE_SUGGESTED_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ROLE_VIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -10,35 +22,38 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 
 public enum PrismRole {
 
-    APPLICATION_ADMINISTRATOR(false, APPLICATION), //
-    APPLICATION_CREATOR(true, APPLICATION), //
-    APPLICATION_INTERVIEWEE(false, APPLICATION), //
-    APPLICATION_INTERVIEWER(false, APPLICATION), //
-    APPLICATION_POTENTIAL_INTERVIEWEE(false, APPLICATION), //
-    APPLICATION_POTENTIAL_INTERVIEWER(false, APPLICATION), //
-    APPLICATION_PRIMARY_SUPERVISOR(false, APPLICATION), //
-    APPLICATION_REFEREE(false, APPLICATION), //
-    APPLICATION_REVIEWER(false, APPLICATION), //
-    APPLICATION_SECONDARY_SUPERVISOR(false, APPLICATION), //
-    APPLICATION_SUGGESTED_SUPERVISOR(false, APPLICATION), //
-    APPLICATION_VIEWER_RECRUITER(false, APPLICATION), //
-    APPLICATION_VIEWER_REFEREE(false, APPLICATION), //
-    INSTITUTION_ADMINISTRATOR(true, INSTITUTION), //
-    INSTITUTION_ADMITTER(false, INSTITUTION), //
-    PROGRAM_ADMINISTRATOR(true, PROGRAM), //
-    PROGRAM_APPROVER(false, PROGRAM), //
-    PROGRAM_VIEWER(false, PROGRAM), //
-    PROJECT_ADMINISTRATOR(false, PROJECT), //
-    PROJECT_PRIMARY_SUPERVISOR(true, PROJECT), //
-    PROJECT_SECONDARY_SUPERVISOR(false, PROJECT), //
-    SYSTEM_ADMINISTRATOR(true, SYSTEM);
+    APPLICATION_ADMINISTRATOR(false, APPLICATION, SYSTEM_ROLE_ADMINISTRATOR), //
+    APPLICATION_CREATOR(true, APPLICATION, SYSTEM_ROLE_CREATOR), //
+    APPLICATION_INTERVIEWEE(false, APPLICATION, SYSTEM_ROLE_INTERVIEWEE), //
+    APPLICATION_INTERVIEWER(false, APPLICATION, SYSTEM_ROLE_INTERVIEWER), //
+    APPLICATION_POTENTIAL_INTERVIEWEE(false, APPLICATION, SYSTEM_ROLE_INTERVIEWEE), //
+    APPLICATION_POTENTIAL_INTERVIEWER(false, APPLICATION, SYSTEM_ROLE_INTERVIEWER), //
+    APPLICATION_PRIMARY_SUPERVISOR(false, APPLICATION, SYSTEM_ROLE_PRIMARY_SUPERVISOR), //
+    APPLICATION_REFEREE(false, APPLICATION, SYSTEM_ROLE_REFEREE), //
+    APPLICATION_REVIEWER(false, APPLICATION, SYSTEM_ROLE_REVIEWER), //
+    APPLICATION_SECONDARY_SUPERVISOR(false, APPLICATION, SYSTEM_ROLE_SECONDARY_SUPERVISOR), //
+    APPLICATION_SUGGESTED_SUPERVISOR(false, APPLICATION, SYSTEM_ROLE_SUGGESTED_SUPERVISOR), //
+    APPLICATION_VIEWER_RECRUITER(false, APPLICATION, SYSTEM_ROLE_VIEWER), //
+    APPLICATION_VIEWER_REFEREE(false, APPLICATION, SYSTEM_ROLE_REFEREE), //
+    INSTITUTION_ADMINISTRATOR(true, INSTITUTION, SYSTEM_ROLE_ADMINISTRATOR), //
+    INSTITUTION_ADMITTER(false, INSTITUTION, SYSTEM_ROLE_ADMITTER), //
+    PROGRAM_ADMINISTRATOR(true, PROGRAM, SYSTEM_ROLE_ADMINISTRATOR), //
+    PROGRAM_APPROVER(false, PROGRAM, SYSTEM_ROLE_APPROVER), //
+    PROGRAM_VIEWER(false, PROGRAM, SYSTEM_ROLE_VIEWER), //
+    PROJECT_ADMINISTRATOR(false, PROJECT, SYSTEM_ROLE_ADMINISTRATOR), //
+    PROJECT_PRIMARY_SUPERVISOR(true, PROJECT, SYSTEM_ROLE_PRIMARY_SUPERVISOR), //
+    PROJECT_SECONDARY_SUPERVISOR(false, PROJECT, SYSTEM_ROLE_SECONDARY_SUPERVISOR), //
+    SYSTEM_ADMINISTRATOR(true, SYSTEM, SYSTEM_ROLE_ADMINISTRATOR);
 
     private boolean scopeOwner;
 
     private PrismScope scope;
+
+    private PrismDisplayPropertyDefinition displayPropertyDefinition;
 
     private static final HashMultimap<PrismRole, PrismRole> excludedRoles = HashMultimap.create();
 
@@ -63,9 +78,10 @@ public enum PrismRole {
         }
     }
 
-    private PrismRole(boolean scopeOwner, PrismScope scope) {
+    private PrismRole(boolean scopeOwner, PrismScope scope, PrismDisplayPropertyDefinition displayPropertyDefinition) {
         this.scopeOwner = scopeOwner;
         this.scope = scope;
+        this.displayPropertyDefinition = displayPropertyDefinition;
     }
 
     public boolean isScopeOwner() {
@@ -74,6 +90,10 @@ public enum PrismRole {
 
     public PrismScope getScope() {
         return scope;
+    }
+
+    public final PrismDisplayPropertyDefinition getDisplayPropertyDefinition() {
+        return displayPropertyDefinition;
     }
 
     public static Set<PrismRole> getExcludedRoles(PrismRole role) {

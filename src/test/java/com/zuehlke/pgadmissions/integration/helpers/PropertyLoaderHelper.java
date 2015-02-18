@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.system.System;
-import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
@@ -38,17 +37,16 @@ public class PropertyLoaderHelper {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public void verifyPropertyLoader() throws WorkflowConfigurationException, DeduplicationException, CustomizationException, InstantiationException, IllegalAccessException {
+    public void verifyPropertyLoader() throws WorkflowConfigurationException, DeduplicationException, CustomizationException, InstantiationException,
+            IllegalAccessException {
         System system = systemService.getSystem();
 
-        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(system, system.getUser());
+        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(system);
         assertEquals(propertyLoader.load(SYSTEM_YES), SYSTEM_YES.getDefaultValue());
-
-        User herman = userService.getOrCreateUser("herman", "ze german", "hermanzegerman@germany.com", EN_GB);
 
         customizationService.createOrUpdateConfiguration(PrismConfiguration.DISPLAY_PROPERTY, systemService.getSystem(), EN_GB, null,
                 new DisplayPropertyConfigurationValueDTO().withDefinitionId(SYSTEM_YES).withValue("Ja"));
-        PropertyLoader propertyLoaderDe = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem(), herman);
+        PropertyLoader propertyLoaderDe = applicationContext.getBean(PropertyLoader.class).localize(system);
 
         assertEquals(propertyLoaderDe.load(SYSTEM_YES), "Ja");
         assertEquals(propertyLoader.load(SYSTEM_YES), SYSTEM_YES.getDefaultValue());

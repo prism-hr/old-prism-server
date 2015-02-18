@@ -321,7 +321,7 @@ public class NotificationService {
             message.setModelDTO(modelDTO);
             message.setAttachments(Lists.<AttachmentInputSource> newArrayList());
     
-            PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(modelDTO.getResource(), user);
+            PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(modelDTO.getResource());
             applicationContext.getBean(MailSender.class).localize(propertyLoader).sendEmail(message);
         }
     }

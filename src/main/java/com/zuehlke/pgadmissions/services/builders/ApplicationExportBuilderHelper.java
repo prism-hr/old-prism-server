@@ -16,42 +16,30 @@ public class ApplicationExportBuilderHelper {
     public ApplicationExportBuilderHelper() throws DatatypeConfigurationException {
         datatypeFactory = DatatypeFactory.newInstance();
     }
-    
+
     public String cleanString(String text) {
-        if (text == null) {
-            return null;
-        }
-        return text.replaceAll("[^\\x20-\\x7F|\\x80-\\xFD|\\n|\\r]", "");
+        return text == null ? null : text.replaceAll("[^\\x20-\\x7F|\\x80-\\xFD|\\n|\\r]", "");
     }
 
     public String cleanPhoneNumber(String number) {
-        if (number == null) {
-            return null;
-        }
-        return number.replaceAll("[^0-9()+ ]", "");
+        return number == null ? null : number.replaceAll("[^0-9()+ ]", "");
     }
 
     public XMLGregorianCalendar buildXmlDate(LocalDate date) {
-        if (date == null) {
-            return null;
-        }
-        return buildXmlDate(date.toDateTimeAtStartOfDay());
+        return date == null ? null : buildXmlDate(date.toDateTimeAtStartOfDay());
     }
 
     public XMLGregorianCalendar buildXmlDate(DateTime dateTime) {
-        if (dateTime == null) {
-            return null; 
-        }
-        return datatypeFactory.newXMLGregorianCalendar(dateTime.toGregorianCalendar());
+        return dateTime == null ? null : datatypeFactory.newXMLGregorianCalendar(dateTime.toGregorianCalendar());
     }
 
     public XMLGregorianCalendar buildXmlDateYearOnly(String date) {
-        if (date == null) {
-            return null;
+        if (date != null) {;
+            XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
+            xmlCalendar.setYear(Integer.valueOf(date));
+            return xmlCalendar;
         }
-        XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
-        xmlCalendar.setYear(Integer.valueOf(date));
-        return xmlCalendar;
+        return null;
     }
-    
+
 }

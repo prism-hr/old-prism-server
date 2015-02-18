@@ -35,7 +35,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCa
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_STATE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_GLOBAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_INTEGRATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ROLE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
@@ -126,7 +128,23 @@ public enum PrismDisplayPropertyDefinition {
     SYSTEM_COMMENT_INITIALIZED_SYSTEM(SYSTEM_COMMENT, "System initialised and ready to use", SYSTEM), //
     SYSTEM_COMMENT_INITIALIZED_INSTITUTION(SYSTEM_COMMENT, "Institution initialised and ready to use", SYSTEM), //
     SYSTEM_COMMENT_CUSTOM_FORM_WEIGHT_ERROR(SYSTEM_COMMENT, "The weights for your rating fields must add up to one", SYSTEM), //
-    SYSTEM_USER_ALREADY_LINKED(SYSTEM_VALIDATION_ERROR, "User is already linked", SYSTEM), INSTITUTION_COMMENT_APPROVED(
+    SYSTEM_ROLE_ADMINISTRATOR(SYSTEM_ROLE, "Administrator", SYSTEM), //
+    SYSTEM_ROLE_CREATOR(SYSTEM_ROLE, "Creator", SYSTEM), //
+    SYSTEM_ROLE_INTERVIEWEE(SYSTEM_ROLE, "Interviewee", SYSTEM), //
+    SYSTEM_ROLE_INTERVIEWER(SYSTEM_ROLE, "Interviewer", SYSTEM), //
+    SYSTEM_ROLE_PRIMARY_SUPERVISOR(SYSTEM_ROLE, "Primary Supervisor", SYSTEM), //
+    SYSTEM_ROLE_REFEREE(SYSTEM_ROLE, "Referee", SYSTEM), //
+    SYSTEM_ROLE_REVIEWER(SYSTEM_ROLE, "Reviewer", SYSTEM), //
+    SYSTEM_ROLE_SECONDARY_SUPERVISOR(SYSTEM_ROLE, "Secondary Referee", SYSTEM), //
+    SYSTEM_ROLE_SUGGESTED_SUPERVISOR(SYSTEM_ROLE, "Preferred Supervisor", SYSTEM), //
+    SYSTEM_ROLE_VIEWER(SYSTEM_ROLE, "Recruiter", SYSTEM), //
+    SYSTEM_ROLE_ADMITTER(SYSTEM_ROLE, "Admitter", SYSTEM), //
+    SYSTEM_ROLE_APPROVER(SYSTEM_ROLE, "Approver", SYSTEM), //
+    SYSTEM_ADDRESS_LINE_MOCK(SYSTEM_INTEGRATION, "Address Line", APPLICATION), //
+    SYSTEM_ADDRESS_CODE_MOCK(SYSTEM_INTEGRATION, "Address Code", APPLICATION), //
+    SYSTEM_PHONE_MOCK(SYSTEM_INTEGRATION, "0000000000", APPLICATION), //
+    SYSTEM_USER_ALREADY_LINKED(SYSTEM_VALIDATION_ERROR, "User is already linked", SYSTEM), //
+    INSTITUTION_COMMENT_APPROVED(
             INSTITUTION_COMMENT,
             "We are pleased to tell you that your institution has been approved. We will send you a message with further instructions when your institution is ready to use. If you do not receive this message within 1 hour, please contact our helpdesk",
             INSTITUTION), //
@@ -457,6 +475,8 @@ public enum PrismDisplayPropertyDefinition {
     APPLICATION_PROVIDE_REFERENCE_REQUEST_TOOLTIP(APPLICATION_NOTIFICATION, "First request to provide a references for an applicant", APPLICATION), //
     APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER_LABEL(APPLICATION_NOTIFICATION, "Application Reference Reminder", APPLICATION), //
     APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER_TOOLTIP(APPLICATION_NOTIFICATION, "Follow up reminder to provide references for an applicant", APPLICATION), //
+    APPLICATION_REVERSE_REJECTION_NOTIFICATION_LABEL(APPLICATION_NOTIFICATION, "Application Reverse Rejection Notification", APPLICATION), //
+    APPLICATION_REVERSE_REJECTION_NOTIFICATION_TOOLTIP(APPLICATION_NOTIFICATION, "Notification of a rejection having been reversed", APPLICATION), //
     APPLICATION_TERMINATE_NOTIFICATION_LABEL(APPLICATION_NOTIFICATION, "Application Terminate Notification", APPLICATION), //
     APPLICATION_TERMINATE_NOTIFICATION_TOOLTIP(APPLICATION_NOTIFICATION, "Notification of an application having been terminated by the system", APPLICATION), //
     APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION_LABEL(APPLICATION_NOTIFICATION, "Application Update Interview Availability Notification",

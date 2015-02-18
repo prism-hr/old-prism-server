@@ -1,8 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.google.visualization.datasource.datatable.value.ValueType.TEXT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ADDRESS_CODE_MOCK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_LINK;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PHONE_MOCK;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ROLE_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
 
 import java.beans.IntrospectionException;
@@ -70,6 +73,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -78,8 +82,11 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
+import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
+import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
@@ -245,28 +252,36 @@ public class ApplicationService {
         return applicationDAO.getApplicationExportQualifications(application);
     }
 
-    public List<ApplicationReferee> getApplicationExportReferees(Application application) {
-        List<ApplicationReferee> refereesResponded = applicationDAO.getApplicationRefereesResponded(application);
-        int refereesRespondedSize = refereesResponded.size();
+    public List<ApplicationReferenceDTO> getApplicationExportReferees(Application application) {
+        List<ApplicationReferenceDTO> references = applicationDAO.getApplicationRefereesResponded(application);
 
-        List<ApplicationReferee> refereesNotResponded = applicationDAO.getApplicationRefereesNotResponded(application);
-        int refereesNotRespondedSize = refereesNotResponded.size();
+        Institution institution = application.getInstitution();
+        DomicileUseDTO domicileMock = importedEntityService.getMostUsedDomicile(institution);
 
-        if (refereesNotRespondedSize == 0) {
-            return refereesResponded;
-        } else if (refereesRespondedSize == 0) {
-            return refereesNotResponded;
+        if (domicileMock == null) {
+            throw new ApplicationExportException("No export domicile for mock referee for " + application.getCode());
         }
+
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(application);
+        String addressLineMock = loader.load(PrismDisplayPropertyDefinition.SYSTEM_ADDRESS_LINE_MOCK);
 
         WorkflowPropertyConfiguration configuration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithOrWithoutVersion(
                 PrismConfiguration.WORKFLOW_PROPERTY, application, application.getInstitution().getUser(),
                 PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE, application.getWorkflowPropertyConfigurationVersion());
 
-        for (int i = 0; i < (configuration.getMinimum() - refereesRespondedSize); i++) {
-            refereesResponded.add(refereesNotResponded.get(i));
+        int referencesPending = configuration.getMinimum() - references.size();
+        for (int i = 0; i < referencesPending; i++) {
+            references.add(new ApplicationReferenceDTO().withUser(institution.getUser()).withJobTitle(loader.load(SYSTEM_ROLE_ADMINISTRATOR))
+                    .withAddressLine1(addressLineMock).withAddressLine2(addressLineMock).withAddressTown(addressLineMock).withAddressRegion(addressLineMock)
+                    .withAddressCode(loader.load(SYSTEM_ADDRESS_CODE_MOCK)).withAddressDomicile(domicileMock.getCode())
+                    .withPhone(loader.load(SYSTEM_PHONE_MOCK)));
         }
 
-        return refereesResponded;
+        return references;
+    }
+    
+    public List<ApplicationReferee> getApplicationRefereesNotResponded(Application application) {
+        return applicationDAO.getApplicationRefereesNotResponded(application);
     }
 
     public void validateApplicationAndThrowException(Application application) {
@@ -408,7 +423,7 @@ public class ApplicationService {
     public ApplicationSummaryRepresentation getApplicationSummary(Integer applicationId) {
         Application application = getById(applicationId);
 
-        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(application, userService.getCurrentUser());
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(application);
         String dateFormat = loader.load(PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT);
 
         ApplicationProgramDetail programDetail = application.getProgramDetail();
@@ -469,7 +484,7 @@ public class ApplicationService {
     }
 
     public DataTable getApplicationReport(ResourceListFilterDTO filter) throws TypeMismatchException, IntrospectionException {
-        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem(), userService.getCurrentUser());
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem());
 
         PrismScope scopeId = PrismScope.APPLICATION;
         List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(PrismScope.APPLICATION);
@@ -564,7 +579,7 @@ public class ApplicationService {
             application.setDocument(null);
             application.setAdditionalInformation(null);
         }
-        
+
         application.setApplicationRatingCount(null);
         application.setApplicationRatingAverage(null);
         commentService.delete(application, comment);

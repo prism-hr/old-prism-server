@@ -213,7 +213,7 @@ public class StaticDataService {
 
     public Map<String, Object> getProgramCategories() {
         Map<String, Object> staticData = Maps.newHashMap();
-        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem(), userService.getCurrentUser());
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem());
 
         List<ProgramCategoryRepresentation> programCategories = Lists.newArrayListWithCapacity(PrismProgramCategory.values().length);
         for (PrismProgramCategory prismProgramCategory : PrismProgramCategory.values()) {

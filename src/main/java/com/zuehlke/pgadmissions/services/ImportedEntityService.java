@@ -48,6 +48,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.dto.InstitutionDomicileImportDTO;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -317,6 +318,10 @@ public class ImportedEntityService {
         }
 
         throw new Error();
+    }
+
+    public DomicileUseDTO getMostUsedDomicile(Institution institution) {
+        return importedEntityDAO.getMostUsedEnabledDomicile(institution);
     }
 
     private Program mergeProgram(Institution institution, Programme programDefinition, LocalDate baseline) throws DeduplicationException {

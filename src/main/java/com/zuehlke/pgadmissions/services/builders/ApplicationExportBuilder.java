@@ -62,7 +62,6 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualificat
 import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
@@ -74,6 +73,7 @@ import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.Address;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationExportDTO;
+import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Component
@@ -288,22 +288,22 @@ public class ApplicationExportBuilder {
         String creatorIpAddress = applicationExportDTO.getCreatorIpAddress();
         applicationTp.setIpAddress(creatorIpAddress == null ? propertyLoader.load(SYSTEM_IP_PLACEHOLDER) : creatorIpAddress);
         applicationTp.setCreationDate(applicationExportBuilderHelper.buildXmlDate(application.getSubmittedTimestamp()));
-        applicationTp.setRefereeList(buildReferee(applicationExportDTO.getApplicationReferees()));
+        applicationTp.setRefereeList(buildReferee(applicationExportDTO.getApplicationReferences()));
 
         switch (application.getState().getStateGroup().getId()) {
-            case APPLICATION_WITHDRAWN:
-                applicationTp.setApplicationStatus("WITHDRAWN");
-                break;
-            case APPLICATION_APPROVED:
-                applicationTp.setApplicationStatus("ACTIVE");
-                applicationTp.setDepartmentalDecision("OFFER");
-                break;
-            case APPLICATION_REJECTED:
-                applicationTp.setApplicationStatus("ACTIVE");
-                applicationTp.setDepartmentalDecision("REJECT");
-                break;
-            default:
-                throw new Error("Application in state " + application.getState().getId().name() + " cannot be exported");
+        case APPLICATION_WITHDRAWN:
+            applicationTp.setApplicationStatus("WITHDRAWN");
+            break;
+        case APPLICATION_APPROVED:
+            applicationTp.setApplicationStatus("ACTIVE");
+            applicationTp.setDepartmentalDecision("OFFER");
+            break;
+        case APPLICATION_REJECTED:
+            applicationTp.setApplicationStatus("ACTIVE");
+            applicationTp.setDepartmentalDecision("REJECT");
+            break;
+        default:
+            throw new Error("Application in state " + application.getState().getId().name() + " cannot be exported");
         }
 
         applicationTp.setProgramme(buildProgrammeOccurence(applicationExportDTO));
@@ -320,8 +320,8 @@ public class ApplicationExportBuilder {
                 String conditions = offerDetail.getAppointmentConditions();
 
                 String offerSummary = propertyLoader.load(APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION) + ": " + (conditions == null ? none : conditions)
-                        + "\n\n" + propertyLoader.load(APPLICATION_PREFERRED_START_DATE) + ": " + (positionProvisionalStartDate == null ? none
-                        : positionProvisionalStartDate.toString(propertyLoader.load(SYSTEM_DATE_FORMAT)));
+                        + "\n\n" + propertyLoader.load(APPLICATION_PREFERRED_START_DATE) + ": "
+                        + (positionProvisionalStartDate == null ? none : positionProvisionalStartDate.toString(propertyLoader.load(SYSTEM_DATE_FORMAT)));
                 applicationTp.setDepartmentalOfferConditions(offerSummary);
             }
         }
@@ -462,30 +462,30 @@ public class ApplicationExportBuilder {
         return resultList;
     }
 
-    private RefereeListTp buildReferee(List<ApplicationReferee> exportReferees) {
+    private RefereeListTp buildReferee(List<ApplicationReferenceDTO> exportReferees) {
         int referenceCount = exportReferees.size();
         RefereeListTp resultList = objectFactory.createRefereeListTp();
 
         for (int i = 0; i < referenceCount; i++) {
-            ApplicationReferee referee = exportReferees.get(i);
+            ApplicationReferenceDTO reference = exportReferees.get(i);
             RefereeTp refereeTp = objectFactory.createRefereeTp();
-            refereeTp.setPosition(referee.getJobTitle());
+            refereeTp.setPosition(reference.getJobTitle());
             NameTp nameTp = objectFactory.createNameTp();
-            nameTp.setForename1(referee.getUser().getFirstName());
-            nameTp.setSurname(referee.getUser().getLastName());
+            nameTp.setForename1(reference.getUser().getFirstName());
+            nameTp.setSurname(reference.getUser().getLastName());
             refereeTp.setName(nameTp);
 
             ContactDtlsTp contactDtlsTp = objectFactory.createContactDtlsTp();
-            contactDtlsTp.setEmail(referee.getUser().getEmail());
-            contactDtlsTp.setLandline(applicationExportBuilderHelper.cleanPhoneNumber(referee.getPhone()));
+            contactDtlsTp.setEmail(reference.getUser().getEmail());
+            contactDtlsTp.setLandline(applicationExportBuilderHelper.cleanPhoneNumber(reference.getPhone()));
 
             AddressTp addressTp = objectFactory.createAddressTp();
-            addressTp.setAddressLine1(referee.getAddress().getAddressLine1());
-            addressTp.setAddressLine2(referee.getAddress().getAddressLine2());
-            addressTp.setAddressLine3(referee.getAddress().getAddressTown());
-            addressTp.setAddressLine4(referee.getAddress().getAddressRegion());
-            addressTp.setPostCode(referee.getAddress().getAddressCode());
-            addressTp.setCountry(referee.getAddress().getDomicile().getCode());
+            addressTp.setAddressLine1(reference.getAddressLine1());
+            addressTp.setAddressLine2(reference.getAddressLine2());
+            addressTp.setAddressLine3(reference.getAddressTown());
+            addressTp.setAddressLine4(reference.getAddressRegion());
+            addressTp.setPostCode(reference.getAddressCode());
+            addressTp.setCountry(reference.getAddressDomicile());
             contactDtlsTp.setAddressDtls(addressTp);
             refereeTp.setContactDetails(contactDtlsTp);
             resultList.getReferee().add(refereeTp);

@@ -151,14 +151,13 @@ public class ApplicationExportService {
         }
 
         Comment exportComment = commentService.getLatestComment(application, PrismAction.APPLICATION_EXPORT);
-        String exportException = exportComment.getExportException();
-        boolean positionDescriptionUnexportable = exportException != null && exportException.contains("ATAS statement validation failed");
 
         return applicationContext
                 .getBean(ApplicationExportBuilder.class)
                 .localize(propertyLoader)
                 .build(new ApplicationExportDTO().withApplication(application).withCreatorExportId(creatorExportId).withCreatorIpAddress(creatorIpAddress)
-                        .withOfferRecommendationComment(offerRecommendationComment).withPositionDescriptionUnexportable(positionDescriptionUnexportable)
+                        .withOfferRecommendationComment(offerRecommendationComment)
+                        .withExportExceptionCondition(exportComment == null ? null : exportComment.getExportExceptionCondition())
                         .withPrimarySupervisor(primarySupervisor).withExportProgramInstance(exportProgramInstance)
                         .withApplicationReferences(applicationExportReferences));
     }

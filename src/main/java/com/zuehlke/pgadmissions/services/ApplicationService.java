@@ -1,10 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.google.visualization.datasource.datatable.value.ValueType.TEXT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ADDRESS_CODE_MOCK;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_EXPORT_MOCK_ADDRESS_CODE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_EXPORT_MOCK_ADDRESS_LINE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_EXPORT_MOCK_PHONE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_LINK;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PHONE_MOCK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ROLE_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
 
@@ -263,7 +264,7 @@ public class ApplicationService {
         }
 
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(application);
-        String addressLineMock = loader.load(PrismDisplayPropertyDefinition.SYSTEM_ADDRESS_LINE_MOCK);
+        String addressLineMock = loader.load(APPLICATION_EXPORT_MOCK_ADDRESS_LINE);
 
         WorkflowPropertyConfiguration configuration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithOrWithoutVersion(
                 PrismConfiguration.WORKFLOW_PROPERTY, application, application.getInstitution().getUser(),
@@ -273,13 +274,13 @@ public class ApplicationService {
         for (int i = 0; i < referencesPending; i++) {
             references.add(new ApplicationReferenceDTO().withUser(institution.getUser()).withJobTitle(loader.load(SYSTEM_ROLE_ADMINISTRATOR))
                     .withAddressLine1(addressLineMock).withAddressLine2(addressLineMock).withAddressTown(addressLineMock).withAddressRegion(addressLineMock)
-                    .withAddressCode(loader.load(SYSTEM_ADDRESS_CODE_MOCK)).withAddressDomicile(domicileMock.getCode())
-                    .withPhone(loader.load(SYSTEM_PHONE_MOCK)));
+                    .withAddressCode(loader.load(APPLICATION_EXPORT_MOCK_ADDRESS_CODE)).withAddressDomicile(domicileMock.getCode())
+                    .withPhone(loader.load(APPLICATION_EXPORT_MOCK_PHONE)));
         }
 
         return references;
     }
-    
+
     public List<ApplicationReferee> getApplicationRefereesNotResponded(Application application) {
         return applicationDAO.getApplicationRefereesNotResponded(application);
     }

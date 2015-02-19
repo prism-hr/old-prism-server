@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewAppointment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationExportExceptionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
@@ -162,7 +163,7 @@ public class StateService {
 
         resourceService.preProcessResource(resource, comment);
         commentService.preProcessComment(comment);
-        
+
         entityService.flush();
 
         State state = resource.getState();
@@ -305,14 +306,27 @@ public class StateService {
 
     public StateTransition getApplicationExportedOutcome(Resource resource, Comment comment) {
         State currentState = resource.getState();
-        PrismState transitionStateId;
         PrismStateGroup stateGroupId = currentState.getStateGroup().getId();
-        if (comment.getExportException() == null) {
-            transitionStateId = PrismState.valueOf(stateGroupId.name() + "_COMPLETED");
+        ApplicationExportExceptionCondition exportExceptionCondition = comment.getExportExceptionCondition();
+        if (exportExceptionCondition == null) {
+            return stateDAO.getStateTransition(resource, comment.getAction(), PrismState.valueOf(stateGroupId.name() + "_COMPLETED"));
         } else {
-            transitionStateId = PrismState.valueOf(stateGroupId.name() + "_PENDING_CORRECTION");
+            Comment previousExportComment = commentService.getLatestComment(resource, comment);
+            if (previousExportComment == null || !comment.getExportExceptionCondition().equals(previousExportComment.getExportExceptionCondition())) {
+                switch (exportExceptionCondition.getHandlingStrategy()) {
+                case GIVE_UP:
+                    return stateDAO.getStateTransition(resource, comment.getAction(), PrismState.valueOf(stateGroupId.name() + "_COMPLETED"));
+                case RETRY_SYSTEM_INVOCATION_DELAYED:
+                case RETRY_SYSTEM_INVOCATION_IMMEDIATE:
+                    return stateDAO.getStateTransition(resource, comment.getAction(), currentState.getId());
+                case RETRY_USER_INVOCATION:
+                default:
+                    return stateDAO.getStateTransition(resource, comment.getAction(), PrismState.valueOf(stateGroupId.name() + "_PENDING_CORRECTION"));
+                }
+            } else {
+                return stateDAO.getStateTransition(resource, comment.getAction(), PrismState.valueOf(stateGroupId.name() + "_PENDING_CORRECTION"));
+            }
         }
-        return stateDAO.getStateTransition(resource, comment.getAction(), transitionStateId);
     }
 
     public StateTransition getApplicationProcessedOutcome(Resource resource, Comment comment) {

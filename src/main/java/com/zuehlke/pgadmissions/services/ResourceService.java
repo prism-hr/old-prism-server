@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewAppointment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationExportExceptionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
@@ -258,7 +259,8 @@ public class ResourceService {
 
             PrismStateDurationEvaluation stateDurationEvaluation = resource.getState().getStateDurationEvaluation();
             if (stateDurationEvaluation != null) {
-                baselineCustom = (LocalDate) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(stateDurationEvaluation), resource, comment);
+                baselineCustom = (LocalDate) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(stateDurationEvaluation), resource, comment,
+                        baseline);
             }
 
             baseline = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
@@ -372,20 +374,25 @@ public class ResourceService {
                 assignedResources, filter, lastSequenceIdentifier, maxRecords, hasRedactions);
     }
 
-    public LocalDate getApplicationClosingDate(Resource resource, Comment comment) {
+    public LocalDate getApplicationClosingDate(Resource resource, Comment comment, LocalDate baseline) {
         return resource.getApplication().getClosingDate();
     }
 
-    public LocalDate getApplicationInterviewDate(Resource resource, Comment comment) {
+    public LocalDate getApplicationExportDate(Resource resource, Comment comment, LocalDate baseline) {
+        ApplicationExportExceptionCondition exportExceptionCondition = comment.getExportExceptionCondition();
+        return baseline.plusDays(exportExceptionCondition == null ? 0 : exportExceptionCondition.getHandlingStrategy().getDayDelay());
+    }
+
+    public LocalDate getApplicationInterviewDate(Resource resource, Comment comment, LocalDate baseline) {
         CommentApplicationInterviewAppointment interviewAppointment = comment.getInterviewAppointment();
         return interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime().toLocalDate();
     }
 
-    public LocalDate getProjectEndDate(Resource resource, Comment comment) {
+    public LocalDate getProjectEndDate(Resource resource, Comment comment, LocalDate baseline) {
         return comment.getTransitionState().getId() == PrismState.PROJECT_DISABLED_COMPLETED ? null : resource.getProject().getEndDate();
     }
 
-    public LocalDate getProgramEndDate(Resource resource, Comment comment) {
+    public LocalDate getProgramEndDate(Resource resource, Comment comment, LocalDate baseline) {
         return comment.getTransitionState().getId() == PrismState.PROGRAM_DISABLED_COMPLETED ? null : resource.getProgram().getEndDate();
     }
 

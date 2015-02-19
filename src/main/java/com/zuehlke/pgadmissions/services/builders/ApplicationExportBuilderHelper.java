@@ -21,6 +21,10 @@ public class ApplicationExportBuilderHelper {
         return text == null ? null : text.replaceAll("[^\\x20-\\x7F|\\x80-\\xFD|\\n|\\r]", "");
     }
 
+    public String cleanPhone(String number) {
+        return number == null ? null : number.replaceAll("[^0-9()+ ]", "");
+    }
+
     public XMLGregorianCalendar buildXmlDate(LocalDate date) {
         return date == null ? null : buildXmlDate(date.toDateTimeAtStartOfDay());
     }
@@ -30,7 +34,7 @@ public class ApplicationExportBuilderHelper {
     }
 
     public XMLGregorianCalendar buildXmlDateYearOnly(String date) {
-        if (date != null) {;
+        if (date != null) {
             XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
             xmlCalendar.setYear(Integer.valueOf(date));
             return xmlCalendar;

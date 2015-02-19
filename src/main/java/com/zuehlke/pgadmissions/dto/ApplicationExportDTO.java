@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationExportExceptionCondition;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 
@@ -17,7 +18,7 @@ public class ApplicationExportDTO {
     
     private Comment offerRecommendationComment;
     
-    private boolean positionDescriptionUnexportable;
+    private ApplicationExportExceptionCondition exportExceptionCondition;
     
     private User primarySupervisor;
     
@@ -73,12 +74,12 @@ public class ApplicationExportDTO {
         this.offerRecommendationComment = offerRecommendationComment;
     }
 
-    public final boolean isPositionDescriptionUnexportable() {
-        return positionDescriptionUnexportable;
+    public final ApplicationExportExceptionCondition getExportExceptionCondition() {
+        return exportExceptionCondition;
     }
 
-    public final void setPositionDescriptionUnexportable(boolean positionDescriptionUnexportable) {
-        this.positionDescriptionUnexportable = positionDescriptionUnexportable;
+    public final void setExportExceptionCondition(ApplicationExportExceptionCondition exportExceptionCondition) {
+        this.exportExceptionCondition = exportExceptionCondition;
     }
 
     public final void setPrimarySupervisor(User primarySupervisor) {
@@ -109,8 +110,8 @@ public class ApplicationExportDTO {
         return this;
     }
     
-    public ApplicationExportDTO withPositionDescriptionUnexportable(boolean positionDescriptionUnexportable) {
-        this.positionDescriptionUnexportable = positionDescriptionUnexportable;
+    public ApplicationExportDTO withExportExceptionCondition(ApplicationExportExceptionCondition exportExceptionCondition) {
+        this.exportExceptionCondition = exportExceptionCondition;
         return this;
     }
     

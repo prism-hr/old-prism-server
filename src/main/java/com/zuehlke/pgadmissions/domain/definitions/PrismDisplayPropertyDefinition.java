@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCa
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_DOCUMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_EMPLOYMENT_POSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_EXPORT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FUNDING;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_LANGUAGE_QUALIFICATION;
@@ -35,7 +36,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCa
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_STATE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_INTEGRATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ROLE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP;
@@ -140,9 +140,6 @@ public enum PrismDisplayPropertyDefinition {
     SYSTEM_ROLE_VIEWER(SYSTEM_ROLE, "Recruiter", SYSTEM), //
     SYSTEM_ROLE_ADMITTER(SYSTEM_ROLE, "Admitter", SYSTEM), //
     SYSTEM_ROLE_APPROVER(SYSTEM_ROLE, "Approver", SYSTEM), //
-    SYSTEM_ADDRESS_LINE_MOCK(SYSTEM_INTEGRATION, "Address Line", APPLICATION), //
-    SYSTEM_ADDRESS_CODE_MOCK(SYSTEM_INTEGRATION, "Address Code", APPLICATION), //
-    SYSTEM_PHONE_MOCK(SYSTEM_INTEGRATION, "0000000000", APPLICATION), //
     SYSTEM_USER_ALREADY_LINKED(SYSTEM_VALIDATION_ERROR, "User is already linked", SYSTEM), //
     INSTITUTION_COMMENT_APPROVED(
             INSTITUTION_COMMENT,
@@ -339,7 +336,6 @@ public enum PrismDisplayPropertyDefinition {
     APPLICATION_ADDITIONAL_INFORMATION_CONVICTION(APPLICATION_ADDITIONAL_INFORMATION, "Unspent Criminal Convictions", APPLICATION), //
     APPLICATION_COMMENT_DECLINED_REFEREE(APPLICATION_COMMENT, "Declined to provide a reference", APPLICATION), //
     APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION(APPLICATION_COMMENT, "Recommended offer conditions", APPLICATION), //
-    APPLICATION_COMMENT_POSITION_DESCRIPTION_UNEXPORTABLE(APPLICATION_COMMENT, "Refer to program administrator for position description", APPLICATION), //
     APPLICATION_COMMENT_REJECTION_SYSTEM(APPLICATION_COMMENT, "We are currently unable to offer you a position", APPLICATION), //
     APPLICATION_COMMENT_DIRECTIONS(APPLICATION_COMMENT, "Directions", APPLICATION), //
     APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED(APPLICATION_COMMENT, "No directions provided. Please contact the interviewer for further information",
@@ -562,6 +558,21 @@ public enum PrismDisplayPropertyDefinition {
     APPLICATION_APPROVED_STATE_GROUP(APPLICATION_STATE_GROUP, "Approved", APPLICATION), //
     APPLICATION_REJECTED_STATE_GROUP(APPLICATION_STATE_GROUP, "Rejected", APPLICATION), //
     APPLICATION_WITHDRAWN_STATE_GROUP(APPLICATION_STATE_GROUP, "Withdrawn", APPLICATION), //
+    APPLICATION_EXPORT_EXCEPTION_REFEREE_ADDRESS(APPLICATION_EXPORT, "Referee address invalid", APPLICATION), //
+    APPLICATION_EXPORT_EXCEPTION_REFEREE_PHONE(APPLICATION_EXPORT, "Referee phone number invalid", APPLICATION), //
+    APPLICATION_EXPORT_EXCEPTION_POSITION_DESCRIPTION(APPLICATION_EXPORT, "Position description invalid", APPLICATION), //
+    APPLICATION_EXPORT_EXCEPTION_PROGRAM(APPLICATION_EXPORT, "Program invalid", APPLICATION), //
+    APPLICATION_EXPORT_EXCEPTION_PROGRAM_INSTANCE(APPLICATION_EXPORT, "Program no longer available", APPLICATION), //
+    APPLICATION_EXPORT_EXCEPTION_QUALIFICATION_DATE(APPLICATION_EXPORT, "Start/award date of qualification invalid", APPLICATION), //
+    APPLICATION_EXPORT_EXCEPTION_DATE_OF_BIRTH(APPLICATION_EXPORT, "Date of birth invalid", APPLICATION), //
+    APPLICATION_EXPORT_EXCEPTION_DOCUMENT(APPLICATION_EXPORT, "Document cannot be exported", APPLICATION), //
+    APPLICATION_EXPORT_EXCEPTION_NATIONALITY(APPLICATION_EXPORT, "Nationality invalid", APPLICATION), //
+    APPLICATION_EXPORT_EXCEPTION_UNAVAILABLE(APPLICATION_EXPORT, "Web service unavailable", APPLICATION), //
+    APPLICATION_EXPORT_EXCEPTION_UNCLASSIFED(APPLICATION_EXPORT, "Unclassifed expception, refer to the stack trace for details", APPLICATION), //
+    APPLICATION_EXPORT_MOCK_ADDRESS_LINE(APPLICATION_EXPORT, "Address Line", APPLICATION), //
+    APPLICATION_EXPORT_MOCK_ADDRESS_CODE(APPLICATION_EXPORT, "Address Code", APPLICATION), //
+    APPLICATION_EXPORT_MOCK_PHONE(APPLICATION_EXPORT, "0000000000", APPLICATION), //
+    APPLICATION_EXPORT_MOCK_POSITION_DESCRIPTION(APPLICATION_EXPORT, "Refer to program administrator for position description", APPLICATION), //
     PROJECT_APPROVAL_STATE_GROUP(PROJECT_STATE_GROUP, "Approval", PROJECT), //
     PROJECT_APPROVED_STATE_GROUP(PROJECT_STATE_GROUP, "Approved", PROJECT), //
     PROJECT_REJECTED_STATE_GROUP(PROJECT_STATE_GROUP, "Rejected", PROJECT), //

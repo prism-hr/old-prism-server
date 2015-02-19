@@ -1,12 +1,14 @@
 package com.zuehlke.pgadmissions.services.builders;
 
+import static com.zuehlke.pgadmissions.domain.definitions.ApplicationExportExceptionCondition.POSITION_DESCRIPTION;
+import static com.zuehlke.pgadmissions.domain.definitions.ApplicationExportExceptionCondition.REFEREE_ADDRESS_LINE_1;
+import static com.zuehlke.pgadmissions.domain.definitions.ApplicationExportExceptionCondition.REFEREE_PHONE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PREFERRED_START_DATE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_IP_PLACEHOLDER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NONE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OTHER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PHONE_MOCK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_REFER_TO_DOCUMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_PROVIDED;
 
@@ -66,7 +68,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationExportExceptionCondition;
 import com.zuehlke.pgadmissions.domain.imported.Gender;
 import com.zuehlke.pgadmissions.domain.imported.Language;
 import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
@@ -253,7 +255,7 @@ public class ApplicationExportBuilder {
         addressTp.setCountry(currentAddress.getDomicile().getCode());
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(application.getUser().getEmail());
-        contactDtlsTp.setLandline(propertyLoader.load(SYSTEM_PHONE_MOCK));
+        contactDtlsTp.setLandline(applicationExportBuilderHelper.cleanPhone(application.getPersonalDetail().getPhone()));
         return contactDtlsTp;
     }
 
@@ -272,7 +274,7 @@ public class ApplicationExportBuilder {
         addressTp.setCountry(contactAddress.getDomicile().getCode());
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(application.getUser().getEmail());
-        contactDtlsTp.setLandline(propertyLoader.load(SYSTEM_PHONE_MOCK));
+        contactDtlsTp.setLandline(applicationExportBuilderHelper.cleanPhone(application.getPersonalDetail().getPhone()));
         return contactDtlsTp;
     }
 
@@ -291,7 +293,7 @@ public class ApplicationExportBuilder {
         String creatorIpAddress = applicationExportDTO.getCreatorIpAddress();
         applicationTp.setIpAddress(creatorIpAddress == null ? propertyLoader.load(SYSTEM_IP_PLACEHOLDER) : creatorIpAddress);
         applicationTp.setCreationDate(applicationExportBuilderHelper.buildXmlDate(application.getSubmittedTimestamp()));
-        applicationTp.setRefereeList(buildReferee(applicationExportDTO.getApplicationReferences()));
+        applicationTp.setRefereeList(buildReferee(applicationExportDTO));
 
         switch (application.getState().getStateGroup().getId()) {
         case APPLICATION_WITHDRAWN:
@@ -314,8 +316,9 @@ public class ApplicationExportBuilder {
         Comment offerRecommendationComment = applicationExportDTO.getOfferRecommendationComment();
         if (offerRecommendationComment != null) {
             CommentApplicationPositionDetail positionDetail = offerRecommendationComment.getPositionDetail();
-            applicationTp.setAtasStatement(positionDetail == null ? null : applicationExportDTO.isPositionDescriptionUnexportable() ? propertyLoader
-                    .load(PrismDisplayPropertyDefinition.APPLICATION_COMMENT_POSITION_DESCRIPTION_UNEXPORTABLE) : positionDetail.getPositionDescription());
+            ApplicationExportExceptionCondition exportExceptionCondition = applicationExportDTO.getExportExceptionCondition();
+            applicationTp.setAtasStatement(positionDetail == null ? null : (exportExceptionCondition == POSITION_DESCRIPTION ? propertyLoader
+                    .load(exportExceptionCondition.getSubstituteValue()) : positionDetail.getPositionDescription()));
 
             CommentApplicationOfferDetail offerDetail = offerRecommendationComment.getOfferDetail();
             if (offerDetail != null) {
@@ -466,30 +469,33 @@ public class ApplicationExportBuilder {
         return resultList;
     }
 
-    private RefereeListTp buildReferee(List<ApplicationReferenceDTO> exportReferees) {
-        int referenceCount = exportReferees.size();
+    private RefereeListTp buildReferee(ApplicationExportDTO applicationExportDTO) {
+        List<ApplicationReferenceDTO> exportReferences = applicationExportDTO.getApplicationReferences();
         RefereeListTp resultList = objectFactory.createRefereeListTp();
 
-        for (int i = 0; i < referenceCount; i++) {
-            ApplicationReferenceDTO reference = exportReferees.get(i);
+        for (ApplicationReferenceDTO exportReference : exportReferences) {
             RefereeTp refereeTp = objectFactory.createRefereeTp();
-            refereeTp.setPosition(reference.getJobTitle());
+            refereeTp.setPosition(exportReference.getJobTitle());
             NameTp nameTp = objectFactory.createNameTp();
-            nameTp.setForename1(reference.getUser().getFirstName());
-            nameTp.setSurname(reference.getUser().getLastName());
+            nameTp.setForename1(exportReference.getUser().getFirstName());
+            nameTp.setSurname(exportReference.getUser().getLastName());
             refereeTp.setName(nameTp);
 
             ContactDtlsTp contactDtlsTp = objectFactory.createContactDtlsTp();
-            contactDtlsTp.setEmail(reference.getUser().getEmail());
-            contactDtlsTp.setLandline(propertyLoader.load(SYSTEM_PHONE_MOCK));
+            contactDtlsTp.setEmail(exportReference.getUser().getEmail());
+
+            ApplicationExportExceptionCondition exportExceptionCondition = applicationExportDTO.getExportExceptionCondition();
+            contactDtlsTp.setLandline(exportExceptionCondition == REFEREE_PHONE ? propertyLoader.load(exportExceptionCondition.getSubstituteValue())
+                    : exportReference.getPhone());
 
             AddressTp addressTp = objectFactory.createAddressTp();
-            addressTp.setAddressLine1(reference.getAddressLine1());
-            addressTp.setAddressLine2(reference.getAddressLine2());
-            addressTp.setAddressLine3(reference.getAddressTown());
-            addressTp.setAddressLine4(reference.getAddressRegion());
-            addressTp.setPostCode(reference.getAddressCode());
-            addressTp.setCountry(reference.getAddressDomicile());
+            addressTp.setAddressLine1(exportExceptionCondition == REFEREE_ADDRESS_LINE_1 ? propertyLoader.load(exportExceptionCondition.getSubstituteValue())
+                    : exportReference.getAddressLine1());
+            addressTp.setAddressLine2(exportReference.getAddressLine2());
+            addressTp.setAddressLine3(exportReference.getAddressTown());
+            addressTp.setAddressLine4(exportReference.getAddressRegion());
+            addressTp.setPostCode(exportReference.getAddressCode());
+            addressTp.setCountry(exportReference.getAddressDomicile());
             contactDtlsTp.setAddressDtls(addressTp);
             refereeTp.setContactDetails(contactDtlsTp);
             resultList.getReferee().add(refereeTp);

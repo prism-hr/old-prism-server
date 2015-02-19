@@ -33,6 +33,7 @@ import org.joda.time.LocalDateTime;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationExportExceptionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
@@ -156,12 +157,13 @@ public class Comment {
     @Column(name = "application_export_exception")
     private String exportException;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "application_export_exception_condition")
+    private ApplicationExportExceptionCondition exportExceptionCondition;
+
     @ManyToOne
     @JoinColumn(name = "parent_resource_transition_state_id")
     private State parentResourceTransitionState;
-
-    @Column(name = "creator_ip_address")
-    private String creatorIpAddress;
 
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -429,12 +431,12 @@ public class Comment {
         this.exportException = exportException;
     }
 
-    public String getCreatorIpAddress() {
-        return creatorIpAddress;
+    public final ApplicationExportExceptionCondition getExportExceptionCondition() {
+        return exportExceptionCondition;
     }
 
-    public void setCreatorIpAddress(String creatorIpAddress) {
-        this.creatorIpAddress = creatorIpAddress;
+    public final void setExportExceptionCondition(ApplicationExportExceptionCondition exportExceptionCondition) {
+        this.exportExceptionCondition = exportExceptionCondition;
     }
 
     public State getParentResourceTransitionState() {
@@ -710,9 +712,13 @@ public class Comment {
     public boolean isApplicationInterviewPendingInterviewComment() {
         return transitionState.getId() == PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
     }
-    
+
     public boolean isApplicationReverseRejectionComment() {
         return action.getId() == PrismAction.APPLICATION_REVERSE_REJECTION;
+    }
+
+    public boolean isApplicationExportComment() {
+        return action.getId() == PrismAction.APPLICATION_EXPORT;
     }
 
     public boolean isInterviewScheduledExpeditedComment() {

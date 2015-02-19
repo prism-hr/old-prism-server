@@ -17,6 +17,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDur
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.PROGRAM_ESCALATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition.PROJECT_ESCALATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation.APPLICATION_CLOSING_DATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation.APPLICATION_EXPORT_DATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation.APPLICATION_INTERVIEW_DATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation.PROGRAM_END_DATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation.PROJECT_END_DATE;
@@ -128,7 +129,7 @@ public enum PrismState {
     APPLICATION_APPROVAL_PENDING_COMPLETION(PrismStateGroup.APPLICATION_APPROVAL, APPLICATION_ESCALATE_DURATION, null, false, false, APPLICATION,
             PrismApplicationApprovalPendingCompletion.class), //
     APPLICATION_APPROVED(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null, false, false, APPLICATION, PrismApplicationApproved.class), //
-    APPLICATION_APPROVED_PENDING_EXPORT(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null, false, false, APPLICATION,
+    APPLICATION_APPROVED_PENDING_EXPORT(PrismStateGroup.APPLICATION_APPROVED, null, APPLICATION_EXPORT_DATE, false, false, APPLICATION,
             PrismApplicationApprovedPendingExport.class), //
     APPLICATION_APPROVED_PENDING_CORRECTION(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null, false, false, APPLICATION,
             PrismApplicationApprovedPendingCorrection.class), //
@@ -137,7 +138,7 @@ public enum PrismState {
     APPLICATION_APPROVED_COMPLETED_PURGED(PrismStateGroup.APPLICATION_APPROVED, null, null, false, true, APPLICATION,
             PrismApplicationApprovedCompletedPurged.class), //
     APPLICATION_REJECTED(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_ESCALATE_DURATION, null, false, false, APPLICATION, PrismApplicationRejected.class), //
-    APPLICATION_REJECTED_PENDING_EXPORT(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_ESCALATE_DURATION, null, false, false, APPLICATION,
+    APPLICATION_REJECTED_PENDING_EXPORT(PrismStateGroup.APPLICATION_REJECTED, null, APPLICATION_EXPORT_DATE, false, false, APPLICATION,
             PrismApplicationRejectedPendingExport.class), //
     APPLICATION_REJECTED_PENDING_CORRECTION(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_ESCALATE_DURATION, null, false, false, APPLICATION,
             PrismApplicationRejectedPendingCorrection.class), //
@@ -149,7 +150,7 @@ public enum PrismState {
             PrismApplicationWithdrawnCompletedUnsubmitted.class), //
     APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_PURGED(PrismStateGroup.APPLICATION_WITHDRAWN, null, null, false, false, APPLICATION,
             PrismApplicationWithdrawnCompletedPurged.class), //
-    APPLICATION_WITHDRAWN_PENDING_EXPORT(PrismStateGroup.APPLICATION_WITHDRAWN, APPLICATION_ESCALATE_DURATION, null, false, false, APPLICATION,
+    APPLICATION_WITHDRAWN_PENDING_EXPORT(PrismStateGroup.APPLICATION_WITHDRAWN, null, APPLICATION_EXPORT_DATE, false, false, APPLICATION,
             PrismApplicationWithdrawnPendingExport.class), //
     APPLICATION_WITHDRAWN_PENDING_CORRECTION(PrismStateGroup.APPLICATION_WITHDRAWN, APPLICATION_ESCALATE_DURATION, null, false, false, APPLICATION,
             PrismApplicationWithdrawnPendingCorrection.class), //

@@ -259,5 +259,5 @@ public class ApplicationDAO {
                 .setResultTransformer(Transformers.aliasToBean(ApplicationReportListRowDTO.class)) //
                 .list();
     }
-
+    
 }

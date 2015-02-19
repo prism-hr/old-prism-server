@@ -34,6 +34,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
+import com.zuehlke.pgadmissions.domain.definitions.ApplicationExportExceptionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
@@ -132,6 +133,10 @@ public class CommentService {
         return commentDAO.getLatestComment(resource, actionId);
     }
 
+    public Comment getLatestComment(Resource resource, Comment comment) {
+        return commentDAO.getLatestComment(resource, comment);
+    }
+    
     public Comment getLatestComment(Resource resource, PrismAction actionId, User user, DateTime baseline) {
         return commentDAO.getLatestComment(resource, actionId, user, baseline);
     }
@@ -419,10 +424,11 @@ public class CommentService {
 
     public void preProcessComment(Comment comment) {
         if (comment.isApplicationReverseRejectionComment()) {
-            Role refereeRole = roleService.getById(PrismRole.APPLICATION_REFEREE);
-            for (ApplicationReferee referee : applicationService.getApplicationRefereesNotResponded(comment.getApplication())) {
-                comment.addAssignedUser(referee.getUser(), refereeRole, PrismRoleTransitionType.EXHUME);
-            }
+            appendExhumedApplicationReferees(comment);
+        }
+
+        if (comment.isApplicationExportComment()) {
+            comment.setExportExceptionCondition(ApplicationExportExceptionCondition.getCondition(comment.getExportException()));
         }
     }
 
@@ -569,7 +575,7 @@ public class CommentService {
         CommentRepresentation representation;
         if (!rolesOverridingRedactions.isEmpty() || redactions.isEmpty() || isCommentOwner(comment, user)) {
             representation = mapper.map(comment, CommentRepresentation.class);
-            appendCommentAssignedUsers(comment, representation, creatableRoles);
+            appendAssignedUsers(comment, representation, creatableRoles);
         } else {
             UserRepresentation authorRepresentation = new UserRepresentation().withFirstName(author.getFirstName()).withLastName(author.getLastName())
                     .withEmail(author.getEmail());
@@ -607,7 +613,7 @@ public class CommentService {
         return representation;
     }
 
-    private void appendCommentAssignedUsers(Comment comment, CommentRepresentation representation, List<PrismRole> creatableRoles) {
+    private void appendAssignedUsers(Comment comment, CommentRepresentation representation, List<PrismRole> creatableRoles) {
         Set<CommentAssignedUser> assignees = comment.getAssignedUsers();
         if (!assignees.isEmpty()) {
             List<CommentAssignedUserRepresentation> representations = Lists.newLinkedList();
@@ -730,6 +736,13 @@ public class CommentService {
             representations.add(mapper.map(assignedUser, CommentAssignedUserRepresentation.class));
         }
         return representations;
+    }
+
+    private void appendExhumedApplicationReferees(Comment comment) {
+        Role refereeRole = roleService.getById(PrismRole.APPLICATION_REFEREE);
+        for (ApplicationReferee referee : applicationService.getApplicationRefereesNotResponded(comment.getApplication())) {
+            comment.addAssignedUser(referee.getUser(), refereeRole, PrismRoleTransitionType.EXHUME);
+        }
     }
 
 }

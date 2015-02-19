@@ -58,6 +58,17 @@ public class CommentDAO {
                 .uniqueResult();
     }
 
+    public Comment getLatestComment(Resource resource, Comment comment) {
+        return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
+                .add(Restrictions.eq("action.id", comment.getAction().getId())) //
+                .add(Restrictions.ne("id", comment.getId())) //
+                .addOrder(Order.desc("createdTimestamp")) //
+                .addOrder(Order.desc("id")) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
+
     public Comment getLatestComment(Resource resource, PrismAction actionId, User user, DateTime baseline) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //

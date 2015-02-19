@@ -16,6 +16,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,6 +59,8 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 @Service
 @Transactional
 public class ApplicationExportService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationExportService.class);
 
     private PropertyLoader propertyLoader = null;
 
@@ -104,6 +108,7 @@ public class ApplicationExportService {
 
     public void submitExportRequest(Integer applicationId) throws Exception {
         Application application = applicationService.getById(applicationId);
+        LOGGER.info("Exporting application: " + application.getCode());
 
         String exportId = null;
         String exportUserId = null;
@@ -123,6 +128,7 @@ public class ApplicationExportService {
             outputStream = sendDocumentExportRequest(application, exportId);
         } catch (Exception e) {
             executeExportAction(application, exportRequest, exportId, exportUserId, ExceptionUtils.getStackTrace(e));
+            LOGGER.error("Error exporting application: " + application.getCode(), e);
         } finally {
             IOUtils.closeQuietly(outputStream);
         }

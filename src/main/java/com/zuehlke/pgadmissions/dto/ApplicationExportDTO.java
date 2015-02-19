@@ -17,6 +17,8 @@ public class ApplicationExportDTO {
     
     private Comment offerRecommendationComment;
     
+    private boolean positionDescriptionUnexportable;
+    
     private User primarySupervisor;
     
     private ProgramStudyOptionInstance exportProgramInstance;
@@ -71,6 +73,14 @@ public class ApplicationExportDTO {
         this.offerRecommendationComment = offerRecommendationComment;
     }
 
+    public final boolean isPositionDescriptionUnexportable() {
+        return positionDescriptionUnexportable;
+    }
+
+    public final void setPositionDescriptionUnexportable(boolean positionDescriptionUnexportable) {
+        this.positionDescriptionUnexportable = positionDescriptionUnexportable;
+    }
+
     public final void setPrimarySupervisor(User primarySupervisor) {
         this.primarySupervisor = primarySupervisor;
     }
@@ -96,6 +106,11 @@ public class ApplicationExportDTO {
     
     public ApplicationExportDTO withOfferRecommendationComment(Comment offerRecommendationComment) {
         this.offerRecommendationComment = offerRecommendationComment;
+        return this;
+    }
+    
+    public ApplicationExportDTO withPositionDescriptionUnexportable(boolean positionDescriptionUnexportable) {
+        this.positionDescriptionUnexportable = positionDescriptionUnexportable;
         return this;
     }
     

@@ -66,6 +66,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.imported.Gender;
 import com.zuehlke.pgadmissions.domain.imported.Language;
 import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
@@ -83,9 +84,9 @@ public class ApplicationExportBuilder {
 
     @Value("${xml.export.source}")
     private String exportSource;
-    
+
     private final ObjectFactory objectFactory = new ObjectFactory();
-    
+
     private PropertyLoader propertyLoader;
 
     @Autowired
@@ -313,7 +314,8 @@ public class ApplicationExportBuilder {
         Comment offerRecommendationComment = applicationExportDTO.getOfferRecommendationComment();
         if (offerRecommendationComment != null) {
             CommentApplicationPositionDetail positionDetail = offerRecommendationComment.getPositionDetail();
-            applicationTp.setAtasStatement(positionDetail == null ? null : positionDetail.getPositionDescription());
+            applicationTp.setAtasStatement(positionDetail == null ? null : applicationExportDTO.isPositionDescriptionUnexportable() ? propertyLoader
+                    .load(PrismDisplayPropertyDefinition.APPLICATION_COMMENT_POSITION_DESCRIPTION_UNEXPORTABLE) : positionDetail.getPositionDescription());
 
             CommentApplicationOfferDetail offerDetail = offerRecommendationComment.getOfferDetail();
             if (offerDetail != null) {

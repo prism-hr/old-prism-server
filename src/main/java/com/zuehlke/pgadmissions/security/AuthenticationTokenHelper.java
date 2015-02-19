@@ -62,20 +62,25 @@ public class AuthenticationTokenHelper {
 
     public TokenValidityStatus validateToken(String authToken, UserDetails userDetails) {
         User user = (User) userDetails;
-        String[] parts = authToken.split(":");
-        long created = Long.parseLong(parts[1]);
-        long expires = Long.parseLong(parts[2]);
-        String signature = parts[3];
+        try {
+            String[] parts = authToken.split(":");
+            long created = Long.parseLong(parts[1]);
+            long expires = Long.parseLong(parts[2]);
+            String signature = parts[3];
 
-        long now = System.currentTimeMillis();
+            long now = System.currentTimeMillis();
 
-        boolean valid = expires >= now && signature.equals(computeSignature(user, created, expires));
-        String renewedToken = null;
-        if (valid) {
-            if (now > created + RENEW_PERIOD) {
-                renewedToken = createToken(user);
+            boolean valid = expires >= now && signature.equals(computeSignature(user, created, expires));
+            String renewedToken = null;
+            if (valid) {
+                if (now > created + RENEW_PERIOD) {
+                    renewedToken = createToken(user);
+                }
             }
+            return new TokenValidityStatus(valid, renewedToken);
+        } catch (NumberFormatException e) {
+        } catch (ArrayIndexOutOfBoundsException e) {
         }
-        return new TokenValidityStatus(valid, renewedToken);
+        return new TokenValidityStatus(false, null);
     }
 }

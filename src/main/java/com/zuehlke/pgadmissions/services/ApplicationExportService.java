@@ -150,12 +150,17 @@ public class ApplicationExportService {
             throw new ApplicationExportException("No export program instance for application " + application.getCode());
         }
 
+        Comment exportComment = commentService.getLatestComment(application, PrismAction.APPLICATION_EXPORT);
+        String exportException = exportComment.getExportException();
+        boolean positionDescriptionUnexportable = exportException != null && exportException.contains("ATAS statement validation failed");
+
         return applicationContext
                 .getBean(ApplicationExportBuilder.class)
                 .localize(propertyLoader)
                 .build(new ApplicationExportDTO().withApplication(application).withCreatorExportId(creatorExportId).withCreatorIpAddress(creatorIpAddress)
-                        .withOfferRecommendationComment(offerRecommendationComment).withPrimarySupervisor(primarySupervisor)
-                        .withExportProgramInstance(exportProgramInstance).withApplicationReferences(applicationExportReferences));
+                        .withOfferRecommendationComment(offerRecommendationComment).withPositionDescriptionUnexportable(positionDescriptionUnexportable)
+                        .withPrimarySupervisor(primarySupervisor).withExportProgramInstance(exportProgramInstance)
+                        .withApplicationReferences(applicationExportReferences));
     }
 
     protected OutputStream buildDocumentExportRequest(Application application, String exportReference, OutputStream outputStream) throws IOException,

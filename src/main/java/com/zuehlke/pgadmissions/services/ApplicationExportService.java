@@ -121,8 +121,6 @@ public class ApplicationExportService {
                 exportUserId = exportReference.getApplicantID();
             }
             outputStream = sendDocumentExportRequest(application, exportId);
-        } catch (RuntimeException e) {
-            throw new Exception(e);
         } catch (Exception e) {
             executeExportAction(application, exportRequest, exportId, exportUserId, ExceptionUtils.getStackTrace(e));
         } finally {

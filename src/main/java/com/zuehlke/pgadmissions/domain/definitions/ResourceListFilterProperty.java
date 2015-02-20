@@ -27,7 +27,6 @@ public enum ResourceListFilterProperty implements FilterProperty {
     USER("user.id", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION)), //
     CODE("code", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION, PROJECT, PROGRAM, INSTITUTION)), //
     INSTITUTION_TITLE("institution.id", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION, PROJECT, PROGRAM)), //
-    DEPARTMENT_TITLE("department.id", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION, PROJECT, PROGRAM)), //
     PROGRAM_TITLE("program.id", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION, PROJECT)), //
     PROJECT_TITLE("project.id", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION)), //
     TITLE("title", STRING, Arrays.asList(CONTAIN), Arrays.asList(PROJECT, PROGRAM, INSTITUTION)), //

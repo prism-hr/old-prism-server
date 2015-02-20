@@ -529,10 +529,6 @@ public class ResourceService {
                         ResourceListConstraintBuilder.appendDateTimeFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
                                 constraint.computeValueDateTimeStart(), constraint.computeValueDateTimeClose(), negated);
                         break;
-                    case DEPARTMENT_TITLE:
-                        List<Integer> programIds = programService.getProgramsInDepartment(constraint.getValueString());
-                        ResourceListConstraintBuilder.appendPropertyInFilterCriterion(conditions, propertyName, programIds, negated);
-                        break;
                     case INSTITUTION_TITLE:
                     case PROGRAM_TITLE:
                     case PROJECT_TITLE:

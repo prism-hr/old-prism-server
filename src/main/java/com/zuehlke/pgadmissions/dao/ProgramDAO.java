@@ -268,14 +268,5 @@ public class ProgramDAO {
                 .setResultTransformer(Transformers.aliasToBean(ResourceSearchEngineDTO.class)) //
                 .list();
     }
-
-    public List<Integer> getProgramsInDepartment(String departmentTitle) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Program.class) //
-                .setProjection(Projections.property("id")) //
-                .createAlias("department", "department", JoinType.INNER_JOIN) //
-                .add(Restrictions.ilike("department.title", departmentTitle, MatchMode.ANYWHERE)) //
-                .list();
-
-    }
     
 }

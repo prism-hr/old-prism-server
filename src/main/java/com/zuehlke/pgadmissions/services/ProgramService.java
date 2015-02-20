@@ -250,11 +250,7 @@ public class ProgramService {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         return programDAO.getActiveProgramsByInstitution(institutionId, activeProgramStates);
     }
-
-    public List<Integer> getProgramsInDepartment(String departmentTitle) {
-        return programDAO.getProgramsInDepartment(departmentTitle);
-    }
-
+    
     private void update(Integer programId, ProgramDTO programDTO) {
         Program program = entityService.getById(Program.class, programId);
         copyProgramDetails(program, programDTO);

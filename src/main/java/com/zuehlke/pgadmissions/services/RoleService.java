@@ -307,10 +307,10 @@ public class RoleService {
     }
     
     public void executeDeleteUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
-        executeRemoveUserRole(userRole, transitionUserRole, comment);
+        executeRetireUserRole(userRole, transitionUserRole, comment);
     }
 
-    public void executeRemoveUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
+    public void executeRetireUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
         UserRole persistentRole = entityService.getDuplicateEntity(transitionUserRole);
         if (persistentRole != null) {
             deleteUserRole(persistentRole.getResource(), persistentRole.getUser(), persistentRole.getRole());

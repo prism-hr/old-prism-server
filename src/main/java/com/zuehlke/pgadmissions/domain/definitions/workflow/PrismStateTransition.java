@@ -7,94 +7,119 @@ import com.google.common.collect.Lists;
 
 public class PrismStateTransition {
 
-    private PrismState transitionState;
+	private PrismState transitionState;
 
-    private PrismAction transitionAction;
+	private PrismAction transitionAction;
 
-    private PrismStateTransitionEvaluation stateTransitionEvaluation;
+	private PrismStateTransitionEvaluation stateTransitionEvaluation;
 
-    private List<PrismRoleTransition> roleTransitions = Lists.newArrayList();
+	private PrismResourceBatch resourceBatchStart;
 
-    private List<PrismAction> propagatedActions = Lists.newArrayList();
+	private PrismResourceBatch resourceBatchClose;
 
-    private List<PrismStateTermination> stateTerminations = Lists.newArrayList();
+	private List<PrismRoleTransition> roleTransitions = Lists.newArrayList();
 
-    public PrismState getTransitionState() {
-        return transitionState;
-    }
+	private List<PrismAction> propagatedActions = Lists.newArrayList();
 
-    public PrismAction getTransitionAction() {
-        return transitionAction;
-    }
+	private List<PrismStateTermination> stateTerminations = Lists.newArrayList();
 
-    public PrismStateTransitionEvaluation getStateTransitionEvaluation() {
-        return stateTransitionEvaluation;
-    }
+	public PrismState getTransitionState() {
+		return transitionState;
+	}
 
-    public List<PrismRoleTransition> getRoleTransitions() {
-        return roleTransitions;
-    }
+	public PrismAction getTransitionAction() {
+		return transitionAction;
+	}
 
-    public List<PrismAction> getPropagatedActions() {
-        return propagatedActions;
-    }
+	public PrismStateTransitionEvaluation getStateTransitionEvaluation() {
+		return stateTransitionEvaluation;
+	}
 
-    public final List<PrismStateTermination> getStateTerminations() {
-        return stateTerminations;
-    }
+	public PrismResourceBatch getResourceBatchStart() {
+		return resourceBatchStart;
+	}
 
-    public PrismStateTransition withTransitionState(PrismState transitionState) {
-        this.transitionState = transitionState;
-        return this;
-    }
+	public PrismResourceBatch getResourceBatchClose() {
+		return resourceBatchClose;
+	}
 
-    public PrismStateTransition withTransitionAction(PrismAction transitionAction) {
-        this.transitionAction = transitionAction;
-        return this;
-    }
+	public List<PrismRoleTransition> getRoleTransitions() {
+		return roleTransitions;
+	}
 
-    public PrismStateTransition withStateTransitionEvaluation(PrismStateTransitionEvaluation transitionEvaluation) {
-        this.stateTransitionEvaluation = transitionEvaluation;
-        return this;
-    }
+	public List<PrismAction> getPropagatedActions() {
+		return propagatedActions;
+	}
 
-    public PrismStateTransition withRoleTransitions(List<PrismRoleTransition> roleTransitions) {
-        this.roleTransitions = roleTransitions == null ? this.roleTransitions : roleTransitions;
-        return this;
-    }
+	public final List<PrismStateTermination> getStateTerminations() {
+		return stateTerminations;
+	}
 
-    public PrismStateTransition withPropagatedActions(List<PrismAction> propagatedActions) {
-        this.propagatedActions = propagatedActions == null ? this.propagatedActions : propagatedActions;
-        return this;
-    }
+	public PrismStateTransition withTransitionState(PrismState transitionState) {
+		this.transitionState = transitionState;
+		return this;
+	}
 
-    public PrismStateTransition withStateTerminations(List<PrismStateTermination> stateTerminations) {
-        this.stateTerminations = stateTerminations == null ? this.stateTerminations : stateTerminations;
-        return this;
-    }
+	public PrismStateTransition withTransitionAction(PrismAction transitionAction) {
+		this.transitionAction = transitionAction;
+		return this;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(transitionState, transitionAction, stateTransitionEvaluation, roleTransitions, propagatedActions, stateTerminations);
-    }
+	public PrismStateTransition withStateTransitionEvaluation(PrismStateTransitionEvaluation transitionEvaluation) {
+		this.stateTransitionEvaluation = transitionEvaluation;
+		return this;
+	}
 
-    @Override
-    public boolean equals(Object object) {
-        if (object == null) {
-            return false;
-        }
-        if (getClass() != object.getClass()) {
-            return false;
-        }
-        final PrismStateTransition other = (PrismStateTransition) object;
-        final List<PrismRoleTransition> otherRoleTransitions = other.getRoleTransitions();
-        final List<PrismAction> otherPropagatedActions = other.getPropagatedActions();
-        final List<PrismStateTermination> otherStateTerminations = other.getStateTerminations();
-        return Objects.equal(transitionState, other.getTransitionState()) && Objects.equal(transitionAction, other.getTransitionAction())
-                && Objects.equal(stateTransitionEvaluation, other.getStateTransitionEvaluation()) && roleTransitions.size() == otherRoleTransitions.size()
-                && roleTransitions.containsAll(otherRoleTransitions) && propagatedActions.size() == otherPropagatedActions.size()
-                && propagatedActions.containsAll(otherPropagatedActions) && stateTerminations.size() == otherStateTerminations.size()
-                && stateTerminations.containsAll(otherStateTerminations);
-    }
+	public PrismStateTransition withResourceBatchStart(PrismResourceBatch resourceBatchStart) {
+		this.resourceBatchStart = resourceBatchStart;
+		return this;
+	}
+
+	public PrismStateTransition withResourceBatchClose(PrismResourceBatch resourceBatchClose) {
+		this.resourceBatchClose = resourceBatchClose;
+		return this;
+	}
+
+	public PrismStateTransition withRoleTransitions(List<PrismRoleTransition> roleTransitions) {
+		this.roleTransitions = roleTransitions == null ? this.roleTransitions : roleTransitions;
+		return this;
+	}
+
+	public PrismStateTransition withPropagatedActions(List<PrismAction> propagatedActions) {
+		this.propagatedActions = propagatedActions == null ? this.propagatedActions : propagatedActions;
+		return this;
+	}
+
+	public PrismStateTransition withStateTerminations(List<PrismStateTermination> stateTerminations) {
+		this.stateTerminations = stateTerminations == null ? this.stateTerminations : stateTerminations;
+		return this;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(transitionState, transitionAction, stateTransitionEvaluation, resourceBatchStart, resourceBatchClose, roleTransitions,
+		        propagatedActions, stateTerminations);
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (object == null) {
+			return false;
+		}
+		if (getClass() != object.getClass()) {
+			return false;
+		}
+		final PrismStateTransition other = (PrismStateTransition) object;
+		final List<PrismRoleTransition> otherRoleTransitions = other.getRoleTransitions();
+		final List<PrismAction> otherPropagatedActions = other.getPropagatedActions();
+		final List<PrismStateTermination> otherStateTerminations = other.getStateTerminations();
+		return Objects.equal(transitionState, other.getTransitionState()) && Objects.equal(transitionAction, other.getTransitionAction())
+		        && Objects.equal(stateTransitionEvaluation, other.getStateTransitionEvaluation())
+		        && Objects.equal(resourceBatchStart, other.getResourceBatchStart())
+		        && Objects.equal(resourceBatchClose, other.getResourceBatchClose()) && roleTransitions.size() == otherRoleTransitions.size()
+		        && roleTransitions.containsAll(otherRoleTransitions) && propagatedActions.size() == otherPropagatedActions.size()
+		        && propagatedActions.containsAll(otherPropagatedActions) && stateTerminations.size() == otherStateTerminations.size()
+		        && stateTerminations.containsAll(otherStateTerminations);
+	}
 
 }

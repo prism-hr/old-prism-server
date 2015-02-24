@@ -43,6 +43,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceBatch;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -94,6 +95,10 @@ public class Application extends Resource {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "advert_id")
     private Advert advert;
+
+    @ManyToOne
+    @JoinColumn(name = "resource_batch_id")
+    private ResourceBatch resourceBatch;
     
     @Column(name = "referrer")
     private String referrer;
@@ -336,7 +341,15 @@ public class Application extends Resource {
         this.advert = advert;
     }
 
-    @Override
+    public ResourceBatch getResourceBatch() {
+		return resourceBatch;
+	}
+
+	public void setResourceBatch(ResourceBatch resourceBatch) {
+		this.resourceBatch = resourceBatch;
+	}
+
+	@Override
     public Application getApplication() {
         return this;
     }

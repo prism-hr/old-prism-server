@@ -21,143 +21,146 @@ import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 public abstract class Resource implements IUniqueEntity {
 
-    public abstract Integer getId();
+	public abstract Integer getId();
 
-    public abstract void setId(Integer id);
+	public abstract void setId(Integer id);
 
-    public abstract User getUser();
+	public abstract User getUser();
 
-    public abstract void setUser(User user);
+	public abstract void setUser(User user);
 
-    public abstract String getCode();
+	public abstract String getCode();
 
-    public abstract void setCode(String code);
+	public abstract void setCode(String code);
 
-    public abstract PrismLocale getLocale();
+	public abstract PrismLocale getLocale();
 
-    public abstract System getSystem();
+	public abstract System getSystem();
 
-    public abstract void setSystem(System system);
+	public abstract void setSystem(System system);
 
-    public abstract Institution getInstitution();
+	public abstract Institution getInstitution();
 
-    public abstract void setInstitution(Institution institution);
+	public abstract void setInstitution(Institution institution);
 
-    public abstract Program getProgram();
+	public abstract Program getProgram();
 
-    public abstract void setProgram(Program program);
+	public abstract void setProgram(Program program);
 
-    public abstract Project getProject();
+	public abstract Project getProject();
 
-    public abstract void setProject(Project project);
+	public abstract void setProject(Project project);
 
-    public abstract Application getApplication();
+	public abstract Application getApplication();
 
-    public abstract String getReferrer();
+	public abstract ResourceBatch getResourceBatch();
 
-    public abstract void setReferrer(String referrer);
+	public abstract void setResourceBatch(ResourceBatch resourceBatch);
 
-    public abstract State getState();
+	public abstract String getReferrer();
 
-    public abstract void setState(State state);
+	public abstract void setReferrer(String referrer);
 
-    public abstract State getPreviousState();
+	public abstract State getState();
 
-    public abstract void setPreviousState(State previousState);
+	public abstract void setState(State state);
 
-    public abstract LocalDate getDueDate();
+	public abstract State getPreviousState();
 
-    public abstract void setDueDate(LocalDate dueDate);
+	public abstract void setPreviousState(State previousState);
 
-    public abstract DateTime getCreatedTimestamp();
+	public abstract LocalDate getDueDate();
 
-    public abstract void setCreatedTimestamp(DateTime createdTimestamp);
+	public abstract void setDueDate(LocalDate dueDate);
 
-    public abstract DateTime getUpdatedTimestamp();
+	public abstract DateTime getCreatedTimestamp();
 
-    public abstract void setUpdatedTimestamp(DateTime updatedTimestamp);
+	public abstract void setCreatedTimestamp(DateTime createdTimestamp);
 
-    public abstract LocalDate getLastRemindedRequestIndividual();
+	public abstract DateTime getUpdatedTimestamp();
 
-    public abstract void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual);
+	public abstract void setUpdatedTimestamp(DateTime updatedTimestamp);
 
-    public abstract LocalDate getLastRemindedRequestSyndicated();
+	public abstract LocalDate getLastRemindedRequestIndividual();
 
-    public abstract void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated);
+	public abstract void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual);
 
-    public abstract LocalDate getLastNotifiedUpdateSyndicated();
+	public abstract LocalDate getLastRemindedRequestSyndicated();
 
-    public abstract void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated);
+	public abstract void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated);
 
-    public abstract Integer getWorkflowPropertyConfigurationVersion();
+	public abstract LocalDate getLastNotifiedUpdateSyndicated();
 
-    public abstract void setWorkflowPropertyConfigurationVersion(Integer workflowResourceConfigurationVersion);
+	public abstract void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated);
 
-    public abstract String getSequenceIdentifier();
+	public abstract Integer getWorkflowPropertyConfigurationVersion();
 
-    public abstract void setSequenceIdentifier(String sequenceIdentifier);
+	public abstract void setWorkflowPropertyConfigurationVersion(Integer workflowResourceConfigurationVersion);
 
-    public abstract Set<ResourceState> getResourceStates();
+	public abstract String getSequenceIdentifier();
 
-    public abstract Set<ResourcePreviousState> getResourcePreviousStates();
+	public abstract void setSequenceIdentifier(String sequenceIdentifier);
 
-    public abstract Set<Comment> getComments();
+	public abstract Set<ResourceState> getResourceStates();
 
-    public abstract Set<UserRole> getUserRoles();
+	public abstract Set<ResourcePreviousState> getResourcePreviousStates();
 
-    public void addComment(Comment comment) {
-        getComments().add(comment);
-    }
+	public abstract Set<Comment> getComments();
 
-    public String getHelpdeskDisplay() {
-        if (getResourceScope() == PrismScope.SYSTEM) {
-            return getSystem().getHelpdesk();
-        }
-        String helpdesk = getInstitution().getHelpdesk();
-        return helpdesk == null ? getSystem().getHelpdesk() : helpdesk;
-    }
+	public abstract Set<UserRole> getUserRoles();
 
-    public Resource getParentResource() {
-        PrismScope resourceScope = PrismScope.getResourceScope(this.getClass());
-        switch (resourceScope) {
-        case SYSTEM:
-            return this;
-        case INSTITUTION:
-            return getSystem();
-        case PROGRAM:
-            return getInstitution();
-        case PROJECT:
-            return getProgram();
-        case APPLICATION:
-            Resource project = getProject();
-            return project == null ? getProgram() : project;
-        }
-        throw new Error();
-    }
+	public void addComment(Comment comment) {
+		getComments().add(comment);
+	}
 
-    public void setParentResource(Resource parentResource) {
-        if (parentResource.getId() != null) {
-            setProject(parentResource.getProject());
-            setProgram(parentResource.getProgram());
-            setInstitution(parentResource.getInstitution());
-            setSystem(parentResource.getSystem());
-        }
-    }
+	public String getHelpdeskDisplay() {
+		if (getResourceScope() == PrismScope.SYSTEM) {
+			return getSystem().getHelpdesk();
+		}
+		String helpdesk = getInstitution().getHelpdesk();
+		return helpdesk == null ? getSystem().getHelpdesk() : helpdesk;
+	}
 
-    public PrismScope getResourceScope() {
-        return PrismScope.getResourceScope(this.getClass());
-    }
+	public Resource getParentResource() {
+		PrismScope resourceScope = PrismScope.getResourceScope(this.getClass());
+		switch (resourceScope) {
+		case SYSTEM:
+			return this;
+		case INSTITUTION:
+			return getSystem();
+		case PROGRAM:
+			return getInstitution();
+		case PROJECT:
+			return getProgram();
+		case APPLICATION:
+			return getApplication().isProgramApplication() ? getProgram() : getProject();
+		}
+		throw new Error();
+	}
 
-    public Resource getEnclosingResource(PrismScope resourceScope) {
-        if (getResourceScope().equals(resourceScope)) {
-            return this;
-        } else {
-            return (Resource) ReflectionUtils.getProperty(this, resourceScope.getLowerCaseName());
-        }
-    }
+	public void setParentResource(Resource parentResource) {
+		if (parentResource.getId() != null) {
+			setProject(parentResource.getProject());
+			setProgram(parentResource.getProgram());
+			setInstitution(parentResource.getInstitution());
+			setSystem(parentResource.getSystem());
+		}
+	}
 
-    @Override
-    public String toString() {
-        return getResourceScope().name() + "#" + getId();
-    }
+	public PrismScope getResourceScope() {
+		return PrismScope.getResourceScope(this.getClass());
+	}
+
+	public Resource getEnclosingResource(PrismScope resourceScope) {
+		if (getResourceScope().equals(resourceScope)) {
+			return this;
+		} else {
+			return (Resource) ReflectionUtils.getProperty(this, resourceScope.getLowerCaseName());
+		}
+	}
+
+	@Override
+	public String toString() {
+		return getCode();
+	}
 }

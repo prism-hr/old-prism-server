@@ -43,12 +43,9 @@ public class Action extends WorkflowDefinition {
 
     @Column(name = "declinable_action", nullable = false)
     private Boolean declinableAction;
-
+    
     @Column(name = "visible_action", nullable = false)
     private Boolean visibleAction;
-
-    @Column(name = "emphasized_action", nullable = false)
-    private Boolean emphasizedAction;
 
     @Column(name = "conclude_parent_action", nullable = false)
     private Boolean concludeParentAction;
@@ -123,21 +120,13 @@ public class Action extends WorkflowDefinition {
     public final void setDeclinableAction(Boolean declinableAction) {
         this.declinableAction = declinableAction;
     }
-
+    
     public final Boolean getVisibleAction() {
         return visibleAction;
     }
 
     public final void setVisibleAction(Boolean visibleAction) {
         this.visibleAction = visibleAction;
-    }
-
-    public final Boolean getEmphasizedAction() {
-        return emphasizedAction;
-    }
-
-    public final void setEmphasizedAction(Boolean emphasizedAction) {
-        this.emphasizedAction = emphasizedAction;
     }
 
     public final Boolean getConcludeParentAction() {
@@ -230,11 +219,6 @@ public class Action extends WorkflowDefinition {
 
     public Action withVisibleAction(Boolean visibleAction) {
         this.visibleAction = visibleAction;
-        return this;
-    }
-
-    public Action withEmphasizedAction(Boolean emphasizedAction) {
-        this.emphasizedAction = emphasizedAction;
         return this;
     }
 

@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.resource.ResourceBatch;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -72,6 +73,10 @@ public class Project extends ResourceParent {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
+    
+    @ManyToOne
+    @JoinColumn(name = "resource_batch_id")
+    private ResourceBatch resourceBatch;
 
     @Column(name = "referrer")
     private String referrer;
@@ -358,6 +363,14 @@ public class Project extends ResourceParent {
     public void setProject(Project project) {
     }
 
+    public ResourceBatch getResourceBatch() {
+		return resourceBatch;
+	}
+
+	public void setResourceBatch(ResourceBatch resourceBatch) {
+		this.resourceBatch = resourceBatch;
+	}
+    
     @Override
     public Application getApplication() {
         return null;

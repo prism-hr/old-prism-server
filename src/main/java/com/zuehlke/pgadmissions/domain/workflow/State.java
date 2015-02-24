@@ -2,12 +2,15 @@ package com.zuehlke.pgadmissions.domain.workflow;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -48,6 +51,10 @@ public class State extends WorkflowDefinition {
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
+    
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "STATE_BATCH_SCOPE", joinColumns = {@JoinColumn(name = "state_transition_id", nullable = false)}, inverseJoinColumns = {@JoinColumn(name = "scope_id", nullable = false)})
+    private Set<Scope> batchScopes = Sets.newHashSet();
 
     @OneToMany(mappedBy = "state")
     private Set<StateAction> stateActions = Sets.newHashSet();
@@ -117,7 +124,11 @@ public class State extends WorkflowDefinition {
         this.scope = scope;
     }
 
-    public final Set<StateAction> getStateActions() {
+    public Set<Scope> getBatchScopes() {
+		return batchScopes;
+	}
+
+	public final Set<StateAction> getStateActions() {
         return stateActions;
     }
 

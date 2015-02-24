@@ -60,183 +60,178 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 @Transactional
 public class ApplicationExportService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationExportService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationExportService.class);
 
-    private PropertyLoader propertyLoader = null;
+	private PropertyLoader propertyLoader = null;
 
-    @Value("${xml.data.export.sftp.privatekeyfile}")
-    private Resource privateKeyFile;
+	@Value("${xml.data.export.sftp.privatekeyfile}")
+	private Resource privateKeyFile;
 
-    @Value("${xml.data.export.sftp.host}")
-    private String sftpHost;
+	@Value("${xml.data.export.sftp.host}")
+	private String sftpHost;
 
-    @Value("${xml.data.export.sftp.port}")
-    private String sftpPort;
+	@Value("${xml.data.export.sftp.port}")
+	private String sftpPort;
 
-    @Value("${xml.data.export.sftp.username}")
-    private String sftpUsername;
+	@Value("${xml.data.export.sftp.username}")
+	private String sftpUsername;
 
-    @Value("${xml.data.export.sftp.password}")
-    private String sftpPassword;
+	@Value("${xml.data.export.sftp.password}")
+	private String sftpPassword;
 
-    @Value("${xml.data.export.sftp.folder}")
-    private String targetFolder;
+	@Value("${xml.data.export.sftp.folder}")
+	private String targetFolder;
 
-    @Autowired
-    private WebServiceTemplate webServiceTemplate;
+	@Autowired
+	private WebServiceTemplate webServiceTemplate;
 
-    @Autowired
-    private CommentService commentService;
+	@Autowired
+	private CommentService commentService;
 
-    @Autowired
-    private ProgramService programService;
+	@Autowired
+	private ProgramService programService;
 
-    @Autowired
-    private UserService userService;
+	@Autowired
+	private UserService userService;
 
-    @Autowired
-    private ApplicationDocumentExportBuilder applicationDocumentExportBuilder;
+	@Autowired
+	private ApplicationDocumentExportBuilder applicationDocumentExportBuilder;
 
-    @Autowired
-    protected ApplicationService applicationService;
+	@Autowired
+	protected ApplicationService applicationService;
 
-    @Autowired
-    protected ActionService actionService;
+	@Autowired
+	protected ActionService actionService;
 
-    @Autowired
-    private ApplicationContext applicationContext;
+	@Autowired
+	private ApplicationContext applicationContext;
 
-    public void submitExportRequest(Integer applicationId) throws Exception {
-        Application application = applicationService.getById(applicationId);
-        LOGGER.info("Exporting application: " + application.getCode());
+	public void submitExportRequest(Integer applicationId) throws Exception {
+		Application application = applicationService.getById(applicationId);
+		LOGGER.info("Exporting application: " + application.getCode());
 
-        String exportId = null;
-        String exportUserId = null;
-        OutputStream outputStream = null;
-        SubmitAdmissionsApplicationRequest exportRequest = null;
+		String exportId = null;
+		String exportUserId = null;
+		OutputStream outputStream = null;
+		SubmitAdmissionsApplicationRequest exportRequest = null;
 
-        try {
-            exportId = applicationService.getApplicationExportReference(application);
-            if (exportId == null) {
-                exportRequest = buildDataExportRequest(application);
-                AdmissionsApplicationResponse exportResponse = sendDataExportRequest(application, exportRequest);
+		try {
+			exportId = applicationService.getApplicationExportReference(application);
+			if (exportId == null) {
+				exportRequest = buildDataExportRequest(application);
+				AdmissionsApplicationResponse exportResponse = sendDataExportRequest(application, exportRequest);
 
-                ReferenceTp exportReference = exportResponse.getReference();
-                exportId = exportReference.getApplicationID();
-                exportUserId = exportReference.getApplicantID();
-            }
-            outputStream = sendDocumentExportRequest(application, exportId);
-            executeExportAction(application, exportRequest, exportId, exportUserId, null);
-        } catch (Exception e) {
-            executeExportAction(application, exportRequest, exportId, exportUserId, ExceptionUtils.getStackTrace(e));
-            LOGGER.error("Error exporting application: " + application.getCode(), e);
-        } finally {
-            IOUtils.closeQuietly(outputStream);
-        }
-    }
+				ReferenceTp exportReference = exportResponse.getReference();
+				exportId = exportReference.getApplicationID();
+				exportUserId = exportReference.getApplicantID();
+			}
+			outputStream = sendDocumentExportRequest(application, exportId);
+			executeExportAction(application, exportRequest, exportId, exportUserId, null);
+		} catch (Exception e) {
+			executeExportAction(application, exportRequest, exportId, exportUserId, ExceptionUtils.getStackTrace(e));
+			LOGGER.error("Error exporting application: " + application.getCode(), e);
+		} finally {
+			IOUtils.closeQuietly(outputStream);
+		}
+	}
 
-    protected SubmitAdmissionsApplicationRequest buildDataExportRequest(Application application) throws ApplicationExportException {
-        localize(application);
+	protected SubmitAdmissionsApplicationRequest buildDataExportRequest(Application application) throws ApplicationExportException {
+		localize(application);
 
-        String creatorExportId = userService.getUserInstitutionId(application.getUser(), application.getInstitution(), PrismUserIdentity.STUDY_APPLICANT);
-        String creatorIpAddress = applicationService.getApplicationCreatorIpAddress(application);
-        Comment offerRecommendationComment = commentService.getLatestComment(application, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
-        User primarySupervisor = applicationService.getPrimarySupervisor(offerRecommendationComment);
-        ProgramStudyOptionInstance exportProgramInstance = programService.getFirstEnabledProgramStudyOptionInstance(application.getProgram(), application
-                .getProgramDetail().getStudyOption());
-        List<ApplicationReferenceDTO> applicationExportReferences = applicationService.getApplicationExportReferees(application);
+		String creatorExportId = userService.getUserInstitutionId(application.getUser(), application.getInstitution(), PrismUserIdentity.STUDY_APPLICANT);
+		String creatorIpAddress = applicationService.getApplicationCreatorIpAddress(application);
+		Comment offerRecommendationComment = commentService.getLatestComment(application, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
+		User primarySupervisor = applicationService.getPrimarySupervisor(offerRecommendationComment);
+		ProgramStudyOptionInstance exportProgramInstance = programService.getFirstEnabledProgramStudyOptionInstance(application.getProgram(), application
+		        .getProgramDetail().getStudyOption());
+		List<ApplicationReferenceDTO> applicationExportReferences = applicationService.getApplicationExportReferees(application);
 
-        if (exportProgramInstance == null) {
-            throw new ApplicationExportException("No export program instance for application " + application.getCode());
-        }
+		if (exportProgramInstance == null) {
+			throw new ApplicationExportException("No export program instance for application " + application.getCode());
+		}
 
-        Comment exportComment = commentService.getLatestComment(application, PrismAction.APPLICATION_EXPORT);
-        String exportException = exportComment.getExportException();
-        boolean positionDescriptionUnexportable = exportException != null && exportException.contains("ATAS statement validation failed");
+		return applicationContext
+		        .getBean(ApplicationExportBuilder.class)
+		        .localize(propertyLoader)
+		        .build(new ApplicationExportDTO().withApplication(application).withCreatorExportId(creatorExportId).withCreatorIpAddress(creatorIpAddress)
+		                .withOfferRecommendationComment(offerRecommendationComment).withPrimarySupervisor(primarySupervisor)
+		                .withExportProgramInstance(exportProgramInstance).withApplicationReferences(applicationExportReferences));
+	}
 
-        return applicationContext
-                .getBean(ApplicationExportBuilder.class)
-                .localize(propertyLoader)
-                .build(new ApplicationExportDTO().withApplication(application).withCreatorExportId(creatorExportId).withCreatorIpAddress(creatorIpAddress)
-                        .withOfferRecommendationComment(offerRecommendationComment).withPositionDescriptionUnexportable(positionDescriptionUnexportable)
-                        .withPrimarySupervisor(primarySupervisor).withExportProgramInstance(exportProgramInstance)
-                        .withApplicationReferences(applicationExportReferences));
-    }
+	protected OutputStream buildDocumentExportRequest(Application application, String exportReference, OutputStream outputStream) throws IOException,
+	        IntegrationException {
+		localize(application);
+		applicationDocumentExportBuilder.localize(propertyLoader).getDocuments(application, exportReference, outputStream);
+		return outputStream;
+	}
 
-    protected OutputStream buildDocumentExportRequest(Application application, String exportReference, OutputStream outputStream) throws IOException,
-            IntegrationException {
-        localize(application);
-        applicationDocumentExportBuilder.localize(propertyLoader).getDocuments(application, exportReference, outputStream);
-        return outputStream;
-    }
+	protected void executeExportAction(Application application, SubmitAdmissionsApplicationRequest exportRequest, String exportId, String exportUserId,
+	        String exportException) throws DeduplicationException, InstantiationException, IllegalAccessException, JAXBException, BeansException,
+	        WorkflowEngineException, IOException, IntegrationException {
+		Action exportAction = actionService.getById(PrismAction.APPLICATION_EXPORT);
+		Institution exportInstitution = application.getInstitution();
 
-    protected void executeExportAction(Application application, SubmitAdmissionsApplicationRequest exportRequest, String exportId, String exportUserId,
-            String exportException) throws DeduplicationException, InstantiationException, IllegalAccessException, JAXBException, BeansException,
-            WorkflowEngineException, IOException, IntegrationException {
-        Action exportAction = actionService.getById(PrismAction.APPLICATION_EXPORT);
-        Institution exportInstitution = application.getInstitution();
+		Comment comment = new Comment().withUser(exportInstitution.getUser()).withAction(exportAction).withDeclinedResponse(false)
+		        .withExportRequest(exportRequest == null ? null : getRequestContent(exportRequest)).withExportReference(exportId)
+		        .withExportException(exportException).withCreatedTimestamp(new DateTime());
+		actionService.executeAction(application, exportAction, comment);
 
-        Comment comment = new Comment().withUser(exportInstitution.getUser()).withAction(exportAction).withDeclinedResponse(false)
-                .withExportRequest(exportRequest == null ? null : getRequestContent(exportRequest)).withExportReference(exportId)
-                .withExportException(exportException).withCreatedTimestamp(new DateTime());
-        actionService.executeAction(application, exportAction, comment);
+		if (exportUserId != null) {
+			userService.createOrUpdateUserInstitutionIdentity(application, exportUserId);
+		}
+	}
 
-        if (exportUserId != null) {
-            userService.createOrUpdateUserInstitutionIdentity(application, exportUserId);
-        }
-    }
+	protected void localize(Application application) {
+		propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(application);
+	}
 
-    protected void localize(Application application) {
-        propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(application);
-    }
+	private AdmissionsApplicationResponse sendDataExportRequest(Application application, SubmitAdmissionsApplicationRequest exportRequest) {
+		AdmissionsApplicationResponse exportResponse = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(exportRequest,
+		        new WebServiceMessageCallback() {
+			        public void doWithMessage(WebServiceMessage webServiceMessage) throws IOException, TransformerException {
+				        webServiceMessage.writeTo(new ByteArrayOutputStream(5000));
+			        }
+		        });
 
-    private AdmissionsApplicationResponse sendDataExportRequest(Application application, SubmitAdmissionsApplicationRequest exportRequest) {
-        AdmissionsApplicationResponse exportResponse = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(exportRequest,
-                new WebServiceMessageCallback() {
-                    public void doWithMessage(WebServiceMessage webServiceMessage) throws IOException, TransformerException {
-                        webServiceMessage.writeTo(new ByteArrayOutputStream(5000));
-                    }
-                });
+		if (exportResponse == null) {
+			throw new ApplicationExportException("No response to export request for application " + application.getCode());
+		}
+		return exportResponse;
+	}
 
-        if (exportResponse == null) {
-            throw new ApplicationExportException("No response to export request for application " + application.getCode());
-        }
-        return exportResponse;
-    }
+	private OutputStream sendDocumentExportRequest(Application application, String exportId) throws SftpException, IOException, ResourceNotFoundException,
+	        JSchException, IntegrationException {
+		Session session = getSftpSession();
+		session.connect();
+		ChannelSftp sftpChannel = (ChannelSftp) session.openChannel("sftp");
+		sftpChannel.connect();
+		sftpChannel.cd(targetFolder);
+		String finalZipName = exportId + ".zip";
+		OutputStream outputStream = buildDocumentExportRequest(application, exportId, sftpChannel.put(finalZipName, ChannelSftp.OVERWRITE));
+		sftpChannel.disconnect();
+		session.disconnect();
+		return outputStream;
+	}
 
-    private OutputStream sendDocumentExportRequest(Application application, String exportId) throws SftpException, IOException, ResourceNotFoundException,
-            JSchException, IntegrationException {
-        Session session = getSftpSession();
-        session.connect();
-        ChannelSftp sftpChannel = (ChannelSftp) session.openChannel("sftp");
-        sftpChannel.connect();
-        sftpChannel.cd(targetFolder);
-        String finalZipName = exportId + ".zip";
-        OutputStream outputStream = buildDocumentExportRequest(application, exportId, sftpChannel.put(finalZipName, ChannelSftp.OVERWRITE));
-        sftpChannel.disconnect();
-        session.disconnect();
-        return outputStream;
-    }
+	private Session getSftpSession() throws JSchException, ResourceNotFoundException, IOException {
+		JSch jSch = new JSch();
+		byte[] privateKeyAsByteArray = FileUtils.readFileToByteArray(privateKeyFile.getFile());
+		byte[] emptyPassPhrase = new byte[0];
+		jSch.addIdentity("prismIdentity", privateKeyAsByteArray, null, emptyPassPhrase);
+		Session session = jSch.getSession(sftpUsername, sftpHost, Integer.valueOf(sftpPort));
+		session.setPassword(sftpPassword);
+		Properties config = new Properties();
+		config.put("StrictHostKeyChecking", "no");
+		session.setConfig(config);
+		return session;
+	}
 
-    private Session getSftpSession() throws JSchException, ResourceNotFoundException, IOException {
-        JSch jSch = new JSch();
-        byte[] privateKeyAsByteArray = FileUtils.readFileToByteArray(privateKeyFile.getFile());
-        byte[] emptyPassPhrase = new byte[0];
-        jSch.addIdentity("prismIdentity", privateKeyAsByteArray, null, emptyPassPhrase);
-        Session session = jSch.getSession(sftpUsername, sftpHost, Integer.valueOf(sftpPort));
-        session.setPassword(sftpPassword);
-        Properties config = new Properties();
-        config.put("StrictHostKeyChecking", "no");
-        session.setConfig(config);
-        return session;
-    }
-
-    private String getRequestContent(SubmitAdmissionsApplicationRequest request) throws JAXBException {
-        final Marshaller marshaller = JAXBContext.newInstance(SubmitAdmissionsApplicationRequest.class).createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        final StringWriter writer = new StringWriter();
-        marshaller.marshal(request, writer);
-        return writer.toString();
-    }
+	private String getRequestContent(SubmitAdmissionsApplicationRequest request) throws JAXBException {
+		final Marshaller marshaller = JAXBContext.newInstance(SubmitAdmissionsApplicationRequest.class).createMarshaller();
+		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		final StringWriter writer = new StringWriter();
+		marshaller.marshal(request, writer);
+		return writer.toString();
+	}
 
 }

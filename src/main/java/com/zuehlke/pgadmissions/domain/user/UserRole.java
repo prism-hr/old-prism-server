@@ -52,7 +52,7 @@ public class UserRole extends WorkflowResourceExecution {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id")
     private Application application;
-
+    
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -127,7 +127,7 @@ public class UserRole extends WorkflowResourceExecution {
         this.application = application;
     }
 
-    public User getUser() {
+	public User getUser() {
         return user;
     }
 
@@ -163,7 +163,7 @@ public class UserRole extends WorkflowResourceExecution {
         setResource(resource);
         return this;
     }
-
+    
     public UserRole withUser(User user) {
         this.user = user;
         return this;

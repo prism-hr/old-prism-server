@@ -40,7 +40,15 @@ public class StateTransition implements IUniqueEntity {
     @ManyToOne
     @JoinColumn(name = "state_transition_evaluation_id")
     private StateTransitionEvaluation stateTransitionEvaluation;
+    
+    @ManyToOne
+    @JoinColumn(name = "resource_batch_start")
+    private StateTransitionResourceBatch resourceBatchStart;
 
+    @ManyToOne
+    @JoinColumn(name = "resource_batch_close")
+    private StateTransitionResourceBatch resourceBatchClose;
+    
     @OneToMany(mappedBy = "stateTransition")
     private Set<RoleTransition> roleTransitions = Sets.newHashSet();
 
@@ -83,15 +91,31 @@ public class StateTransition implements IUniqueEntity {
         this.transitionAction = transitionAction;
     }
 
-    public final StateTransitionEvaluation getStateTransitionEvaluation() {
+    public StateTransitionEvaluation getStateTransitionEvaluation() {
         return stateTransitionEvaluation;
     }
 
-    public final void setStateTransitionEvaluation(StateTransitionEvaluation stateTransitionEvaluation) {
+    public void setStateTransitionEvaluation(StateTransitionEvaluation stateTransitionEvaluation) {
         this.stateTransitionEvaluation = stateTransitionEvaluation;
     }
 
-    public Set<RoleTransition> getRoleTransitions() {
+	public StateTransitionResourceBatch getResourceBatchStart() {
+		return resourceBatchStart;
+	}
+
+	public void setResourceBatchStart(StateTransitionResourceBatch resourceBatchStart) {
+		this.resourceBatchStart = resourceBatchStart;
+	}
+
+	public StateTransitionResourceBatch getResourceBatchClose() {
+		return resourceBatchClose;
+	}
+
+	public void setResourceBatchClose(StateTransitionResourceBatch resourceBatchClose) {
+		this.resourceBatchClose = resourceBatchClose;
+	}
+
+	public Set<RoleTransition> getRoleTransitions() {
         return roleTransitions;
     }
 
@@ -99,11 +123,11 @@ public class StateTransition implements IUniqueEntity {
         return propagatedActions;
     }
 
-    public final Set<StateTermination> getStateTerminations() {
+    public Set<StateTermination> getStateTerminations() {
         return stateTerminations;
     }
-
-    public StateTransition withStateAction(StateAction stateAction) {
+    
+	public StateTransition withStateAction(StateAction stateAction) {
         this.stateAction = stateAction;
         return this;
     }
@@ -121,6 +145,18 @@ public class StateTransition implements IUniqueEntity {
     public StateTransition withStateTransitionEvaluation(StateTransitionEvaluation stateTransitionEvaluation) {
         this.stateTransitionEvaluation = stateTransitionEvaluation;
         return this;
+    }
+    
+    public boolean isResourceBatchStart() {
+    	return resourceBatchStart != null;
+    }
+    
+    public boolean isResourceBatchClose() {
+    	return resourceBatchClose != null;
+    }
+    
+    public boolean hasPropagatedActions() {
+    	return propagatedActions.size() > 0;
     }
 
     @Override

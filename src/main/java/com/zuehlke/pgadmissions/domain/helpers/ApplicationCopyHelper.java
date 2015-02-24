@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.components;
+package com.zuehlke.pgadmissions.domain.helpers;
 
 import java.io.IOException;
 import java.util.Set;

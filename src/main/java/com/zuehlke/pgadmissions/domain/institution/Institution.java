@@ -34,6 +34,7 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.domain.resource.ResourceBatch;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -55,6 +56,10 @@ public class Institution extends ResourceParent {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
+    
+    @ManyToOne
+    @JoinColumn(name = "resource_batch_id")
+    private ResourceBatch resourceBatch;
 
     @Column(name = "referrer")
     private String referrer;
@@ -220,6 +225,24 @@ public class Institution extends ResourceParent {
     public void setId(Integer id) {
         this.id = id;
     }
+    
+    @Override
+    public System getSystem() {
+        return system;
+    }
+
+    @Override
+    public void setSystem(System system) {
+        this.system = system;
+    }
+    
+    public ResourceBatch getResourceBatch() {
+		return resourceBatch;
+	}
+
+	public void setResourceBatch(ResourceBatch resourceBatch) {
+		this.resourceBatch = resourceBatch;
+	}
 
     @Override
     public String getCode() {
@@ -539,16 +562,6 @@ public class Institution extends ResourceParent {
     public Institution withUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
         return this;
-    }
-
-    @Override
-    public System getSystem() {
-        return system;
-    }
-
-    @Override
-    public void setSystem(System system) {
-        this.system = system;
     }
 
     @Override

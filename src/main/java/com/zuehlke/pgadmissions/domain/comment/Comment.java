@@ -47,6 +47,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceBatch;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -82,6 +83,10 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id")
     private Application application;
+    
+    @ManyToOne
+    @JoinColumn(name = "resource_batch_id")
+    private ResourceBatch resourceBatch;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -253,7 +258,15 @@ public class Comment {
         this.application = application;
     }
 
-    public User getUser() {
+    public ResourceBatch getResourceBatch() {
+		return resourceBatch;
+	}
+
+	public void setResourceBatch(ResourceBatch resourceBatch) {
+		this.resourceBatch = resourceBatch;
+	}
+
+	public User getUser() {
         return user;
     }
 

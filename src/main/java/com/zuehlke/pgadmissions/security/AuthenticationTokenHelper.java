@@ -1,14 +1,15 @@
 package com.zuehlke.pgadmissions.security;
 
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.services.SystemService;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.stereotype.Service;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.services.SystemService;
 
 @Service
 public class AuthenticationTokenHelper {

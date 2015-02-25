@@ -33,7 +33,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismResourceBatchType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismResourceBatchProcess;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -44,7 +44,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceBatch;
+import com.zuehlke.pgadmissions.domain.resource.ResourceBatchProcess;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -141,9 +141,9 @@ public class ResourceService {
 	public <T extends Resource> T getById(Class<T> resourceClass, Integer id) {
 		return entityService.getById(resourceClass, id);
 	}
-
-	public Integer getResourceId(Resource resource) {
-		return resource == null ? null : resource.getId();
+	
+	public ResourceBatchProcess getResourceBatchProcessById(PrismResourceBatchProcess resourceBatchProcessId) {
+		return entityService.getById(ResourceBatchProcess.class, resourceBatchProcessId);
 	}
 
 	public ActionOutcomeDTO create(User user, Action action, Object resourceDTO, String referrer, Integer workflowPropertyConfigurationVersion)
@@ -300,6 +300,7 @@ public class ResourceService {
 		}
 
 		if (comment.isStateGroupTransitionComment() && comment.getAction().getCreationScope() == null) {
+			resource.setResourceBatch(null);
 			createOrUpdateStateTransitionSummary(resource, baselineTime);
 		}
 	}
@@ -323,14 +324,6 @@ public class ResourceService {
 		}
 
 		actionService.executeUserAction(resource, action, comment);
-	}
-
-	public void deleteResourceState(Resource resource, State state) {
-		resourceDAO.deleteResourceState(resource, state);
-	}
-
-	public void deleteSecondaryResourceState(Resource resource, State state) {
-		resourceDAO.deleteSecondaryResourceState(resource, state);
 	}
 
 	public Resource getOperativeResource(Resource resource, Action action) {
@@ -466,10 +459,13 @@ public class ResourceService {
 			throw new Error();
 		}
 	}
-
-	public void startResourceBatch(Resource resource, Comment comment, PrismResourceBatchType resourceBatchType, String name) {
-		ResourceBatch transientResourceBatch = new ResourceBatch().withResource(resource.getParentResource())
-		        .withResourceBatchType(resourceBatchType).withName(name);
+	
+	public void joinResourceBatch(Resource resource, Comment comment) {
+		
+	}
+	
+	public void exitResourceBatch(Resource resource) {
+		resource.setResourceBatch(null);
 	}
 
 	private Resource getNotNullResource(PrismScope resourceScope, Integer resourceId) throws Error {

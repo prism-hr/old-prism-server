@@ -138,15 +138,6 @@ public class SystemInitialisationHelper {
         for (Role role : roleService.getRoles()) {
             assertEquals(role.getId().getScope(), role.getScope().getId());
             assertEquals(role.getId().isScopeOwner(), role.getScopeCreator());
-
-            Set<Role> excludedRoles = role.getExcludedRoles();
-            Set<PrismRole> prismExcludedRoles = PrismRole.getExcludedRoles(role.getId());
-
-            assertEquals(prismExcludedRoles.size(), excludedRoles.size());
-
-            for (Role excludedRole : excludedRoles) {
-                assertTrue(prismExcludedRoles.contains(excludedRole.getId()));
-            }
         }
     }
 

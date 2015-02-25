@@ -77,6 +77,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.AssignedUserDTO;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.AddressDTO;
@@ -619,7 +620,7 @@ public class ApplicationSectionService {
 
         if (Collections.disjoint(userEnhancements, permittedEnhancements)) {
             Action action = actionService.getViewEditAction(application);
-            actionService.throwWorkflowPermissionException(application, action);
+            throw new WorkflowPermissionException(application, action);
         }
 
         if (application.isSubmitted()) {

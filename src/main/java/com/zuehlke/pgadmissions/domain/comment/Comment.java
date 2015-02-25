@@ -754,6 +754,10 @@ public class Comment {
         }
         return false;
     }
+    
+    public boolean isCreateComment() {
+    	return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE;
+    }
 
     public boolean isViewEditComment() {
         return action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE;

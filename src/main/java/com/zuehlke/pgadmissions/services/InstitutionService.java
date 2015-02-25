@@ -41,6 +41,7 @@ import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
@@ -288,7 +289,7 @@ public class InstitutionService {
                 institution.setLogoDocument(documentService.getExternalFile(FileCategory.IMAGE, logoDocumentLink));
             } catch (IOException e) {
                 Action action = actionService.getById(actionId);
-                actionService.throwWorkflowPermissionException(institution, action);
+                throw new WorkflowPermissionException(institution, action);
             }
         } else {
             Document image = documentService.getById(logoDocumentDTO.getId(), FileCategory.IMAGE);

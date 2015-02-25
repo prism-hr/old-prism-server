@@ -7,7 +7,7 @@ import org.joda.time.DateTime;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 
-public class ResourceConsoleListRowDTO {
+public class ResourceListRowDTO {
 
     private Integer systemId;
 

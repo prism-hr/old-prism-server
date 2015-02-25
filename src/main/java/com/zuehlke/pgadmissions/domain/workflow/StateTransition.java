@@ -122,6 +122,10 @@ public class StateTransition implements IUniqueEntity {
         this.stateTransitionEvaluation = stateTransitionEvaluation;
         return this;
     }
+    
+    public boolean hasPropagatedActions() {
+    	return propagatedActions.size() > 0;
+    }
 
     @Override
     public ResourceSignature getResourceSignature() {

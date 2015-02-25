@@ -7,22 +7,22 @@ public class WorkflowPermissionException extends RuntimeException {
 
     private static final long serialVersionUID = -116272246657153672L;
 
+    private Resource fallbackResource;
+    
     private Action fallbackAction;
 
-    private Resource fallbackResource;
-
-    public WorkflowPermissionException(String message, Action fallbackAction, Resource fallbackResource) {
-        super(message);
+    public WorkflowPermissionException(Resource fallbackResource, Action fallbackAction) {
+    	super();
         this.fallbackAction = fallbackAction;
         this.fallbackResource = fallbackResource;
     }
 
-    public final Action getFallbackAction() {
-        return fallbackAction;
-    }
-
     public final Resource getFallbackResource() {
         return fallbackResource;
+    }
+    
+    public final Action getFallbackAction() {
+        return fallbackAction;
     }
 
 }

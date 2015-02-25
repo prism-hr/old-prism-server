@@ -2,15 +2,12 @@ package com.zuehlke.pgadmissions.domain.workflow;
 
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -38,10 +35,6 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "ROLE_EXCLUSION", joinColumns = {@JoinColumn(name = "role_id", nullable = false)}, inverseJoinColumns = {@JoinColumn(name = "excluded_role_id", nullable = false)})
-    private Set<Role> excludedRoles = Sets.newHashSet();
 
     @OneToMany(mappedBy = "role")
     private Set<UserRole> userRoles = Sets.newHashSet();
@@ -81,10 +74,6 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
 
     public Set<UserRole> getUserRoles() {
         return userRoles;
-    }
-
-    public Set<Role> getExcludedRoles() {
-        return excludedRoles;
     }
 
     public Set<StateActionAssignment> getStateActionAssignments() {

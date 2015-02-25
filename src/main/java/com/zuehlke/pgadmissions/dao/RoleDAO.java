@@ -123,7 +123,7 @@ public class RoleDAO {
 
     public Role getCreatorRole(Resource resource) {
         return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class) //
-                .add(Restrictions.eq("scope.id", PrismScope.getResourceScope(resource.getClass()))) //
+                .add(Restrictions.eq("scope.id", PrismScope.getByResourceClass(resource.getClass()))) //
                 .add(Restrictions.eq("scopeCreator", true)) //
                 .uniqueResult();
     }
@@ -176,7 +176,7 @@ public class RoleDAO {
     public List<PrismRole> getUserRoles(Resource resource, User user) {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("role.id")).add(Restrictions.eq("user", user)) //
-                .add(Restrictions.eq(PrismScope.getResourceScope(resource.getClass()).getLowerCaseName(), resource)) //
+                .add(Restrictions.eq(PrismScope.getByResourceClass(resource.getClass()).getLowerCaseName(), resource)) //
                 .list();
     }
 

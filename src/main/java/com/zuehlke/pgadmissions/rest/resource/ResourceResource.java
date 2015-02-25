@@ -42,7 +42,8 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
+import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
+import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestApiUtils;
 import com.zuehlke.pgadmissions.rest.dto.ActionDTO;
@@ -139,8 +140,8 @@ public class ResourceResource {
 
         Set<ActionRepresentation> permittedActions = actionService.getPermittedActions(resource, currentUser);
         if (permittedActions.isEmpty()) {
-            Action viewEditAction = actionService.getViewEditAction(resource);
-            actionService.throwWorkflowPermissionException(resource, viewEditAction);
+            Action action = actionService.getViewEditAction(resource);
+            throw new WorkflowPermissionException(resource, action);
         }
         representation.setActions(permittedActions);
         representation.setRecommendedNextStates(stateService.getRecommendedNextStates(resource));
@@ -191,7 +192,7 @@ public class ResourceResource {
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
         HashMultimap<PrismState, PrismAction> creationActions = actionService.getCreateResourceActionsByState(resourceScope);
 
-        for (ResourceConsoleListRowDTO rowDTO : resourceService.getResourceList(resourceScope, filterDTO, lastSequenceIdentifier)) {
+        for (ResourceListRowDTO rowDTO : resourceService.getResourceList(resourceScope, filterDTO, lastSequenceIdentifier)) {
             ResourceListRowRepresentation representation = beanMapper.map(rowDTO, ResourceListRowRepresentation.class);
             representation.setResourceScope(resourceScope);
             representation.setId((Integer) PropertyUtils.getSimpleProperty(rowDTO, resourceScope.getLowerCaseName() + "Id"));
@@ -287,7 +288,7 @@ public class ResourceResource {
     }
 
     private void addActions(User currentUser, PrismScope resourceScope, HashMultimap<PrismState, PrismAction> creationActions,
-                            ResourceConsoleListRowDTO rowDTO, ResourceListRowRepresentation representation) {
+                            ResourceListRowDTO rowDTO, ResourceListRowRepresentation representation) {
         representation.setActions(actionService.getPermittedActions(resourceScope, rowDTO.getSystemId(), rowDTO.getInstitutionId(), rowDTO.getProgramId(),
                 rowDTO.getProjectId(), rowDTO.getApplicationId(), currentUser));
         for (PrismAction creationAction : creationActions.get(rowDTO.getStateId())) {

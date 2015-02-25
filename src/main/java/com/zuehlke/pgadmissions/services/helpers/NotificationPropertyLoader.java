@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.services.helpers;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_DIRECTIONS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ACTIVATE_ACCOUNT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_PLURAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_CONTENT_NOT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
@@ -12,11 +12,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_HELPDESK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_HELPDESK_REPORT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_HOMEPAGE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_INSTITUTION_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_INSTITUTION_PLURAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROCEED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_LIST;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROJECT_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROJECT_PLURAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_USER_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VIEW_EDIT;
@@ -284,7 +283,7 @@ public class NotificationPropertyLoader {
     }
 
     public String getSystemApplicationHomepage() throws IOException, TemplateException {
-        return buildRedirectionControl(SYSTEM_APPLICATION_LIST);
+        return buildRedirectionControl(SYSTEM_APPLICATION_PLURAL);
     }
 
     public String getSystemApplicationRecommendation() throws IOException, TemplateException, AbortMailSendException {
@@ -315,15 +314,15 @@ public class NotificationPropertyLoader {
     }
 
     public String getSystemProjectHomepage() throws IOException, TemplateException {
-        return buildRedirectionControl(SYSTEM_PROJECT_LIST);
+        return buildRedirectionControl(SYSTEM_PROJECT_PLURAL);
     }
 
     public String getSystemProgramHomepage() throws IOException, TemplateException {
-        return buildRedirectionControl(SYSTEM_PROGRAM_LIST);
+        return buildRedirectionControl(PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_PLURAL);
     }
 
     public String getSystemInstitutionHomepage() throws IOException, TemplateException {
-        return buildRedirectionControl(SYSTEM_INSTITUTION_LIST);
+        return buildRedirectionControl(SYSTEM_INSTITUTION_PLURAL);
     }
 
     public String getSystemUserNewPassword() throws IOException, TemplateException {

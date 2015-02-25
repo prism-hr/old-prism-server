@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO;
+import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
 
@@ -121,10 +121,10 @@ public class ResourceDAO {
                 .executeUpdate();
     }
 
-    public List<ResourceConsoleListRowDTO> getResourceConsoleList(User user, PrismScope scopeId, List<PrismScope> parentScopeIds,
+    public List<ResourceListRowDTO> getResourceConsoleList(User user, PrismScope scopeId, List<PrismScope> parentScopeIds,
                                                                   Set<Integer> assignedResources, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords, boolean hasRedactions) {
         if (assignedResources.isEmpty()) {
-            return new ArrayList<ResourceConsoleListRowDTO>(0);
+            return new ArrayList<ResourceListRowDTO>(0);
         }
 
         Class<? extends Resource> resourceClass = scopeId.getResourceClass();
@@ -174,7 +174,7 @@ public class ResourceDAO {
         criteria.add(Restrictions.in("id", assignedResources));
 
         return ResourceListConstraintBuilder.appendLimitCriterion(criteria, filter, lastSequenceIdentifier, maxRecords)
-                .setResultTransformer(Transformers.aliasToBean(ResourceConsoleListRowDTO.class)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceListRowDTO.class)) //
                 .list();
     }
 

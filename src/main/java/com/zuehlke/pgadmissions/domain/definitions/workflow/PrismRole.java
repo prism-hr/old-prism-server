@@ -18,7 +18,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
@@ -55,28 +54,7 @@ public enum PrismRole {
 
     private PrismDisplayPropertyDefinition displayPropertyDefinition;
 
-    private static final HashMultimap<PrismRole, PrismRole> excludedRoles = HashMultimap.create();
-
     private static HashMultimap<PrismScope, PrismRole> scopeOwners = HashMultimap.create();
-
-    static {
-        excludedRoles.put(PrismRole.APPLICATION_ADMINISTRATOR, PrismRole.APPLICATION_CREATOR);
-        excludedRoles.put(PrismRole.APPLICATION_INTERVIEWER, PrismRole.APPLICATION_CREATOR);
-        excludedRoles.put(PrismRole.APPLICATION_POTENTIAL_INTERVIEWER, PrismRole.APPLICATION_CREATOR);
-        excludedRoles.put(PrismRole.APPLICATION_PRIMARY_SUPERVISOR, PrismRole.APPLICATION_CREATOR);
-        excludedRoles.put(PrismRole.APPLICATION_REFEREE, PrismRole.APPLICATION_CREATOR);
-        excludedRoles.put(PrismRole.APPLICATION_REVIEWER, PrismRole.APPLICATION_CREATOR);
-        excludedRoles.put(PrismRole.APPLICATION_SECONDARY_SUPERVISOR, PrismRole.APPLICATION_CREATOR);
-        excludedRoles.put(PrismRole.APPLICATION_SUGGESTED_SUPERVISOR, PrismRole.APPLICATION_CREATOR);
-        excludedRoles.put(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROJECT_SECONDARY_SUPERVISOR);
-        excludedRoles.put(PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.PROJECT_PRIMARY_SUPERVISOR);
-
-        for (PrismRole role : PrismRole.values()) {
-            if (role.isScopeOwner()) {
-                scopeOwners.put(role.getScope(), role);
-            }
-        }
-    }
 
     private PrismRole(boolean scopeOwner, PrismScope scope, PrismDisplayPropertyDefinition displayPropertyDefinition) {
         this.scopeOwner = scopeOwner;
@@ -94,10 +72,6 @@ public enum PrismRole {
 
     public final PrismDisplayPropertyDefinition getDisplayPropertyDefinition() {
         return displayPropertyDefinition;
-    }
-
-    public static Set<PrismRole> getExcludedRoles(PrismRole role) {
-        return excludedRoles.get(role) == null ? new HashSet<PrismRole>() : excludedRoles.get(role);
     }
 
     public static Set<PrismRole> getScopeOwners(PrismScope scope) {

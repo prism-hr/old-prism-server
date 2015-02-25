@@ -1,26 +1,21 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-
-import javax.xml.bind.JAXBException;
-
+import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.services.AdvertService;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.services.AdvertService;
+import java.util.List;
 
 @Component
-public class AdvertServiceHelperExchangeRate extends AbstractServiceHelper {
-    
+public class AdvertServiceHelperExchangeRate implements AbstractServiceHelper {
+
     @Autowired
     private AdvertService advertService;
-    
+
     @Override
-    public void execute() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, JAXBException {
+    public void execute() {
         LocalDate baseline = new LocalDate();
         List<Advert> adverts = advertService.getAdvertsWithElapsedCurrencyConversions(baseline);
         for (Advert advert : adverts) {

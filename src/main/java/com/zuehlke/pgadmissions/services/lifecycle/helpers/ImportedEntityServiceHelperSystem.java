@@ -39,7 +39,7 @@ import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
 @Component
-public class ImportedEntityServiceHelperSystem extends AbstractServiceHelper {
+public class ImportedEntityServiceHelperSystem implements AbstractServiceHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ImportedEntityServiceHelperSystem.class);
 

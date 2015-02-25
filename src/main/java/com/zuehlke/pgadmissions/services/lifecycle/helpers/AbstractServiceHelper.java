@@ -1,8 +1,7 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-public abstract class AbstractServiceHelper {
+public interface AbstractServiceHelper {
 
-    public abstract void execute() throws
-            Exception;
+    public void execute() throws Exception;
 
 }

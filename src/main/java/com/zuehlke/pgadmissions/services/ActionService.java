@@ -145,7 +145,7 @@ public class ActionService {
     }
 
     public Set<ActionRepresentation> getPermittedActions(PrismScope resourceScope, Integer systemId, Integer institutionId, Integer programId,
-            Integer projectId, Integer applicationId, User user) {
+                                                         Integer projectId, Integer applicationId, User user) {
         return Sets.newLinkedHashSet(actionDAO.getPermittedActions(resourceScope,
                 ObjectUtils.firstNonNull(applicationId, projectId, programId, institutionId, systemId), systemId, institutionId, programId, projectId,
                 applicationId, user));
@@ -164,8 +164,8 @@ public class ActionService {
         return executeAction(resource, action, comment);
     }
 
-    public ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment) throws DeduplicationException, InstantiationException,
-            IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
+    public ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment) throws DeduplicationException,
+            BeansException, WorkflowEngineException, IOException, IntegrationException {
         User actionOwner = comment.getUser();
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE || action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE) {

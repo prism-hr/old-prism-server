@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.domain.resource;
+package com.zuehlke.pgadmissions.domain.comment;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -9,7 +9,7 @@ import org.joda.time.DateTime;
 import com.zuehlke.pgadmissions.domain.definitions.MeetingMode;
 
 @Embeddable
-public class ResourceBatchApplicationShortlisting {
+public class CommentApplicationShortlistingPanel {
 
 	@Column(name = "application_shortlisting_mode", nullable = false)
 	private MeetingMode mode;
@@ -34,12 +34,12 @@ public class ResourceBatchApplicationShortlisting {
 		this.deadline = deadline;
 	}
 
-	public ResourceBatchApplicationShortlisting withMode(MeetingMode mode) {
+	public CommentApplicationShortlistingPanel withMode(MeetingMode mode) {
 		this.mode = mode;
 		return this;
 	}
 
-	public ResourceBatchApplicationShortlisting withDeadline(DateTime deadline) {
+	public CommentApplicationShortlistingPanel withDeadline(DateTime deadline) {
 		this.deadline = deadline;
 		return this;
 	}

@@ -32,8 +32,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQue
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PrismReminderDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismResourceBatch;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismResourceBatchType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismResourceBatchProcess;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
@@ -49,6 +48,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.resource.ResourceBatchProcess;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -68,7 +68,6 @@ import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.StateTermination;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
-import com.zuehlke.pgadmissions.domain.workflow.StateTransitionResourceBatch;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
@@ -163,69 +162,73 @@ public class SystemService {
 	@Transactional(timeout = 600)
 	public void initializeSystem() throws WorkflowConfigurationException, DeduplicationException, CustomizationException, InstantiationException,
 	        IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
-		LOGGER.info("Initialising scope definitions");
+		LOGGER.info("Initializing scope definitions");
 		verifyBackwardCompatibility(Scope.class);
 		initializeScopes();
 
-		LOGGER.info("Initialising role definitions");
+		LOGGER.info("Initializing role definitions");
 		verifyBackwardCompatibility(Role.class);
 		initializeRoles();
 
-		LOGGER.info("Initialising action custom question definitions");
+		LOGGER.info("Initializing action custom question definitions");
 		verifyBackwardCompatibility(ActionCustomQuestionDefinition.class);
 		initializeActionCustomQuestionDefinitions();
 
-		LOGGER.info("Initialising action definitions");
+		LOGGER.info("Initializing action definitions");
 		verifyBackwardCompatibility(Action.class);
 		initializeActions();
 
-		LOGGER.info("Initialising state group definitions");
+		LOGGER.info("Initializing state group definitions");
 		verifyBackwardCompatibility(StateGroup.class);
 		initializeStateGroups();
 
-		LOGGER.info("Initialising state transition evaluation definitions");
+		LOGGER.info("Initializing state transition evaluation definitions");
 		verifyBackwardCompatibility(StateTransitionEvaluation.class);
 		initializeStateTransitionEvaluations();
 
-		LOGGER.info("Initialising state duration definitions");
+		LOGGER.info("Initializing state duration definitions");
 		verifyBackwardCompatibility(StateDurationDefinition.class);
 		initializeStateDurationDefinitions();
 
-		LOGGER.info("Initialising state definitions");
+		LOGGER.info("Initializing state definitions");
 		verifyBackwardCompatibility(State.class);
 		initializeStates();
 
-		LOGGER.info("Initialising display property definitions");
+		LOGGER.info("Initializing display property definitions");
 		verifyBackwardCompatibility(DisplayPropertyDefinition.class);
 		initializeDisplayPropertyDefinitions();
 
-		LOGGER.info("Initialising workflow property definitions");
+		LOGGER.info("Initializing workflow property definitions");
 		verifyBackwardCompatibility(WorkflowPropertyDefinition.class);
 		initializeWorkflowPropertyDefinitions();
 
-		LOGGER.info("Initialising notification definitions");
+		LOGGER.info("Initializing notification definitions");
 		verifyBackwardCompatibility(NotificationDefinition.class);
 		initializeNotificationDefinitions();
 
-		LOGGER.info("Initialising state action definitions");
+		LOGGER.info("Initializing resource batch processes");
+		verifyBackwardCompatibility(ResourceBatchProcess.class);
+		initializeResourceBatchProcesses();
+
+		LOGGER.info("Initializing state action definitions");
 		initializeStateActions();
 
-		LOGGER.info("Initialising system object");
+		LOGGER.info("Initializing system object");
 		System system = initializeSystemResource();
 
-		LOGGER.info("Initialising state duration configurations");
+		LOGGER.info("Initializing state duration configurations");
 		initializeStateDurationConfigurations(system);
 
-		LOGGER.info("Initialising display property configurations");
+		LOGGER.info("Initializing display property configurations");
 		initializeDisplayPropertyConfigurations(system);
 
-		LOGGER.info("Initialising workflow property configurations");
+		LOGGER.info("Initializing workflow property configurations");
 		initializeWorkflowPropertyConfigurations(system);
 
-		LOGGER.info("Initialising notification configurations");
+		LOGGER.info("Initializing notification configurations");
 		initializeNotificationConfigurations(system);
 
-		LOGGER.info("Initialising system user");
+		LOGGER.info("Initializing system user");
 		initializeSystemUser(system);
 
 		entityService.flush();
@@ -237,6 +240,7 @@ public class SystemService {
 		getSystem().setLastDataImportDate(baseline);
 	}
 
+	@Transactional
 	public SocialMetadataDTO getSocialMetadata() {
 		System system = getSystem();
 		PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(system);
@@ -298,13 +302,12 @@ public class SystemService {
 			Scope creationScope = scopeService.getById(prismAction.getCreationScope());
 			ActionCustomQuestionDefinition actionCustomQuestionDefinition = actionService
 			        .getCustomQuestionDefinitionById(prismAction.getActionCustomQuestion());
-			Action transientAction = new Action().withId(prismAction).withActionType(prismAction.getActionType())
-			        .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
-			        .withTransitionAction(prismAction.isTransitionAction()).withDeclinableAction(prismAction.isDeclinableAction())
-			        .withVisibleAction(prismAction.isVisibleAction()).withConcludeParentAction(prismAction.isConcludeParentAction())
-			        .withActionCustomQuestionDefinition(actionCustomQuestionDefinition)
-			        .withScope(scope).withCreationScope(creationScope);
-			Action action = entityService.createOrUpdate(transientAction);
+			Action action = entityService.createOrUpdate(new Action().withId(prismAction).withActionType(prismAction.getActionType())
+			        .withActionCategory(prismAction.getActionCategory()).withActionBehaviour(prismAction.getActionBehaviour())
+			        .withRatingAction(prismAction.isRatingAction()).withTransitionAction(prismAction.isTransitionAction())
+			        .withDeclinableAction(prismAction.isDeclinableAction()).withVisibleAction(prismAction.isVisibleAction())
+			        .withConcludeParentAction(prismAction.isConcludeParentAction()).withActionCustomQuestionDefinition(actionCustomQuestionDefinition)
+			        .withScope(scope).withCreationScope(creationScope));
 			action.getRedactions().clear();
 
 			for (PrismActionRedaction prismActionRedaction : prismAction.getRedactions()) {
@@ -326,9 +329,8 @@ public class SystemService {
 	private void initializeStateGroups() throws DeduplicationException {
 		for (PrismStateGroup prismStateGroup : PrismStateGroup.values()) {
 			Scope scope = scopeService.getById(prismStateGroup.getScope());
-			StateGroup transientStateGroup = new StateGroup().withId(prismStateGroup).withSequenceOrder(prismStateGroup.getSequenceOrder())
-			        .withRepeatable(prismStateGroup.isRepeatable()).withScope(scope);
-			entityService.createOrUpdate(transientStateGroup);
+			entityService.createOrUpdate(new StateGroup().withId(prismStateGroup).withSequenceOrder(prismStateGroup.getSequenceOrder())
+			        .withRepeatable(prismStateGroup.isRepeatable()).withScope(scope));
 		}
 	}
 
@@ -399,6 +401,19 @@ public class SystemService {
 			NotificationDefinition reminderDefinition = definitions.get(prismRequestDefinition.getReminderDefinition());
 			requestDefinition.setReminderDefinition(reminderDefinition);
 		}
+	}
+
+	private void initializeResourceBatchProcesses() {
+		for (PrismResourceBatchProcess prismResourceBatchProcess : PrismResourceBatchProcess.values()) {
+			Scope scope = scopeService.getById(prismResourceBatchProcess.getScope());
+			ResourceBatchProcess resourceBatchProcess = entityService.createOrUpdate(new ResourceBatchProcess().withId(prismResourceBatchProcess).withScope(
+			        scope));
+			for (PrismScope prismBatchScope : prismResourceBatchProcess.getBatchScopes()) {
+				Scope batchScope = scopeService.getById(prismBatchScope);
+				resourceBatchProcess.addBatchScope(batchScope);
+			}
+		}
+
 	}
 
 	private System initializeSystemResource() throws DeduplicationException {
@@ -496,6 +511,11 @@ public class SystemService {
 	}
 
 	private void initializeStateActions() throws DeduplicationException, WorkflowConfigurationException {
+		roleService.deleteRoleTransitions();
+		stateService.deleteStateTerminations();
+		stateService.deleteStateTransitions();
+		stateService.deleteStateActionAssignments();
+		stateService.deleteStateActionNotifications();
 		stateService.deleteStateActions();
 
 		for (State state : stateService.getStates()) {
@@ -545,29 +565,14 @@ public class SystemService {
 		for (PrismStateTransition prismStateTransition : prismStateAction.getTransitions()) {
 			State transitionState = stateService.getById(prismStateTransition.getTransitionState());
 			Action transitionAction = actionService.getById(prismStateTransition.getTransitionAction());
+
 			StateTransitionEvaluation transitionEvaluation = stateService.getStateTransitionEvaluationById(prismStateTransition.getStateTransitionEvaluation());
+			ResourceBatchProcess resourceBatchProcessStart = resourceService.getResourceBatchProcessById(prismStateTransition.getResourceBatchProcessJoin());
+			ResourceBatchProcess resourceBatchProcessClose = resourceService.getResourceBatchProcessById(prismStateTransition.getResourceBatchProcessExit());
+
 			StateTransition stateTransition = new StateTransition().withStateAction(stateAction).withTransitionState(transitionState)
-			        .withTransitionAction(transitionAction).withStateTransitionEvaluation(transitionEvaluation);
-
-			PrismResourceBatch prismResourceBatchStart = prismStateTransition.getResourceBatchStart();
-			if (prismResourceBatchStart != null) {
-				PrismResourceBatchType resourceBatchStartType = prismResourceBatchStart.getResourceBatchType();
-				Scope scope = scopeService.getById(prismResourceBatchStart.getResourceBatchType().getScope());
-				StateTransitionResourceBatch resourceBatchStart = entityService.getOrCreate(new StateTransitionResourceBatch().withId(
-				        resourceBatchStartType).withScope(scope));
-				for (PrismRole prismRole : prismResourceBatchStart.getRoleAssignments()) {
-					Role role = roleService.getById(prismRole);
-					resourceBatchStart.addRoleAssignment(role);
-				}
-				stateTransition.setResourceBatchStart(resourceBatchStart);
-			}
-
-			PrismResourceBatch prismResourceBatchClose = prismStateTransition.getResourceBatchClose();
-			if (prismResourceBatchClose != null) {
-				StateTransitionResourceBatch resourceBatchClose = stateService.getStateTransitionResourceBatchById(prismResourceBatchClose
-				        .getResourceBatchType());
-				stateTransition.setResourceBatchClose(resourceBatchClose);
-			}
+			        .withTransitionAction(transitionAction).withStateTransitionEvaluation(transitionEvaluation)
+			        .withResourceBatchProcessJoin(resourceBatchProcessStart).withResourceBatchProcessExit(resourceBatchProcessClose);
 
 			entityService.save(stateTransition);
 			stateAction.getStateTransitions().add(stateTransition);
@@ -638,8 +643,7 @@ public class SystemService {
 		try {
 			entityService.list(workflowResourceClass);
 		} catch (IllegalArgumentException e) {
-			throw new WorkflowConfigurationException("You attempted to remove an entity of type " + workflowResourceClass.getSimpleName()
-			        + " which is required for backward compatibility by the workflow engine", e);
+			throw new WorkflowConfigurationException("Entity of type " + workflowResourceClass.getSimpleName() + " required for backward compatibility", e);
 		}
 	}
 

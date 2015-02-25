@@ -15,6 +15,7 @@ import javax.persistence.Table;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionBehaviour;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 
@@ -22,233 +23,270 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 @Table(name = "ACTION")
 public class Action extends WorkflowDefinition {
 
-    @Id
-    @Column(name = "id", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PrismAction id;
+	@Id
+	@Column(name = "id", nullable = false)
+	@Enumerated(EnumType.STRING)
+	private PrismAction id;
 
-    @Column(name = "action_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PrismActionType actionType;
+	@Column(name = "action_type", nullable = false)
+	@Enumerated(EnumType.STRING)
+	private PrismActionType actionType;
 
-    @Column(name = "action_category", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PrismActionCategory actionCategory;
+	@Column(name = "action_category", nullable = false)
+	@Enumerated(EnumType.STRING)
+	private PrismActionCategory actionCategory;
 
-    @Column(name = "rating_action", nullable = false)
-    private Boolean ratingAction;
+	@Column(name = "action_behaviour", nullable = false)
+	@Enumerated(EnumType.STRING)
+	private PrismActionBehaviour actionBehaviour;
 
-    @Column(name = "transition_action", nullable = false)
-    private Boolean transitionAction;
+	@Column(name = "rating_action", nullable = false)
+	private Boolean ratingAction;
 
-    @Column(name = "declinable_action", nullable = false)
-    private Boolean declinableAction;
-    
-    @Column(name = "visible_action", nullable = false)
-    private Boolean visibleAction;
+	@Column(name = "transition_action", nullable = false)
+	private Boolean transitionAction;
 
-    @Column(name = "conclude_parent_action", nullable = false)
-    private Boolean concludeParentAction;
+	@Column(name = "declinable_action", nullable = false)
+	private Boolean declinableAction;
 
-    @OneToOne
-    @JoinColumn(name = "action_custom_question_definition_id")
-    private ActionCustomQuestionDefinition actionCustomQuestionDefinition;
+	@Column(name = "visible_action", nullable = false)
+	private Boolean visibleAction;
 
-    @ManyToOne
-    @JoinColumn(name = "scope_id", nullable = false)
-    private Scope scope;
+	@Column(name = "batch_action", nullable = false)
+	private Boolean batchAction;
 
-    @ManyToOne
-    @JoinColumn(name = "fallback_action_id")
-    private Action fallbackAction;
+	@Column(name = "conclude_parent_action", nullable = false)
+	private Boolean concludeParentAction;
 
-    @ManyToOne
-    @JoinColumn(name = "creation_scope_id")
-    private Scope creationScope;
+	@OneToOne
+	@JoinColumn(name = "action_custom_question_definition_id")
+	private ActionCustomQuestionDefinition actionCustomQuestionDefinition;
 
-    @OneToMany(mappedBy = "action")
-    private Set<ActionRedaction> redactions = Sets.newHashSet();
+	@ManyToOne
+	@JoinColumn(name = "scope_id", nullable = false)
+	private Scope scope;
 
-    @OneToMany(mappedBy = "action")
-    private Set<StateAction> stateActions = Sets.newHashSet();
+	@ManyToOne
+	@JoinColumn(name = "fallback_action_id")
+	private Action fallbackAction;
 
-    @Override
-    public PrismAction getId() {
-        return id;
-    }
+	@ManyToOne
+	@JoinColumn(name = "creation_scope_id")
+	private Scope creationScope;
 
-    public void setId(PrismAction id) {
-        this.id = id;
-    }
+	@OneToMany(mappedBy = "action")
+	private Set<ActionRedaction> redactions = Sets.newHashSet();
 
-    public PrismActionType getActionType() {
-        return actionType;
-    }
+	@OneToMany(mappedBy = "action")
+	private Set<StateAction> stateActions = Sets.newHashSet();
 
-    public void setActionType(PrismActionType actionType) {
-        this.actionType = actionType;
-    }
+	@Override
+	public PrismAction getId() {
+		return id;
+	}
 
-    public PrismActionCategory getActionCategory() {
-        return actionCategory;
-    }
+	public void setId(PrismAction id) {
+		this.id = id;
+	}
 
-    public void setActionCategory(PrismActionCategory actionCategory) {
-        this.actionCategory = actionCategory;
-    }
+	public PrismActionType getActionType() {
+		return actionType;
+	}
 
-    public final Boolean getRatingAction() {
-        return ratingAction;
-    }
+	public void setActionType(PrismActionType actionType) {
+		this.actionType = actionType;
+	}
 
-    public final void setRatingAction(Boolean ratingAction) {
-        this.ratingAction = ratingAction;
-    }
+	public PrismActionCategory getActionCategory() {
+		return actionCategory;
+	}
 
-    public final Boolean getTransitionAction() {
-        return transitionAction;
-    }
+	public void setActionCategory(PrismActionCategory actionCategory) {
+		this.actionCategory = actionCategory;
+	}
 
-    public final void setTransitionAction(Boolean transitionAction) {
-        this.transitionAction = transitionAction;
-    }
+	public PrismActionBehaviour getActionBehaviour() {
+		return actionBehaviour;
+	}
 
-    public final Boolean getDeclinableAction() {
-        return declinableAction;
-    }
+	public void setActionBehaviour(PrismActionBehaviour actionBehaviour) {
+		this.actionBehaviour = actionBehaviour;
+	}
 
-    public final void setDeclinableAction(Boolean declinableAction) {
-        this.declinableAction = declinableAction;
-    }
-    
-    public final Boolean getVisibleAction() {
-        return visibleAction;
-    }
+	public final Boolean getRatingAction() {
+		return ratingAction;
+	}
 
-    public final void setVisibleAction(Boolean visibleAction) {
-        this.visibleAction = visibleAction;
-    }
+	public final void setRatingAction(Boolean ratingAction) {
+		this.ratingAction = ratingAction;
+	}
 
-    public final Boolean getConcludeParentAction() {
-        return concludeParentAction;
-    }
+	public final Boolean getTransitionAction() {
+		return transitionAction;
+	}
 
-    public final void setConcludeParentAction(Boolean concludeParentAction) {
-        this.concludeParentAction = concludeParentAction;
-    }
+	public final void setTransitionAction(Boolean transitionAction) {
+		this.transitionAction = transitionAction;
+	}
 
-    public final ActionCustomQuestionDefinition getActionCustomQuestionDefinition() {
-        return actionCustomQuestionDefinition;
-    }
+	public final Boolean getDeclinableAction() {
+		return declinableAction;
+	}
 
-    public final void setActionCustomQuestionDefinition(ActionCustomQuestionDefinition actionCustomQuestionDefinition) {
-        this.actionCustomQuestionDefinition = actionCustomQuestionDefinition;
-    }
+	public final void setDeclinableAction(Boolean declinableAction) {
+		this.declinableAction = declinableAction;
+	}
 
-    public final Action getFallbackAction() {
-        return fallbackAction;
-    }
+	public final Boolean getVisibleAction() {
+		return visibleAction;
+	}
 
-    public final void setFallbackAction(Action fallbackAction) {
-        this.fallbackAction = fallbackAction;
-    }
+	public final void setVisibleAction(Boolean visibleAction) {
+		this.visibleAction = visibleAction;
+	}
 
-    @Override
-    public Scope getScope() {
-        return scope;
-    }
+	public Boolean getBatchAction() {
+		return batchAction;
+	}
 
-    @Override
-    public void setScope(Scope scope) {
-        this.scope = scope;
-    }
+	public void setBatchAction(Boolean batchAction) {
+		this.batchAction = batchAction;
+	}
 
-    public Scope getCreationScope() {
-        return creationScope;
-    }
+	public final Boolean getConcludeParentAction() {
+		return concludeParentAction;
+	}
 
-    public void setCreationScope(Scope creationScope) {
-        this.creationScope = creationScope;
-    }
+	public final void setConcludeParentAction(Boolean concludeParentAction) {
+		this.concludeParentAction = concludeParentAction;
+	}
 
-    public Set<ActionRedaction> getRedactions() {
-        return redactions;
-    }
+	public final ActionCustomQuestionDefinition getActionCustomQuestionDefinition() {
+		return actionCustomQuestionDefinition;
+	}
 
-    public final Set<StateAction> getStateActions() {
-        return stateActions;
-    }
+	public final void setActionCustomQuestionDefinition(ActionCustomQuestionDefinition actionCustomQuestionDefinition) {
+		this.actionCustomQuestionDefinition = actionCustomQuestionDefinition;
+	}
 
-    public final void setStateActions(Set<StateAction> stateActions) {
-        this.stateActions = stateActions;
-    }
+	public final Action getFallbackAction() {
+		return fallbackAction;
+	}
 
-    public final void setRedactions(Set<ActionRedaction> redactions) {
-        this.redactions = redactions;
-    }
+	public final void setFallbackAction(Action fallbackAction) {
+		this.fallbackAction = fallbackAction;
+	}
 
-    public Action withId(PrismAction id) {
-        this.id = id;
-        return this;
-    }
+	@Override
+	public Scope getScope() {
+		return scope;
+	}
 
-    public Action withActionType(PrismActionType actionType) {
-        this.actionType = actionType;
-        return this;
-    }
+	@Override
+	public void setScope(Scope scope) {
+		this.scope = scope;
+	}
 
-    public Action withActionCategory(PrismActionCategory actionCategory) {
-        this.actionCategory = actionCategory;
-        return this;
-    }
+	public Scope getCreationScope() {
+		return creationScope;
+	}
 
-    public Action withRatingAction(Boolean ratingAction) {
-        this.ratingAction = ratingAction;
-        return this;
-    }
+	public void setCreationScope(Scope creationScope) {
+		this.creationScope = creationScope;
+	}
 
-    public Action withTransitionAction(Boolean transitionAction) {
-        this.transitionAction = transitionAction;
-        return this;
-    }
+	public Set<ActionRedaction> getRedactions() {
+		return redactions;
+	}
 
-    public Action withDeclinableAction(Boolean declinableAction) {
-        this.declinableAction = declinableAction;
-        return this;
-    }
+	public final Set<StateAction> getStateActions() {
+		return stateActions;
+	}
 
-    public Action withVisibleAction(Boolean visibleAction) {
-        this.visibleAction = visibleAction;
-        return this;
-    }
+	public final void setStateActions(Set<StateAction> stateActions) {
+		this.stateActions = stateActions;
+	}
 
-    public Action withConcludeParentAction(Boolean concludeParentAction) {
-        this.concludeParentAction = concludeParentAction;
-        return this;
-    }
+	public final void setRedactions(Set<ActionRedaction> redactions) {
+		this.redactions = redactions;
+	}
 
-    public Action withActionCustomQuestionDefinition(ActionCustomQuestionDefinition actionCustomQuestionDefinition) {
-        this.actionCustomQuestionDefinition = actionCustomQuestionDefinition;
-        return this;
-    }
+	public Action withId(PrismAction id) {
+		this.id = id;
+		return this;
+	}
 
-    public Action withFallbackAction(Action fallbackAction) {
-        this.fallbackAction = fallbackAction;
-        return this;
-    }
+	public Action withActionType(PrismActionType actionType) {
+		this.actionType = actionType;
+		return this;
+	}
 
-    public Action withScope(Scope scope) {
-        this.scope = scope;
-        return this;
-    }
+	public Action withActionCategory(PrismActionCategory actionCategory) {
+		this.actionCategory = actionCategory;
+		return this;
+	}
 
-    public Action withCreationScope(Scope creationScope) {
-        this.creationScope = creationScope;
-        return this;
-    }
+	public Action withActionBehaviour(PrismActionBehaviour actionBehaviour) {
+		this.actionBehaviour = actionBehaviour;
+		return this;
+	}
 
-    public boolean isCustomizableAction() {
-        return actionCustomQuestionDefinition != null;
-    }
+	public Action withRatingAction(Boolean ratingAction) {
+		this.ratingAction = ratingAction;
+		return this;
+	}
+
+	public Action withTransitionAction(Boolean transitionAction) {
+		this.transitionAction = transitionAction;
+		return this;
+	}
+
+	public Action withDeclinableAction(Boolean declinableAction) {
+		this.declinableAction = declinableAction;
+		return this;
+	}
+
+	public Action withVisibleAction(Boolean visibleAction) {
+		this.visibleAction = visibleAction;
+		return this;
+	}
+
+	public Action withBatchAction(Boolean batchAction) {
+		this.batchAction = batchAction;
+		return this;
+	}
+
+	public Action withConcludeParentAction(Boolean concludeParentAction) {
+		this.concludeParentAction = concludeParentAction;
+		return this;
+	}
+
+	public Action withActionCustomQuestionDefinition(ActionCustomQuestionDefinition actionCustomQuestionDefinition) {
+		this.actionCustomQuestionDefinition = actionCustomQuestionDefinition;
+		return this;
+	}
+
+	public Action withFallbackAction(Action fallbackAction) {
+		this.fallbackAction = fallbackAction;
+		return this;
+	}
+
+	public Action withScope(Scope scope) {
+		this.scope = scope;
+		return this;
+	}
+
+	public Action withCreationScope(Scope creationScope) {
+		this.creationScope = creationScope;
+		return this;
+	}
+
+	public boolean isCreationAction() {
+		return actionCategory == PrismActionCategory.CREATE_RESOURCE;
+	}
+
+	public boolean isCustomizableAction() {
+		return actionCustomQuestionDefinition != null;
+	}
 
 }

@@ -599,7 +599,7 @@ public class ApplicationDownloadBuilder {
 
             if (cvEnabled) {
                 addBookmark(body, propertyLoader.load(APPLICATION_DOCUMENT_CV_APPENDIX),
-                        documentSection == null ? null : documentSection.getPersonalStatement(), applicationDownloadDTO);
+                        documentSection == null ? null : documentSection.getCv(), applicationDownloadDTO);
             }
 
             if (researchStatementEnabled) {

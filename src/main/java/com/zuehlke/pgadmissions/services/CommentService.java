@@ -672,7 +672,6 @@ public class CommentService {
 	}
 
 	private void createCommentTransitionStates(Comment comment, State transitionState, Set<State> stateTerminations) {
-		comment.addCommentTransitionState(transitionState, true);
 		for (State secondaryTransitionState : comment.getSecondaryTransitionStates()) {
 			if (stateTerminations == null || !stateTerminations.contains(secondaryTransitionState)) {
 				comment.addCommentTransitionState(secondaryTransitionState, false);

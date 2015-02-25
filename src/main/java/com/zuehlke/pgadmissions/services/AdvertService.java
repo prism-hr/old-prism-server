@@ -1,36 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_COMMENT_UPDATED_ADVERT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_COMMENT_UPDATED_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_COMMENT_UPDATED_CLOSING_DATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_COMMENT_UPDATED_FEE_AND_PAYMENT;
-import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
-
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.net.URI;
-import java.net.URLEncoder;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.xml.bind.JAXBException;
-
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang3.text.WordUtils;
-import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
@@ -54,14 +23,33 @@ import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.dto.AdvertCategoriesDTO;
-import com.zuehlke.pgadmissions.rest.dto.AdvertClosingDateDTO;
-import com.zuehlke.pgadmissions.rest.dto.AdvertDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.AdvertFeesAndPaymentsDTO;
-import com.zuehlke.pgadmissions.rest.dto.FinancialDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
+import com.zuehlke.pgadmissions.rest.dto.*;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.text.WordUtils;
+import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
+import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 @Service
 @Transactional
@@ -119,15 +107,15 @@ public class AdvertService {
             PrismScope parentResourceScope = parentResource.getResourceScope();
 
             switch (parentResourceScope) {
-            case INSTITUTION:
-            case PROGRAM:
-            case PROJECT:
-                ReflectionUtils.setProperty(queryDTO, parentResourceScope.getLowerCaseName() + "s", new Integer[] { parentResource.getId() });
-                break;
-            case SYSTEM:
-                break;
-            default:
-                throw new Error();
+                case INSTITUTION:
+                case PROGRAM:
+                case PROJECT:
+                    ReflectionUtils.setProperty(queryDTO, parentResourceScope.getLowerCaseName() + "s", new Integer[]{parentResource.getId()});
+                    break;
+                case SYSTEM:
+                    break;
+                default:
+                    throw new Error();
             }
         }
 
@@ -199,7 +187,7 @@ public class AdvertService {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
 
-        for (String propertyName : new String[] { "domain", "industry", "function", "competency", "theme", "institution", "programType" }) {
+        for (String propertyName : new String[]{"domain", "industry", "function", "competency", "theme", "institution", "programType"}) {
             String propertySetterName = "add" + WordUtils.capitalize(propertyName);
             List<Object> values = (List<Object>) ReflectionUtils.getProperty(categoriesDTO, pluralize(propertyName));
 
@@ -274,8 +262,7 @@ public class AdvertService {
         persistentAdvert.setClosingDate(getNextAdvertClosingDate(persistentAdvert));
     }
 
-    public void updateCurrencyConversion(Advert transientAdvert) throws IOException, JAXBException, IllegalAccessException, InvocationTargetException,
-            NoSuchMethodException {
+    public void updateCurrencyConversion(Advert transientAdvert) {
         Advert persistentAdvert = getById(transientAdvert.getId());
         LocalDate baseline = new LocalDate();
 
@@ -352,7 +339,7 @@ public class AdvertService {
     }
 
     private void setMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context)
+                                   BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Minimum" + context, minimumSpecified);
         PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Maximum" + context, maximumSpecified);
@@ -361,7 +348,7 @@ public class AdvertService {
     }
 
     private void setConvertedMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
+                                            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (rate.compareTo(new BigDecimal(0)) == 1) {
             minimumSpecified = minimumSpecified.multiply(rate).setScale(2, RoundingMode.HALF_UP);
@@ -377,8 +364,7 @@ public class AdvertService {
                 maximumGenerated, "AtLocale");
     }
 
-    private void updateConvertedMonetaryValues(AdvertFinancialDetail financialDetails, LocalDate baseline) throws IOException, JAXBException,
-            IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    private void updateConvertedMonetaryValues(AdvertFinancialDetail financialDetails, LocalDate baseline) {
         String currencySpecified = financialDetails.getCurrencySpecified();
         String currencyAtLocale = financialDetails.getCurrencyAtLocale();
 
@@ -476,7 +462,7 @@ public class AdvertService {
     }
 
     private void updateFinancialDetails(AdvertFinancialDetail financialDetails, FinancialDetailsDTO financialDetailsDTO, String currencyAtLocale,
-            LocalDate baseline) throws Exception {
+                                        LocalDate baseline) throws Exception {
         PrismDurationUnit interval = financialDetailsDTO.getInterval();
         String currencySpecified = financialDetailsDTO.getCurrency();
 

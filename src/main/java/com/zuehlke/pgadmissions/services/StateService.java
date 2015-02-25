@@ -1,10 +1,25 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.dao.StateDAO;
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewAppointment;
+import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
+import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.workflow.*;
+import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.NextStateRepresentation;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -15,47 +30,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.dao.StateDAO;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewAppointment;
-import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationEvaluation;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
-import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.domain.workflow.StateAction;
-import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
-import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
-import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
-import com.zuehlke.pgadmissions.domain.workflow.StateTermination;
-import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
-import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
-import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
-import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.IntegrationException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.NextStateRepresentation;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -149,8 +127,8 @@ public class StateService {
         return stateDAO.getStateTransitionsPending(scopeId);
     }
 
-    public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) throws DeduplicationException, InstantiationException,
-            IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
+    public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) throws DeduplicationException,
+            BeansException, WorkflowEngineException, IOException, IntegrationException {
         comment.setResource(resource);
 
         if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
@@ -162,7 +140,7 @@ public class StateService {
 
         resourceService.preProcessResource(resource, comment);
         commentService.preProcessComment(comment);
-        
+
         entityService.flush();
 
         State state = resource.getState();
@@ -446,7 +424,7 @@ public class StateService {
     }
 
     public <T extends Resource> void executeDeferredStateTransition(Class<T> resourceClass, Integer resourceId, PrismAction actionId)
-            throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException,
+            throws DeduplicationException, InstantiationException, WorkflowEngineException, IOException,
             IntegrationException {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Action action = actionService.getById(actionId);

@@ -1,22 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
-import org.springframework.beans.BeansException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BeanPropertyBindingResult;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -43,10 +26,26 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.BeansException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
 
 @Service
 @Transactional
@@ -91,7 +90,7 @@ public class UserService {
     public User getOrCreateUser(String firstName, String lastName, String email, PrismLocale locale) throws DeduplicationException {
         User user;
         User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email)
-                .withEmailValid(true).withLocale(locale);
+                .withLocale(locale);
         User duplicateUser = entityService.getDuplicateEntity(transientUser);
         if (duplicateUser == null) {
             user = transientUser;
@@ -118,7 +117,7 @@ public class UserService {
         user.getUserAccount().setEnabled(true);
         return !wasEnabled;
     }
-    
+
     public void updateUser(UserDTO userDTO) {
         User user = getCurrentUser();
         User userByEmail = getUserByEmail(userDTO.getEmail());
@@ -287,4 +286,16 @@ public class UserService {
         return user != null && Objects.equal(user.getId(), getCurrentUser().getId());
     }
 
+    public List<User> getBouncedUsers() {
+        return userDAO.getBouncedUsers();
+    }
+
+    public void correctUser(Integer userId, UserCorrectionDTO userCorrectionDTO) {
+        User user = getById(userId);
+        user.setFirstName(userCorrectionDTO.getFirstName());
+        user.setLastName(userCorrectionDTO.getLastName());
+        user.setFullName(user.getFirstName() + " " + user.getLastName());
+        user.setEmail(userCorrectionDTO.getEmail());
+        user.setEmailBouncedMessage(null);
+    }
 }

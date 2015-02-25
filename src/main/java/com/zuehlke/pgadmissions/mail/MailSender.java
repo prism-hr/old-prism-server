@@ -1,33 +1,10 @@
 package com.zuehlke.pgadmissions.mail;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EMAIL_LINK_MESSAGE;
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
-
-import javax.mail.SendFailedException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.MimeMessagePreparator;
-import org.springframework.stereotype.Component;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
-
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClient;
+import com.amazonaws.services.simpleemail.model.*;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -43,12 +20,32 @@ import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
 import com.zuehlke.pgadmissions.exceptions.AbortMailSendException;
-import com.zuehlke.pgadmissions.services.builders.pdf.mail.AttachmentInputSource;
+import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
+
+import javax.inject.Inject;
+import javax.mail.internet.InternetAddress;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EMAIL_LINK_MESSAGE;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
@@ -61,8 +58,8 @@ public class MailSender {
     @Value("${context.environment}")
     private String contextEnvironment;
 
-    @Value("${email.address.from}")
-    private String emailAddressFrom;
+    @Value("${email.source}")
+    private String emailSource;
 
     @Value("${application.url}")
     private String applicationUrl;
@@ -70,55 +67,55 @@ public class MailSender {
     @Value("${application.api.url}")
     private String applicationApiUrl;
 
-    @Autowired
-    private JavaMailSender javaMailSender;
-
-    @Autowired
+    @Inject
     private FreeMarkerConfig freemarkerConfig;
 
-    @Autowired
+    @Inject
     private MailToPlainTextConverter mailToPlainTextConverter;
 
-    @Autowired
+    @Inject
     private ApplicationContext applicationContext;
 
-    public void sendEmail(final MailMessageDTO message) {
-        final NotificationConfiguration configuration = message.getConfiguration();
+    @Inject
+    private SystemService systemService;
+
+    public void sendEmail(final MailMessageDTO messageDTO) {
+        NotificationDefinitionModelDTO modelDTO = messageDTO.getModelDTO();
+        final NotificationConfiguration configuration = messageDTO.getConfiguration();
         try {
-            Map<String, Object> model = createNotificationModel(message.getConfiguration().getNotificationDefinition(), message.getModelDTO());
+            Map<String, Object> model = createNotificationModel(messageDTO.getConfiguration().getNotificationDefinition(), modelDTO);
             final String subject = processHeader(configuration.getNotificationDefinition().getId(), configuration.getSubject(), model);
 
-            Institution institution = message.getModelDTO().getResource().getInstitution();
+            Institution institution = modelDTO.getResource().getInstitution();
             Document logoDocument = institution != null ? institution.getLogoDocument() : null;
-            final String htmlContent = processContent(configuration.getNotificationDefinition().getId(), configuration.getContent(), model, subject,
+            final String html = processContent(configuration.getNotificationDefinition().getId(), configuration.getContent(), model, subject,
                     logoDocument);
-            final String plainTextContent = mailToPlainTextConverter.getPlainText(htmlContent) + "\n\n" + propertyLoader.load(SYSTEM_EMAIL_LINK_MESSAGE);
+            final String plainText = mailToPlainTextConverter.getPlainText(html) + "\n\n" + propertyLoader.load(SYSTEM_EMAIL_LINK_MESSAGE);
 
-            if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat")) {
-                LOGGER.info("Sending Production Email: " + message.toString());
-                javaMailSender.send(new MimeMessagePreparator() {
-                    @Override
-                    public void prepare(final MimeMessage mimeMessage) throws Exception {
-                        final MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
-                        messageHelper.setTo(convertToInternetAddresses(message.getModelDTO().getUser()));
-                        messageHelper.setSubject(subject);
-                        messageHelper.setText(plainTextContent, htmlContent);
-                        messageHelper.setFrom(emailAddressFrom);
-                        for (AttachmentInputSource attachment : message.getAttachments()) {
-                            messageHelper.addAttachment(attachment.getAttachmentFilename(), attachment, "application/pdf");
-                        }
-                    }
-                });
+            if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat") || messageDTO.getModelDTO().getUser().getEmail().contains("fibinger")) {
+                LOGGER.info("Sending Production Email: " + messageDTO.toString());
+
+                Destination destination = new Destination().withToAddresses(new String[]{convertToInternetAddresses(modelDTO.getUser()).toString()});
+                Content subjectContent = new Content().withData(subject);
+                Content plainTextContent = new Content().withData(plainText);
+                Content htmlContent = new Content().withData(html);
+                Body body = new Body().withText(plainTextContent).withHtml(htmlContent);
+                Message message = new Message().withSubject(subjectContent).withBody(body);
+                SendEmailRequest request = new SendEmailRequest().withSource(emailSource).withDestination(destination)
+                        .withMessage(message);
+
+                AWSCredentials credentials = systemService.getAmazonCredentials();
+                AmazonSimpleEmailServiceClient client = new AmazonSimpleEmailServiceClient(credentials);
+                Region REGION = Region.getRegion(Regions.EU_WEST_1);
+                client.setRegion(REGION);
+                client.sendEmail(request);
             } else if (contextEnvironment.equals("dev")) {
-                LOGGER.info("Sending Development Email: " + message.toString() + "\nSubject: " + subject + "\nContent:\n" + htmlContent);
+                LOGGER.info("Sending Development Email: " + messageDTO.toString() + "\nSubject: " + subject + "\nContent:\n" + html);
             } else {
-                LOGGER.info("Sending Development Email: " + message.toString());
+                LOGGER.info("Sending Development Email: " + messageDTO.toString());
             }
         } catch (Exception e) {
-            if (SendFailedException.class.isAssignableFrom(e.getClass())) {
-                message.getModelDTO().getUser().setEmailValid(false);
-            }
-            LOGGER.error(String.format("Failed to send email %s", message.toString()), e);
+            LOGGER.error(String.format("Failed to send email %s", messageDTO.toString()), e);
         }
 
     }
@@ -149,7 +146,7 @@ public class MailSender {
             logoUrl = imagesPath + "/prism.png";
         }
 
-        model = ImmutableMap.<String, Object> of("LOGO_URL", logoUrl, "IMAGES_PATH", imagesPath, "SUBJECT", subject, "CONTENT", content);
+        model = ImmutableMap.<String, Object>of("LOGO_URL", logoUrl, "IMAGES_PATH", imagesPath, "SUBJECT", subject, "CONTENT", content);
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
     }
 
@@ -159,7 +156,7 @@ public class MailSender {
     }
 
     private Map<String, Object> createNotificationModel(NotificationDefinition notificationTemplate, NotificationDefinitionModelDTO modelDTO,
-            boolean validationMode) throws AbortMailSendException {
+                                                        boolean validationMode) throws AbortMailSendException {
         Map<String, Object> model = Maps.newHashMap();
         List<PrismNotificationDefinitionPropertyCategory> categories = notificationTemplate.getId().getPropertyCategories();
         NotificationPropertyLoader loader = applicationContext.getBean(NotificationPropertyLoader.class).localize(modelDTO, propertyLoader);

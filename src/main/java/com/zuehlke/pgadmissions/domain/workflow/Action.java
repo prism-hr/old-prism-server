@@ -280,11 +280,7 @@ public class Action extends WorkflowDefinition {
 		this.creationScope = creationScope;
 		return this;
 	}
-
-	public boolean isCreationAction() {
-		return actionCategory == PrismActionCategory.CREATE_RESOURCE;
-	}
-
+	
 	public boolean isCustomizableAction() {
 		return actionCustomQuestionDefinition != null;
 	}

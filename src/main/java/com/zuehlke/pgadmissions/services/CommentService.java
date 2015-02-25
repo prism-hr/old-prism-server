@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -400,7 +401,7 @@ public class CommentService {
 
 		updateCommentStates(comment);
 
-		if (comment.isSecondaryTransitionComment() || comment.isStateGroupTransitionComment()) {
+		if (comment.isStateGroupTransitionComment()) {
 			createCommentTransitionStates(comment, transitionState, stateTerminations);
 		} else {
 			updateCommentTransitionStates(comment, stateTerminations);
@@ -424,6 +425,7 @@ public class CommentService {
 				comment.addAssignedUser(referee.getUser(), refereeRole, PrismRoleTransitionType.EXHUME);
 			}
 		}
+		entityService.flush();
 	}
 
 	public void processComment(Comment comment) {
@@ -664,16 +666,15 @@ public class CommentService {
 
 	private void updateCommentStates(Comment comment) {
 		for (ResourceState resourceState : comment.getResource().getResourceStates()) {
-			boolean primaryState = resourceState.getPrimaryState();
-			if (!primaryState) {
-				comment.addCommentState(resourceState.getState(), primaryState);
+			if (BooleanUtils.isFalse(resourceState.getPrimaryState())) {
+				comment.addCommentState(resourceState.getState(), false);
 			}
 		}
 	}
 
 	private void createCommentTransitionStates(Comment comment, State transitionState, Set<State> stateTerminations) {
 		for (State secondaryTransitionState : comment.getSecondaryTransitionStates()) {
-			if (stateTerminations == null || !stateTerminations.contains(secondaryTransitionState)) {
+			if (!stateTerminations.contains(secondaryTransitionState)) {
 				comment.addCommentTransitionState(secondaryTransitionState, false);
 			}
 		}
@@ -682,9 +683,8 @@ public class CommentService {
 	private void updateCommentTransitionStates(Comment comment, Set<State> stateTerminations) {
 		for (ResourceState resourceState : comment.getResource().getResourceStates()) {
 			State state = resourceState.getState();
-			boolean primaryState = resourceState.getPrimaryState();
-			if (stateTerminations == null || (!stateTerminations.contains(state) && !primaryState)) {
-				comment.addCommentTransitionState(state, primaryState);
+			if (!stateTerminations.contains(state) && BooleanUtils.isFalse(resourceState.getPrimaryState())) {
+				comment.addCommentTransitionState(state, false);
 			}
 		}
 	}

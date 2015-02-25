@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -44,6 +45,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceBatch;
 import com.zuehlke.pgadmissions.domain.resource.ResourceBatchProcess;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
@@ -141,7 +143,7 @@ public class ResourceService {
 	public <T extends Resource> T getById(Class<T> resourceClass, Integer id) {
 		return entityService.getById(resourceClass, id);
 	}
-	
+
 	public ResourceBatchProcess getResourceBatchProcessById(PrismResourceBatchProcess resourceBatchProcessId) {
 		return entityService.getById(ResourceBatchProcess.class, resourceBatchProcessId);
 	}
@@ -182,7 +184,7 @@ public class ResourceService {
 		return actionService.executeUserAction(resource, action, comment);
 	}
 
-	public void persistResource(Resource resource, Action action) throws WorkflowEngineException, BeansException, IOException, IntegrationException {
+	public void createResource(Resource resource, Comment comment) throws WorkflowEngineException, BeansException, IOException, IntegrationException {
 		DateTime baseline = new DateTime();
 		resource.setCreatedTimestamp(baseline);
 		resource.setUpdatedTimestamp(baseline);
@@ -205,11 +207,20 @@ public class ResourceService {
 			applicationService.save((Application) resource);
 			break;
 		default:
-			actionService.throwWorkflowEngineException(resource, action, "Attempted to persist a resource of invalid type");
+			actionService.throwWorkflowEngineException(resource, comment.getAction(), "Attempted to create a resource of invalid type");
 		}
 
 		resource.setCode(generateResourceCode(resource));
+
 		entityService.save(resource);
+		entityService.flush();
+	}
+
+	public void createResourceBatch(Resource resource, Comment comment) {
+		ResourceBatch resourceBatch = comment.getResourceBatch();
+		entityService.save(resourceBatch);
+		resource.setResourceBatch(resourceBatch);
+		entityService.flush();
 	}
 
 	public ActionOutcomeDTO executeAction(Integer resourceId, CommentDTO commentDTO) throws DeduplicationException, InstantiationException,
@@ -236,6 +247,7 @@ public class ResourceService {
 		default:
 			break;
 		}
+		entityService.flush();
 	}
 
 	public void recordStateTransition(Resource resource, Comment comment, State state, State transitionState) throws DeduplicationException,
@@ -371,6 +383,11 @@ public class ResourceService {
 		return resource.getApplication().getClosingDate();
 	}
 
+	public LocalDate getApplicationPanelDate(Resource resource, Comment comment) {
+		ResourceBatch resourceBatch = resource.getResourceBatch();
+		return resourceBatch == null ? null : resourceBatch.getClosureTimestamp().toLocalDate();
+	}
+
 	public LocalDate getApplicationInterviewDate(Resource resource, Comment comment) {
 		CommentApplicationInterviewAppointment interviewAppointment = comment.getInterviewAppointment();
 		return interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime().toLocalDate();
@@ -430,7 +447,7 @@ public class ResourceService {
 	}
 
 	public SocialMetadataDTO getSocialMetadata(PrismScope resourceScope, Integer resourceId) {
-		Resource resource = getNotNullResource(resourceScope, resourceId);
+		Resource resource = Preconditions.checkNotNull(getById(resourceScope.getResourceClass(), resourceId));
 		switch (resourceScope) {
 		case INSTITUTION:
 			return institutionService.getSocialMetadata((Institution) resource);
@@ -459,21 +476,13 @@ public class ResourceService {
 			throw new Error();
 		}
 	}
-	
+
 	public void joinResourceBatch(Resource resource, Comment comment) {
-		
-	}
-	
-	public void exitResourceBatch(Resource resource) {
-		resource.setResourceBatch(null);
+		comment.setResource(null);
 	}
 
-	private Resource getNotNullResource(PrismScope resourceScope, Integer resourceId) throws Error {
-		Resource resource = getById(resourceScope.getResourceClass(), resourceId);
-		if (resource == null) {
-			throw new Error();
-		}
-		return resource;
+	public void exitResourceBatch(Resource resource) {
+		resource.setResourceBatch(null);
 	}
 
 	public String getSocialThumbnailUrl(Resource resource) {

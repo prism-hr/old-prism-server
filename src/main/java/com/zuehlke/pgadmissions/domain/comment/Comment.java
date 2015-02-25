@@ -776,10 +776,6 @@ public class Comment {
         return action.getActionType() == PrismActionType.USER_INVOCATION;
     }
 
-    public boolean isSecondaryTransitionComment() {
-        return !secondaryTransitionStates.isEmpty();
-    }
-
     public boolean isDelegateComment() {
         return delegateUser != null;
     }
@@ -788,6 +784,14 @@ public class Comment {
         return isDelegateComment() && action.getId() == PrismAction.APPLICATION_PROVIDE_REFERENCE;
     }
 
+    public boolean isResourceCreationComment() {
+    	return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE;
+    }
+    
+    public boolean isResourceBatchCreationComment() {
+    	return resourceBatch != null && resourceBatch.getId() == null;
+    }
+    
     public String getApplicationRatingDisplay() {
         return applicationRating == null ? null : applicationRating.toPlainString();
     }

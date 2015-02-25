@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceBatch;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionDefinition;
@@ -168,9 +169,8 @@ public class ActionService {
             IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         User actionOwner = comment.getUser();
 
-        if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE || action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE) {
+        if (comment.isResourceCreationComment() || comment.isViewEditComment()) {
             Resource duplicateResource = entityService.getDuplicateEntity(resource);
-
             if (duplicateResource != null) {
                 if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
                     Action redirectAction = getRedirectAction(action, actionOwner, duplicateResource);
@@ -180,6 +180,13 @@ public class ActionService {
                     throwWorkflowPermissionException(resource, action);
                 }
             }
+        }
+        
+        if (comment.isResourceBatchCreationComment()) {
+        	ResourceBatch duplicateResourceBatch = entityService.getDuplicateEntity(comment.getResourceBatch());
+        	if (duplicateResourceBatch != null) {
+        		comment.setResourceBatch(duplicateResourceBatch);
+        	}
         }
 
         StateTransition stateTransition = stateService.executeStateTransition(resource, action, comment);

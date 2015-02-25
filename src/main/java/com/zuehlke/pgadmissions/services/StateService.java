@@ -142,8 +142,12 @@ public class StateService {
 	        IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
 		comment.setResource(resource);
 
-		if (action.isCreationAction()) {
-			resourceService.persistResource(resource, action);
+		if (comment.isResourceCreationComment()) {
+			resourceService.createResource(resource, comment);
+		}
+		
+		if (comment.isResourceBatchCreationComment()) {
+			resourceService.createResourceBatch(resource, comment);
 		}
 
 		commentService.createComment(comment);
@@ -151,8 +155,6 @@ public class StateService {
 
 		resourceService.preProcessResource(resource, comment);
 		commentService.preProcessComment(comment);
-
-		entityService.flush();
 
 		State state = resource.getState();
 		StateTransition stateTransition = getStateTransition(resource, action, comment);
@@ -169,11 +171,6 @@ public class StateService {
 			commentService.recordStateTransition(comment, state, transitionState, stateTerminations);
 			resourceService.recordStateTransition(resource, comment, state, transitionState);
 
-			commentService.processComment(comment);
-			resourceService.processResource(resource, comment);
-
-			roleService.executeRoleTransitions(resource, comment, stateTransition);
-			
 			if (stateTransition.isResourceBatchProcessJoin()) {
 				resourceService.joinResourceBatch(resource, comment);
 			}
@@ -181,6 +178,11 @@ public class StateService {
 			if (stateTransition.isResourceBatchProcessExit()) {
 				resourceService.exitResourceBatch(resource);
 			}
+			
+			commentService.processComment(comment);
+			resourceService.processResource(resource, comment);
+
+			roleService.executeRoleTransitions(resource, comment, stateTransition);
 
 			if (stateTransition.hasPropagatedActions()) {
 				getOrCreateStateTransitionPending(resource, stateTransition);
@@ -191,7 +193,7 @@ public class StateService {
 
 		commentService.postProcessComment(comment);
 		resourceService.postProcessResource(resource, comment);
-
+		
 		return stateTransition;
 	}
 

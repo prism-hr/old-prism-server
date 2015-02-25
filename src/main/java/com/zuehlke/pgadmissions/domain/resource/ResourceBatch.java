@@ -10,6 +10,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDateTime;
+
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -49,6 +52,10 @@ public class ResourceBatch extends WorkflowResource {
 
 	@Column(name = "name", nullable = false)
 	private String name;
+
+	@Column(name = "closure_timestamp", nullable = false)
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	private LocalDateTime closureTimestamp;
 
 	public Integer getId() {
 		return id;
@@ -106,6 +113,14 @@ public class ResourceBatch extends WorkflowResource {
 		this.name = name;
 	}
 
+	public LocalDateTime getClosureTimestamp() {
+		return closureTimestamp;
+	}
+
+	public void setClosureTimestamp(LocalDateTime closureTimestamp) {
+		this.closureTimestamp = closureTimestamp;
+	}
+
 	public ResourceBatch withResource(Resource resource) {
 		setResource(resource);
 		return this;
@@ -121,6 +136,11 @@ public class ResourceBatch extends WorkflowResource {
 		return this;
 	}
 
+	public ResourceBatch withClosureTimestamp(LocalDateTime closureTimestamp) {
+		this.closureTimestamp = closureTimestamp;
+		return this;
+	}
+
 	@Override
 	public Resource getResource() {
 		return project == null ? super.getResource() : project;
@@ -128,7 +148,8 @@ public class ResourceBatch extends WorkflowResource {
 
 	@Override
 	public ResourceSignature getResourceSignature() {
-		return new ResourceSignature().addProperty("resourceBatchProcess", resourceBatchProcess).addProperty("name", name);
+		return new ResourceSignature().addProperty("resourceBatchProcess", resourceBatchProcess).addProperty("name", name)
+		        .addProperty("closureTimestamp", closureTimestamp);
 	}
 
 }

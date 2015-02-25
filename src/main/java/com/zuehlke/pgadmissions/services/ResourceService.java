@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -57,6 +60,7 @@ import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
+import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
@@ -72,7 +76,7 @@ import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentatio
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import com.zuehlke.pgadmissions.utils.Constants;
+import com.zuehlke.pgadmissions.utils.PrismConstants;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Service
@@ -368,7 +372,7 @@ public class ResourceService {
 		List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(scopeId);
 		filter = resourceListFilterService.saveOrGetByUserAndScope(user, scopeId, filter);
 
-		int maxRecords = Constants.RESOURCE_LIST_PAGE_ROW_COUNT;
+		int maxRecords = PrismConstants.LIST_PAGE_ROW_COUNT;
 		Set<Integer> assignedResources = getAssignedResources(user, scopeId, parentScopeIds, filter, lastSequenceIdentifier, maxRecords);
 		boolean hasRedactions = actionService.hasRedactions(scopeId, assignedResources, user);
 
@@ -491,7 +495,7 @@ public class ResourceService {
 	}
 
 	public String getSocialResourceUrl(Resource resource) {
-		return applicationUrl + "/" + Constants.ANGULAR_HASH + "/?" + resource.getResourceScope().getLowerCaseName() + "=" + resource.getId();
+		return applicationUrl + "/" + PrismConstants.ANGULAR_HASH + "/?" + resource.getResourceScope().getLowerCaseName() + "=" + resource.getId();
 	}
 
 	public PrismLocale getOperativeLocale(Resource resource) {
@@ -502,6 +506,16 @@ public class ResourceService {
 			}
 		}
 		return resource.getLocale();
+	}
+
+	public <T extends Resource> HashMultimap<PrismScope, T> getUserAdministratorResources(User user) {
+		HashMultimap<PrismScope, T> userAdministratorResources = HashMultimap.create();
+		for (UserAdministratorResourceDTO userAdministratorResource : resourceDAO.getUserAdministratorResources(user)) {
+			T resource = (T) userAdministratorResource.getResource();
+			userAdministratorResources.put(resource.getResourceScope(), resource);
+		}
+		userAdministratorResources.putAll(APPLICATION, (List<T>) applicationService.getUserAdministratorApplications(user, userAdministratorResources));
+		return userAdministratorResources;
 	}
 
 	private Junction getFilterConditions(PrismScope scopeId, ResourceListFilterDTO filter) {

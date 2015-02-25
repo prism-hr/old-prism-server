@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.zuehlke.pgadmissions.utils.Constants;
+import com.zuehlke.pgadmissions.utils.PrismConstants;
 
 @Controller
 @RequestMapping("api/mail")
@@ -20,7 +20,7 @@ public class MailUrlController {
 
     @RequestMapping(method = RequestMethod.GET, value = "{redirectPath:.+}")
     public void redirect(HttpServletRequest request, HttpServletResponse response, @PathVariable String redirectPath) {
-        String redirect = applicationUrl + "/" + Constants.ANGULAR_HASH + "/";
+        String redirect = applicationUrl + "/" + PrismConstants.ANGULAR_HASH + "/";
         if(redirectPath != null){
             redirect += redirectPath;
             if(request.getQueryString() != null){

@@ -16,7 +16,7 @@ import com.google.common.primitives.Ints;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ProgramService;
-import com.zuehlke.pgadmissions.utils.Constants;
+import com.zuehlke.pgadmissions.utils.PrismConstants;
 
 @Controller
 @RequestMapping("api/pgadmissions")
@@ -35,7 +35,7 @@ public class LegacyController {
 
     @RequestMapping(method = RequestMethod.GET)
     public void redirect(HttpServletRequest request, HttpServletResponse response) {
-        String redirectionPrefix = applicationUrl + "/" + Constants.ANGULAR_HASH + "/";
+        String redirectionPrefix = applicationUrl + "/" + PrismConstants.ANGULAR_HASH + "/";
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         try {
 

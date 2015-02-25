@@ -19,11 +19,11 @@ public class Scope implements IUniqueEntity {
     @Enumerated(EnumType.STRING)
     private PrismScope id;
 
-    @Column(name = "precedence", nullable = false, unique = true)
-    private Integer precedence;
-
     @Column(name = "short_code", nullable = false, unique = true)
     private String shortCode;
+    
+    @Column(name = "ordinal", nullable = false, unique = true)
+    private Integer ordinal;
 
     public PrismScope getId() {
         return id;
@@ -33,10 +33,6 @@ public class Scope implements IUniqueEntity {
         this.id = id;
     }
 
-    public Integer getPrecedence() {
-        return precedence;
-    }
-
     public String getShortCode() {
         return shortCode;
     }
@@ -44,23 +40,27 @@ public class Scope implements IUniqueEntity {
     public void setShortCode(String shortCode) {
         this.shortCode = shortCode;
     }
-
-    public void setPrecedence(Integer precedence) {
-        this.precedence = precedence;
+    
+    public Integer getOrdinal() {
+        return ordinal;
     }
 
+    public void setOrdinal(Integer ordinal) {
+        this.ordinal = ordinal;
+    }
+
+    public Scope withShortCode(String shortCode) {
+        this.shortCode = shortCode;
+        return this;
+    }
+    
     public Scope withId(PrismScope id) {
         this.id = id;
         return this;
     }
 
-    public Scope withPrecedence(Integer precedence) {
-        this.precedence = precedence;
-        return this;
-    }
-
-    public Scope withShortCode(String shortCode) {
-        this.shortCode = shortCode;
+    public Scope withOrdinal(Integer ordinal) {
+        this.ordinal = ordinal;
         return this;
     }
 

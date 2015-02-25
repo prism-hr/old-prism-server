@@ -1,7 +1,17 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.DISPLAY_PROPERTY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_SYSTEM;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DESCRIPTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -33,7 +43,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDef
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PrismReminderDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
@@ -161,7 +170,7 @@ public class SystemService {
 	        IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
 		LOGGER.info("Initialising scope definitions");
 		verifyBackwardCompatibility(Scope.class);
-		initializeScopes(PrismScope.getSystemScope(), 1);
+		initializeScopes();
 
 		LOGGER.info("Initialising role definitions");
 		verifyBackwardCompatibility(Role.class);
@@ -233,11 +242,12 @@ public class SystemService {
 		getSystem().setLastDataImportDate(baseline);
 	}
 
+	@Transactional
 	public SocialMetadataDTO getSocialMetadata() {
 		System system = getSystem();
 		PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(system);
 		return new SocialMetadataDTO().withAuthor(system.getUser().getFullName()).withTitle(system.getTitle())
-		        .withDescription(loader.load(PrismDisplayPropertyDefinition.SYSTEM_DESCRIPTION))
+		        .withDescription(loader.load(SYSTEM_DESCRIPTION))
 		        .withThumbnailUrl(resourceService.getSocialThumbnailUrl(system)).withResourceUrl(resourceService.getSocialResourceUrl(system))
 		        .withLocale(resourceService.getOperativeLocale(system).toString());
 	}
@@ -247,10 +257,9 @@ public class SystemService {
 		return new SearchEngineAdvertDTO().withRelatedInstitutions(institutionService.getActiveInstitions());
 	}
 
-	private void initializeScopes(PrismScope prismScope, int precedence) throws DeduplicationException {
-		entityService.createOrUpdate(new Scope().withId(prismScope).withPrecedence(prismScope.getPrecedence()).withShortCode(prismScope.getShortCode()));
-		for (PrismScope prismChildScope : prismScope.getChildScopes()) {
-			initializeScopes(prismChildScope, precedence + 1);
+	private void initializeScopes() throws DeduplicationException {
+		for (PrismScope prismScope : PrismScope.values()) {
+			entityService.createOrUpdate(new Scope().withId(prismScope).withShortCode(prismScope.getShortCode()).withOrdinal(prismScope.ordinal()));
 		}
 	}
 
@@ -361,21 +370,21 @@ public class SystemService {
 	}
 
 	private void initializeDisplayPropertyDefinitions() throws DeduplicationException {
-		for (PrismDisplayPropertyDefinition prismDisplayProperty : PrismDisplayPropertyDefinition.values()) {
-			Scope scope = scopeService.getById(prismDisplayProperty.getScope());
-			DisplayPropertyDefinition transientDisplayProperty = new DisplayPropertyDefinition().withId(prismDisplayProperty)
-			        .withCategory(prismDisplayProperty.getDisplayCategory()).withScope(scope);
-			entityService.createOrUpdate(transientDisplayProperty);
+		for (PrismDisplayPropertyDefinition prismDisplayPropertyDefinition : PrismDisplayPropertyDefinition.values()) {
+			Scope scope = scopeService.getById(prismDisplayPropertyDefinition.getScope());
+			entityService.createOrUpdate(new DisplayPropertyDefinition().withId(prismDisplayPropertyDefinition)
+			        .withCategory(prismDisplayPropertyDefinition.getDisplayCategory()).withScope(scope));
 		}
 	}
 
 	private void initializeWorkflowPropertyDefinitions() {
-		for (PrismWorkflowPropertyDefinition prismWorkflowProperty : PrismWorkflowPropertyDefinition.values()) {
-			Scope scope = scopeService.getById(prismWorkflowProperty.getScope());
-			WorkflowPropertyDefinition transientWorkflowPropertyDefinition = new WorkflowPropertyDefinition().withId(prismWorkflowProperty)
-			        .withCategory(prismWorkflowProperty.getCategory()).withDefineRange(prismWorkflowProperty.isDefineRange())
-			        .withCanBeDisabled(prismWorkflowProperty.isCanBeDisabled()).withCanBeOptional(prismWorkflowProperty.isCanBeOptional())
-			        .withMinimumPermitted(prismWorkflowProperty.getMinimumPermitted()).withMaximumPermitted(prismWorkflowProperty.getMaximumPermitted())
+		for (PrismWorkflowPropertyDefinition prismWorkflowPropertyDefinition : PrismWorkflowPropertyDefinition.values()) {
+			Scope scope = scopeService.getById(prismWorkflowPropertyDefinition.getScope());
+			WorkflowPropertyDefinition transientWorkflowPropertyDefinition = new WorkflowPropertyDefinition().withId(prismWorkflowPropertyDefinition)
+			        .withCategory(prismWorkflowPropertyDefinition.getCategory()).withDefineRange(prismWorkflowPropertyDefinition.isDefineRange())
+			        .withCanBeDisabled(prismWorkflowPropertyDefinition.isCanBeDisabled()).withCanBeOptional(prismWorkflowPropertyDefinition.isCanBeOptional())
+			        .withMinimumPermitted(prismWorkflowPropertyDefinition.getMinimumPermitted())
+			        .withMaximumPermitted(prismWorkflowPropertyDefinition.getMaximumPermitted())
 			        .withScope(scope);
 			entityService.createOrUpdate(transientWorkflowPropertyDefinition);
 		}
@@ -387,7 +396,7 @@ public class SystemService {
 		DateTime baseline = new DateTime();
 
 		if (system == null) {
-			State systemRunning = stateService.getById(PrismState.SYSTEM_RUNNING);
+			State systemRunning = stateService.getById(SYSTEM_RUNNING);
 			system = new System().withId(systemId).withTitle(systemName).withLocale(PrismLocale.getSystemLocale()).withHelpdesk(systemHelpdesk)
 			        .withUser(systemUser).withState(systemRunning).withCipherSalt(EncryptionUtils.getUUID()).withCreatedTimestamp(baseline)
 			        .withUpdatedTimestamp(baseline);
@@ -419,7 +428,7 @@ public class SystemService {
 					        prismStateDuration.getDefaultDuration()));
 				}
 			}
-			persistConfigurations(PrismConfiguration.STATE_DURATION, system, prismScope, configurationDTO);
+			persistConfigurations(STATE_DURATION, system, prismScope, configurationDTO);
 		}
 	}
 
@@ -433,7 +442,7 @@ public class SystemService {
 					        prismDisplayPropertyDefinition.getDefaultValue()));
 				}
 			}
-			persistConfigurations(PrismConfiguration.DISPLAY_PROPERTY, system, prismScope, configurationDTO);
+			persistConfigurations(DISPLAY_PROPERTY, system, prismScope, configurationDTO);
 		}
 	}
 
@@ -456,7 +465,7 @@ public class SystemService {
 					        .withMaximum(prismWorkflowProperty.getDefaultMaximum()));
 				}
 			}
-			persistConfigurations(PrismConfiguration.WORKFLOW_PROPERTY, system, prismScope, configurationDTO);
+			persistConfigurations(WORKFLOW_PROPERTY, system, prismScope, configurationDTO);
 		}
 	}
 
@@ -466,12 +475,12 @@ public class SystemService {
 			String subject = FileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationDefinition.getInitialTemplateSubject());
 			String content = FileUtils.getContent(defaultEmailContentDirectory + prismNotificationDefinition.getInitialTemplateContent());
 
-			PrismProgramType programType = prismNotificationDefinition.getScope().getPrecedence() > PrismScope.INSTITUTION.getPrecedence() ? PrismProgramType
+			PrismProgramType programType = prismNotificationDefinition.getScope().ordinal() > INSTITUTION.ordinal() ? PrismProgramType
 			        .getSystemProgramType() : null;
 
 			NotificationConfigurationDTO configurationDTO = new NotificationConfigurationDTO().withId(prismNotificationDefinition).withSubject(subject)
 			        .withContent(content).withReminderInterval(prismNotificationDefinition.getDefaultReminderDuration());
-			customizationService.createOrUpdateConfiguration(PrismConfiguration.NOTIFICATION, system, getSystemLocale(), programType, configurationDTO);
+			customizationService.createOrUpdateConfiguration(NOTIFICATION, system, getSystemLocale(), programType, configurationDTO);
 		}
 	}
 
@@ -542,7 +551,7 @@ public class SystemService {
 			Role role = roleService.getById(prismRoleTransition.getRole());
 			Role transitionRole = roleService.getById(prismRoleTransition.getTransitionRole());
 			WorkflowPropertyDefinition workflowPropertyDefinition = (WorkflowPropertyDefinition) customizationService.getDefinitionById(
-			        PrismConfiguration.WORKFLOW_PROPERTY, prismRoleTransition.getPropertyDefinition());
+			        WORKFLOW_PROPERTY, prismRoleTransition.getPropertyDefinition());
 			RoleTransition roleTransition = new RoleTransition().withStateTransition(stateTransition).withRole(role)
 			        .withRoleTransitionType(prismRoleTransition.getTransitionType()).withTransitionRole(transitionRole)
 			        .withRestrictToActionOwner(prismRoleTransition.getRestrictToActionOwner()).withMinimumPermitted(prismRoleTransition.getMinimumPermitted())
@@ -574,11 +583,10 @@ public class SystemService {
 	        WorkflowEngineException, IOException, IntegrationException {
 		User user = system.getUser();
 		if (user.getUserAccount() == null) {
-			Action action = actionService.getById(PrismAction.SYSTEM_STARTUP);
-			String content = applicationContext.getBean(PropertyLoader.class).localize(system)
-			        .load(PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_SYSTEM);
+			Action action = actionService.getById(SYSTEM_STARTUP);
+			String content = applicationContext.getBean(PropertyLoader.class).localize(system).load(SYSTEM_COMMENT_INITIALIZED_SYSTEM);
 			Comment comment = new Comment().withAction(action).withContent(content).withDeclinedResponse(false).withUser(user)
-			        .withCreatedTimestamp(new DateTime()).addAssignedUser(user, roleService.getCreatorRole(system), PrismRoleTransitionType.CREATE);
+			        .withCreatedTimestamp(new DateTime()).addAssignedUser(user, roleService.getCreatorRole(system), CREATE);
 			ActionOutcomeDTO outcome = actionService.executeAction(system, action, comment);
 			notificationService.sendRegistrationNotification(user, outcome, comment);
 		}
@@ -589,7 +597,7 @@ public class SystemService {
 	        IllegalAccessException {
 		if (configurationDTO.size() > 0) {
 			customizationService.createConfigurationGroup(configurationType, system, prismScope, getSystemLocale(),
-			        prismScope.getPrecedence() > PrismScope.INSTITUTION.getPrecedence() ? getSystemProgramType() : null, configurationDTO);
+			        prismScope.ordinal() > INSTITUTION.ordinal() ? getSystemProgramType() : null, configurationDTO);
 		}
 	}
 
@@ -597,8 +605,7 @@ public class SystemService {
 		try {
 			entityService.list(workflowResourceClass);
 		} catch (IllegalArgumentException e) {
-			throw new WorkflowConfigurationException("You attempted to remove an entity of type " + workflowResourceClass.getSimpleName()
-			        + " which is required for backward compatibility by the workflow engine", e);
+			throw new WorkflowConfigurationException(workflowResourceClass.getSimpleName() + " required for backward compatibility", e);
 		}
 	}
 

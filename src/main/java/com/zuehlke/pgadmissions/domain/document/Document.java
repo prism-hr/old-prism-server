@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.utils.Constants;
+import com.zuehlke.pgadmissions.utils.PrismConstants;
 
 @Entity
 @Table(name = "DOCUMENT")
@@ -269,7 +269,7 @@ public class Document {
     }
 
     public String getExportFilenameSits() {
-        return getExportFilenameAmazon() + Constants.DOT + Constants.FILE_EXTENSION_PDF;
+        return getExportFilenameAmazon() + PrismConstants.DOT + PrismConstants.FILE_EXTENSION_PDF;
     }
     
 }

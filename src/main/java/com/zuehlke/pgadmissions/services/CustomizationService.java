@@ -76,7 +76,7 @@ public class CustomizationService {
     public WorkflowConfiguration getConfiguration(PrismConfiguration configurationType, Resource resource, User user, WorkflowDefinition definition) {
         PrismScope resourceScope = resource.getResourceScope();
         PrismLocale locale = resourceScope == SYSTEM ? user.getLocale() : resource.getLocale();
-        PrismProgramType programType = resourceScope.getPrecedence() > INSTITUTION.getPrecedence() ? resource.getProgram().getProgramType()
+        PrismProgramType programType = resourceScope.ordinal() > INSTITUTION.ordinal() ? resource.getProgram().getProgramType()
                 .getPrismProgramType() : null;
         return getConfiguration(configurationType, resource, locale, programType, definition);
     }
@@ -84,7 +84,7 @@ public class CustomizationService {
     public Integer getActiveConfigurationVersion(PrismConfiguration configurationType, Resource resource, PrismScope scope) {
         PrismScope resourceScope = resource.getResourceScope();
         PrismLocale locale = userService.getCurrentUser() != null ? userService.getCurrentUser().getLocale() : resource.getLocale();
-        PrismProgramType programType = resourceScope.getPrecedence() > INSTITUTION.getPrecedence() ? resource.getProgram().getProgramType()
+        PrismProgramType programType = resourceScope.ordinal() > INSTITUTION.ordinal() ? resource.getProgram().getProgramType()
                 .getPrismProgramType() : null;
         return customizationDAO.getActiveConfigurationVersion(configurationType, resource, locale, programType, scope);
     }
@@ -127,7 +127,7 @@ public class CustomizationService {
     public List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource resource, User user) {
         PrismScope resourceScope = resource.getResourceScope();
         PrismLocale locale = resourceScope == SYSTEM ? user.getLocale() : resource.getLocale();
-        PrismProgramType programType = resourceScope.getPrecedence() > INSTITUTION.getPrecedence() ? resource.getProgram().getProgramType()
+        PrismProgramType programType = resourceScope.ordinal() > INSTITUTION.ordinal() ? resource.getProgram().getProgramType()
                 .getPrismProgramType() : null;
         return getConfigurationRepresentations(configurationType, resource, resource.getResourceScope(), locale, programType);
     }
@@ -261,10 +261,10 @@ public class CustomizationService {
 
     public boolean isSystemDefault(WorkflowDefinition definition, PrismLocale locale, PrismProgramType programType) {
         if (locale == getSystemLocale()) {
-            Integer precedence = definition.getScope().getPrecedence();
-            if (precedence > INSTITUTION.getPrecedence() && programType == getSystemProgramType()) {
+            Integer precedence = definition.getScope().getOrdinal();
+            if (precedence > INSTITUTION.ordinal() && programType == getSystemProgramType()) {
                 return true;
-            } else if (precedence < PROGRAM.getPrecedence() && programType == null) {
+            } else if (precedence < PROGRAM.ordinal() && programType == null) {
                 return true;
             }
         }
@@ -273,18 +273,18 @@ public class CustomizationService {
 
     public void validateConfiguration(Resource resource, WorkflowDefinition definition, PrismLocale locale, PrismProgramType programType)
             throws CustomizationException {
-        Integer resourcePrecedence = resource.getResourceScope().getPrecedence();
-        Integer definitionPrecedence = definition.getScope().getPrecedence();
-        if (resourcePrecedence.equals(SYSTEM.getPrecedence()) && locale == null) {
+        Integer resourcePrecedence = resource.getResourceScope().ordinal();
+        Integer definitionPrecedence = definition.getScope().getOrdinal();
+        if (resourcePrecedence.equals(SYSTEM.ordinal()) && locale == null) {
             throw new CustomizationException("Tried to configure " + definition.getClass().getSimpleName() + ": " + definition.getId().toString()
                     + " with no locale. System scope configurations must specify locale.");
-        } else if (resourcePrecedence > SYSTEM.getPrecedence() && locale != null) {
+        } else if (resourcePrecedence > SYSTEM.ordinal() && locale != null) {
             throw new CustomizationException("Tried to configure " + definition.getClass().getSimpleName() + ": " + definition.getId().toString()
                     + " with locale. Only system scope configurations may specify locale.");
-        } else if (resourcePrecedence < PROGRAM.getPrecedence() && definitionPrecedence > INSTITUTION.getPrecedence() && programType == null) {
+        } else if (resourcePrecedence < PROGRAM.ordinal() && definitionPrecedence > INSTITUTION.ordinal() && programType == null) {
             throw new CustomizationException("Tried to configure " + definition.getClass().getSimpleName() + ": " + definition.getId().toString()
                     + " with no program type. Scopes within program must specify program type.");
-        } else if (definitionPrecedence < PROGRAM.getPrecedence() && programType != null) {
+        } else if (definitionPrecedence < PROGRAM.ordinal() && programType != null) {
             throw new CustomizationException("Tried to configure " + definition.getClass().getSimpleName() + ": " + definition.getId().toString()
                     + " with program type. Only scopes within program may specify program type.");
         }
@@ -345,7 +345,7 @@ public class CustomizationService {
     }
 
     private Resource getConfiguredResource(Resource resource) {
-        return resource.getResourceScope().getPrecedence() > PrismScope.PROGRAM.getPrecedence() ? resource.getProgram() : resource;
+        return resource.getResourceScope().ordinal() > PROGRAM.ordinal() ? resource.getProgram() : resource;
     }
 
     private List<WorkflowConfigurationRepresentation> parseRepresentations(Resource resource, PrismConfiguration configurationType,

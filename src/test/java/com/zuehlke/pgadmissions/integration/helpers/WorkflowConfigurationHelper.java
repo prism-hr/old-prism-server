@@ -115,8 +115,8 @@ public class WorkflowConfigurationHelper {
 	private void verifyTransitionState(State state, State transitionState) {
 		statesVisited.add(transitionState);
 
-		int statePrecedence = state.getScope().getPrecedence();
-		int transitionStatePrecedence = transitionState.getScope().getPrecedence();
+		int statePrecedence = state.getScope().getOrdinal();
+		int transitionStatePrecedence = transitionState.getScope().getOrdinal();
 
 		assertTrue(statePrecedence <= transitionStatePrecedence);
 
@@ -292,7 +292,7 @@ public class WorkflowConfigurationHelper {
 				Role assignedRole = assignment.getRole();
 				logger.info("Verifying assignment: " + assignedRole.getId().toString());
 
-				assertTrue(assignedRole.getScope().getPrecedence() <= state.getScope().getPrecedence());
+				assertTrue(assignedRole.getScope().getOrdinal() <= state.getScope().getOrdinal());
 				assertTrue(actualRolesCreated.contains(assignedRole.getId()));
 			}
 		}
@@ -336,7 +336,7 @@ public class WorkflowConfigurationHelper {
 				        + stateTransition.getStateAction().getAction().getId().toString() + " " + propagatedAction.getId().toString());
 
 				com.zuehlke.pgadmissions.domain.workflow.Scope actionScope = propagatedAction.getScope();
-				if (actionScope.getPrecedence() > propagatingScope.getPrecedence()) {
+				if (actionScope.getOrdinal() > propagatingScope.getOrdinal()) {
 					assertTrue(childScopes.contains(actionScope.getId()));
 				} else {
 					assertTrue(parentScopes.contains(actionScope.getId()));

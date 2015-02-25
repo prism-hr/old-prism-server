@@ -188,7 +188,7 @@ public class RoleService {
 	}
 
 	public Integer getPermissionPrecedence(User user) {
-		return roleDAO.getPermissionPrecedence(user);
+		return roleDAO.getPermissionOrdinal(user);
 	}
 
 	public void executeApplicationProvideReferenceRoleTransition(Resource resource, Comment comment) {

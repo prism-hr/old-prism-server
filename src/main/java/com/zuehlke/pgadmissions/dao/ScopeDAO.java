@@ -15,26 +15,26 @@ import com.zuehlke.pgadmissions.domain.workflow.Scope;
 @Repository
 @SuppressWarnings("unchecked")
 public class ScopeDAO {
-    
-    @Autowired
-    private EntityDAO entityDAO;
-    
-    @Autowired
-    private SessionFactory sessionFactory;
-    
-    public List<PrismScope> getScopesDescending() {
-        return (List<PrismScope>) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
-                .setProjection(Projections.property("id")) //
-                .addOrder(Order.desc("precedence")) //
-                .list();
-    }
-  
-    public List<PrismScope> getParentScopesDescending(PrismScope scopeId) {
-        return (List<PrismScope>) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
-                .setProjection(Projections.property("id")) //
-                .add(Restrictions.lt("precedence", scopeId.getPrecedence())) //
-                .addOrder(Order.desc("precedence")) //
-                .list();
-    }
-    
+
+	@Autowired
+	private EntityDAO entityDAO;
+
+	@Autowired
+	private SessionFactory sessionFactory;
+
+	public List<PrismScope> getScopesDescending() {
+		return (List<PrismScope>) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
+		        .setProjection(Projections.property("id")) //
+		        .addOrder(Order.desc("ordinal")) //
+		        .list();
+	}
+
+	public List<PrismScope> getParentScopesDescending(PrismScope prismScope) {
+		return (List<PrismScope>) sessionFactory.getCurrentSession().createCriteria(Scope.class) //
+		        .setProjection(Projections.property("id")) //
+		        .add(Restrictions.lt("ordinal", prismScope.ordinal())) //
+		        .addOrder(Order.desc("ordinal")) //
+		        .list();
+	}
+
 }

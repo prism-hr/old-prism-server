@@ -219,13 +219,13 @@ public class RoleDAO {
                 .list();
     }
 
-    public Integer getPermissionPrecedence(User user) {
+    public Integer getPermissionOrdinal(User user) {
         return (Integer) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("scope.precedence")) //
+                .setProjection(Projections.groupProperty("scope.ordinal")) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
-                .addOrder(Order.asc("scope.precedence")) //
+                .addOrder(Order.asc("scope.ordinal")) //
                 .setMaxResults(1) //
                 .uniqueResult();
     }

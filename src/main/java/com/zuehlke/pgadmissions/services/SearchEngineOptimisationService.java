@@ -31,7 +31,7 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
-import com.zuehlke.pgadmissions.utils.Constants;
+import com.zuehlke.pgadmissions.utils.PrismConstants;
 
 @Service
 @Transactional
@@ -143,7 +143,7 @@ public class SearchEngineOptimisationService {
             Element location = document.createElement("loc");
             url.appendChild(location);
 
-            Text locationString = document.createTextNode(applicationUrl + "/" + Constants.ANGULAR_HASH + "/?" + scope.getLowerCaseName() + "="
+            Text locationString = document.createTextNode(applicationUrl + "/" + PrismConstants.ANGULAR_HASH + "/?" + scope.getLowerCaseName() + "="
                     + sitemapEntryDTO.getResourceId());
             location.appendChild(locationString);
 

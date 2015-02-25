@@ -301,7 +301,7 @@ public class ActionDAO {
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("action.actionCategory", Arrays.asList(ESCALATE_RESOURCE, PURGE_RESOURCE))) //
-                .addOrder(Order.desc("scope.precedence")) //
+                .addOrder(Order.desc("scope.ordinal")) //
                 .list();
     }
 

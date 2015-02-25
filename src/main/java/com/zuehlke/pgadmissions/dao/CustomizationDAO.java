@@ -253,7 +253,7 @@ public class CustomizationDAO {
     }
 
     private Criterion getProgramTypeCriterionSelect(PrismScope scope, PrismProgramType programType) {
-        return scope.getPrecedence() < PROGRAM.getPrecedence() ? Restrictions.isNull("programType") : programType == null ? Restrictions.eq("programType",
+        return scope.ordinal() < PROGRAM.ordinal() ? Restrictions.isNull("programType") : programType == null ? Restrictions.eq("programType",
                 getSystemProgramType()) : Restrictions.in("programType", Arrays.asList(programType, getSystemProgramType()));
     }
 

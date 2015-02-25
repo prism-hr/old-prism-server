@@ -159,7 +159,7 @@
 	</configuration>
 
 	<mapping>
-		<class-a>com.zuehlke.pgadmissions.dto.ResourceConsoleListRowDTO
+		<class-a>com.zuehlke.pgadmissions.dto.ResourceListRowDTO
 		</class-a>
 		<class-b>com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation
 		</class-b>

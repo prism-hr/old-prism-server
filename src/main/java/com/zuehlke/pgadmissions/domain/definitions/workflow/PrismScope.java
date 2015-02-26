@@ -1,8 +1,9 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.DEADLINE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.APPLICATION_CATEGORY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.DEADLINE_CATEGORY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY_CATEGORY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION_CATEGORY;
 
 import java.util.Map;
 
@@ -21,12 +22,12 @@ import com.zuehlke.pgadmissions.domain.system.System;
 public enum PrismScope {
 
 	SYSTEM(null, System.class, "SM", null, null), //
-	INSTITUTION(ORGANIZATION, Institution.class, "IN", new ColumnDefinition().add("institution", "title").getAll(), null), //
-	PROGRAM(OPPORTUNITY, Program.class, "PM", new ColumnDefinition().add("institution", "title").add("program", "title").getAll(), null), //
-	PROJECT(OPPORTUNITY, Project.class, "PT", new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null), //
-	CLOSING_DATE(DEADLINE, ClosingDate.class, "CD", null, null), //
-	PANEL_DEADLINE(DEADLINE, PanelDeadline.class, "PD", null, null), //
-	APPLICATION(PrismScopeCategory.APPLICATION, Application.class, "AN", new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null);
+	INSTITUTION(ORGANIZATION_CATEGORY, Institution.class, "IN", new ColumnDefinition().add("institution", "title").getAll(), null), //
+	PROGRAM(OPPORTUNITY_CATEGORY, Program.class, "PM", new ColumnDefinition().add("institution", "title").add("program", "title").getAll(), null), //
+	PROJECT(OPPORTUNITY_CATEGORY, Project.class, "PT", new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null), //
+	CLOSING_DATE(DEADLINE_CATEGORY, ClosingDate.class, "CD", null, null), //
+	PANEL_DEADLINE(DEADLINE_CATEGORY, PanelDeadline.class, "PD", null, null), //
+	APPLICATION(APPLICATION_CATEGORY, Application.class, "AN", new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null);
 
 	private static final Map<Class<? extends Resource>, PrismScope> byResourceClass = Maps.newHashMap();
 
@@ -82,7 +83,7 @@ public enum PrismScope {
 	public String getLowerCaseName() {
 		return resourceClass.getSimpleName().toLowerCase();
 	}
-	
+
 	public PrismDisplayPropertyDefinition getDisplayPropertyDefinition() {
 		return PrismDisplayPropertyDefinition.valueOf("SYSTEM_" + name());
 	}

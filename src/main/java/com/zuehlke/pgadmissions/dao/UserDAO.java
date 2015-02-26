@@ -260,8 +260,8 @@ public class UserDAO {
 		        .uniqueResult();
 	}
 
-	public <T extends Resource> List<User> getBouncedOrUniverifiedUsers(HashMultimap<PrismScope, T> userAdministratorResources,
-	        UserListFilterDTO userListFilterDTO) {
+	public <T extends Resource> List<User> getBouncedOrUnverifiedUsers(HashMultimap<PrismScope, T> userAdministratorResources,
+                                                                       UserListFilterDTO userListFilterDTO) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
 		        .setProjection(Projections.groupProperty("user")) //
 		        .createAlias("user", "user", JoinType.INNER_JOIN) //
@@ -286,10 +286,10 @@ public class UserDAO {
 		String searchTerm = userListFilterDTO.getSearchTerm();
 		if (searchTerm != null) {
 			criteria.add(Restrictions.disjunction() //
-			        .add(Restrictions.ilike("firstName", searchTerm, MatchMode.START)) //
-			        .add(Restrictions.ilike("lastName", searchTerm, MatchMode.START)) //
-			        .add(Restrictions.ilike("fullName", searchTerm, MatchMode.START)) //
-			        .add(Restrictions.ilike("email", searchTerm, MatchMode.START))); //
+			        .add(Restrictions.ilike("user.firstName", searchTerm, MatchMode.START)) //
+			        .add(Restrictions.ilike("user.lastName", searchTerm, MatchMode.START)) //
+			        .add(Restrictions.ilike("user.fullName", searchTerm, MatchMode.START)) //
+			        .add(Restrictions.ilike("user.email", searchTerm, MatchMode.START))); //
 		}
 
 		Integer lastUserId = userListFilterDTO.getLastUserId();
@@ -302,7 +302,7 @@ public class UserDAO {
 		        .list();
 	}
 
-	public <T extends Resource> User getBouncedOrUniverifiedUser(HashMultimap<PrismScope, T> userAdministratorResources, Integer userId) {
+	public <T extends Resource> User getBouncedOrUnverifiedUser(HashMultimap<PrismScope, T> userAdministratorResources, Integer userId) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
 		        .setProjection(Projections.groupProperty("user")) //
 		        .createAlias("user", "user", JoinType.INNER_JOIN) //

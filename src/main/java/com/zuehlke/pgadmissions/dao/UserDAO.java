@@ -280,12 +280,12 @@ public class UserDAO {
 		criteria.add(disjunction);
 
 		if (userListFilterDTO.isInvalidOnly()) {
-			criteria.add(Restrictions.eq("user.emailValid", false));
+			criteria.add(Restrictions.isNotNull("user.emailBouncedMessage"));
 		} else {
 			criteria.add(Restrictions.disjunction() //
 			        .add(Restrictions.isNull("user.userAccount")) //
 			        .add(Restrictions.eq("userAccount.enabled", false)) //
-			        .add(Restrictions.eq("user.emailValid", false)));
+			        .add(Restrictions.isNotNull("user.emailBouncedMessage")));
 		}
 
 		String searchTerm = userListFilterDTO.getSearchTerm();

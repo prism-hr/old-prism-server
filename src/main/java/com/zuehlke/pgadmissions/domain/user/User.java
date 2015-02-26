@@ -17,7 +17,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
@@ -106,10 +105,7 @@ public class User implements UserDetails, IUniqueEntity {
 	@ManyToOne
 	@JoinColumn(name = "parent_user_id")
 	private User parentUser;
-
-	@Formula("email_bounced_message is null")
-	private boolean emailValid;
-
+	
 	@OrderBy(clause = "last_name asc, first_name asc")
 	@OneToMany(mappedBy = "parentUser")
 	private Set<User> childUsers = Sets.newHashSet();
@@ -271,10 +267,6 @@ public class User implements UserDetails, IUniqueEntity {
 
 	public void setParentUser(User parentUser) {
 		this.parentUser = parentUser;
-	}
-
-	public boolean isEmailValid() {
-		return emailValid;
 	}
 
 	public Set<User> getChildUsers() {

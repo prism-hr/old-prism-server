@@ -1,12 +1,5 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-import java.io.IOException;
-import java.util.List;
-
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -18,24 +11,29 @@ import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.StateService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.List;
 
 @Component
-public class StateServiceHelperPropagation extends AbstractServiceHelper {
+public class StateServiceHelperPropagation implements AbstractServiceHelper {
 
     @Autowired
     private ScopeService scopeService;
-    
+
     @Autowired
     private StateService stateService;
-    
+
     @Autowired
     private ActionService actionService;
-    
+
     @Autowired
     private ResourceService resourceService;
-    
+
     @Override
-    public void execute() throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException,
+    public void execute() throws DeduplicationException, InstantiationException, WorkflowEngineException, IOException,
             IntegrationException {
         List<PrismScope> scopeIds = scopeService.getScopesDescending();
         for (PrismScope scopeId : scopeIds) {

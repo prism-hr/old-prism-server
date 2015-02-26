@@ -13,17 +13,17 @@ import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.SystemService;
 
 @Component
-public class DocumentServiceHelperDelete extends AbstractServiceHelper {
+public class DocumentServiceHelperDelete implements AbstractServiceHelper {
 
     @Value("${integration.amazon.on}")
     private Boolean amazonOn;
-    
+
     @Autowired
     private DocumentService documentService;
-    
+
     @Autowired
     private SystemService systemService;
-    
+
     @Override
     public void execute() throws DeduplicationException, IOException, IntegrationException {
         DateTime baselineTime = new DateTime();
@@ -32,5 +32,5 @@ public class DocumentServiceHelperDelete extends AbstractServiceHelper {
             documentService.deleteAmazonDocuments(baselineTime);
         }
     }
-    
+
 }

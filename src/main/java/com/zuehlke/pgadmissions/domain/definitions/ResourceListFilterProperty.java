@@ -47,8 +47,8 @@ public enum ResourceListFilterProperty implements FilterProperty {
     PROJECT_USER("id", STRING, Arrays.asList(CONTAIN), Arrays.asList(PROJECT)), //
     PROGRAM_USER("id", STRING, Arrays.asList(CONTAIN), Arrays.asList(PROGRAM)), //
     INSTITUTION_USER("id", STRING, Arrays.asList(CONTAIN), Arrays.asList(INSTITUTION)), //
-    PRIMARY_THEME("primaryTheme", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION)), //
-    SECONDARY_THEME("secondaryTheme", STRING, Arrays.asList(CONTAIN), Arrays.asList(APPLICATION));
+    PRIMARY_THEME("primaryTheme", STRING, Arrays.asList(CONTAIN, EQUAL), Arrays.asList(APPLICATION)), //
+    SECONDARY_THEME("secondaryTheme", STRING, Arrays.asList(CONTAIN, EQUAL), Arrays.asList(APPLICATION));
 
     private String propertyName;
 

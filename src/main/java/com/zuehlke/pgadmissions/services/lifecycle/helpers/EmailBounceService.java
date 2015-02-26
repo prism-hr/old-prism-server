@@ -25,7 +25,7 @@ import java.util.List;
 @Transactional
 public class EmailBounceService {
 
-    private static final Logger log = LoggerFactory.getLogger(EmailBounceService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmailBounceService.class);
 
     @Value("${integration.amazon.email.bounce.queue}")
     private String bounceQueueUrl;
@@ -52,7 +52,7 @@ public class EmailBounceService {
             JsonObject messageRoot = parser.parse(messageContent).getAsJsonObject();
             String notificationType = messageRoot.getAsJsonPrimitive("notificationType").getAsString();
             if (NotificationType.Bounce.toString().equals(notificationType)) {
-                log.warn("Message bounced: " + message.getBody());
+                LOGGER.warn("Message bounced: " + message.getBody());
                 JsonObject bounce = messageRoot.getAsJsonObject("bounce");
                 String bounceType = bounce.getAsJsonPrimitive("bounceType").getAsString();
                 if ("Permanent".equals(bounceType)) {
@@ -62,7 +62,7 @@ public class EmailBounceService {
                         String emailAddress = bouncedRecipient.getAsJsonPrimitive("emailAddress").getAsString();
                         User user = userService.getUserByEmail(emailAddress);
                         if (user == null) {
-                            log.error("Could not find user for given bounced email address: " + emailAddress);
+                            LOGGER.error("Could not find user for given bounced email address: " + emailAddress);
                             continue;
                         }
 
@@ -77,7 +77,7 @@ public class EmailBounceService {
                     }
                 }
             } else {
-                log.error("Unexpected AWS SES notification type: " + notificationType + ". Message: " + message.getBody());
+                LOGGER.error("Unexpected AWS SES notification type: " + notificationType + ". Message: " + message.getBody());
             }
             deleteRequestEntries.add(new DeleteMessageBatchRequestEntry(message.getMessageId(), message.getReceiptHandle()));
         }

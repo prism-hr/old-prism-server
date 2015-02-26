@@ -272,8 +272,9 @@ public class ApplicationDAO {
 		        .createAlias("application", "application", JoinType.INNER_JOIN) //
 		        .createAlias("role", "role", JoinType.INNER_JOIN) //
 		        .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+		        .createAlias("role.scope", "scope", JoinType.INNER_JOIN) //
 		        .add(Restrictions.eq("user", user)) //
-		        .add(Restrictions.ne("role.scope.id", PrismScope.APPLICATION));
+		        .add(Restrictions.eq("scope.scopeCreator", false));
 
 		Disjunction disjunction = Restrictions.disjunction();
 		for (PrismScope scope : userAdministratorResources.keySet()) {

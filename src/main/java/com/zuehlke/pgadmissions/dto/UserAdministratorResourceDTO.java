@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dto;
 
+import com.zuehlke.pgadmissions.domain.system.System;
 import org.apache.commons.lang3.ObjectUtils;
 
 import com.zuehlke.pgadmissions.domain.institution.Institution;

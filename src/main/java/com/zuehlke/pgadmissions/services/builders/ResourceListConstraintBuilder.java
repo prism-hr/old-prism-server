@@ -24,7 +24,7 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
         }
     }
 
-    public static Criteria appendLimitCriterion(Criteria criteria, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords) {
+    public static Criteria appendLimitCriterion(Criteria criteria, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer recordsToRetrieve) {
         FilterSortOrder sortOrder = filter.getSortOrder();
 
         if (lastSequenceIdentifier != null) {
@@ -33,8 +33,8 @@ public class ResourceListConstraintBuilder extends ConstraintBuilder {
 
         criteria.addOrder(FilterSortOrder.getOrderExpression(SEQUENCE_IDENTIFIER, sortOrder));
 
-        if (maxRecords != null) {
-            criteria.setMaxResults(maxRecords);
+        if (recordsToRetrieve != null) {
+            criteria.setMaxResults(recordsToRetrieve);
         }
 
         return criteria;

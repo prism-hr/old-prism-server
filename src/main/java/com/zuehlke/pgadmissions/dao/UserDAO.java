@@ -325,7 +325,16 @@ public class UserDAO {
 		        .uniqueResult();
 	}
 
-	public void resetUserNotifications(User user, PrismScope resourceScope, Set<Integer> assignedResources) {
+	public void resetUserNotificationsIndividual(User user) {
+		sessionFactory.getCurrentSession().createQuery( //
+		        "update UserRole " //
+		                + "set lastNotifiedDate = null " //
+		                + "where user = :user") //
+		        .setParameter("user", user) //
+		        .executeUpdate();
+	}
+
+	public void resetUserNotificationsSyndicated(User user, PrismScope resourceScope, Set<Integer> assignedResources) {
 		sessionFactory.getCurrentSession().createQuery( //
 		        "update " + resourceScope.getResourceClass().getSimpleName() + " " //
 		                + "set lastRemindedRequestIndividual = null, " //
@@ -335,4 +344,5 @@ public class UserDAO {
 		        .setParameterList("assignedResource", assignedResources) //
 		        .executeUpdate();
 	}
+
 }

@@ -327,15 +327,15 @@ public class UserService {
 	}
 
 	private void resetUserNotifications(User user) {
+		userDAO.resetUserNotificationsIndividual(user);
 		for (PrismScope scope : PrismScope.values()) {
 			List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope);
 			Set<Integer> assignedResources = resourceService.getAssignedResources(user, scope, parentScopes);
 			if (!assignedResources.isEmpty()) {
-				userDAO.resetUserNotifications(user, scope, assignedResources);
+				userDAO.resetUserNotificationsSyndicated(user, scope, assignedResources);
 			}
 			ReflectionUtils.setProperty(user, "lastNotifiedDate" + scope.getLowerCaseName(), null);
 		}
-
 	}
 
 }

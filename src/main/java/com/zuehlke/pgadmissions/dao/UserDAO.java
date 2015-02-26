@@ -4,9 +4,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -261,18 +263,23 @@ public class UserDAO {
 	}
 
 	public <T extends Resource> List<User> getBouncedOrUnverifiedUsers(HashMultimap<PrismScope, T> userAdministratorResources,
-                                                                       UserListFilterDTO userListFilterDTO) {
+	        UserListFilterDTO userListFilterDTO) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
 		        .setProjection(Projections.groupProperty("user")) //
 		        .createAlias("user", "user", JoinType.INNER_JOIN) //
 		        .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN); //
 
-		Disjunction disjunction = Restrictions.disjunction();
+		Junction sentDisjunction = Restrictions.disjunction() //
+		        .add(Restrictions.isNotNull("lastNotifiedDate"));
+		Junction roleDisjunction = Restrictions.disjunction();
 		for (PrismScope scope : userAdministratorResources.keySet()) {
-			disjunction.add(Restrictions.in(scope.getLowerCaseName(), userAdministratorResources.get(scope)));
+			String scopeReference = scope.getLowerCaseName();
+			sentDisjunction.add(Restrictions.isNotNull("user.lastNotifiedDate" + WordUtils.capitalize(scopeReference)));
+			roleDisjunction.add(Restrictions.in(scopeReference, userAdministratorResources.get(scope)));
 		}
 
-		criteria.add(disjunction);
+		criteria.add(sentDisjunction) //
+		        .add(roleDisjunction);
 
 		if (userListFilterDTO.isInvalidOnly()) {
 			criteria.add(Restrictions.isNotNull("user.emailBouncedMessage"));

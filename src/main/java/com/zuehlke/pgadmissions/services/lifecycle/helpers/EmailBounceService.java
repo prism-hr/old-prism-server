@@ -56,8 +56,8 @@ public class EmailBounceService {
             JsonObject messageRoot = parser.parse(messageContent).getAsJsonObject();
             String notificationType = messageRoot.getAsJsonPrimitive("notificationType").getAsString();
             if (NotificationType.Bounce.toString().equals(notificationType)) {
-                LOGGER.warn("Message bounced: " + message.getBody());
                 JsonObject bounce = messageRoot.getAsJsonObject("bounce");
+                LOGGER.warn("Message bounced: " + bounce);
                 String bounceType = bounce.getAsJsonPrimitive("bounceType").getAsString();
                 if ("Permanent".equals(bounceType)) {
                     JsonArray bouncedRecipients = bounce.getAsJsonArray("bouncedRecipients");

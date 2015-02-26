@@ -52,7 +52,7 @@ import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
-@Table(name = "APPLICATION_CATEGORY")
+@Table(name = "APPLICATION")
 public class Application extends Resource {
 
     @Id

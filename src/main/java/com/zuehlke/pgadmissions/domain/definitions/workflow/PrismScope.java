@@ -25,8 +25,8 @@ public enum PrismScope {
 	INSTITUTION(ORGANIZATION_CATEGORY, Institution.class, "IN", new ColumnDefinition().add("institution", "title").getAll(), null), //
 	PROGRAM(OPPORTUNITY_CATEGORY, Program.class, "PM", new ColumnDefinition().add("institution", "title").add("program", "title").getAll(), null), //
 	PROJECT(OPPORTUNITY_CATEGORY, Project.class, "PT", new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null), //
-	CLOSING_DATE(DEADLINE_CATEGORY, ClosingDate.class, "CD", null, null), //
-	PANEL_DEADLINE(DEADLINE_CATEGORY, PanelDeadline.class, "PD", null, null), //
+//	CLOSING_DATE(DEADLINE_CATEGORY, ClosingDate.class, "CD", null, null), //
+//	PANEL_DEADLINE(DEADLINE_CATEGORY, PanelDeadline.class, "PD", null, null), //
 	APPLICATION(APPLICATION_CATEGORY, Application.class, "AN", new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null);
 
 	private static final Map<Class<? extends Resource>, PrismScope> byResourceClass = Maps.newHashMap();

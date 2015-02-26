@@ -1,5 +1,24 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
+
+import javax.inject.Inject;
+
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.BeansException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
@@ -24,29 +43,18 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
-import com.zuehlke.pgadmissions.exceptions.*;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.IntegrationException;
+import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
+import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
-import org.springframework.beans.BeansException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BeanPropertyBindingResult;
-
-import javax.inject.Inject;
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Service
 @Transactional
@@ -75,6 +83,9 @@ public class UserService {
 
 	@Inject
 	private ResourceService resourceService;
+
+	@Inject
+	private ScopeService scopeService;
 
 	@Inject
 	private SystemService systemService;
@@ -296,11 +307,11 @@ public class UserService {
 		return user != null && Objects.equal(user.getId(), getCurrentUser().getId());
 	}
 
-//	public <T extends Resource> List<User> getBouncedOrUniverifiedUsers(UserListFilterDTO userListFilterDTO) {
-//		HashMultimap<PrismScope, T> userAdministratorResources = resourceService.getUserAdministratorResources(getCurrentUser());
-//		return userAdministratorResources.isEmpty() ? Lists.<User> newArrayList() : userDAO.getBouncedOrUniverifiedUsers(userAdministratorResources,
-//		        userListFilterDTO);
-//	}
+	public <T extends Resource> List<User> getBouncedOrUniverifiedUsers(UserListFilterDTO userListFilterDTO) {
+		HashMultimap<PrismScope, T> userAdministratorResources = resourceService.getUserAdministratorResources(getCurrentUser());
+		return userAdministratorResources.isEmpty() ? Lists.<User> newArrayList() : userDAO.getBouncedOrUniverifiedUsers(userAdministratorResources,
+		        userListFilterDTO);
+	}
 
 	public <T extends Resource> void correctBouncedOrUniverifiedUser(Integer userId, UserCorrectionDTO userCorrectionDTO) {
 		HashMultimap<PrismScope, T> userAdministratorResources = resourceService.getUserAdministratorResources(getCurrentUser());
@@ -315,9 +326,22 @@ public class UserService {
 			user.setFullName(user.getFirstName() + " " + user.getLastName());
 			user.setEmail(userCorrectionDTO.getEmail());
 			user.setEmailBouncedMessage(null);
+			resetUserNotifications(user);
 		} else {
 			throw new WorkflowPermissionException(systemService.getSystem(), actionService.getById(SYSTEM_VIEW_APPLICATION_LIST));
 		}
+	}
+
+	private void resetUserNotifications(User user) {
+		for (PrismScope scope : PrismScope.values()) {
+			List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope);
+			Set<Integer> assignedResources = resourceService.getAssignedResources(user, scope, parentScopes);
+			if (!assignedResources.isEmpty()) {
+				userDAO.resetUserNotifications(user, scope, assignedResources);
+			}
+			ReflectionUtils.setProperty(user, "lastNotifiedDate" + scope.getLowerCaseName(), null);
+		}
+
 	}
 
 }

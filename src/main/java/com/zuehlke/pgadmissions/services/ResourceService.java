@@ -417,17 +417,21 @@ public class ResourceService {
 		return summary;
 	}
 
+	public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds) {
+		return getAssignedResources(user, scopeId, parentScopeIds, new ResourceListFilterDTO(), null, null);
+	}
+
 	public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter) {
 		return getAssignedResources(user, scopeId, parentScopeIds, filter, null, null);
 	}
 
 	public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter,
-	        String lastSequenceIdentifier, Integer maxRecords) {
+	        String lastSequenceIdentifier, Integer recordsToRetrieve) {
 		Set<Integer> assigned = Sets.newHashSet();
 		Junction conditions = getFilterConditions(scopeId, filter);
-		assigned.addAll(resourceDAO.getAssignedResources(user, scopeId, filter, conditions, lastSequenceIdentifier, maxRecords));
+		assigned.addAll(resourceDAO.getAssignedResources(user, scopeId, filter, conditions, lastSequenceIdentifier, recordsToRetrieve));
 		for (PrismScope parentScopeId : parentScopeIds) {
-			assigned.addAll(resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, conditions, lastSequenceIdentifier, maxRecords));
+			assigned.addAll(resourceDAO.getAssignedResources(user, scopeId, parentScopeId, filter, conditions, lastSequenceIdentifier, recordsToRetrieve));
 		}
 		return assigned;
 	}

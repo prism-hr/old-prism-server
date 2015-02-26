@@ -1,6 +1,20 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
@@ -13,22 +27,10 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
+import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.utils.PrismConstants;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
-import java.util.Arrays;
-import java.util.List;
+import com.zuehlke.pgadmissions.utils.PrismConstants;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -255,16 +257,16 @@ public class UserDAO {
 		        .add(Restrictions.eq("externalAccount.accountType", oauthProvider)) //
 		        .add(Restrictions.eq("externalAccount.accountIdentifier", externalId)) //
 		        .uniqueResult();
-    }
-
-    public List<User> getBouncedUsers() {
-        return (List<User>) sessionFactory.getCurrentSession().createCriteria(User.class) //
-                .add(Restrictions.isNotNull("emailBouncedMessage")) //
-                .list();
 	}
 
-	public <T extends Resource> List<User> getUserAdministratorUsers(HashMultimap<PrismScope, T> userAdministratorResources, boolean invalidOnly,
-	        String searchTerm, Integer lastUserId) {
+	public List<User> getBouncedUsers() {
+		return (List<User>) sessionFactory.getCurrentSession().createCriteria(User.class) //
+		        .add(Restrictions.isNotNull("emailBouncedMessage")) //
+		        .list();
+	}
+
+	public <T extends Resource> List<User> getBouncedOrUniverifiedUsers(HashMultimap<PrismScope, T> userAdministratorResources,
+	        UserListFilterDTO userListFilterDTO) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
 		        .setProjection(Projections.groupProperty("user")) //
 		        .createAlias("user", "user", JoinType.INNER_JOIN) //
@@ -275,7 +277,9 @@ public class UserDAO {
 			disjunction.add(Restrictions.in(scope.getLowerCaseName(), userAdministratorResources.get(scope)));
 		}
 
-		if (invalidOnly) {
+		criteria.add(disjunction);
+
+		if (userListFilterDTO.isInvalidOnly()) {
 			criteria.add(Restrictions.eq("user.emailValid", false));
 		} else {
 			criteria.add(Restrictions.disjunction() //
@@ -283,23 +287,40 @@ public class UserDAO {
 			        .add(Restrictions.eq("userAccount.enabled", false)) //
 			        .add(Restrictions.eq("user.emailValid", false)));
 		}
-		
+
+		String searchTerm = userListFilterDTO.getSearchTerm();
 		if (searchTerm != null) {
 			criteria.add(Restrictions.disjunction() //
-	                .add(Restrictions.ilike("firstName", searchTerm, MatchMode.START)) //
-	                .add(Restrictions.ilike("lastName", searchTerm, MatchMode.START)) //
-	                .add(Restrictions.ilike("fullName", searchTerm, MatchMode.START)) //
-	                .add(Restrictions.ilike("email", searchTerm, MatchMode.START))); //
+			        .add(Restrictions.ilike("firstName", searchTerm, MatchMode.START)) //
+			        .add(Restrictions.ilike("lastName", searchTerm, MatchMode.START)) //
+			        .add(Restrictions.ilike("fullName", searchTerm, MatchMode.START)) //
+			        .add(Restrictions.ilike("email", searchTerm, MatchMode.START))); //
 		}
-		
+
+		Integer lastUserId = userListFilterDTO.getLastUserId();
 		if (lastUserId != null) {
 			criteria.add(Restrictions.lt("user.id", lastUserId));
 		}
 
-		return (List<User>) criteria.add(disjunction) //
-		        .addOrder(Order.desc("user.id")) //
+		return (List<User>) criteria.addOrder(Order.desc("user.id")) //
 		        .setMaxResults(PrismConstants.LIST_PAGE_ROW_COUNT) //
 		        .list();
 	}
-	
+
+	public <T extends Resource> User getBouncedOrUniverifiedUser(HashMultimap<PrismScope, T> userAdministratorResources, Integer userId) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+		        .setProjection(Projections.groupProperty("user")) //
+		        .createAlias("user", "user", JoinType.INNER_JOIN) //
+		        .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN); //
+
+		Disjunction disjunction = Restrictions.disjunction();
+		for (PrismScope scope : userAdministratorResources.keySet()) {
+			disjunction.add(Restrictions.in(scope.getLowerCaseName(), userAdministratorResources.get(scope)));
+		}
+
+		return (User) criteria.add(disjunction) //
+		        .add(Restrictions.eq("user.id", userId)) //
+		        .uniqueResult();
+	}
+
 }

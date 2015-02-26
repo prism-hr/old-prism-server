@@ -21,8 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import java.util.List;
 
-@Transactional
 @Service
+@Transactional
 public class EmailBounceService {
 
     private static final Logger log = LoggerFactory.getLogger(EmailBounceService.class);

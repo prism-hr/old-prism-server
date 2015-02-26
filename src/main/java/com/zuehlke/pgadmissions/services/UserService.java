@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
@@ -45,6 +47,9 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
+import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -57,6 +62,9 @@ public class UserService {
 	@Inject
 	private UserDAO userDAO;
 
+	@Inject
+	private ActionService actionService;
+	
 	@Inject
 	private RoleService roleService;
 
@@ -74,6 +82,9 @@ public class UserService {
 
 	@Inject
 	private ResourceService resourceService;
+	
+	@Inject
+	private SystemService systemService;
 
 	public User getById(Integer id) {
 		return entityService.getById(User.class, id);
@@ -96,7 +107,7 @@ public class UserService {
 	public User getOrCreateUser(String firstName, String lastName, String email, PrismLocale locale) throws DeduplicationException {
 		User user;
 		User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email)
-		        .withEmailValid(true).withLocale(locale);
+		        .withLocale(locale);
 		User duplicateUser = entityService.getDuplicateEntity(transientUser);
 		if (duplicateUser == null) {
 			user = transientUser;
@@ -292,8 +303,28 @@ public class UserService {
 		return user != null && Objects.equal(user.getId(), getCurrentUser().getId());
 	}
 
-	public <T extends Resource> List<User> getUserAdministratorUsers(User user, boolean invalidOnly, String searchTerm, Integer lastUserId) {
-		HashMultimap<PrismScope, T> userAdministratorResources = resourceService.getUserAdministratorResources(user);
-		return userAdministratorResources.isEmpty() ? Lists.<User> newArrayList() : userDAO.getUserAdministratorUsers(userAdministratorResources, invalidOnly, searchTerm, lastUserId);
+	public <T extends Resource> List<User> getBouncedOrUniverifiedUsers(UserListFilterDTO userListFilterDTO) {
+		HashMultimap<PrismScope, T> userAdministratorResources = resourceService.getUserAdministratorResources(getCurrentUser());
+		return userAdministratorResources.isEmpty() ? Lists.<User> newArrayList() : userDAO.getBouncedOrUniverifiedUsers(userAdministratorResources,
+		        userListFilterDTO);
 	}
+
+	public <T extends Resource> void correctBouncedOrUniverifiedUser(Integer userId, UserCorrectionDTO userCorrectionDTO) {
+		HashMultimap<PrismScope, T> userAdministratorResources = resourceService.getUserAdministratorResources(getCurrentUser());
+		User user = userDAO.getBouncedOrUniverifiedUser(userAdministratorResources, userId);
+		
+		String email = userCorrectionDTO.getEmail();
+		User userDuplicate = getUserByEmail(email);
+		
+		if (user != null && userDuplicate == null) {
+			user.setFirstName(userCorrectionDTO.getFirstName());
+			user.setLastName(userCorrectionDTO.getLastName());
+			user.setFullName(user.getFirstName() + " " + user.getLastName());
+			user.setEmail(userCorrectionDTO.getEmail());
+			user.setEmailBouncedMessage(null);
+		} else {
+			throw new WorkflowPermissionException(systemService.getSystem(), actionService.getById(SYSTEM_VIEW_APPLICATION_LIST));
+		}
+	}
+
 }

@@ -1,5 +1,13 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
+import java.io.IOException;
+import java.util.List;
+
+import org.joda.time.LocalDate;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
@@ -8,13 +16,6 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.StateService;
-import org.joda.time.LocalDate;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.util.List;
 
 @Component
 public class StateServiceHelperEscalation implements AbstractServiceHelper {

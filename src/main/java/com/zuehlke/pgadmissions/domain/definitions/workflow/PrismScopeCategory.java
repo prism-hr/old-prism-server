@@ -4,11 +4,11 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinitio
 
 public enum PrismScopeCategory {
 
-	ORGANIZATION, //
+	ORGANIZATION_CATEGORY, //
 	DIVISION, //
-	OPPORTUNITY, //
-	DEADLINE, //
-	APPLICATION;
+	OPPORTUNITY_CATEGORY, //
+	DEADLINE_CATEGORY, //
+	APPLICATION_CATEGORY;
 	
 	public PrismDisplayPropertyDefinition getDisplayPropertyDefinition() {
 		return PrismDisplayPropertyDefinition.valueOf("SYSTEM_" + name());

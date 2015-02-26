@@ -1,12 +1,13 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.services.NotificationService;
+import java.util.List;
+
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.services.NotificationService;
 
 @Component
 public class NotificationServiceHelperRecommendation implements AbstractServiceHelper {

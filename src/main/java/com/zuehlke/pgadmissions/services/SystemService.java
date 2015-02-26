@@ -29,6 +29,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -256,6 +258,19 @@ public class SystemService {
 	public SearchEngineAdvertDTO getSearchEngineAdvert() {
 		return new SearchEngineAdvertDTO().withRelatedInstitutions(institutionService.getActiveInstitions());
 	}
+	
+	@Transactional
+    public AWSCredentials getAmazonCredentials() throws IntegrationException {
+        System system = getSystem();
+        String accessKey = system.getAmazonAccessKey();
+        String secretKey = system.getAmazonSecretKey();
+
+        if (accessKey == null || secretKey == null) {
+            throw new IntegrationException("Amazon credentials not in database");
+        }
+
+        return new BasicAWSCredentials(accessKey, secretKey);
+    }
 
 	private void initializeScopes() throws DeduplicationException {
 		for (PrismScope prismScope : PrismScope.values()) {

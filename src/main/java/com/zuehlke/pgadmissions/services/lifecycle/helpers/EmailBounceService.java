@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 import com.amazonaws.services.simpleemail.model.NotificationType;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.*;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -37,6 +38,9 @@ public class EmailBounceService {
     private UserService userService;
 
     public void processEmailBounces() throws IntegrationException {
+        if(Strings.isNullOrEmpty(bounceQueueUrl)){
+            return;
+        }
         AmazonSQSClient client = new AmazonSQSClient(systemService.getAmazonCredentials());
         ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(bounceQueueUrl);
         receiveMessageRequest.setMaxNumberOfMessages(10);

@@ -65,7 +65,7 @@ public class NotificationDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", PrismNotificationType.INDIVIDUAL)) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.system", resource.getSystem())) //
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
@@ -95,7 +95,7 @@ public class NotificationDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.user", resource.getUser())) //
                         .add(Restrictions.ne("userRole.user", invoker))) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.system", resource.getSystem())) //
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
@@ -121,7 +121,7 @@ public class NotificationDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", PrismNotificationType.INDIVIDUAL)) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.system", resource.getSystem())) //
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
@@ -147,7 +147,7 @@ public class NotificationDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", PrismNotificationType.SYNDICATED)) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.system", resource.getSystem())) //
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
@@ -180,7 +180,7 @@ public class NotificationDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.user", resource.getUser())) //
                         .add(Restrictions.ne("userRole.user", invoker))) //
-                .add(Restrictions.eq("comment." + resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.eq("comment." + resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.system", resource.getSystem())) //
                         .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //

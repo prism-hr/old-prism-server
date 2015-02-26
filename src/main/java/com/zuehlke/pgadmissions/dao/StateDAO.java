@@ -39,7 +39,7 @@ public class StateDAO {
 		        .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
 		        .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
 		        .createAlias("state.resourceStates", "resourceState", JoinType.INNER_JOIN) //
-		        .add(Restrictions.eq("resourceState." + resource.getResourceScope().getLowerCaseName() + ".id", resource.getId())) //
+		        .add(Restrictions.eq("resourceState." + resource.getResourceScope().getLowerCamelName() + ".id", resource.getId())) //
 		        .add(Restrictions.eq("stateAction.action", action)) //
 		        .add(Restrictions.disjunction() //
 		                .add(Restrictions.conjunction() //
@@ -57,7 +57,7 @@ public class StateDAO {
 		        .createAlias("stateAction.state", "state") //
 		        .createAlias("state.resourceStates", "resourceState", JoinType.INNER_JOIN) //
 		        .add(Restrictions.eq("stateAction.action", action)) //
-		        .add(Restrictions.eq("resourceState." + resource.getResourceScope().getLowerCaseName(), resource));
+		        .add(Restrictions.eq("resourceState." + resource.getResourceScope().getLowerCamelName(), resource));
 
 		if (transitionStateId == null) {
 			criteria.add(Restrictions.isNull("transitionState"));
@@ -71,7 +71,7 @@ public class StateDAO {
 	}
 
 	public List<StateTransitionPendingDTO> getStateTransitionsPending(PrismScope scopeId) {
-		String scopeReference = scopeId.getLowerCaseName();
+		String scopeReference = scopeId.getLowerCamelName();
 		return (List<StateTransitionPendingDTO>) sessionFactory.getCurrentSession().createCriteria(StateTransitionPending.class, "stateTransitionPending") //
 		        .setProjection(Projections.projectionList() //
 		                .add(Projections.property("id"), "id") //
@@ -158,7 +158,7 @@ public class StateDAO {
 	public List<State> getCurrentStates(Resource resource) {
 		return (List<State>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
 		        .setProjection(Projections.property("state")) //
-		        .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+		        .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
 		        .addOrder(Order.desc("primaryState")) //
 		        .list();
 	}
@@ -167,7 +167,7 @@ public class StateDAO {
 		Resource parentResource = resource.getParentResource();
 		return (String) sessionFactory.getCurrentSession().createCriteria(ResourceStateTransitionSummary.class) //
 		        .setProjection(Projections.property("transitionStateSelection")) //
-		        .add(Restrictions.eq(parentResource.getResourceScope().getLowerCaseName(), parentResource)) //
+		        .add(Restrictions.eq(parentResource.getResourceScope().getLowerCamelName(), parentResource)) //
 		        .add(Restrictions.eq("stateGroup", resource.getState().getStateGroup())) //
 		        .add(Restrictions.ge("frequency", 3)) //
 		        .addOrder(Order.desc("frequency")) //
@@ -180,7 +180,7 @@ public class StateDAO {
 		return (List<PrismStateGroup>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
 		        .setProjection(Projections.property("state.stateGroup.id")) //
 		        .createAlias("state", "state", JoinType.INNER_JOIN) //
-		        .add(Restrictions.eq(resourceScope.getLowerCaseName() + ".id", resourceId)) //
+		        .add(Restrictions.eq(resourceScope.getLowerCamelName() + ".id", resourceId)) //
 		        .add(Restrictions.eq("primaryState", false)) //
 		        .list();
 	}

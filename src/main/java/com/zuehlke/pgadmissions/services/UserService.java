@@ -334,7 +334,7 @@ public class UserService {
 			if (!assignedResources.isEmpty()) {
 				userDAO.resetUserNotificationsSyndicated(user, scope, assignedResources);
 			}
-			ReflectionUtils.setProperty(user, "lastNotifiedDate" + scope.getLowerCaseName(), null);
+			ReflectionUtils.setProperty(user, "lastNotifiedDate" + scope.getUpperCamelName(), null);
 		}
 	}
 

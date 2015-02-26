@@ -90,7 +90,7 @@ public class SearchEngineOptimisationService {
             Element location = document.createElement("loc");
             sitemap.appendChild(location);
 
-            Text locationString = document.createTextNode(applicationApiUrl + "/sitemap/" + scope.getLowerCaseName() + "_sitemap.xml");
+            Text locationString = document.createTextNode(applicationApiUrl + "/sitemap/" + scope.getLowerCamelName() + "_sitemap.xml");
             location.appendChild(locationString);
 
             Element lastModifiedDateTime = document.createElement("lastmod");
@@ -143,7 +143,7 @@ public class SearchEngineOptimisationService {
             Element location = document.createElement("loc");
             url.appendChild(location);
 
-            Text locationString = document.createTextNode(applicationUrl + "/" + PrismConstants.ANGULAR_HASH + "/?" + scope.getLowerCaseName() + "="
+            Text locationString = document.createTextNode(applicationUrl + "/" + PrismConstants.ANGULAR_HASH + "/?" + scope.getLowerCamelName() + "="
                     + sitemapEntryDTO.getResourceId());
             location.appendChild(locationString);
 

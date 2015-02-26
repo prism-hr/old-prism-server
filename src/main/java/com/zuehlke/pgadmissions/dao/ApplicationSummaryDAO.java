@@ -35,7 +35,7 @@ public class ApplicationSummaryDAO {
 
     public ApplicationProcessingSummary getProcessingSummary(ResourceParent resource, StateGroup stateGroup) {
         return (ApplicationProcessingSummary) sessionFactory.getCurrentSession().createCriteria(ApplicationProcessingSummary.class) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("stateGroup", stateGroup)) //
                 .uniqueResult();
     }
@@ -63,7 +63,7 @@ public class ApplicationSummaryDAO {
                         .add(Projections.property("instanceCountAverageNonZero"), "instanceOccurenceAverage") //
                         .add(Projections.property("dayDurationAverage"), "instanceDurationAverage")) //
                 .createAlias("stateGroup", "stateGroup", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .addOrder(Order.asc("stateGroup.sequenceOrder")) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryRepresentation.class)) //
                 .list();

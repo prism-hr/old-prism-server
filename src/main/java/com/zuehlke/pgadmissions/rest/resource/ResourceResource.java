@@ -191,7 +191,7 @@ public class ResourceResource {
         for (ResourceListRowDTO rowDTO : resourceService.getResourceList(resourceScope, filterDTO, lastSequenceIdentifier)) {
             ResourceListRowRepresentation representation = beanMapper.map(rowDTO, ResourceListRowRepresentation.class);
             representation.setResourceScope(resourceScope);
-            representation.setId((Integer) PropertyUtils.getSimpleProperty(rowDTO, resourceScope.getLowerCaseName() + "Id"));
+            representation.setId((Integer) PropertyUtils.getSimpleProperty(rowDTO, resourceScope.getLowerCamelName() + "Id"));
 
             addActions(currentUser, resourceScope, creationActions, rowDTO, representation);
 
@@ -205,7 +205,7 @@ public class ResourceResource {
 
             representation.setRaisesUpdateFlag(rowDTO.getUpdatedTimestamp().isAfter(baseline));
             representation.setSecondaryStateGroups(stateService.getSecondaryResourceStateGroups(resourceScope,
-                    (Integer) ReflectionUtils.getProperty(rowDTO, resourceScope.getLowerCaseName() + "Id")));
+                    (Integer) ReflectionUtils.getProperty(rowDTO, resourceScope.getLowerCamelName() + "Id")));
 
             representations.add(representation);
         }

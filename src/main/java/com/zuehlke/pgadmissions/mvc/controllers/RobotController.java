@@ -98,7 +98,7 @@ public class RobotController {
         case INSTITUTION:
         case PROGRAM:
         case PROJECT:
-            return Integer.parseInt(queryMap.get(resourceScope.getLowerCaseName()));
+            return Integer.parseInt(queryMap.get(resourceScope.getLowerCamelName()));
         case SYSTEM:
             return null;
         default:

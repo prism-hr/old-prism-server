@@ -120,7 +120,7 @@ public class AdvertService {
                 case INSTITUTION:
                 case PROGRAM:
                 case PROJECT:
-                    ReflectionUtils.setProperty(queryDTO, parentResourceScope.getLowerCaseName() + "s", new Integer[]{parentResource.getId()});
+                    ReflectionUtils.setProperty(queryDTO, parentResourceScope.getLowerCamelName() + "s", new Integer[]{parentResource.getId()});
                     break;
                 case SYSTEM:
                     break;

@@ -121,7 +121,7 @@ public class CustomizationDAO {
             Enum<?> definitionId) {
         Query query = sessionFactory.getCurrentSession().createQuery( //
                 getUpdateOperation(configurationType) //
-                        + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+                        + "where " + resource.getResourceScope().getLowerCamelName() + " = :resource " //
                         + "and " + configurationType.getDefinitionPropertyName() + ".id" + " = :definitionId " //
                         + getLocaleCriterionUpdate(locale) //
                         + getProgramTypeCriterionUpdate(programType)) //
@@ -135,7 +135,7 @@ public class CustomizationDAO {
             PrismProgramType programType) {
         Query query = sessionFactory.getCurrentSession().createQuery( //
                 getUpdateOperation(configurationType) //
-                        + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+                        + "where " + resource.getResourceScope().getLowerCamelName() + " = :resource " //
                         + "and " + getScopeConstraint(configurationType) //
                         + getLocaleCriterionUpdate(locale) //
                         + getProgramTypeCriterionUpdate(programType)) //
@@ -170,7 +170,7 @@ public class CustomizationDAO {
             throw new Error();
         }
 
-        query.setParameter(resourceScope.getLowerCaseName(), resource) //
+        query.setParameter(resourceScope.getLowerCamelName(), resource) //
                 .setParameter("definitionId", definitionId);
 
         applyLocalizationConstraintsRestoreGlobal(locale, programType, query);
@@ -202,7 +202,7 @@ public class CustomizationDAO {
             throw new Error();
         }
 
-        query.setParameter(resourceScope.getLowerCaseName(), resource) //
+        query.setParameter(resourceScope.getLowerCamelName(), resource) //
                 .setParameter("scope", scope);
 
         applyLocalizationConstraintsRestoreGlobal(locale, programType, query);
@@ -232,7 +232,7 @@ public class CustomizationDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-    
+
     private Junction getResourceLocalizationCriterion(Resource resource, PrismScope scope, PrismLocale locale, PrismProgramType programType) {
         Criterion localeCriterion = getLocaleCriterionSelect(locale);
         Criterion programTypeCriterion = getProgramTypeCriterionSelect(scope, programType);
@@ -294,10 +294,10 @@ public class CustomizationDAO {
             query.setParameter("programType", programType);
         }
     }
-    
+
     private void applyLocalizationConstraintsRestoreGlobal(PrismLocale locale, PrismProgramType programType, Query query) {
         applyLocalizationConstraintsRestoreDefault(locale, programType, query);
-        
+
         if (programType != null) {
             query.setParameter("programTypeName", programType.name());
         }

@@ -54,7 +54,7 @@ public class ResourceDAO {
 	}
 
 	public List<Integer> getResourcesToPropagate(PrismScope propagatingScope, Integer propagatingId, PrismScope propagatedScope, PrismAction actionId) {
-		String propagatedAlias = propagatedScope.getLowerCaseName();
+		String propagatedAlias = propagatedScope.getLowerCamelName();
 		String propagatedReference = propagatingScope.ordinal() > propagatedScope.ordinal() ? propagatedAlias : propagatedAlias + "s";
 
 		return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(propagatingScope.getResourceClass()) //
@@ -107,7 +107,7 @@ public class ResourceDAO {
 	public void deleteResourceState(Resource resource, State state) {
 		sessionFactory.getCurrentSession().createQuery( //
 		        "delete ResourceState " //
-		                + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+		                + "where " + resource.getResourceScope().getLowerCamelName() + " = :resource " //
 		                + "and state = :state") //
 		        .setParameter("resource", resource) //
 		        .setParameter("state", state) //
@@ -117,7 +117,7 @@ public class ResourceDAO {
 	public void deleteSecondaryResourceState(Resource resource, State state) {
 		sessionFactory.getCurrentSession().createQuery( //
 		        "delete ResourceState " //
-		                + "where " + resource.getResourceScope().getLowerCaseName() + " = :resource " //
+		                + "where " + resource.getResourceScope().getLowerCamelName() + " = :resource " //
 		                + "and state = :state " + "and primaryState is false") //
 		        .setParameter("resource", resource) //
 		        .setParameter("state", state) //
@@ -131,18 +131,18 @@ public class ResourceDAO {
 		}
 
 		Class<? extends Resource> resourceClass = scopeId.getResourceClass();
-		String resourceReference = scopeId.getLowerCaseName();
+		String resourceReference = scopeId.getLowerCamelName();
 
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceClass, resourceReference);
 
 		ProjectionList projectionList = Projections.projectionList();
 
 		for (PrismScope parentScopeId : parentScopeIds) {
-			String parentScopeName = parentScopeId.getLowerCaseName();
+			String parentScopeName = parentScopeId.getLowerCamelName();
 			projectionList.add(Projections.property(parentScopeName + ".id"), parentScopeName + "Id");
 		}
 
-		projectionList.add(Projections.property("id"), scopeId.getLowerCaseName() + "Id") //
+		projectionList.add(Projections.property("id"), scopeId.getLowerCamelName() + "Id") //
 		        .add(Projections.property("user.id"), "creatorId") //
 		        .add(Projections.property("user.firstName"), "creatorFirstName") //
 		        .add(Projections.property("user.firstName2"), "creatorFirstName2") //
@@ -202,7 +202,7 @@ public class ResourceDAO {
 
 	public List<Integer> getAssignedResources(User user, PrismScope scopeId, PrismScope parentScopeId, ResourceListFilterDTO filter, Junction conditions,
 	        String lastIdentifier, Integer recordsToRetrieve) {
-		String parentResourceReference = parentScopeId.getLowerCaseName();
+		String parentResourceReference = parentScopeId.getLowerCamelName();
 
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
 		        .setProjection(Projections.groupProperty("id")) //
@@ -233,7 +233,7 @@ public class ResourceDAO {
 
 	public List<Integer> getByMatchingUsersInRole(PrismScope scopeId, String searchTerm, PrismRole roleId) {
 		return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-		        .setProjection(Projections.property(scopeId.getLowerCaseName() + ".id")) //
+		        .setProjection(Projections.property(scopeId.getLowerCamelName() + ".id")) //
 		        .createAlias("user", "user", JoinType.INNER_JOIN) //
 		        .add(Restrictions.disjunction() //
 		                .add(Restrictions.ilike("user.fullName", searchTerm, MatchMode.ANYWHERE)) //
@@ -266,7 +266,7 @@ public class ResourceDAO {
 	private void addResourceListCustomColumns(PrismScope scopeId, ProjectionList projectionList) {
 		HashMultimap<String, String> customColumns = scopeId.getConsoleListCustomColumns();
 		for (String tableName : customColumns.keySet()) {
-			boolean prefixColumnName = !tableName.equals(scopeId.getLowerCaseName());
+			boolean prefixColumnName = !tableName.equals(scopeId.getLowerCamelName());
 			for (String columnName : customColumns.get(tableName)) {
 				projectionList.add(Projections.property(prefixColumnName ? tableName + "." + columnName : columnName),
 				        tableName + WordUtils.capitalize(columnName));

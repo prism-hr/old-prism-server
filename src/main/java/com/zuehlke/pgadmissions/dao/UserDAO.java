@@ -228,7 +228,7 @@ public class UserDAO {
 		return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
 		        .setProjection(Projections.groupProperty("user")) //
 		        .createAlias("user", "user", JoinType.INNER_JOIN) //
-		        .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+		        .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
 		        .addOrder(Order.desc("user.lastName")) //
 		        .addOrder(Order.desc("user.firstName")) //
 		        .list();
@@ -273,7 +273,7 @@ public class UserDAO {
 		        .add(Restrictions.isNotNull("lastNotifiedDate"));
 		Junction roleDisjunction = Restrictions.disjunction();
 		for (PrismScope scope : userAdministratorResources.keySet()) {
-			String scopeReference = scope.getLowerCaseName();
+			String scopeReference = scope.getLowerCamelName();
 			sentDisjunction.add(Restrictions.isNotNull("user.lastNotifiedDate" + WordUtils.capitalize(scopeReference)));
 			roleDisjunction.add(Restrictions.in(scopeReference, userAdministratorResources.get(scope)));
 		}
@@ -317,7 +317,7 @@ public class UserDAO {
 
 		Disjunction disjunction = Restrictions.disjunction();
 		for (PrismScope scope : userAdministratorResources.keySet()) {
-			disjunction.add(Restrictions.in(scope.getLowerCaseName(), userAdministratorResources.get(scope)));
+			disjunction.add(Restrictions.in(scope.getLowerCamelName(), userAdministratorResources.get(scope)));
 		}
 
 		return (User) criteria.add(disjunction) //
@@ -341,7 +341,7 @@ public class UserDAO {
 		                + "lastRemindedRequestSyndicated = null, " //
 		                + "lastNotifiedUpdateSyndicated = null " //
 		                + "where id in (:assignedResources)") //
-		        .setParameterList("assignedResource", assignedResources) //
+		        .setParameterList("assignedResources", assignedResources) //
 		        .executeUpdate();
 	}
 

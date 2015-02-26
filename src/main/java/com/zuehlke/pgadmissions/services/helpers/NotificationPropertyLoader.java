@@ -288,26 +288,26 @@ public class NotificationPropertyLoader {
 
     public String getSystemApplicationRecommendation() throws IOException, TemplateException, AbortMailSendException {
         List<AdvertRecommendationDTO> advertRecommendations = advertService.getRecommendedAdverts(notificationDefinitionModelDTO.getUser());
-        
+
         if (!advertRecommendations.isEmpty()) {
             List<String> recommendations = Lists.newLinkedList();
-    
+
             for (AdvertRecommendationDTO advertRecommendation : advertRecommendations) {
                 Advert advert = advertRecommendation.getAdvert();
-    
+
                 Program program = advert.getProgram();
                 Project project = advert.getProject();
-    
+
                 String title = "<b>" + advert.getTitle() + "</b>";
                 String summary = advert.getSummary();
-    
+
                 String applyHomepage = advert.getApplyHomepage();
                 applyHomepage = applyHomepage == null ? buildRedirectionUrl(project == null ? program : project, notificationDefinitionModelDTO.getTransitionAction(),
                         notificationDefinitionModelDTO.getUser()) : applyHomepage;
-    
+
                 recommendations.add(Joiner.on("<br/>").skipNulls().join(title, summary, buildRedirectionControl(applyHomepage, SYSTEM_APPLY)));
             }
-            
+
             return "<p>" + Joiner.on("<p></p>").join(recommendations) + "</p>";
         }
         throw new AbortMailSendException("No recommended adverts found for user: " + notificationDefinitionModelDTO.getUser().getId().toString());
@@ -383,7 +383,7 @@ public class NotificationPropertyLoader {
     }
 
     private String buildRedirectionUrl(Resource resource, PrismAction actionId, User user) {
-        Resource operative = (Resource) ReflectionUtils.getProperty(resource, actionId.getScope().getLowerCaseName());
+        Resource operative = (Resource) ReflectionUtils.getProperty(resource, actionId.getScope().getLowerCamelName());
         return applicationApiUrl + "/mail/activate?resourceId=" + operative.getId() + "&actionId=" + actionId.name() + "&activationCode="
                 + user.getActivationCode();
     }

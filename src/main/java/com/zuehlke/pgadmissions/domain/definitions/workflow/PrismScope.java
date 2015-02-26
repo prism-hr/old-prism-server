@@ -3,8 +3,6 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.advert.ClosingDate;
-import com.zuehlke.pgadmissions.domain.advert.PanelDeadline;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -78,8 +76,12 @@ public enum PrismScope {
 		return byResourceClass.get(resourceClass);
 	}
 
-	public String getLowerCaseName() {
+	public String getLowerCamelName() {
 		return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name());
+	}
+
+	public String getUpperCamelName() {
+		return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
 	}
 
 	public PrismDisplayPropertyDefinition getDisplayPropertyDefinition() {

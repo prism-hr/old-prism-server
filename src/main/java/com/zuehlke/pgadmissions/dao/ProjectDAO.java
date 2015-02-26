@@ -72,7 +72,7 @@ public class ProjectDAO {
     }
 
     public Long getActiveProjectCount(ResourceParent resource) {
-        String resourceReference = resource.getResourceScope().getLowerCaseName();
+        String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (Long) sessionFactory.getCurrentSession().createCriteria(Project.class) //
                 .setProjection(Projections.countDistinct("id")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //

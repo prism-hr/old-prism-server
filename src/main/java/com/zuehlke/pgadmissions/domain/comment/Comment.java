@@ -494,7 +494,7 @@ public class Comment {
     }
 
     public void setResource(Resource resource) {
-        ReflectionUtils.setProperty(this, resource.getResourceScope().getLowerCaseName(), resource);
+        ReflectionUtils.setProperty(this, resource.getResourceScope().getLowerCamelName(), resource);
     }
 
     public Comment withId(Integer id) {
@@ -710,7 +710,7 @@ public class Comment {
     public boolean isApplicationInterviewPendingInterviewComment() {
         return transitionState.getId() == PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
     }
-    
+
     public boolean isApplicationReverseRejectionComment() {
         return action.getId() == PrismAction.APPLICATION_REVERSE_REJECTION;
     }
@@ -754,7 +754,7 @@ public class Comment {
         }
         return false;
     }
-    
+
     public boolean isCreateComment() {
     	return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE;
     }

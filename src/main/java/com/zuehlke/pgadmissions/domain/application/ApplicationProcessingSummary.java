@@ -154,7 +154,7 @@ public class ApplicationProcessingSummary implements IUniqueEntity {
     @Override
     public ResourceSignature getResourceSignature() {
         Resource resource = getResource();
-        return new ResourceSignature().addProperty(resource.getResourceScope().getLowerCaseName(), resource).addProperty("stateGroup", stateGroup);
+        return new ResourceSignature().addProperty(resource.getResourceScope().getLowerCamelName(), resource).addProperty("stateGroup", stateGroup);
     }
 
 }

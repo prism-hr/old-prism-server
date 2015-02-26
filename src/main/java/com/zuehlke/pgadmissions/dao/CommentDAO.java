@@ -41,7 +41,7 @@ public class CommentDAO {
 
     public Comment getLatestComment(Resource resource) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .add(Restrictions.eq(PrismScope.getByResourceClass(resource.getClass()).getLowerCaseName(), resource)) //
+                .add(Restrictions.eq(PrismScope.getByResourceClass(resource.getClass()).getLowerCamelName(), resource)) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //
@@ -50,7 +50,7 @@ public class CommentDAO {
 
     public Comment getLatestComment(Resource resource, PrismAction actionId) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .add(Restrictions.eq(PrismScope.getByResourceClass(resource.getClass()).getLowerCaseName(), resource)) //
+                .add(Restrictions.eq(PrismScope.getByResourceClass(resource.getClass()).getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("action.id", actionId)) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //
@@ -60,7 +60,7 @@ public class CommentDAO {
 
     public Comment getLatestComment(Resource resource, PrismAction actionId, User user, DateTime baseline) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .add(Restrictions.eq(PrismScope.getByResourceClass(resource.getClass()).getLowerCaseName(), resource)) //
+                .add(Restrictions.eq(PrismScope.getByResourceClass(resource.getClass()).getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("action.id", actionId)) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.ge("createdTimestamp", baseline)) //
@@ -71,8 +71,8 @@ public class CommentDAO {
     }
 
     public <T extends Resource> Comment getEarliestComment(ResourceParent parentResource, Class<T> resourceClass, PrismAction actionId) {
-        String resourceReference = PrismScope.getByResourceClass(resourceClass).getLowerCaseName();
-        String parentResourceReference = parentResource.getResourceScope().getLowerCaseName();
+        String resourceReference = PrismScope.getByResourceClass(resourceClass).getLowerCamelName();
+        String parentResourceReference = parentResource.getResourceScope().getLowerCamelName();
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
                 .createAlias(resourceReference + "." + parentResourceReference, parentResourceReference, JoinType.INNER_JOIN) //
@@ -155,7 +155,7 @@ public class CommentDAO {
 
     public <T extends Resource> List<Comment> getRecentComments(Class<T> resourceClass, Integer resourceId, DateTime rangeStart, DateTime rangeClose) {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .add(Restrictions.eq(PrismScope.getByResourceClass(resourceClass).getLowerCaseName() + ".id", resourceId)) //
+                .add(Restrictions.eq(PrismScope.getByResourceClass(resourceClass).getLowerCamelName() + ".id", resourceId)) //
                 .add(Restrictions.between("createdTimestamp", rangeStart, rangeClose)) //
                 .list();
     }

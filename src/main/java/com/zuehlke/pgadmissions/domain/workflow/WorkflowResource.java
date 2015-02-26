@@ -38,7 +38,7 @@ public abstract class WorkflowResource implements IUniqueEntity {
     @Override
     public ResourceSignature getResourceSignature() {
         Resource resource = getResource();
-        return new ResourceSignature().addProperty(resource.getResourceScope().getLowerCaseName(), resource);
+        return new ResourceSignature().addProperty(resource.getResourceScope().getLowerCamelName(), resource);
     }
 
 }

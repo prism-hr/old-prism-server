@@ -104,7 +104,7 @@ public class ActionDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("stateActionAssignment.id")) //
                         .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+                                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                                 .add(Restrictions.disjunction() //
                                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
                                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
@@ -147,7 +147,7 @@ public class ActionDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
-                .add(Restrictions.eq(resourceScope.getLowerCaseName() + ".id", resourceId)) //
+                .add(Restrictions.eq(resourceScope.getLowerCamelName() + ".id", resourceId)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.system.id", systemId)) //
                         .add(Restrictions.eq("userRole.institution.id", institutionId)) //
@@ -170,18 +170,18 @@ public class ActionDAO {
                         .add(Projections.groupProperty("redaction.redactionType"), "redactionType")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("action.redactions", "redaction", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.in("redaction.role.id", roleIds)) //
                 .setResultTransformer(Transformers.aliasToBean(ActionRedactionDTO.class)) //
                 .list();
     }
-    
+
     public List<PrismActionRedactionType> getRedactions(PrismScope resourceScope, Set<Integer> resourceIds, List<PrismRole> roleIds) {
         return (List<PrismActionRedactionType>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.groupProperty("redaction.redactionType")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("action.redactions", "redaction", JoinType.INNER_JOIN) //
-                .add(Restrictions.in(resourceScope.getLowerCaseName() + ".id", resourceIds)) //
+                .add(Restrictions.in(resourceScope.getLowerCamelName() + ".id", resourceIds)) //
                 .add(Restrictions.in("redaction.role.id", roleIds)) //
                 .list();
     }
@@ -199,7 +199,7 @@ public class ActionDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.isNotNull("stateAction.actionEnhancement")) //
                 .add(Restrictions.eq("action.actionCategory", PrismActionCategory.VIEW_EDIT_RESOURCE)) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
@@ -224,7 +224,7 @@ public class ActionDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.isNotNull("stateAction.actionEnhancement")) //
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
@@ -249,7 +249,7 @@ public class ActionDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.isNotNull("stateActionAssignment.actionEnhancement")) //
                 .add(Restrictions.eq("action.actionCategory", PrismActionCategory.VIEW_EDIT_RESOURCE)) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
@@ -274,7 +274,7 @@ public class ActionDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.isNotNull("stateActionAssignment.actionEnhancement")) //
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.application", resource.getApplication())) //
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //

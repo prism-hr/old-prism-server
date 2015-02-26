@@ -34,7 +34,7 @@ public class ApplicationSummaryService {
 
     public void summariseApplication(Application application, Comment comment) {
         Integer currentRatingCount = application.getApplicationRatingCount();
-        application.setApplicationRatingCount(SummaryUtils.incrementRunningCount(currentRatingCount));        
+        application.setApplicationRatingCount(SummaryUtils.incrementRunningCount(currentRatingCount));
         application.setApplicationRatingAverage(SummaryUtils.computeRunningAverage(currentRatingCount, application.getApplicationRatingAverage(),
                 comment.getApplicationRating()));
 
@@ -77,7 +77,7 @@ public class ApplicationSummaryService {
     public List<ApplicationProcessingRepresentation> getProcessings(Application application) {
         return applicationSummaryDAO.getProcessings(application);
     }
-    
+
     public List<ApplicationProcessingSummaryRepresentation> getProcessingSummaries(ResourceParent resource) {
         return applicationSummaryDAO.getProcessingSummaries(resource);
     }
@@ -157,7 +157,7 @@ public class ApplicationSummaryService {
 
     private void incrementApplicationEventCount(Application application, String eventCountProperty) {
         for (ResourceParent parentResource : application.getParentResources()) {
-            ResourceParent parent = (ResourceParent) ReflectionUtils.getProperty(application, parentResource.getResourceScope().getLowerCaseName());
+            ResourceParent parent = (ResourceParent) ReflectionUtils.getProperty(application, parentResource.getResourceScope().getLowerCamelName());
             Integer currentCount = (Integer) ReflectionUtils.getProperty(parent, eventCountProperty);
             ReflectionUtils.setProperty(parent, eventCountProperty, SummaryUtils.incrementRunningCount(currentCount));
         }

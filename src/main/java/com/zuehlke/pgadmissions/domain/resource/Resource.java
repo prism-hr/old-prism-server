@@ -153,7 +153,7 @@ public abstract class Resource implements IUniqueEntity {
 		if (getResourceScope().equals(resourceScope)) {
 			return this;
 		} else {
-			return (Resource) ReflectionUtils.getProperty(this, resourceScope.getLowerCaseName());
+			return (Resource) ReflectionUtils.getProperty(this, resourceScope.getLowerCamelName());
 		}
 	}
 

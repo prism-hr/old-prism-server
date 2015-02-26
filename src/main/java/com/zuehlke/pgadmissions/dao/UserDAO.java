@@ -296,4 +296,5 @@ public class UserDAO {
 		        .setMaxResults(PrismConstants.LIST_PAGE_ROW_COUNT) //
 		        .list();
 	}
+	
 }

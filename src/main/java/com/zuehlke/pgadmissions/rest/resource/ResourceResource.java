@@ -154,7 +154,7 @@ public class ResourceResource {
         List<ResourceUserRolesRepresentation> userRolesRepresentations = Lists.newArrayListWithCapacity(users.size());
         for (User user : users) {
             UserRepresentation userRepresentation = beanMapper.map(user, UserRepresentation.class);
-            Set<PrismRole> roles = Sets.newHashSet(roleService.getUserRoles(resource, user));
+            Set<PrismRole> roles = Sets.newHashSet(roleService.getRolesForResource(resource, user));
             userRolesRepresentations.add(new ResourceUserRolesRepresentation(userRepresentation, roles));
         }
         representation.setUsers(userRolesRepresentations);

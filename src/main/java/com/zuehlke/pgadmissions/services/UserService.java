@@ -347,10 +347,13 @@ public class UserService {
 	    userDAO.reassignUsers(oldUser, newUser);
 	    reassignUserInsitutionIdentities(oldUser, newUser);
 	    
+	    oldUser.setActivationCode(null);
 	    UserAccount oldUserAccount = oldUser.getUserAccount();
 	    if (oldUserAccount != null) {
 	    	oldUserAccount.setEnabled(false);
-	    }   
+	    }
+	    
+	    // TODO: Send an email about the merge
     }
 
 	private void reassignUserRoles(User oldUser, User newUser) {

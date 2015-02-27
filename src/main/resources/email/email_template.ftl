@@ -38,6 +38,17 @@
             <tr>
                 <td colspan="3" height="30"></td>
             </tr>
+            <tr>
+                <td width="10">&nbsp;</td>
+                <td class="text-pad">You cannot reply to this message. If you require help, visit our helpdesk:
+                    <a style="text-decoration:none;" href="http://uclprism.freshdesk.com">
+                        http://uclprism.freshdesk.com
+                    </a>&nbsp;</td>
+                <td width="10">&nbsp;</td>
+            </tr>
+            <tr>
+                <td colspan="3" height="30"></td>
+            </tr>
         </table></td>
     </tr>
     <tr>

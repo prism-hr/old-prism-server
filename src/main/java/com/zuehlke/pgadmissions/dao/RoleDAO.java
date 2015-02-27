@@ -1,15 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.List;
-
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
@@ -22,6 +12,15 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -73,10 +72,10 @@ public class RoleDAO {
 		return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
 		        .setProjection(Projections.groupProperty("role.id")) //
 		        .add(Restrictions.eq("user", user)) //
-		        .add(Restrictions.eq(PrismScope.getByResourceClass(resource.getClass()).getLowerCaseName(), resource)) //
+		        .add(Restrictions.eq(PrismScope.getByResourceClass(resource.getClass()).getLowerCamelName(), resource)) //
 		        .list();
 	}
-	
+
 	public List<PrismRole> getRolesWithinResource(Resource resource, User user) {
 		return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
 		        .setProjection(Projections.property("role.id")) //
@@ -92,7 +91,7 @@ public class RoleDAO {
 
 	public UserRole getUserRole(Resource resource, User user, Role role) {
 		return (UserRole) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-		        .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+		        .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
 		        .add(Restrictions.eq("user", user)) //
 		        .add(Restrictions.eq("role", role)) //
 		        .uniqueResult();
@@ -100,7 +99,7 @@ public class RoleDAO {
 
 	public List<UserRole> getUserRoles(Resource resource, User user, PrismRole... authorities) {
 		return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-		        .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+		        .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
 		        .add(Restrictions.eq("user", user)) //
 		        .add(Restrictions.in("role.id", authorities)) //
 		        .list();
@@ -109,13 +108,13 @@ public class RoleDAO {
 	public List<User> getRoleUsers(Resource resource, Role role) {
 		return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
 		        .setProjection(Projections.property("user")) //
-		        .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+		        .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
 		        .add(Restrictions.eq("role", role)) //
 		        .list();
 	}
 
 	public List<Integer> getExcludingUserRoles(Resource resource, User user, Role role) {
-		String resourceReference = resource.getResourceScope().getLowerCaseName();
+		String resourceReference = resource.getResourceScope().getLowerCamelName();
 		return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
 		        .setProjection(Projections.property("excludedUserRole.id")) //
 		        .createAlias("role", "role", JoinType.INNER_JOIN) //
@@ -146,7 +145,7 @@ public class RoleDAO {
 		        .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
 		        .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
 		        .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-		        .add(Restrictions.eq(resource.getResourceScope().getLowerCaseName(), resource)) //
+		        .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
 		        .add(Restrictions.eq("stateAction.action", action)) //
 		        .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
 		        .add(Restrictions.disjunction() //
@@ -172,7 +171,7 @@ public class RoleDAO {
 		        .createAlias("role", "role", JoinType.INNER_JOIN) //
 		        .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
 		        .add(Restrictions.eq("id", roleTransition.getId())) //
-		        .add(Restrictions.eq("userRole." + resource.getResourceScope().getLowerCaseName(), resource)) //
+		        .add(Restrictions.eq("userRole." + resource.getResourceScope().getLowerCamelName(), resource)) //
 		        .add(Restrictions.disjunction() //
 		                .add(Restrictions.conjunction() //
 		                        .add(Restrictions.eq("restrictToActionOwner", true)) //
@@ -206,7 +205,7 @@ public class RoleDAO {
 		        "delete UserRole " //
 		                + "where :resourceReference = :resource " //
 		                + "and user = :user") //
-		        .setParameter("resourceReference", resource.getResourceScope().getLowerCaseName()) //
+		        .setParameter("resourceReference", resource.getResourceScope().getLowerCamelName()) //
 		        .setParameter("resource", resource).setParameter("user", user) //
 		        .executeUpdate();
 	}

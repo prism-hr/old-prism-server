@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.dto.*;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.*;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
@@ -144,10 +143,6 @@ public class ResourceService {
 			break;
 		default:
 			throw new Error("Attempted to create a resource of invalid type");
-		}
-
-		if (entityService.getDuplicateEntity(resource) != null) {
-			throw new WorkflowPermissionException(resource, action);
 		}
 
 		resource.setReferrer(referrer);

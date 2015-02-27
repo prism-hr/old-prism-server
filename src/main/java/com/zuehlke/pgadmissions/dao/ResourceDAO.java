@@ -270,7 +270,7 @@ public class ResourceDAO {
 		                + "where user = :oldUser") //
 		        .setParameter("newUser", newUser) //
 		        .setParameter("oldUser", oldUser) //
-		        .list();
+		        .executeUpdate();
 	}
 
 	private void addResourceListCustomColumns(PrismScope scopeId, ProjectionList projectionList) {

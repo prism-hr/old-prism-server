@@ -38,7 +38,7 @@ public class EmailBounceService {
     private UserService userService;
 
     public void processEmailBounces() throws IntegrationException {
-        if(Strings.isNullOrEmpty(bounceQueueUrl)){
+        if (Strings.isNullOrEmpty(bounceQueueUrl)) {
             return;
         }
         AmazonSQSClient client = new AmazonSQSClient(systemService.getAmazonCredentials());
@@ -72,10 +72,24 @@ public class EmailBounceService {
 
                         JsonObject bouncedMessage = parser.parse(messageContent).getAsJsonObject();
                         bouncedMessage.remove("bouncedRecipients");
-                        bouncedMessage.addProperty("status", bouncedRecipient.get("status").getAsString());
-                        bouncedMessage.addProperty("action", bouncedRecipient.get("action").getAsString());
-                        bouncedMessage.addProperty("diagnosticCode", bouncedRecipient.get("diagnosticCode").getAsString());
+
                         bouncedMessage.addProperty("emailAddress", bouncedRecipient.get("emailAddress").getAsString());
+
+                        JsonElement status = bouncedRecipient.get("status");
+                        if (status != null) {
+                            bouncedMessage.addProperty("status", status.getAsString());
+                        }
+
+                        JsonElement action = bouncedRecipient.get("action");
+                        if (action != null) {
+                            bouncedMessage.addProperty("action", action.getAsString());
+                        }
+
+                        JsonElement diagnosticCode = bouncedRecipient.get("diagnosticCode");
+                        if (diagnosticCode != null) {
+                            bouncedMessage.addProperty("diagnosticCode", diagnosticCode.getAsString());
+                        }
+
 
                         user.setEmailBouncedMessage(bouncedMessage.toString());
                     }

@@ -1,13 +1,12 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-import org.apache.commons.lang3.ObjectUtils;
-
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 
 public abstract class WorkflowResource implements IUniqueEntity {
 
@@ -32,7 +31,7 @@ public abstract class WorkflowResource implements IUniqueEntity {
     }
 
     public void setResource(Resource resource) {
-        ReflectionUtils.invokeMethod(this, "set" + resource.getClass().getSimpleName(), resource);
+        ReflectionUtils.invokeMethod(this, "set" + resource.getResourceScope().getUpperCamelName(), resource);
     }
 
     @Override

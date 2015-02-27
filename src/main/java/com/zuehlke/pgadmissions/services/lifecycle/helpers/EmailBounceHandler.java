@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-import org.springframework.stereotype.Service;
-
 import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
 
 @Service
 public class EmailBounceHandler implements AbstractServiceHelper {

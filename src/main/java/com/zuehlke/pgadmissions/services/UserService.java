@@ -68,6 +68,9 @@ public class UserService {
 	private ActionService actionService;
 
 	@Inject
+	private ApplicationSectionService applicationSectionService;
+
+	@Inject
 	private RoleService roleService;
 
 	@Inject
@@ -329,18 +332,43 @@ public class UserService {
 			user.setEmailBouncedMessage(null);
 			resetUserNotifications(user);
 		} else if (userDuplicate != null) {
-			reassignUserRoles(user, userDuplicate);
-			resourceService.reassignResources(user, userDuplicate);
+			mergeUsers(user, userDuplicate);
 		} else {
 			throw new WorkflowPermissionException(systemService.getSystem(), actionService.getById(SYSTEM_VIEW_APPLICATION_LIST));
 		}
 	}
+
+	private void mergeUsers(User oldUser, User newUser) {
+	    reassignUserRoles(oldUser, newUser);
+	    resourceService.reassignResources(oldUser, newUser);
+	    applicationSectionService.reassignApplicationSections(oldUser, newUser);
+	    commentService.reassignComments(oldUser, newUser);
+	    documentService.reassignDoucments(oldUser, newUser);
+	    userDAO.reassignUsers(oldUser, newUser);
+	    reassignUserInsitutionIdentities(oldUser, newUser);
+	    
+	    UserAccount oldUserAccount = oldUser.getUserAccount();
+	    if (oldUserAccount != null) {
+	    	oldUserAccount.setEnabled(false);
+	    }   
+    }
 
 	private void reassignUserRoles(User oldUser, User newUser) {
 		for (UserRole userRole : oldUser.getUserRoles()) {
 			roleService.getOrCreateUserRole(new UserRole().withResource(userRole.getResource()).withUser(newUser).withRole(userRole.getRole())
 			        .withAssignedTimestamp(new DateTime()));
 			entityService.delete(userRole);
+		}
+	}
+	
+	private void reassignUserInsitutionIdentities(User oldUser, User newUser) {
+		for (UserInstitutionIdentity userInstitutionIdentity : oldUser.getInstitutionIdentities()) {
+			userInstitutionIdentity.setUser(newUser);
+			UserInstitutionIdentity duplicateUserInstitutionIdentity = entityService.getDuplicateEntity(userInstitutionIdentity);
+			if (duplicateUserInstitutionIdentity != null) {
+				userInstitutionIdentity.setUser(oldUser);
+				entityService.delete(userInstitutionIdentity);
+			}
 		}
 	}
 

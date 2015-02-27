@@ -222,6 +222,10 @@ public class DocumentService {
     public byte[] getSystemDocument(String path) throws IOException {
         return Resources.toByteArray(Resources.getResource(path));
     }
+    
+    public void reassignDoucments(User oldUser, User newUser) {
+    	documentDAO.reassignDocuments(oldUser, newUser);
+    }
 
     private byte[] createImageDocument(byte[] content, String contentType) throws IOException {
         BufferedImage image = ImageIO.read(new ByteArrayInputStream(content));

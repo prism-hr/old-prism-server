@@ -345,4 +345,14 @@ public class UserDAO {
 		        .executeUpdate();
 	}
 
+	public void reassignUsers(User oldUser, User newUser) {
+		sessionFactory.getCurrentSession().createQuery(
+		        "update User " //
+		                + "set parentUser = :newUser " //
+		                + "where parentUser = :oldUser") //
+		        .setParameter("newUser", newUser) //
+		        .setParameter("oldUser", oldUser) //
+		        .executeUpdate();
+	}
+
 }

@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 
 @Entity
 @Table(name = "APPLICATION_SUPERVISOR", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "user_id" }) })
-public class ApplicationSupervisor extends ApplicationSection {
+public class ApplicationSupervisor extends ApplicationAssignmentSection {
 
     @Id
     @GeneratedValue
@@ -37,26 +37,32 @@ public class ApplicationSupervisor extends ApplicationSection {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    @Override
     public final Application getApplication() {
         return application;
     }
 
+    @Override
     public final void setApplication(Application application) {
         this.application = application;
     }
 
+    @Override
     public User getUser() {
         return user;
     }
 
+    @Override
     public void setUser(User user) {
         this.user = user;
     }

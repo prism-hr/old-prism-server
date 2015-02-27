@@ -518,7 +518,25 @@ public class CommentService {
 			throw new PrismValidationException("Comment not completed", errors);
 		}
 	}
+	
+	public void reassignComments(User oldUser, User newUser) {
+		commentDAO.reassignComments(oldUser, newUser);
+		commentDAO.reassignDelegateComments(oldUser, newUser);
+		reassignCommentAssignedUsers(oldUser, newUser);
+	}
 
+	private void reassignCommentAssignedUsers(User oldUser, User newUser) {
+		List<CommentAssignedUser> commentAssignedUsers = commentDAO.getCommentAssignedUsers(oldUser);
+		for (CommentAssignedUser commentAssignedUser : commentAssignedUsers) {
+			commentAssignedUser.setUser(newUser);
+			CommentAssignedUser duplicateCommentAssignedUser = entityService.getDuplicateEntity(commentAssignedUser);
+			if (duplicateCommentAssignedUser != null) {
+				commentAssignedUser.setUser(oldUser);
+				entityService.delete(commentAssignedUser);
+			}
+		}
+	}
+	
 	private Comment getLatestAppointmentPreferenceComment(Application application, Comment schedulingComment, User user) {
 		DateTime baseline = schedulingComment.getCreatedTimestamp();
 		Comment preferenceComment = getLatestComment(application, PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY, user, baseline);

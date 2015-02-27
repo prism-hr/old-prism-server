@@ -83,10 +83,10 @@ public class RoleService {
 
 	public UserRole getOrCreateUserRole(Resource resource, User user, PrismRole newRoleId) throws DeduplicationException {
 		Role newRole = getById(newRoleId);
-		UserRole transientUserRole = new UserRole().withResource(resource).withUser(user).withRole(newRole).withAssignedTimestamp(new DateTime());
-		UserRole persistentUserRole = entityService.getOrCreate(transientUserRole);
+		UserRole userRole = entityService.getOrCreate(new UserRole().withResource(resource).withUser(user).withRole(newRole)
+		        .withAssignedTimestamp(new DateTime()));
 		entityService.flush();
-		return persistentUserRole;
+		return userRole;
 	}
 
 	public void updateUserRole(Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) throws DeduplicationException,
@@ -139,12 +139,12 @@ public class RoleService {
 		return roleDAO.getRolesOverridingRedactions(resource, user);
 	}
 
-	public List<PrismRole> getRoles(Resource resource, User user) {
-		return roleDAO.getRoles(resource, user);
+	public List<PrismRole> getRolesForResource(Resource resource, User user) {
+		return roleDAO.getRolesForResource(resource, user);
 	}
 
-	public List<PrismRole> getUserRoles(Resource resource, User user) {
-		return roleDAO.getUserRoles(resource, user);
+	public List<PrismRole> getRolesWithinResource(Resource resource, User user) {
+		return roleDAO.getRolesWithinResource(resource, user);
 	}
 
 	public List<User> getRoleUsers(Resource resource, Role role) {
@@ -183,7 +183,7 @@ public class RoleService {
 
 	public void deleteUserRoles(Resource resource, User user) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException,
 	        WorkflowEngineException, IOException, IntegrationException {
-		List<PrismRole> roles = roleDAO.getUserRoles(resource, user);
+		List<PrismRole> roles = roleDAO.getRolesForResource(resource, user);
 		updateUserRole(resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
 	}
 

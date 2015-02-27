@@ -232,7 +232,7 @@ public class ActionService {
 		HashMultimap<PrismAction, PrismActionRedactionType> actionRedactions = HashMultimap.create();
 		List<PrismRole> rolesOverridingRedactions = roleService.getRolesOverridingRedactions(resource, user);
 		if (rolesOverridingRedactions.isEmpty()) {
-			List<PrismRole> roleIds = roleService.getRoles(resource, user);
+			List<PrismRole> roleIds = roleService.getRolesForResource(resource, user);
 			if (!roleIds.isEmpty()) {
 				List<ActionRedactionDTO> redactions = actionDAO.getRedactions(resource, roleIds);
 				for (ActionRedactionDTO redaction : redactions) {

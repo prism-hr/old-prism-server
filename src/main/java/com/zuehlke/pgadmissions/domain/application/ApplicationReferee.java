@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 
 @Entity
 @Table(name = "APPLICATION_REFEREE", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "user_id" }) })
-public class ApplicationReferee extends ApplicationSection {
+public class ApplicationReferee extends ApplicationAssignmentSection {
 
     @Id
     @GeneratedValue
@@ -65,10 +65,22 @@ public class ApplicationReferee extends ApplicationSection {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
 
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    @Override
+    public Integer getId() {
+        return id;
+    }
+    
+    @Override
     public Application getApplication() {
         return application;
     }
 
+    @Override
     public void setApplication(Application application) {
         this.application = application;
     }
@@ -113,14 +125,6 @@ public class ApplicationReferee extends ApplicationSection {
         this.address = address;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
     public String getSkype() {
         return skype;
     }
@@ -129,10 +133,12 @@ public class ApplicationReferee extends ApplicationSection {
         this.skype = skype;
     }
 
+    @Override
     public User getUser() {
         return user;
     }
 
+    @Override
     public void setUser(User user) {
         this.user = user;
     }

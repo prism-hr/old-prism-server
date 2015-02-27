@@ -25,6 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -111,6 +112,12 @@ public class User implements UserDetails, IUniqueEntity {
 
 	@OneToMany(mappedBy = "user")
 	private Set<UserRole> userRoles = Sets.newHashSet();
+	
+	@OneToMany(mappedBy = "user")
+	private Set<Application> applications = Sets.newHashSet();
+	
+	@OneToMany(mappedBy = "user")
+	private Set<UserInstitutionIdentity> institutionIdentities = Sets.newHashSet();
 	
 	public Integer getId() {
 		return id;
@@ -272,6 +279,14 @@ public class User implements UserDetails, IUniqueEntity {
 		return userRoles;
 	}
 	
+	public Set<Application> getApplications() {
+		return applications;
+	}
+
+	public Set<UserInstitutionIdentity> getInstitutionIdentities() {
+		return institutionIdentities;
+	}
+
 	public User withId(Integer id) {
 		this.id = id;
 		return this;

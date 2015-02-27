@@ -329,13 +329,18 @@ public class UserService {
 			user.setEmailBouncedMessage(null);
 			resetUserNotifications(user);
 		} else if (userDuplicate != null) {
-			for (UserRole userRole : user.getUserRoles()) {
-				roleService.getOrCreateUserRole(new UserRole().withResource(userRole.getResource()).withUser(userDuplicate).withRole(userRole.getRole())
-				        .withAssignedTimestamp(new DateTime()));
-				
-			}
+			reassignUserRoles(user, userDuplicate);
+			resourceService.reassignResources(user, userDuplicate);
 		} else {
 			throw new WorkflowPermissionException(systemService.getSystem(), actionService.getById(SYSTEM_VIEW_APPLICATION_LIST));
+		}
+	}
+
+	private void reassignUserRoles(User oldUser, User newUser) {
+		for (UserRole userRole : oldUser.getUserRoles()) {
+			roleService.getOrCreateUserRole(new UserRole().withResource(userRole.getResource()).withUser(newUser).withRole(userRole.getRole())
+			        .withAssignedTimestamp(new DateTime()));
+			entityService.delete(userRole);
 		}
 	}
 

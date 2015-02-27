@@ -496,6 +496,12 @@ public class ResourceService {
 		userAdministratorResources.putAll(APPLICATION, (List<T>) applicationService.getUserAdministratorApplications(userAdministratorResources));
 		return userAdministratorResources;
 	}
+	
+	public void reassignResources(User oldUser, User newUser) {
+		for (PrismScope prismScope : PrismScope.values()) {
+			resourceDAO.reassignResources(prismScope, oldUser, newUser);
+		}
+	}
 
 	private Junction getFilterConditions(PrismScope scopeId, ResourceListFilterDTO filter) {
 		if (filter.hasConstraints()) {

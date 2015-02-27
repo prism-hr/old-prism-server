@@ -243,25 +243,35 @@ public class ResourceDAO {
 	}
 
 	public List<UserAdministratorResourceDTO> getUserAdministratorResources(User user) {
-    	return (List<UserAdministratorResourceDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-    			.setProjection(Projections.projectionList() //
-    					.add(Projections.groupProperty("system"), "system") //
-    					.add(Projections.groupProperty("institution"), "institution") //
-    					.add(Projections.groupProperty("program"), "program") //
-    					.add(Projections.groupProperty("project"), "project")) //
-    			.createAlias("role", "role", JoinType.INNER_JOIN) //
-    			.createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-    			.createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
-    			.createAlias("stateAction.stateTransitions", "stateTransition", JoinType.INNER_JOIN) //
-    			.createAlias("stateTransition.roleTransitions", "roleTransition", JoinType.INNER_JOIN) //
-    			.add(Restrictions.eq("user", user)) //
-    			.add(Restrictions.isNull("application")) //
-    			.add(Restrictions.disjunction() //
-    					.add(Restrictions.eq("roleTransition.roleTransitionType", CREATE)) //
-    					.add(Restrictions.eq("roleTransition.restrictToActionOwner", false))) //
-    			.setResultTransformer(Transformers.aliasToBean(UserAdministratorResourceDTO.class)) //
-    			.list();
-    }
+		return (List<UserAdministratorResourceDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+		        .setProjection(Projections.projectionList() //
+		                .add(Projections.groupProperty("system"), "system") //
+		                .add(Projections.groupProperty("institution"), "institution") //
+		                .add(Projections.groupProperty("program"), "program") //
+		                .add(Projections.groupProperty("project"), "project")) //
+		        .createAlias("role", "role", JoinType.INNER_JOIN) //
+		        .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+		        .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
+		        .createAlias("stateAction.stateTransitions", "stateTransition", JoinType.INNER_JOIN) //
+		        .createAlias("stateTransition.roleTransitions", "roleTransition", JoinType.INNER_JOIN) //
+		        .add(Restrictions.eq("user", user)) //
+		        .add(Restrictions.isNull("application")) //
+		        .add(Restrictions.disjunction() //
+		                .add(Restrictions.eq("roleTransition.roleTransitionType", CREATE)) //
+		                .add(Restrictions.eq("roleTransition.restrictToActionOwner", false))) //
+		        .setResultTransformer(Transformers.aliasToBean(UserAdministratorResourceDTO.class)) //
+		        .list();
+	}
+
+	public void reassignResources(PrismScope prismScope, User oldUser, User newUser) {
+		sessionFactory.getCurrentSession().createQuery( //
+		        "update " + prismScope.getUpperCamelName() + " " //
+		                + "set user = :newUser " //
+		                + "where user = :oldUser") //
+		        .setParameter("newUser", newUser) //
+		        .setParameter("oldUser", oldUser) //
+		        .list();
+	}
 
 	private void addResourceListCustomColumns(PrismScope scopeId, ProjectionList projectionList) {
 		HashMultimap<String, String> customColumns = scopeId.getConsoleListCustomColumns();

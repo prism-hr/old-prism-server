@@ -316,6 +316,12 @@ public class UserService {
 		return userAdministratorResources.isEmpty() ? Lists.<User> newArrayList() : userDAO.getBouncedOrUnverifiedUsers(userAdministratorResources,
 		        userListFilterDTO);
 	}
+	
+
+	public User getActiveUser(User user) {
+		User parentUser = user.getParentUser();
+		return parentUser == null ? user : parentUser;
+	}
 
 	public <T extends Resource> void correctBouncedOrUnverifiedUser(Integer userId, UserCorrectionDTO userCorrectionDTO) {
 		HashMultimap<PrismScope, T> userAdministratorResources = resourceService.getUserAdministratorResources(getCurrentUser());
@@ -346,7 +352,7 @@ public class UserService {
 	    documentService.reassignDoucments(oldUser, newUser);
 	    userDAO.reassignUsers(oldUser, newUser);
 	    reassignUserInsitutionIdentities(oldUser, newUser);
-	    
+	   
 	    oldUser.setActivationCode(null);
 	    UserAccount oldUserAccount = oldUser.getUserAccount();
 	    if (oldUserAccount != null) {

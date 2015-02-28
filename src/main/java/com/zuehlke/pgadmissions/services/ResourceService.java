@@ -152,6 +152,8 @@ public class ResourceService {
 	        throws Exception {
 		Resource resource;
 		PrismScope resourceScope = action.getCreationScope().getId();
+		
+		user = userService.getActiveUser(user);
 
 		switch (resourceScope) {
 		case INSTITUTION:

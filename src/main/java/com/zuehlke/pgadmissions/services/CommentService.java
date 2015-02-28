@@ -356,7 +356,7 @@ public class CommentService {
 
 		entityService.save(comment);
 
-		addAssignedUsers(comment, persistentAssignees);
+		assignUsers(comment, persistentAssignees);
 		comment.getCommentTransitionStates().addAll(persistentTransitionStates);
 		comment.getAppointmentTimeslots().addAll(persistentTimeslots);
 		comment.getAppointmentPreferences().addAll(persistentPreferences);
@@ -518,7 +518,7 @@ public class CommentService {
 			throw new PrismValidationException("Comment not completed", errors);
 		}
 	}
-	
+
 	public void reassignComments(User oldUser, User newUser) {
 		commentDAO.reassignComments(oldUser, newUser);
 		commentDAO.reassignDelegateComments(oldUser, newUser);
@@ -536,7 +536,7 @@ public class CommentService {
 			}
 		}
 	}
-	
+
 	private Comment getLatestAppointmentPreferenceComment(Application application, Comment schedulingComment, User user) {
 		DateTime baseline = schedulingComment.getCreatedTimestamp();
 		Comment preferenceComment = getLatestComment(application, PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY, user, baseline);
@@ -572,10 +572,11 @@ public class CommentService {
 		return supervisors;
 	}
 
-	private void addAssignedUsers(Comment comment, Set<CommentAssignedUser> assignees) {
+	private void assignUsers(Comment comment, Set<CommentAssignedUser> assignees) {
 		for (CommentAssignedUser assignee : assignees) {
 			PrismRoleTransitionType transitionType = assignee.getRoleTransitionType();
-			comment.addAssignedUser(assignee.getUser(), assignee.getRole(), transitionType == null ? PrismRoleTransitionType.CREATE : transitionType);
+			comment.addAssignedUser(userService.getActiveUser(assignee.getUser()), assignee.getRole(), transitionType == null ? PrismRoleTransitionType.CREATE
+			        : transitionType);
 		}
 	}
 

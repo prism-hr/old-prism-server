@@ -43,7 +43,7 @@ public class NotificationDefinitionModelDTO {
         this.invoker = invoker;
     }
 
-    public Comment getComment() {
+	public Comment getComment() {
         return comment;
     }
 
@@ -77,7 +77,7 @@ public class NotificationDefinitionModelDTO {
         this.invoker = invoker;
         return this;
     }
-
+    
     public NotificationDefinitionModelDTO withResource(Resource resource) {
         this.resource = resource;
         return this;

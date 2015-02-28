@@ -337,7 +337,7 @@ public class UserService {
 			throw new WorkflowPermissionException(systemService.getSystem(), actionService.getById(SYSTEM_VIEW_APPLICATION_LIST));
 		}
 	}
-
+	
 	private void mergeUsers(User oldUser, User newUser) {
 	    reassignUserRoles(oldUser, newUser);
 	    resourceService.reassignResources(oldUser, newUser);
@@ -352,8 +352,6 @@ public class UserService {
 	    if (oldUserAccount != null) {
 	    	oldUserAccount.setEnabled(false);
 	    }
-	    
-	    // TODO: Send an email about the merge
     }
 
 	private void reassignUserRoles(User oldUser, User newUser) {

@@ -317,12 +317,6 @@ public class UserService {
 		        userListFilterDTO);
 	}
 	
-
-	public User getActiveUser(User user) {
-		User parentUser = user.getParentUser();
-		return parentUser == null ? user : parentUser;
-	}
-
 	public <T extends Resource> void correctBouncedOrUnverifiedUser(Integer userId, UserCorrectionDTO userCorrectionDTO) {
 		HashMultimap<PrismScope, T> userAdministratorResources = resourceService.getUserAdministratorResources(getCurrentUser());
 		User user = userDAO.getBouncedOrUnverifiedUser(userAdministratorResources, userId);

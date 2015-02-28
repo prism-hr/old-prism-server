@@ -153,20 +153,19 @@ public class ResourceService {
 		Resource resource;
 		PrismScope resourceScope = action.getCreationScope().getId();
 		
-		user = userService.getActiveUser(user);
-
+		User userOwner = user.getParentUser();
 		switch (resourceScope) {
 		case INSTITUTION:
-			resource = institutionService.create(user, (InstitutionDTO) resourceDTO);
+			resource = institutionService.create(userOwner, (InstitutionDTO) resourceDTO);
 			break;
 		case PROGRAM:
-			resource = programService.create(user, (ProgramDTO) resourceDTO);
+			resource = programService.create(userOwner, (ProgramDTO) resourceDTO);
 			break;
 		case PROJECT:
-			resource = projectService.create(user, (ProjectDTO) resourceDTO);
+			resource = projectService.create(userOwner, (ProjectDTO) resourceDTO);
 			break;
 		case APPLICATION:
-			resource = applicationService.create(user, (ApplicationDTO) resourceDTO);
+			resource = applicationService.create(userOwner, (ApplicationDTO) resourceDTO);
 			break;
 		default:
 			throw new Error("Attempted to create a resource of invalid type");
@@ -175,9 +174,9 @@ public class ResourceService {
 		resource.setReferrer(referrer);
 		resource.setWorkflowPropertyConfigurationVersion(workflowPropertyConfigurationVersion);
 
-		user.setLatestCreationScope(scopeService.getById(resourceScope));
-		Comment comment = new Comment().withUser(user).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
-		        .addAssignedUser(user, roleService.getCreatorRole(resource), PrismRoleTransitionType.CREATE);
+		userOwner.setLatestCreationScope(scopeService.getById(resourceScope));
+		Comment comment = new Comment().withUser(userOwner).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
+		        .addAssignedUser(userOwner, roleService.getCreatorRole(resource), PrismRoleTransitionType.CREATE);
 
 		return actionService.executeUserAction(resource, action, comment);
 	}

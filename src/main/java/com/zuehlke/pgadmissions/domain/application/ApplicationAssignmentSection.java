@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.user.User;
 
 
-public abstract class ApplicationAssignmentSection extends ApplicationSection implements IUniqueEntity {
+public abstract class ApplicationAssignmentSection extends ApplicationSection implements UniqueEntity {
 
 	public abstract Integer getId();
 	

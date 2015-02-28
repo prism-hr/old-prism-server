@@ -11,12 +11,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 
 @Entity
 @Table(name = "ACTION_REDACTION", uniqueConstraints = {@UniqueConstraint(columnNames = {"action_id", "role_id"})})
-public class ActionRedaction implements IUniqueEntity {
+public class ActionRedaction implements UniqueEntity {
 
     @Id
     @GeneratedValue

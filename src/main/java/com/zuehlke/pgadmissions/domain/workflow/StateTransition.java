@@ -15,11 +15,11 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 
 @Entity
 @Table(name = "STATE_TRANSITION", uniqueConstraints = {@UniqueConstraint(columnNames = {"state_action_id", "transition_state_id"})})
-public class StateTransition implements IUniqueEntity {
+public class StateTransition implements UniqueEntity {
 
     @Id
     @GeneratedValue

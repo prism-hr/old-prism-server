@@ -11,12 +11,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationEvaluation;
 
 @Entity
 @Table(name = "STATE_TERMINATION", uniqueConstraints = {@UniqueConstraint(columnNames = {"state_transition_id", "termination_state_id"})})
-public class StateTermination implements IUniqueEntity {
+public class StateTermination implements UniqueEntity {
 
     @Id
     @GeneratedValue

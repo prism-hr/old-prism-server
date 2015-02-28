@@ -14,12 +14,12 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 
 @Entity
 @Table(name = "APPLICATION_PROCESSING", uniqueConstraints = {@UniqueConstraint(columnNames = {"application_id", "state_group_id"})})
-public class ApplicationProcessing implements IUniqueEntity {
+public class ApplicationProcessing implements UniqueEntity {
 
     @Id
     @GeneratedValue

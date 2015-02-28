@@ -12,11 +12,11 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 
 @Entity
 @Table(name = "PROGRAM_STUDY_OPTION_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "program_study_option_id", "academic_year" }) )
-public class ProgramStudyOptionInstance implements IUniqueEntity {
+public class ProgramStudyOptionInstance implements UniqueEntity {
 
     @Id
     @GeneratedValue

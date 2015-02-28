@@ -16,12 +16,12 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 
 @Entity
 @Table(name = "PROGRAM_STUDY_OPTION", uniqueConstraints = @UniqueConstraint(columnNames = { "program_id", "study_option_id" }))
-public class ProgramStudyOption implements IUniqueEntity {
+public class ProgramStudyOption implements UniqueEntity {
 
     @Id
     @GeneratedValue

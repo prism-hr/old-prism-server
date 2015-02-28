@@ -13,7 +13,7 @@ import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang3.ObjectUtils;
 
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 @Entity
 @Table(name = "APPLICATION_PROCESSING_SUMMARY", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_id", "state_group_id"}),
         @UniqueConstraint(columnNames = {"program_id", "state_group_id"}), @UniqueConstraint(columnNames = {"project_id", "state_group_id"})})
-public class ApplicationProcessingSummary implements IUniqueEntity {
+public class ApplicationProcessingSummary implements UniqueEntity {
 
     @Id
     @GeneratedValue

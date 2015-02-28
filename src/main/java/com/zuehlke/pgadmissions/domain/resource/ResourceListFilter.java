@@ -17,7 +17,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Scope;
 
 @Entity
 @Table(name = "RESOURCE_LIST_FILTER", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_account_id", "scope_id" }) })
-public class ResourceListFilter implements IUniqueEntity {
+public class ResourceListFilter implements UniqueEntity {
 
     @Id
     @GeneratedValue

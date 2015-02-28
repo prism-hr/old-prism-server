@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
-import com.zuehlke.pgadmissions.domain.IUniqueEntity.ResourceSignature;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity.ResourceSignature;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 
 @Repository
@@ -68,7 +68,7 @@ public class EntityDAO {
         sessionFactory.getCurrentSession().update(entity);
     }
 
-    public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) throws DeduplicationException {
+    public <T extends UniqueEntity> T getDuplicateEntity(T uniqueResource) throws DeduplicationException {
         ResourceSignature resourceSignature = uniqueResource.getResourceSignature();
 
         Class<T> resourceClass = (Class<T>) uniqueResource.getClass();

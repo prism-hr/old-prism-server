@@ -12,14 +12,14 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.google.common.base.Objects;
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 
 @Entity
 @Table(name = "COMMENT_ASSIGNED_USER", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "user_id", "role_id" }) })
-public class CommentAssignedUser implements IUniqueEntity {
+public class CommentAssignedUser implements UniqueEntity {
 
     @Id
     @GeneratedValue

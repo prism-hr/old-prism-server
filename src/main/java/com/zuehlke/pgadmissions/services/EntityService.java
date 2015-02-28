@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.EntityDAO;
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
@@ -36,11 +36,11 @@ public class EntityService {
         return entityDAO.list(klass);
     }
 
-    public <T extends IUniqueEntity> T getDuplicateEntity(T uniqueResource) throws DeduplicationException {
+    public <T extends UniqueEntity> T getDuplicateEntity(T uniqueResource) throws DeduplicationException {
         return entityDAO.getDuplicateEntity(uniqueResource);
     }
 
-    public <T extends IUniqueEntity> T getOrCreate(T transientResource) throws DeduplicationException {
+    public <T extends UniqueEntity> T getOrCreate(T transientResource) throws DeduplicationException {
         T persistentResource = getDuplicateEntity(transientResource);
         if (persistentResource == null) {
             save(transientResource);
@@ -49,7 +49,7 @@ public class EntityService {
         return persistentResource;
     }
 
-    public <T extends IUniqueEntity> T createOrUpdate(T transientResource) throws DeduplicationException {
+    public <T extends UniqueEntity> T createOrUpdate(T transientResource) throws DeduplicationException {
         T persistentResource = getDuplicateEntity(transientResource);
         if (persistentResource == null) {
             save(transientResource);
@@ -60,7 +60,7 @@ public class EntityService {
         return persistentResource;
     }
 
-    public <T extends IUniqueEntity> T replace(T persistentResource, T transientResource) {
+    public <T extends UniqueEntity> T replace(T persistentResource, T transientResource) {
         persistentResource = overwriteProperties(persistentResource, transientResource);
         flush();
         return persistentResource;
@@ -95,7 +95,7 @@ public class EntityService {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends IUniqueEntity> T overwriteProperties(T persistentResource, T transientResource) {
+    private <T extends UniqueEntity> T overwriteProperties(T persistentResource, T transientResource) {
         Object persistentId = ReflectionUtils.getProperty(persistentResource, "id");
         ReflectionUtils.setProperty(transientResource, "id", persistentId);
         return (T) merge(transientResource);

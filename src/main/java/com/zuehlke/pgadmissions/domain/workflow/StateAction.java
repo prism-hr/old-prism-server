@@ -15,12 +15,12 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 
 @Entity
 @Table(name = "STATE_ACTION", uniqueConstraints = {@UniqueConstraint(columnNames = {"state_id", "action_id"})})
-public class StateAction implements IUniqueEntity {
+public class StateAction implements UniqueEntity {
 
     @Id
     @GeneratedValue

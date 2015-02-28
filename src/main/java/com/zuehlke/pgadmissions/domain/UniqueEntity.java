@@ -11,7 +11,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
-public interface IUniqueEntity {
+public interface UniqueEntity {
 
     public ResourceSignature getResourceSignature();
 

@@ -11,12 +11,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 
 @Entity
 @Table(name = "ROLE_TRANSITION", uniqueConstraints = {@UniqueConstraint(columnNames = {"state_transition_id", "role_id", "role_transition_type"})})
-public class RoleTransition implements IUniqueEntity {
+public class RoleTransition implements UniqueEntity {
 
     @Id
     @GeneratedValue

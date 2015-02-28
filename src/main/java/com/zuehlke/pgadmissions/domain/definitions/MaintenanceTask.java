@@ -6,7 +6,7 @@ import com.zuehlke.pgadmissions.services.lifecycle.helpers.AdvertServiceHelperEx
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.ApplicationExportServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.DocumentServiceHelperDelete;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.DocumentServiceHelperExport;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.EmailBounceHandler;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.EmailBounceServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperInstitution;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperSystem;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.InstitutionServiceHelper;
@@ -31,7 +31,7 @@ public enum MaintenanceTask {
     SYSTEM_SEND_RECOMMENDATION_NOTIFICATION(NotificationServiceHelperRecommendation.class, true, true), //
     SYSTEM_EXPORT_DOCUMENT(DocumentServiceHelperExport.class, true, true), //
     SYSTEM_DELETE_DOCUMENT(DocumentServiceHelperDelete.class, true, true),
-    SYSTEM_EMAIL_BOUNCE_HANDLE(EmailBounceHandler.class, true, true);
+    SYSTEM_EMAIL_BOUNCE_HANDLE(EmailBounceServiceHelper.class, true, true);
 
     private Class<? extends AbstractServiceHelper> executor;
 

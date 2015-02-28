@@ -8,11 +8,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 
 @Entity
 @Table(name = "STATE_ACTION_NOTIFICATION", uniqueConstraints = {@UniqueConstraint(columnNames = {"state_action_id", "role_id"})})
-public class StateActionNotification implements IUniqueEntity {
+public class StateActionNotification implements UniqueEntity {
 
     @Id
     @GeneratedValue

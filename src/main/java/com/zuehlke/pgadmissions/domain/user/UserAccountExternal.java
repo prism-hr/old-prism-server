@@ -11,12 +11,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 
 @Entity
 @Table(name = "USER_ACCOUNT_EXTERNAL", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_account_id", "external_account_type" }) })
-public class UserAccountExternal implements IUniqueEntity {
+public class UserAccountExternal implements UniqueEntity {
 
     @Id
     @GeneratedValue

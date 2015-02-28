@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
 import com.google.common.base.Objects;
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 
-public abstract class WorkflowDefinition implements IUniqueEntity {
+public abstract class WorkflowDefinition implements UniqueEntity {
 
     public abstract Enum<?> getId();
 

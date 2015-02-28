@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 
-public abstract class AdvertFilterCategory implements IUniqueEntity {
+public abstract class AdvertFilterCategory implements UniqueEntity {
 
     public abstract Integer getId();
 

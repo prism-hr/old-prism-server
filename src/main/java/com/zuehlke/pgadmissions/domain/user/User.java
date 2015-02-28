@@ -24,7 +24,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Entity
 @Table(name = "USER")
-public class User implements UserDetails, IUniqueEntity {
+public class User implements UserDetails, UniqueEntity {
 
 	private static final long serialVersionUID = 5910410212695389060L;
 

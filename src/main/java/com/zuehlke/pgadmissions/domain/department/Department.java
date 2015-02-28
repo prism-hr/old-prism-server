@@ -9,12 +9,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 
 @Entity
 @Table(name = "DEPARTMENT", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "title" }) })
-public class Department implements IUniqueEntity {
+public class Department implements UniqueEntity {
 
     @Id
     @GeneratedValue

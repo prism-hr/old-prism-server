@@ -13,11 +13,11 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import com.google.common.base.Objects;
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 
 @Entity
 @Table(name = "ADVERT_CLOSING_DATE", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "closing_date" }) })
-public class AdvertClosingDate implements IUniqueEntity {
+public class AdvertClosingDate implements UniqueEntity {
 
     @Id
     @GeneratedValue

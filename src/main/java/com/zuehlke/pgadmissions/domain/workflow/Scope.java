@@ -7,12 +7,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 @Entity
 @Table(name = "SCOPE")
-public class Scope implements IUniqueEntity {
+public class Scope implements UniqueEntity {
 
     @Id
     @Column(name = "id", nullable = false)

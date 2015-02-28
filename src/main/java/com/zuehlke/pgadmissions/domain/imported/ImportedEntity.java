@@ -1,11 +1,11 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
 import com.google.common.base.Objects;
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 
-public abstract class ImportedEntity implements IUniqueEntity {
+public abstract class ImportedEntity implements UniqueEntity {
 
     public abstract Integer getId();
 

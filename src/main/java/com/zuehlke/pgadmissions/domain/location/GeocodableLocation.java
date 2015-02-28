@@ -4,9 +4,9 @@ import java.util.List;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.IUniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 
-public abstract class GeocodableLocation implements IUniqueEntity {
+public abstract class GeocodableLocation implements UniqueEntity {
 
     public abstract Object getId();
 

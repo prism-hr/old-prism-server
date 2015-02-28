@@ -19,7 +19,7 @@ create table user_feedback (
 ;
 
 alter table role
-	add column role_category varchar(50) not null default "CREATOR" after id,
+	add column role_category varchar(50) not null default "APPLICANT" after id,
 	add index (role_category)
 ;
 

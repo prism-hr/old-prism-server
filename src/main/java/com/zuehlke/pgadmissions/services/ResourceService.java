@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 
 import java.io.IOException;
@@ -37,7 +38,6 @@ import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
@@ -152,20 +152,20 @@ public class ResourceService {
 	        throws Exception {
 		Resource resource;
 		PrismScope resourceScope = action.getCreationScope().getId();
-		
-		User userOwner = user.getParentUser();
+
+		User resourceUser = user.getParentUser();
 		switch (resourceScope) {
 		case INSTITUTION:
-			resource = institutionService.create(userOwner, (InstitutionDTO) resourceDTO);
+			resource = institutionService.create(resourceUser, (InstitutionDTO) resourceDTO);
 			break;
 		case PROGRAM:
-			resource = programService.create(userOwner, (ProgramDTO) resourceDTO);
+			resource = programService.create(resourceUser, (ProgramDTO) resourceDTO);
 			break;
 		case PROJECT:
-			resource = projectService.create(userOwner, (ProjectDTO) resourceDTO);
+			resource = projectService.create(resourceUser, (ProjectDTO) resourceDTO);
 			break;
 		case APPLICATION:
-			resource = applicationService.create(userOwner, (ApplicationDTO) resourceDTO);
+			resource = applicationService.create(resourceUser, (ApplicationDTO) resourceDTO);
 			break;
 		default:
 			throw new Error("Attempted to create a resource of invalid type");
@@ -174,9 +174,9 @@ public class ResourceService {
 		resource.setReferrer(referrer);
 		resource.setWorkflowPropertyConfigurationVersion(workflowPropertyConfigurationVersion);
 
-		userOwner.setLatestCreationScope(scopeService.getById(resourceScope));
-		Comment comment = new Comment().withUser(userOwner).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
-		        .addAssignedUser(userOwner, roleService.getCreatorRole(resource), PrismRoleTransitionType.CREATE);
+		resourceUser.setLatestCreationScope(scopeService.getById(resourceScope));
+		Comment comment = new Comment().withUser(resourceUser).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
+		        .addAssignedUser(resourceUser, roleService.getCreatorRole(resource), CREATE);
 
 		return actionService.executeUserAction(resource, action, comment);
 	}
@@ -517,7 +517,7 @@ public class ResourceService {
 		userAdministratorResources.putAll(APPLICATION, (List<T>) applicationService.getUserAdministratorApplications(userAdministratorResources));
 		return userAdministratorResources;
 	}
-	
+
 	public void reassignResources(User oldUser, User newUser) {
 		for (PrismScope prismScope : PrismScope.values()) {
 			resourceDAO.reassignResources(prismScope, oldUser, newUser);

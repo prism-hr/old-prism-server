@@ -258,19 +258,19 @@ public class SystemService {
 	public SearchEngineAdvertDTO getSearchEngineAdvert() {
 		return new SearchEngineAdvertDTO().withRelatedInstitutions(institutionService.getActiveInstitions());
 	}
-	
+
 	@Transactional
-    public AWSCredentials getAmazonCredentials() throws IntegrationException {
-        System system = getSystem();
-        String accessKey = system.getAmazonAccessKey();
-        String secretKey = system.getAmazonSecretKey();
+	public AWSCredentials getAmazonCredentials() throws IntegrationException {
+		System system = getSystem();
+		String accessKey = system.getAmazonAccessKey();
+		String secretKey = system.getAmazonSecretKey();
 
-        if (accessKey == null || secretKey == null) {
-            throw new IntegrationException("Amazon credentials not in database");
-        }
+		if (accessKey == null || secretKey == null) {
+			throw new IntegrationException("Amazon credentials not in database");
+		}
 
-        return new BasicAWSCredentials(accessKey, secretKey);
-    }
+		return new BasicAWSCredentials(accessKey, secretKey);
+	}
 
 	private void initializeScopes() throws DeduplicationException {
 		for (PrismScope prismScope : PrismScope.values()) {
@@ -281,7 +281,8 @@ public class SystemService {
 	private void initializeRoles() throws DeduplicationException {
 		for (PrismRole prismRole : PrismRole.values()) {
 			Scope scope = scopeService.getById(prismRole.getScope());
-			entityService.createOrUpdate(new Role().withId(prismRole).withScopeCreator(prismRole.isScopeOwner()).withScope(scope));
+			entityService.createOrUpdate(new Role().withId(prismRole).withRoleCategory(prismRole.getRoleCategory()).withScopeCreator(prismRole.isScopeOwner())
+			        .withScope(scope));
 		}
 	}
 

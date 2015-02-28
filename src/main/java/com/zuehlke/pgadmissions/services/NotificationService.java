@@ -106,11 +106,10 @@ public class NotificationService {
     }
 
     public void sendWorkflowNotifications(Resource resource, Comment comment) {
-        User actionOwner = comment.getActionOwner();
+        User author = systemService.getSystem().getUser();
         LocalDate baseline = new LocalDate();
-
-        sendIndividualRequestNotifications(resource, comment, actionOwner, baseline);
-        sendIndividualUpdateNotifications(resource, comment, actionOwner, baseline);
+        sendIndividualRequestNotifications(resource, comment, author, baseline);
+        sendIndividualUpdateNotifications(resource, comment, author, baseline);
     }
 
     public <T extends Resource> void sendIndividualRequestReminders(Class<T> resourceClass, Integer resourceId, LocalDate baseline) {
@@ -180,11 +179,12 @@ public class NotificationService {
 
     public <T extends Resource> void sendSyndicatedUpdateNotifications(Class<T> resourceClass, Integer resourceId, Comment transitionComment, LocalDate baseline) {
         Resource resource = resourceService.getById(resourceClass, resourceId);
-
-        User actionOwner = transitionComment.getActionOwner();
         Action action = transitionComment.getAction();
 
-        List<UserNotificationDefinitionDTO> updates = notificationDAO.getSyndicatedUpdateDefinitions(resource, action, actionOwner, baseline);
+        User invoker = transitionComment.getActionOwner();
+        User author = systemService.getSystem().getUser();
+
+        List<UserNotificationDefinitionDTO> updates = notificationDAO.getSyndicatedUpdateDefinitions(resource, action, invoker, baseline);
         HashMultimap<NotificationDefinition, User> sent = HashMultimap.create();
 
         if (updates.size() > 0) {
@@ -195,7 +195,7 @@ public class NotificationService {
                 NotificationDefinition notificationDefinition = getById(update.getNotificationDefinitionId());
 
                 if (!sent.get(notificationDefinition).contains(user)) {
-                    sendNotification(notificationDefinition, new NotificationDefinitionModelDTO().withUser(user).withAuthor(actionOwner).withResource(resource)
+                    sendNotification(notificationDefinition, new NotificationDefinitionModelDTO().withUser(user).withAuthor(author).withResource(resource)
                             .withTransitionAction(transitionActionId));
                     user.setLastNotifiedDate(resource.getClass(), baseline);
                     sent.put(notificationDefinition, user);

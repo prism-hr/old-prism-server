@@ -6,9 +6,9 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
+
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +23,7 @@ import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.services.SystemService;
 
 import freemarker.template.Template;
 
@@ -33,14 +34,14 @@ public class RobotController {
     @Value("${application.url}")
     private String applicationUrl;
 
-    @Autowired
+    @Inject
     private ResourceService resourceService;
+    
+    @Inject
+    private SystemService systemService;
 
-    @Autowired
+    @Inject
     private FreeMarkerConfig freemarkerConfig;
-
-    @Autowired
-    private ApplicationContext applicationContext;
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.GET, produces = "text/html")
@@ -102,7 +103,7 @@ public class RobotController {
         case PROJECT:
             return Integer.parseInt(queryMap.get(resourceScope.getLowerCamelName()));
         case SYSTEM:
-            return null;
+            return systemService.getSystem().getId();
         default:
             throw new Error();
         }

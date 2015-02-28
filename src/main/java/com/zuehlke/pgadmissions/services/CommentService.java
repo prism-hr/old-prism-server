@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
@@ -575,8 +577,7 @@ public class CommentService {
 	private void assignUsers(Comment comment, Set<CommentAssignedUser> assignees) {
 		for (CommentAssignedUser assignee : assignees) {
 			PrismRoleTransitionType transitionType = assignee.getRoleTransitionType();
-			User user = assignee.getUser().getParentUser();
-			comment.addAssignedUser(user, assignee.getRole(), transitionType == null ? PrismRoleTransitionType.CREATE : transitionType);
+			comment.addAssignedUser(assignee.getUser().getParentUser(), assignee.getRole(), transitionType == null ? CREATE : transitionType);
 		}
 	}
 

@@ -32,7 +32,7 @@ public class EmailBounceServiceHelper implements AbstractServiceHelper {
 
     @Override
     public void execute() throws Exception {
-        if (!Strings.isNullOrEmpty(bounceQueueUrl)) {    
+        if (!Strings.isNullOrEmpty(bounceQueueUrl)) {   
 	        AmazonSQSClient client = new AmazonSQSClient(systemService.getAmazonCredentials());
 	        ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(bounceQueueUrl);
 	        receiveMessageRequest.setMaxNumberOfMessages(10);

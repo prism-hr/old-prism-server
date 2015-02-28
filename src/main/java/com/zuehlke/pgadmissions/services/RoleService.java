@@ -324,7 +324,7 @@ public class RoleService {
 		executeUpdateUserRole(userRole, transitionUserRole, comment);
 	}
 
-	private void deleteUserRole(Resource resource, User user, Role role) {
+	public void deleteUserRole(Resource resource, User user, Role role) {
 		UserRole userRole = roleDAO.getUserRole(resource, user, role);
 		validateUserRoleRemoval(resource, userRole.getRole());
 		entityService.delete(userRole);

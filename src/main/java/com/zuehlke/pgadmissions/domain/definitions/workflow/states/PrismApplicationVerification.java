@@ -152,10 +152,10 @@ public class PrismApplicationVerification extends PrismWorkflowState {
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_VERIFICATION_PENDING_COMPLETION) //
                         .withTransitionAction(PrismAction.APPLICATION_COMPLETE_VERIFICATION_STAGE) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_VERIFIED_OUTCOME), //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_ELIGIBILITY_OUTCOME), //
                     new PrismStateTransition() //
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_VERIFIED_OUTCOME) //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_ELIGIBILITY_OUTCOME) //
                         .withStateTerminations(Lists.newArrayList( //
                             new PrismStateTermination().withTerminationState(PrismState.APPLICATION_VERIFICATION)))))); //
 
@@ -287,7 +287,7 @@ public class PrismApplicationVerification extends PrismWorkflowState {
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT) //
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_WITHDRAWN_OUTCOME) //
                         .withRoleTransitions(Arrays.asList( //
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_REFEREE) //
@@ -297,7 +297,7 @@ public class PrismApplicationVerification extends PrismWorkflowState {
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_WITHDRAWN_COMPLETED) //
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_PROCESSED_OUTCOME) //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_WITHDRAWN_OUTCOME) //
                         .withRoleTransitions(Arrays.asList( //
                             new PrismRoleTransition() //
                                 .withRole(PrismRole.APPLICATION_REFEREE) //

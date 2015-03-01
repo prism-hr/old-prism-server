@@ -10,9 +10,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INS
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
 import java.util.List;
+import java.util.Set;
+
+import javax.inject.Inject;
 
 import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,40 +43,41 @@ import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
 import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
 import com.zuehlke.pgadmissions.mail.MailSender;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Service
 @Transactional
 @SuppressWarnings("unchecked")
 public class NotificationService {
 
-    @Autowired
+    @Inject
     private NotificationDAO notificationDAO;
 
-    @Autowired
+    @Inject
     private ActionService actionService;
 
-    @Autowired
-    private AdvertService advertService;
-
-    @Autowired
+    @Inject
     private UserService userService;
 
-    @Autowired
+    @Inject
     private ResourceService resourceService;
 
-    @Autowired
+    @Inject
     private RoleService roleService;
 
-    @Autowired
+    @Inject
     private SystemService systemService;
 
-    @Autowired
+    @Inject
     private EntityService entityService;
 
-    @Autowired
+    @Inject
     private CustomizationService customizationService;
+    
+    @Inject
+    private ScopeService scopeService;
 
-    @Autowired
+    @Inject
     private ApplicationContext applicationContext;
 
     public NotificationDefinition getById(PrismNotificationDefinition id) {
@@ -268,6 +271,24 @@ public class NotificationService {
     public List<PrismNotificationDefinition> getEditableTemplates(PrismScope scope) {
         return (List<PrismNotificationDefinition>) (List<?>) customizationService.getDefinitions(PrismConfiguration.NOTIFICATION, scope);
     }
+    
+	public void resetNotifications(Resource resource) {
+		resource.setLastRemindedRequestIndividual(null);
+		resource.setLastRemindedRequestSyndicated(null);
+		resource.setLastNotifiedUpdateSyndicated(null);
+	}
+	
+	public void resetNotifications(User user) {
+		notificationDAO.resetNotificationsIndividual(user);
+		for (PrismScope scope : PrismScope.values()) {
+			List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope);
+			Set<Integer> assignedResources = resourceService.getAssignedResources(user, scope, parentScopes);
+			if (!assignedResources.isEmpty()) {
+				notificationDAO.resetNotificationsSyndicated(user, scope, assignedResources);
+			}
+			ReflectionUtils.setProperty(user, "lastNotifiedDate" + scope.getUpperCamelName(), null);
+		}
+	}
 
     private void sendIndividualRequestNotifications(Resource resource, Comment comment, User author, LocalDate baseline) {
         List<UserNotificationDefinitionDTO> requests = notificationDAO.getIndividualRequestDefinitions(resource, author, baseline);

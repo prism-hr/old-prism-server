@@ -98,19 +98,27 @@ public class RoleDAO {
 		        .uniqueResult();
 	}
 
-	public List<UserRole> getUserRoles(Resource resource, User user, PrismRole... authorities) {
-		return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+	public UserRole getUserRole(Resource resource, User user, PrismRole prismRole) {
+		return (UserRole) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
 		        .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
 		        .add(Restrictions.eq("user", user)) //
-		        .add(Restrictions.in("role.id", authorities)) //
-		        .list();
+		        .add(Restrictions.eq("role.id", prismRole)) //
+		        .uniqueResult();
 	}
 
-	public List<User> getRoleUsers(Resource resource, Role role) {
+	public List<User> getRoleUsers(Resource resource, Role... roles) {
 		return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
 		        .setProjection(Projections.property("user")) //
 		        .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-		        .add(Restrictions.eq("role", role)) //
+		        .add(Restrictions.in("role", roles)) //
+		        .list();
+	}
+
+	public List<User> getRoleUsers(Resource resource, PrismRole... prismRoles) {
+		return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+		        .setProjection(Projections.property("user")) //
+		        .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+		        .add(Restrictions.in("role.id", prismRoles)) //
 		        .list();
 	}
 

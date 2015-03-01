@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.RoleService;
 
 @Component
-public class RoleTransitionResolverDelete implements RoleTransitionResolver {
+public class DeleteResolver implements RoleTransitionResolver {
 
 	@Inject
 	private EntityService entityService;

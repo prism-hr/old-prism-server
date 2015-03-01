@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang3.text.WordUtils;
 import org.hibernate.Criteria;
@@ -323,26 +322,6 @@ public class UserDAO {
 		return (User) criteria.add(disjunction) //
 		        .add(Restrictions.eq("user.id", userId)) //
 		        .uniqueResult();
-	}
-
-	public void resetUserNotificationsIndividual(User user) {
-		sessionFactory.getCurrentSession().createQuery( //
-		        "update UserRole " //
-		                + "set lastNotifiedDate = null " //
-		                + "where user = :user") //
-		        .setParameter("user", user) //
-		        .executeUpdate();
-	}
-
-	public void resetUserNotificationsSyndicated(User user, PrismScope resourceScope, Set<Integer> assignedResources) {
-		sessionFactory.getCurrentSession().createQuery( //
-		        "update " + resourceScope.getResourceClass().getSimpleName() + " " //
-		                + "set lastRemindedRequestIndividual = null, " //
-		                + "lastRemindedRequestSyndicated = null, " //
-		                + "lastNotifiedUpdateSyndicated = null " //
-		                + "where id in (:assignedResources)") //
-		        .setParameterList("assignedResources", assignedResources) //
-		        .executeUpdate();
 	}
 
 	public void reassignUsers(User oldUser, User newUser) {

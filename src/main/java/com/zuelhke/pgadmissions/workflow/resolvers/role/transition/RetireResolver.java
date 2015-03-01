@@ -1,6 +1,6 @@
 package com.zuelhke.pgadmissions.workflow.resolvers.role.transition;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 
 import javax.inject.Inject;
 
@@ -13,20 +13,20 @@ import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.RoleService;
 
 @Component
-public class RoleTransitionResolverBranch implements RoleTransitionResolver {
-	
+public class RetireResolver implements RoleTransitionResolver {
+
 	@Inject
 	private EntityService entityService;
 	
 	@Inject
 	private RoleService roleService;
-
+	
 	@Override
 	public void resolve(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
-		UserRole persistentRole = entityService.getDuplicateEntity(userRole);
+		UserRole persistentRole = entityService.getDuplicateEntity(transitionUserRole);
 		if (persistentRole != null) {
-			comment.addAssignedUser(transitionUserRole.getUser(), transitionUserRole.getRole(), CREATE);
-			roleService.getOrCreateUserRole(transitionUserRole);
+			roleService.deleteUserRole(persistentRole.getResource(), persistentRole.getUser(), persistentRole.getRole());
+			comment.addAssignedUser(transitionUserRole.getUser(), transitionUserRole.getRole(), DELETE);
 		}
 	}
 

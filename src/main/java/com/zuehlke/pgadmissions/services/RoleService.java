@@ -1,14 +1,18 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.UPDATE;
 
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.commons.lang3.text.WordUtils;
+import javax.inject.Inject;
+
 import org.joda.time.DateTime;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,28 +45,28 @@ import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 @Transactional
 public class RoleService {
 
-	@Autowired
+	@Inject
 	private RoleDAO roleDAO;
 
-	@Autowired
+	@Inject
 	private ActionService actionService;
 
-	@Autowired
+	@Inject
 	private EntityService entityService;
 
-	@Autowired
+	@Inject
 	private NotificationService notificationService;
 
-	@Autowired
+	@Inject
 	private ResourceService resourceService;
 
-	@Autowired
+	@Inject
 	private UserService userService;
 
-	@Autowired
+	@Inject
 	private CustomizationService customizationService;
 
-	@Autowired
+	@Inject
 	private ApplicationContext applicationContext;
 
 	public Role getById(PrismRole roleId) {
@@ -89,7 +93,7 @@ public class RoleService {
 		return userRole;
 	}
 
-	public void updateUserRole(Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) throws DeduplicationException,
+	public void assignUserRoles(Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) throws DeduplicationException,
 	        InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
 		if (roles.length > 0) {
 			User invoker = userService.getCurrentUser();
@@ -113,14 +117,9 @@ public class RoleService {
 		return roleDAO.getActionOwnerRoles(user, resource, action);
 	}
 
-	public boolean hasUserRole(Resource resource, User user, PrismRole roleId) {
-		Role role = getById(roleId);
-		return roleDAO.getUserRole(resource, user, role) != null;
-	}
-
-	public boolean hasAnyUserRole(Resource resource, User user, PrismRole... roleIds) {
-		for (PrismRole roleId : roleIds) {
-			if (hasUserRole(resource, user, roleId)) {
+	public boolean hasUserRole(Resource resource, User user, PrismRole... prismRoles) {
+		for (PrismRole prismRole : prismRoles) {
+			if (roleDAO.getUserRole(resource, user, prismRole) != null) {
 				return true;
 			}
 		}
@@ -147,13 +146,12 @@ public class RoleService {
 		return roleDAO.getRolesWithinResource(resource, user);
 	}
 
-	public List<User> getRoleUsers(Resource resource, Role role) {
-		return roleDAO.getRoleUsers(resource, role);
+	public List<User> getRoleUsers(Resource resource, Role... roles) {
+		return roleDAO.getRoleUsers(resource, roles);
 	}
 
-	public List<User> getRoleUsers(Resource resource, PrismRole roleId) {
-		Role role = getById(roleId);
-		return roleDAO.getRoleUsers(resource, role);
+	public List<User> getRoleUsers(Resource resource, PrismRole... prismRoles) {
+		return roleDAO.getRoleUsers(resource, prismRoles);
 	}
 
 	public List<PrismRole> getCreatableRoles(PrismScope scopeId) {
@@ -184,7 +182,7 @@ public class RoleService {
 	public void deleteUserRoles(Resource resource, User user) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException,
 	        WorkflowEngineException, IOException, IntegrationException {
 		List<PrismRole> roles = roleDAO.getRolesForResource(resource, user);
-		updateUserRole(resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
+		assignUserRoles(resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
 	}
 
 	public Integer getPermissionPrecedence(User user) {
@@ -193,11 +191,21 @@ public class RoleService {
 
 	public void executeApplicationProvideReferenceRoleTransition(Resource resource, Comment comment) {
 		User user = comment.getDelegateUser();
-		Role referee = getById(PrismRole.APPLICATION_REFEREE);
-		UserRole oldUserRole = new UserRole().withResource(resource).withUser(user).withRole(referee);
-		Role viewer = getById(PrismRole.APPLICATION_VIEWER_REFEREE);
-		UserRole newUserRole = new UserRole().withResource(resource).withUser(user).withRole(viewer);
-		executeUpdateUserRole(oldUserRole, newUserRole, comment);
+		Role referee = getById(APPLICATION_REFEREE);
+		UserRole userRole = new UserRole().withResource(resource).withUser(user).withRole(referee);
+		Role viewer = getById(APPLICATION_VIEWER_REFEREE);
+		UserRole transitionUserRole = new UserRole().withResource(resource).withUser(user).withRole(viewer);
+		applicationContext.getBean(UPDATE.getResolver()).resolve(userRole, transitionUserRole, comment);
+	}
+
+	public void updateUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) {
+		UserRole persistentRole = entityService.getDuplicateEntity(userRole);
+		if (persistentRole != null) {
+			comment.addAssignedUser(userRole.getUser(), userRole.getRole(), DELETE);
+			comment.addAssignedUser(transitionUserRole.getUser(), transitionUserRole.getRole(), CREATE);
+			deleteUserRole(persistentRole.getResource(), persistentRole.getUser(), persistentRole.getRole());
+			getOrCreateUserRole(transitionUserRole);
+		}
 	}
 
 	private void executeRoleTransitions(Resource resource, Comment comment, List<RoleTransition> roleTransitions) {
@@ -271,57 +279,11 @@ public class RoleService {
 		Resource resource = resourceService.getOperativeResource(comment.getResource(), comment.getAction());
 		Resource transitionResource = comment.getResource();
 
-		UserRole transientRole = new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(baseline);
-		UserRole transientTransitionRole = new UserRole().withResource(transitionResource).withUser(user).withRole(transitionRole)
+		UserRole userRole = new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(baseline);
+		UserRole transitionUserRole = new UserRole().withResource(transitionResource).withUser(user).withRole(transitionRole)
 		        .withAssignedTimestamp(baseline);
 
-		ReflectionUtils.invokeMethod(this, "execute" + WordUtils.capitalizeFully(roleTransition.getRoleTransitionType().name()) + "UserRole", transientRole,
-		        transientTransitionRole, comment);
-	}
-
-	public void executeBranchUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
-		UserRole persistentRole = entityService.getDuplicateEntity(userRole);
-		if (persistentRole != null) {
-			comment.addAssignedUser(transitionUserRole.getUser(), transitionUserRole.getRole(), PrismRoleTransitionType.CREATE);
-			getOrCreateUserRole(transitionUserRole);
-		}
-	}
-
-	public void executeCreateUserRole(UserRole userRole, UserRole transitionUserRole, Comment Comment) throws DeduplicationException {
-		getOrCreateUserRole(transitionUserRole);
-	}
-
-	public void executeDeleteUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
-		executeRetireUserRole(userRole, transitionUserRole, comment);
-	}
-
-	public void executeRetireUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
-		UserRole persistentRole = entityService.getDuplicateEntity(transitionUserRole);
-		if (persistentRole != null) {
-			deleteUserRole(persistentRole.getResource(), persistentRole.getUser(), persistentRole.getRole());
-			comment.addAssignedUser(transitionUserRole.getUser(), transitionUserRole.getRole(), PrismRoleTransitionType.DELETE);
-		}
-	}
-
-	public void executeUpdateUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
-		UserRole persistentRole = entityService.getDuplicateEntity(userRole);
-		if (persistentRole != null) {
-			comment.addAssignedUser(userRole.getUser(), userRole.getRole(), PrismRoleTransitionType.DELETE);
-			comment.addAssignedUser(transitionUserRole.getUser(), transitionUserRole.getRole(), PrismRoleTransitionType.CREATE);
-			deleteUserRole(persistentRole.getResource(), persistentRole.getUser(), persistentRole.getRole());
-			getOrCreateUserRole(transitionUserRole);
-		}
-	}
-
-	public void executeReviveUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
-		UserRole persistentRole = entityService.getDuplicateEntity(userRole);
-		if (persistentRole != null) {
-			persistentRole.setLastNotifiedDate(null);
-		}
-	}
-
-	public void executeExhumeUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
-		executeUpdateUserRole(userRole, transitionUserRole, comment);
+		applicationContext.getBean(roleTransition.getRoleTransitionType().getResolver()).resolve(userRole, transitionUserRole, comment);
 	}
 
 	public void deleteUserRole(Resource resource, User user, Role role) {

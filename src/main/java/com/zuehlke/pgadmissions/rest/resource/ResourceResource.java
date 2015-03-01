@@ -242,7 +242,7 @@ public class ResourceResource {
         PrismRole role = body.get("role");
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
-        roleService.updateUserRole(resource, user, PrismRoleTransitionType.CREATE, role);
+        roleService.assignUserRoles(resource, user, PrismRoleTransitionType.CREATE, role);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles/{role}", method = RequestMethod.DELETE)
@@ -250,7 +250,7 @@ public class ResourceResource {
                                @ModelAttribute ResourceDescriptor resourceDescriptor) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
-        roleService.updateUserRole(resource, user, PrismRoleTransitionType.DELETE, role);
+        roleService.assignUserRoles(resource, user, PrismRoleTransitionType.DELETE, role);
     }
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)

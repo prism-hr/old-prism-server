@@ -55,7 +55,6 @@ import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Service
 @Transactional
@@ -87,9 +86,6 @@ public class UserService {
 
 	@Inject
 	private ResourceService resourceService;
-
-	@Inject
-	private ScopeService scopeService;
 
 	@Inject
 	private SystemService systemService;
@@ -132,7 +128,7 @@ public class UserService {
 	        throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException,
 	        IntegrationException {
 		User user = getOrCreateUser(firstName, lastName, email, locale);
-		roleService.updateUserRole(resource, user, PrismRoleTransitionType.CREATE, roles.toArray(new PrismRole[roles.size()]));
+		roleService.assignUserRoles(resource, user, PrismRoleTransitionType.CREATE, roles.toArray(new PrismRole[roles.size()]));
 		return user;
 	}
 
@@ -330,7 +326,7 @@ public class UserService {
 			user.setFullName(user.getFirstName() + " " + user.getLastName());
 			user.setEmail(userCorrectionDTO.getEmail());
 			user.setEmailBouncedMessage(null);
-			resetUserNotifications(user);
+			notificationService.resetNotifications(user);
 		} else if (userDuplicate != null) {
 			mergeUsers(user, userDuplicate);
 		} else {
@@ -370,18 +366,6 @@ public class UserService {
 				userInstitutionIdentity.setUser(oldUser);
 				entityService.delete(userInstitutionIdentity);
 			}
-		}
-	}
-
-	private void resetUserNotifications(User user) {
-		userDAO.resetUserNotificationsIndividual(user);
-		for (PrismScope scope : PrismScope.values()) {
-			List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope);
-			Set<Integer> assignedResources = resourceService.getAssignedResources(user, scope, parentScopes);
-			if (!assignedResources.isEmpty()) {
-				userDAO.resetUserNotificationsSyndicated(user, scope, assignedResources);
-			}
-			ReflectionUtils.setProperty(user, "lastNotifiedDate" + scope.getUpperCamelName(), null);
 		}
 	}
 

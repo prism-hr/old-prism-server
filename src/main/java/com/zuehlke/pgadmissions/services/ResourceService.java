@@ -9,13 +9,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,6 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewAppointment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
@@ -92,52 +92,55 @@ public class ResourceService {
 	@Value("${system.social.thumbnail}")
 	private String systemSocialThumbnail;
 
-	@Autowired
+	@Inject
 	private ResourceDAO resourceDAO;
 
-	@Autowired
+	@Inject
 	private ActionService actionService;
 
-	@Autowired
+	@Inject
 	private ApplicationService applicationService;
 
-	@Autowired
+	@Inject
 	private ApplicationSummaryService applicationSummaryService;
 
-	@Autowired
+	@Inject
 	private ProjectService projectService;
 
-	@Autowired
+	@Inject
 	private ProgramService programService;
 
-	@Autowired
+	@Inject
 	private InstitutionService institutionService;
 
-	@Autowired
+	@Inject
 	private SystemService systemService;
 
-	@Autowired
+	@Inject
 	private EntityService entityService;
+	
+	@Inject
+	private NotificationService notificationService;
 
-	@Autowired
+	@Inject
 	private ResourceListFilterService resourceListFilterService;
 
-	@Autowired
+	@Inject
 	private RoleService roleService;
 
-	@Autowired
+	@Inject
 	private ScopeService scopeService;
 
-	@Autowired
+	@Inject
 	private StateService stateService;
 
-	@Autowired
+	@Inject
 	private UserService userService;
 
-	@Autowired
+	@Inject
 	private CustomizationService customizationService;
 
-	@Autowired
+	@Inject
 	private ApplicationContext applicationContext;
 
 	public <T extends Resource> T getById(Class<T> resourceClass, Integer id) {
@@ -262,7 +265,7 @@ public class ResourceService {
 
 			PrismStateDurationEvaluation stateDurationEvaluation = resource.getState().getStateDurationEvaluation();
 			if (stateDurationEvaluation != null) {
-				baselineCustom = (LocalDate) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(stateDurationEvaluation), resource, comment);
+				baselineCustom = applicationContext.getBean(stateDurationEvaluation.getResolver()).resolve(resource, comment);
 			}
 
 			baseline = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
@@ -298,7 +301,7 @@ public class ResourceService {
 		}
 
 		if (comment.isUserCreationComment()) {
-			resetNotifications(resource);
+			notificationService.resetNotifications(resource);
 		}
 
 		if (comment.isStateGroupTransitionComment() && comment.getAction().getCreationScope() == null) {
@@ -374,23 +377,6 @@ public class ResourceService {
 
 		return assignedResources.isEmpty() ? new ArrayList<ResourceListRowDTO>() : resourceDAO.getResourceConsoleList(user, scopeId, parentScopeIds,
 		        assignedResources, filter, lastSequenceIdentifier, maxRecords, hasRedactions);
-	}
-
-	public LocalDate getApplicationClosingDate(Resource resource, Comment comment) {
-		return resource.getApplication().getClosingDate();
-	}
-
-	public LocalDate getApplicationInterviewDate(Resource resource, Comment comment) {
-		CommentApplicationInterviewAppointment interviewAppointment = comment.getInterviewAppointment();
-		return interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime().toLocalDate();
-	}
-
-	public LocalDate getProjectEndDate(Resource resource, Comment comment) {
-		return comment.getTransitionState().getId() == PrismState.PROJECT_DISABLED_COMPLETED ? null : resource.getProject().getEndDate();
-	}
-
-	public LocalDate getProgramEndDate(Resource resource, Comment comment) {
-		return comment.getTransitionState().getId() == PrismState.PROGRAM_DISABLED_COMPLETED ? null : resource.getProgram().getEndDate();
 	}
 
 	public <T extends Resource> ResourceSummaryRepresentation getResourceSummary(Class<T> resourceClass, Integer resourceId) {
@@ -632,12 +618,6 @@ public class ResourceService {
 		if (doAddCondition) {
 			conditions.add(inCondition);
 		}
-	}
-
-	private void resetNotifications(Resource resource) {
-		resource.setLastRemindedRequestIndividual(null);
-		resource.setLastRemindedRequestSyndicated(null);
-		resource.setLastNotifiedUpdateSyndicated(null);
 	}
 
 	private void createOrUpdateStateTransitionSummary(Resource resource, DateTime baselineTime) {

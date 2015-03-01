@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.services.RoleService;
 
 @Component
-public class RoleTransitionResolverCreate implements RoleTransitionResolver {
+public class CreateResolver implements RoleTransitionResolver {
 
 	@Inject
 	private RoleService roleService;

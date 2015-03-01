@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.comment.CommentState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -205,5 +207,25 @@ public class NotificationDAO {
                         .add(Restrictions.lt("userAccount.lastNotifiedDateApplicationRecommendation", lastSentBaseline))) //
                 .list();
     }
+    
+	public void resetNotificationsIndividual(User user) {
+		sessionFactory.getCurrentSession().createQuery( //
+		        "update UserRole " //
+		                + "set lastNotifiedDate = null " //
+		                + "where user = :user") //
+		        .setParameter("user", user) //
+		        .executeUpdate();
+	}
+
+	public void resetNotificationsSyndicated(User user, PrismScope resourceScope, Set<Integer> assignedResources) {
+		sessionFactory.getCurrentSession().createQuery( //
+		        "update " + resourceScope.getResourceClass().getSimpleName() + " " //
+		                + "set lastRemindedRequestIndividual = null, " //
+		                + "lastRemindedRequestSyndicated = null, " //
+		                + "lastNotifiedUpdateSyndicated = null " //
+		                + "where id in (:assignedResources)") //
+		        .setParameterList("assignedResources", assignedResources) //
+		        .executeUpdate();
+	}
 
 }

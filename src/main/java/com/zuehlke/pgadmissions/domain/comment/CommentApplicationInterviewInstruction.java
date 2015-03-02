@@ -2,13 +2,16 @@ package com.zuehlke.pgadmissions.domain.comment;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Lob;
 
 @Embeddable
 public class CommentApplicationInterviewInstruction {
 
+	@Lob
     @Column(name = "application_interviewee_instructions")
     private String intervieweeInstructions;
 
+	@Lob
     @Column(name = "application_interviewer_instructions")
     private String interviewerInstructions;
 

@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -39,6 +40,7 @@ public class SimpleImportedEntity extends ImportedEntity {
     @Column(name = "code", nullable = false)
     private String code;
 
+    @Lob
     @Column(name = "name", nullable = false)
     private String name;
 

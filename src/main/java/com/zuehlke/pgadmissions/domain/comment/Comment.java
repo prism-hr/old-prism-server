@@ -18,6 +18,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -99,6 +100,7 @@ public class Comment {
 	@Column(name = "declined_response", nullable = false)
 	private Boolean declinedResponse;
 
+	@Lob
 	@Column(name = "content")
 	private String content;
 
@@ -148,12 +150,14 @@ public class Comment {
 	@Column(name = "application_use_custom_recruiter_questions")
 	private Boolean useCustomRecruiterQuestions;
 
+	@Lob
 	@Column(name = "application_export_request")
 	private String exportRequest;
 
 	@Column(name = "application_export_reference")
 	private String exportReference;
 
+	@Lob
 	@Column(name = "application_export_exception")
 	private String exportException;
 

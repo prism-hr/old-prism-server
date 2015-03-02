@@ -16,6 +16,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -158,9 +159,11 @@ public class Application extends Resource {
     @JoinColumn(name = "application_additional_information_id", unique = true)
     private ApplicationAdditionalInformation additionalInformation;
 
+    @Lob
     @Column(name = "primary_theme")
     private String primaryTheme;
 
+    @Lob
     @Column(name = "secondary_theme")
     private String secondaryTheme;
 

@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -24,12 +25,15 @@ public class ApplicationPrize extends ApplicationSection {
     @JoinColumn(name = "application_id", nullable = false, insertable = false, updatable = false)
     private Application application;
 
+    @Lob
     @Column(name = "provider", nullable = false)
     private String provider;
 
+    @Lob
     @Column(name = "title", nullable = false)
     private String title;
 
+    @Lob
     @Column(name = "description", nullable = false)
     private String description;
 

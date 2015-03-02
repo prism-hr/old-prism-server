@@ -5,7 +5,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 
-import com.zuelhke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
 
 public enum PrismStateTransitionEvaluation {
 

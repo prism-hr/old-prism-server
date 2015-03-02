@@ -490,7 +490,7 @@ public class SystemService {
 		for (PrismNotificationDefinition prismNotificationDefinition : PrismNotificationDefinition.values()) {
 			String subject = FileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationDefinition.getInitialTemplateSubject());
 			String content = FileUtils.getContent(defaultEmailContentDirectory + prismNotificationDefinition.getInitialTemplateContent());
-
+			
 			PrismProgramType programType = prismNotificationDefinition.getScope().ordinal() > INSTITUTION.ordinal() ? PrismProgramType
 			        .getSystemProgramType() : null;
 

@@ -279,7 +279,7 @@ public class PrismApplicationInterviewPendingFeedback extends PrismWorkflowState
                                 .withRestrictToOwner(true))), //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK) //
-                        .withTransitionAction(PrismAction.APPLICATION_COMPLETE_INTERVIEW_STAGE) //
+                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) //
                         .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_PROVIDED_INTERVIEW_FEEDBACK_OUTCOME) //
                         .withRoleTransitions(Arrays.asList( //
                             new PrismRoleTransition() //

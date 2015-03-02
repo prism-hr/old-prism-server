@@ -32,7 +32,7 @@ public class CommentAssignInterviewersCustomValidator implements Validator {
         Preconditions.checkArgument(action == PrismAction.APPLICATION_ASSIGN_INTERVIEWERS, "Unexpected action: " + action);
 
         boolean takenPlace = false;
-        CommentApplicationInterviewAppointment interviewAppointment = comment.getApplicationInterviewAppointment();
+        CommentApplicationInterviewAppointment interviewAppointment = comment.getInterviewAppointment();
         LocalDateTime interviewLocalDateTime = interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime();
 
         if (interviewLocalDateTime == null) {

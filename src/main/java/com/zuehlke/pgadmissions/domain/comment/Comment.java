@@ -120,10 +120,10 @@ public class Comment {
 	private Boolean applicationInterested;
 
 	@Embedded
-	private CommentApplicationInterviewAppointment applicationInterviewAppointment;
+	private CommentApplicationInterviewAppointment interviewAppointment;
 
 	@Embedded
-	private CommentApplicationInterviewInstruction applicationInterviewInstruction;
+	private CommentApplicationInterviewInstruction interviewInstruction;
 
 	@Embedded
 	private CommentApplicationPositionDetail positionDetail;
@@ -330,20 +330,20 @@ public class Comment {
 		this.applicationEligible = applicationEligible;
 	}
 
-	public CommentApplicationInterviewAppointment getApplicationInterviewAppointment() {
-		return applicationInterviewAppointment;
+	public CommentApplicationInterviewAppointment getInterviewAppointment() {
+		return interviewAppointment;
 	}
 
-	public void setApplicationInterviewAppointment(CommentApplicationInterviewAppointment applicationInterviewAppointment) {
-		this.applicationInterviewAppointment = applicationInterviewAppointment;
+	public void setInterviewAppointment(CommentApplicationInterviewAppointment interviewAppointment) {
+		this.interviewAppointment = interviewAppointment;
 	}
 
-	public CommentApplicationInterviewInstruction getApplicationInterviewInstruction() {
-		return applicationInterviewInstruction;
+	public CommentApplicationInterviewInstruction getInterviewInstruction() {
+		return interviewInstruction;
 	}
 
-	public void setApplicationInterviewInstruction(CommentApplicationInterviewInstruction applicationInterviewInstruction) {
-		this.applicationInterviewInstruction = applicationInterviewInstruction;
+	public void setInterviewInstruction(CommentApplicationInterviewInstruction interviewInstruction) {
+		this.interviewInstruction = interviewInstruction;
 	}
 
 	public CommentApplicationPositionDetail getPositionDetail() {
@@ -607,15 +607,20 @@ public class Comment {
 		return this;
 	}
 
-	public Comment withApplicationInterviewAppointment(CommentApplicationInterviewAppointment applicationInterviewAppointment) {
-		this.applicationInterviewAppointment = applicationInterviewAppointment;
+	public Comment withInterviewAppointment(CommentApplicationInterviewAppointment interviewAppointment) {
+		this.interviewAppointment = interviewAppointment;
 		return this;
 	}
 
-	public Comment withApplicationInterviewInstruction(CommentApplicationInterviewInstruction applicationInterviewInstruction) {
-		this.applicationInterviewInstruction = applicationInterviewInstruction;
+	public Comment withInterviewInstruction(CommentApplicationInterviewInstruction interviewInstruction) {
+		this.interviewInstruction = interviewInstruction;
 		return this;
 	}
+	
+	public Comment withRecruiterAcceptAppointment(Boolean recruiterAcceptAppointment) {
+		this.recruiterAcceptAppointment = recruiterAcceptAppointment;
+		return this;
+	}	
 
 	public Comment addAssignedUser(User user, Role role, PrismRoleTransitionType roleTransitionType) {
 		assignedUsers.add(new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(roleTransitionType));
@@ -786,13 +791,15 @@ public class Comment {
 	}
 
 	public boolean isApplicationInterviewScheduledComment(DateTime baseline) {
-		return applicationInterviewAppointment == null ? false : applicationInterviewAppointment.getInterviewDateTime()
-		        .toDateTime(DateTimeZone.forTimeZone(applicationInterviewAppointment.getInterviewTimeZone())).isAfter(baseline);
+		LocalDateTime interviewDateTime = interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime();
+		return interviewDateTime == null ? false : interviewAppointment.getInterviewDateTime()
+		        .toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone())).isAfter(baseline);
 	}
-	
+
 	public boolean isApplicationInterviewRecordedComment(DateTime baseline) {
-		return applicationInterviewAppointment == null ? false : applicationInterviewAppointment.getInterviewDateTime()
-		        .toDateTime(DateTimeZone.forTimeZone(applicationInterviewAppointment.getInterviewTimeZone())).isBefore(baseline);
+		LocalDateTime interviewDateTime = interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime();
+		return interviewDateTime == null ? false : interviewAppointment.getInterviewDateTime()
+		        .toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone())).isBefore(baseline);
 	}
 
 	public String getApplicationRatingDisplay() {
@@ -812,10 +819,7 @@ public class Comment {
 	}
 
 	public String getInterviewDateTimeDisplay(String dateTimeFormat) {
-		if (applicationInterviewAppointment == null) {
-			return null;
-		}
-		LocalDateTime interviewDateTime = applicationInterviewAppointment.getInterviewDateTime();
+		LocalDateTime interviewDateTime = interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime();
 		return interviewDateTime == null ? null : interviewDateTime.toString(dateTimeFormat, LocaleUtils.toLocale(getResource().getLocale().toString()));
 	}
 
@@ -826,10 +830,7 @@ public class Comment {
 	}
 
 	public String getInterviewTimeZoneDisplay() {
-		if (applicationInterviewAppointment == null) {
-			return null;
-		}
-		TimeZone interviewTimezone = applicationInterviewAppointment.getInterviewTimeZone();
+		TimeZone interviewTimezone = interviewAppointment == null ? null : interviewAppointment.getInterviewTimeZone();
 		return interviewTimezone == null ? null : interviewTimezone.getDisplayName(LocaleUtils.toLocale(getResource().getLocale().toString()));
 	}
 

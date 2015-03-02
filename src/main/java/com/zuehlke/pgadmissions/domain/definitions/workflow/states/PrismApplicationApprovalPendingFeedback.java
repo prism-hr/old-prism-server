@@ -276,7 +276,7 @@ public class PrismApplicationApprovalPendingFeedback extends PrismWorkflowState 
                 .withTransitions(Arrays.asList( //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_APPROVAL_PENDING_COMPLETION) //
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) //
+                        .withTransitionAction(PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE) //
                         .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_SUPERVISION_OUTCOME)
                         .withRoleTransitions(Arrays.asList( //
                             new PrismRoleTransition() //
@@ -325,7 +325,7 @@ public class PrismApplicationApprovalPendingFeedback extends PrismWorkflowState 
                 .withTransitions(Arrays.asList( //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_APPROVAL_PENDING_COMPLETION) //
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) //
+                        .withTransitionAction(PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE) //
                         .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_SUPERVISION_OUTCOME)
                         .withRoleTransitions(Arrays.asList( //
                             new PrismRoleTransition() //

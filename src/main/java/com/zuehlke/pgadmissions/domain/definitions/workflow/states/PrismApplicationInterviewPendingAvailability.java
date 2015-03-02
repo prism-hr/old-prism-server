@@ -474,7 +474,7 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
                 .withTransitions(Arrays.asList( //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY) //
-                        .withTransitionAction(PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS) //
+                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) //
                         .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_PROVIDED_INTERVIEW_AVAILABILITY_OUTCOME) //
                         .withRoleTransitions(Arrays.asList( //
                             new PrismRoleTransition() //

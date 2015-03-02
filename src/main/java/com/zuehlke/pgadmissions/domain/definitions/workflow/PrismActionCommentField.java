@@ -24,7 +24,7 @@ public enum PrismActionCommentField {
 
     private String propertyPath;
 
-    PrismActionCommentField(String propertyPath) {
+    private PrismActionCommentField(String propertyPath) {
         this.propertyPath = propertyPath;
     }
 

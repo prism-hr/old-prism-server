@@ -23,7 +23,6 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -128,13 +127,10 @@ public class DocumentService {
     public void validateDownload(Document document) {
         User user = userService.getCurrentUser();
         Resource resource = document.getResource();
-
-        if (resource == null || (document.getUserPortrait() != null && !document.getUserPortrait().isEnabled())) {
-            throw new AccessDeniedException("Document unavailable");
+        if (!user.getId().equals(document.getUser().getId())) {
+            Action viewEditAction = actionService.getViewEditAction(resource);
+            actionService.validateUserAction(resource, viewEditAction, user);
         }
-
-        Action viewEditAction = actionService.getViewEditAction(resource);
-        actionService.validateUserAction(resource, viewEditAction, user);
     }
 
     public byte[] getDocumentContent(Document document) throws IOException, IntegrationException {

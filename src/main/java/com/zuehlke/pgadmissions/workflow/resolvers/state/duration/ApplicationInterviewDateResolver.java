@@ -10,7 +10,7 @@ public class ApplicationInterviewDateResolver implements StateDurationResolver {
 
 	@Override
 	public LocalDate resolve(Resource resource, Comment comment) {
-		CommentApplicationInterviewAppointment interviewAppointment = comment.getApplicationInterviewAppointment();
+		CommentApplicationInterviewAppointment interviewAppointment = comment.getInterviewAppointment();
 		return interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime().toLocalDate();
 	}
 

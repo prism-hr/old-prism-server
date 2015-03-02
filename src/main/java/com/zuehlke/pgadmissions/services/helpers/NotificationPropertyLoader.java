@@ -201,19 +201,19 @@ public class NotificationPropertyLoader {
     }
 
     public String getApplicationInterviewerInstructions() {
-        CommentApplicationInterviewInstruction interviewInstruction = notificationDefinitionModelDTO.getComment().getApplicationInterviewInstruction();
+        CommentApplicationInterviewInstruction interviewInstruction = notificationDefinitionModelDTO.getComment().getInterviewInstruction();
         String instructions = interviewInstruction == null ? null : interviewInstruction.getInterviewerInstructions();
         return instructions == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : instructions;
     }
 
     public String getApplicationIntervieweeInstructions() {
-        CommentApplicationInterviewInstruction interviewInstruction = notificationDefinitionModelDTO.getComment().getApplicationInterviewInstruction();
+        CommentApplicationInterviewInstruction interviewInstruction = notificationDefinitionModelDTO.getComment().getInterviewInstruction();
         String instructions = interviewInstruction == null ? null : interviewInstruction.getIntervieweeInstructions();
         return instructions == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : instructions;
     }
 
     public String getApplicationInterviewLocation() throws IOException, TemplateException {
-        CommentApplicationInterviewInstruction interviewInstruction = notificationDefinitionModelDTO.getComment().getApplicationInterviewInstruction();
+        CommentApplicationInterviewInstruction interviewInstruction = notificationDefinitionModelDTO.getComment().getInterviewInstruction();
         String interviewLocation = interviewInstruction == null ? null : interviewInstruction.getInterviewLocation();
         return interviewLocation == null ? "<p>" + propertyLoader.load(APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED) + "</p>" : buildRedirectionControl(
                 interviewLocation, APPLICATION_COMMENT_DIRECTIONS);

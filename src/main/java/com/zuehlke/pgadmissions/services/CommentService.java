@@ -248,12 +248,12 @@ public class CommentService {
 			interview.getAppointmentPreferences().add(preferenceRepresentation);
 		}
 
-		CommentApplicationInterviewAppointment interviewAppointment = schedulingComment.getApplicationInterviewAppointment();
+		CommentApplicationInterviewAppointment interviewAppointment = schedulingComment.getInterviewAppointment();
 		if (interviewAppointment != null) {
 			dozerBeanMapper.map(interviewAppointment, interview);
 		}
 
-		CommentApplicationInterviewInstruction interviewInstruction = schedulingComment.getApplicationInterviewInstruction();
+		CommentApplicationInterviewInstruction interviewInstruction = schedulingComment.getInterviewInstruction();
 		if (interviewInstruction != null) {
 			dozerBeanMapper.map(interviewInstruction, interview);
 		}
@@ -603,7 +603,7 @@ public class CommentService {
 			        .addCreatedTimestamp(comment.getCreatedTimestamp());
 
 			if (redactions.contains(PrismActionRedactionType.ALL_ASSESSMENT_CONTENT)) {
-				CommentApplicationInterviewAppointment interviewAppointment = comment.getApplicationInterviewAppointment();
+				CommentApplicationInterviewAppointment interviewAppointment = comment.getInterviewAppointment();
 				if (interviewAppointment != null) {
 					representation.setInterviewAppointment(new CommentApplicationInterviewAppointmentRepresentation()
 					        .withInterviewDateTime(interviewAppointment.getInterviewDateTime())
@@ -611,7 +611,7 @@ public class CommentService {
 					        .withInterviewDuration(interviewAppointment.getInterviewDuration()));
 				}
 
-				CommentApplicationInterviewInstruction interviewInstruction = comment.getApplicationInterviewInstruction();
+				CommentApplicationInterviewInstruction interviewInstruction = comment.getInterviewInstruction();
 				if (interviewInstruction != null) {
 					representation.setInterviewInstruction(new CommentApplicationInterviewInstructionRepresentation().withIntervieweeInstructions(
 					        interviewInstruction.getIntervieweeInstructions()).withInterviewLocation(interviewInstruction.getInterviewLocation()));
@@ -668,7 +668,7 @@ public class CommentService {
 	}
 
 	private void appendInterviewPreferenceComments(Comment comment) {
-		LocalDateTime interviewDateTime = comment.getApplicationInterviewAppointment().getInterviewDateTime();
+		LocalDateTime interviewDateTime = comment.getInterviewAppointment().getInterviewDateTime();
 		comment.getAppointmentTimeslots().add(new CommentAppointmentTimeslot().withDateTime(interviewDateTime));
 
 		Resource resource = comment.getResource();
@@ -731,13 +731,13 @@ public class CommentService {
 
 	private void appendInterviewAppointment(Comment comment, CommentDTO commentDTO) {
 		CommentApplicationInterviewAppointmentDTO interviewAppointmentDTO = commentDTO.getInterviewAppointment();
-		comment.setApplicationInterviewAppointment(new CommentApplicationInterviewAppointment().withInterviewDateTime(interviewAppointmentDTO.getInterviewDateTime())
+		comment.setInterviewAppointment(new CommentApplicationInterviewAppointment().withInterviewDateTime(interviewAppointmentDTO.getInterviewDateTime())
 		        .withInterviewTimezone(interviewAppointmentDTO.getInterviewTimeZone()).withInterviewDuration(interviewAppointmentDTO.getInterviewDuration()));
 	}
 
 	private void appendInterviewInstruction(Comment comment, CommentDTO commentDTO) {
 		CommentApplicationInterviewInstructionDTO interviewInstructionDTO = commentDTO.getInterviewInstruction();
-		comment.setApplicationInterviewInstruction(new CommentApplicationInterviewInstruction()
+		comment.setInterviewInstruction(new CommentApplicationInterviewInstruction()
 		        .withIntervieweeInstructions(interviewInstructionDTO.getIntervieweeInstructions())
 		        .withInterviewerInstructions(interviewInstructionDTO.getInterviewerInstructions())
 		        .withInterviewLocation(interviewInstructionDTO.getInterviewLocation()));

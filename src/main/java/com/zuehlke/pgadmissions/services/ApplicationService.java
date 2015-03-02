@@ -369,7 +369,8 @@ public class ApplicationService {
 		Comment comment = new Comment().withResource(application).withContent(commentDTO.getContent()).withUser(user).withDelegateUser(delegateUser)
 		        .withAction(action).withTransitionState(transitionState).withCreatedTimestamp(new DateTime())
 		        .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse())).withApplicationEligible(commentDTO.getApplicationEligible())
-		        .withApplicationInterested(commentDTO.getApplicationInterested()).withApplicationRating(commentDTO.getApplicationRating());
+		        .withApplicationInterested(commentDTO.getApplicationInterested()).withApplicationRating(commentDTO.getApplicationRating())
+		        .withRecruiterAcceptAppointment(commentDTO.getRecruiterAcceptAppointment());
 
 		CommentApplicationPositionDetailDTO positionDetailDTO = commentDTO.getPositionDetail();
 		if (positionDetailDTO != null) {
@@ -563,7 +564,8 @@ public class ApplicationService {
 	}
 
 	public <T extends Resource> List<Application> getUserAdministratorApplications(HashMultimap<PrismScope, T> userAdministratorResources) {
-		return userAdministratorResources.isEmpty() ? Lists.<Application> newArrayList() : applicationDAO.getUserAdministratorApplications(userAdministratorResources);
+		return userAdministratorResources.isEmpty() ? Lists.<Application> newArrayList() : applicationDAO
+		        .getUserAdministratorApplications(userAdministratorResources);
 	}
 
 	private List<ApplicationReportListRowDTO> getApplicationReport(Set<Integer> assignedApplications, String columns) {

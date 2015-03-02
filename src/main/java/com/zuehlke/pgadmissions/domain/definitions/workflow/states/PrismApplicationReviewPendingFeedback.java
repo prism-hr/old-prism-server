@@ -269,7 +269,7 @@ public class PrismApplicationReviewPendingFeedback extends PrismWorkflowState {
                 .withTransitions(Arrays.asList( //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_REVIEW_PENDING_COMPLETION) //
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) //
+                        .withTransitionAction(PrismAction.APPLICATION_COMPLETE_REVIEW_STAGE) //
                         .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_PROVIDED_REVIEW_OUTCOME)
                         .withRoleTransitions(Arrays.asList( //
                             new PrismRoleTransition() //

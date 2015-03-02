@@ -7,6 +7,10 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 
 public interface StateRecommender {
 
-	public List<State> getRecommendations(Resource resource);
+	public List<State> getPreselected(Resource resource);
+	
+	public List<State> getPromoted(Resource resource);
+	
+	public List<State> getPotential(Resource resource);
 
 }

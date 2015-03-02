@@ -25,15 +25,15 @@ public class PrismProgramApproved extends PrismWorkflowState {
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.PROGRAM_APPROVED) //
                         .withTransitionAction(PrismAction.PROGRAM_CONCLUDE) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME), //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_OFFER_OUTCOME), //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.PROGRAM_DEACTIVATED) //
                         .withTransitionAction(PrismAction.PROGRAM_CONCLUDE) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME), //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_OFFER_OUTCOME), //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.PROGRAM_DISABLED_COMPLETED) //
                         .withTransitionAction(PrismAction.PROGRAM_CONCLUDE) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME) //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_OFFER_OUTCOME) //
                         .withPropagatedActions(Arrays.asList( //
                             PrismAction.PROJECT_TERMINATE))))); //
 

@@ -27,15 +27,15 @@ public class PrismProjectApproved extends PrismWorkflowState {
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.PROJECT_APPROVED) //
                         .withTransitionAction(PrismAction.PROJECT_CONCLUDE) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME), //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_OFFER_OUTCOME), //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.PROJECT_DEACTIVATED) //
                         .withTransitionAction(PrismAction.PROJECT_CONCLUDE) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME), //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_OFFER_OUTCOME), //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.PROJECT_DISABLED_COMPLETED) //
                         .withTransitionAction(PrismAction.PROJECT_CONCLUDE) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_RECRUITED_OUTCOME)))); //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_OFFER_OUTCOME)))); //
 
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROJECT_EMAIL_CREATOR) //

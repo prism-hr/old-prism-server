@@ -51,21 +51,28 @@ public class StateDAO {
 		        .list();
 	}
 
-	public StateTransition getStateTransition(Resource resource, Action action, PrismState transitionStateId) {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
+	public StateTransition getStateTransition(Resource resource, Action action) {
+		return (StateTransition) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
 		        .createAlias("stateAction", "stateAction") //
 		        .createAlias("stateAction.state", "state") //
 		        .createAlias("state.resourceStates", "resourceState", JoinType.INNER_JOIN) //
 		        .add(Restrictions.eq("stateAction.action", action)) //
-		        .add(Restrictions.eq("resourceState." + resource.getResourceScope().getLowerCamelName(), resource));
+		        .add(Restrictions.eq("resourceState." + resource.getResourceScope().getLowerCamelName(), resource)) //
+		        .add(Restrictions.isNull("transitionState")) //
+		        .addOrder(Order.desc("resourceState.primaryState")) //
+		        .setMaxResults(1) //
+		        .uniqueResult();
+	}
 
-		if (transitionStateId == null) {
-			criteria.add(Restrictions.isNull("transitionState"));
-		} else {
-			criteria.add(Restrictions.eq("transitionState.id", transitionStateId));
-		}
-
-		return (StateTransition) criteria.addOrder(Order.desc("resourceState.primaryState")) //
+	public StateTransition getStateTransition(Resource resource, Action action, PrismState transitionStateId) {
+		return (StateTransition) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
+		        .createAlias("stateAction", "stateAction") //
+		        .createAlias("stateAction.state", "state") //
+		        .createAlias("state.resourceStates", "resourceState", JoinType.INNER_JOIN) //
+		        .add(Restrictions.eq("stateAction.action", action)) //
+		        .add(Restrictions.eq("resourceState." + resource.getResourceScope().getLowerCamelName(), resource))
+		        .add(Restrictions.eq("transitionState.id", transitionStateId)) //
+		        .addOrder(Order.desc("resourceState.primaryState")) //
 		        .setMaxResults(1) //
 		        .uniqueResult();
 	}

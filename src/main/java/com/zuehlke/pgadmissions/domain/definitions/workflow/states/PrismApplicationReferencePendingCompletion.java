@@ -93,7 +93,7 @@ public class PrismApplicationReferencePendingCompletion extends PrismWorkflowSta
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_APPROVAL) //
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_SUPERVISORS) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME) //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_COMPLETED_REFERENCE_STATE_OUTCOME) //
                         .withRoleTransitions(Arrays.asList( //
                                 new PrismRoleTransition() //
                                     .withRole(PrismRole.APPLICATION_REFEREE) //
@@ -103,7 +103,7 @@ public class PrismApplicationReferencePendingCompletion extends PrismWorkflowSta
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_APPROVED) //
                         .withTransitionAction(PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME) //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_COMPLETED_REFERENCE_STATE_OUTCOME) //
                         .withRoleTransitions(Arrays.asList( //
                                 new PrismRoleTransition() //
                                     .withRole(PrismRole.APPLICATION_REFEREE) //
@@ -113,7 +113,7 @@ public class PrismApplicationReferencePendingCompletion extends PrismWorkflowSta
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_INTERVIEW) //
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_INTERVIEWERS) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME) //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_COMPLETED_REFERENCE_STATE_OUTCOME) //
                         .withRoleTransitions(Arrays.asList( //
                                 new PrismRoleTransition() //
                                     .withRole(PrismRole.APPLICATION_REFEREE) //
@@ -123,7 +123,7 @@ public class PrismApplicationReferencePendingCompletion extends PrismWorkflowSta
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_REFERENCE) //
                         .withTransitionAction(PrismAction.APPLICATION_PROVIDE_REFERENCE) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME) //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_COMPLETED_REFERENCE_STATE_OUTCOME) //
                         .withRoleTransitions(Arrays.asList( //
                                 new PrismRoleTransition() //
                                     .withRole(PrismRole.APPLICATION_REFEREE) //
@@ -133,7 +133,7 @@ public class PrismApplicationReferencePendingCompletion extends PrismWorkflowSta
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_REJECTED) //
                         .withTransitionAction(PrismAction.APPLICATION_CONFIRM_REJECTION) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME) //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_COMPLETED_REFERENCE_STATE_OUTCOME) //
                         .withRoleTransitions(Arrays.asList( //
                                 new PrismRoleTransition() //
                                     .withRole(PrismRole.APPLICATION_REFEREE) //
@@ -143,7 +143,7 @@ public class PrismApplicationReferencePendingCompletion extends PrismWorkflowSta
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_REVIEW) //
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_REVIEWERS) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME) //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_COMPLETED_REFERENCE_STATE_OUTCOME) //
                         .withRoleTransitions(Arrays.asList( //
                                 new PrismRoleTransition() //
                                     .withRole(PrismRole.APPLICATION_REFEREE) //
@@ -153,7 +153,7 @@ public class PrismApplicationReferencePendingCompletion extends PrismWorkflowSta
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_VERIFICATION) //
                         .withTransitionAction(PrismAction.APPLICATION_CONFIRM_ELIGIBILITY) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_REFERENCE_COMPLETED_OUTCOME) //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_COMPLETED_REFERENCE_STATE_OUTCOME) //
                         .withRoleTransitions(Arrays.asList( //
                                 new PrismRoleTransition() //
                                     .withRole(PrismRole.APPLICATION_REFEREE) //

@@ -190,17 +190,13 @@ public class SystemService {
 		verifyBackwardCompatibility(StateGroup.class);
 		initializeStateGroups();
 
-		LOGGER.info("Initialising state transition evaluation definitions");
-		verifyBackwardCompatibility(StateTransitionEvaluation.class);
-		initializeStateTransitionEvaluations();
+		LOGGER.info("Initialising state definitions");
+		verifyBackwardCompatibility(State.class);
+		initializeStates();
 
 		LOGGER.info("Initialising state duration definitions");
 		verifyBackwardCompatibility(StateDurationDefinition.class);
 		initializeStateDurationDefinitions();
-
-		LOGGER.info("Initialising state definitions");
-		verifyBackwardCompatibility(State.class);
-		initializeStates();
 
 		LOGGER.info("Initialising display property definitions");
 		verifyBackwardCompatibility(DisplayPropertyDefinition.class);
@@ -349,15 +345,6 @@ public class SystemService {
 		}
 	}
 
-	private void initializeStateTransitionEvaluations() throws DeduplicationException {
-		for (PrismStateTransitionEvaluation prismTransitionEvaluation : PrismStateTransitionEvaluation.values()) {
-			Scope scope = scopeService.getById(prismTransitionEvaluation.getScope());
-			StateTransitionEvaluation transientStateTransitionEvaluation = new StateTransitionEvaluation().withId(prismTransitionEvaluation)
-			        .withNextStateSelection(prismTransitionEvaluation.isNextStateSelection()).withScope(scope);
-			entityService.createOrUpdate(transientStateTransitionEvaluation);
-		}
-	}
-
 	private void initializeStateDurationDefinitions() throws DeduplicationException {
 		for (PrismStateDurationDefinition prismStateDuration : PrismStateDurationDefinition.values()) {
 			Scope scope = scopeService.getById(prismStateDuration.getScope());
@@ -490,7 +477,7 @@ public class SystemService {
 		for (PrismNotificationDefinition prismNotificationDefinition : PrismNotificationDefinition.values()) {
 			String subject = FileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationDefinition.getInitialTemplateSubject());
 			String content = FileUtils.getContent(defaultEmailContentDirectory + prismNotificationDefinition.getInitialTemplateContent());
-			
+
 			PrismProgramType programType = prismNotificationDefinition.getScope().ordinal() > INSTITUTION.ordinal() ? PrismProgramType
 			        .getSystemProgramType() : null;
 
@@ -550,9 +537,21 @@ public class SystemService {
 		for (PrismStateTransition prismStateTransition : prismStateAction.getTransitions()) {
 			State transitionState = stateService.getById(prismStateTransition.getTransitionState());
 			Action transitionAction = actionService.getById(prismStateTransition.getTransitionAction());
-			StateTransitionEvaluation transitionEvaluation = stateService.getStateTransitionEvaluationById(prismStateTransition.getStateTransitionEvaluation());
+
+			StateTransitionEvaluation stateTransitionEvaluation = null;
+			PrismStateTransitionEvaluation prismStateTransitionEvaluation = prismStateTransition.getStateTransitionEvaluation();
+			if (prismStateTransitionEvaluation != null) {
+				stateTransitionEvaluation = stateService.getStateTransitionEvaluationById(prismStateTransitionEvaluation);
+				if (stateTransitionEvaluation == null) {
+					Scope scope = scopeService.getById(prismStateTransitionEvaluation.getScope());
+					stateTransitionEvaluation = new StateTransitionEvaluation().withId(prismStateTransitionEvaluation)
+					        .withNextStateSelection(prismStateTransitionEvaluation.isNextStateSelection()).withScope(scope);
+					entityService.save(stateTransitionEvaluation);
+				}
+			}
+
 			StateTransition stateTransition = new StateTransition().withStateAction(stateAction).withTransitionState(transitionState)
-			        .withTransitionAction(transitionAction).withStateTransitionEvaluation(transitionEvaluation);
+			        .withTransitionAction(transitionAction).withStateTransitionEvaluation(stateTransitionEvaluation);
 			entityService.save(stateTransition);
 			stateAction.getStateTransitions().add(stateTransition);
 

@@ -7,6 +7,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -56,6 +57,7 @@ public class NotificationConfiguration extends WorkflowConfiguration {
     @Column(name = "subject", nullable = false)
     private String subject;
 
+    @Lob
     @Column(name = "content", nullable = false)
     private String content;
 

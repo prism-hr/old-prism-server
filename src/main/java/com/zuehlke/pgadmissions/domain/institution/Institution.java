@@ -11,6 +11,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -81,6 +82,7 @@ public class Institution extends ResourceParent {
     @Column(name = "summary", nullable = false)
     private String summary;
 
+    @Lob
     @Column(name = "description")
     private String description;
 

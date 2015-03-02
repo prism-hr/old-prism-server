@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import com.zuelhke.pgadmissions.workflow.resolvers.state.duration.ApplicationClosingDateResolver;
-import com.zuelhke.pgadmissions.workflow.resolvers.state.duration.ApplicationInterviewDateResolver;
-import com.zuelhke.pgadmissions.workflow.resolvers.state.duration.ProgramEndDateResolver;
-import com.zuelhke.pgadmissions.workflow.resolvers.state.duration.ProjectEndDateResolver;
-import com.zuelhke.pgadmissions.workflow.resolvers.state.duration.StateDurationResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.duration.ApplicationClosingDateResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.duration.ApplicationInterviewDateResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.duration.ProgramEndDateResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.duration.ProjectEndDateResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.duration.StateDurationResolver;
 
 public enum PrismStateDurationEvaluation {
 

@@ -12,6 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -60,6 +61,7 @@ public class User implements UserDetails, UniqueEntity {
 	@Column(name = "email", nullable = false, unique = true)
 	private String email;
 
+	@Lob
 	@Column(name = "email_bounced_message")
 	private String emailBouncedMessage;
 
@@ -71,7 +73,7 @@ public class User implements UserDetails, UniqueEntity {
 	@JoinColumn(name = "portrait_document_id")
 	private Document portraitDocument;
 
-	@Column(name = "activation_code", nullable = false, unique = true)
+	@Column(name = "activation_code", unique = true)
 	private String activationCode;
 
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)

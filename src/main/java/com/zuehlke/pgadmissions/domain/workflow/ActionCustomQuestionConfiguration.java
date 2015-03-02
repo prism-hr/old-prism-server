@@ -9,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -63,6 +64,7 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
     @Enumerated(EnumType.STRING)
     private PrismCustomQuestionType customQuestionType;
 
+    @Lob
     @Column(name = "display_name", nullable = false)
     private String component;
 
@@ -72,21 +74,26 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
     @Column(name = "display_index", nullable = false)
     private Integer index;
 
+    @Lob
     @Column(name = "display_label", nullable = false)
     private String label;
 
+    @Lob
     @Column(name = "display_description")
     private String description;
 
+    @Lob
     @Column(name = "display_placeholder")
     private String placeholder;
 
+    @Lob
     @Column(name = "display_options")
     private String options;
 
     @Column(name = "display_required", nullable = false)
     private Boolean required;
 
+    @Lob
     @Column(name = "display_validation")
     private String validation;
 

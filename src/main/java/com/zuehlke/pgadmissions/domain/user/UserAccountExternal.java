@@ -7,6 +7,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -33,9 +34,11 @@ public class UserAccountExternal implements UniqueEntity {
     @Column(name = "external_account_identifier", nullable = false)
     private String accountIdentifier;
 
+    @Lob
     @Column(name = "external_account_profile_url")
     private String accountProfileUrl;
 
+    @Lob
     @Column(name = "external_account_image_url")
     private String accountImageUrl;
 

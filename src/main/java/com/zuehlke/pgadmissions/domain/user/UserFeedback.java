@@ -7,6 +7,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -42,6 +43,7 @@ public class UserFeedback {
 	@Column(name = "rating")
 	private Integer rating;
 	
+	@Lob
 	@Column(name = "content")
 	private String content;
 	

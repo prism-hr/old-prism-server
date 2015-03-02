@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.comment;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Lob;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
@@ -13,6 +14,7 @@ public class CommentApplicationOfferDetail {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate positionProvisionalStartDate;
 
+    @Lob
     @Column(name = "application_appointment_conditions")
     private String appointmentConditions;
 

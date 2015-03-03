@@ -9,9 +9,6 @@ import javax.validation.constraints.NotNull;
 public class UserFeedbackDTO {
 
 	@NotNull
-	private Integer user;
-
-	@NotNull
 	private PrismRoleCategory roleCategory;
 
     @NotNull
@@ -22,14 +19,6 @@ public class UserFeedbackDTO {
 
     @Valid
     private UserFeedbackContentDTO content;
-
-	public Integer getUser() {
-		return user;
-	}
-
-	public void setUser(Integer user) {
-		this.user = user;
-	}
 
 	public PrismRoleCategory getRoleCategory() {
 		return roleCategory;

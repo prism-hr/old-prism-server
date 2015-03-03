@@ -35,7 +35,7 @@ public class UserFeedbackService {
 
     public void createFeedback(UserFeedbackDTO userFeedbackDTO) {
         UserFeedbackContentDTO contentDTO = userFeedbackDTO.getContent();
-        User user = userService.getById(userFeedbackDTO.getUser());
+        User user = userService.getCurrentUser();
         Institution institution = institutionService.getById(5243); // FIXME get right institution
 
         UserFeedback userFeedback = new UserFeedback().withUser(user).withRoleCategory(userFeedbackDTO.getRoleCategory()).withInstitution(institution)

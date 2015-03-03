@@ -25,7 +25,7 @@ public class UserExtendedRepresentation extends UserRepresentation {
 
     private List<String> oauthProviders;
 
-    private List<PrismRoleCategory> requiredFeedbackRoleCategories;
+    private PrismRoleCategory requiredFeedbackRoleCategory;
 
     public PrismLocale getLocale() {
         return locale;
@@ -91,11 +91,11 @@ public class UserExtendedRepresentation extends UserRepresentation {
         this.oauthProviders = oauthProviders;
     }
 
-    public List<PrismRoleCategory> getRequiredFeedbackRoleCategories() {
-        return requiredFeedbackRoleCategories;
+    public PrismRoleCategory getRequiredFeedbackRoleCategory() {
+        return requiredFeedbackRoleCategory;
     }
 
-    public void setRequiredFeedbackRoleCategories(List<PrismRoleCategory> requiredFeedbackRoleCategories) {
-        this.requiredFeedbackRoleCategories = requiredFeedbackRoleCategories;
+    public void setRequiredFeedbackRoleCategory(PrismRoleCategory requiredFeedbackRoleCategory) {
+        this.requiredFeedbackRoleCategory = requiredFeedbackRoleCategory;
     }
 }

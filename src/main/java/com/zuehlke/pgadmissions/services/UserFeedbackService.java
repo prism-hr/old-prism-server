@@ -16,8 +16,8 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserFeedback;
+import com.zuehlke.pgadmissions.rest.dto.user.UserFeedbackContentDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserFeedbackDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserFeedbackDeclineDTO;
 
 @Service
 @Transactional
@@ -40,33 +40,25 @@ public class UserFeedbackService {
 
 	@Inject
 	private UserService userService;
-
-	public void createFeedback(UserFeedbackDTO userFeedbackDTO) {
-		User user = userService.getById(userFeedbackDTO.getUser());
+	
+    public void createFeedback(UserFeedbackDTO userFeedbackDTO) {
+        UserFeedbackContentDTO contentDTO = userFeedbackDTO.getContent();
+        User user = userService.getCurrentUser();
 		Institution institution = getFeedbackInstitution(user,
 		        resourceService.getById(userFeedbackDTO.getResourceScope().getResourceClass(), userFeedbackDTO.getResourceId()));
-
-		if (institution == null) {
-			UserFeedback userFeedback = new UserFeedback().withUser(user).withRoleCategory(userFeedbackDTO.getRoleCategory()).withInstitution(institution)
-			        .withDeclinedResponse(false).withRating(userFeedbackDTO.getRating()).withContent(userFeedbackDTO.getContent())
-			        .withCreatedTimestamp(new DateTime());
-			entityService.save(userFeedback);
-			setLastSequenceIdentifier(userFeedback);
+		
+		if (institution != null) {
+	        UserFeedback userFeedback = new UserFeedback().withUser(user).withRoleCategory(userFeedbackDTO.getRoleCategory()).withInstitution(institution)
+	                .withDeclinedResponse(contentDTO == null).withCreatedTimestamp(new DateTime());
+	        if (contentDTO != null) {
+	            userFeedback.setRating(contentDTO.getRating());
+	            userFeedback.setContent(contentDTO.getContent());
+	            userFeedback.setFeatureRequest(contentDTO.getFeatureRequest());
+	        }
+	        entityService.save(userFeedback);
+	        setLastSequenceIdentifier(userFeedback);
 		}
-	}
-
-	public void declineFeedback(UserFeedbackDeclineDTO userFeedbackDeclineDTO) {
-		User user = userService.getById(userFeedbackDeclineDTO.getUser());
-		Institution institution = getFeedbackInstitution(user,
-		        resourceService.getById(userFeedbackDeclineDTO.getResourceScope().getResourceClass(), userFeedbackDeclineDTO.getResourceId()));
-
-		if (institution == null) {
-			UserFeedback userFeedback = new UserFeedback().withUser(user).withRoleCategory(userFeedbackDeclineDTO.getRoleCategory()).withInstitution(institution)
-			        .withDeclinedResponse(true).withCreatedTimestamp(new DateTime());
-			entityService.save(userFeedback);
-			setLastSequenceIdentifier(userFeedback);
-		}
-	}
+    }
 
 	public List<UserFeedback> getUserFeedback(Integer ratingThreshold, String lastSequenceIdentifier) {
 		return userFeedbackDAO.getUserFeedback(ratingThreshold, lastSequenceIdentifier);

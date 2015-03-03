@@ -1,11 +1,21 @@
 package com.zuehlke.pgadmissions.domain.user;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
 
 @Entity
 @Table(name = "USER_FEEDBACK")

@@ -90,7 +90,7 @@ public class UserController {
             oauthProviders.add(externalAccount.getAccountType().getName());
         }
         userRepresentation.setOauthProviders(oauthProviders);
-        userRepresentation.setRequiredFeedbackRoleCategories(userFeedbackService.getUserFeedbackRequired(user));
+        userRepresentation.setRequiredFeedbackRoleCategory(userFeedbackService.getRoleCategoryUserFeedbackRequiredFor(user));
 
         return userRepresentation;
     }

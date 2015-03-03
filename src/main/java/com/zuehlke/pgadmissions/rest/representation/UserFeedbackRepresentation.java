@@ -1,8 +1,9 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
+import org.joda.time.DateTime;
+
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
-import org.joda.time.DateTime;
 
 public class UserFeedbackRepresentation {
 

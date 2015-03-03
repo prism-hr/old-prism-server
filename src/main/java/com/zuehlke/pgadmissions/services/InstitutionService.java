@@ -282,7 +282,19 @@ public class InstitutionService {
 	}
 
 	public Institution getUserPrimaryInstitution(User user) {
-		Map<Institution, Integer> institutionConnections = Maps.newHashMap();
+		Map<Institution, Integer> institutionConnections = getUserInstitutionConnections(user);
+		if (!institutionConnections.isEmpty()) {
+			TreeMap<Integer, Institution> orderedInstitutionConnections = Maps.newTreeMap();
+			for (Map.Entry<Institution, Integer> institutionConnection : institutionConnections.entrySet()) {
+				orderedInstitutionConnections.put(institutionConnection.getValue(), institutionConnection.getKey());
+			}
+			orderedInstitutionConnections.descendingMap().firstEntry().getValue();
+		}
+		return null;
+	}
+
+	private Map<Institution, Integer> getUserInstitutionConnections(User user) {
+	    Map<Institution, Integer> institutionConnections = Maps.newHashMap();
 		for (UserRole userRole : user.getUserRoles()) {
 			Resource resource = userRole.getResource();
 			if (resource.getResourceScope() != SYSTEM) {
@@ -291,17 +303,8 @@ public class InstitutionService {
 				institutionConnections.put(institution, connectionCount == null ? 1 : connectionCount + 1);
 			}
 		}
-
-		if (!institutionConnections.isEmpty()) {
-			TreeMap<Integer, Institution> orderedInstitutionConnections = Maps.newTreeMap();
-			for (Map.Entry<Institution, Integer> institutionConnection : institutionConnections.entrySet()) {
-				orderedInstitutionConnections.put(institutionConnection.getValue(), institutionConnection.getKey());
-			}
-			orderedInstitutionConnections.descendingMap().firstEntry().getValue();
-		}
-
-		return null;
-	}
+	    return institutionConnections;
+    }
 
 	private void setLogoDocument(Institution institution, InstitutionDTO institutionDTO, PrismAction actionId) {
 		FileDTO logoDocumentDTO = institutionDTO.getLogoDocument();

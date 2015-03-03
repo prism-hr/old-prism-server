@@ -6,7 +6,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -45,7 +44,6 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.NextStateRepresentation;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 
 @Service
 @Transactional
@@ -186,15 +184,6 @@ public class StateService {
 		return stateTransition;
 	}
 
-	public StateTransition getStateTransition(Resource resource, Action action, Comment comment) {
-		Resource operative = resourceService.getOperativeResource(resource, action);
-		List<StateTransition> potentialStateTransitions = getPotentialStateTransitions(operative, action);
-		if (potentialStateTransitions.size() > 1) {
-			return applicationContext.getBean(potentialStateTransitions.get(0).getStateTransitionEvaluation().getId().getResolver()).resolve(operative, comment);
-		}
-		return potentialStateTransitions.isEmpty() ? null : potentialStateTransitions.get(0);
-	}
-
 	public StateTransition getStateTransition(Resource resource, Action action) {
 		return stateDAO.getStateTransition(resource, action);
 	}
@@ -285,6 +274,15 @@ public class StateService {
 	public List<NextStateRepresentation> getSelectableTransitionStates(State state, PrismAction actionId, boolean importedResource) {
 		return stateDAO.getSelectableTransitionStates(state, actionId, importedResource);
 	}
+	
+	private StateTransition getStateTransition(Resource resource, Action action, Comment comment) {
+		Resource operative = resourceService.getOperativeResource(resource, action);
+		List<StateTransition> potentialStateTransitions = getPotentialStateTransitions(operative, action);
+		if (potentialStateTransitions.size() > 1) {
+			return applicationContext.getBean(potentialStateTransitions.get(0).getStateTransitionEvaluation().getId().getResolver()).resolve(operative, comment);
+		}
+		return potentialStateTransitions.isEmpty() ? null : potentialStateTransitions.get(0);
+	}
 
 	private Set<State> getStateTerminations(Resource resource, Action action, StateTransition stateTransition) {
 		Resource operative = resourceService.getOperativeResource(resource, action);
@@ -293,7 +291,7 @@ public class StateService {
 		Set<StateTermination> potentialStateTerminations = stateTransition.getStateTerminations();
 		for (StateTermination potentialStateTermination : potentialStateTerminations) {
 			PrismStateTerminationEvaluation evaluation = potentialStateTermination.getStateTerminationEvaluation();
-			if (evaluation == null || BooleanUtils.isTrue((Boolean) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(evaluation), operative))) {
+			if (evaluation == null || applicationContext.getBean(evaluation.getResolver()).resolve(operative)) {
 				stateTerminations.add(potentialStateTermination.getTerminationState());
 			}
 		}

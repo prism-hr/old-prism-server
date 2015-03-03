@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.services.lifecycle.helpers.ProgramServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperEscalation;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperPropagation;
 
-public enum MaintenanceTask {
+public enum PrismMaintenanceTask {
 
     SYSTEM_EXPORT_APPLICATION(ApplicationExportServiceHelper.class, true, false), //
     SYSTEM_EXECUTE_ESCALATED_STATE_TRANSITION(StateServiceHelperEscalation.class, true, false), //
@@ -39,7 +39,7 @@ public enum MaintenanceTask {
 
     boolean parallelize;
 
-    private MaintenanceTask(Class<? extends AbstractServiceHelper> executor, boolean execute, boolean parallelize) {
+    private PrismMaintenanceTask(Class<? extends AbstractServiceHelper> executor, boolean execute, boolean parallelize) {
         this.executor = executor;
         this.execute = execute;
         this.parallelize = parallelize;

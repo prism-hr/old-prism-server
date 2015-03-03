@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.workflow.resolvers.state.duration;
 
 import org.joda.time.LocalDate;
+import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 
+@Component
 public class ProgramEndDateResolver implements StateDurationResolver {
 
 	@Override

@@ -1,14 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.DateTime;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.zuehlke.pgadmissions.dao.UserFeedbackDAO;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -16,6 +7,12 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserFeedback;
 import com.zuehlke.pgadmissions.rest.dto.user.UserFeedbackDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserFeedbackDeclineDTO;
+import org.joda.time.DateTime;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.List;
 
 @Service
 @Transactional
@@ -38,11 +35,11 @@ public class UserFeedbackService {
 
 	public void createFeedback(UserFeedbackDTO userFeedbackDTO) {
 		User user = userService.getById(userFeedbackDTO.getUser());
-		Institution institution = institutionService.getById(userFeedbackDTO.getInstitution());
+		Institution institution = institutionService.getById(5243); // FIXME get right institution
 
 		UserFeedback userFeedback = new UserFeedback().withUser(user).withRoleCategory(userFeedbackDTO.getRoleCategory()).withInstitution(institution)
 		        .withDeclinedResponse(false).withRating(userFeedbackDTO.getRating()).withContent(userFeedbackDTO.getContent())
-		        .withRecommended(BooleanUtils.toBoolean(userFeedbackDTO.getRecommended())).withCreatedTimestamp(new DateTime());
+		        .withCreatedTimestamp(new DateTime());
 		entityService.save(userFeedback);
 
 		setLastSequenceIdentifier(userFeedback);
@@ -50,7 +47,7 @@ public class UserFeedbackService {
 
 	public void declineFeedback(UserFeedbackDeclineDTO userFeedbackDeclineDTO) {
 		User user = userService.getById(userFeedbackDeclineDTO.getUser());
-		Institution institution = institutionService.getById(userFeedbackDeclineDTO.getInstitution());
+		Institution institution = institutionService.getById(5243); // FIXME get right institution
 
 		UserFeedback userFeedback = new UserFeedback().withUser(user).withRoleCategory(userFeedbackDeclineDTO.getRoleCategory()).withInstitution(institution)
 		        .withDeclinedResponse(true).withCreatedTimestamp(new DateTime());

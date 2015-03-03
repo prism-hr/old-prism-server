@@ -1,59 +1,53 @@
 package com.zuehlke.pgadmissions.domain.user;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "USER_FEEDBACK")
 public class UserFeedback {
-	
+
 	@Id
 	@GeneratedValue
 	private Integer id;
-	
+
 	@ManyToOne
-	@JoinColumn(name = "user", nullable = false)
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
-	
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "role_category", nullable = false)
 	private PrismRoleCategory roleCategory;
-	
+
 	@ManyToOne
-	@JoinColumn(name = "institution", nullable = false)
+	@JoinColumn(name = "institution_id", nullable = false)
 	private Institution institution;
-	
+
     @Column(name = "declined_response", nullable = false)
     private Boolean declinedResponse;
-	
+
 	@Column(name = "rating")
 	private Integer rating;
-	
+
 	@Lob
 	@Column(name = "content")
 	private String content;
-	
+
+    @Lob
+    @Column(name = "feature_requests")
+    private String featureRequests;
+
 	@Column(name = "recommended")
 	private Boolean recommended;
-	
+
 	@Column(name = "created_timestamp", nullable = false)
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime createdTimestamp;
-	
+
 	@Column(name = "sequence_identifier")
 	private String sequenceIdentifier;
 
@@ -88,7 +82,7 @@ public class UserFeedback {
 	public void setInstitution(Institution institution) {
 		this.institution = institution;
 	}
-	
+
 	public Boolean getDeclinedResponse() {
 		return declinedResponse;
 	}
@@ -113,7 +107,15 @@ public class UserFeedback {
 		this.content = content;
 	}
 
-	public Boolean getRecommended() {
+    public String getFeatureRequests() {
+        return featureRequests;
+    }
+
+    public void setFeatureRequests(String featureRequests) {
+        this.featureRequests = featureRequests;
+    }
+
+    public Boolean getRecommended() {
 		return recommended;
 	}
 
@@ -151,17 +153,17 @@ public class UserFeedback {
 		this.institution = institution;
 		return this;
 	}
-	
+
 	public UserFeedback withDeclinedResponse(Boolean declinedResponse) {
 		this.declinedResponse = declinedResponse;
 		return this;
 	}
-	
+
 	public UserFeedback withRating(Integer rating) {
 		this.rating = rating;
 		return this;
 	}
-	
+
 	public UserFeedback withContent(String content) {
 		this.content = content;
 		return this;
@@ -171,10 +173,10 @@ public class UserFeedback {
 		this.recommended = recommended;
 		return this;
 	}
-	
+
 	public UserFeedback withCreatedTimestamp(DateTime createdTimestamp) {
 		this.createdTimestamp = createdTimestamp;
 		return this;
 	}
-	
+
 }

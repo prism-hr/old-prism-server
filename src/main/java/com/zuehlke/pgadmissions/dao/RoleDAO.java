@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -237,6 +238,14 @@ public class RoleDAO {
 		        .addOrder(Order.asc("scope.ordinal")) //
 		        .setMaxResults(1) //
 		        .uniqueResult();
+	}
+	
+	public List<UserRole> getUserRoleByRoleCategory(User user, PrismRoleCategory prismRoleCategory) {
+		return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+				.createAlias("role", "role", JoinType.INNER_JOIN) //
+				.add(Restrictions.eq("user", user)) //
+				.add(Restrictions.eq("role.roleCategory", prismRoleCategory)) //
+				.list();
 	}
 
 }

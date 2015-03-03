@@ -9,7 +9,6 @@ import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.UserFeedbackDAO;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -31,6 +30,9 @@ public class UserFeedbackService {
 	@Inject
 	private InstitutionService institutionService;
 
+	@Inject
+	private RoleService roleService;
+	
 	@Inject
 	private UserService userService;
 
@@ -61,13 +63,14 @@ public class UserFeedbackService {
 		return userFeedbackDAO.getUserFeedback(ratingThreshold, lastSequenceIdentifier);
 	}
 
-	public List<PrismRoleCategory> getUserFeedbackRequired(User user) {
-		DateTime baseline = new DateTime().minusYears(1);
-		List<PrismRoleCategory> required = Lists.newArrayList();
-		for (PrismRoleCategory prismRoleCategory : PrismRoleCategory.values()) {
-			DateTime latestFeedbackTimestamp = userFeedbackDAO.getLatestUserFeedbackTimestamp(user, prismRoleCategory);
-			if (latestFeedbackTimestamp == null || latestFeedbackTimestamp.isBefore(baseline)) {
-				required.add(prismRoleCategory);
+	public PrismRoleCategory getRoleCategoryUserFeedbackRequiredFor(User user) {
+		PrismRoleCategory required = null;
+		DateTime latestFeedbackTimestamp = userFeedbackDAO.getLatestUserFeedbackTimestamp(user);
+		if (latestFeedbackTimestamp.isBefore(new DateTime().minusYears(1))) {
+			for (PrismRoleCategory prismRoleCategory : PrismRoleCategory.values()) {
+				if (!roleService.getUserRolesByRoleCategory(user, prismRoleCategory).isEmpty()) {
+					return required;
+				}
 			}
 		}
 		return required;

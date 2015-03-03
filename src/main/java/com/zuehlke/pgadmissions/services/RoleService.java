@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -206,6 +207,10 @@ public class RoleService {
 			deleteUserRole(persistentRole.getResource(), persistentRole.getUser(), persistentRole.getRole());
 			getOrCreateUserRole(transitionUserRole);
 		}
+	}
+	
+	public List<UserRole> getUserRolesByRoleCategory(User user, PrismRoleCategory prismRoleCategory) {
+		return roleDAO.getUserRoleByRoleCategory(user, prismRoleCategory);
 	}
 
 	private void executeRoleTransitions(Resource resource, Comment comment, List<RoleTransition> roleTransitions) {

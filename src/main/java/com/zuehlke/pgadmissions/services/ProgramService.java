@@ -145,21 +145,10 @@ public class ProgramService {
         return programDAO.getEnabledProgramStudyOption(program, studyOption);
     }
 
-    public LocalDate getProgramClosureDate(Program program) {
-        return programDAO.getProgramClosureDate(program);
-    }
-
-    public List<Program> getProgramsWithElapsedStudyOptions(LocalDate baseline) {
-        return programDAO.getProgramsWithElapsedStudyOptions(baseline);
-    }
-
-    public void updateProgramStudyOptions(Program transientProgram, LocalDate baseline) {
-        Program persistentProgram = getById(transientProgram.getId());
-        List<ProgramStudyOption> elapsedOptions = programDAO.getElapsedStudyOptions(persistentProgram, baseline);
-
-        for (ProgramStudyOption elapsedOption : elapsedOptions) {
-            elapsedOption.setEnabled(false);
-        }
+    public void disableElapsedProgramStudyOptions() {
+    	LocalDate baseline = new LocalDate();
+    	programDAO.disableElapsedProgramStudyOptions(baseline);
+    	programDAO.disableElapsedProgramStudyOptionInstances(baseline);
     }
 
     public List<ProgramRepresentation> getSimilarPrograms(Integer institutionId, String searchTerm) {

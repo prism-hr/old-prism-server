@@ -286,7 +286,6 @@ public class StateService {
 
 	private Set<State> getStateTerminations(Resource resource, Action action, StateTransition stateTransition) {
 		Resource operative = resourceService.getOperativeResource(resource, action);
-
 		Set<State> stateTerminations = Sets.newHashSet();
 		Set<StateTermination> potentialStateTerminations = stateTransition.getStateTerminations();
 		for (StateTermination potentialStateTermination : potentialStateTerminations) {
@@ -295,7 +294,6 @@ public class StateService {
 				stateTerminations.add(potentialStateTermination.getTerminationState());
 			}
 		}
-
 		return stateTerminations;
 	}
 

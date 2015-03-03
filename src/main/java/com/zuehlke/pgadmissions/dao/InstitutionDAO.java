@@ -163,7 +163,7 @@ public class InstitutionDAO {
     public List<ResourceSearchEngineDTO> getRelatedInstitutions(List<PrismState> programStates, List<PrismState> projectStates) {
         return (List<ResourceSearchEngineDTO>) sessionFactory.getCurrentSession().createCriteria(Institution.class, "institution") //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.property("id"), "id") //
+                        .add(Projections.groupProperty("id"), "id") //
                         .add(Projections.property("title"), "title")) //
                 .createAlias("programs", "program", JoinType.LEFT_OUTER_JOIN, Restrictions.in("program.state.id", programStates)) //
                 .createAlias("projects", "project", JoinType.LEFT_OUTER_JOIN, Restrictions.in("project.state.id", projectStates)) //

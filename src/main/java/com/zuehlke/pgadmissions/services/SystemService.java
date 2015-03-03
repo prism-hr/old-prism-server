@@ -170,65 +170,65 @@ public class SystemService {
 	@Transactional(timeout = 600)
 	public void initializeSystem() throws WorkflowConfigurationException, DeduplicationException, CustomizationException, InstantiationException,
 	        IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
-		LOGGER.info("Initialising scope definitions");
+		LOGGER.info("Initializing scope definitions");
 		verifyBackwardCompatibility(Scope.class);
 		initializeScopes();
 
-		LOGGER.info("Initialising role definitions");
+		LOGGER.info("Initializing role definitions");
 		verifyBackwardCompatibility(Role.class);
 		initializeRoles();
 
-		LOGGER.info("Initialising action custom question definitions");
+		LOGGER.info("Initializing action custom question definitions");
 		verifyBackwardCompatibility(ActionCustomQuestionDefinition.class);
 		initializeActionCustomQuestionDefinitions();
 
-		LOGGER.info("Initialising action definitions");
+		LOGGER.info("Initializing action definitions");
 		verifyBackwardCompatibility(Action.class);
 		initializeActions();
 
-		LOGGER.info("Initialising state group definitions");
+		LOGGER.info("Initializing state group definitions");
 		verifyBackwardCompatibility(StateGroup.class);
 		initializeStateGroups();
 
-		LOGGER.info("Initialising state definitions");
+		LOGGER.info("Initializing state definitions");
 		verifyBackwardCompatibility(State.class);
 		initializeStates();
 
-		LOGGER.info("Initialising state duration definitions");
+		LOGGER.info("Initializing state duration definitions");
 		verifyBackwardCompatibility(StateDurationDefinition.class);
 		initializeStateDurationDefinitions();
 
-		LOGGER.info("Initialising display property definitions");
+		LOGGER.info("Initializing display property definitions");
 		verifyBackwardCompatibility(DisplayPropertyDefinition.class);
 		initializeDisplayPropertyDefinitions();
 
-		LOGGER.info("Initialising workflow property definitions");
+		LOGGER.info("Initializing workflow property definitions");
 		verifyBackwardCompatibility(WorkflowPropertyDefinition.class);
 		initializeWorkflowPropertyDefinitions();
 
-		LOGGER.info("Initialising notification definitions");
+		LOGGER.info("Initializing notification definitions");
 		verifyBackwardCompatibility(NotificationDefinition.class);
 		initializeNotificationDefinitions();
 
-		LOGGER.info("Initialising state action definitions");
+		LOGGER.info("Initializing state action definitions");
 		initializeStateActions();
 
-		LOGGER.info("Initialising system object");
+		LOGGER.info("Initializing system object");
 		System system = initializeSystemResource();
 
-		LOGGER.info("Initialising state duration configurations");
+		LOGGER.info("Initializing state duration configurations");
 		initializeStateDurationConfigurations(system);
 
-		LOGGER.info("Initialising display property configurations");
+		LOGGER.info("Initializing display property configurations");
 		initializeDisplayPropertyConfigurations(system);
 
-		LOGGER.info("Initialising workflow property configurations");
+		LOGGER.info("Initializing workflow property configurations");
 		initializeWorkflowPropertyConfigurations(system);
 
-		LOGGER.info("Initialising notification configurations");
+		LOGGER.info("Initializing notification configurations");
 		initializeNotificationConfigurations(system);
 
-		LOGGER.info("Initialising system user");
+		LOGGER.info("Initializing system user");
 		initializeSystemUser(system);
 
 		entityService.flush();
@@ -267,7 +267,7 @@ public class SystemService {
 
 		return new BasicAWSCredentials(accessKey, secretKey);
 	}
-
+	
 	private void initializeScopes() throws DeduplicationException {
 		for (PrismScope prismScope : PrismScope.values()) {
 			entityService.createOrUpdate(new Scope().withId(prismScope).withShortCode(prismScope.getShortCode()).withOrdinal(prismScope.ordinal()));

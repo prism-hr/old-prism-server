@@ -1,40 +1,54 @@
 package com.zuehlke.pgadmissions.rest.dto.user;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-public class UserFeedbackDTO extends UserFeedbackDeclineDTO {
+public class UserFeedbackDTO {
 
 	@NotNull
-	private Integer rating;
+	private PrismRoleCategory roleCategory;
 
-	@NotEmpty
-	private String content;
+    @NotNull
+    private PrismScope resourceScope;
 
-    private String featureRequest;
+	@NotNull
+	private Integer resourceId;
 
-    public Integer getRating() {
-        return rating;
+    @Valid
+    private UserFeedbackContentDTO content;
+
+	public PrismRoleCategory getRoleCategory() {
+		return roleCategory;
+	}
+
+	public void setRoleCategory(PrismRoleCategory roleCategory) {
+		this.roleCategory = roleCategory;
+	}
+
+    public PrismScope getResourceScope() {
+        return resourceScope;
     }
 
-    public void setRating(Integer rating) {
-        this.rating = rating;
+    public void setResourceScope(PrismScope resourceScope) {
+        this.resourceScope = resourceScope;
     }
 
-    public String getContent() {
+    public Integer getResourceId() {
+        return resourceId;
+    }
+
+    public void setResourceId(Integer resourceId) {
+        this.resourceId = resourceId;
+    }
+
+    public UserFeedbackContentDTO getContent() {
         return content;
     }
 
-    public void setContent(String content) {
+    public void setContent(UserFeedbackContentDTO content) {
         this.content = content;
-    }
-
-    public String getFeatureRequest() {
-        return featureRequest;
-    }
-
-    public void setFeatureRequest(String featureRequest) {
-        this.featureRequest = featureRequest;
     }
 }

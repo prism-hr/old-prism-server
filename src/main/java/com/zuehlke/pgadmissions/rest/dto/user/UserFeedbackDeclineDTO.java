@@ -1,19 +1,23 @@
 package com.zuehlke.pgadmissions.rest.dto.user;
 
-import javax.validation.constraints.NotNull;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import javax.validation.constraints.NotNull;
 
 public class UserFeedbackDeclineDTO {
 
 	@NotNull
 	private Integer user;
-	
+
 	@NotNull
 	private PrismRoleCategory roleCategory;
-	
+
+    @NotNull
+    private PrismScope resourceScope;
+
 	@NotNull
-	private Integer institution;
+	private Integer resourceId;
 
 	public Integer getUser() {
 		return user;
@@ -31,12 +35,19 @@ public class UserFeedbackDeclineDTO {
 		this.roleCategory = roleCategory;
 	}
 
-	public Integer getInstitution() {
-		return institution;
-	}
+    public PrismScope getResourceScope() {
+        return resourceScope;
+    }
 
-	public void setInstitution(Integer institution) {
-		this.institution = institution;
-	}
-	
+    public void setResourceScope(PrismScope resourceScope) {
+        this.resourceScope = resourceScope;
+    }
+
+    public Integer getResourceId() {
+        return resourceId;
+    }
+
+    public void setResourceId(Integer resourceId) {
+        this.resourceId = resourceId;
+    }
 }

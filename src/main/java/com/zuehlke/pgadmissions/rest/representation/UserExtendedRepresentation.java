@@ -1,10 +1,11 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
+
+import java.util.List;
 
 public class UserExtendedRepresentation extends UserRepresentation {
 
@@ -23,6 +24,8 @@ public class UserExtendedRepresentation extends UserRepresentation {
     private List<String> linkedUsers;
 
     private List<String> oauthProviders;
+
+    private List<PrismRoleCategory> requiredFeedbackRoleCategories;
 
     public PrismLocale getLocale() {
         return locale;
@@ -86,5 +89,13 @@ public class UserExtendedRepresentation extends UserRepresentation {
 
     public void setOauthProviders(List<String> oauthProviders) {
         this.oauthProviders = oauthProviders;
+    }
+
+    public List<PrismRoleCategory> getRequiredFeedbackRoleCategories() {
+        return requiredFeedbackRoleCategories;
+    }
+
+    public void setRequiredFeedbackRoleCategories(List<PrismRoleCategory> requiredFeedbackRoleCategories) {
+        this.requiredFeedbackRoleCategories = requiredFeedbackRoleCategories;
     }
 }

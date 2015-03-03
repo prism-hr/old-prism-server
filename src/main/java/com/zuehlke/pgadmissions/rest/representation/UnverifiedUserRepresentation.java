@@ -10,7 +10,7 @@ public class UnverifiedUserRepresentation {
 
     private String email;
 
-    private boolean bounced;
+    private String bouncedDiagnosticCode;
 
     public Integer getId() {
         return id;
@@ -44,11 +44,11 @@ public class UnverifiedUserRepresentation {
         this.email = email;
     }
 
-    public boolean isBounced() {
-        return bounced;
+    public String getBouncedDiagnosticCode() {
+        return bouncedDiagnosticCode;
     }
 
-    public void setBounced(boolean bounced) {
-        this.bounced = bounced;
+    public void setBouncedDiagnosticCode(String bouncedDiagnosticCode) {
+        this.bouncedDiagnosticCode = bouncedDiagnosticCode;
     }
 }

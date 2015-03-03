@@ -1,14 +1,7 @@
 package com.zuehlke.pgadmissions.security;
 
-import java.io.IOException;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.common.base.Charsets;
+import com.zuehlke.pgadmissions.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,7 +9,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.GenericFilterBean;
 
-import com.zuehlke.pgadmissions.services.UserService;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
 
@@ -42,7 +44,7 @@ public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpRequest));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                if(tokenValidityStatus.getRenewedToken() != null){
+                if (tokenValidityStatus.getRenewedToken() != null) {
                     httpResponse.setHeader("x-auth-token-renew", tokenValidityStatus.getRenewedToken());
                 }
             } else {
@@ -70,15 +72,22 @@ public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
         return (HttpServletResponse) response;
     }
 
-    private String extractAuthTokenFromRequest(HttpServletRequest httpRequest) {
-        /* Get token from header */
-        String authToken = httpRequest.getHeader("X-Auth-Token");
+    private String extractAuthTokenFromRequest(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
 
-        /* If token not found get it from request parameter */
-        if (authToken == null) {
-            authToken = httpRequest.getParameter("token");
+        if ((cookies == null) || (cookies.length == 0)) {
+            return null;
         }
 
-        return authToken;
+        for (Cookie cookie : cookies) {
+            if ("authToken".equals(cookie.getName())) {
+                try {
+                    return URLDecoder.decode(cookie.getValue(), Charsets.UTF_8.name()).replace("\"", "");
+                } catch (UnsupportedEncodingException e) {
+                    throw new Error(e);
+                }
+            }
+        }
+        return null;
     }
 }

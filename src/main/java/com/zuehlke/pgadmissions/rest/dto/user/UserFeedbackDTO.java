@@ -12,7 +12,7 @@ public class UserFeedbackDTO extends UserFeedbackDeclineDTO {
 	@NotEmpty
 	private String content;
 
-    private String featureRequests;
+    private String featureRequest;
 
     public Integer getRating() {
         return rating;
@@ -30,11 +30,11 @@ public class UserFeedbackDTO extends UserFeedbackDeclineDTO {
         this.content = content;
     }
 
-    public String getFeatureRequests() {
-        return featureRequests;
+    public String getFeatureRequest() {
+        return featureRequest;
     }
 
-    public void setFeatureRequests(String featureRequests) {
-        this.featureRequests = featureRequests;
+    public void setFeatureRequest(String featureRequest) {
+        this.featureRequest = featureRequest;
     }
 }

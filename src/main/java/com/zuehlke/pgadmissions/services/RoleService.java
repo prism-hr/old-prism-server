@@ -209,8 +209,8 @@ public class RoleService {
 		}
 	}
 	
-	public List<UserRole> getUserRolesByRoleCategory(User user, PrismRoleCategory prismRoleCategory) {
-		return roleDAO.getUserRoleByRoleCategory(user, prismRoleCategory);
+	public List<UserRole> getUserRolesByRoleCategory(User user, PrismRoleCategory prismRoleCategory, PrismScope ...exludedPrismScopes) {
+		return roleDAO.getUserRoleByRoleCategory(user, prismRoleCategory, exludedPrismScopes);
 	}
 
 	private void executeRoleTransitions(Resource resource, Comment comment, List<RoleTransition> roleTransitions) {

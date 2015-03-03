@@ -100,7 +100,7 @@ public class ProgramDAO {
 		        "update ProgramStudyOption " //
 		                + "set enabled = false " //
 		                + "where applicationCloseDate < :baseline") //
-		        .setEntity("baseline", baseline) //
+		        .setParameter("baseline", baseline) //
 		        .executeUpdate();
 	}
 
@@ -109,7 +109,7 @@ public class ProgramDAO {
 		        "update ProgramStudyOptionInstance " //
 		                + "set enabled = false " //
 		                + "where applicationCloseDate < :baseline") //
-		        .setEntity("baseline", baseline) //
+		        .setParameter("baseline", baseline) //
 		        .executeUpdate();
 	}
 
@@ -117,7 +117,7 @@ public class ProgramDAO {
 		sessionFactory.getCurrentSession().createQuery( //
 		        "delete ProgramStudyOption " //
 		                + "where program = :program") //
-		        .setEntity("program", program) //
+		        .setParameter("program", program) //
 		        .executeUpdate();
 	}
 
@@ -127,7 +127,7 @@ public class ProgramDAO {
 		                + "where studyOption in ( " //
 		                + "from ProgramStudyOption " //
 		                + "where program = :program)") //
-		        .setEntity("program", program) //
+		        .setParameter("program", program) //
 		        .executeUpdate();
 	}
 

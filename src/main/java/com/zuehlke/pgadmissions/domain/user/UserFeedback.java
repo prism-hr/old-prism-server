@@ -39,7 +39,7 @@ public class UserFeedback {
 
     @Lob
     @Column(name = "feature_requests")
-    private String featureRequests;
+    private String featureRequest;
 
 	@Column(name = "recommended")
 	private Boolean recommended;
@@ -107,12 +107,12 @@ public class UserFeedback {
 		this.content = content;
 	}
 
-    public String getFeatureRequests() {
-        return featureRequests;
+    public String getFeatureRequest() {
+        return featureRequest;
     }
 
-    public void setFeatureRequests(String featureRequests) {
-        this.featureRequests = featureRequests;
+    public void setFeatureRequest(String featureRequest) {
+        this.featureRequest = featureRequest;
     }
 
     public Boolean getRecommended() {
@@ -169,6 +169,11 @@ public class UserFeedback {
 		return this;
 	}
 
+	public UserFeedback withFeatureRequest(String featureRequest) {
+		this.featureRequest = featureRequest;
+		return this;
+	}
+	
 	public UserFeedback withRecommended(Boolean recommended) {
 		this.recommended = recommended;
 		return this;

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -240,12 +241,17 @@ public class RoleDAO {
 		        .uniqueResult();
 	}
 	
-	public List<UserRole> getUserRoleByRoleCategory(User user, PrismRoleCategory prismRoleCategory) {
-		return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+	public List<UserRole> getUserRoleByRoleCategory(User user, PrismRoleCategory prismRoleCategory, PrismScope... excludedPrismScopes) {
+		Criteria criteria =  sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
 				.createAlias("role", "role", JoinType.INNER_JOIN) //
 				.add(Restrictions.eq("user", user)) //
-				.add(Restrictions.eq("role.roleCategory", prismRoleCategory)) //
-				.list();
+				.add(Restrictions.eq("role.roleCategory", prismRoleCategory)); //
+		
+		for (PrismScope excludedPrismScope : excludedPrismScopes) {
+			criteria.add(Restrictions.isNull(excludedPrismScope.getLowerCamelName()));
+		}
+		
+		return (List<UserRole>) criteria.list();
 	}
 
 }

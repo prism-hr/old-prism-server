@@ -1,23 +1,31 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-
+<<<<<<< local
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+=======
+import com.google.common.collect.Lists;
+>>>>>>> other
 import com.zuehlke.pgadmissions.dao.UserFeedbackDAO;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserFeedback;
 import com.zuehlke.pgadmissions.rest.dto.user.UserFeedbackDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserFeedbackDeclineDTO;
+import org.joda.time.DateTime;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.List;
 
 @Service
 @Transactional
@@ -33,39 +41,32 @@ public class UserFeedbackService {
 	private InstitutionService institutionService;
 
 	@Inject
-	private ResourceService resourceService;
-
-	@Inject
 	private RoleService roleService;
-
+	
 	@Inject
 	private UserService userService;
 
 	public void createFeedback(UserFeedbackDTO userFeedbackDTO) {
 		User user = userService.getById(userFeedbackDTO.getUser());
-		Institution institution = getFeedbackInstitution(user,
-		        resourceService.getById(userFeedbackDTO.getResourceScope().getResourceClass(), userFeedbackDTO.getResourceId()));
+		Institution institution = institutionService.getById(5243); // FIXME get right institution
 
-		if (institution == null) {
-			UserFeedback userFeedback = new UserFeedback().withUser(user).withRoleCategory(userFeedbackDTO.getRoleCategory()).withInstitution(institution)
-			        .withDeclinedResponse(false).withRating(userFeedbackDTO.getRating()).withContent(userFeedbackDTO.getContent())
-			        .withCreatedTimestamp(new DateTime());
-			entityService.save(userFeedback);
-			setLastSequenceIdentifier(userFeedback);
-		}
+		UserFeedback userFeedback = new UserFeedback().withUser(user).withRoleCategory(userFeedbackDTO.getRoleCategory()).withInstitution(institution)
+		        .withDeclinedResponse(false).withRating(userFeedbackDTO.getRating()).withContent(userFeedbackDTO.getContent())
+		        .withCreatedTimestamp(new DateTime());
+		entityService.save(userFeedback);
+
+		setLastSequenceIdentifier(userFeedback);
 	}
 
 	public void declineFeedback(UserFeedbackDeclineDTO userFeedbackDeclineDTO) {
 		User user = userService.getById(userFeedbackDeclineDTO.getUser());
-		Institution institution = getFeedbackInstitution(user,
-		        resourceService.getById(userFeedbackDeclineDTO.getResourceScope().getResourceClass(), userFeedbackDeclineDTO.getResourceId()));
+		Institution institution = institutionService.getById(5243); // FIXME get right institution
 
-		if (institution == null) {
-			UserFeedback userFeedback = new UserFeedback().withUser(user).withRoleCategory(userFeedbackDeclineDTO.getRoleCategory()).withInstitution(institution)
-			        .withDeclinedResponse(true).withCreatedTimestamp(new DateTime());
-			entityService.save(userFeedback);
-			setLastSequenceIdentifier(userFeedback);
-		}
+		UserFeedback userFeedback = new UserFeedback().withUser(user).withRoleCategory(userFeedbackDeclineDTO.getRoleCategory()).withInstitution(institution)
+		        .withDeclinedResponse(true).withCreatedTimestamp(new DateTime());
+		entityService.save(userFeedback);
+
+		setLastSequenceIdentifier(userFeedback);
 	}
 
 	public List<UserFeedback> getUserFeedback(Integer ratingThreshold, String lastSequenceIdentifier) {
@@ -77,19 +78,12 @@ public class UserFeedbackService {
 		DateTime latestFeedbackTimestamp = userFeedbackDAO.getLatestUserFeedbackTimestamp(user);
 		if (latestFeedbackTimestamp.isBefore(new DateTime().minusYears(1))) {
 			for (PrismRoleCategory prismRoleCategory : PrismRoleCategory.values()) {
-				if (!roleService.getUserRolesByRoleCategory(user, prismRoleCategory, SYSTEM).isEmpty()) {
+				if (!roleService.getUserRolesByRoleCategory(user, prismRoleCategory).isEmpty()) {
 					return required;
 				}
 			}
 		}
 		return required;
-	}
-
-	private Institution getFeedbackInstitution(User user, Resource resource) {
-		if (resource.getResourceScope() == SYSTEM) {
-			return institutionService.getUserPrimaryInstitution(user);
-		}
-		return resource.getInstitution();
 	}
 
 	private void setLastSequenceIdentifier(UserFeedback userFeedback) {

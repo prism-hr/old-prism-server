@@ -65,7 +65,7 @@ import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 @Transactional
 public class AdvertService {
 
-    private static final Logger lOGGER = LoggerFactory.getLogger(AdvertService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdvertService.class);
 
     private final HashMap<LocalDate, HashMap<String, BigDecimal>> exchangeRates = Maps.newHashMap();
 
@@ -406,7 +406,7 @@ public class AdvertService {
             setConvertedMonetaryValues(financialDetails, interval.name().toLowerCase(), minimumSpecified, maximumSpecified, intervalPrefixGenerated,
                     minimumGenerated, maximumGenerated, rate);
         } catch (Exception e) {
-            lOGGER.error("Unable to perform currency conversion", e);
+            LOGGER.error("Unable to perform currency conversion", e);
         }
     }
 
@@ -509,7 +509,7 @@ public class AdvertService {
                 setConvertedMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated,
                         minimumGenerated, maximumGenerated, rate);
             } catch (Exception e) {
-                lOGGER.error("Problem performing currency conversion", e);
+                LOGGER.error("Problem performing currency conversion", e);
             }
         }
     }

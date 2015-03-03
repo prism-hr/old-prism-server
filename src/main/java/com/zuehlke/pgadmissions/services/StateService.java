@@ -190,7 +190,7 @@ public class StateService {
 		Resource operative = resourceService.getOperativeResource(resource, action);
 		List<StateTransition> potentialStateTransitions = getPotentialStateTransitions(operative, action);
 		if (potentialStateTransitions.size() > 1) {
-			return applicationContext.getBean(potentialStateTransitions.get(0).getStateTransitionEvaluation().getId().getResolver()).resolve(resource, comment);
+			return applicationContext.getBean(potentialStateTransitions.get(0).getStateTransitionEvaluation().getId().getResolver()).resolve(operative, comment);
 		}
 		return potentialStateTransitions.isEmpty() ? null : potentialStateTransitions.get(0);
 	}

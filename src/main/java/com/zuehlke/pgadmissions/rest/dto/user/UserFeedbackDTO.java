@@ -1,40 +1,65 @@
 package com.zuehlke.pgadmissions.rest.dto.user;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-public class UserFeedbackDTO extends UserFeedbackDeclineDTO {
+public class UserFeedbackDTO {
 
 	@NotNull
-	private Integer rating;
+	private Integer user;
 
-	@NotEmpty
-	private String content;
+	@NotNull
+	private PrismRoleCategory roleCategory;
 
-    private String featureRequests;
+    @NotNull
+    private PrismScope resourceScope;
 
-    public Integer getRating() {
-        return rating;
+	@NotNull
+	private Integer resourceId;
+
+    @Valid
+    private UserFeedbackContentDTO content;
+
+	public Integer getUser() {
+		return user;
+	}
+
+	public void setUser(Integer user) {
+		this.user = user;
+	}
+
+	public PrismRoleCategory getRoleCategory() {
+		return roleCategory;
+	}
+
+	public void setRoleCategory(PrismRoleCategory roleCategory) {
+		this.roleCategory = roleCategory;
+	}
+
+    public PrismScope getResourceScope() {
+        return resourceScope;
     }
 
-    public void setRating(Integer rating) {
-        this.rating = rating;
+    public void setResourceScope(PrismScope resourceScope) {
+        this.resourceScope = resourceScope;
     }
 
-    public String getContent() {
+    public Integer getResourceId() {
+        return resourceId;
+    }
+
+    public void setResourceId(Integer resourceId) {
+        this.resourceId = resourceId;
+    }
+
+    public UserFeedbackContentDTO getContent() {
         return content;
     }
 
-    public void setContent(String content) {
+    public void setContent(UserFeedbackContentDTO content) {
         this.content = content;
-    }
-
-    public String getFeatureRequests() {
-        return featureRequests;
-    }
-
-    public void setFeatureRequests(String featureRequests) {
-        this.featureRequests = featureRequests;
     }
 }

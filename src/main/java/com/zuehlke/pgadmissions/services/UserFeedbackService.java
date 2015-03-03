@@ -5,8 +5,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserFeedback;
+import com.zuehlke.pgadmissions.rest.dto.user.UserFeedbackContentDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserFeedbackDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserFeedbackDeclineDTO;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,63 +18,57 @@ import java.util.List;
 @Transactional
 public class UserFeedbackService {
 
-	@Inject
-	private UserFeedbackDAO userFeedbackDAO;
+    @Inject
+    private UserFeedbackDAO userFeedbackDAO;
 
-	@Inject
-	private EntityService entityService;
+    @Inject
+    private EntityService entityService;
 
-	@Inject
-	private InstitutionService institutionService;
+    @Inject
+    private InstitutionService institutionService;
 
-	@Inject
-	private RoleService roleService;
-	
-	@Inject
-	private UserService userService;
+    @Inject
+    private RoleService roleService;
 
-	public void createFeedback(UserFeedbackDTO userFeedbackDTO) {
-		User user = userService.getById(userFeedbackDTO.getUser());
-		Institution institution = institutionService.getById(5243); // FIXME get right institution
+    @Inject
+    private UserService userService;
 
-		UserFeedback userFeedback = new UserFeedback().withUser(user).withRoleCategory(userFeedbackDTO.getRoleCategory()).withInstitution(institution)
-		        .withDeclinedResponse(false).withRating(userFeedbackDTO.getRating()).withContent(userFeedbackDTO.getContent())
-		        .withCreatedTimestamp(new DateTime());
-		entityService.save(userFeedback);
+    public void createFeedback(UserFeedbackDTO userFeedbackDTO) {
+        UserFeedbackContentDTO contentDTO = userFeedbackDTO.getContent();
+        User user = userService.getById(userFeedbackDTO.getUser());
+        Institution institution = institutionService.getById(5243); // FIXME get right institution
 
-		setLastSequenceIdentifier(userFeedback);
-	}
+        UserFeedback userFeedback = new UserFeedback().withUser(user).withRoleCategory(userFeedbackDTO.getRoleCategory()).withInstitution(institution)
+                .withDeclinedResponse(contentDTO == null).withCreatedTimestamp(new DateTime());
+        if (contentDTO != null) {
+            userFeedback.setRating(contentDTO.getRating());
+            userFeedback.setContent(contentDTO.getContent());
+            userFeedback.setFeatureRequests(contentDTO.getFeatureRequests());
+        }
+        entityService.save(userFeedback);
 
-	public void declineFeedback(UserFeedbackDeclineDTO userFeedbackDeclineDTO) {
-		User user = userService.getById(userFeedbackDeclineDTO.getUser());
-		Institution institution = institutionService.getById(5243); // FIXME get right institution
+        setLastSequenceIdentifier(userFeedback);
+    }
 
-		UserFeedback userFeedback = new UserFeedback().withUser(user).withRoleCategory(userFeedbackDeclineDTO.getRoleCategory()).withInstitution(institution)
-		        .withDeclinedResponse(true).withCreatedTimestamp(new DateTime());
-		entityService.save(userFeedback);
+    public List<UserFeedback> getUserFeedback(Integer ratingThreshold, String lastSequenceIdentifier) {
+        return userFeedbackDAO.getUserFeedback(ratingThreshold, lastSequenceIdentifier);
+    }
 
-		setLastSequenceIdentifier(userFeedback);
-	}
+    public PrismRoleCategory getRoleCategoryUserFeedbackRequiredFor(User user) {
+        PrismRoleCategory required = null;
+        DateTime latestFeedbackTimestamp = userFeedbackDAO.getLatestUserFeedbackTimestamp(user);
+        if (latestFeedbackTimestamp.isBefore(new DateTime().minusYears(1))) {
+            for (PrismRoleCategory prismRoleCategory : PrismRoleCategory.values()) {
+                if (!roleService.getUserRolesByRoleCategory(user, prismRoleCategory).isEmpty()) {
+                    return required;
+                }
+            }
+        }
+        return required;
+    }
 
-	public List<UserFeedback> getUserFeedback(Integer ratingThreshold, String lastSequenceIdentifier) {
-		return userFeedbackDAO.getUserFeedback(ratingThreshold, lastSequenceIdentifier);
-	}
-
-	public PrismRoleCategory getRoleCategoryUserFeedbackRequiredFor(User user) {
-		PrismRoleCategory required = null;
-		DateTime latestFeedbackTimestamp = userFeedbackDAO.getLatestUserFeedbackTimestamp(user);
-		if (latestFeedbackTimestamp.isBefore(new DateTime().minusYears(1))) {
-			for (PrismRoleCategory prismRoleCategory : PrismRoleCategory.values()) {
-				if (!roleService.getUserRolesByRoleCategory(user, prismRoleCategory).isEmpty()) {
-					return required;
-				}
-			}
-		}
-		return required;
-	}
-
-	private void setLastSequenceIdentifier(UserFeedback userFeedback) {
-		userFeedback.setSequenceIdentifier(Long.toString(new DateTime().getMillis()) + String.format("%010d", userFeedback.getId()));
-	}
+    private void setLastSequenceIdentifier(UserFeedback userFeedback) {
+        userFeedback.setSequenceIdentifier(Long.toString(new DateTime().getMillis()) + String.format("%010d", userFeedback.getId()));
+    }
 
 }

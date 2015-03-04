@@ -147,8 +147,6 @@ public class ProgramService {
 
     public void disableElapsedProgramStudyOptions() {
     	LocalDate baseline = new LocalDate();
-    	
-    	
     	programDAO.disableElapsedProgramStudyOptions(baseline);
     	programDAO.disableElapsedProgramStudyOptionInstances(baseline);
     }

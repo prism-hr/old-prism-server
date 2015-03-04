@@ -18,43 +18,43 @@ import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperPro
 
 public enum PrismMaintenanceTask {
 
-    SYSTEM_EXPORT_APPLICATION(ApplicationExportServiceHelper.class, true, false), //
-    SYSTEM_EXECUTE_ESCALATED_STATE_TRANSITION(StateServiceHelperEscalation.class, true, false), //
-    SYSTEM_EXECUTE_PROPAGATED_STATE_TRANSITION(StateServiceHelperPropagation.class, true, false), //
-    SYSTEM_IMPORT_SYSTEM_REFERENCE_DATA(ImportedEntityServiceHelperSystem.class, true, true), //
-    SYSTEM_IMPORT_INSTITUTION_REFERENCE_DATA(ImportedEntityServiceHelperInstitution.class, true, false), //
-    SYSTEM_STARTUP_INSTITUTION(InstitutionServiceHelper.class, true, true), //
-    SYSTEM_UPDATE_PROGRAM_STUDY_OPTION(ProgramServiceHelper.class, true, true), //
-    SYSTEM_UPDATE_ADVERT_CLOSING_DATE(AdvertServiceHelperClosingDate.class, true, true), //
-    SYSTEM_UPDATE_ADVERT_EXCHANGE_RATE(AdvertServiceHelperExchangeRate.class, true, true), //
-    SYSTEM_SEND_DEFERRED_WORKFLOW_NOTIFICATION(NotificationServiceHelperWorkflow.class, true, false), //
-    SYSTEM_SEND_RECOMMENDATION_NOTIFICATION(NotificationServiceHelperRecommendation.class, true, true), //
-    SYSTEM_EXPORT_DOCUMENT(DocumentServiceHelperExport.class, true, true), //
-    SYSTEM_DELETE_DOCUMENT(DocumentServiceHelperDelete.class, true, true),
-    SYSTEM_EMAIL_BOUNCE_HANDLE(EmailBounceServiceHelper.class, true, true);
+	SYSTEM_UPDATE_PROGRAM_STUDY_OPTION(ProgramServiceHelper.class, true, true), //
+	SYSTEM_EXECUTE_ESCALATED_STATE_TRANSITION(StateServiceHelperEscalation.class, true, true), //
+	SYSTEM_EXECUTE_PROPAGATED_STATE_TRANSITION(StateServiceHelperPropagation.class, true, true), //
+	SYSTEM_IMPORT_INSTITUTION_REFERENCE_DATA(ImportedEntityServiceHelperInstitution.class, true, true), //
+	SYSTEM_EXPORT_APPLICATION(ApplicationExportServiceHelper.class, true, true), //
+	SYSTEM_SEND_DEFERRED_WORKFLOW_NOTIFICATION(NotificationServiceHelperWorkflow.class, true, true), //
+	SYSTEM_IMPORT_SYSTEM_REFERENCE_DATA(ImportedEntityServiceHelperSystem.class, true, false), //
+	SYSTEM_STARTUP_INSTITUTION(InstitutionServiceHelper.class, true, false), //
+	SYSTEM_UPDATE_ADVERT_CLOSING_DATE(AdvertServiceHelperClosingDate.class, true, false), //
+	SYSTEM_UPDATE_ADVERT_EXCHANGE_RATE(AdvertServiceHelperExchangeRate.class, true, false), //
+	SYSTEM_SEND_RECOMMENDATION_NOTIFICATION(NotificationServiceHelperRecommendation.class, true, false), //
+	SYSTEM_EXPORT_DOCUMENT(DocumentServiceHelperExport.class, true, false), //
+	SYSTEM_DELETE_DOCUMENT(DocumentServiceHelperDelete.class, true, false),
+	SYSTEM_EMAIL_BOUNCE_HANDLE(EmailBounceServiceHelper.class, true, false);
 
-    private Class<? extends AbstractServiceHelper> executor;
+	private Class<? extends AbstractServiceHelper> executor;
 
-    private boolean execute;
+	private boolean execute;
 
-    boolean parallelize;
+	boolean blocking;
 
-    private PrismMaintenanceTask(Class<? extends AbstractServiceHelper> executor, boolean execute, boolean parallelize) {
-        this.executor = executor;
-        this.execute = execute;
-        this.parallelize = parallelize;
-    }
+	private PrismMaintenanceTask(Class<? extends AbstractServiceHelper> executor, boolean execute, boolean blocking) {
+		this.executor = executor;
+		this.execute = execute;
+		this.blocking = blocking;
+	}
 
-    public final Class<? extends AbstractServiceHelper> getExecutor() {
-        return executor;
-    }
+	public final Class<? extends AbstractServiceHelper> getExecutor() {
+		return executor;
+	}
 
-    public final boolean isExecute() {
-        return execute;
-    }
+	public final boolean isExecute() {
+		return execute;
+	}
 
-    public final boolean isParallelize() {
-        return parallelize;
-    }
+	public final boolean isBlocking() {
+		return blocking;
+	}
 
 }

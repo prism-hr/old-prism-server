@@ -33,7 +33,7 @@
     <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
         <property name="corePoolSize" value="10"/>
         <property name="maxPoolSize" value="20"/>
-        <property name="WaitForTasksToCompleteOnShutdown" value="false"/>
+        <property name="WaitForTasksToCompleteOnShutdown" value="true"/>
     </bean>
 
     <!-- exporter config -->

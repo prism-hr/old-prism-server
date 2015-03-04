@@ -17,7 +17,7 @@ public class UserFeedbackRepresentation {
 
     private String content;
 
-    private String featureRequests;
+    private String featureRequest;
 
     private Boolean recommended;
 
@@ -63,12 +63,12 @@ public class UserFeedbackRepresentation {
         this.content = content;
     }
 
-    public String getFeatureRequests() {
-        return featureRequests;
+    public String getFeatureRequest() {
+        return featureRequest;
     }
 
-    public void setFeatureRequests(String featureRequests) {
-        this.featureRequests = featureRequests;
+    public void setFeatureRequest(String featureRequest) {
+        this.featureRequest = featureRequest;
     }
 
     public Boolean getRecommended() {

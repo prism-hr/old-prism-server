@@ -146,10 +146,6 @@ public class AdvertService {
         return advertDAO.getRecommendedAdverts(user, activeProgramStates, activeProjectStates, advertsRecentlyAppliedFor);
     }
 
-    public List<Advert> getAdvertsWithElapsedClosingDates(LocalDate baseline) {
-        return advertDAO.getAdvertsWithElapsedClosingDates(baseline);
-    }
-
     public void updateDetail(Class<? extends Resource> resourceClass, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) throws Exception {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
@@ -217,7 +213,7 @@ public class AdvertService {
         resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CATEGORY);
     }
 
-    public AdvertClosingDate addClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, AdvertClosingDateDTO advertClosingDateDTO)
+    public AdvertClosingDate createClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, AdvertClosingDateDTO advertClosingDateDTO)
             throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException,
             IntegrationException {
         Resource resource = resourceService.getById(resourceClass, resourceId);
@@ -227,6 +223,7 @@ public class AdvertService {
             AdvertClosingDate advertClosingDate = new AdvertClosingDate().withAdvert(advert).withClosingDate(advertClosingDateDTO.getClosingDate())
                     .withStudyPlaces(advertClosingDateDTO.getStudyPlaces());
             advert.getClosingDates().add(advertClosingDate);
+            entityService.flush();
             advert.setClosingDate(getNextAdvertClosingDate(advert));
             resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CLOSING_DATE);
             return advertClosingDate;
@@ -245,6 +242,7 @@ public class AdvertService {
         if (advert.getId().equals(advertClosingDate.getAdvert().getId())) {
             advertClosingDate.setClosingDate(advertClosingDateDTO.getClosingDate());
             advertClosingDate.setStudyPlaces(advertClosingDateDTO.getStudyPlaces());
+            entityService.flush();
             advert.setClosingDate(getNextAdvertClosingDate(advert));
             resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CLOSING_DATE);
         } else {
@@ -259,6 +257,8 @@ public class AdvertService {
         AdvertClosingDate advertClosingDate = getClosingDateById(closingDateId);
 
         if (advert.getId().equals(advertClosingDate.getAdvert().getId())) {
+        	advert.setClosingDate(null);
+        	entityService.flush();
             advert.getClosingDates().remove(advertClosingDate);
             advert.setClosingDate(getNextAdvertClosingDate(advert));
             resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CLOSING_DATE);
@@ -267,27 +267,31 @@ public class AdvertService {
         }
     }
 
-    public void updateClosingDate(Advert transientAdvert, LocalDate baseline) {
-        Advert persistentAdvert = getById(transientAdvert.getId());
-        persistentAdvert.setClosingDate(getNextAdvertClosingDate(persistentAdvert));
+    public List<Integer> getAdvertsWithElapsedClosingDates(LocalDate baseline) {
+    	return advertDAO.getAdvertsWithElapsedClosingDates(baseline);
+    }
+    
+    public void refreshClosingDate(Integer advertId, LocalDate baseline) {
+        Advert advert = getById(advertId);
+        advert.setClosingDate(getNextAdvertClosingDate(advert));
     }
 
-    public void updateCurrencyConversion(Advert transientAdvert) {
-        Advert persistentAdvert = getById(transientAdvert.getId());
+    public void updateCurrencyConversion(Integer advertId) {
+        Advert advert = getById(advertId);
         LocalDate baseline = new LocalDate();
 
-        if (persistentAdvert.hasConvertedFee()) {
-            updateConvertedMonetaryValues(persistentAdvert.getFee(), baseline);
+        if (advert.hasConvertedFee()) {
+            updateConvertedMonetaryValues(advert.getFee(), baseline);
         }
 
-        if (persistentAdvert.hasConvertedPay()) {
-            updateConvertedMonetaryValues(persistentAdvert.getPay(), baseline);
+        if (advert.hasConvertedPay()) {
+            updateConvertedMonetaryValues(advert.getPay(), baseline);
         }
 
-        persistentAdvert.setLastCurrencyConversionDate(baseline);
+        advert.setLastCurrencyConversionDate(baseline);
     }
 
-    public List<Advert> getAdvertsWithElapsedCurrencyConversions(LocalDate baseline) {
+    public List<Integer> getAdvertsWithElapsedCurrencyConversions(LocalDate baseline) {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         return advertDAO.getAdvertsWithElapsedCurrencyConversions(baseline, activeProgramStates, activeProjectStates);
@@ -515,7 +519,6 @@ public class AdvertService {
     }
 
     private AdvertClosingDate getNextAdvertClosingDate(Advert advert) {
-        entityService.flush();
         return advertDAO.getNextAdvertClosingDate(advert, new LocalDate());
     }
 

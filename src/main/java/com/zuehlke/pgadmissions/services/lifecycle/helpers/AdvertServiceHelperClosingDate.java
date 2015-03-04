@@ -6,7 +6,6 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.services.AdvertService;
 
 @Component
@@ -18,9 +17,9 @@ public class AdvertServiceHelperClosingDate implements AbstractServiceHelper {
     @Override
     public void execute() {
         LocalDate baseline = new LocalDate();
-        List<Advert> adverts = advertService.getAdvertsWithElapsedClosingDates(baseline);
-        for (Advert advert : adverts) {
-            advertService.updateClosingDate(advert, baseline);
+        List<Integer> adverts = advertService.getAdvertsWithElapsedClosingDates(baseline);
+        for (Integer advert : adverts) {
+            advertService.refreshClosingDate(advert, baseline);
         }
     }
 

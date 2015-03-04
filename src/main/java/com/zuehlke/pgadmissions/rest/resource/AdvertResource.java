@@ -49,7 +49,7 @@ public class AdvertResource {
     @RequestMapping(value = "/closingDates", method = RequestMethod.POST)
     public Integer addClosingDate(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @Valid @RequestBody AdvertClosingDateDTO advertClosingDateDTO) throws Exception {
-        AdvertClosingDate closingDate = advertService.addClosingDate(resourceDescriptor.getType(), resourceId, advertClosingDateDTO);
+        AdvertClosingDate closingDate = advertService.createClosingDate(resourceDescriptor.getType(), resourceId, advertClosingDateDTO);
         return closingDate.getId();
     }
 

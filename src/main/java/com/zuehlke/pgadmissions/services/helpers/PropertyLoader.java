@@ -27,50 +27,50 @@ import com.zuehlke.pgadmissions.services.ResourceService;
 @Scope(SCOPE_PROTOTYPE)
 public class PropertyLoader {
 
-    private Resource resource;
+	private Resource resource;
 
-    private PrismLocale locale;
+	private PrismLocale locale;
 
-    private PrismProgramType programType;
+	private PrismProgramType programType;
 
-    private final HashMap<PrismDisplayPropertyDefinition, String> properties = Maps.newHashMap();
+	private final HashMap<PrismDisplayPropertyDefinition, String> properties = Maps.newHashMap();
 
-    @Autowired
-    private DisplayPropertyService displayPropertyService;
-    
-    @Autowired
-    private ResourceService resourceService;
+	@Autowired
+	private DisplayPropertyService displayPropertyService;
 
-    public String load(PrismDisplayPropertyDefinition property) {
-        String value = properties.get(property);
-        if (value == null) {
-            PrismDisplayPropertyCategory category = property.getDisplayCategory();
-            properties.putAll(displayPropertyService.getDisplayProperties(resource, property.getScope(), category, locale, programType));
-            value = properties.get(property);
-        }
-        return value;
-    }
+	@Autowired
+	private ResourceService resourceService;
 
-    public String load(PrismDisplayPropertyDefinition trueIndex, PrismDisplayPropertyDefinition falseIndex, boolean evaluation) {
-        return evaluation ? load(trueIndex) : load(falseIndex);
-    }
-    
-    public PropertyLoader localize(Resource resource) {
-        PrismScope resourceScope = resource.getResourceScope();
-        if (Arrays.asList(PROGRAM, PROJECT, APPLICATION).contains(resourceScope)) {
-            Program program = resource.getProgram();
-            this.resource = program;
-            this.programType = program.getProgramType().getPrismProgramType();
-        } else {
-            this.resource = resource;
-            this.programType = null;
-        }
-        this.locale = resourceService.getOperativeLocale(resource);
-        return this;
-    }
-    
-    public Resource getResource() {
-        return resource;
-    }
+	public String load(PrismDisplayPropertyDefinition property) {
+		String value = properties.get(property);
+		if (value == null) {
+			PrismDisplayPropertyCategory category = property.getDisplayCategory();
+			properties.putAll(displayPropertyService.getDisplayProperties(resource, property.getScope(), category, locale, programType));
+			value = properties.get(property);
+		}
+		return value;
+	}
+
+	public String load(PrismDisplayPropertyDefinition trueIndex, PrismDisplayPropertyDefinition falseIndex, boolean evaluation) {
+		return evaluation ? load(trueIndex) : load(falseIndex);
+	}
+
+	public PropertyLoader localize(Resource resource) {
+		return localize(resource, null);
+	}
+
+	public PropertyLoader localize(Resource resource, PrismLocale prismLocale) {
+		PrismScope resourceScope = resource.getResourceScope();
+		if (Arrays.asList(PROGRAM, PROJECT, APPLICATION).contains(resourceScope)) {
+			Program program = resource.getProgram();
+			this.resource = program;
+			this.programType = program.getProgramType().getPrismProgramType();
+		} else {
+			this.resource = resource;
+			this.programType = null;
+		}
+		this.locale = resourceService.getOperativeLocale(resource, prismLocale);
+		return this;
+	}
 
 }

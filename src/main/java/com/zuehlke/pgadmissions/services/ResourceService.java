@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -456,6 +458,15 @@ public class ResourceService {
 		}
 	}
 
+	public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource resource, PrismLocale prismLocale) {
+		PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
+		Map<PrismDisplayPropertyDefinition, String> properties = Maps.newLinkedHashMap();
+		for (PrismDisplayPropertyDefinition prismDisplayPropertyDefinition : PrismDisplayPropertyDefinition.values()) {
+			properties.put(prismDisplayPropertyDefinition, loader.load(prismDisplayPropertyDefinition));
+		}
+		return properties;
+	}
+
 	private Resource getNotNullResource(PrismScope resourceScope, Integer resourceId) throws Error {
 		Resource resource = getById(resourceScope.getResourceClass(), resourceId);
 		if (resource == null) {
@@ -482,9 +493,15 @@ public class ResourceService {
 	}
 
 	public PrismLocale getOperativeLocale(Resource resource) {
+		return getOperativeLocale(resource, null);
+	}
+	
+	public PrismLocale getOperativeLocale(Resource resource, PrismLocale prismLocale) {
 		if (resource.getResourceScope() == PrismScope.SYSTEM) {
 			User currentUser = userService.getCurrentUser();
-			if (currentUser != null) {
+			if (currentUser == null) {
+				return prismLocale == null ? PrismLocale.getSystemLocale() : prismLocale;
+			} else {
 				return currentUser.getLocale();
 			}
 		}

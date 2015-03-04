@@ -6,7 +6,6 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.services.AdvertService;
 
 @Component
@@ -18,8 +17,8 @@ public class AdvertServiceHelperExchangeRate implements AbstractServiceHelper {
     @Override
     public void execute() {
         LocalDate baseline = new LocalDate();
-        List<Advert> adverts = advertService.getAdvertsWithElapsedCurrencyConversions(baseline);
-        for (Advert advert : adverts) {
+        List<Integer> adverts = advertService.getAdvertsWithElapsedCurrencyConversions(baseline);
+        for (Integer advert : adverts) {
             advertService.updateCurrencyConversion(advert);
         }
     }

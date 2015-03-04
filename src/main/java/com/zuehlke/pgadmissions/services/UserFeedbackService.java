@@ -1,15 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.joda.time.DateTime;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.zuehlke.pgadmissions.dao.UserFeedbackDAO;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -18,6 +8,14 @@ import com.zuehlke.pgadmissions.domain.user.UserFeedback;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.rest.dto.user.UserFeedbackContentDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserFeedbackDTO;
+import org.joda.time.DateTime;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 @Service
 @Transactional
@@ -66,16 +64,15 @@ public class UserFeedbackService {
 	}
 
 	public PrismRoleCategory getRoleCategoryUserFeedbackRequiredFor(User user) {
-		PrismRoleCategory required = null;
 		DateTime latestFeedbackTimestamp = userFeedbackDAO.getLatestUserFeedbackTimestamp(user);
-		if (latestFeedbackTimestamp.isBefore(new DateTime().minusYears(1))) {
+		if (latestFeedbackTimestamp == null || latestFeedbackTimestamp.isBefore(new DateTime().minusYears(1))) {
 			for (PrismRoleCategory prismRoleCategory : PrismRoleCategory.values()) {
 				if (!roleService.getUserRolesByRoleCategory(user, prismRoleCategory, SYSTEM).isEmpty()) {
-					return required;
+					return prismRoleCategory;
 				}
 			}
 		}
-		return required;
+		return null;
 	}
 
 	private void setLastSequenceIdentifier(UserFeedback userFeedback) {

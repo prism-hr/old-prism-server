@@ -6,12 +6,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.I
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.inject.Inject;
 
@@ -23,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
@@ -34,9 +30,7 @@ import com.zuehlke.pgadmissions.domain.document.FileCategory;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
@@ -280,31 +274,6 @@ public class InstitutionService {
 		List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
 		return institutionDAO.getRelatedInstitutions(activeProgramStates, activeProjectStates);
 	}
-
-	public Institution getUserPrimaryInstitution(User user) {
-		Map<Institution, Integer> institutionConnections = getUserInstitutionConnections(user);
-		if (!institutionConnections.isEmpty()) {
-			TreeMap<Integer, Institution> orderedInstitutionConnections = Maps.newTreeMap();
-			for (Map.Entry<Institution, Integer> institutionConnection : institutionConnections.entrySet()) {
-				orderedInstitutionConnections.put(institutionConnection.getValue(), institutionConnection.getKey());
-			}
-			orderedInstitutionConnections.descendingMap().firstEntry().getValue();
-		}
-		return null;
-	}
-
-	private Map<Institution, Integer> getUserInstitutionConnections(User user) {
-	    Map<Institution, Integer> institutionConnections = Maps.newHashMap();
-		for (UserRole userRole : user.getUserRoles()) {
-			Resource resource = userRole.getResource();
-			if (resource.getResourceScope() != SYSTEM) {
-				Institution institution = resource.getInstitution();
-				Integer connectionCount = institutionConnections.get(institution);
-				institutionConnections.put(institution, connectionCount == null ? 1 : connectionCount + 1);
-			}
-		}
-	    return institutionConnections;
-    }
 
 	private void setLogoDocument(Institution institution, InstitutionDTO institutionDTO, PrismAction actionId) {
 		FileDTO logoDocumentDTO = institutionDTO.getLogoDocument();

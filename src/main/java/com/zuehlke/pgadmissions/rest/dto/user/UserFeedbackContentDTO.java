@@ -2,14 +2,11 @@ package com.zuehlke.pgadmissions.rest.dto.user;
 
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 public class UserFeedbackContentDTO {
 
 	@NotNull
 	private Integer rating;
 
-	@NotEmpty
 	private String content;
 
     private String featureRequest;
@@ -37,4 +34,5 @@ public class UserFeedbackContentDTO {
     public void setFeatureRequest(String featureRequest) {
         this.featureRequest = featureRequest;
     }
+
 }

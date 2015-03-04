@@ -14,17 +14,48 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.system.System;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
 
 @Entity
 @Table(name = "USER_FEEDBACK")
-public class UserFeedback {
+public class UserFeedback extends WorkflowResourceExecution {
 
 	@Id
 	@GeneratedValue
 	private Integer id;
 
+	@ManyToOne
+	@JoinColumn(name = "system_id")
+	private System system;
+	
+	@ManyToOne
+	@JoinColumn(name = "institution_id")
+	private Institution institution;
+
+	@ManyToOne
+	@JoinColumn(name = "program_id")
+	private Program program;
+
+	@ManyToOne
+	@JoinColumn(name = "project_id")
+	private Project project;
+	
+	@ManyToOne
+	@JoinColumn(name = "application_id")
+	private Application application;	
+	
+	@ManyToOne
+	@JoinColumn(name = "action_id", nullable = false)
+	private Action action;
+	
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
@@ -32,11 +63,7 @@ public class UserFeedback {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "role_category", nullable = false)
 	private PrismRoleCategory roleCategory;
-
-	@ManyToOne
-	@JoinColumn(name = "institution_id", nullable = false)
-	private Institution institution;
-
+	
     @Column(name = "declined_response", nullable = false)
     private Boolean declinedResponse;
 
@@ -48,7 +75,7 @@ public class UserFeedback {
 	private String content;
 
     @Lob
-    @Column(name = "feature_requests")
+    @Column(name = "feature_request")
     private String featureRequest;
 
 	@Column(name = "recommended")
@@ -69,6 +96,64 @@ public class UserFeedback {
 		this.id = id;
 	}
 
+	@Override
+    public System getSystem() {
+	    return system;
+    }
+	
+	@Override
+    public void setSystem(System system) {
+		this.system = system;
+    }
+	
+	@Override
+	public Institution getInstitution() {
+		return institution;
+	}
+
+	@Override
+	public void setInstitution(Institution institution) {
+		this.institution = institution;
+	}
+	
+	@Override
+    public Program getProgram() {
+	    return program;
+    }
+
+	@Override
+    public void setProgram(Program program) {
+		this.program = program;
+    }
+	
+	@Override
+    public Project getProject() {
+	    return project;
+    }
+
+	@Override
+    public void setProject(Project project) {
+		this.project = project;
+    }
+
+	@Override
+    public Application getApplication() {
+	    return application;
+    }
+
+	@Override
+    public void setApplication(Application application) {
+		this.application = application;
+    }
+	
+	public Action getAction() {
+		return action;
+	}
+
+	public void setAction(Action action) {
+		this.action = action;
+	}
+
 	public User getUser() {
 		return user;
 	}
@@ -84,15 +169,7 @@ public class UserFeedback {
 	public void setRoleCategory(PrismRoleCategory roleCategory) {
 		this.roleCategory = roleCategory;
 	}
-
-	public Institution getInstitution() {
-		return institution;
-	}
-
-	public void setInstitution(Institution institution) {
-		this.institution = institution;
-	}
-
+	
 	public Boolean getDeclinedResponse() {
 		return declinedResponse;
 	}
@@ -149,6 +226,16 @@ public class UserFeedback {
 		this.sequenceIdentifier = sequenceIdentifier;
 	}
 
+	public UserFeedback withResource(Resource resource) {
+		setResource(resource);
+		return this;
+	}
+	
+	public UserFeedback withAction(Action action) {
+		this.action = action;
+		return this;
+	}
+	
 	public UserFeedback withUser(User user) {
 		this.user = user;
 		return this;
@@ -156,11 +243,6 @@ public class UserFeedback {
 
 	public UserFeedback withRoleCategory(PrismRoleCategory roleCategory) {
 		this.roleCategory = roleCategory;
-		return this;
-	}
-
-	public UserFeedback withInstitution(Institution institution) {
-		this.institution = institution;
 		return this;
 	}
 

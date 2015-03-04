@@ -1,15 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.joda.time.DateTime;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.zuehlke.pgadmissions.dao.UserFeedbackDAO;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -18,6 +8,14 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserFeedback;
 import com.zuehlke.pgadmissions.rest.dto.user.UserFeedbackContentDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserFeedbackDTO;
+import org.joda.time.DateTime;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 @Service
 @Transactional
@@ -40,13 +38,13 @@ public class UserFeedbackService {
 
 	@Inject
 	private UserService userService;
-	
+
     public void createFeedback(UserFeedbackDTO userFeedbackDTO) {
         UserFeedbackContentDTO contentDTO = userFeedbackDTO.getContent();
         User user = userService.getCurrentUser();
 		Institution institution = getFeedbackInstitution(user,
 		        resourceService.getById(userFeedbackDTO.getResourceScope().getResourceClass(), userFeedbackDTO.getResourceId()));
-		
+
 		if (institution != null) {
 	        UserFeedback userFeedback = new UserFeedback().withUser(user).withRoleCategory(userFeedbackDTO.getRoleCategory()).withInstitution(institution)
 	                .withDeclinedResponse(contentDTO == null).withCreatedTimestamp(new DateTime());
@@ -65,16 +63,15 @@ public class UserFeedbackService {
 	}
 
 	public PrismRoleCategory getRoleCategoryUserFeedbackRequiredFor(User user) {
-		PrismRoleCategory required = null;
 		DateTime latestFeedbackTimestamp = userFeedbackDAO.getLatestUserFeedbackTimestamp(user);
-		if (latestFeedbackTimestamp.isBefore(new DateTime().minusYears(1))) {
+		if (latestFeedbackTimestamp == null || latestFeedbackTimestamp.isBefore(new DateTime().minusYears(1))) {
 			for (PrismRoleCategory prismRoleCategory : PrismRoleCategory.values()) {
 				if (!roleService.getUserRolesByRoleCategory(user, prismRoleCategory, SYSTEM).isEmpty()) {
-					return required;
+					return prismRoleCategory;
 				}
 			}
 		}
-		return required;
+		return null;
 	}
 
 	private Institution getFeedbackInstitution(User user, Resource resource) {

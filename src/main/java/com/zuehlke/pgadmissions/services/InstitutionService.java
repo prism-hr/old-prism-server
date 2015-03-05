@@ -175,8 +175,11 @@ public class InstitutionService {
 
 	public void populateDefaultImportedEntityFeeds() throws DeduplicationException {
 		for (Institution institution : institutionDAO.getInstitutionsWithoutImportedEntityFeeds()) {
-			for (PrismImportedEntity importedEntityType : PrismImportedEntity.getDefaultLocations()) {
-				importedEntityService.getOrCreateImportedEntityFeed(institution, importedEntityType, importedEntityType.getDefaultLocation());
+			for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {
+				String defaultLocation = prismImportedEntity.getDefaultLocation();
+				if (defaultLocation != null) {
+					importedEntityService.getOrCreateImportedEntityFeed(institution, prismImportedEntity, defaultLocation);
+				}
 			}
 		}
 	}

@@ -229,7 +229,7 @@ public class ImportedEntityService {
         try {
             SimpleImportedEntity transientEntity = (SimpleImportedEntity) entityClass.newInstance();
             transientEntity.setInstitution(institution);
-            transientEntity.setType(PrismImportedEntity.getTypeByClass(entityClass));
+            transientEntity.setType(PrismImportedEntity.getByEntityClass(entityClass));
             transientEntity.setCode((String) ReflectionUtils.getProperty(entityDefinition, "code"));
 
             String name = (String) ReflectionUtils.getProperty(entityDefinition, "name");

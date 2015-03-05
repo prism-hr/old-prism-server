@@ -1,9 +1,7 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.imported.Country;
 import com.zuehlke.pgadmissions.domain.imported.Disability;
@@ -73,16 +71,11 @@ public enum PrismImportedEntity {
 
 	private boolean supportsUserDefinedInput;
 
-	private static final List<PrismImportedEntity> defaultLocations = Lists.newArrayList();
-
-	private static final Map<Class<?>, PrismImportedEntity> typeByEntityClass = Maps.newHashMap();
+	private static final Map<Class<?>, PrismImportedEntity> byEntityClass = Maps.newHashMap();
 
 	static {
 		for (PrismImportedEntity entity : values()) {
-			if (entity.defaultLocation != null) {
-				defaultLocations.add(entity);
-			}
-			typeByEntityClass.put(entity.getEntityClass(), entity);
+			byEntityClass.put(entity.getEntityClass(), entity);
 		}
 	}
 
@@ -120,12 +113,8 @@ public enum PrismImportedEntity {
 		return supportsUserDefinedInput;
 	}
 
-	public static final List<PrismImportedEntity> getDefaultLocations() {
-		return defaultLocations;
-	}
-
-	public static final PrismImportedEntity getTypeByClass(Class<?> entityClass) {
-		return typeByEntityClass.get(entityClass);
+	public static final PrismImportedEntity getByEntityClass(Class<?> entityClass) {
+		return byEntityClass.get(entityClass);
 	}
 
 }

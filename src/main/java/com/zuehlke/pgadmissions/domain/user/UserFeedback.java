@@ -154,7 +154,6 @@ public class UserFeedback extends WorkflowResourceExecution {
 		this.user = user;
 	}
 	
-
 	public PrismRoleCategory getRoleCategory() {
 		return roleCategory;
 	}

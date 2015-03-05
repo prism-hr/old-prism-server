@@ -46,9 +46,9 @@ public class UserFeedbackService {
 
 		UserFeedbackContentDTO contentDTO = userFeedbackDTO.getContent();
 		boolean declined = contentDTO == null;
-		UserFeedback userFeedback = new UserFeedback().withResource(resource).withAction(action).withUser(user)
-		        .withRoleCategory(userFeedbackDTO.getRoleCategory()).withDeclinedResponse(declined).withCreatedTimestamp(new DateTime());
-		
+		UserFeedback userFeedback = new UserFeedback().withResource(resource).withUser(user).withRoleCategory(userFeedbackDTO.getRoleCategory())
+		        .withAction(action).withDeclinedResponse(declined).withCreatedTimestamp(new DateTime());
+
 		if (!declined) {
 			userFeedback.setRating(contentDTO.getRating());
 			userFeedback.setContent(contentDTO.getContent());

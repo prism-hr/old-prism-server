@@ -40,83 +40,92 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.Titles;
 
 public enum PrismImportedEntity {
 
-    COUNTRY(Countries.class, "country", Country.class, "xml/defaultEntities/country.xml", "xsd/import/country.xsd"), //
-    DISABILITY(Disabilities.class, "disability", Disability.class, "xml/defaultEntities/disability.xml", "xsd/import/disability.xsd"), //
-    DOMICILE(Domiciles.class, "domicile", Domicile.class, "xml/defaultEntities/domicile.xml", "xsd/import/domicile.xsd"), //
-    ETHNICITY(Ethnicities.class, "ethnicity", Ethnicity.class, "xml/defaultEntities/ethnicity.xml", "xsd/import/ethnicity.xsd"), //
-    NATIONALITY(Nationalities.class, "nationality", Language.class, "xml/defaultEntities/nationality.xml", "xsd/import/nationality.xsd"), //
-    PROGRAM(ProgrammeOccurrences.class, "programmeOccurrence", Program.class, null, "xsd/import/program.xsd"), //
-    QUALIFICATION_TYPE(Qualifications.class, "qualification", QualificationType.class, "xml/defaultEntities/qualificationType.xml",
-            "xsd/import/qualificationType.xsd"), //
-    REFERRAL_SOURCE(SourcesOfInterest.class, "sourceOfInterest", ReferralSource.class, "xml/defaultEntities/referralSource.xml",
-            "xsd/import/referralSource.xsd"), FUNDING_SOURCE(FundingSources.class, "fundingSource", FundingSource.class,
-            "xml/defaultEntities/fundingSource.xml", "xsd/import/fundingSource.xsd"), //
-    LANGUAGE_QUALIFICATION_TYPE(LanguageQualificationTypes.class, "languageQualificationType", ImportedLanguageQualificationType.class,
-            "xml/defaultEntities/languageQualificationType.xml", "xsd/import/languageQualificationType.xsd"), //
-    TITLE(Titles.class, "title", Title.class, "xml/defaultEntities/title.xml", "xsd/import/title.xsd"), //
-    INSTITUTION(Institutions.class, "institution", ImportedInstitution.class, "xml/defaultEntities/institution.xml", "xsd/import/institution.xsd"), //
-    GENDER(Genders.class, "gender", Gender.class, "xml/defaultEntities/gender.xml", "xsd/import/gender.xsd"), REJECTION_REASON(RejectionReasons.class,
-            "rejectionReason", RejectionReason.class, "xml/defaultEntities/rejectionReason.xml", "xsd/import/rejectionReason.xsd"), //
-    STUDY_OPTION(StudyOptions.class, "studyOption", StudyOption.class, "xml/defaultEntities/studyOption.xml", "xsd/import/studyOption.xsd"), //
-    PROGRAM_TYPE(ProgramTypes.class, "programType", ProgramType.class, "xml/defaultEntities/programType.xml", "xsd/import/programType.xsd");
+	COUNTRY(Countries.class, "country", Country.class, "xml/defaultEntities/country.xml", "xsd/import/country.xsd", false), //
+	DISABILITY(Disabilities.class, "disability", Disability.class, "xml/defaultEntities/disability.xml", "xsd/import/disability.xsd", false), //
+	DOMICILE(Domiciles.class, "domicile", Domicile.class, "xml/defaultEntities/domicile.xml", "xsd/import/domicile.xsd", false), //
+	ETHNICITY(Ethnicities.class, "ethnicity", Ethnicity.class, "xml/defaultEntities/ethnicity.xml", "xsd/import/ethnicity.xsd", false), //
+	NATIONALITY(Nationalities.class, "nationality", Language.class, "xml/defaultEntities/nationality.xml", "xsd/import/nationality.xsd", false), //
+	PROGRAM(ProgrammeOccurrences.class, "programmeOccurrence", Program.class, null, "xsd/import/program.xsd", false), //
+	QUALIFICATION_TYPE(Qualifications.class, "qualification", QualificationType.class, "xml/defaultEntities/qualificationType.xml",
+	        "xsd/import/qualificationType.xsd", false), //
+	REFERRAL_SOURCE(SourcesOfInterest.class, "sourceOfInterest", ReferralSource.class, "xml/defaultEntities/referralSource.xml",
+	        "xsd/import/referralSource.xsd", false), //
+	FUNDING_SOURCE(FundingSources.class, "fundingSource", FundingSource.class, "xml/defaultEntities/fundingSource.xml", "xsd/import/fundingSource.xsd", false), //
+	LANGUAGE_QUALIFICATION_TYPE(LanguageQualificationTypes.class, "languageQualificationType", ImportedLanguageQualificationType.class,
+	        "xml/defaultEntities/languageQualificationType.xml", "xsd/import/languageQualificationType.xsd", false), //
+	TITLE(Titles.class, "title", Title.class, "xml/defaultEntities/title.xml", "xsd/import/title.xsd", false), //
+	GENDER(Genders.class, "gender", Gender.class, "xml/defaultEntities/gender.xml", "xsd/import/gender.xsd", false), //
+	REJECTION_REASON(RejectionReasons.class, "rejectionReason", RejectionReason.class, "xml/defaultEntities/rejectionReason.xml",
+	        "xsd/import/rejectionReason.xsd", false), //
+	STUDY_OPTION(StudyOptions.class, "studyOption", StudyOption.class, "xml/defaultEntities/studyOption.xml", "xsd/import/studyOption.xsd", false), //
+	PROGRAM_TYPE(ProgramTypes.class, "programType", ProgramType.class, "xml/defaultEntities/programType.xml", "xsd/import/programType.xsd", false), //
+	INSTITUTION(Institutions.class, "institution", ImportedInstitution.class, "xml/defaultEntities/institution.xml", "xsd/import/institution.xsd", true);
 
-    private Class<?> jaxbClass;
+	private Class<?> jaxbClass;
 
-    private String jaxbPropertyName;
+	private String jaxbPropertyName;
 
-    private Class<?> entityClass;
+	private Class<?> entityClass;
 
-    private String defaultLocation;
+	private String defaultLocation;
 
-    private String schemaLocation;
+	private String schemaLocation;
 
-    private static final List<PrismImportedEntity> defaultLocations = Lists.newArrayList();
+	private boolean supportsUserDefinedInput;
 
-    private static final Map<Class<?>, PrismImportedEntity> typeByEntityClass = Maps.newHashMap();
+	private static final List<PrismImportedEntity> defaultLocations = Lists.newArrayList();
 
-    static {
-        for (PrismImportedEntity entity : values()) {
-            if (entity.defaultLocation != null) {
-                defaultLocations.add(entity);
-            }
-            typeByEntityClass.put(entity.getEntityClass(), entity);
-        }
-    }
+	private static final Map<Class<?>, PrismImportedEntity> typeByEntityClass = Maps.newHashMap();
 
-    private PrismImportedEntity(Class<?> jaxbClass, String jaxbPropertyName, Class<?> entityClass, String defaultLocation, String schemaLocation) {
-        this.jaxbClass = jaxbClass;
-        this.jaxbPropertyName = jaxbPropertyName;
-        this.entityClass = entityClass;
-        this.defaultLocation = defaultLocation;
-        this.schemaLocation = schemaLocation;
-    }
+	static {
+		for (PrismImportedEntity entity : values()) {
+			if (entity.defaultLocation != null) {
+				defaultLocations.add(entity);
+			}
+			typeByEntityClass.put(entity.getEntityClass(), entity);
+		}
+	}
 
-    public Class<?> getJaxbClass() {
-        return jaxbClass;
-    }
+	private PrismImportedEntity(Class<?> jaxbClass, String jaxbPropertyName, Class<?> entityClass, String defaultLocation, String schemaLocation,
+	        boolean supportsUserDefinedInput) {
+		this.jaxbClass = jaxbClass;
+		this.jaxbPropertyName = jaxbPropertyName;
+		this.entityClass = entityClass;
+		this.defaultLocation = defaultLocation;
+		this.schemaLocation = schemaLocation;
+		this.supportsUserDefinedInput = supportsUserDefinedInput;
+	}
 
-    public String getJaxbPropertyName() {
-        return jaxbPropertyName;
-    }
+	public Class<?> getJaxbClass() {
+		return jaxbClass;
+	}
 
-    public Class<?> getEntityClass() {
-        return entityClass;
-    }
+	public String getJaxbPropertyName() {
+		return jaxbPropertyName;
+	}
 
-    public String getDefaultLocation() {
-        return defaultLocation;
-    }
+	public Class<?> getEntityClass() {
+		return entityClass;
+	}
 
-    public final String getSchemaLocation() {
-        return schemaLocation;
-    }
+	public String getDefaultLocation() {
+		return defaultLocation;
+	}
 
-    public static final List<PrismImportedEntity> getDefaultLocations() {
-        return defaultLocations;
-    }
+	public final String getSchemaLocation() {
+		return schemaLocation;
+	}
 
-    public static final PrismImportedEntity getTypeByClass(Class<?> entityClass) {
-        return typeByEntityClass.get(entityClass);
-    }
+	public boolean isSupportsUserDefinedInput() {
+		return supportsUserDefinedInput;
+	}
+
+	public static final List<PrismImportedEntity> getDefaultLocations() {
+		return defaultLocations;
+	}
+
+	public static final PrismImportedEntity getTypeByClass(Class<?> entityClass) {
+		return typeByEntityClass.get(entityClass);
+	}
 
 }

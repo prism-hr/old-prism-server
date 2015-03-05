@@ -17,8 +17,11 @@
             </tr>
             <tr>
                 <td width="10">&nbsp;</td>
-                <td class="header-logo" align="left"><img src="${LOGO_URL}" class="image_fix" alt=""/></td>
-                <td width="10">&nbsp;</td>
+                <td class="header-logo" align="left"><img src="${IMAGES_PATH}/prism.png" class="image_fix" alt=""/></td>
+                <td></td>
+                <td width="160">
+                    <div style="margin-bottom:-40px; background:white; display:block; padding: 6px 6px 2px 6px; border:1px solid #53abd6"><img src="${LOGO_URL}" style="height:84px; width:160px;" alt=""/></div>
+                </td>
             </tr>
             <tr>
                 <td colspan="5" height="10"></td>
@@ -28,7 +31,7 @@
     <tr>
         <td><table cellpadding="0" align="center" cellspacing="0" border="0" width="560">
             <tr>
-                <td colspan="3" height="20"></td>
+                <td colspan="3" height="30"></td>
             </tr>
             <tr>
                 <td width="10">&nbsp;</td>
@@ -36,14 +39,11 @@
                 <td width="10">&nbsp;</td>
             </tr>
             <tr>
-                <td colspan="3" height="30"></td>
+                <td colspan="3" height="20"></td>
             </tr>
             <tr>
                 <td width="10">&nbsp;</td>
-                <td class="text-pad">You cannot reply to this message. If you require help, visit our helpdesk:
-                    <a style="text-decoration:none;" href="http://uclprism.freshdesk.com">
-                        http://uclprism.freshdesk.com
-                    </a>&nbsp;</td>
+                <td class="text-pad">PRiSM is now available as a commmercial servive. Visit our <a href="http://alumeni.co.uk/" style="color:#2ba6cb">webpage</a> to learn more.</td>
                 <td width="10">&nbsp;</td>
             </tr>
             <tr>
@@ -60,8 +60,8 @@
                 <td width="7">&nbsp;</td>
                 <td width="42"><img src="${IMAGES_PATH}/prism-logo.png" alt="Prism" height="40" class="logo" title="Prism"/></td>
                 <td><img src="${IMAGES_PATH}/opportunity.gif" alt="The Opportunity Portal" height="20" class="opportunity" title="The Opportunity Portal" style="margin-top:2px;"/></td>
-                <td align="right" width="107" valign="middle"><img src="${IMAGES_PATH}/prism_white.png" alt="Prism" height="22" title="Prism" style="margin-top:5px;"/></td>
-                <td width="10">&nbsp;</td>
+                <td align="right" width="107" valign="middle"><a a href="http://alumeni.co.uk/"><img src="${IMAGES_PATH}/alumeni.png" /></a></td>
+                <td width="14">&nbsp;</td>
             </tr>
             <tr>
                 <td colspan="5" height="8"></td>

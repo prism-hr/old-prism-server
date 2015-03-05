@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services.lifecycle;
 
+import java.util.Set;
+
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
@@ -12,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismMaintenanceTask;
 
 @Service
@@ -20,8 +23,10 @@ public class MaintenanceService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MaintenanceService.class);
 
 	private final Object lock = new Object();
-	
-	private PrismMaintenanceTask blockingTask;
+
+	private PrismMaintenanceTask blockingTask = null;
+
+	private Set<PrismMaintenanceTask> nonBlockingTasks = Sets.newHashSet();
 
 	@Value("${maintenance.run}")
 	private Boolean maintenanceRun;
@@ -37,26 +42,16 @@ public class MaintenanceService {
 		if (BooleanUtils.isTrue(maintenanceRun)) {
 			for (PrismMaintenanceTask prismMaintenanceTask : PrismMaintenanceTask.values()) {
 				if (prismMaintenanceTask.isExecute()) {
-					if (!prismMaintenanceTask.isBlocking()) {
-						submit(prismMaintenanceTask);
-					} else synchronized (lock) {
-						if (blockingTask == null) {
+					synchronized (lock) {
+						if (prismMaintenanceTask.isBlocking() && blockingTask == null) {
 							execute(prismMaintenanceTask);
+						} else if (!prismMaintenanceTask.isBlocking() && !nonBlockingTasks.contains(prismMaintenanceTask)) {
+							submit(prismMaintenanceTask);
 						}
 					}
 				}
 			}
 		}
-	}
-
-	private void submit(final PrismMaintenanceTask prismMaintenanceTask) {
-		executor.submit(new Runnable() {
-			@Override
-			public void run() {
-				execute(prismMaintenanceTask);
-
-			}
-		});
 	}
 
 	private void execute(final PrismMaintenanceTask prismMaintenanceTask) {
@@ -67,9 +62,27 @@ public class MaintenanceService {
 		} catch (Exception e) {
 			LOGGER.error("Error performing maintenance task", e);
 		} finally {
-			if (prismMaintenanceTask.isBlocking()) synchronized (lock) {
-				blockingTask = null;
+			synchronized (lock) {
+				if (prismMaintenanceTask.isBlocking()) {
+					blockingTask = null;
+				} else {
+					nonBlockingTasks.remove(prismMaintenanceTask);
+				}
 			}
+		}
+	}
+	
+	private void submit(final PrismMaintenanceTask prismMaintenanceTask) {
+		try {
+			executor.submit(new Runnable() {
+				@Override
+				public void run() {
+					execute(prismMaintenanceTask);
+	
+				}
+			});
+		} catch (Exception e) {
+			LOGGER.error("Error submitting maintenance task", e);			
 		}
 	}
 

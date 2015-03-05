@@ -53,16 +53,16 @@ public class UserFeedback extends WorkflowResourceExecution {
 	private Application application;	
 	
 	@ManyToOne
-	@JoinColumn(name = "action_id", nullable = false)
-	private Action action;
-	
-	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
-
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "role_category", nullable = false)
 	private PrismRoleCategory roleCategory;
+	
+	@ManyToOne
+	@JoinColumn(name = "action_id", nullable = false)
+	private Action action;
 	
     @Column(name = "declined_response", nullable = false)
     private Boolean declinedResponse;
@@ -146,14 +146,6 @@ public class UserFeedback extends WorkflowResourceExecution {
 		this.application = application;
     }
 	
-	public Action getAction() {
-		return action;
-	}
-
-	public void setAction(Action action) {
-		this.action = action;
-	}
-
 	public User getUser() {
 		return user;
 	}
@@ -161,6 +153,7 @@ public class UserFeedback extends WorkflowResourceExecution {
 	public void setUser(User user) {
 		this.user = user;
 	}
+	
 
 	public PrismRoleCategory getRoleCategory() {
 		return roleCategory;
@@ -168,6 +161,14 @@ public class UserFeedback extends WorkflowResourceExecution {
 
 	public void setRoleCategory(PrismRoleCategory roleCategory) {
 		this.roleCategory = roleCategory;
+	}
+	
+	public Action getAction() {
+		return action;
+	}
+
+	public void setAction(Action action) {
+		this.action = action;
 	}
 	
 	public Boolean getDeclinedResponse() {
@@ -231,13 +232,13 @@ public class UserFeedback extends WorkflowResourceExecution {
 		return this;
 	}
 	
-	public UserFeedback withAction(Action action) {
-		this.action = action;
+	public UserFeedback withUser(User user) {
+		this.user = user;
 		return this;
 	}
 	
-	public UserFeedback withUser(User user) {
-		this.user = user;
+	public UserFeedback withAction(Action action) {
+		this.action = action;
 		return this;
 	}
 

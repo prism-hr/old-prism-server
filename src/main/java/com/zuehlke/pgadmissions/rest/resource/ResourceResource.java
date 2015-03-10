@@ -161,6 +161,8 @@ public class ResourceResource {
 
 		representation.setWorkflowPropertyConfigurations(resourceService.getWorkflowPropertyConfigurations(resource));
 
+        representation.setDisplayProperties(resourceService.getDisplayProperties(resource));
+
 		PrismScope resourceScope = resource.getResourceScope();
 		switch (resourceScope) {
 		case APPLICATION:

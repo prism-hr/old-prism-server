@@ -12,10 +12,13 @@ public class ActionRepresentation {
 
     private PrismActionCustomQuestionDefinition actionCustomQuestionDefinition;
 
-    public ActionRepresentation(PrismAction id, PrismActionCategory actionCategory, PrismActionCustomQuestionDefinition actionCustomQuestionDefinition) {
+    private PrismAction.PrismActionDisplayPropertyDescriptor displayProperties;
+
+    public ActionRepresentation(PrismAction id, PrismActionCategory actionCategory, PrismActionCustomQuestionDefinition actionCustomQuestionDefinition, PrismAction.PrismActionDisplayPropertyDescriptor displayProperties) {
         this.id = id;
         this.actionCategory = actionCategory;
         this.actionCustomQuestionDefinition = actionCustomQuestionDefinition;
+        this.displayProperties = displayProperties;
     }
 
     public PrismAction getId() {
@@ -28,5 +31,9 @@ public class ActionRepresentation {
 
     public PrismActionCustomQuestionDefinition getActionCustomQuestionDefinition() {
         return actionCustomQuestionDefinition;
+    }
+
+    public PrismAction.PrismActionDisplayPropertyDescriptor getDisplayProperties() {
+        return displayProperties;
     }
 }

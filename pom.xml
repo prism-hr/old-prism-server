@@ -490,7 +490,7 @@
                 <configuration>
                     <scriptdirectory>src/sql/change_scripts</scriptdirectory>
                     <driver>com.mysql.jdbc.Driver</driver>
-                    <url><![CDATA[jdbc:mysql://${sql.host}/${sql.db}?useUnicode=yes&characterEncoding=UTF-8]]></url>
+                    <url><![CDATA[jdbc:mysql://${sql.host}/${sql.db}?useUnicode=yes&characterEncoding=UTF-8&connectionCollation=utf8_general_ci]]></url>
                     <userid>pgadmissions</userid>
                     <password>pgadmissions</password>
                     <dbms>mysql</dbms>

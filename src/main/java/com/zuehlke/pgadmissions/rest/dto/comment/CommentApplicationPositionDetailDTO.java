@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.dto.comment;
 
+import com.zuehlke.pgadmissions.rest.validation.annotation.ATASConstraint;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -11,6 +13,7 @@ public class CommentApplicationPositionDetailDTO {
 
     @NotNull
     @Size(max = 2000)
+    @ATASConstraint
     private String positionDescription;
 
     public final String getPositionTitle() {

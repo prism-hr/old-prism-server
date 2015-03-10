@@ -1,23 +1,24 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-import java.util.List;
-import java.util.Set;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class AbstractResourceRepresentation {
 
     private Integer id;
 
     private String code;
-    
+
     private PrismState state;
 
     private PrismStateGroup stateGroup;
@@ -44,6 +45,8 @@ public class AbstractResourceRepresentation {
 
     private List<WorkflowPropertyConfigurationRepresentation> workflowPropertyConfigurations;
 
+    private Map<PrismDisplayPropertyDefinition, String> displayProperties;
+
     public Integer getId() {
         return id;
     }
@@ -60,27 +63,27 @@ public class AbstractResourceRepresentation {
         this.code = code;
     }
 
-    public final PrismState getState() {
+    public PrismState getState() {
         return state;
     }
 
-    public final void setState(PrismState state) {
+    public void setState(PrismState state) {
         this.state = state;
     }
 
-    public final PrismStateGroup getStateGroup() {
+    public PrismStateGroup getStateGroup() {
         return stateGroup;
     }
 
-    public final void setStateGroup(PrismStateGroup stateGroup) {
+    public void setStateGroup(PrismStateGroup stateGroup) {
         this.stateGroup = stateGroup;
     }
 
-    public final List<PrismStateGroup> getSecondaryStates() {
+    public List<PrismStateGroup> getSecondaryStates() {
         return secondaryStates;
     }
 
-    public final void setSecondaryStates(List<PrismStateGroup> secondaryStates) {
+    public void setSecondaryStates(List<PrismStateGroup> secondaryStates) {
         this.secondaryStates = secondaryStates;
     }
 
@@ -156,12 +159,19 @@ public class AbstractResourceRepresentation {
         this.users = users;
     }
 
-    public final List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations() {
+    public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations() {
         return workflowPropertyConfigurations;
     }
 
-    public final void setWorkflowPropertyConfigurations(List<WorkflowPropertyConfigurationRepresentation> workflowPropertyConfigurations) {
+    public void setWorkflowPropertyConfigurations(List<WorkflowPropertyConfigurationRepresentation> workflowPropertyConfigurations) {
         this.workflowPropertyConfigurations = workflowPropertyConfigurations;
     }
 
+    public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties() {
+        return displayProperties;
+    }
+
+    public void setDisplayProperties(Map<PrismDisplayPropertyDefinition, String> displayProperties) {
+        this.displayProperties = displayProperties;
+    }
 }

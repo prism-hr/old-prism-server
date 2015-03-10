@@ -1,42 +1,8 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.List;
-
-import javax.imageio.ImageIO;
-import javax.servlet.http.Part;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-import org.bouncycastle.util.io.Streams;
-import org.imgscalr.Scalr;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.ListObjectsRequest;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.services.s3.model.*;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
@@ -51,6 +17,29 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.util.io.Streams;
+import org.imgscalr.Scalr;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.imageio.ImageIO;
+import javax.servlet.http.Part;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.List;
 
 @Service
 @Transactional
@@ -218,7 +207,7 @@ public class DocumentService {
     public byte[] getSystemDocument(String path) throws IOException {
         return Resources.toByteArray(Resources.getResource(path));
     }
-    
+
     public void reassignDoucments(User oldUser, User newUser) {
     	documentDAO.reassignDocuments(oldUser, newUser);
     }
@@ -229,16 +218,22 @@ public class DocumentService {
             throw new PrismBadRequestException("Uploaded file is not valid image file");
         }
 
-        final int SIZE = 600;
-        final int HALF_SIZE = SIZE / 2;
-        image = Scalr.resize(image, Scalr.Mode.AUTOMATIC, SIZE, SIZE);
+        final int WIDTH = 1200;
+        final int HEIGHT = 630;
+        boolean fitToWidth = (float)image.getWidth() / WIDTH >= (float)image.getHeight() / HEIGHT;
+        if(fitToWidth) {
+            image = Scalr.resize(image, Scalr.Mode.FIT_TO_WIDTH, WIDTH, HEIGHT);
+        } else {
+            image = Scalr.resize(image, Scalr.Mode.FIT_TO_HEIGHT, WIDTH, HEIGHT);
+        }
 
-        BufferedImage paddedImage = new BufferedImage(SIZE, SIZE, BufferedImage.TYPE_INT_RGB);
+        BufferedImage paddedImage = new BufferedImage(WIDTH, HEIGHT, image.getType());
         Graphics graphics = paddedImage.getGraphics();
-        graphics.setColor(Color.WHITE);
-        graphics.fillRect(0, 0, SIZE, SIZE);
-        graphics.drawImage(image, HALF_SIZE - image.getWidth() / 2, HALF_SIZE - image.getHeight() / 2, null);
+        graphics.fillRect(0, 0, WIDTH, HEIGHT);
+        graphics.drawImage(image, (WIDTH - image.getWidth()) / 2, (HEIGHT - image.getHeight()) / 2, null);
         graphics.dispose();
+
+        BufferedImage secondaryImage = new BufferedImage(WIDTH, HEIGHT, image.getType());
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(paddedImage, contentType.replaceAll("image/", ""), baos);

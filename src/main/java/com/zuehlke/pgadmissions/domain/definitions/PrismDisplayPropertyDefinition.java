@@ -1,23 +1,20 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-
-import java.util.Set;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.*;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 public enum PrismDisplayPropertyDefinition {
 
-	SYSTEM_ORGANIZATION(SYSTEM_GLOBAL, "Organisation", SYSTEM), //
-	SYSTEM_ORGANIZATION_PLURAL(SYSTEM_GLOBAL, "Organisations", SYSTEM), //
-	SYSTEM_DIVISION(SYSTEM_GLOBAL, "Division", SYSTEM), //
-	SYSTEM_DIVISION_PLURAL(SYSTEM_GLOBAL, "Divisions", SYSTEM), //
-	SYSTEM_OPPORTUNITY(SYSTEM_GLOBAL, "Opportunity", SYSTEM), //
-	SYSTEM_OPPORTUNITY_PLURAL(SYSTEM_GLOBAL, "Opportunities", SYSTEM), //
-	SYSTEM_DEADLINE(SYSTEM_GLOBAL, "Deadline", SYSTEM), //
-	SYSTEM_DEADLINE_PLURAL(SYSTEM_GLOBAL, "Deadlines", SYSTEM), //
+    SYSTEM_ORGANIZATION(SYSTEM_GLOBAL, "Organisation", SYSTEM), //
+    SYSTEM_ORGANIZATION_PLURAL(SYSTEM_GLOBAL, "Organisations", SYSTEM), //
+    SYSTEM_DIVISION(SYSTEM_GLOBAL, "Division", SYSTEM), //
+    SYSTEM_DIVISION_PLURAL(SYSTEM_GLOBAL, "Divisions", SYSTEM), //
+    SYSTEM_OPPORTUNITY(SYSTEM_GLOBAL, "Opportunity", SYSTEM), //
+    SYSTEM_OPPORTUNITY_PLURAL(SYSTEM_GLOBAL, "Opportunities", SYSTEM), //
+    SYSTEM_DEADLINE(SYSTEM_GLOBAL, "Deadline", SYSTEM), //
+    SYSTEM_DEADLINE_PLURAL(SYSTEM_GLOBAL, "Deadlines", SYSTEM), //
     SYSTEM_SYSTEM(SYSTEM_GLOBAL, "System", SYSTEM), //
     SYSTEM_SYSTEM_PLURAL(SYSTEM_GLOBAL, "Systems", SYSTEM), //
     SYSTEM_INSTITUTION(SYSTEM_GLOBAL, "Institution", SYSTEM), //
@@ -532,10 +529,19 @@ public enum PrismDisplayPropertyDefinition {
     APPLICATION_APPROVED_STATE_GROUP(APPLICATION_STATE_GROUP, "Approved", APPLICATION), //
     APPLICATION_REJECTED_STATE_GROUP(APPLICATION_STATE_GROUP, "Rejected", APPLICATION), //
     APPLICATION_WITHDRAWN_STATE_GROUP(APPLICATION_STATE_GROUP, "Withdrawn", APPLICATION), //
+    APPLICATION_COMPLETE_APPROVAL_STAGE_CONFIRMATION(APPLICATION_ACTION_CONFIRMATION_GROUP, "You have successfully completed approval stage.", APPLICATION), //
     APPLICATION_COMPLETE_CONFIRMATION(APPLICATION_STATE_GROUP, "You have successfully submitted your application.", APPLICATION), //
+    APPLICATION_COMPLETE_INTERVIEW_STAGE_CONFIRMATION(APPLICATION_STATE_GROUP, "You have successfully completed the interview stage.", APPLICATION), //
     APPLICATION_COMPLETE_REFERENCE_STAGE_CONFIRMATION(APPLICATION_STATE_GROUP, "You have successfully completed the reference stage.", APPLICATION), //
+    APPLICATION_COMPLETE_REVIEW_STAGE_CONFIRMATION(APPLICATION_STATE_GROUP, "You have successfully completed the review stage.", APPLICATION), //
     APPLICATION_COMPLETE_VALIDATION_STAGE_CONFIRMATION(APPLICATION_STATE_GROUP, "You have successfully completed the validation stage.", APPLICATION), //
+    APPLICATION_COMPLETE_VERIFICATION_STAGE_CONFIRMATION(APPLICATION_STATE_GROUP, "You have successfully completed the verification stage.", APPLICATION), //
+    APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_CONFIRMATION(APPLICATION_STATE_GROUP, "You have successfully confirmed interview arrangements.", APPLICATION), //
+    APPLICATION_CONFIRM_OFFER_RECOMMENDATION_CONFIRMATION(APPLICATION_STATE_GROUP, "You have successfully confirmed offer recommendation.", APPLICATION), //
+    APPLICATION_CONFIRM_REJECTION_CONFIRMATION(APPLICATION_STATE_GROUP, "You have successfully rejected application.", APPLICATION), //
+    APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_CONFIRMATION(APPLICATION_STATE_GROUP, "You have successfully provided your interview feedback.", APPLICATION), //
     APPLICATION_PROVIDE_REFERENCE_CONFIRMATION(APPLICATION_STATE_GROUP, "You have successfully provided your reference.", APPLICATION), //
+    APPLICATION_PROVIDE_REVIEW_CONFIRMATION(APPLICATION_STATE_GROUP, "You have successfully provided your review.", APPLICATION), //
     PROJECT_APPROVAL_STATE_GROUP(PROJECT_STATE_GROUP, "Approval", PROJECT), //
     PROJECT_APPROVED_STATE_GROUP(PROJECT_STATE_GROUP, "Approved", PROJECT), //
     PROJECT_REJECTED_STATE_GROUP(PROJECT_STATE_GROUP, "Rejected", PROJECT), //
@@ -553,18 +559,8 @@ public enum PrismDisplayPropertyDefinition {
     SYSTEM_RUNNING_STATE_GROUP(SYSTEM_STATE_GROUP, "Running", SYSTEM); //
 
     private PrismDisplayPropertyCategory displayCategory;
-
     private String defaultValue;
-
     private PrismScope scope;
-
-    private static final HashMultimap<PrismDisplayPropertyCategory, PrismDisplayPropertyDefinition> categoryProperties = HashMultimap.create();
-
-    static {
-        for (PrismDisplayPropertyDefinition property : values()) {
-            categoryProperties.put(property.displayCategory, property);
-        }
-    }
 
     private PrismDisplayPropertyDefinition(PrismDisplayPropertyCategory category, String defaultValue, PrismScope scope) {
         this.displayCategory = category;
@@ -582,10 +578,6 @@ public enum PrismDisplayPropertyDefinition {
 
     public final PrismScope getScope() {
         return scope;
-    }
-
-    public static final Set<PrismDisplayPropertyDefinition> getByCategory(PrismDisplayPropertyCategory category) {
-        return categoryProperties.get(category);
     }
 
 }

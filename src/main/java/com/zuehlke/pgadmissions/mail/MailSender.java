@@ -1,39 +1,11 @@
 package com.zuehlke.pgadmissions.mail;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EMAIL_LINK_MESSAGE;
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.mail.internet.InternetAddress;
-
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
-
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClient;
-import com.amazonaws.services.simpleemail.model.Body;
-import com.amazonaws.services.simpleemail.model.Content;
-import com.amazonaws.services.simpleemail.model.Destination;
-import com.amazonaws.services.simpleemail.model.Message;
-import com.amazonaws.services.simpleemail.model.SendEmailRequest;
+import com.amazonaws.services.simpleemail.model.*;
 import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
@@ -50,9 +22,29 @@ import com.zuehlke.pgadmissions.exceptions.AbortMailSendException;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
+
+import javax.inject.Inject;
+import javax.mail.internet.InternetAddress;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EMAIL_LINK_MESSAGE;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
@@ -146,14 +138,18 @@ public class MailSender {
         template = new Template("Email template", emailTemplate, freemarkerConfig.getConfiguration());
 
         String imagesPath = applicationUrl + "/images/email";
-        String logoUrl;
+        String logoUrl = null;
         if (logoDocument != null) {
             logoUrl = applicationApiUrl + "/images/" + logoDocument.getId();
-        } else {
-            logoUrl = imagesPath + "/prism.png";
         }
 
-        model = ImmutableMap.<String, Object>of("LOGO_URL", logoUrl, "IMAGES_PATH", imagesPath, "SUBJECT", subject, "CONTENT", content);
+        model = Maps.newHashMap();
+        if (logoUrl != null) {
+            model.put("LOGO_URL", logoUrl);
+        }
+        model.put("IMAGES_PATH", imagesPath);
+        model.put("SUBJECT", subject);
+        model.put("CONTENT", content);
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
     }
 

@@ -148,7 +148,6 @@ public class ResourceService {
         resource.setReferrer(referrer);
         resource.setWorkflowPropertyConfigurationVersion(workflowPropertyConfigurationVersion);
 
-        resourceUser.setLatestCreationScope(scopeService.getById(resourceScope));
         Comment comment = new Comment().withUser(resourceUser).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                 .addAssignedUser(resourceUser, roleService.getCreatorRole(resource), CREATE);
 

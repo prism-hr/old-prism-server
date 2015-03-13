@@ -422,31 +422,31 @@ public enum PrismAction {
         return actionCategory;
     }
 
-    public final boolean isRatingAction() {
+    public boolean isRatingAction() {
         return ratingAction;
     }
 
-    public final boolean isTransitionAction() {
+    public boolean isTransitionAction() {
         return transitionAction;
     }
 
-    public final boolean isDeclinableAction() {
+    public boolean isDeclinableAction() {
         return declinableAction;
     }
 
-    public final boolean isVisibleAction() {
+    public boolean isVisibleAction() {
         return visibleAction;
     }
 
-    public final boolean isEmphasizedAction() {
+    public boolean isEmphasizedAction() {
         return emphasizedAction;
     }
 
-    public final boolean isConcludeParentAction() {
+    public boolean isConcludeParentAction() {
         return concludeParentAction;
     }
 
-    public final PrismActionCustomQuestionDefinition getActionCustomQuestion() {
+    public PrismActionCustomQuestionDefinition getActionCustomQuestion() {
         return actionCustomQuestion;
     }
 

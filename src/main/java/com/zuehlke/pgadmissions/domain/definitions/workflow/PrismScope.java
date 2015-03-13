@@ -1,21 +1,18 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.APPLICATION_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION_CATEGORY;
-
-import java.util.Map;
-
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
+
+import java.util.Map;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.*;
 
 public enum PrismScope {
 
@@ -84,14 +81,6 @@ public enum PrismScope {
 
 	public String getUpperCamelName() {
 		return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
-	}
-
-	public PrismDisplayPropertyDefinition getDisplayPropertyDefinition() {
-		return PrismDisplayPropertyDefinition.valueOf("SYSTEM_" + name());
-	}
-
-	public PrismDisplayPropertyDefinition getDisplayPropertyDefinitionPlural() {
-		return PrismDisplayPropertyDefinition.valueOf("SYSTEM_" + name() + "_PLURAL");
 	}
 
 	private static class ColumnDefinition {

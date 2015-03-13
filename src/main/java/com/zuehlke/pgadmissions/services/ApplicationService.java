@@ -1,24 +1,52 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.google.visualization.datasource.datatable.value.ValueType.TEXT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ADDRESS_CODE_MOCK;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_LINK;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PHONE_MOCK;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ROLE_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
-
-import java.beans.IntrospectionException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.validation.Valid;
-
+import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.visualization.datasource.base.TypeMismatchException;
+import com.google.visualization.datasource.datatable.ColumnDescription;
+import com.google.visualization.datasource.datatable.DataTable;
+import com.google.visualization.datasource.datatable.TableRow;
+import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
+import com.zuehlke.pgadmissions.dao.ApplicationDAO;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.application.*;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
+import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
+import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.definitions.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.imported.StudyOption;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.Role;
+import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
+import com.zuehlke.pgadmissions.dto.*;
+import com.zuehlke.pgadmissions.exceptions.*;
+import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.comment.CommentApplicationOfferDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.comment.CommentApplicationPositionDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
+import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.DocumentSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.EmploymentPositionSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.QualificationSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
+import com.zuehlke.pgadmissions.rest.validation.validator.ApplicationValidator;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import com.zuehlke.pgadmissions.utils.PrismConstants;
+import com.zuehlke.pgadmissions.utils.ReflectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.DateTime;
@@ -36,78 +64,15 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.visualization.datasource.base.TypeMismatchException;
-import com.google.visualization.datasource.datatable.ColumnDescription;
-import com.google.visualization.datasource.datatable.DataTable;
-import com.google.visualization.datasource.datatable.TableRow;
-import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
-import com.zuehlke.pgadmissions.dao.ApplicationDAO;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
-import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
-import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismReportColumn;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
-import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
-import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
-import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
-import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
-import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
-import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.IntegrationException;
-import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentApplicationOfferDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentApplicationPositionDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
-import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.DocumentSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.EmploymentPositionSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.QualificationSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
-import com.zuehlke.pgadmissions.rest.validation.validator.ApplicationValidator;
-import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import com.zuehlke.pgadmissions.utils.PrismConstants;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import javax.validation.Valid;
+import java.beans.IntrospectionException;
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
+
+import static com.google.visualization.datasource.datatable.value.ValueType.TEXT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
 
 @Service
 @Transactional
@@ -272,7 +237,7 @@ public class ApplicationService {
 
 		int referencesPending = configuration.getMinimum() - references.size();
 		for (int i = 0; i < referencesPending; i++) {
-			references.add(new ApplicationReferenceDTO().withUser(institution.getUser()).withJobTitle(loader.load(SYSTEM_ROLE_ADMINISTRATOR))
+			references.add(new ApplicationReferenceDTO().withUser(institution.getUser()).withJobTitle(loader.load(SYSTEM_ROLE_APPLICATION_ADMINISTRATOR))
 			        .withAddressLine1(addressLineMock).withAddressLine2(addressLineMock).withAddressTown(addressLineMock).withAddressRegion(addressLineMock)
 			        .withAddressCode(loader.load(SYSTEM_ADDRESS_CODE_MOCK)).withAddressDomicile(domicileMock.getCode())
 			        .withPhone(loader.load(SYSTEM_PHONE_MOCK)));

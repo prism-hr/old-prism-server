@@ -20,7 +20,11 @@
                 <td class="header-logo" align="left"><img src="${IMAGES_PATH}/prism.png" class="image_fix" alt=""/></td>
                 <td></td>
                 <td width="160">
-                    <div style="margin-bottom:-40px; background:white; display:block; padding: 6px 6px 2px 6px; border:1px solid #53abd6"><img src="${LOGO_URL}" style="height:84px; width:160px;" alt=""/></div>
+                    <#if LOGO_URL??>
+                        <div style="margin-bottom:-40px; background:white; display:block; padding: 6px 6px 2px 6px; border:1px solid #53abd6">
+                            <img src="${LOGO_URL}" style="height:84px; width:160px;" alt=""/>
+                        </div>
+                    </#if>
                 </td>
             </tr>
             <tr>

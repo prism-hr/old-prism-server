@@ -32,6 +32,7 @@ CREATE TABLE user_feedback (
   CONSTRAINT user_feedback_ibfk_6 FOREIGN KEY (application_id) REFERENCES application (id),
   CONSTRAINT user_feedback_ibfk_7 FOREIGN KEY (action_id) REFERENCES action (id)
 )
+  COLLATE='utf8_general_ci'
   ENGINE=InnoDB
   AUTO_INCREMENT=1
 ;

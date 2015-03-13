@@ -1,22 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.UPDATE;
-
-import java.io.IOException;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.joda.time.DateTime;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -30,17 +13,25 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
-import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
-import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.workflow.*;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.*;
 
 @Service
 @Transactional
@@ -208,7 +199,7 @@ public class RoleService {
 			getOrCreateUserRole(transitionUserRole);
 		}
 	}
-	
+
 	public List<UserRole> getUserRolesByRoleCategory(User user, PrismRoleCategory prismRoleCategory, PrismScope ...exludedPrismScopes) {
 		return roleDAO.getUserRoleByRoleCategory(user, prismRoleCategory, exludedPrismScopes);
 	}
@@ -262,7 +253,7 @@ public class RoleService {
 		PrismRoleTransitionType roleTransitionType = roleTransition.getRoleTransitionType();
 
 		for (CommentAssignedUser assignee : comment.getAssignedUsers()) {
-			if (assignee.getRole() == transitionRole && assignee.getRoleTransitionType() == roleTransitionType) {
+			if (assignee.getRole().equals(transitionRole) && assignee.getRoleTransitionType() == roleTransitionType) {
 				User transitionUser = assignee.getUser();
 				if (restrictedToUser == null || transitionUser.equals(restrictedToUser)) {
 					transitionUsers.add(transitionUser);

@@ -1,9 +1,10 @@
 package com.zuehlke.pgadmissions.rest.validation.validator.comment;
 
-import static com.zuehlke.pgadmissions.utils.ValidationUtils.rejectIfNotNull;
-
-import java.util.TimeZone;
-
+import com.google.common.base.Preconditions;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewAppointment;
+import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
@@ -12,10 +13,10 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import com.google.common.base.Preconditions;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewAppointment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import java.util.Set;
+import java.util.TimeZone;
+
+import static com.zuehlke.pgadmissions.utils.ValidationUtils.rejectIfNotNull;
 
 @Component
 public class CommentAssignInterviewersCustomValidator implements Validator {
@@ -34,10 +35,11 @@ public class CommentAssignInterviewersCustomValidator implements Validator {
         boolean takenPlace = false;
         CommentApplicationInterviewAppointment interviewAppointment = comment.getInterviewAppointment();
         LocalDateTime interviewLocalDateTime = interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime();
+        Set<CommentAppointmentTimeslot> appointmentTimeslots = comment.getAppointmentTimeslots();
 
         if (interviewLocalDateTime == null) {
-            if (comment.getAppointmentTimeslots() == null || comment.getAppointmentTimeslots().isEmpty()) {
-                errors.rejectValue("appointmentTimeslots", "min", new Object[] { 0 }, null);
+            if (appointmentTimeslots == null || appointmentTimeslots.isEmpty()) {
+                errors.rejectValue("appointmentTimeslots", "min", new Object[]{0}, null);
             }
         } else {
             TimeZone interviewTimezone = interviewAppointment.getInterviewTimeZone();
@@ -50,7 +52,9 @@ public class CommentAssignInterviewersCustomValidator implements Validator {
                 takenPlace = true;
                 rejectIfNotNull(comment, errors, "interviewInstruction", "forbidden");
             } else {
-                rejectIfNotNull(comment, errors, "appointmentTimeslots", "forbidden");
+                if (appointmentTimeslots != null && !appointmentTimeslots.isEmpty()) {
+                    errors.rejectValue("appointmentTimeslots", "forbidden");
+                }
             }
         }
 

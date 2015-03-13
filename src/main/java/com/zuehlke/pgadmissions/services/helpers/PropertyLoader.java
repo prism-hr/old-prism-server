@@ -1,17 +1,5 @@
 package com.zuehlke.pgadmissions.services.helpers;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
-
-import java.util.Arrays;
-import java.util.HashMap;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
@@ -22,6 +10,15 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.services.DisplayPropertyService;
 import com.zuehlke.pgadmissions.services.ResourceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.HashMap;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
@@ -45,7 +42,7 @@ public class PropertyLoader {
 		String value = properties.get(property);
 		if (value == null) {
 			PrismDisplayPropertyCategory category = property.getDisplayCategory();
-			properties.putAll(displayPropertyService.getDisplayProperties(resource, property.getScope(), category, locale, programType));
+			properties.putAll(displayPropertyService.getDisplayProperties(resource, property.getDisplayCategory().getScope(), category, locale, programType));
 			value = properties.get(property);
 		}
 		return value;

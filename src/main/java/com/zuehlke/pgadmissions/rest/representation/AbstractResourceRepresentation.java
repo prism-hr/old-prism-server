@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
@@ -10,7 +9,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class AbstractResourceRepresentation {
@@ -44,8 +42,6 @@ public class AbstractResourceRepresentation {
     private List<ResourceUserRolesRepresentation> users;
 
     private List<WorkflowPropertyConfigurationRepresentation> workflowPropertyConfigurations;
-
-    private Map<PrismDisplayPropertyDefinition, String> displayProperties;
 
     public Integer getId() {
         return id;
@@ -167,11 +163,4 @@ public class AbstractResourceRepresentation {
         this.workflowPropertyConfigurations = workflowPropertyConfigurations;
     }
 
-    public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties() {
-        return displayProperties;
-    }
-
-    public void setDisplayProperties(Map<PrismDisplayPropertyDefinition, String> displayProperties) {
-        this.displayProperties = displayProperties;
-    }
 }

@@ -1,3 +1,5 @@
+SET FOREIGN_KEY_CHECKS = 0;
+
 alter table user_feedback
 	add column system_id int(10) unsigned after role_category,
 	modify column institution_id int(10) unsigned,
@@ -19,3 +21,5 @@ alter table user_feedback
 	add foreign key (application_id) references application (id),
 	add foreign key (action_id) references action (id)
 ;
+
+SET FOREIGN_KEY_CHECKS = 1;

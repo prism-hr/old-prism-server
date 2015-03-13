@@ -1,6 +1,3 @@
-DROP TABLE user_feedback
-;
-
 CREATE TABLE user_feedback (
   id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   role_category VARCHAR(50) NOT NULL,

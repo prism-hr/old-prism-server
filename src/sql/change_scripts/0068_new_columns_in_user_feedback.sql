@@ -1,27 +1,40 @@
-SET FOREIGN_KEY_CHECKS = 0
+DROP TABLE user_feedback
 ;
 
-alter table user_feedback
-	add column system_id int(10) unsigned after role_category,
-	modify column institution_id int(10) unsigned,
-	add column program_id int(10) unsigned after institution_id,
-	add column project_id int(10) unsigned after program_id,
-	add column application_id int(10) unsigned after project_id,
-	modify column user_id int(10) unsigned after application_id,
-	add column action_id varchar(100) not null after user_id,
-	drop index institution_id,
-	add index (system_id, sequence_identifier),
-	add index (institution_id, sequence_identifier),
-	add index (program_id, sequence_identifier),
-	add index (project_id, sequence_identifier),
-	add index (application_id, sequence_identifier),
-	add index (action_id),
-	add foreign key (system_id) references system (id),
-	add foreign key (program_id) references program (id),
-	add foreign key (project_id) references project (id),
-	add foreign key (application_id) references application (id),
-	add foreign key (action_id) references action (id)
-;
-
-SET FOREIGN_KEY_CHECKS = 1
+CREATE TABLE user_feedback (
+  id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  role_category VARCHAR(50) NOT NULL,
+  system_id INT(10) UNSIGNED NULL DEFAULT NULL,
+  institution_id INT(10) UNSIGNED NULL DEFAULT NULL,
+  program_id INT(10) UNSIGNED NULL DEFAULT NULL,
+  project_id INT(10) UNSIGNED NULL DEFAULT NULL,
+  application_id INT(10) UNSIGNED NULL DEFAULT NULL,
+  user_id INT(10) UNSIGNED NULL DEFAULT NULL,
+  action_id VARCHAR(100) NOT NULL,
+  declined_response INT(1) UNSIGNED NOT NULL,
+  rating INT(1) UNSIGNED NULL DEFAULT NULL,
+  content MEDIUMTEXT NULL,
+  feature_request MEDIUMTEXT NULL,
+  recommended INT(1) NULL DEFAULT NULL,
+  created_timestamp DATETIME NOT NULL,
+  sequence_identifier VARCHAR(23) NULL DEFAULT NULL,
+  PRIMARY KEY (id),
+  INDEX user_id (user_id),
+  INDEX declined_response (declined_response, sequence_identifier),
+  INDEX system_id (system_id, sequence_identifier),
+  INDEX institution_id (institution_id, sequence_identifier),
+  INDEX program_id (program_id, sequence_identifier),
+  INDEX project_id (project_id, sequence_identifier),
+  INDEX application_id (application_id, sequence_identifier),
+  INDEX action_id (action_id),
+  CONSTRAINT user_feedback_ibfk_1 FOREIGN KEY (user_id) REFERENCES user (id),
+  CONSTRAINT user_feedback_ibfk_2 FOREIGN KEY (institution_id) REFERENCES institution (id),
+  CONSTRAINT user_feedback_ibfk_3 FOREIGN KEY (system_id) REFERENCES system (id),
+  CONSTRAINT user_feedback_ibfk_4 FOREIGN KEY (program_id) REFERENCES program (id),
+  CONSTRAINT user_feedback_ibfk_5 FOREIGN KEY (project_id) REFERENCES project (id),
+  CONSTRAINT user_feedback_ibfk_6 FOREIGN KEY (application_id) REFERENCES application (id),
+  CONSTRAINT user_feedback_ibfk_7 FOREIGN KEY (action_id) REFERENCES action (id)
+)
+  ENGINE=InnoDB
+  AUTO_INCREMENT=1
 ;

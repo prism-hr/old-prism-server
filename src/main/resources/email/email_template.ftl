@@ -47,7 +47,7 @@
             </tr>
             <tr>
                 <td width="10">&nbsp;</td>
-                <td class="text-pad">PRiSM is now available as a commmercial servive. Visit our <a href="http://alumeni.co.uk/" style="color:#2ba6cb">webpage</a> to learn more.</td>
+                <td class="text-pad">PRiSM is now available as a commercial service. Visit our <a href="http://alumeni.co.uk/" style="color:#2ba6cb">webpage</a> to learn more.</td>
                 <td width="10">&nbsp;</td>
             </tr>
             <tr>

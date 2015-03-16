@@ -1,7 +1,12 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.List;
-
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.application.ApplicationProcessing;
+import com.zuehlke.pgadmissions.domain.application.ApplicationProcessingSummary;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
+import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.ApplicationProcessingRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation.ApplicationProcessingSummaryRepresentation;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -11,13 +16,7 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationProcessing;
-import com.zuehlke.pgadmissions.domain.application.ApplicationProcessingSummary;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
-import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.ApplicationProcessingRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation.ApplicationProcessingSummaryRepresentation;
+import java.util.List;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -60,7 +59,7 @@ public class ApplicationSummaryDAO {
                         .add(Projections.property("stateGroup.id"), "stateGroup") //
                         .add(Projections.property("instanceCount"), "instanceTotal") //
                         .add(Projections.property("instanceCountLive"), "instanceTotalLive") //
-                        .add(Projections.property("instanceCountAverageNonZero"), "instanceOccurenceAverage") //
+                        .add(Projections.property("instanceCountAverageNonZero"), "instanceOccurrenceAverage") //
                         .add(Projections.property("dayDurationAverage"), "instanceDurationAverage")) //
                 .createAlias("stateGroup", "stateGroup", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //

@@ -1,11 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-import java.math.BigDecimal;
-import java.util.List;
-
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import java.math.BigDecimal;
+import java.util.List;
 
 public class ResourceSummaryRepresentation {
 
@@ -14,19 +13,19 @@ public class ResourceSummaryRepresentation {
     private Integer programCount;
 
     private Integer projectCount;
-    
+
     private Integer applicationCreatedCount;
-    
+
     private Integer applicationSubmittedCount;
-    
+
     private Integer applicationApprovedCount;
-    
+
     private Integer applicationRejectedCount;
-    
+
     private Integer applicationWithdrawnCount;
-    
+
     private Integer applicationRatingCount;
-    
+
     private BigDecimal applicationRatingOccurenceAverage;
 
     private List<ApplicationProcessingSummaryRepresentation> processingSummaries;
@@ -127,7 +126,7 @@ public class ResourceSummaryRepresentation {
 
         private Integer instanceTotalLive;
 
-        private BigDecimal instanceOccurenceAverage;
+        private BigDecimal instanceOccurrenceAverage;
 
         private BigDecimal instanceDurationAverage;
 
@@ -155,12 +154,12 @@ public class ResourceSummaryRepresentation {
             this.instanceTotalLive = instanceTotalLive;
         }
 
-        public final BigDecimal getInstanceOccurenceAverage() {
-            return instanceOccurenceAverage;
+        public final BigDecimal getInstanceOccurrenceAverage() {
+            return instanceOccurrenceAverage;
         }
 
-        public final void setInstanceOccurenceAverage(BigDecimal instanceOccurenceAverage) {
-            this.instanceOccurenceAverage = instanceOccurenceAverage;
+        public final void setInstanceOccurrenceAverage(BigDecimal instanceOccurrenceAverage) {
+            this.instanceOccurrenceAverage = instanceOccurrenceAverage;
         }
 
         public final BigDecimal getInstanceDurationAverage() {
@@ -186,8 +185,8 @@ public class ResourceSummaryRepresentation {
             return this;
         }
 
-        public ApplicationProcessingSummaryRepresentation withInstanceOccurenceAverage(BigDecimal instanceOccurenceAverage) {
-            this.instanceOccurenceAverage = instanceOccurenceAverage;
+        public ApplicationProcessingSummaryRepresentation withInstanceOccurrenceAverage(BigDecimal instanceOccurrenceAverage) {
+            this.instanceOccurrenceAverage = instanceOccurrenceAverage;
             return this;
         }
 
@@ -212,32 +211,32 @@ public class ResourceSummaryRepresentation {
         this.projectCount = projectCount;
         return this;
     }
-    
+
     public ResourceSummaryRepresentation withApplicationCreatedCount(Integer applicationCreatedCount) {
         this.applicationCreatedCount = applicationCreatedCount;
         return this;
     }
-    
+
     public ResourceSummaryRepresentation withApplicationSubmittedCount(Integer applicationSubmittedCount) {
         this.applicationSubmittedCount = applicationSubmittedCount;
         return this;
     }
-    
+
     public ResourceSummaryRepresentation withApplicationApprovedCount(Integer applicationApprovedCount) {
         this.applicationApprovedCount = applicationApprovedCount;
         return this;
     }
-    
+
     public ResourceSummaryRepresentation withApplicationRejectedCount(Integer applicationRejectedCount) {
         this.applicationRejectedCount = applicationRejectedCount;
         return this;
     }
-    
+
     public ResourceSummaryRepresentation withApplicationWithdrawnCount(Integer applicationWithdrawnCount) {
         this.applicationWithdrawnCount = applicationWithdrawnCount;
         return this;
     }
-    
+
     public ResourceSummaryRepresentation withApplicationRatingCount(Integer applicationRatingCount) {
         this.applicationRatingCount = applicationRatingCount;
         return this;
@@ -247,5 +246,5 @@ public class ResourceSummaryRepresentation {
         this.applicationRatingOccurenceAverage = applicationRatingOccurenceAverage;
         return this;
     }
-    
+
 }

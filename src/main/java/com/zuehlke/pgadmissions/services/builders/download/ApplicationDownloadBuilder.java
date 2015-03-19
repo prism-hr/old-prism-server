@@ -1,55 +1,11 @@
 package com.zuehlke.pgadmissions.services.builders.download;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_THEME_SECONDARY;
-import static com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize.MEDIUM;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import com.google.common.collect.Maps;
-import com.itextpdf.text.Anchor;
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.ColumnText;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfImportedPage;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.text.pdf.events.PdfPageEventForwarder;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
-import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPassport;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
-import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.application.ApplicationStudyDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
+import com.zuehlke.pgadmissions.domain.application.*;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.ApplicationDownloadMode;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
@@ -70,6 +26,21 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_THEME_SECONDARY;
+import static com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize.MEDIUM;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -163,7 +134,7 @@ public class ApplicationDownloadBuilder {
         String startDate = programDetailNull ? null : programDetail.getStartDateDisplay(dateFormat);
         String confirmedStartDate = programDetailNull ? null : application.getConfirmedStartDateDisplay(dateFormat);
 
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_START_DATE, APPLICATION_CONFIRMED_START_DATE,
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PROGRAM_DETAIL_START_DATE_LABEL, APPLICATION_CONFIRMED_START_DATE,
                 confirmedStartDate == null), confirmedStartDate == null ? startDate : confirmedStartDate, body);
 
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_REFERRAL_SOURCE),
@@ -179,15 +150,15 @@ public class ApplicationDownloadBuilder {
         if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
                 PrismWorkflowPropertyDefinition.APPLICATION_STUDY_DETAIL)) {
             ApplicationStudyDetail studyDetail = application.getStudyDetail();
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_LOCATION),
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_DETAIL_LOCATION_LABEL),
                     studyDetail == null ? null : studyDetail.getStudyLocation(), body);
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_DIVISION),
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_DETAIL_DIVISION_LABEL),
                     studyDetail == null ? null : studyDetail.getStudyDivision(), body);
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_AREA),
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_DETAIL_AREA_LABEL),
                     studyDetail == null ? null : studyDetail.getStudyArea(), body);
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_APPLICATION_ID), studyDetail == null ? null
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_DETAIL_APPLICATION_ID_LABEL), studyDetail == null ? null
                     : studyDetail.getStudyApplicationId(), body);
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_START_DATE),
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_STUDY_DETAIL_START_DATE_LABEL),
                     studyDetail == null ? null : studyDetail.getStudyStartDateDisplay(propertyLoader.load(SYSTEM_DATE_FORMAT)), body);
         }
     }
@@ -195,11 +166,11 @@ public class ApplicationDownloadBuilder {
     private void addThemeSection(Application application, PdfPTable body) {
         if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
                 PrismWorkflowPropertyDefinition.APPLICATION_THEME_PRIMARY)) {
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PRIMARY_THEME), application.getPrimaryThemeDisplay(), body);
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PROGRAM_DETAIL_PRIMARY_THEME_LABEL), application.getPrimaryThemeDisplay(), body);
         }
 
         if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application, APPLICATION_THEME_SECONDARY)) {
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(PrismDisplayPropertyDefinition.APPLICATION_SECONDARY_THEME),
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(PrismDisplayPropertyDefinition.APPLICATION_PROGRAM_DETAIL_SECONDARY_THEME_LABEL),
                     application.getSecondaryThemeDisplay(), body);
         }
     }
@@ -223,9 +194,9 @@ public class ApplicationDownloadBuilder {
                     User user = supervisor.getUser();
 
                     applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_FIRST_NAME), user.getFirstName(), subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_LAST_NAME), user.getLastName(), subBody);
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_LAST_NAME_LABEL), user.getLastName(), subBody);
                     applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_EMAIL), user.getEmail(), subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_SUPERVISOR_AWARE_OF_APPLICATION),
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_SUPERVISOR_ACCEPTED_SUPERVISION_LABEL),
                             propertyLoader.load(SYSTEM_YES, SYSTEM_NO, supervisor.getAcceptedSupervision()), subBody);
 
                     applicationDownloadBuilderHelper.closeSection(pdfDocument, subBody);
@@ -241,7 +212,7 @@ public class ApplicationDownloadBuilder {
         ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
         boolean personalDetailNull = personalDetail == null;
 
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_TITLE), personalDetailNull ? null : personalDetail.getTitleDisplay(),
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_TITLE_LABEL), personalDetailNull ? null : personalDetail.getTitleDisplay(),
                 body);
 
         User applicationCreator = application.getUser();
@@ -249,22 +220,22 @@ public class ApplicationDownloadBuilder {
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_FIRST_NAME), applicationCreator.getFirstName(), body);
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_FIRST_NAME_2), applicationCreator.getFirstName2(), body);
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_FIRST_NAME_3), applicationCreator.getFirstName3(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_LAST_NAME), applicationCreator.getLastName(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_LAST_NAME_LABEL), applicationCreator.getLastName(), body);
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_EMAIL), applicationCreator.getEmail(), body);
 
         applicationDownloadBuilderHelper
-                .addContentRowMedium(propertyLoader.load(SYSTEM_TELEPHONE), personalDetailNull ? null : personalDetail.getPhone(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_SKYPE), personalDetailNull ? null : personalDetail.getSkype(), body);
+                .addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_TELEPHONE_LABEL), personalDetailNull ? null : personalDetail.getPhone(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_SKYPE_LABEL), personalDetailNull ? null : personalDetail.getSkype(), body);
 
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_GENDER), personalDetailNull ? null
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_GENDER_LABEL), personalDetailNull ? null
                 : personalDetail.getGenderDisplay(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_DATE_OF_BIRTH),
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL),
                 personalDetailNull ? null : personalDetail.getDateOfBirth(propertyLoader.load(SYSTEM_DATE_FORMAT)), body);
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_COUNTRY_OF_BIRTH), personalDetailNull ? null
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_COUNTRY_OF_BIRTH_LABEL), personalDetailNull ? null
                 : personalDetail.getCountryDisplay(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_COUNTRY_OF_DOMICILE), personalDetailNull ? null
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_DOMICILE_LABEL), personalDetailNull ? null
                 : personalDetail.getDomicileDisplay(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_NATIONALITY), personalDetailNull ? null
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_NATIONALITY_LABEL), personalDetailNull ? null
                 : personalDetail.getNationalityDisplay(), body);
 
         appendEqualOpportunitiesSection(applicationDownloadDTO, body, application, personalDetail, personalDetailNull);
@@ -279,7 +250,7 @@ public class ApplicationDownloadBuilder {
         }
 
         if (languageQualificationAvailable) {
-            addLanquageQualificationSection(application, personalDetail.getLanguageQualification(), applicationDownloadDTO, pdfDocument);
+            addLanguageQualificationSection(application, personalDetail.getLanguageQualification(), applicationDownloadDTO, pdfDocument);
         }
     }
 
@@ -288,9 +259,9 @@ public class ApplicationDownloadBuilder {
         if (applicationDownloadDTO.isIncludeEqualOpportunities()) {
             if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
                     PrismWorkflowPropertyDefinition.APPLICATION_DEMOGRAPHIC)) {
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_ETHNICITY), personalDetailNull ? null
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_ETHNICITY_LABEL), personalDetailNull ? null
                         : personalDetail.getEthnicityDisplay(), body);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_DISABILITY), personalDetailNull ? null
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_DISABILITY_LABEL), personalDetailNull ? null
                         : personalDetail.getDisabilityDisplay(), body);
             }
         }
@@ -300,12 +271,15 @@ public class ApplicationDownloadBuilder {
         boolean passportAvailable = false;
         if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
                 PrismWorkflowPropertyDefinition.APPLICATION_RESIDENCE)) {
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_REQUIRE_VISA),
-                    propertyLoader.load(SYSTEM_YES, SYSTEM_NO, personalDetail.getVisaRequired()), body);
+
+            boolean visaRequired = personalDetailNull ? false : personalDetail.getVisaRequired();
+
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_VISA_REQUIRED_LABEL),
+                    propertyLoader.load(SYSTEM_YES, SYSTEM_NO, visaRequired), body);
 
             passportAvailable = personalDetailNull ? false : personalDetail.getPassportAvailable();
 
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_PASSPORT_AVAILABLE),
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_PASSPORT_AVAILABLE_LABEL),
                     propertyLoader.load(SYSTEM_YES, SYSTEM_NO, passportAvailable), body);
         }
         return passportAvailable;
@@ -315,12 +289,12 @@ public class ApplicationDownloadBuilder {
         boolean languageQualificationAvailable = false;
         if (customizationService
                 .isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application, PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE)) {
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_WORK_LANGUAGE_FIRST_LANGUAGE),
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_FIRST_LANGUAGE_LOCALE_LABEL),
                     personalDetailNull ? null : propertyLoader.load(SYSTEM_YES, SYSTEM_NO, personalDetail.getFirstLanguageLocale()), body);
 
             languageQualificationAvailable = personalDetailNull ? false : personalDetail.getLanguageQualificationAvailable();
 
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_LANGUAGE_QUALIFICATION_AVAILABLE),
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_LANGUAGE_QUALIFICATION_AVAILABLE_LABEL),
                     personalDetailNull ? null : propertyLoader.load(SYSTEM_YES, SYSTEM_NO, languageQualificationAvailable), body);
         }
         return languageQualificationAvailable;
@@ -329,34 +303,34 @@ public class ApplicationDownloadBuilder {
     private void addPassportSection(ApplicationPassport passport, Document pdfDocument) throws DocumentException {
         PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_PASSPORT_HEADER));
 
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PASSPORT_NUMBER), passport.getNumber(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PASSPORT_NAME), passport.getName(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PASSPORT_NUMBER_LABEL), passport.getNumber(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PASSPORT_NAME_LABEL), passport.getName(), body);
 
         String dateFormat = propertyLoader.load(SYSTEM_DATE_FORMAT);
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PASSPORT_ISSUE_DATE), passport.getIssueDateDisplay(dateFormat),
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PASSPORT_ISSUE_DATE_LABEL), passport.getIssueDateDisplay(dateFormat),
                 body);
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PASSPORT_EXPIRY_DATE), passport.getExipryDateDisplay(dateFormat),
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PASSPORT_EXPIRY_DATE_LABEL), passport.getExipryDateDisplay(dateFormat),
                 body);
 
         applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
     }
 
-    private void addLanquageQualificationSection(Application application, ApplicationLanguageQualification languageQualification,
-            ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument) throws DocumentException {
+    private void addLanguageQualificationSection(Application application, ApplicationLanguageQualification languageQualification,
+                                                 ApplicationDownloadDTO applicationDownloadDTO, Document pdfDocument) throws DocumentException {
         PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_HEADER));
 
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_TYPE), languageQualification.getTypeDisplay(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_EXAM_DATE),
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_TYPE_LABEL), languageQualification.getTypeDisplay(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_EXAM_DATE_LABEL),
                 languageQualification.getExamDateDisplay(propertyLoader.load(SYSTEM_DATE_FORMAT)), body);
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_OVERALL_SCORE),
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_OVERALL_SCORE_LABEL),
                 languageQualification.getOverallScore(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_READING_SCORE),
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_READING_SCORE_LABEL),
                 languageQualification.getReadingScore(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_WRITING_SCORE),
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_WRITING_SCORE_LABEL),
                 languageQualification.getWritingScore(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_SPEAKING_SCORE),
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_SPEAKING_SCORE_LABEL),
                 languageQualification.getSpeakingScore(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_LISTENING_SCORE),
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_LANGUAGE_QUALIFICATION_LISTENING_SCORE_LABEL),
                 languageQualification.getListeningScore(), body);
 
         if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, application,
@@ -372,9 +346,9 @@ public class ApplicationDownloadBuilder {
                 propertyLoader.load(PrismDisplayPropertyDefinition.APPLICATION_ADDRESS_HEADER));
         ApplicationAddress address = application.getAddress();
 
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_ADDRESS_CURRENT),
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_ADDRESS_CURRENT_HEADER),
                 address == null ? null : address.getCurrentAddressDisplay(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_ADDRESS_CONTACT),
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_ADDRESS_CONTACT_HEADER),
                 address == null ? null : address.getConcactAddressDisplay(), body);
 
         applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
@@ -403,35 +377,34 @@ public class ApplicationDownloadBuilder {
                     ImportedInstitution institution = qualification.getInstitution();
                     boolean institutionNull = institution == null;
 
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_COUNTRY), institutionNull ? null
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_DOMICILE_LABEL), institutionNull ? null
                             : institution.getDomicileDisplay(), subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_PROVIDER), institutionNull ? null
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_PROVIDER_LABEL), institutionNull ? null
                             : institution.getName(), subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_TYPE), qualification.getTypeDisplay(),
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_TYPE_LABEL), qualification.getTypeDisplay(),
                             subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_TITLE), qualification.getTitle(),
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_TITLE_LABEL), qualification.getTitle(),
                             subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_SUBJECT), qualification.getSubject(),
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_SUBJECT_LABEL), qualification.getSubject(),
                             subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_LANGUAGE), qualification.getLanguage(),
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_LANGUAGE_LABEL), qualification.getLanguage(),
                             subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_START_DATE),
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_START_DATE_LABEL),
                             qualification.getStartDateDisplay(dateFormat), subBody);
 
                     boolean completed = BooleanUtils.isTrue(qualification.getCompleted());
 
-                    applicationDownloadBuilderHelper.addContentRowMedium("Has this Qualification been awarded",
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_QUALIFICATION_COMPLETED_LABEL),
                             propertyLoader.load(SYSTEM_YES, SYSTEM_NO, completed), subBody);
                     applicationDownloadBuilderHelper.addContentRowMedium(
-                            propertyLoader.load(APPLICATION_QUALIFICATION_CONFIRMED_RESULT, APPLICATION_QUALIFICATION_EXPECTED_RESULT, completed),
+                            propertyLoader.load(APPLICATION_QUALIFICATION_CONFIRMED_RESULT_LABEL, APPLICATION_QUALIFICATION_EXPECTED_RESULT_LABEL, completed),
                             qualification.getGrade(), subBody);
                     applicationDownloadBuilderHelper.addContentRowMedium(
-                            propertyLoader.load(APPLICATION_QUALIFICATION_CONFIRMED_AWARD_DATE, APPLICATION_QUALIFICATION_EXPECTED_AWARD_DATE, completed),
+                            propertyLoader.load(APPLICATION_QUALIFICATION_CONFIRMED_AWARD_DATE_LABEL, APPLICATION_QUALIFICATION_EXPECTED_AWARD_DATE_LABEL, completed),
                             qualification.getAwardDateDisplay(dateFormat), subBody);
 
                     if (documentEnabled) {
-                        addBookmark(subBody, propertyLoader.load(APPLICATION_QUALIFICATION_FINAL_TRANSCRIPT,
-                                PrismDisplayPropertyDefinition.APPLICATION_QUALIFICATION_INTERIM_TRANSCRIPT, completed), qualification.getDocument(),
+                        addBookmark(subBody, propertyLoader.load(APPLICATION_QUALIFICATION_DOCUMENT_LABEL), qualification.getDocument(),
                                 applicationDownloadDTO);
                     }
 
@@ -458,17 +431,17 @@ public class ApplicationDownloadBuilder {
 
                     String dateFormat = propertyLoader.load(SYSTEM_DATE_FORMAT);
 
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_EMPLOYER_NAME), position.getEmployerName(), subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_EMPLOYMENT_POSITION_EMPLOYER_ADDRESS),
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_EMPLOYMENT_POSITION_EMPLOYER_NAME_LABEL), position.getEmployerName(), subBody);
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_EMPLOYMENT_POSITION_EMPLOYER_ADDRESS_LABEL),
                             position.getEmployerAddressLocation(), subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_POSITION_TITLE), position.getPosition(), subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_EMPLOYMENT_POSITION_REMIT), position.getRemit(),
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_EMPLOYMENT_POSITION_TITLE_LABEL), position.getPosition(), subBody);
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_EMPLOYMENT_POSITION_REMIT_LABEL), position.getRemit(),
                             subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_START_DATE), position.getStartDateDisplay(dateFormat),
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_EMPLOYMENT_POSITION_START_DATE_LABEL), position.getStartDateDisplay(dateFormat),
                             subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_EMPLOYMENT_POSITION_IS_CURRENT),
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_EMPLOYMENT_POSITION_CURRENT_LABEL),
                             propertyLoader.load(SYSTEM_YES, SYSTEM_NO, position.getCurrent()), subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_END_DATE), position.getEndDateDisplay(dateFormat),
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_EMPLOYMENT_POSITION_END_DATE_LABEL), position.getEndDateDisplay(dateFormat),
                             subBody);
 
                     applicationDownloadBuilderHelper.closeSection(pdfDocument, subBody);
@@ -493,15 +466,15 @@ public class ApplicationDownloadBuilder {
                 for (ApplicationFunding funding : fundings) {
                     PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.load(APPLICATION_FUNDING_SUBHEADER) + "(" + counter++
                             + ")");
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_FUNDING_TYPE), funding.getFundingSourceDisplay(),
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_FUNDING_TYPE_LABEL), funding.getFundingSourceDisplay(),
                             subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_FUNDING_SPONSOR), funding.getSponsor(), subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_FUNDING_DESCRIPTION), funding.getDescription(),
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_FUNDING_SPONSOR_LABEL), funding.getSponsor(), subBody);
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_FUNDING_DESCRIPTION_LABEL), funding.getDescription(),
                             subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_FUNDING_VALUE), funding.getValue(), subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_FUNDING_AWARD_DATE),
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_FUNDING_VALUE_LABEL), funding.getValue(), subBody);
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_FUNDING_AWARD_DATE_LABEL),
                             funding.getAwardDateDisplay(propertyLoader.load(SYSTEM_DATE_FORMAT)), subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_FUNDING_TERMS), funding.getTerms(), subBody);
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_FUNDING_TERMS_LABEL), funding.getTerms(), subBody);
 
                     if (documentEnabled) {
                         addBookmark(subBody, propertyLoader.load(APPLICATION_PROOF_OF_AWARD), funding.getDocument(), applicationDownloadDTO);
@@ -526,10 +499,10 @@ public class ApplicationDownloadBuilder {
                 for (ApplicationPrize prize : prizes) {
                     PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.load(APPLICATION_PRIZE_SUBHEADER) + "(" + counter++
                             + ")");
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PRIZE_PROVIDER), prize.getProvider(), subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PRIZE_TITLE), prize.getTitle(), subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PRIZE_DESCRIPTION), prize.getDescription(), subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PRIZE_AWARD_DATE),
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PRIZE_PROVIDER_LABEL), prize.getProvider(), subBody);
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PRIZE_TITLE_LABEL), prize.getTitle(), subBody);
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PRIZE_DESCRIPTION_LABEL), prize.getDescription(), subBody);
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PRIZE_AWARD_DATE_LABEL),
                             prize.getAwardDateDisplay(propertyLoader.load(SYSTEM_DATE_FORMAT)), subBody);
 
                     applicationDownloadBuilderHelper.closeSection(pdfDocument, subBody);
@@ -555,13 +528,13 @@ public class ApplicationDownloadBuilder {
                 boolean userNull = user == null;
 
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_FIRST_NAME), userNull ? null : user.getFirstName(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_LAST_NAME), userNull ? null : user.getLastName(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_LAST_NAME_LABEL), userNull ? null : user.getLastName(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_EMAIL), userNull ? null : user.getEmail(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_EMPLOYER_ADDRESS), referee.getAddressDisplay(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_TELEPHONE), referee.getPhone(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_SKYPE), referee.getSkype(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_EMPLOYER_NAME), referee.getJobEmployer(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_POSITION_TITLE), referee.getJobTitle(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_REFEREE_EMPLOYER_ADDRESS_LABEL), referee.getAddressDisplay(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_TELEPHONE_LABEL), referee.getPhone(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_SKYPE_LABEL), referee.getSkype(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_EMPLOYMENT_POSITION_EMPLOYER_NAME_LABEL), referee.getJobEmployer(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_REFEREE_POSITION_LABEL), referee.getJobTitle(), subBody);
 
                 Comment referenceComment = referee.getComment();
                 if (referenceComment != null) {
@@ -593,22 +566,22 @@ public class ApplicationDownloadBuilder {
             ApplicationDocument documentSection = applicationDownloadDTO.getApplication().getDocument();
 
             if (personalStatementEnabled) {
-                addBookmark(body, propertyLoader.load(APPLICATION_DOCUMENT_PERSONAL_STATEMENT_APPENDIX),
+                addBookmark(body, propertyLoader.load(APPLICATION_DOCUMENT_PERSONAL_STATEMENT_LABEL),
                         documentSection == null ? null : documentSection.getPersonalStatement(), applicationDownloadDTO);
             }
 
             if (cvEnabled) {
-                addBookmark(body, propertyLoader.load(APPLICATION_DOCUMENT_CV_APPENDIX),
+                addBookmark(body, propertyLoader.load(APPLICATION_DOCUMENT_CV_LABEL),
                         documentSection == null ? null : documentSection.getCv(), applicationDownloadDTO);
             }
 
             if (researchStatementEnabled) {
-                addBookmark(body, propertyLoader.load(APPLICATION_DOCUMENT_RESEARCH_STATEMENT_APPENDIX),
+                addBookmark(body, propertyLoader.load(APPLICATION_DOCUMENT_RESEARCH_STATEMENT_LABEL),
                         documentSection == null ? null : documentSection.getResearchStatement(), applicationDownloadDTO);
             }
 
             if (coveringLetterEnabled) {
-                addBookmark(body, propertyLoader.load(APPLICATION_DOCUMENT_COVERING_LETTER_APPENDIX),
+                addBookmark(body, propertyLoader.load(APPLICATION_DOCUMENT_COVERING_LETTER_LABEL),
                         documentSection == null ? null : documentSection.getCoveringLetter(), applicationDownloadDTO);
             }
 
@@ -623,7 +596,7 @@ public class ApplicationDownloadBuilder {
             PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.load(APPLICATION_ADDITIONAL_INFORMATION_HEADER));
             ApplicationAdditionalInformation additionalInformation = application.getAdditionalInformation();
 
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_ADDITIONAL_INFORMATION_CONVICTION),
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_ADDITIONAL_INFORMATION_CONVICTION_LABEL),
                     additionalInformation == null ? null : additionalInformation.getConvictionsText(), body);
 
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
@@ -653,15 +626,15 @@ public class ApplicationDownloadBuilder {
                 } else if (document.getApplicationQualification() != null) {
                     pdfDocument.add(buildTarget(APPLICATION_QUALIFICATION_APPENDIX, anchor));
                 } else if (document.getApplicationFunding() != null) {
-                    pdfDocument.add(buildTarget(APPLICATION_FUNDING_APPENDIX, anchor));
+                    pdfDocument.add(buildTarget(APPLICATION_FUNDING_DOCUMENT_LABEL, anchor));
                 } else if (document.getApplicationPersonalStatement() != null) {
-                    pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_PERSONAL_STATEMENT_APPENDIX, anchor));
+                    pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_PERSONAL_STATEMENT_LABEL, anchor));
                 } else if (document.getApplicationCv() != null) {
-                    pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_CV_APPENDIX, anchor));
+                    pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_CV_LABEL, anchor));
                 } else if (document.getApplicationResearchStatement() != null) {
-                    pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_RESEARCH_STATEMENT_APPENDIX, anchor));
+                    pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_RESEARCH_STATEMENT_LABEL, anchor));
                 } else if (document.getApplicationCoveringLetter() != null) {
-                    pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_COVERING_LETTER_APPENDIX, anchor));
+                    pdfDocument.add(buildTarget(APPLICATION_DOCUMENT_COVERING_LETTER_LABEL, anchor));
                 }
 
                 addDocument(pdfDocument, document, pdfWriter);
@@ -725,7 +698,7 @@ public class ApplicationDownloadBuilder {
 
         ApplicationProgramDetail programDetail = application.getProgramDetail();
         PrismStudyOption studyOption = programDetail == null ? null : programDetail.getStudyOptionDisplay();
-        applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(PROGRAM_STUDY_OPTION),
+        applicationDownloadBuilderHelper.addContentRow(propertyLoader.load(APPLICATION_PROGRAM_DETAIL_STUDY_OPTION_LABEL),
                 studyOption == null ? null : propertyLoader.load(studyOption.getDisplayProperty()), fontSize, table);
     }
 

@@ -46,6 +46,7 @@ public class LifecycleTest {
     public void run() throws Exception {
         for (int i = 0; i < 2; i++) {
             systemService.initializeSystem();
+            systemService.initializeDisplayProperties();
 
             systemInitialisationHelper.verifyScopeCreation();
             systemInitialisationHelper.verifyRoleCreation();

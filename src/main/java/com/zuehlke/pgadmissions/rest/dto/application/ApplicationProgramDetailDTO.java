@@ -1,22 +1,16 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import org.joda.time.LocalDate;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import org.joda.time.LocalDate;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public class ApplicationProgramDetailDTO {
 
     @NotNull
     private Boolean previousApplication;
-    
-    @Valid
-    private ApplicationStudyDetailDTO studyDetail;
 
     @NotNull
     private PrismStudyOption studyOption;
@@ -30,21 +24,13 @@ public class ApplicationProgramDetailDTO {
     private List<String> primaryThemes = Lists.newArrayList();
 
     private List<String> secondaryThemes = Lists.newArrayList();
-    
-    public final Boolean getPreviousApplication() {
+
+    public Boolean getPreviousApplication() {
         return previousApplication;
     }
 
-    public final void setPreviousApplication(Boolean previousApplication) {
+    public void setPreviousApplication(Boolean previousApplication) {
         this.previousApplication = previousApplication;
-    }
-
-    public final ApplicationStudyDetailDTO getStudyDetail() {
-        return studyDetail;
-    }
-
-    public final void setStudyDetail(ApplicationStudyDetailDTO studyDetail) {
-        this.studyDetail = studyDetail;
     }
 
     public PrismStudyOption getStudyOption() {
@@ -71,19 +57,19 @@ public class ApplicationProgramDetailDTO {
         this.referralSource = referralSource;
     }
 
-    public final List<String> getPrimaryThemes() {
+    public List<String> getPrimaryThemes() {
         return primaryThemes;
     }
 
-    public final void setPrimaryThemes(List<String> primaryThemes) {
+    public void setPrimaryThemes(List<String> primaryThemes) {
         this.primaryThemes = primaryThemes;
     }
 
-    public final List<String> getSecondaryThemes() {
+    public List<String> getSecondaryThemes() {
         return secondaryThemes;
     }
 
-    public final void setSecondaryThemes(List<String> secondaryThemes) {
+    public void setSecondaryThemes(List<String> secondaryThemes) {
         this.secondaryThemes = secondaryThemes;
     }
 

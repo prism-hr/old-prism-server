@@ -1140,6 +1140,31 @@ public enum PrismDisplayPropertyDefinition {
     PROGRAM_COMMENT_UPDATED_CLOSING_DATE(PROGRAM_COMMENT, "Updated program closing dates"),
 
     /*
+     * *************** PROGRAM DETAILS *********************
+     */
+
+    PROGRAM_DETAILS_TYPE_LABEL(PROGRAM_DETAILS, "Type"),
+    PROGRAM_DETAILS_TYPE_HINT(PROGRAM_DETAILS, "The type of the programme."),
+    PROGRAM_DETAILS_TITLE_LABEL(PROGRAM_DETAILS, "Title"),
+    PROGRAM_DETAILS_TITLE_HINT(PROGRAM_DETAILS, "The title of your programme."),
+    PROGRAM_DETAILS_SUMMARY_LABEL(PROGRAM_DETAILS, "Summary"),
+    PROGRAM_DETAILS_SUMMARY_HINT(PROGRAM_DETAILS, "A brief description of your programme."),
+    PROGRAM_DETAILS_STUDY_OPTIONS_LABEL(PROGRAM_DETAILS, "Study Options"),
+    PROGRAM_DETAILS_STUDY_OPTIONS_HINT(PROGRAM_DETAILS, "The modes of participation that your programme offers (e.g. full-time, part-time, by distance)."),
+    PROGRAM_DETAILS_END_DATE_LABEL(PROGRAM_DETAILS, "End Date"),
+    PROGRAM_DETAILS_END_DATE_HINT(PROGRAM_DETAILS, "The end date of the program."),
+    PROGRAM_DETAILS_LOCALE_LABEL(PROGRAM_DETAILS, "Locale"),
+    PROGRAM_DETAILS_LOCALE_HINT(PROGRAM_DETAILS, "The locale of your program, e.g. the default region and language of study."),
+    PROGRAM_DETAILS_USE_OUR_ENGINE_LABEL(PROGRAM_DETAILS, "Use our recruitment engine?"),
+    PROGRAM_DETAILS_USE_OUR_ENGINE_HINT(PROGRAM_DETAILS, "Specify whether you wish to use our recruitment engine, or link to your own."),
+    PROGRAM_DETAILS_HOMEPAGE_LABEL(PROGRAM_DETAILS, "Application Page URL"),
+    PROGRAM_DETAILS_HOMEPAGE_HINT(PROGRAM_DETAILS, "Link to your application page for the opportunity."),
+    PROGRAM_DETAILS_STUDY_DURATION_MINIMUM_LABEL(PROGRAM_DETAILS, "Study Duration Minimum"),
+    PROGRAM_DETAILS_STUDY_DURATION_MINIMUM_HINT(PROGRAM_DETAILS, "The minimum anticipated duration of study for your program."),
+    PROGRAM_DETAILS_STUDY_DURATION_MAXIMUM_LABEL(PROGRAM_DETAILS, "Study Duration Maximum"),
+    PROGRAM_DETAILS_STUDY_DURATION_MAXIMUM_HINT(PROGRAM_DETAILS, "The maximum anticipated duration of study for your program."),
+
+    /*
      * *************** PROJECT COMMENT *********************
      */
 

@@ -1066,6 +1066,24 @@ public enum PrismDisplayPropertyDefinition {
     SYSTEM_HTML_COMMON_NEXT_BUTTON(SYSTEM_HTML_COMMON, "Next"),
     SYSTEM_HTML_COMMON_CONFIRM_BUTTON(SYSTEM_HTML_COMMON, "Confirm"),
     SYSTEM_HTML_COMMON_SUBMIT_BUTTON(SYSTEM_HTML_COMMON, "Submit"),
+    SYSTEM_HTML_COMMON_ADD_BUTTON(SYSTEM_HTML_COMMON, "Add"),
+
+    /*
+     * *************** SYSTEM HTML ADDRESS *********************
+     */
+
+    SYSTEM_ADDRESS_LINE1_LABEL(SYSTEM_HTML_ADDRESS, "Building name / number & street"),
+    SYSTEM_ADDRESS_LINE1_HINT(SYSTEM_HTML_ADDRESS, "The building name/number and street of the address."),
+    SYSTEM_ADDRESS_TOWN_LABEL(SYSTEM_HTML_ADDRESS, "Town / city / suburb"),
+    SYSTEM_ADDRESS_TOWN_HINT(SYSTEM_HTML_ADDRESS, "The town/city/suburb of the address."),
+    SYSTEM_ADDRESS_REGION_LABEL(SYSTEM_HTML_ADDRESS, "State / county / region"),
+    SYSTEM_ADDRESS_REGION_HINT(SYSTEM_HTML_ADDRESS, "The town/city/suburb of the address."),
+    SYSTEM_ADDRESS_CODE_LABEL(SYSTEM_HTML_ADDRESS, "Post / zip / area code"),
+    SYSTEM_ADDRESS_CODE_HINT(SYSTEM_HTML_ADDRESS, "The post/zip/area code of the address (if applicable)."),
+    SYSTEM_ADDRESS_DOMICILE_LABEL(SYSTEM_HTML_ADDRESS, "Country"),
+    SYSTEM_ADDRESS_DOMICILE_HINT(SYSTEM_HTML_ADDRESS, "The country of your address."),
+    SYSTEM_ADDRESS_CONTACT_SAME_AS_CURRENT_LABEL(SYSTEM_HTML_ADDRESS, "Is this the same as your current address?"),
+    SYSTEM_ADDRESS_CONTACT_SAME_AS_CURRENT_HINT(SYSTEM_HTML_ADDRESS, "This tells us that your contact address is the same as your current address. If you wish to specify a different address, you may choose to."),
 
     /*
      * *************** INSTITUTION COMMENT *********************
@@ -1177,24 +1195,68 @@ public enum PrismDisplayPropertyDefinition {
     PROGRAM_ADVERT_HEADER(PROGRAM_ADVERT_DETAILS, "Advert"),
     PROGRAM_ADVERT_DESCRIPTION_LABEL(PROGRAM_ADVERT_DETAILS, "Description"),
     PROGRAM_ADVERT_DESCRIPTION_HINT(PROGRAM_ADVERT_DETAILS, "Detailed description of your advert."),
+    PROGRAM_ADVERT_HOMEPAGE_LABEL(PROGRAM_ADVERT_DETAILS, "Homepage URL"),
+    PROGRAM_ADVERT_HOMEPAGE_HINT(PROGRAM_ADVERT_DETAILS, "???"),
+    PROGRAM_ADVERT_USE_DIFFERENT_ADDRESS_LABEL(PROGRAM_ADVERT_DETAILS, "Use different address"),
+    PROGRAM_ADVERT_USE_DIFFERENT_ADDRESS_HINT(PROGRAM_ADVERT_DETAILS, "???"),
 
     /*
      * *************** PROGRAM ADVERT FEES & PAYMENTS *********************
      */
 
     PROGRAM_FEES_HEADER(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Fees and Payments"),
+    PROGRAM_FEES_SPECIFY_FEE_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Would you like to specify fee?"),
+    PROGRAM_FEES_SPECIFY_FEE_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "???"),
+    PROGRAM_FEES_FEE_CURRENCY_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Fee Currency"),
+    PROGRAM_FEES_FEE_CURRENCY_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Please specify the default fee currency of your advert."),
+    PROGRAM_FEES_FEE_INTERVAL_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Fee Interval"),
+    PROGRAM_FEES_FEE_INTERVAL_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "???"),
+    PROGRAM_FEES_FEE_MINIMUM_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Fee minimum"),
+    PROGRAM_FEES_FEE_MINIMUM_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "???"),
+    PROGRAM_FEES_FEE_MAXIMUM_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Fee maximum"),
+    PROGRAM_FEES_FEE_MAXIMUM_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "???"),
+    PROGRAM_FEES_SPECIFY_PAY_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Would you like to specify pay?"),
+    PROGRAM_FEES_SPECIFY_PAY_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "???"),
+    PROGRAM_FEES_PAY_CURRENCY_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Pay Currency"),
+    PROGRAM_FEES_PAY_CURRENCY_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Please specify the default pay currency of your advert."),
+    PROGRAM_FEES_PAY_INTERVAL_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Pay Interval"),
+    PROGRAM_FEES_PAY_INTERVAL_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "???"),
+    PROGRAM_FEES_PAY_MINIMUM_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Pay minimum"),
+    PROGRAM_FEES_PAY_MINIMUM_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "???"),
+    PROGRAM_FEES_PAY_MAXIMUM_LABEL(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Pay maximum"),
+    PROGRAM_FEES_PAY_MAXIMUM_HINT(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "???"),
 
     /*
      * *************** PROGRAM ADVERT CATEGORIES *********************
      */
 
     PROGRAM_CATEGORIES_HEADER(PROGRAM_ADVERT_CATEGORIES, "Categories"),
+    PROGRAM_CATEGORIES_APPLICATION_REQUIREMENTS_SUBHEADER(PROGRAM_ADVERT_CATEGORIES, "Application Requirements"),
+    PROGRAM_CATEGORIES_DOMAINS_LABEL(PROGRAM_ADVERT_CATEGORIES, "Domains"),
+    PROGRAM_CATEGORIES_DOMAINS_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the domains/sectors that your advert is relevant to"),
+    PROGRAM_CATEGORIES_FUNCTIONS_LABEL(PROGRAM_ADVERT_CATEGORIES, "Functions"),
+    PROGRAM_CATEGORIES_FUNCTIONS_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the job functions that your advert is relevant to."),
+    PROGRAM_CATEGORIES_INDUSTRIES_LABEL(PROGRAM_ADVERT_CATEGORIES, "Industries"),
+    PROGRAM_CATEGORIES_INDUSTRIES_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the industries that your advert is relevant to."),
+    PROGRAM_CATEGORIES_COMPETENCIES_LABEL(PROGRAM_ADVERT_CATEGORIES, "Competencies"),
+    PROGRAM_CATEGORIES_COMPETENCIES_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the competencies that you are looking for in your applicants."),
+    PROGRAM_CATEGORIES_SUBJECTS_LABEL(PROGRAM_ADVERT_CATEGORIES, "Subjects"),
+    PROGRAM_CATEGORIES_SUBJECTS_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the subject/thematic areas that your applicants can indicate preference for when they apply."),
+    PROGRAM_CATEGORIES_INSTITUTIONS_LABEL(PROGRAM_ADVERT_CATEGORIES, "Institutions"),
+    PROGRAM_CATEGORIES_INSTITUTIONS_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the institutions that you wish to target your advert to."),
+    PROGRAM_CATEGORIES_PROGRAM_TYPES_LABEL(PROGRAM_ADVERT_CATEGORIES, "Program Types"),
+    PROGRAM_CATEGORIES_PROGRAM_TYPES_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the program types that you wish to target your advert to."),
+
 
     /*
      * *************** PROGRAM ADVERT CLOSING DATES *********************
      */
 
-    PROGRAM_CLOSING_DATES_HEADER(PROGRAM_ADVERT_CATEGORIES, "Closing Dates"),
+    PROGRAM_CLOSING_DATES_HEADER(PROGRAM_ADVERT_CLOSING_DATES, "Closing Dates"),
+    PROGRAM_CLOSING_DATES_CLOSING_DATE_LABEL(PROGRAM_ADVERT_CLOSING_DATES, "Closing Date"),
+    PROGRAM_CLOSING_DATES_CLOSING_DATE_HINT(PROGRAM_ADVERT_CLOSING_DATES, "The closing date for applications."),
+    PROGRAM_CLOSING_DATES_STUDY_PLACES_LABEL(PROGRAM_ADVERT_CLOSING_DATES, "Study Places"),
+    PROGRAM_CLOSING_DATES_STUDY_PLACES_HINT(PROGRAM_ADVERT_CLOSING_DATES, "The number of study places on offer."),
 
     /*
      * *************** PROJECT COMMENT *********************
@@ -1351,16 +1413,6 @@ public enum PrismDisplayPropertyDefinition {
     APPLICATION_ADDRESS_DESCRIPTION(APPLICATION_ADDRESS, "Your current residence and contact address(es)."),
     APPLICATION_ADDRESS_CURRENT_HEADER(APPLICATION_ADDRESS, "Current Address"),
     APPLICATION_ADDRESS_CONTACT_HEADER(APPLICATION_ADDRESS, "Contact Address"),
-    APPLICATION_ADDRESS_LINE1_LABEL(APPLICATION_ADDRESS, "Building name / number & street"),
-    APPLICATION_ADDRESS_LINE1_HINT(APPLICATION_ADDRESS, "The building name/number and street of the address."),
-    APPLICATION_ADDRESS_TOWN_LABEL(APPLICATION_ADDRESS, "Town / city / suburb"),
-    APPLICATION_ADDRESS_TOWN_HINT(APPLICATION_ADDRESS, "The town/city/suburb of the address."),
-    APPLICATION_ADDRESS_REGION_LABEL(APPLICATION_ADDRESS, "State / county / region"),
-    APPLICATION_ADDRESS_REGION_HINT(APPLICATION_ADDRESS, "The town/city/suburb of the address."),
-    APPLICATION_ADDRESS_CODE_LABEL(APPLICATION_ADDRESS, "Post / zip / area code"),
-    APPLICATION_ADDRESS_CODE_HINT(APPLICATION_ADDRESS, "The post/zip/area code of the address (if applicable)."),
-    APPLICATION_ADDRESS_DOMICILE_LABEL(APPLICATION_ADDRESS, "Country"),
-    APPLICATION_ADDRESS_DOMICILE_HINT(APPLICATION_ADDRESS, "The country of your address."),
     APPLICATION_ADDRESS_CONTACT_SAME_AS_CURRENT_LABEL(APPLICATION_ADDRESS, "Is this the same as your current address?"),
     APPLICATION_ADDRESS_CONTACT_SAME_AS_CURRENT_HINT(APPLICATION_ADDRESS, "This tells us that your contact address is the same as your current address. If you wish to specify a different address, you may choose to."),
 
@@ -1556,16 +1608,16 @@ public enum PrismDisplayPropertyDefinition {
         return propertiesByScope.get(scope);
     }
 
+    public static void main(String[] args) {
+        System.out.println(PrismDisplayPropertyDefinition.values().length);
+    }
+
     public PrismDisplayPropertyCategory getDisplayCategory() {
         return displayCategory;
     }
 
     public String getDefaultValue() {
         return defaultValue;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(PrismDisplayPropertyDefinition.values().length);
     }
 
 }

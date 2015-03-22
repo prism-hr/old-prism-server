@@ -1140,29 +1140,61 @@ public enum PrismDisplayPropertyDefinition {
     PROGRAM_COMMENT_UPDATED_CLOSING_DATE(PROGRAM_COMMENT, "Updated program closing dates"),
 
     /*
-     * *************** PROGRAM DETAILS *********************
+     * *************** PROGRAM FORM *********************
      */
 
-    PROGRAM_DETAILS_TYPE_LABEL(PROGRAM_DETAILS, "Type"),
-    PROGRAM_DETAILS_TYPE_HINT(PROGRAM_DETAILS, "The type of the programme."),
-    PROGRAM_DETAILS_TITLE_LABEL(PROGRAM_DETAILS, "Title"),
-    PROGRAM_DETAILS_TITLE_HINT(PROGRAM_DETAILS, "The title of your programme."),
-    PROGRAM_DETAILS_SUMMARY_LABEL(PROGRAM_DETAILS, "Summary"),
-    PROGRAM_DETAILS_SUMMARY_HINT(PROGRAM_DETAILS, "A brief description of your programme."),
-    PROGRAM_DETAILS_STUDY_OPTIONS_LABEL(PROGRAM_DETAILS, "Study Options"),
-    PROGRAM_DETAILS_STUDY_OPTIONS_HINT(PROGRAM_DETAILS, "The modes of participation that your programme offers (e.g. full-time, part-time, by distance)."),
-    PROGRAM_DETAILS_END_DATE_LABEL(PROGRAM_DETAILS, "End Date"),
-    PROGRAM_DETAILS_END_DATE_HINT(PROGRAM_DETAILS, "The end date of the program."),
-    PROGRAM_DETAILS_LOCALE_LABEL(PROGRAM_DETAILS, "Locale"),
-    PROGRAM_DETAILS_LOCALE_HINT(PROGRAM_DETAILS, "The locale of your program, e.g. the default region and language of study."),
-    PROGRAM_DETAILS_USE_OUR_ENGINE_LABEL(PROGRAM_DETAILS, "Use our recruitment engine?"),
-    PROGRAM_DETAILS_USE_OUR_ENGINE_HINT(PROGRAM_DETAILS, "Specify whether you wish to use our recruitment engine, or link to your own."),
-    PROGRAM_DETAILS_HOMEPAGE_LABEL(PROGRAM_DETAILS, "Application Page URL"),
-    PROGRAM_DETAILS_HOMEPAGE_HINT(PROGRAM_DETAILS, "Link to your application page for the opportunity."),
-    PROGRAM_DETAILS_STUDY_DURATION_MINIMUM_LABEL(PROGRAM_DETAILS, "Study Duration Minimum"),
-    PROGRAM_DETAILS_STUDY_DURATION_MINIMUM_HINT(PROGRAM_DETAILS, "The minimum anticipated duration of study for your program."),
-    PROGRAM_DETAILS_STUDY_DURATION_MAXIMUM_LABEL(PROGRAM_DETAILS, "Study Duration Maximum"),
-    PROGRAM_DETAILS_STUDY_DURATION_MAXIMUM_HINT(PROGRAM_DETAILS, "The maximum anticipated duration of study for your program."),
+    PROGRAM_FORM_TYPE_LABEL(PROGRAM_FORM, "Type"),
+    PROGRAM_FORM_TYPE_HINT(PROGRAM_FORM, "The type of the programme."),
+    PROGRAM_FORM_TITLE_LABEL(PROGRAM_FORM, "Title"),
+    PROGRAM_FORM_TITLE_HINT(PROGRAM_FORM, "The title of your programme."),
+    PROGRAM_FORM_SUMMARY_LABEL(PROGRAM_FORM, "Summary"),
+    PROGRAM_FORM_SUMMARY_HINT(PROGRAM_FORM, "A brief description of your programme."),
+    PROGRAM_FORM_STUDY_OPTIONS_LABEL(PROGRAM_FORM, "Study Options"),
+    PROGRAM_FORM_STUDY_OPTIONS_HINT(PROGRAM_FORM, "The modes of participation that your programme offers (e.g. full-time, part-time, by distance)."),
+    PROGRAM_FORM_END_DATE_LABEL(PROGRAM_FORM, "End Date"),
+    PROGRAM_FORM_END_DATE_HINT(PROGRAM_FORM, "The end date of the program."),
+    PROGRAM_FORM_LOCALE_LABEL(PROGRAM_FORM, "Locale"),
+    PROGRAM_FORM_LOCALE_HINT(PROGRAM_FORM, "The locale of your program, e.g. the default region and language of study."),
+    PROGRAM_FORM_USE_OUR_ENGINE_LABEL(PROGRAM_FORM, "Use our recruitment engine?"),
+    PROGRAM_FORM_USE_OUR_ENGINE_HINT(PROGRAM_FORM, "Specify whether you wish to use our recruitment engine, or link to your own."),
+    PROGRAM_FORM_HOMEPAGE_LABEL(PROGRAM_FORM, "Application Page URL"),
+    PROGRAM_FORM_HOMEPAGE_HINT(PROGRAM_FORM, "Link to your application page for the opportunity."),
+    PROGRAM_FORM_STUDY_DURATION_MINIMUM_LABEL(PROGRAM_FORM, "Study Duration Minimum"),
+    PROGRAM_FORM_STUDY_DURATION_MINIMUM_HINT(PROGRAM_FORM, "The minimum anticipated duration of study for your program."),
+    PROGRAM_FORM_STUDY_DURATION_MAXIMUM_LABEL(PROGRAM_FORM, "Study Duration Maximum"),
+    PROGRAM_FORM_STUDY_DURATION_MAXIMUM_HINT(PROGRAM_FORM, "The maximum anticipated duration of study for your program."),
+    PROGRAM_FORM_LOCATIONS_LABEL(PROGRAM_FORM, "Possible Locations"),
+    PROGRAM_FORM_LOCATIONS_HINT(PROGRAM_FORM, "The locations at which it is possible for successful applicants of your program to study at."),
+    PROGRAM_FORM_ADVERTISE_LABEL(PROGRAM_FORM, "Advertise Program?"),
+    PROGRAM_FORM_ADVERTISE_HINT(PROGRAM_FORM, "Specify whether you wish to advertise the program for new applications at the current time"),
+
+    PROGRAM_FORM_DISABLE_PROGRAM_BUTTON(PROGRAM_FORM, "Disable Program"),
+
+    /*
+     * *************** PROGRAM ADVERT DETAILS *********************
+     */
+
+    PROGRAM_ADVERT_HEADER(PROGRAM_ADVERT_DETAILS, "Advert"),
+    PROGRAM_ADVERT_DESCRIPTION_LABEL(PROGRAM_ADVERT_DETAILS, "Description"),
+    PROGRAM_ADVERT_DESCRIPTION_HINT(PROGRAM_ADVERT_DETAILS, "Detailed description of your advert."),
+
+    /*
+     * *************** PROGRAM ADVERT FEES & PAYMENTS *********************
+     */
+
+    PROGRAM_FEES_HEADER(PROGRAM_ADVERT_FEES_AND_PAYMENTS, "Fees and Payments"),
+
+    /*
+     * *************** PROGRAM ADVERT CATEGORIES *********************
+     */
+
+    PROGRAM_CATEGORIES_HEADER(PROGRAM_ADVERT_CATEGORIES, "Categories"),
+
+    /*
+     * *************** PROGRAM ADVERT CLOSING DATES *********************
+     */
+
+    PROGRAM_CLOSING_DATES_HEADER(PROGRAM_ADVERT_CATEGORIES, "Closing Dates"),
 
     /*
      * *************** PROJECT COMMENT *********************

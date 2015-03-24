@@ -724,6 +724,7 @@ public enum PrismDisplayPropertyDefinition {
      */
 
     SYSTEM_LOCALE_EN_GB(SYSTEM_LOCALE, "English (United Kingdom)"),
+    SYSTEM_LOCALE_PL_PL(SYSTEM_LOCALE, "Polish (Poland)"),
 
     /*
      * *************** SYSTEM REFEREE TYPE *********************
@@ -1304,7 +1305,6 @@ public enum PrismDisplayPropertyDefinition {
     PROGRAM_CATEGORIES_INSTITUTIONS_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the institutions that you wish to target your advert to."),
     PROGRAM_CATEGORIES_PROGRAM_TYPES_LABEL(PROGRAM_ADVERT_CATEGORIES, "Program Types"),
     PROGRAM_CATEGORIES_PROGRAM_TYPES_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the program types that you wish to target your advert to."),
-
 
     /*
      * *************** PROGRAM ADVERT CLOSING DATES *********************

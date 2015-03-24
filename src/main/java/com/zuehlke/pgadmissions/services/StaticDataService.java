@@ -138,6 +138,7 @@ public class StaticDataService {
 
         staticData.put("timeZones", TimeZoneUtils.getInstance().getTimeZoneDefinitions());
         staticData.put("currencies", institutionService.listAvailableCurrencies());
+        staticData.put("defaultLocale", PrismLocale.EN_GB);
         staticData.put("locales", PrismLocale.values());
         staticData.put("googleApiKey", googleApiKey);
 

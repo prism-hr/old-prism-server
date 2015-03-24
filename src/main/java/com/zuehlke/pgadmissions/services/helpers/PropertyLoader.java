@@ -66,7 +66,7 @@ public class PropertyLoader {
 			this.resource = resource;
 			this.programType = null;
 		}
-		this.locale = resourceService.getOperativeLocale(resource, prismLocale);
+		this.locale = prismLocale;
 		return this;
 	}
 

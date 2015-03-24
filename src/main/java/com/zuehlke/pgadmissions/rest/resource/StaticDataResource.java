@@ -1,19 +1,16 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ImportedInstitutionRepresentation;
+import com.zuehlke.pgadmissions.services.DisplayPropertyService;
+import com.zuehlke.pgadmissions.services.StaticDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ImportedInstitutionRepresentation;
-import com.zuehlke.pgadmissions.services.StaticDataService;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/static")
@@ -21,6 +18,9 @@ public class StaticDataResource {
 
     @Autowired
     private StaticDataService staticDataService;
+
+    @Autowired
+    private DisplayPropertyService displayPropertyService;
 
     @Cacheable("staticData")
     @RequestMapping(method = RequestMethod.GET)
@@ -47,6 +47,11 @@ public class StaticDataResource {
     @RequestMapping(method = RequestMethod.GET, value = "/domiciles/{domicileId}/importedInstitutions")
     public List<ImportedInstitutionRepresentation> getImportedInstitutions(@PathVariable Integer domicileId) {
         return staticDataService.getImportedInstitutions(domicileId);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "googleTranslate")
+    public void googleTranslateDisplayProperties(@RequestParam PrismLocale locale) throws Exception {
+        displayPropertyService.googleTranslateDisplayProperties(locale);
     }
 
 }

@@ -429,8 +429,8 @@ public class ResourceService {
         }
     }
 
-    public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource resource, PrismScope propertiesScope) {
-        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
+    public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource resource, PrismScope propertiesScope, PrismLocale locale) {
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource, locale);
         Map<PrismDisplayPropertyDefinition, String> properties = Maps.newLinkedHashMap();
         for (PrismDisplayPropertyDefinition prismDisplayPropertyDefinition : PrismDisplayPropertyDefinition.getProperties(propertiesScope)) {
             properties.put(prismDisplayPropertyDefinition, loader.load(prismDisplayPropertyDefinition));

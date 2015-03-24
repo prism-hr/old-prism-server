@@ -5,6 +5,8 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
+import com.google.api.client.util.Lists;
+import com.google.api.services.translate.Translate;
 import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +54,7 @@ public class MaintenanceService {
 				}
 			}
 		}
-	}
+    }
 
 	private void execute(final PrismMaintenanceTask prismMaintenanceTask) {
 		try {
@@ -71,18 +73,18 @@ public class MaintenanceService {
 			}
 		}
 	}
-	
+
 	private void submit(final PrismMaintenanceTask prismMaintenanceTask) {
 		try {
 			executor.submit(new Runnable() {
 				@Override
 				public void run() {
 					execute(prismMaintenanceTask);
-	
+
 				}
 			});
 		} catch (Exception e) {
-			LOGGER.error("Error submitting maintenance task", e);			
+			LOGGER.error("Error submitting maintenance task", e);
 		}
 	}
 

@@ -6,7 +6,7 @@
     http://www.springframework.org/schema/security
     http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
-    <security:http pattern="/api/static" security="none" disable-url-rewriting="true" create-session="stateless"/>
+    <security:http pattern="/api/static/**" security="none" disable-url-rewriting="true" create-session="stateless"/>
     <security:http pattern="/api/pgadmissions" security="none" disable-url-rewriting="true" create-session="stateless"/>
     <security:http pattern="/api/mail" security="none" disable-url-rewriting="true" create-session="stateless"/>
     <security:http pattern="/api/sitemap" security="none" disable-url-rewriting="true" create-session="stateless"/>

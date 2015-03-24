@@ -9,6 +9,7 @@ import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -157,10 +158,13 @@ public class ResourceResource {
 
     @RequestMapping(value = "/{resourceId}/displayProperties", method = RequestMethod.GET)
     @PreAuthorize("permitAll")
-    public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                                                                            @RequestParam PrismScope propertiesScope) {
+    public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(
+            @PathVariable Integer resourceId,
+            @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @RequestParam PrismScope propertiesScope,
+            @RequestParam(required = false) PrismLocale locale) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
-        return resourceService.getDisplayProperties(resource, propertiesScope);
+        return resourceService.getDisplayProperties(resource, propertiesScope, locale);
     }
 
     @RequestMapping(method = RequestMethod.GET)

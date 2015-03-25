@@ -3,7 +3,8 @@ package com.zuehlke.pgadmissions.domain.definitions;
 public enum PrismLocale {
 
     EN_GB,
-    PL_PL;
+    PL_PL,
+    ES_ES;
 
     public static PrismLocale getSystemLocale() {
         return EN_GB;

@@ -725,6 +725,8 @@ public enum PrismDisplayPropertyDefinition {
 
     SYSTEM_LOCALE_EN_GB(SYSTEM_LOCALE, "English (United Kingdom)"),
     SYSTEM_LOCALE_PL_PL(SYSTEM_LOCALE, "Polish (Poland)"),
+    SYSTEM_LOCALE_ES_ES(SYSTEM_LOCALE, "Spanish (Spain)"),
+    SYSTEM_LOCALE_HE_HE(SYSTEM_LOCALE, "Hebrew (Israel)"),
 
     /*
      * *************** SYSTEM REFEREE TYPE *********************
@@ -1406,11 +1408,15 @@ public enum PrismDisplayPropertyDefinition {
     APPLICATION_PERSONAL_DETAIL_DATE_OF_BIRTH_HINT(APPLICATION_PERSONAL_DETAIL, "Your date of birth. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
     APPLICATION_PERSONAL_DETAIL_COUNTRY_OF_BIRTH_LABEL(APPLICATION_PERSONAL_DETAIL, "Country of Birth"),
     APPLICATION_PERSONAL_DETAIL_COUNTRY_OF_BIRTH_HINT(APPLICATION_PERSONAL_DETAIL, "Your country of birth. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
+
+    APPLICATION_PERSONAL_DETAIL_NATIONALITIES_SUBHEADER(APPLICATION_PERSONAL_DETAIL, "Nationalities"),
     APPLICATION_PERSONAL_DETAIL_NATIONALITY_LABEL(APPLICATION_PERSONAL_DETAIL, "Nationality"),
     APPLICATION_PERSONAL_DETAIL_FIRST_NATIONALITY_LABEL(APPLICATION_PERSONAL_DETAIL, "Primary Nationality"),
     APPLICATION_PERSONAL_DETAIL_FIRST_NATIONALITY_HINT(APPLICATION_PERSONAL_DETAIL, "Select your primary nationality. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
     APPLICATION_PERSONAL_DETAIL_SECOND_NATIONALITY_LABEL(APPLICATION_PERSONAL_DETAIL, "Secondary Nationality"),
     APPLICATION_PERSONAL_DETAIL_SECOND_NATIONALITY_HINT(APPLICATION_PERSONAL_DETAIL, "Select your secondary nationality. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
+
+    APPLICATION_PERSONAL_DETAIL_LANGUAGE_SUBHEADER(APPLICATION_PERSONAL_DETAIL, "Language"),
     APPLICATION_PERSONAL_DETAIL_FIRST_LANGUAGE_LOCALE_LABEL(APPLICATION_PERSONAL_DETAIL, "Is English your first language?"),
     APPLICATION_PERSONAL_DETAIL_FIRST_LANGUAGE_LOCALE_HINT(APPLICATION_PERSONAL_DETAIL, "Tell us whether English is your first language. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
     APPLICATION_PERSONAL_DETAIL_LANGUAGE_QUALIFICATION_AVAILABLE_LABEL(APPLICATION_PERSONAL_DETAIL, "Do you have an English language qualification?"),

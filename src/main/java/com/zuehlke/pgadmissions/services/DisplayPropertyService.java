@@ -60,7 +60,9 @@ public class DisplayPropertyService {
         JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
 
         Translate t = new Translate.Builder(httpTransport, jsonFactory, null)
-                .setGoogleClientRequestInitializer(new CommonGoogleClientRequestInitializer("AIzaSyBs0D7C2wzrK3vL1tl5nZ8Vm3PvnvdrkYM")).build();
+                .setGoogleClientRequestInitializer(new CommonGoogleClientRequestInitializer("AIzaSyBs0D7C2wzrK3vL1tl5nZ8Vm3PvnvdrkYM"))
+                .setApplicationName("PRiSM")
+                .build();
 
 
         com.zuehlke.pgadmissions.domain.system.System system = systemService.getSystem();

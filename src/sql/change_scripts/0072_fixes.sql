@@ -156,3 +156,11 @@ delete
 from action
 where id like "%_CONCLUDE"
 ;
+
+alter table state_group
+	modify column sequence_order int(2) unsigned not null
+;
+
+update state_group
+set sequence_order = sequence_order + 20
+;

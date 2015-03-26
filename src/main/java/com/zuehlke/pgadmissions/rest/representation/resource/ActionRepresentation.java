@@ -21,8 +21,6 @@ public class ActionRepresentation {
 
     private Set<NextStateRepresentation> nextStates = Sets.newLinkedHashSet();
 
-    private Set<NextStateRepresentation> nextParentResourceStates = Sets.newLinkedHashSet();
-
     public PrismAction getId() {
         return id;
     }
@@ -76,14 +74,6 @@ public class ActionRepresentation {
 
     public final void addNextStates(Collection<NextStateRepresentation> nextStates) {
         this.nextStates.addAll(nextStates);
-    }
-
-    public final Set<NextStateRepresentation> getNextParentResourceStates() {
-        return nextParentResourceStates;
-    }
-
-    public final void addNextParentResourceStates(Collection<NextStateRepresentation> nextParentResourceStates) {
-        this.nextParentResourceStates.addAll(nextParentResourceStates);
     }
 
     @Override

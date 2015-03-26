@@ -1,10 +1,11 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import org.joda.time.LocalDate;
-
 import java.math.BigDecimal;
 import java.util.List;
+
+import org.joda.time.LocalDate;
+
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 
 public class ResourceSummaryRepresentation {
 

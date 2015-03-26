@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveRating;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -42,6 +43,8 @@ public class CommentRepresentation {
     private CommentApplicationOfferDetailRepresentation offerDetail;
 
     private Boolean recruiterAcceptAppointment;
+    
+    private PrismApplicationReserveRating applicationReserveRating;
 
     private String rejectionReason;
 
@@ -197,7 +200,15 @@ public class CommentRepresentation {
         this.recruiterAcceptAppointment = recruiterAcceptAppointment;
     }
 
-    public final String getRejectionReason() {
+    public PrismApplicationReserveRating getApplicationReserveRating() {
+		return applicationReserveRating;
+	}
+
+	public void setApplicationReserveRating(PrismApplicationReserveRating applicationReserveRating) {
+		this.applicationReserveRating = applicationReserveRating;
+	}
+
+	public final String getRejectionReason() {
         return rejectionReason;
     }
 

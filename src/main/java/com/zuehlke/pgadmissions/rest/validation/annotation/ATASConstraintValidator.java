@@ -1,10 +1,11 @@
 package com.zuehlke.pgadmissions.rest.validation.annotation;
 
-import org.apache.commons.lang.StringUtils;
+import java.util.regex.Pattern;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
 
 public class ATASConstraintValidator implements ConstraintValidator<ATASConstraint, String> {
 

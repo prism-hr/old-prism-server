@@ -34,6 +34,7 @@ import org.joda.time.LocalDate;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveRating;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
@@ -172,6 +173,10 @@ public class Application extends Resource {
 
     @Column(name = "application_rating_average")
     private BigDecimal applicationRatingAverage;
+    
+	@Enumerated(EnumType.STRING)
+	@Column(name = "application_reserve_rating")
+	private PrismApplicationReserveRating applicationReserveRating;
 
     @Column(name = "completion_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -520,7 +525,15 @@ public class Application extends Resource {
         this.applicationRatingAverage = applicationRatingAverage;
     }
 
-    public LocalDate getCompletionDate() {
+    public PrismApplicationReserveRating getApplicationReserveRating() {
+		return applicationReserveRating;
+	}
+
+	public void setApplicationReserveRating(PrismApplicationReserveRating applicationReserveRating) {
+		this.applicationReserveRating = applicationReserveRating;
+	}
+
+	public LocalDate getCompletionDate() {
         return completionDate;
     }
 

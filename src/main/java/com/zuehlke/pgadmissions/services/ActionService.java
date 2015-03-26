@@ -131,12 +131,6 @@ public class ActionService {
 				action.addNextStates(stateService.getSelectableTransitionStates(resource.getState(), actionId,
 				        scope == PrismScope.PROGRAM && program.getImported()));
 			}
-
-			if (actionId.isConcludeParentAction()) {
-				Resource parentResource = resource.getParentResource();
-				action.addNextParentResourceStates(stateService.getSelectableTransitionStates(parentResource.getState(),
-				        parentResource.getResourceScope() == PrismScope.PROGRAM && program.getImported()));
-			}
 		}
 
 		return actions;

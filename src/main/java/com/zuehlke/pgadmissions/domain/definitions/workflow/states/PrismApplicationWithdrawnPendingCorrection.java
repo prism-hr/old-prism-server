@@ -61,7 +61,7 @@ public class PrismApplicationWithdrawnPendingCorrection extends PrismWorkflowSta
             .withAction(PrismAction.APPLICATION_CORRECT) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(false) //
-            .withNotificationTemplate(PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST) //
+            .withNotificationTemplate(PrismNotificationDefinition.APPLICATION_CORRECT_REQUEST) //
                 .withAssignments(Arrays.asList( //
                     new PrismStateActionAssignment() //
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR))) //

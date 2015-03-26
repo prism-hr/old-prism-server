@@ -240,6 +240,16 @@ public class PrismApplicationInterview extends PrismWorkflowState {
                                 .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
                                 .withRestrictToOwner(false))), //
                     new PrismStateTransition() //
+	                    .withTransitionState(PrismState.APPLICATION_RESERVED) //
+	                    .withTransitionAction(PrismAction.APPLICATION_RESERVE) //
+	                    .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_COMPLETED_STATE_OUTCOME) //
+	                    .withRoleTransitions(Arrays.asList( //
+	                        new PrismRoleTransition() //
+	                            .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
+	                            .withTransitionType(PrismRoleTransitionType.UPDATE) //
+	                            .withTransitionRole(PrismRole.APPLICATION_VIEWER_RECRUITER) //
+	                            .withRestrictToOwner(false))), //
+                    new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_REVIEW) //
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_REVIEWERS) //
                         .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_COMPLETED_STATE_OUTCOME) //

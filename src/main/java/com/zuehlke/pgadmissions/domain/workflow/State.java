@@ -23,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 public class State extends WorkflowDefinition {
 
     @Id
-    @Column(name = "id")
     @Enumerated(EnumType.STRING)
     private PrismState id;
 

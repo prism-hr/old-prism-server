@@ -18,26 +18,6 @@ public class PrismProgramApproved extends PrismWorkflowState {
     @Override
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROGRAM_CONCLUDE) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-                .withTransitions(Arrays.asList( //
-                    new PrismStateTransition() //
-                        .withTransitionState(PrismState.PROGRAM_APPROVED) //
-                        .withTransitionAction(PrismAction.PROGRAM_CONCLUDE) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_OFFER_OUTCOME), //
-                    new PrismStateTransition() //
-                        .withTransitionState(PrismState.PROGRAM_DEACTIVATED) //
-                        .withTransitionAction(PrismAction.PROGRAM_CONCLUDE) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_OFFER_OUTCOME), //
-                    new PrismStateTransition() //
-                        .withTransitionState(PrismState.PROGRAM_DISABLED_COMPLETED) //
-                        .withTransitionAction(PrismAction.PROGRAM_CONCLUDE) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_OFFER_OUTCOME) //
-                        .withPropagatedActions(Arrays.asList( //
-                            PrismAction.PROJECT_TERMINATE))))); //
-
-        stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.PROGRAM_EMAIL_CREATOR) //
             .withRaisesUrgentFlag(false) //
             .withDefaultAction(false)  //

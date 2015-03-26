@@ -124,9 +124,6 @@ public class PrismApplicationApproved extends PrismWorkflowState {
                                 .withTransitionRole(PrismRole.APPLICATION_SECONDARY_SUPERVISOR) //
                                 .withRestrictToOwner(false) //
                                 .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_SECONDARY_SUPERVISOR)))//
-                        .withPropagatedActions(Arrays.asList( //
-                            PrismAction.PROGRAM_CONCLUDE,  //
-                            PrismAction.PROJECT_CONCLUDE)) //
                         .withStateTerminations(Lists.newArrayList( //
                             new PrismStateTermination().withTerminationState(PrismState.APPLICATION_REFERENCE), //
                             new PrismStateTermination().withTerminationState(PrismState.APPLICATION_VERIFICATION))),
@@ -152,9 +149,6 @@ public class PrismApplicationApproved extends PrismWorkflowState {
                                 .withTransitionRole(PrismRole.APPLICATION_SECONDARY_SUPERVISOR) //
                                 .withRestrictToOwner(false) //
                                 .withPropertyDefinition(PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_SECONDARY_SUPERVISOR)))//
-                        .withPropagatedActions(Arrays.asList( //
-                            PrismAction.PROGRAM_CONCLUDE,  //
-                            PrismAction.PROJECT_CONCLUDE))
                         .withStateTerminations(Lists.newArrayList( //
                             new PrismStateTermination().withTerminationState(PrismState.APPLICATION_REFERENCE), //
                             new PrismStateTermination().withTerminationState(PrismState.APPLICATION_VERIFICATION)))))); //
@@ -254,7 +248,7 @@ public class PrismApplicationApproved extends PrismWorkflowState {
                         .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
                         .withDefinition(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( //
-                        new PrismStateTransition() //
+                    new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_APPROVAL) //
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_SUPERVISORS) //
                         .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_COMPLETED_STATE_OUTCOME), //
@@ -269,6 +263,10 @@ public class PrismApplicationApproved extends PrismWorkflowState {
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_REJECTED) //
                         .withTransitionAction(PrismAction.APPLICATION_CONFIRM_REJECTION) //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_COMPLETED_STATE_OUTCOME), //
+                    new PrismStateTransition() //
+                        .withTransitionState(PrismState.APPLICATION_RESERVED) //
+                        .withTransitionAction(PrismAction.APPLICATION_RESERVE) //
                         .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_COMPLETED_STATE_OUTCOME), //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_REVIEW) //

@@ -223,7 +223,7 @@ public class PrismApplicationRejected extends PrismWorkflowState {
                         .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
                         .withDefinition(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION))) //
                 .withTransitions(Arrays.asList( //
-                        new PrismStateTransition() //
+                    new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_APPROVAL) //
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_SUPERVISORS) //
                         .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_COMPLETED_STATE_OUTCOME), //
@@ -234,6 +234,10 @@ public class PrismApplicationRejected extends PrismWorkflowState {
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_REFERENCE) //
                         .withTransitionAction(PrismAction.APPLICATION_PROVIDE_REFERENCE) //
+                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_COMPLETED_STATE_OUTCOME), //
+                    new PrismStateTransition() //
+                        .withTransitionState(PrismState.APPLICATION_RESERVED) //
+                        .withTransitionAction(PrismAction.APPLICATION_RESERVE) //
                         .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_COMPLETED_STATE_OUTCOME), //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_APPROVED) //

@@ -100,6 +100,10 @@ public class PrismApplicationValidation extends PrismWorkflowState {
                         .withTransitionAction(PrismAction.APPLICATION_PROVIDE_REFERENCE) //
                         .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_COMPLETED_STATE_OUTCOME), //
                     new PrismStateTransition() //
+	                    .withTransitionState(PrismState.APPLICATION_RESERVED) //
+	                    .withTransitionAction(PrismAction.APPLICATION_RESERVE) //
+	                    .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_COMPLETED_STATE_OUTCOME), //
+                    new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_REJECTED) //
                         .withTransitionAction(PrismAction.APPLICATION_CONFIRM_REJECTION) //
                         .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_COMPLETED_STATE_OUTCOME), //

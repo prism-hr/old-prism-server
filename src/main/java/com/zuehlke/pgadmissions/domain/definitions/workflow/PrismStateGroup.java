@@ -1,10 +1,40 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_APPROVAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_INTERVIEW;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_REFERENCE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_REJECTED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_RESERVED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_REVIEW;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_UNSUBMITTED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_VALIDATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_VERIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_WITHDRAWN;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_INSTITUTION_APPROVAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_INSTITUTION_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_INSTITUTION_REJECTED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_INSTITUTION_WITHDRAWN;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_PROGRAM_APPROVAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_PROGRAM_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_PROGRAM_DISABLED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_PROGRAM_REJECTED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_PROGRAM_WITHDRAWN;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_PROJECT_APPROVAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_PROJECT_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_PROJECT_DISABLED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_PROJECT_REJECTED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_PROJECT_WITHDRAWN;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_SYSTEM_RUNNING;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+
 import org.apache.commons.lang3.text.WordUtils;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 
 
 public enum PrismStateGroup {
@@ -17,8 +47,9 @@ public enum PrismStateGroup {
     APPLICATION_INTERVIEW(6, true, APPLICATION, SYSTEM_STATE_GROUP_APPLICATION_INTERVIEW), //
     APPLICATION_APPROVAL(7, true, APPLICATION, SYSTEM_STATE_GROUP_APPLICATION_APPROVAL), //
     APPLICATION_APPROVED(8, true, APPLICATION, SYSTEM_STATE_GROUP_APPLICATION_APPROVED), //
-    APPLICATION_REJECTED(9, true, APPLICATION, SYSTEM_STATE_GROUP_APPLICATION_REJECTED), //
-    APPLICATION_WITHDRAWN(10, false, APPLICATION, SYSTEM_STATE_GROUP_APPLICATION_WITHDRAWN), //
+    APPLICATION_RESERVED(9, true, APPLICATION, SYSTEM_STATE_GROUP_APPLICATION_RESERVED), //
+    APPLICATION_REJECTED(10, true, APPLICATION, SYSTEM_STATE_GROUP_APPLICATION_REJECTED), //
+    APPLICATION_WITHDRAWN(11, false, APPLICATION, SYSTEM_STATE_GROUP_APPLICATION_WITHDRAWN), //
     PROJECT_APPROVAL(1, false, PROJECT, SYSTEM_STATE_GROUP_PROJECT_APPROVAL), //
     PROJECT_APPROVED(2, true, PROJECT, SYSTEM_STATE_GROUP_PROJECT_APPROVED), //
     PROJECT_REJECTED(3, false, PROJECT, SYSTEM_STATE_GROUP_PROJECT_REJECTED), //

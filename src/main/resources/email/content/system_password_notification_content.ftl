@@ -7,7 +7,7 @@
     <b>${SYSTEM_USER_NEW_PASSWORD}</b>
 </p>
 
-<p><b>This is valid for a limited time only.</b> In order to retain access to your account <b>you must reset your password immediately.</b></p>
+<p><b>This is valid for a limited time only.</b> In order to retain access to your account <b>you must reset your password immediately.</p>
 
 <p>In order to reset your password, go to the profile section:
 	<br/>

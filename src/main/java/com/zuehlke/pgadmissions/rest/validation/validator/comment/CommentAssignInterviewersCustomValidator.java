@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.rest.validation.validator.comment;
 
-import com.google.common.base.Preconditions;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewAppointment;
-import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import static com.zuehlke.pgadmissions.utils.ValidationUtils.rejectIfNotNull;
+
+import java.util.Set;
+import java.util.TimeZone;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
@@ -13,10 +13,11 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import java.util.Set;
-import java.util.TimeZone;
-
-import static com.zuehlke.pgadmissions.utils.ValidationUtils.rejectIfNotNull;
+import com.google.common.base.Preconditions;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewAppointment;
+import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
 @Component
 public class CommentAssignInterviewersCustomValidator implements Validator {

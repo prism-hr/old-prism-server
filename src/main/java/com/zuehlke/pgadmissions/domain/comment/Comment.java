@@ -35,6 +35,7 @@ import org.joda.time.LocalDateTime;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveRating;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
@@ -134,6 +135,10 @@ public class Comment {
 	@Column(name = "application_recruiter_accept_appointment")
 	private Boolean recruiterAcceptAppointment;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "application_reserve_rating")
+	private PrismApplicationReserveRating applicationReserveRating;
+
 	@ManyToOne
 	@JoinColumn(name = "application_rejection_reason_id")
 	private RejectionReason rejectionReason;
@@ -143,12 +148,6 @@ public class Comment {
 
 	@Column(name = "application_rating")
 	private BigDecimal applicationRating;
-
-	@Column(name = "application_use_custom_referee_questions")
-	private Boolean useCustomRefereeQuestions;
-
-	@Column(name = "application_use_custom_recruiter_questions")
-	private Boolean useCustomRecruiterQuestions;
 
 	@Lob
 	@Column(name = "application_export_request")
@@ -160,10 +159,6 @@ public class Comment {
 	@Lob
 	@Column(name = "application_export_exception")
 	private String exportException;
-
-	@ManyToOne
-	@JoinColumn(name = "parent_resource_transition_state_id")
-	private State parentResourceTransitionState;
 
 	@Column(name = "creator_ip_address")
 	private String creatorIpAddress;
@@ -370,6 +365,14 @@ public class Comment {
 		this.recruiterAcceptAppointment = recruiterAcceptAppointment;
 	}
 
+	public PrismApplicationReserveRating getApplicationReserveRating() {
+		return applicationReserveRating;
+	}
+
+	public void setApplicationReserveRating(PrismApplicationReserveRating applicationReserveRating) {
+		this.applicationReserveRating = applicationReserveRating;
+	}
+
 	public RejectionReason getRejectionReason() {
 		return rejectionReason;
 	}
@@ -392,22 +395,6 @@ public class Comment {
 
 	public void setApplicationRating(BigDecimal applicationRating) {
 		this.applicationRating = applicationRating;
-	}
-
-	public Boolean getUseCustomRefereeQuestions() {
-		return useCustomRefereeQuestions;
-	}
-
-	public void setUseCustomRefereeQuestions(Boolean useCustomRefereeQuestions) {
-		this.useCustomRefereeQuestions = useCustomRefereeQuestions;
-	}
-
-	public Boolean getUseCustomRecruiterQuestions() {
-		return useCustomRecruiterQuestions;
-	}
-
-	public void setUseCustomRecruiterQuestions(Boolean useCustomRecruiterQuestions) {
-		this.useCustomRecruiterQuestions = useCustomRecruiterQuestions;
 	}
 
 	public final String getApplicationExportRequest() {
@@ -440,14 +427,6 @@ public class Comment {
 
 	public void setCreatorIpAddress(String creatorIpAddress) {
 		this.creatorIpAddress = creatorIpAddress;
-	}
-
-	public State getParentResourceTransitionState() {
-		return parentResourceTransitionState;
-	}
-
-	public void setParentResourceTransitionState(State parentResourceTransitionState) {
-		this.parentResourceTransitionState = parentResourceTransitionState;
 	}
 
 	public Set<CommentAssignedUser> getAssignedUsers() {
@@ -616,11 +595,11 @@ public class Comment {
 		this.interviewInstruction = interviewInstruction;
 		return this;
 	}
-	
+
 	public Comment withRecruiterAcceptAppointment(Boolean recruiterAcceptAppointment) {
 		this.recruiterAcceptAppointment = recruiterAcceptAppointment;
 		return this;
-	}	
+	}
 
 	public Comment addAssignedUser(User user, Role role, PrismRoleTransitionType roleTransitionType) {
 		assignedUsers.add(new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(roleTransitionType));
@@ -800,6 +779,10 @@ public class Comment {
 		LocalDateTime interviewDateTime = interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime();
 		return interviewDateTime == null ? false : interviewAppointment.getInterviewDateTime()
 		        .toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone())).isBefore(baseline);
+	}
+	
+	public boolean isApplicationReserveRatingComment() {
+		return applicationReserveRating != null;
 	}
 
 	public String getApplicationRatingDisplay() {

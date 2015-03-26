@@ -15,7 +15,6 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationC
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationCompletedVerificationStateResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationConfirmedEligibilityResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationConfirmedInterviewResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationConfirmedOfferResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationConfirmedSupervisionResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationEscalatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationExportedResolver;
@@ -57,7 +56,6 @@ public enum PrismStateTransitionEvaluation {
 	APPLICATION_COMPLETED_VERIFICATION_STATE_OUTCOME(true, APPLICATION, ApplicationCompletedVerificationStateResolver.class), //
 	APPLICATION_COMPLETED_REFERENCE_STATE_OUTCOME(true, APPLICATION, ApplicationCompletedReferenceStateResolver.class), //
 	APPLICATION_PROVIDED_REVIEW_OUTCOME(false, APPLICATION, ApplicationProvidedReviewResolver.class), //
-	APPLICATION_CONFIRMED_OFFER_OUTCOME(false, APPLICATION, ApplicationConfirmedOfferResolver.class), //
 	INSTITUTION_APPROVED_OUTCOME(true, INSTITUTION, InstitutionApprovedResolver.class), //
 	INSTITUTION_CREATED_OUTCOME(false, INSTITUTION, InstitutionCreatedResolver.class), //
 	PROGRAM_APPROVED_OUTCOME(true, PROGRAM, ProgramApprovedResolver.class), //

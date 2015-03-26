@@ -1,11 +1,18 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import com.google.common.collect.HashMultimap;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory.ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory.APPLICANT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory.RECRUITER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory.REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.Set;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory.*;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
+import com.google.common.collect.HashMultimap;
 
 public enum PrismRole {
 

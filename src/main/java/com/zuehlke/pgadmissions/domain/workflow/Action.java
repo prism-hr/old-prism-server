@@ -23,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 public class Action extends WorkflowDefinition {
 
     @Id
-    @Column(name = "id", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismAction id;
 
@@ -49,9 +48,6 @@ public class Action extends WorkflowDefinition {
 
     @Column(name = "emphasized_action", nullable = false)
     private Boolean emphasizedAction;
-
-    @Column(name = "conclude_parent_action", nullable = false)
-    private Boolean concludeParentAction;
 
     @OneToOne
     @JoinColumn(name = "action_custom_question_definition_id")
@@ -138,14 +134,6 @@ public class Action extends WorkflowDefinition {
 
     public final void setEmphasizedAction(Boolean emphasizedAction) {
         this.emphasizedAction = emphasizedAction;
-    }
-
-    public final Boolean getConcludeParentAction() {
-        return concludeParentAction;
-    }
-
-    public final void setConcludeParentAction(Boolean concludeParentAction) {
-        this.concludeParentAction = concludeParentAction;
     }
 
     public final ActionCustomQuestionDefinition getActionCustomQuestionDefinition() {
@@ -235,11 +223,6 @@ public class Action extends WorkflowDefinition {
 
     public Action withEmphasizedAction(Boolean emphasizedAction) {
         this.emphasizedAction = emphasizedAction;
-        return this;
-    }
-
-    public Action withConcludeParentAction(Boolean concludeParentAction) {
-        this.concludeParentAction = concludeParentAction;
         return this;
     }
 

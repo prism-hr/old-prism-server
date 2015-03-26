@@ -142,6 +142,16 @@ public class PrismApplicationReference extends PrismWorkflowState {
                                     .withTransitionRole(PrismRole.APPLICATION_REFEREE)
                                     .withRestrictToOwner(false))), //
                     new PrismStateTransition() //
+	                    .withTransitionState(PrismState.APPLICATION_RESERVED) //
+	                    .withTransitionAction(PrismAction.APPLICATION_RESERVE) //
+	                    .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_COMPLETED_REFERENCE_STATE_OUTCOME) //
+	                    .withRoleTransitions(Arrays.asList( //
+	                            new PrismRoleTransition() //
+	                                .withRole(PrismRole.APPLICATION_REFEREE) //
+	                                .withTransitionType(PrismRoleTransitionType.REVIVE) //
+	                                .withTransitionRole(PrismRole.APPLICATION_REFEREE)
+	                                .withRestrictToOwner(false))), //
+                    new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_REVIEW) //
                         .withTransitionAction(PrismAction.APPLICATION_ASSIGN_REVIEWERS) //
                         .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_COMPLETED_REFERENCE_STATE_OUTCOME) //

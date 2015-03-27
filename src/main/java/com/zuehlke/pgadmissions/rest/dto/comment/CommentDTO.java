@@ -1,14 +1,6 @@
 package com.zuehlke.pgadmissions.rest.dto.comment;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
-
-import org.joda.time.LocalDateTime;
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveRating;
+import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -16,6 +8,12 @@ import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
+import org.joda.time.LocalDateTime;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.util.List;
 
 public class CommentDTO {
 
@@ -54,7 +52,7 @@ public class CommentDTO {
 
 	private Boolean recruiterAcceptAppointment;
 
-	private PrismApplicationReserveRating applicationReserveRating;
+	private PrismApplicationReserveStatus applicationReserveStatus;
 
 	private Boolean declinedResponse;
 
@@ -204,12 +202,12 @@ public class CommentDTO {
 		this.recruiterAcceptAppointment = recruiterAcceptAppointment;
 	}
 
-	public PrismApplicationReserveRating getApplicationReserveRating() {
-		return applicationReserveRating;
+	public PrismApplicationReserveStatus getApplicationReserveStatus() {
+		return applicationReserveStatus;
 	}
 
-	public void setApplicationReserveRating(PrismApplicationReserveRating applicationReserveRating) {
-		this.applicationReserveRating = applicationReserveRating;
+	public void setApplicationReserveStatus(PrismApplicationReserveStatus applicationReserveStatus) {
+		this.applicationReserveStatus = applicationReserveStatus;
 	}
 
 	public Boolean getDeclinedResponse() {

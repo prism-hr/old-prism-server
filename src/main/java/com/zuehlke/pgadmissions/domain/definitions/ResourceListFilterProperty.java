@@ -1,26 +1,16 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.FilterExpression.BETWEEN;
-import static com.zuehlke.pgadmissions.domain.definitions.FilterExpression.CONTAIN;
-import static com.zuehlke.pgadmissions.domain.definitions.FilterExpression.EQUAL;
-import static com.zuehlke.pgadmissions.domain.definitions.FilterExpression.GREATER;
-import static com.zuehlke.pgadmissions.domain.definitions.FilterExpression.LESSER;
-import static com.zuehlke.pgadmissions.domain.definitions.FilterPropertyType.DATE;
-import static com.zuehlke.pgadmissions.domain.definitions.FilterPropertyType.NUMBER;
-import static com.zuehlke.pgadmissions.domain.definitions.FilterPropertyType.STATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.FilterPropertyType.STRING;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.rest.dto.FilterProperty;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.rest.dto.FilterProperty;
+import static com.zuehlke.pgadmissions.domain.definitions.FilterExpression.*;
+import static com.zuehlke.pgadmissions.domain.definitions.FilterPropertyType.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 public enum ResourceListFilterProperty implements FilterProperty {
 
@@ -49,7 +39,7 @@ public enum ResourceListFilterProperty implements FilterProperty {
     INSTITUTION_USER("id", STRING, Arrays.asList(CONTAIN), Arrays.asList(INSTITUTION)), //
     PRIMARY_THEME("primaryTheme", STRING, Arrays.asList(CONTAIN, EQUAL), Arrays.asList(APPLICATION)), //
     SECONDARY_THEME("secondaryTheme", STRING, Arrays.asList(CONTAIN, EQUAL), Arrays.asList(APPLICATION)), //
-    RESERVE_STATUS("applicationReserveRating", STRING, Arrays.asList(EQUAL), Arrays.asList(APPLICATION));
+    RESERVE_STATUS("applicationReserveStatus", APPLICATION_RESERVE_STATUS, Arrays.asList(EQUAL), Arrays.asList(APPLICATION));
 
     private String propertyName;
 
@@ -70,7 +60,7 @@ public enum ResourceListFilterProperty implements FilterProperty {
     }
 
     private ResourceListFilterProperty(String propertyName, FilterPropertyType propertyType, List<FilterExpression> permittedExpressions,
-            List<PrismScope> permittedScopes) {
+                                       List<PrismScope> permittedScopes) {
         this.propertyName = propertyName;
         this.permittedExpressions = permittedExpressions;
         this.propertyType = propertyType;

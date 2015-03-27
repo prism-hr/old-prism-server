@@ -67,7 +67,7 @@ public class ResourceListFilterConstraint {
     private StateGroup valueStateGroup;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "value_application_reserve_status")
+    @Column(name = "value_reserve_status")
     private PrismApplicationReserveStatus valueReserveStatus;
     
     @Column(name = "value_decimal_start")

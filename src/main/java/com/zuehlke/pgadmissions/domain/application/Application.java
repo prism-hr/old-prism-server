@@ -1,40 +1,9 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.IMMEDIATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import org.apache.commons.lang3.LocaleUtils;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.OrderBy;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveRating;
+import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
@@ -52,6 +21,21 @@ import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import org.apache.commons.lang3.LocaleUtils;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.OrderBy;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.IMMEDIATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
 
 @Entity
 @Table(name = "APPLICATION")
@@ -173,10 +157,10 @@ public class Application extends Resource {
 
     @Column(name = "application_rating_average")
     private BigDecimal applicationRatingAverage;
-    
+
 	@Enumerated(EnumType.STRING)
-	@Column(name = "application_reserve_rating")
-	private PrismApplicationReserveRating applicationReserveRating;
+	@Column(name = "application_reserve_status")
+	private PrismApplicationReserveStatus applicationReserveStatus;
 
     @Column(name = "completion_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -525,12 +509,12 @@ public class Application extends Resource {
         this.applicationRatingAverage = applicationRatingAverage;
     }
 
-    public PrismApplicationReserveRating getApplicationReserveRating() {
-		return applicationReserveRating;
+    public PrismApplicationReserveStatus getApplicationReserveStatus() {
+		return applicationReserveStatus;
 	}
 
-	public void setApplicationReserveRating(PrismApplicationReserveRating applicationReserveRating) {
-		this.applicationReserveRating = applicationReserveRating;
+	public void setApplicationReserveStatus(PrismApplicationReserveStatus applicationReserveRating) {
+		this.applicationReserveStatus = applicationReserveRating;
 	}
 
 	public LocalDate getCompletionDate() {

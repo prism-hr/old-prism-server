@@ -602,7 +602,7 @@ public class ResourceService {
 						appendUserRoleFilterCriteria(scopeId, conditions, constraint, propertyName,
 						        Arrays.asList(PrismRole.INSTITUTION_ADMINISTRATOR, PrismRole.INSTITUTION_ADMITTER), negated);
 						break;
-					case RESERVE_RATING:
+					case RESERVE_STATUS:
 						break;
 					default:
 						break;

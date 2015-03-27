@@ -292,10 +292,10 @@ public class UserDAO {
 		String searchTerm = userListFilterDTO.getSearchTerm();
 		if (searchTerm != null) {
 			criteria.add(Restrictions.disjunction() //
-			        .add(Restrictions.ilike("user.firstName", searchTerm, MatchMode.START)) //
-			        .add(Restrictions.ilike("user.lastName", searchTerm, MatchMode.START)) //
-			        .add(Restrictions.ilike("user.fullName", searchTerm, MatchMode.START)) //
-			        .add(Restrictions.ilike("user.email", searchTerm, MatchMode.START))); //
+			        .add(Restrictions.ilike("user.firstName", searchTerm, MatchMode.ANYWHERE)) //
+			        .add(Restrictions.ilike("user.lastName", searchTerm, MatchMode.ANYWHERE)) //
+			        .add(Restrictions.ilike("user.fullName", searchTerm, MatchMode.ANYWHERE)) //
+			        .add(Restrictions.ilike("user.email", searchTerm, MatchMode.ANYWHERE))); //
 		}
 
 		Integer lastUserId = userListFilterDTO.getLastUserId();

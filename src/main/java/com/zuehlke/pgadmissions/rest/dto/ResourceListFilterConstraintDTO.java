@@ -6,167 +6,178 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
+import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 
 public class ResourceListFilterConstraintDTO {
 
-    private ResourceListFilterProperty filterProperty;
+	private ResourceListFilterProperty filterProperty;
 
-    private FilterExpression filterExpression;
+	private FilterExpression filterExpression;
 
-    private Boolean negated;
+	private Boolean negated;
 
-    private Integer displayPosition;
+	private Integer displayPosition;
 
-    private String valueString;
+	private String valueString;
 
-    private LocalDate valueDateStart;
+	private LocalDate valueDateStart;
 
-    private LocalDate valueDateClose;
+	private LocalDate valueDateClose;
 
-    private PrismStateGroup valueStateGroup;
+	private PrismStateGroup valueStateGroup;
 
-    private BigDecimal valueDecimalStart;
+	private PrismApplicationReserveStatus valueReserveStatus;
 
-    private BigDecimal valueDecimalClose;
+	private BigDecimal valueDecimalStart;
 
-    public final ResourceListFilterProperty getFilterProperty() {
-        return filterProperty;
-    }
+	private BigDecimal valueDecimalClose;
 
-    public final void setFilterProperty(ResourceListFilterProperty filterProperty) {
-        this.filterProperty = filterProperty;
-    }
+	public final ResourceListFilterProperty getFilterProperty() {
+		return filterProperty;
+	}
 
-    public final FilterExpression getFilterExpression() {
-        return filterExpression;
-    }
+	public final void setFilterProperty(ResourceListFilterProperty filterProperty) {
+		this.filterProperty = filterProperty;
+	}
 
-    public final void setFilterExpression(FilterExpression filterExpression) {
-        this.filterExpression = filterExpression;
-    }
+	public final FilterExpression getFilterExpression() {
+		return filterExpression;
+	}
 
-    public final Boolean getNegated() {
-        return negated;
-    }
+	public final void setFilterExpression(FilterExpression filterExpression) {
+		this.filterExpression = filterExpression;
+	}
 
-    public final void setNegated(Boolean negated) {
-        this.negated = negated;
-    }
+	public final Boolean getNegated() {
+		return negated;
+	}
 
-    public final Integer getDisplayPosition() {
-        return displayPosition;
-    }
+	public final void setNegated(Boolean negated) {
+		this.negated = negated;
+	}
 
-    public final void setDisplayPosition(Integer displayPosition) {
-        this.displayPosition = displayPosition;
-    }
+	public final Integer getDisplayPosition() {
+		return displayPosition;
+	}
 
-    public final String getValueString() {
-        return valueString;
-    }
+	public final void setDisplayPosition(Integer displayPosition) {
+		this.displayPosition = displayPosition;
+	}
 
-    public final void setValueString(String valueString) {
-        this.valueString = valueString;
-    }
+	public final String getValueString() {
+		return valueString;
+	}
 
-    public final LocalDate getValueDateStart() {
-        return valueDateStart;
-    }
+	public final void setValueString(String valueString) {
+		this.valueString = valueString;
+	}
 
-    public final void setValueDateStart(LocalDate valueDateStart) {
-        this.valueDateStart = valueDateStart;
-    }
+	public final LocalDate getValueDateStart() {
+		return valueDateStart;
+	}
 
-    public final LocalDate getValueDateClose() {
-        return valueDateClose;
-    }
+	public final void setValueDateStart(LocalDate valueDateStart) {
+		this.valueDateStart = valueDateStart;
+	}
 
-    public final void setValueDateClose(LocalDate valueDateClose) {
-        this.valueDateClose = valueDateClose;
-    }
+	public final LocalDate getValueDateClose() {
+		return valueDateClose;
+	}
 
-    public final PrismStateGroup getValueStateGroup() {
-        return valueStateGroup;
-    }
+	public final void setValueDateClose(LocalDate valueDateClose) {
+		this.valueDateClose = valueDateClose;
+	}
 
-    public final DateTime computeValueDateTimeStart() {
-        return valueDateStart.toDateTimeAtStartOfDay();
-    }
+	public final PrismStateGroup getValueStateGroup() {
+		return valueStateGroup;
+	}
 
-    public final DateTime computeValueDateTimeClose() {
-        return valueDateClose.plusDays(1).toDateTimeAtStartOfDay().minusSeconds(1);
-    }
+	public PrismApplicationReserveStatus getValueReserveStatus() {
+		return valueReserveStatus;
+	}
 
-    public final void setValueStateGroup(PrismStateGroup valueStateGroup) {
-        this.valueStateGroup = valueStateGroup;
-    }
+	public void setValueReserveStatus(PrismApplicationReserveStatus valueReserveStatus) {
+		this.valueReserveStatus = valueReserveStatus;
+	}
 
-    public final BigDecimal getValueDecimalStart() {
-        return valueDecimalStart;
-    }
+	public final DateTime computeValueDateTimeStart() {
+		return valueDateStart.toDateTimeAtStartOfDay();
+	}
 
-    public final void setValueDecimalStart(BigDecimal valueDecimalStart) {
-        this.valueDecimalStart = valueDecimalStart;
-    }
+	public final DateTime computeValueDateTimeClose() {
+		return valueDateClose.plusDays(1).toDateTimeAtStartOfDay().minusSeconds(1);
+	}
 
-    public final BigDecimal getValueDecimalClose() {
-        return valueDecimalClose;
-    }
+	public final void setValueStateGroup(PrismStateGroup valueStateGroup) {
+		this.valueStateGroup = valueStateGroup;
+	}
 
-    public final void setValueDecimalClose(BigDecimal valueDecimalClose) {
-        this.valueDecimalClose = valueDecimalClose;
-    }
+	public final BigDecimal getValueDecimalStart() {
+		return valueDecimalStart;
+	}
 
-    public ResourceListFilterConstraintDTO withFilterProperty(ResourceListFilterProperty filterProperty) {
-        this.filterProperty = filterProperty;
-        return this;
-    }
+	public final void setValueDecimalStart(BigDecimal valueDecimalStart) {
+		this.valueDecimalStart = valueDecimalStart;
+	}
 
-    public ResourceListFilterConstraintDTO withFilterExpression(FilterExpression filterExpression) {
-        this.filterExpression = filterExpression;
-        return this;
-    }
+	public final BigDecimal getValueDecimalClose() {
+		return valueDecimalClose;
+	}
 
-    public ResourceListFilterConstraintDTO withNegated(Boolean negated) {
-        this.negated = negated;
-        return this;
-    }
+	public final void setValueDecimalClose(BigDecimal valueDecimalClose) {
+		this.valueDecimalClose = valueDecimalClose;
+	}
 
-    public ResourceListFilterConstraintDTO withDisplayPosition(Integer displayPosition) {
-        this.displayPosition = displayPosition;
-        return this;
-    }
+	public ResourceListFilterConstraintDTO withFilterProperty(ResourceListFilterProperty filterProperty) {
+		this.filterProperty = filterProperty;
+		return this;
+	}
 
-    public ResourceListFilterConstraintDTO withValueString(String valueString) {
-        this.valueString = valueString;
-        return this;
-    }
+	public ResourceListFilterConstraintDTO withFilterExpression(FilterExpression filterExpression) {
+		this.filterExpression = filterExpression;
+		return this;
+	}
 
-    public ResourceListFilterConstraintDTO withValueStateGroup(PrismStateGroup valueStateGroup) {
-        this.valueStateGroup = valueStateGroup;
-        return this;
-    }
+	public ResourceListFilterConstraintDTO withNegated(Boolean negated) {
+		this.negated = negated;
+		return this;
+	}
 
-    public ResourceListFilterConstraintDTO withValueDateStart(LocalDate valueDateStart) {
-        this.valueDateStart = valueDateStart;
-        return this;
-    }
+	public ResourceListFilterConstraintDTO withDisplayPosition(Integer displayPosition) {
+		this.displayPosition = displayPosition;
+		return this;
+	}
 
-    public ResourceListFilterConstraintDTO withValueDateClose(LocalDate valueDateClose) {
-        this.valueDateClose = valueDateClose;
-        return this;
-    }
+	public ResourceListFilterConstraintDTO withValueString(String valueString) {
+		this.valueString = valueString;
+		return this;
+	}
 
-    public ResourceListFilterConstraintDTO withValueDecimalStart(BigDecimal valueDecimalStart) {
-        this.valueDecimalStart = valueDecimalStart;
-        return this;
-    }
+	public ResourceListFilterConstraintDTO withValueStateGroup(PrismStateGroup valueStateGroup) {
+		this.valueStateGroup = valueStateGroup;
+		return this;
+	}
 
-    public ResourceListFilterConstraintDTO withValueDecimalClose(BigDecimal valueDecimalClose) {
-        this.valueDecimalClose = valueDecimalClose;
-        return this;
-    }
+	public ResourceListFilterConstraintDTO withValueDateStart(LocalDate valueDateStart) {
+		this.valueDateStart = valueDateStart;
+		return this;
+	}
+
+	public ResourceListFilterConstraintDTO withValueDateClose(LocalDate valueDateClose) {
+		this.valueDateClose = valueDateClose;
+		return this;
+	}
+
+	public ResourceListFilterConstraintDTO withValueDecimalStart(BigDecimal valueDecimalStart) {
+		this.valueDecimalStart = valueDecimalStart;
+		return this;
+	}
+
+	public ResourceListFilterConstraintDTO withValueDecimalClose(BigDecimal valueDecimalClose) {
+		this.valueDecimalClose = valueDecimalClose;
+		return this;
+	}
 
 }

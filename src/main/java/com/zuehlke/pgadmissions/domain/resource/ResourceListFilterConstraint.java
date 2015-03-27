@@ -17,6 +17,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
+import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 
@@ -60,11 +61,15 @@ public class ResourceListFilterConstraint {
     @Column(name = "value_date_close")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate valueDateClose;
-
+    
     @ManyToOne
     @JoinColumn(name = "value_state_group_id")
     private StateGroup valueStateGroup;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "value_application_reserve_status")
+    private PrismApplicationReserveStatus valueReserveStatus;
+    
     @Column(name = "value_decimal_start")
     private BigDecimal valueDecimalStart;
 
@@ -103,7 +108,7 @@ public class ResourceListFilterConstraint {
         this.filterExpression = filterExpression;
     }
 
-    public final Boolean isNegated() {
+    public final Boolean getNegated() {
         return negated;
     }
 
@@ -150,8 +155,16 @@ public class ResourceListFilterConstraint {
     public final void setValueStateGroup(StateGroup valueStateGroup) {
         this.valueStateGroup = valueStateGroup;
     }
+    
+    public PrismApplicationReserveStatus getValueReserveStatus() {
+		return valueReserveStatus;
+	}
 
-    public final BigDecimal getValueDecimalStart() {
+	public void setValueReserveStatus(PrismApplicationReserveStatus valueReserveStatus) {
+		this.valueReserveStatus = valueReserveStatus;
+	}
+
+	public final BigDecimal getValueDecimalStart() {
         return valueDecimalStart;
     }
 
@@ -207,6 +220,11 @@ public class ResourceListFilterConstraint {
         return this;
     }
 
+    public ResourceListFilterConstraint withValueReserveStatus(PrismApplicationReserveStatus valueReserveStatus) {
+        this.valueReserveStatus = valueReserveStatus;
+        return this;
+    }
+    
     public ResourceListFilterConstraint withValueDecimalStart(BigDecimal valueDecimalStart) {
         this.valueDecimalStart = valueDecimalStart;
         return this;

@@ -1,49 +1,10 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.TimeZone;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import org.apache.commons.lang3.LocaleUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.hibernate.annotations.OrderBy;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveRating;
+import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -57,6 +18,23 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.hibernate.annotations.OrderBy;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.TimeZone;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
 @Entity
 @Table(name = "COMMENT")
@@ -136,8 +114,8 @@ public class Comment {
 	private Boolean recruiterAcceptAppointment;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "application_reserve_rating")
-	private PrismApplicationReserveRating applicationReserveRating;
+	@Column(name = "application_reserve_status")
+	private PrismApplicationReserveStatus applicationReserveStatus;
 
 	@ManyToOne
 	@JoinColumn(name = "application_rejection_reason_id")
@@ -365,12 +343,12 @@ public class Comment {
 		this.recruiterAcceptAppointment = recruiterAcceptAppointment;
 	}
 
-	public PrismApplicationReserveRating getApplicationReserveRating() {
-		return applicationReserveRating;
+	public PrismApplicationReserveStatus getApplicationReserveStatus() {
+		return applicationReserveStatus;
 	}
 
-	public void setApplicationReserveRating(PrismApplicationReserveRating applicationReserveRating) {
-		this.applicationReserveRating = applicationReserveRating;
+	public void setApplicationReserveStatus(PrismApplicationReserveStatus applicationReserveRating) {
+		this.applicationReserveStatus = applicationReserveRating;
 	}
 
 	public RejectionReason getRejectionReason() {
@@ -601,6 +579,11 @@ public class Comment {
 		return this;
 	}
 
+	public Comment withApplicationReserveStatus(final PrismApplicationReserveStatus applicationReserveStatus) {
+		this.applicationReserveStatus = applicationReserveStatus;
+		return this;
+	}
+
 	public Comment addAssignedUser(User user, Role role, PrismRoleTransitionType roleTransitionType) {
 		assignedUsers.add(new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(roleTransitionType));
 		return this;
@@ -780,9 +763,9 @@ public class Comment {
 		return interviewDateTime == null ? false : interviewAppointment.getInterviewDateTime()
 		        .toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone())).isBefore(baseline);
 	}
-	
+
 	public boolean isApplicationReserveRatingComment() {
-		return applicationReserveRating != null;
+		return applicationReserveStatus != null;
 	}
 
 	public String getApplicationRatingDisplay() {

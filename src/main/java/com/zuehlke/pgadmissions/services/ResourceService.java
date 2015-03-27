@@ -603,6 +603,7 @@ public class ResourceService {
 						        Arrays.asList(PrismRole.INSTITUTION_ADMINISTRATOR, PrismRole.INSTITUTION_ADMITTER), negated);
 						break;
 					case RESERVE_STATUS:
+						ResourceListConstraintBuilder.appendEnumFilterCriterion(conditions, propertyName, constraint.getValueReserveStatus(), negated);
 						break;
 					default:
 						break;

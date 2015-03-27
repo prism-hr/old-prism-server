@@ -1,16 +1,15 @@
 package com.zuehlke.pgadmissions.rest.representation.comment;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import org.joda.time.DateTime;
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveRating;
+import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.FileRepresentation;
+import org.joda.time.DateTime;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public class CommentRepresentation {
 
@@ -43,8 +42,8 @@ public class CommentRepresentation {
     private CommentApplicationOfferDetailRepresentation offerDetail;
 
     private Boolean recruiterAcceptAppointment;
-    
-    private PrismApplicationReserveRating applicationReserveRating;
+
+    private PrismApplicationReserveStatus applicationReserveStatus;
 
     private String rejectionReason;
 
@@ -200,12 +199,12 @@ public class CommentRepresentation {
         this.recruiterAcceptAppointment = recruiterAcceptAppointment;
     }
 
-    public PrismApplicationReserveRating getApplicationReserveRating() {
-		return applicationReserveRating;
+    public PrismApplicationReserveStatus getApplicationReserveStatus() {
+		return applicationReserveStatus;
 	}
 
-	public void setApplicationReserveRating(PrismApplicationReserveRating applicationReserveRating) {
-		this.applicationReserveRating = applicationReserveRating;
+	public void setApplicationReserveStatus(PrismApplicationReserveStatus applicationReserveStatus) {
+		this.applicationReserveStatus = applicationReserveStatus;
 	}
 
 	public final String getRejectionReason() {

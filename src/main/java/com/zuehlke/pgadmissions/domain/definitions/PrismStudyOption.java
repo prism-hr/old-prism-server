@@ -1,18 +1,16 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_STUDY_OPTION_FULL_TIME;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_STUDY_OPTION_MODULAR_FLEXIBLE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_STUDY_OPTION_PART_TIME;
+import com.google.common.collect.Lists;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
 
 public enum PrismStudyOption {
 
-    FULL_TIME(PROGRAM_STUDY_OPTION_FULL_TIME, new String[] { "f+++++" }), //
-    PART_TIME(PROGRAM_STUDY_OPTION_PART_TIME, new String[] { "p+++++" }), //
-    MODULAR_FLEXIBLE(PROGRAM_STUDY_OPTION_MODULAR_FLEXIBLE, new String[] { "b+++++" });
+    FULL_TIME(SYSTEM_STUDY_OPTION_FULL_TIME, "f+++++"),
+    PART_TIME(SYSTEM_STUDY_OPTION_PART_TIME, "p+++++"),
+    MODULAR_FLEXIBLE(SYSTEM_STUDY_OPTION_MODULAR_FLEXIBLE, "b+++++");
 
     private PrismDisplayPropertyDefinition displayProperty;
 
@@ -26,13 +24,17 @@ public enum PrismStudyOption {
         }
     }
 
-    private PrismStudyOption(PrismDisplayPropertyDefinition displayProperty, String[] externalCodes) {
+    PrismStudyOption(PrismDisplayPropertyDefinition displayProperty, String... externalCodes) {
         this.displayProperty = displayProperty;
         this.externalCodes = externalCodes;
     }
 
-    public final PrismDisplayPropertyDefinition getDisplayProperty() {
+    public PrismDisplayPropertyDefinition getDisplayProperty() {
         return displayProperty;
+    }
+
+    public String[] getExternalCodes() {
+        return externalCodes;
     }
 
     public static PrismStudyOption findValueFromString(String toSearchIn) {
@@ -50,10 +52,6 @@ public enum PrismStudyOption {
             }
         }
         return null;
-    }
-
-    public final String[] getExternalCodes() {
-        return externalCodes;
     }
 
 }

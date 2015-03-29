@@ -1,20 +1,19 @@
 package com.zuehlke.pgadmissions.rest.representation.configuration;
 
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+
+import java.util.List;
 
 public class ProgramCategoryRepresentation {
 
     private PrismProgramCategory id;
 
-    private String displayName;
-    
     private boolean hasFee;
-    
+
     private boolean hasPay;
 
-    private List<ProgramTypeRepresentation> programTypes;
+    private List<PrismProgramType> programTypes;
 
     public PrismProgramCategory getId() {
         return id;
@@ -24,36 +23,28 @@ public class ProgramCategoryRepresentation {
         this.id = id;
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-    
-    public final boolean isHasFee() {
+    public boolean isHasFee() {
         return hasFee;
     }
 
-    public final void setHasFee(boolean hasFee) {
+    public void setHasFee(boolean hasFee) {
         this.hasFee = hasFee;
     }
 
-    public final boolean isHasPay() {
+    public boolean isHasPay() {
         return hasPay;
     }
 
-    public final void setHasPay(boolean hasPay) {
+    public void setHasPay(boolean hasPay) {
         this.hasPay = hasPay;
     }
 
-    public List<ProgramTypeRepresentation> getProgramTypes() {
+    public List<PrismProgramType> getProgramTypes() {
         return programTypes;
     }
 
-    public void setProgramTypes(List<ProgramTypeRepresentation> programTypes) {
+    public void setProgramTypes(List<PrismProgramType> programTypes) {
         this.programTypes = programTypes;
     }
-    
+
 }

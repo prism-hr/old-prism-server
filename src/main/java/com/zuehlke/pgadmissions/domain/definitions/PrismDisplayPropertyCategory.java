@@ -1,12 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 public enum PrismDisplayPropertyCategory {
 
@@ -20,6 +16,7 @@ public enum PrismDisplayPropertyCategory {
     SYSTEM_PROGRAM_TYPE(SYSTEM),
     SYSTEM_YES_NO_UNSURE(SYSTEM),
     SYSTEM_STUDY_OPTION(SYSTEM),
+    SYSTEM_PROGRAM_CATEGORY(SYSTEM),
     SYSTEM_DURATION(SYSTEM),
     SYSTEM_FILTER_PROPERTY(SYSTEM),
     SYSTEM_FILTER_EXPRESSION(SYSTEM),
@@ -42,23 +39,23 @@ public enum PrismDisplayPropertyCategory {
     SYSTEM_ADVERTISE_SECTION(SYSTEM),
     SYSTEM_RESOURCES_SECTION(SYSTEM),
     SYSTEM_RESOURCE_SECTION(SYSTEM),
+    SYSTEM_ACCOUNT_SECTION(SYSTEM),
     SYSTEM_HTML_FIELDS(SYSTEM),
     SYSTEM_HTML_COMMON(SYSTEM),
     SYSTEM_HTML_ADDRESS(SYSTEM),
     SYSTEM_HTML_RESOURCE_CONFIGURATION(SYSTEM),
+    SYSTEM_HTML_MANAGE_USERS(SYSTEM),
     SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION(SYSTEM),
     SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION(SYSTEM),
     SYSTEM_HTML_WORKFLOW_CONFIGURATION(SYSTEM),
     SYSTEM_ERROR_MESSAGES(SYSTEM),
     INSTITUTION_COMMENT(INSTITUTION),
-    PROGRAM_GLOBAL(PROGRAM),
     PROGRAM_COMMENT(PROGRAM),
     PROGRAM_FORM(PROGRAM),
     PROGRAM_ADVERT_DETAILS(PROGRAM),
     PROGRAM_ADVERT_FEES_AND_PAYMENTS(PROGRAM),
     PROGRAM_ADVERT_CATEGORIES(PROGRAM),
     PROGRAM_ADVERT_CLOSING_DATES(PROGRAM),
-    PROJECT_GLOBAL(PROJECT),
     PROJECT_COMMENT(PROJECT),
     APPLICATION_GLOBAL(APPLICATION),
     APPLICATION_PROGRAM_DETAIL(APPLICATION),

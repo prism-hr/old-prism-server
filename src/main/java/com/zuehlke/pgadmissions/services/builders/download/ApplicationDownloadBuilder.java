@@ -1,55 +1,11 @@
 package com.zuehlke.pgadmissions.services.builders.download;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_THEME_SECONDARY;
-import static com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize.MEDIUM;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import com.google.common.collect.Maps;
-import com.itextpdf.text.Anchor;
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.ColumnText;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfImportedPage;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.text.pdf.events.PdfPageEventForwarder;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
-import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
-import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPassport;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPrize;
-import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.application.ApplicationStudyDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
+import com.zuehlke.pgadmissions.domain.application.*;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.ApplicationDownloadMode;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
@@ -70,6 +26,21 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_THEME_SECONDARY;
+import static com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize.MEDIUM;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -223,7 +194,7 @@ public class ApplicationDownloadBuilder {
                     User user = supervisor.getUser();
 
                     applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_FIRST_NAME), user.getFirstName(), subBody);
-                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_LAST_NAME_LABEL), user.getLastName(), subBody);
+                    applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_HTML_GENERAL_FIELD_LAST_NAME_LABEL), user.getLastName(), subBody);
                     applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_EMAIL), user.getEmail(), subBody);
                     applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_SUPERVISOR_ACCEPTED_SUPERVISION_LABEL),
                             propertyLoader.load(SYSTEM_YES, SYSTEM_NO, supervisor.getAcceptedSupervision()), subBody);
@@ -249,7 +220,7 @@ public class ApplicationDownloadBuilder {
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_FIRST_NAME), applicationCreator.getFirstName(), body);
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_FIRST_NAME_2), applicationCreator.getFirstName2(), body);
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_FIRST_NAME_3), applicationCreator.getFirstName3(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_LAST_NAME_LABEL), applicationCreator.getLastName(), body);
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_HTML_GENERAL_FIELD_LAST_NAME_LABEL), applicationCreator.getLastName(), body);
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_EMAIL), applicationCreator.getEmail(), body);
 
         applicationDownloadBuilderHelper
@@ -557,7 +528,7 @@ public class ApplicationDownloadBuilder {
                 boolean userNull = user == null;
 
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_FIRST_NAME), userNull ? null : user.getFirstName(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_LAST_NAME_LABEL), userNull ? null : user.getLastName(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_HTML_GENERAL_FIELD_LAST_NAME_LABEL), userNull ? null : user.getLastName(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(SYSTEM_EMAIL), userNull ? null : user.getEmail(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_REFEREE_EMPLOYER_ADDRESS_LABEL), referee.getAddressDisplay(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.load(APPLICATION_PERSONAL_DETAIL_TELEPHONE_LABEL), referee.getPhone(), subBody);

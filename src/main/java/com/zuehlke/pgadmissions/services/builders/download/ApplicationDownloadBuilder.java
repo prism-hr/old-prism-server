@@ -69,7 +69,7 @@ import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -748,7 +748,7 @@ public class ApplicationDownloadBuilder {
         ApplicationDownloadMode downloadMode = applicationDownloadDTO.getDownloadMode();
         boolean includeAttachments = applicationDownloadDTO.isIncludeAttachments();
         if ((downloadMode == ApplicationDownloadMode.SYSTEM && includeAttachments)
-                || (downloadMode == ApplicationDownloadMode.USER && (includeAttachments || userService.isCurrentUser((User) ReflectionUtils.getProperty(
+                || (downloadMode == ApplicationDownloadMode.USER && (includeAttachments || userService.isCurrentUser((User) PrismReflectionUtils.getProperty(
                         content, "user"))))) {
             if (content == null) {
                 table.addCell(applicationDownloadBuilderHelper.newContentCellMedium(null));

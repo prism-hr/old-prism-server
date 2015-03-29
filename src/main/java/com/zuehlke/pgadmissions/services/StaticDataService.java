@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.rest.representation.configuration.ProgramCategor
 import com.zuehlke.pgadmissions.rest.representation.configuration.ProgramTypeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.FilterRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.FilterRepresentation.FilterExpressionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ImportedEntityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ImportedInstitutionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.LanguageQualificationTypeRepresentation;
@@ -25,6 +26,7 @@ import com.zuehlke.pgadmissions.rest.representation.workflow.ActionRepresentatio
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
+
 import org.apache.commons.lang.WordUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -149,10 +151,13 @@ public class StaticDataService {
 	public Map<String, Object> getFilterProperties() {
 		Map<String, Object> staticData = Maps.newHashMap();
 
-		List<FilterRepresentation> filters = Lists.newArrayListWithCapacity(ResourceListFilterProperty.values().length);
-		for (ResourceListFilterProperty filterProperty : ResourceListFilterProperty.values()) {
-			filters.add(new FilterRepresentation(filterProperty, filterProperty.getPermittedExpressions(), filterProperty.getPropertyType(), filterProperty
-			        .getPermittedScopes()));
+		List<FilterRepresentation> filters = Lists.newArrayListWithCapacity(PrismResourceListFilter.values().length);
+		for (PrismResourceListFilter filterProperty : PrismResourceListFilter.values()) {
+			List<FilterExpressionRepresentation> permittedExpressions = Lists.newArrayList();
+			for (PrismResourceListFilterExpression expression : filterProperty.getPermittedExpressions()) {
+				permittedExpressions.add(new FilterExpressionRepresentation(expression, expression.isNegatable()));
+			}
+			filters.add(new FilterRepresentation(filterProperty, permittedExpressions, filterProperty.getPropertyType(), filterProperty.getPermittedScopes()));
 		}
 
 		staticData.put("filters", filters);

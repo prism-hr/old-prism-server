@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 public abstract class Resource implements UniqueEntity {
 
@@ -153,7 +153,7 @@ public abstract class Resource implements UniqueEntity {
 		if (getResourceScope().equals(resourceScope)) {
 			return this;
 		} else {
-			return (Resource) ReflectionUtils.getProperty(this, resourceScope.getLowerCamelName());
+			return (Resource) PrismReflectionUtils.getProperty(this, resourceScope.getLowerCamelName());
 		}
 	}
 

@@ -9,7 +9,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 public interface UniqueEntity {
 
@@ -56,7 +56,7 @@ public interface UniqueEntity {
             if (property == null) {
                 return "null";
             } else if (PropertyUtils.isReadable(property, "id")) {
-                ReflectionUtils.getProperty(property, "id");
+                PrismReflectionUtils.getProperty(property, "id");
             }
             return property.toString();
         }

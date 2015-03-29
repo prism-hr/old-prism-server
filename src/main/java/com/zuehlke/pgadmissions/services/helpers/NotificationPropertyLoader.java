@@ -65,7 +65,7 @@ import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
 import com.zuehlke.pgadmissions.exceptions.AbortMailSendException;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -95,7 +95,7 @@ public class NotificationPropertyLoader {
     private FreeMarkerConfig freemarkerConfig;
 
     public String load(PrismNotificationDefinitionProperty property) {
-        String value = (String) ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(property));
+        String value = (String) PrismReflectionUtils.invokeMethod(this, PrismReflectionUtils.getMethodName(property));
         return value == null ? "[" + propertyLoader.load(SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR) + ". " + propertyLoader.load(SYSTEM_HELPDESK_REPORT)
                 + ": " + notificationDefinitionModelDTO.getResource().getSystem().getHelpdesk() + "]" : value;
     }
@@ -383,7 +383,7 @@ public class NotificationPropertyLoader {
     }
 
     private String buildRedirectionUrl(Resource resource, PrismAction actionId, User user) {
-        Resource operative = (Resource) ReflectionUtils.getProperty(resource, actionId.getScope().getLowerCamelName());
+        Resource operative = (Resource) PrismReflectionUtils.getProperty(resource, actionId.getScope().getLowerCamelName());
         return applicationApiUrl + "/mail/activate?resourceId=" + operative.getId() + "&actionId=" + actionId.name() + "&activationCode="
                 + user.getActivationCode();
     }

@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.ApplicationProcessingRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation.ApplicationProcessingSummaryRepresentation;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 import com.zuehlke.pgadmissions.utils.SummaryUtils;
 
 @Service
@@ -157,9 +157,9 @@ public class ApplicationSummaryService {
 
     private void incrementApplicationEventCount(Application application, String eventCountProperty) {
         for (ResourceParent parentResource : application.getParentResources()) {
-            ResourceParent parent = (ResourceParent) ReflectionUtils.getProperty(application, parentResource.getResourceScope().getLowerCamelName());
-            Integer currentCount = (Integer) ReflectionUtils.getProperty(parent, eventCountProperty);
-            ReflectionUtils.setProperty(parent, eventCountProperty, SummaryUtils.incrementRunningCount(currentCount));
+            ResourceParent parent = (ResourceParent) PrismReflectionUtils.getProperty(application, parentResource.getResourceScope().getLowerCamelName());
+            Integer currentCount = (Integer) PrismReflectionUtils.getProperty(parent, eventCountProperty);
+            PrismReflectionUtils.setProperty(parent, eventCountProperty, SummaryUtils.incrementRunningCount(currentCount));
         }
     }
 

@@ -59,7 +59,7 @@ import com.zuehlke.pgadmissions.rest.dto.AdvertFeesAndPaymentsDTO;
 import com.zuehlke.pgadmissions.rest.dto.FinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Service
 @Transactional
@@ -120,7 +120,7 @@ public class AdvertService {
                 case INSTITUTION:
                 case PROGRAM:
                 case PROJECT:
-                    ReflectionUtils.setProperty(queryDTO, parentResourceScope.getLowerCamelName() + "s", new Integer[]{parentResource.getId()});
+                    PrismReflectionUtils.setProperty(queryDTO, parentResourceScope.getLowerCamelName() + "s", new Integer[]{parentResource.getId()});
                     break;
                 case SYSTEM:
                     break;
@@ -148,7 +148,7 @@ public class AdvertService {
 
     public void updateDetail(Class<? extends Resource> resourceClass, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) throws Exception {
         Resource resource = resourceService.getById(resourceClass, resourceId);
-        Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
+        Advert advert = (Advert) PrismReflectionUtils.getProperty(resource, "advert");
 
         InstitutionAddressDTO addressDTO = advertDetailsDTO.getAddress();
         InstitutionDomicile country = entityService.getById(InstitutionDomicile.class, addressDTO.getDomicile());
@@ -172,7 +172,7 @@ public class AdvertService {
     public void updateFeesAndPayments(Class<? extends Resource> resourceClass, Integer resourceId, AdvertFeesAndPaymentsDTO feesAndPaymentsDTO)
             throws Exception {
         Resource resource = resourceService.getById(resourceClass, resourceId);
-        Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
+        Advert advert = (Advert) PrismReflectionUtils.getProperty(resource, "advert");
 
         LocalDate baseline = new LocalDate();
         String currencyAtLocale = getCurrencyAtLocale(advert);
@@ -191,21 +191,21 @@ public class AdvertService {
     public void updateCategories(Class<? extends Resource> resourceClass, Integer resourceId, AdvertCategoriesDTO categoriesDTO) throws DeduplicationException,
             InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         Resource resource = resourceService.getById(resourceClass, resourceId);
-        Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
+        Advert advert = (Advert) PrismReflectionUtils.getProperty(resource, "advert");
 
         for (String propertyName : new String[]{"domain", "industry", "function", "competency", "theme", "institution", "programType"}) {
             String propertySetterName = "add" + WordUtils.capitalize(propertyName);
-            List<Object> values = (List<Object>) ReflectionUtils.getProperty(categoriesDTO, pluralize(propertyName));
+            List<Object> values = (List<Object>) PrismReflectionUtils.getProperty(categoriesDTO, pluralize(propertyName));
 
             if (values != null) {
-                Collection<?> persistentMetadata = (Collection<?>) ReflectionUtils.getProperty(advert, pluralize(propertyName));
+                Collection<?> persistentMetadata = (Collection<?>) PrismReflectionUtils.getProperty(advert, pluralize(propertyName));
                 persistentMetadata.clear();
                 entityService.flush();
 
                 boolean isInstitutionsProperty = propertyName.equals("institution");
                 for (Object value : values) {
                     value = isInstitutionsProperty ? institutionService.getById((Integer) value) : value;
-                    ReflectionUtils.invokeMethod(advert, propertySetterName, value);
+                    PrismReflectionUtils.invokeMethod(advert, propertySetterName, value);
                 }
             }
         }
@@ -217,7 +217,7 @@ public class AdvertService {
             throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException,
             IntegrationException {
         Resource resource = resourceService.getById(resourceClass, resourceId);
-        Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
+        Advert advert = (Advert) PrismReflectionUtils.getProperty(resource, "advert");
 
         if (advert != null) {
             AdvertClosingDate advertClosingDate = new AdvertClosingDate().withAdvert(advert).withClosingDate(advertClosingDateDTO.getClosingDate())
@@ -236,7 +236,7 @@ public class AdvertService {
             throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException,
             IntegrationException {
         Resource resource = resourceService.getById(resourceClass, resourceId);
-        Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
+        Advert advert = (Advert) PrismReflectionUtils.getProperty(resource, "advert");
         AdvertClosingDate advertClosingDate = getClosingDateById(closingDateId);
 
         if (advert.getId().equals(advertClosingDate.getAdvert().getId())) {
@@ -253,7 +253,7 @@ public class AdvertService {
     public void deleteClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, Integer closingDateId) throws DeduplicationException,
             InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
         Resource resource = resourceService.getById(resourceClass, resourceId);
-        Advert advert = (Advert) ReflectionUtils.getProperty(resource, "advert");
+        Advert advert = (Advert) PrismReflectionUtils.getProperty(resource, "advert");
         AdvertClosingDate advertClosingDate = getClosingDateById(closingDateId);
 
         if (advert.getId().equals(advertClosingDate.getAdvert().getId())) {

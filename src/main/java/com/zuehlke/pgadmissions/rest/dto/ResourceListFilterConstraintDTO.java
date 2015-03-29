@@ -1,20 +1,24 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
-import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 
 public class ResourceListFilterConstraintDTO {
 
-	private ResourceListFilterProperty filterProperty;
+	private PrismResourceListFilter filterProperty;
 
-	private FilterExpression filterExpression;
+	private PrismResourceListFilterExpression filterExpression;
 
 	private Boolean negated;
 
@@ -34,19 +38,19 @@ public class ResourceListFilterConstraintDTO {
 
 	private BigDecimal valueDecimalClose;
 
-	public final ResourceListFilterProperty getFilterProperty() {
+	public final PrismResourceListFilter getFilterProperty() {
 		return filterProperty;
 	}
 
-	public final void setFilterProperty(ResourceListFilterProperty filterProperty) {
+	public final void setFilterProperty(PrismResourceListFilter filterProperty) {
 		this.filterProperty = filterProperty;
 	}
 
-	public final FilterExpression getFilterExpression() {
+	public final PrismResourceListFilterExpression getFilterExpression() {
 		return filterExpression;
 	}
 
-	public final void setFilterExpression(FilterExpression filterExpression) {
+	public final void setFilterExpression(PrismResourceListFilterExpression filterExpression) {
 		this.filterExpression = filterExpression;
 	}
 
@@ -130,12 +134,12 @@ public class ResourceListFilterConstraintDTO {
 		this.valueDecimalClose = valueDecimalClose;
 	}
 
-	public ResourceListFilterConstraintDTO withFilterProperty(ResourceListFilterProperty filterProperty) {
+	public ResourceListFilterConstraintDTO withFilterProperty(PrismResourceListFilter filterProperty) {
 		this.filterProperty = filterProperty;
 		return this;
 	}
 
-	public ResourceListFilterConstraintDTO withFilterExpression(FilterExpression filterExpression) {
+	public ResourceListFilterConstraintDTO withFilterExpression(PrismResourceListFilterExpression filterExpression) {
 		this.filterExpression = filterExpression;
 		return this;
 	}
@@ -178,6 +182,12 @@ public class ResourceListFilterConstraintDTO {
 	public ResourceListFilterConstraintDTO withValueDecimalClose(BigDecimal valueDecimalClose) {
 		this.valueDecimalClose = valueDecimalClose;
 		return this;
+	}
+
+	public Object[] getValues() {
+		Collection<Object> filterValues = Lists.<Object> newArrayList(valueString, valueDateStart, valueDateClose, valueStateGroup, valueReserveStatus,
+		        valueDecimalStart, valueDecimalClose);
+		return (Object[]) Collections2.filter(filterValues, Predicates.notNull()).toArray();
 	}
 
 }

@@ -43,7 +43,7 @@ import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
 import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
 import com.zuehlke.pgadmissions.mail.MailSender;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Service
 @Transactional
@@ -286,7 +286,7 @@ public class NotificationService {
 			if (!assignedResources.isEmpty()) {
 				notificationDAO.resetNotificationsSyndicated(user, scope, assignedResources);
 			}
-			ReflectionUtils.setProperty(user, "lastNotifiedDate" + scope.getUpperCamelName(), null);
+			PrismReflectionUtils.setProperty(user, "lastNotifiedDate" + scope.getUpperCamelName(), null);
 		}
 	}
 

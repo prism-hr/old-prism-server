@@ -46,7 +46,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.Applica
 import com.zuehlke.pgadmissions.rest.validation.validator.ApplicationValidator;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.DateTime;
@@ -145,7 +145,7 @@ public class ApplicationService {
 
     public Application create(User user, ApplicationDTO applicationDTO) throws Exception {
         Resource parentResource = entityService.getById(applicationDTO.getResourceScope().getResourceClass(), applicationDTO.getResourceId());
-        return new Application().withUser(user).withParentResource(parentResource).withAdvert((Advert) ReflectionUtils.getProperty(parentResource, "advert"))
+        return new Application().withUser(user).withParentResource(parentResource).withAdvert((Advert) PrismReflectionUtils.getProperty(parentResource, "advert"))
                 .withRetain(false).withCreatedTimestamp(new DateTime());
     }
 
@@ -435,7 +435,7 @@ public class ApplicationService {
                     PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_COVERING_LETTER_LABEL);
 
             for (Entry<String, PrismDisplayPropertyDefinition> documentProperty : documentProperties.entrySet()) {
-                Document document = (Document) ReflectionUtils.getProperty(applicationDocument, documentProperty.getKey());
+                Document document = (Document) PrismReflectionUtils.getProperty(applicationDocument, documentProperty.getKey());
                 if (document != null) {
                     summary.addDocument(new DocumentSummaryRepresentation().withId(document.getId()).withLabel(loader.load(documentProperty.getValue())));
                 }
@@ -494,14 +494,14 @@ public class ApplicationService {
                 String getMethod = "get" + WordUtils.capitalize(column.getAccessor()) + "Display";
                 switch (column.getAccessorType()) {
                     case DATE:
-                        value = (String) ReflectionUtils.invokeMethod(reportRow, getMethod, dateFormat);
+                        value = (String) PrismReflectionUtils.invokeMethod(reportRow, getMethod, dateFormat);
                         break;
                     case DISPLAY_PROPERTY:
-                        Enum<?> index = (Enum<?>) ReflectionUtils.invokeMethod(reportRow, getMethod);
-                        value = index == null ? "" : loader.load((PrismDisplayPropertyDefinition) ReflectionUtils.getProperty(index, "displayProperty"));
+                        Enum<?> index = (Enum<?>) PrismReflectionUtils.invokeMethod(reportRow, getMethod);
+                        value = index == null ? "" : loader.load((PrismDisplayPropertyDefinition) PrismReflectionUtils.getProperty(index, "displayProperty"));
                         break;
                     case STRING:
-                        value = (String) ReflectionUtils.invokeMethod(reportRow, getMethod);
+                        value = (String) PrismReflectionUtils.invokeMethod(reportRow, getMethod);
                         break;
                 }
                 row.addCell(value);
@@ -622,9 +622,9 @@ public class ApplicationService {
             applicationContext.getBean(ApplicationCopyHelper.class).copyApplication(application, previousApplication);
             BeanPropertyBindingResult errors = validateApplication(application);
             for (ObjectError error : errors.getAllErrors()) {
-                Object property = ReflectionUtils.getProperty(application, error.getObjectName());
+                Object property = PrismReflectionUtils.getProperty(application, error.getObjectName());
                 if (ApplicationSection.class.isAssignableFrom(property.getClass())) {
-                    ReflectionUtils.setProperty(property, "lastUpdatedTimestamp", null);
+                    PrismReflectionUtils.setProperty(property, "lastUpdatedTimestamp", null);
                 }
             }
         }

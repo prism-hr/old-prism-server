@@ -240,18 +240,25 @@ public class RoleDAO {
 		        .setMaxResults(1) //
 		        .uniqueResult();
 	}
-	
+
 	public List<UserRole> getUserRoleByRoleCategory(User user, PrismRoleCategory prismRoleCategory, PrismScope... excludedPrismScopes) {
-		Criteria criteria =  sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-				.createAlias("role", "role", JoinType.INNER_JOIN) //
-				.add(Restrictions.eq("user", user)) //
-				.add(Restrictions.eq("role.roleCategory", prismRoleCategory)); //
-		
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+		        .createAlias("role", "role", JoinType.INNER_JOIN) //
+		        .add(Restrictions.eq("user", user)) //
+		        .add(Restrictions.eq("role.roleCategory", prismRoleCategory)); //
+
 		for (PrismScope excludedPrismScope : excludedPrismScopes) {
 			criteria.add(Restrictions.isNull(excludedPrismScope.getLowerCamelName()));
 		}
-		
+
 		return (List<UserRole>) criteria.list();
+	}
+
+	public List<PrismRole> getRolesByScopes(PrismScope prismScope) {
+		return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(Role.class) //
+		        .setProjection(Projections.property("id")) //
+		        .add(Restrictions.eq("scope.id", prismScope)) //
+		        .list();
 	}
 
 }

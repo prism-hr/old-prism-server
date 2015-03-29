@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Service
 @Transactional
@@ -96,8 +96,8 @@ public class EntityService {
 
     @SuppressWarnings("unchecked")
     private <T extends UniqueEntity> T overwriteProperties(T persistentResource, T transientResource) {
-        Object persistentId = ReflectionUtils.getProperty(persistentResource, "id");
-        ReflectionUtils.setProperty(transientResource, "id", persistentId);
+        Object persistentId = PrismReflectionUtils.getProperty(persistentResource, "id");
+        PrismReflectionUtils.setProperty(transientResource, "id", persistentId);
         return (T) merge(transientResource);
     }
 

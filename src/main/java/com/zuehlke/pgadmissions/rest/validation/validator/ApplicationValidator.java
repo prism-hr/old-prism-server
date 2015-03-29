@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.ProgramService;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Component
 public class ApplicationValidator extends LocalValidatorFactoryBean implements Validator {
@@ -168,12 +168,12 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
     }
 
     private void validateRangeConstraint(Application application, String property, WorkflowPropertyConfiguration configuration, Errors errors) {
-        Collection<?> properties = (Collection<?>) ReflectionUtils.getProperty(application, property);
+        Collection<?> properties = (Collection<?>) PrismReflectionUtils.getProperty(application, property);
         validateRangeConstraint(configuration, property, properties.size(), errors);
     }
 
     private void validateImplodedRangeConstraint(Application application, String property, WorkflowPropertyConfiguration configuration, Errors errors) {
-        String properties = (String) ReflectionUtils.getProperty(application, property);
+        String properties = (String) PrismReflectionUtils.getProperty(application, property);
         if (properties == null || properties.isEmpty()) {
             validateRangeConstraint(configuration, property, 0, errors);
         } else {
@@ -184,9 +184,9 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
     private void validateDocumentConstraint(Application application, String property, String propertyDocument, WorkflowPropertyConfiguration configuration,
             Errors errors) throws Error {
         int i = 0;
-        Collection<?> instances = (Collection<?>) ReflectionUtils.getProperty(application, property);
+        Collection<?> instances = (Collection<?>) PrismReflectionUtils.getProperty(application, property);
         for (Object instance : instances) {
-            Document document = (Document) ReflectionUtils.getProperty(instance, propertyDocument);
+            Document document = (Document) PrismReflectionUtils.getProperty(instance, propertyDocument);
             validateRequiredConstraint(document, property + "[" + i + "]", propertyDocument, configuration, errors);
             i++;
         }
@@ -195,7 +195,7 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
     private void validateDocumentConstraint(Application application, String propertyDocument, WorkflowPropertyConfiguration configuration, Errors errors)
             throws Error {
         ApplicationDocument documents = application.getDocument();
-        Document document = documents == null ? null : (Document) ReflectionUtils.getProperty(documents, propertyDocument);
+        Document document = documents == null ? null : (Document) PrismReflectionUtils.getProperty(documents, propertyDocument);
         validateRequiredConstraint(document, "document", propertyDocument, configuration, errors);
     }
 

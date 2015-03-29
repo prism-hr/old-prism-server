@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.OrderBy;
@@ -456,7 +456,7 @@ public class Comment {
 	}
 
 	public void setResource(Resource resource) {
-		ReflectionUtils.setProperty(this, resource.getResourceScope().getLowerCamelName(), resource);
+		PrismReflectionUtils.setProperty(this, resource.getResourceScope().getLowerCamelName(), resource);
 	}
 
 	public Comment withId(Integer id) {

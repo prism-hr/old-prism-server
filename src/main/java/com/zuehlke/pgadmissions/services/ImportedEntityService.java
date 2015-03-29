@@ -66,7 +66,7 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.Programm
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
 import com.zuehlke.pgadmissions.rest.dto.application.ImportedInstitutionDTO;
 import com.zuehlke.pgadmissions.utils.ConversionUtils;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Service
 @Transactional(timeout = 600)
@@ -471,9 +471,9 @@ public class ImportedEntityService {
 			SimpleImportedEntity transientEntity = (SimpleImportedEntity) entityClass.newInstance();
 			transientEntity.setInstitution(institution);
 			transientEntity.setType(PrismImportedEntity.getByEntityClass(entityClass));
-			transientEntity.setCode((String) ReflectionUtils.getProperty(entityDefinition, "code"));
+			transientEntity.setCode((String) PrismReflectionUtils.getProperty(entityDefinition, "code"));
 
-			String name = (String) ReflectionUtils.getProperty(entityDefinition, "name");
+			String name = (String) PrismReflectionUtils.getProperty(entityDefinition, "name");
 			String nameClean = name.replace("\n", " ").replace("\r", " ").replace("\t", " ").replaceAll(" +", " ");
 			transientEntity.setName(nameClean);
 

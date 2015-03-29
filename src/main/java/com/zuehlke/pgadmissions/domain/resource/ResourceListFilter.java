@@ -18,8 +18,8 @@ import javax.persistence.UniqueConstraint;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
-import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
-import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterMatchMode;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterSortOrder;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 
@@ -44,11 +44,11 @@ public class ResourceListFilter implements UniqueEntity {
 
     @Column(name = "match_mode", nullable = false)
     @Enumerated(EnumType.STRING)
-    private FilterMatchMode matchMode;
+    private PrismResourceListFilterMatchMode matchMode;
 
     @Column(name = "sort_order", nullable = false)
     @Enumerated(EnumType.STRING)
-    private FilterSortOrder sortOrder;
+    private PrismResourceListFilterSortOrder sortOrder;
 
     @Column(name = "value_string")
     private String valueString;
@@ -90,19 +90,19 @@ public class ResourceListFilter implements UniqueEntity {
         this.urgentOnly = urgentOnly;
     }
 
-    public final FilterMatchMode getMatchMode() {
+    public final PrismResourceListFilterMatchMode getMatchMode() {
         return matchMode;
     }
 
-    public final void setMatchMode(FilterMatchMode matchMode) {
+    public final void setMatchMode(PrismResourceListFilterMatchMode matchMode) {
         this.matchMode = matchMode;
     }
 
-    public final FilterSortOrder getSortOrder() {
+    public final PrismResourceListFilterSortOrder getSortOrder() {
         return sortOrder;
     }
 
-    public final void setSortOrder(FilterSortOrder sortOrder) {
+    public final void setSortOrder(PrismResourceListFilterSortOrder sortOrder) {
         this.sortOrder = sortOrder;
     }
 
@@ -133,12 +133,12 @@ public class ResourceListFilter implements UniqueEntity {
         return this;
     }
 
-    public ResourceListFilter withMatchMode(FilterMatchMode matchMode) {
+    public ResourceListFilter withMatchMode(PrismResourceListFilterMatchMode matchMode) {
         this.matchMode = matchMode;
         return this;
     }
 
-    public ResourceListFilter withSortOrder(FilterSortOrder sortOrder) {
+    public ResourceListFilter withSortOrder(PrismResourceListFilterSortOrder sortOrder) {
         this.sortOrder = sortOrder;
         return this;
     }

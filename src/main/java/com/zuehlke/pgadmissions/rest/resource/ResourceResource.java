@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepr
 import com.zuehlke.pgadmissions.rest.representation.resource.SimpleResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
 import com.zuehlke.pgadmissions.services.*;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
@@ -147,7 +147,7 @@ public class ResourceResource {
             case PROJECT:
             case PROGRAM:
             case INSTITUTION:
-                ReflectionUtils.setProperty(representation, "resourceSummary", resourceService.getResourceSummary(resourceScope.getResourceClass(), resourceId));
+                PrismReflectionUtils.setProperty(representation, "resourceSummary", resourceService.getResourceSummary(resourceScope.getResourceClass(), resourceId));
                 break;
             default:
                 break;
@@ -196,7 +196,7 @@ public class ResourceResource {
 
             representation.setRaisesUpdateFlag(rowDTO.getUpdatedTimestamp().isAfter(baseline));
             representation.setSecondaryStateGroups(stateService.getSecondaryResourceStateGroups(resourceScope,
-                    (Integer) ReflectionUtils.getProperty(rowDTO, resourceScope.getLowerCamelName() + "Id")));
+                    (Integer) PrismReflectionUtils.getProperty(rowDTO, resourceScope.getLowerCamelName() + "Id")));
 
             representations.add(representation);
         }

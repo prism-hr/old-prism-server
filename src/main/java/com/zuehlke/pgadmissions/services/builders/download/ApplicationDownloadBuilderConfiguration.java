@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.services.builders.download;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Font.FontFamily;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 public class ApplicationDownloadBuilderConfiguration {
 
@@ -46,7 +46,7 @@ public class ApplicationDownloadBuilderConfiguration {
 
     private static final Font getFont(ApplicationDownloadBuilderFontSize size, ApplicationDownloadBuilderColor color, boolean bold) {
         String property = size.name() + "_FONT" + (color == null ? "" : "_" + color.name()) + (bold ? "_BOLD" : "");
-        return (Font) ReflectionUtils.getStaticProperty(ApplicationDownloadBuilderConfiguration.class, property);
+        return (Font) PrismReflectionUtils.getStaticProperty(ApplicationDownloadBuilderConfiguration.class, property);
     }
 
     public static enum ApplicationDownloadBuilderFontSize {

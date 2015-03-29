@@ -16,9 +16,9 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
-import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 
 @Entity
@@ -39,11 +39,11 @@ public class ResourceListFilterConstraint {
 
     @Column(name = "filter_property", nullable = false)
     @Enumerated(EnumType.STRING)
-    private ResourceListFilterProperty filterProperty;
+    private PrismResourceListFilter filterProperty;
 
     @Column(name = "filter_expression", nullable = false)
     @Enumerated(EnumType.STRING)
-    private FilterExpression filterExpression;
+    private PrismResourceListFilterExpression filterExpression;
 
     @Column(name = "negated", nullable = false)
     private Boolean negated;
@@ -92,19 +92,19 @@ public class ResourceListFilterConstraint {
         this.filter = filter;
     }
 
-    public final ResourceListFilterProperty getFilterProperty() {
+    public final PrismResourceListFilter getFilterProperty() {
         return filterProperty;
     }
 
-    public final void setFilterProperty(ResourceListFilterProperty filterProperty) {
+    public final void setFilterProperty(PrismResourceListFilter filterProperty) {
         this.filterProperty = filterProperty;
     }
 
-    public final FilterExpression getFilterExpression() {
+    public final PrismResourceListFilterExpression getFilterExpression() {
         return filterExpression;
     }
 
-    public final void setFilterExpression(FilterExpression filterExpression) {
+    public final void setFilterExpression(PrismResourceListFilterExpression filterExpression) {
         this.filterExpression = filterExpression;
     }
 
@@ -185,12 +185,12 @@ public class ResourceListFilterConstraint {
         return this;
     }
 
-    public ResourceListFilterConstraint withFilterProperty(ResourceListFilterProperty filterProperty) {
+    public ResourceListFilterConstraint withFilterProperty(PrismResourceListFilter filterProperty) {
         this.filterProperty = filterProperty;
         return this;
     }
 
-    public ResourceListFilterConstraint withFilterExpression(FilterExpression filterExpression) {
+    public ResourceListFilterConstraint withFilterExpression(PrismResourceListFilterExpression filterExpression) {
         this.filterExpression = filterExpression;
         return this;
     }

@@ -39,7 +39,7 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.Programm
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.NotificationService;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Component
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -146,7 +146,7 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
 
 		try {
 			Object unmarshalled = unmarshaller.unmarshal(fileUrl);
-			return (List<Object>) ReflectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbPropertyName());
+			return (List<Object>) PrismReflectionUtils.getProperty(unmarshalled, importedEntityType.getJaxbPropertyName());
 		} catch (Exception e) {
 			return null;
 		}

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.SEQUENCE_IDENTIFIER;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,19 +23,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -176,7 +176,7 @@ public class ResourceDAO {
 		addResourceListCustomJoins(scopeId, resourceReference, criteria);
 		criteria.add(Restrictions.in("id", assignedResources));
 
-		return ResourceListConstraintBuilder.appendLimitCriterion(criteria, filter, lastSequenceIdentifier, maxRecords)
+		return appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, maxRecords)
 		        .setResultTransformer(Transformers.aliasToBean(ResourceListRowDTO.class)) //
 		        .list();
 	}
@@ -194,8 +194,8 @@ public class ResourceDAO {
 		        .add(Restrictions.eqProperty("stateAction.state", "state")) //
 		        .add(Restrictions.eq("state.hidden", false));
 
-		ResourceListConstraintBuilder.appendFilterCriterion(criteria, conditions, filter);
-		ResourceListConstraintBuilder.appendLimitCriterion(criteria, filter, lastIdentifier, recordsToRetrieve);
+		appendResourceListFilterCriterion(criteria, conditions, filter);
+		appendResourceListLimitCriterion(criteria, filter, lastIdentifier, recordsToRetrieve);
 
 		return (List<Integer>) criteria.list();
 	}
@@ -216,14 +216,14 @@ public class ResourceDAO {
 		        .add(Restrictions.eqProperty("stateAction.state", "state")) //
 		        .add(Restrictions.eq("state.hidden", false));
 
-		ResourceListConstraintBuilder.appendFilterCriterion(criteria, conditions, filter);
-		ResourceListConstraintBuilder.appendLimitCriterion(criteria, filter, lastIdentifier, recordsToRetrieve);
+		appendResourceListFilterCriterion(criteria, conditions, filter);
+		appendResourceListLimitCriterion(criteria, filter, lastIdentifier, recordsToRetrieve);
 
 		return (List<Integer>) criteria.list();
 	}
 
-	public <T extends ResourceParent> List<Integer> getMatchingParentResources(PrismScope parentScopeId, String searchTerm) {
-		return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(parentScopeId.getResourceClass()) //
+	public List<Integer> getMatchingParentResources(PrismScope parentResourceScope, String searchTerm) {
+		return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(parentResourceScope.getResourceClass()) //
 		        .setProjection(Projections.property("id")) //
 		        .add(Restrictions.disjunction() //
 		                .add(Restrictions.ilike("code", searchTerm, MatchMode.ANYWHERE)) //
@@ -231,14 +231,14 @@ public class ResourceDAO {
 		        .list();
 	}
 
-	public List<Integer> getByMatchingUsersInRole(PrismScope scopeId, String searchTerm, PrismRole roleId) {
+	public List<Integer> getResourcesByMatchingUsersAndRole(PrismScope prismScope, String searchTerm, List<PrismRole> prismRoles) {
 		return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-		        .setProjection(Projections.property(scopeId.getLowerCamelName() + ".id")) //
+		        .setProjection(Projections.property(prismScope.getLowerCamelName() + ".id")) //
 		        .createAlias("user", "user", JoinType.INNER_JOIN) //
 		        .add(Restrictions.disjunction() //
 		                .add(Restrictions.ilike("user.fullName", searchTerm, MatchMode.ANYWHERE)) //
 		                .add(Restrictions.ilike("user.email", searchTerm, MatchMode.ANYWHERE))) //
-		        .add(Restrictions.eq("role.id", roleId)) //
+		        .add(Restrictions.in("role.id", prismRoles)) //
 		        .list();
 	}
 
@@ -290,6 +290,32 @@ public class ResourceDAO {
 				criteria.createAlias(tableName, tableName, JoinType.LEFT_OUTER_JOIN); //
 			}
 		}
+	}
+	
+	private static void appendResourceListFilterCriterion(Criteria criteria, Junction conditions, ResourceListFilterDTO filter) {
+		if (filter.isUrgentOnly()) {
+			criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
+		}
+
+		if (conditions != null) {
+			criteria.add(conditions);
+		}
+	}
+
+	private static Criteria appendResourceListLimitCriterion(Criteria criteria, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer recordsToRetrieve) {
+		PrismResourceListFilterSortOrder sortOrder = filter.getSortOrder();
+
+		if (lastSequenceIdentifier != null) {
+			criteria.add(PrismResourceListFilterSortOrder.getPagingRestriction(SEQUENCE_IDENTIFIER, sortOrder, lastSequenceIdentifier));
+		}
+
+		criteria.addOrder(PrismResourceListFilterSortOrder.getOrderExpression(SEQUENCE_IDENTIFIER, sortOrder));
+
+		if (recordsToRetrieve != null) {
+			criteria.setMaxResults(recordsToRetrieve);
+		}
+
+		return criteria;
 	}
 
 }

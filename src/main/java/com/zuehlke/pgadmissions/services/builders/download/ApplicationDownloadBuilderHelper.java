@@ -26,7 +26,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderColor;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Component
 public class ApplicationDownloadBuilderHelper {
@@ -66,8 +66,8 @@ public class ApplicationDownloadBuilderHelper {
 
     public void addContentRow(String title, String content, ApplicationDownloadBuilderFontSize fontSize, PdfPTable table) {
         String fontSizePostfix = WordUtils.capitalizeFully(fontSize.name());
-        table.addCell((PdfPCell) ReflectionUtils.invokeMethod(this, "newTitleCell" + fontSizePostfix, title));
-        table.addCell((PdfPCell) ReflectionUtils.invokeMethod(this, "newContentCell" + fontSizePostfix, content == null ? StringUtils.EMPTY : content));
+        table.addCell((PdfPCell) PrismReflectionUtils.invokeMethod(this, "newTitleCell" + fontSizePostfix, title));
+        table.addCell((PdfPCell) PrismReflectionUtils.invokeMethod(this, "newContentCell" + fontSizePostfix, content == null ? StringUtils.EMPTY : content));
     }
 
     public void closeSection(Document pdfDocument, PdfPTable body) throws DocumentException {

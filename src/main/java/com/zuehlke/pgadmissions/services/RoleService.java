@@ -40,7 +40,7 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Service
 @Transactional
@@ -168,7 +168,7 @@ public class RoleService {
 	}
 
 	public void executeDelegatedRoleTransitions(Resource resource, Comment comment) throws DeduplicationException {
-		ReflectionUtils.invokeMethod(this, ReflectionUtils.getMethodName(comment.getAction().getId(), "execute") + "RoleTransition", resource, comment);
+		PrismReflectionUtils.invokeMethod(this, PrismReflectionUtils.getMethodName(comment.getAction().getId(), "execute") + "RoleTransition", resource, comment);
 		entityService.flush();
 	}
 
@@ -296,6 +296,10 @@ public class RoleService {
 		validateUserRoleRemoval(resource, userRole.getRole());
 		entityService.delete(userRole);
 		reassignResourceOwner(resource);
+	}
+	
+	public List<PrismRole> getRolesByScope(PrismScope prismScope) {
+		return roleDAO.getRolesByScopes(prismScope);
 	}
 
 	private void validateUserRoleRemoval(Resource resource, Role roleToRemove) {

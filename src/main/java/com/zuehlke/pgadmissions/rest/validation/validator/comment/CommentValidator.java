@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguratio
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Component
 @SuppressWarnings("unchecked")
@@ -70,7 +70,7 @@ public class CommentValidator extends LocalValidatorFactoryBean implements Valid
             if (field != APPLICATION_RATING || validateRating) {
                 List<PrismActionValidationFieldResolution> resolutions = fieldDefinitions.get(field);
                 String propertyPath = field.getPropertyPath();
-                Object fieldValue = ReflectionUtils.getNestedProperty(comment, propertyPath, true);
+                Object fieldValue = PrismReflectionUtils.getNestedProperty(comment, propertyPath, true);
                 if (resolutions != null) {
                     for (PrismActionValidationFieldResolution fieldResolution : resolutions) {
                         switch (fieldResolution.getRestriction()) {

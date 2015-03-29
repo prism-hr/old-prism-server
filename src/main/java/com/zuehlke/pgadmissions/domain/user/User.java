@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Entity
 @Table(name = "USER")
@@ -337,11 +337,11 @@ public class User implements UserDetails, UniqueEntity {
 	}
 
 	public <T extends Resource> LocalDate getLastNotifiedDate(Class<T> resourceClass) {
-		return (LocalDate) ReflectionUtils.getProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName());
+		return (LocalDate) PrismReflectionUtils.getProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName());
 	}
 
 	public <T extends Resource> void setLastNotifiedDate(Class<T> resourceClass, LocalDate lastNotifiedDate) {
-		ReflectionUtils.setProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName(), lastNotifiedDate);
+		PrismReflectionUtils.setProperty(this, "lastNotifiedDate" + resourceClass.getSimpleName(), lastNotifiedDate);
 	}
 
 	public String getSearchEngineRepresentation() {

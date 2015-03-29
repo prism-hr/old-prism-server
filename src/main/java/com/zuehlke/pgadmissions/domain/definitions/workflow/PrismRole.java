@@ -69,4 +69,21 @@ public enum PrismRole {
 		return scopeOwners.get(scope);
 	}
 
+	public enum PrismRoleGroup {
+
+		SUPERVISOR(PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR, APPLICATION_SUGGESTED_SUPERVISOR, APPLICATION_PRIMARY_SUPERVISOR,
+		        APPLICATION_SECONDARY_SUPERVISOR);
+
+		private PrismRole[] roles;
+
+		private PrismRoleGroup(PrismRole... roles) {
+			this.roles = roles;
+		}
+
+		public PrismRole[] getRoles() {
+			return roles;
+		}
+
+	}
+
 }

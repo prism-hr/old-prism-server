@@ -1,17 +1,14 @@
-package com.zuehlke.pgadmissions.workflow.recommenders.user;
+package com.zuehlke.pgadmissions.workflow.selectors;
 
 import java.util.List;
-
-import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 
-@Component
-public class RefereeRecommender implements UserRecommender {
+public class RecruiterSelector implements PrismSelector<User> {
 
 	@Override
-    public List<User> getPreselected(Resource resource) {
+    public List<User> getSelected(Resource resource) {
 	    // TODO Auto-generated method stub
 	    return null;
     }
@@ -23,7 +20,7 @@ public class RefereeRecommender implements UserRecommender {
     }
 
 	@Override
-    public List<User> getPotential(Resource resource) {
+    public List<User> getPossible(Resource resource) {
 	    // TODO Auto-generated method stub
 	    return null;
     }

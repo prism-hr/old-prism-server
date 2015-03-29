@@ -2,41 +2,72 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.definitions.FilterExpression;
-import com.zuehlke.pgadmissions.domain.definitions.FilterPropertyType;
-import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class FilterRepresentation {
 
-    private ResourceListFilterProperty propertyName;
+	private PrismResourceListFilter propertyName;
 
-    private List<FilterExpression> permittedExpressions;
+	private List<FilterExpressionRepresentation> permittedExpressions;
 
-    private FilterPropertyType valueType;
+	private PrismResourceListFilterPropertyType valueType;
 
-    private List<PrismScope> permittedScopes;
+	private List<PrismScope> permittedScopes;
 
-    public FilterRepresentation(ResourceListFilterProperty propertyName, List<FilterExpression> permittedExpressions, FilterPropertyType valueType, List<PrismScope> permittedScopes) {
-        this.propertyName = propertyName;
-        this.permittedExpressions = permittedExpressions;
-        this.valueType = valueType;
-        this.permittedScopes = permittedScopes;
-    }
+	public FilterRepresentation(PrismResourceListFilter propertyName, List<FilterExpressionRepresentation> permittedExpressions,
+	        PrismResourceListFilterPropertyType valueType, List<PrismScope> permittedScopes) {
+		this.propertyName = propertyName;
+		this.permittedExpressions = permittedExpressions;
+		this.valueType = valueType;
+		this.permittedScopes = permittedScopes;
+	}
 
-    public ResourceListFilterProperty getPropertyName() {
-        return propertyName;
-    }
+	public PrismResourceListFilter getPropertyName() {
+		return propertyName;
+	}
 
-    public List<FilterExpression> getPermittedExpressions() {
-        return permittedExpressions;
-    }
+	public List<FilterExpressionRepresentation> getPermittedExpressions() {
+		return permittedExpressions;
+	}
 
-    public FilterPropertyType getValueType() {
-        return valueType;
-    }
+	public PrismResourceListFilterPropertyType getValueType() {
+		return valueType;
+	}
 
-    public List<PrismScope> getPermittedScopes() {
-        return permittedScopes;
-    }
+	public List<PrismScope> getPermittedScopes() {
+		return permittedScopes;
+	}
+
+	public static class FilterExpressionRepresentation {
+
+		private PrismResourceListFilterExpression expressionName;
+
+		private boolean negatable;
+		
+		public FilterExpressionRepresentation(PrismResourceListFilterExpression expressionName, boolean negatable) {
+	        this.expressionName = expressionName;
+	        this.negatable = negatable;
+        }
+
+		public PrismResourceListFilterExpression getExpressionName() {
+			return expressionName;
+		}
+
+		public void setExpressionName(PrismResourceListFilterExpression expressionName) {
+			this.expressionName = expressionName;
+		}
+
+		public boolean isNegatable() {
+			return negatable;
+		}
+
+		public void setNegatable(boolean negatable) {
+			this.negatable = negatable;
+		}
+
+	}
+
 }

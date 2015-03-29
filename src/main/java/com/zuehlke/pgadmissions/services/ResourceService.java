@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterMatchMode.ANY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 
@@ -33,16 +34,13 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.ResourceListFilterProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -76,10 +74,10 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
-import com.zuehlke.pgadmissions.services.builders.ResourceListConstraintBuilder;
+import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Service
 @Transactional
@@ -141,6 +139,9 @@ public class ResourceService {
 	private CustomizationService customizationService;
 
 	@Inject
+	private PrismResourceListConstraintBuilder resourceListConstraintBuilder;
+
+	@Inject
 	private ApplicationContext applicationContext;
 
 	public <T extends Resource> T getById(Class<T> resourceClass, Integer id) {
@@ -190,7 +191,7 @@ public class ResourceService {
 			resource.setUpdatedTimestamp(baseline);
 
 			if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
-				ReflectionUtils.setProperty(resource, "updatedTimestampSitemap", baseline);
+				PrismReflectionUtils.setProperty(resource, "updatedTimestampSitemap", baseline);
 			}
 
 			switch (resource.getResourceScope()) {
@@ -521,119 +522,23 @@ public class ResourceService {
 		}
 	}
 
-	private Junction getFilterConditions(PrismScope scopeId, ResourceListFilterDTO filter) {
-		if (filter.hasConstraints()) {
-			Junction conditions = Restrictions.conjunction();
-			if (filter.getMatchMode() == FilterMatchMode.ANY) {
-				conditions = Restrictions.disjunction();
-			}
-
-			for (ResourceListFilterConstraintDTO constraint : filter.getConstraints()) {
-				ResourceListFilterProperty property = constraint.getFilterProperty();
-
-				if (ResourceListFilterProperty.isPermittedFilterProperty(scopeId, property)) {
-					String propertyName = property.getPropertyName();
-					Boolean negated = BooleanUtils.toBoolean(constraint.getNegated());
-					switch (property) {
-					case CLOSING_DATE:
-					case CONFIRMED_START_DATE:
-					case DUE_DATE:
-						ResourceListConstraintBuilder.appendDateFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
-						        constraint.getValueDateStart(), constraint.getValueDateClose(), negated);
-						break;
-					case CODE:
-					case REFERRER:
-						ResourceListConstraintBuilder.appendStringFilterCriterion(conditions, propertyName, constraint.getValueString(), negated);
-						break;
-					case CREATED_TIMESTAMP:
-					case UPDATED_TIMESTAMP:
-						ResourceListConstraintBuilder.appendDateTimeFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
-						        constraint.computeValueDateTimeStart(), constraint.computeValueDateTimeClose(), negated);
-						break;
-					case INSTITUTION_TITLE:
-					case PROGRAM_TITLE:
-					case PROJECT_TITLE:
-						List<Integer> parentResourceIds = resourceDAO.getMatchingParentResources(PrismScope.valueOf(property.name().replace("_TITLE", "")),
-						        constraint.getValueString());
-						ResourceListConstraintBuilder.appendPropertyInFilterCriterion(conditions, propertyName, parentResourceIds, negated);
-						break;
-					case TITLE:
-						ResourceListConstraintBuilder.appendStringFilterCriterion(conditions, propertyName, constraint.getValueString(), negated);
-						break;
-					case RATING:
-						ResourceListConstraintBuilder.appendDecimalFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
-						        constraint.getValueDecimalStart(), constraint.getValueDecimalClose(), negated);
-						break;
-					case STATE_GROUP_TITLE:
-						List<PrismState> stateIds = stateService.getStatesByStateGroup(constraint.getValueStateGroup());
-						ResourceListConstraintBuilder.appendPropertyInFilterCriterion(conditions, propertyName, stateIds, negated);
-						break;
-					case SUBMITTED_TIMESTAMP:
-						ResourceListConstraintBuilder.appendDateTimeFilterCriterion(conditions, propertyName, constraint.getFilterExpression(),
-						        constraint.computeValueDateTimeStart(), constraint.computeValueDateTimeClose(), negated);
-						break;
-					case USER:
-						List<Integer> userIds = userService.getMatchingUsers(constraint.getValueString());
-						ResourceListConstraintBuilder.appendPropertyInFilterCriterion(conditions, propertyName, userIds, negated);
-						break;
-					case STUDY_AREA:
-					case STUDY_DIVISION:
-					case STUDY_LOCATION:
-					case STUDY_APPLICATION:
-					case PRIMARY_THEME:
-					case SECONDARY_THEME:
-						ResourceListConstraintBuilder.appendStringFilterCriterion(conditions, propertyName, constraint.getValueString(), negated);
-						break;
-					case SUPERVISOR:
-						appendUserRoleFilterCriteria(scopeId, conditions, constraint, propertyName, Arrays.asList(PrismRole.PROJECT_PRIMARY_SUPERVISOR,
-						        PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.APPLICATION_SUGGESTED_SUPERVISOR, PrismRole.APPLICATION_PRIMARY_SUPERVISOR,
-						        PrismRole.APPLICATION_SECONDARY_SUPERVISOR), negated);
-						break;
-					case PROJECT_USER:
-						appendUserRoleFilterCriteria(scopeId, conditions, constraint, propertyName,
-						        Arrays.asList(PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROJECT_SECONDARY_SUPERVISOR, PrismRole.PROJECT_ADMINISTRATOR),
-						        negated);
-						break;
-					case PROGRAM_USER:
-						appendUserRoleFilterCriteria(scopeId, conditions, constraint, propertyName,
-						        Arrays.asList(PrismRole.PROGRAM_ADMINISTRATOR, PrismRole.PROGRAM_APPROVER, PrismRole.PROGRAM_VIEWER), negated);
-						break;
-					case INSTITUTION_USER:
-						appendUserRoleFilterCriteria(scopeId, conditions, constraint, propertyName,
-						        Arrays.asList(PrismRole.INSTITUTION_ADMINISTRATOR, PrismRole.INSTITUTION_ADMITTER), negated);
-						break;
-					case RESERVE_STATUS:
-						ResourceListConstraintBuilder.appendEnumFilterCriterion(conditions, propertyName, constraint.getValueReserveStatus(), negated);
-						break;
-					default:
-						break;
-					}
-				} else {
-					ResourceListConstraintBuilder.throwResourceFilterListMissingPropertyError(scopeId, property);
-				}
-			}
-
-			return conditions;
-		}
-		return null;
+	public List<Integer> getResourcesByUserMatchingUserAndRole(PrismScope prismScope, String searchTerm, List<PrismRole> prismRoles) {
+		return resourceDAO.getResourcesByMatchingUsersAndRole(prismScope, searchTerm, prismRoles);
 	}
 
-	private void appendUserRoleFilterCriteria(PrismScope scopeId, Junction conditions, ResourceListFilterConstraintDTO constraint, String propertyName,
-	        List<PrismRole> valueRoles, Boolean negated) {
-		boolean doAddCondition = false;
-		Junction inCondition = negated ? Restrictions.conjunction() : Restrictions.disjunction();
-		for (PrismRole valueRole : valueRoles) {
-			PrismScope roleScope = valueRole.getScope();
-			String actualPropertyName = scopeId == roleScope ? propertyName : roleScope.getLowerCamelName();
-			List<Integer> resourceIds = resourceDAO.getByMatchingUsersInRole(scopeId, constraint.getValueString(), valueRole);
-			if (!resourceIds.isEmpty()) {
-				ResourceListConstraintBuilder.appendPropertyInFilterCriterion(inCondition, actualPropertyName, resourceIds, negated);
-				doAddCondition = true;
+	public List<Integer> getResourcesByMatchingParentResource(PrismScope parentResourceScope, String searchTerm) {
+		return resourceDAO.getMatchingParentResources(parentResourceScope, searchTerm);
+	}
+
+	private Junction getFilterConditions(PrismScope resourceScope, ResourceListFilterDTO filter) {
+		Junction conditions = null;
+		if (filter.hasConstraints()) {
+			conditions = filter.getMatchMode() == ANY ? Restrictions.disjunction() : Restrictions.conjunction();
+			for (ResourceListFilterConstraintDTO constraint : filter.getConstraints()) {
+				resourceListConstraintBuilder.appendFilter(conditions, resourceScope, constraint);
 			}
 		}
-		if (doAddCondition) {
-			conditions.add(inCondition);
-		}
+		return conditions;
 	}
 
 	private void createOrUpdateStateTransitionSummary(Resource resource, DateTime baselineTime) {

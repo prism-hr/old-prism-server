@@ -4,14 +4,14 @@ import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
 
-import com.zuehlke.pgadmissions.domain.definitions.FilterMatchMode;
-import com.zuehlke.pgadmissions.domain.definitions.FilterSortOrder;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterMatchMode;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterSortOrder;
 
 public class ResourceListFilterDTO {
 
-    private FilterMatchMode matchMode;
+    private PrismResourceListFilterMatchMode matchMode;
 
-    private FilterSortOrder sortOrder;
+    private PrismResourceListFilterSortOrder sortOrder;
 
     private String valueString;
 
@@ -19,19 +19,19 @@ public class ResourceListFilterDTO {
 
     private List<ResourceListFilterConstraintDTO> constraints;
 
-    public final FilterMatchMode getMatchMode() {
+    public final PrismResourceListFilterMatchMode getMatchMode() {
         return matchMode;
     }
 
-    public final void setMatchMode(FilterMatchMode matchMode) {
+    public final void setMatchMode(PrismResourceListFilterMatchMode matchMode) {
         this.matchMode = matchMode;
     }
 
-    public final FilterSortOrder getSortOrder() {
+    public final PrismResourceListFilterSortOrder getSortOrder() {
         return sortOrder;
     }
 
-    public final void setSortOrder(FilterSortOrder sortOrder) {
+    public final void setSortOrder(PrismResourceListFilterSortOrder sortOrder) {
         this.sortOrder = sortOrder;
     }
 
@@ -65,12 +65,12 @@ public class ResourceListFilterDTO {
         return this;
     }
 
-    public ResourceListFilterDTO withMatchMode(FilterMatchMode matchMode) {
+    public ResourceListFilterDTO withMatchMode(PrismResourceListFilterMatchMode matchMode) {
         this.matchMode = matchMode;
         return this;
     }
 
-    public ResourceListFilterDTO withSortOrder(FilterSortOrder sortOrder) {
+    public ResourceListFilterDTO withSortOrder(PrismResourceListFilterSortOrder sortOrder) {
         this.sortOrder = sortOrder;
         return this;
     }

@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Entity
 @Table(name = "APPLICATION_PROCESSING_SUMMARY", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_id", "state_group_id"}),
@@ -138,7 +138,7 @@ public class ApplicationProcessingSummary implements UniqueEntity {
         this.institution = null;
         this.program = null;
         this.project = null;
-        ReflectionUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
+        PrismReflectionUtils.setProperty(this, resource.getClass().getSimpleName().toLowerCase(), resource);
     }
 
     public ApplicationProcessingSummary withResource(Resource resource) {

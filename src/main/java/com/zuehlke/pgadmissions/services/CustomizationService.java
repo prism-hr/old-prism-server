@@ -42,7 +42,7 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import com.zuehlke.pgadmissions.utils.ReflectionUtils;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Service
 @Transactional
@@ -326,7 +326,7 @@ public class CustomizationService {
         if (WorkflowConfigurationVersioned.class.isAssignableFrom(configurationClass)) {
             WorkflowConfiguration configuration = getConfigurationWithVersion(configurationType, definitionId,
                     resource.getWorkflowPropertyConfigurationVersion());
-            return configuration != null && BooleanUtils.isTrue((Boolean) ReflectionUtils.getProperty(configuration, "enabled"));
+            return configuration != null && BooleanUtils.isTrue((Boolean) PrismReflectionUtils.getProperty(configuration, "enabled"));
         }
         throw new Error();
     }
@@ -339,7 +339,7 @@ public class CustomizationService {
         configuration.setResource(resource);
         configuration.setLocale(locale);
         configuration.setProgramType(programType);
-        ReflectionUtils.setProperty(configuration, configurationType.getDefinitionPropertyName(), definition);
+        PrismReflectionUtils.setProperty(configuration, configurationType.getDefinitionPropertyName(), definition);
         configuration.setSystemDefault(isSystemDefault(definition, locale, programType));
         return configuration;
     }
@@ -402,31 +402,31 @@ public class CustomizationService {
         Integer version = null;
         for (WorkflowConfigurationDTO valueDTO : valueDTOs) {
             WorkflowConfiguration transientConfiguration = createConfiguration(configurationType, resource, locale, programType, valueDTO);
-            ReflectionUtils.setProperty(transientConfiguration, "active", true);
+            PrismReflectionUtils.setProperty(transientConfiguration, "active", true);
 
             WorkflowConfiguration persistentConfiguration;
             if (version == null) {
                 entityService.save(transientConfiguration);
                 persistentConfiguration = transientConfiguration;
             } else {
-                ReflectionUtils.setProperty(transientConfiguration, "version", version);
+                PrismReflectionUtils.setProperty(transientConfiguration, "version", version);
                 persistentConfiguration = entityService.createOrUpdate(transientConfiguration);
             }
 
             version = version == null ? persistentConfiguration.getId() : version;
-            ReflectionUtils.setProperty(persistentConfiguration, "version", version);
+            PrismReflectionUtils.setProperty(persistentConfiguration, "version", version);
         }
     }
 
     private void localizeConfiguration(WorkflowConfigurationRepresentation representation, WorkflowDefinition definition, PropertyLoader loader) {
-        if (ReflectionUtils.hasProperty(representation, "category")) {
-            ReflectionUtils.setProperty(representation, "category", ReflectionUtils.getProperty(definition, "category"));
+        if (PrismReflectionUtils.hasProperty(representation, "category")) {
+            PrismReflectionUtils.setProperty(representation, "category", PrismReflectionUtils.getProperty(definition, "category"));
         }
 
-        ReflectionUtils.setProperty(representation, "label",
-                loader.load((PrismDisplayPropertyDefinition) ReflectionUtils.getProperty(definition.getId(), "label")));
-        ReflectionUtils.setProperty(representation, "tooltip",
-                loader.load((PrismDisplayPropertyDefinition) ReflectionUtils.getProperty(definition.getId(), "tooltip")));
+        PrismReflectionUtils.setProperty(representation, "label",
+                loader.load((PrismDisplayPropertyDefinition) PrismReflectionUtils.getProperty(definition.getId(), "label")));
+        PrismReflectionUtils.setProperty(representation, "tooltip",
+                loader.load((PrismDisplayPropertyDefinition) PrismReflectionUtils.getProperty(definition.getId(), "tooltip")));
     }
 
     private PrismProgramType getConfiguredProgramType(Resource resource, PrismProgramType programType) {

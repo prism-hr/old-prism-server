@@ -16,9 +16,9 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 
 @Entity

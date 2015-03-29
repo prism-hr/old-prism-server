@@ -1,17 +1,17 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.APPLICATION_RESERVE_STATUS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.DATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.DATE_TIME;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.DECIMAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.STATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.STRING;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.BETWEEN;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.CONTAIN;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.EQUAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.GREATER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.LESSER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.NOT_SPECIFIED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.APPLICATION_RESERVE_STATUS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.DATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.DATE_TIME;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.DECIMAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.STATE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.STRING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;

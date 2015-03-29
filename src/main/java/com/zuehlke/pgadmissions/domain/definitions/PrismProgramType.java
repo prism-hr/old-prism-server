@@ -1,20 +1,17 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_TYPE_EMPLOYMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_TYPE_EMPLOYMENT_SECONDMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_RESEARCH;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_TAUGHT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_TYPE_SCHOLARSHIP_UNDERGRADUATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_TYPE_STUDY_POSTGRADUATE_RESEARCH;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_TYPE_STUDY_POSTGRADUATE_TAUGHT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_TYPE_STUDY_UNDERGRADUATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_TYPE_TRAINING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_TYPE_WORK_EXPERIENCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.EXPERIENCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.FUNDING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.LEARNING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.STUDY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.WORK;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
+import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
+import org.joda.time.LocalDate;
+
+import java.util.List;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.*;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramTypeVisibility.EXTERNAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramTypeVisibility.INTERNAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.IMMEDIATE;
@@ -22,32 +19,22 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramS
 import static org.joda.time.DateTimeConstants.MONDAY;
 import static org.joda.time.DateTimeConstants.SEPTEMBER;
 
-import java.util.List;
-import java.util.Set;
-
-import org.joda.time.LocalDate;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
-import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
-
 public enum PrismProgramType {
 
-    STUDY_UNDERGRADUATE(STUDY, 36, 48, EXTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3, PROGRAM_TYPE_STUDY_UNDERGRADUATE, new String[] {}), //
-    STUDY_POSTGRADUATE_TAUGHT(STUDY, 12, 24, EXTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3, PROGRAM_TYPE_STUDY_POSTGRADUATE_TAUGHT, new String[] {}), //
-    STUDY_POSTGRADUATE_RESEARCH(STUDY, 12, 48, EXTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3, PROGRAM_TYPE_STUDY_POSTGRADUATE_RESEARCH, new String[] {
+    STUDY_UNDERGRADUATE(STUDY, 36, 48, EXTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3, SYSTEM_PROGRAM_TYPE_STUDY_UNDERGRADUATE, new String[] {}), //
+    STUDY_POSTGRADUATE_TAUGHT(STUDY, 12, 24, EXTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3, SYSTEM_PROGRAM_TYPE_STUDY_POSTGRADUATE_TAUGHT, new String[] {}), //
+    STUDY_POSTGRADUATE_RESEARCH(STUDY, 12, 48, EXTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3, SYSTEM_PROGRAM_TYPE_STUDY_POSTGRADUATE_RESEARCH, new String[] {
             "mres", "md(res)", "research degree", "engineering doctorate", "dpa" }), //
-    SCHOLARSHIP_UNDERGRADUATE(FUNDING, 36, 48, INTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 1, PROGRAM_TYPE_SCHOLARSHIP_UNDERGRADUATE, new String[] {}), //
-    SCHOLARSHIP_POSTGRADUATE_TAUGHT(FUNDING, 12, 24, INTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3, PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_TAUGHT,
+    SCHOLARSHIP_UNDERGRADUATE(FUNDING, 36, 48, INTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 1, SYSTEM_PROGRAM_TYPE_SCHOLARSHIP_UNDERGRADUATE, new String[] {}), //
+    SCHOLARSHIP_POSTGRADUATE_TAUGHT(FUNDING, 12, 24, INTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3, SYSTEM_PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_TAUGHT,
             new String[] {}), //
-    SCHOLARSHIP_POSTGRADUATE_RESEARCH(FUNDING, 12, 48, INTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3, PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_RESEARCH,
+    SCHOLARSHIP_POSTGRADUATE_RESEARCH(FUNDING, 12, 48, INTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3, SYSTEM_PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_RESEARCH,
             new String[] {}), //
-    WORK_EXPERIENCE(EXPERIENCE, null, null, EXTERNAL, IMMEDIATE, null, null, MONDAY, 4, 1, PROGRAM_TYPE_WORK_EXPERIENCE, new String[] {}), //
-    EMPLOYMENT(WORK, null, null, EXTERNAL, IMMEDIATE, null, null, MONDAY, 4, 1, PROGRAM_TYPE_EMPLOYMENT, new String[] {}), //
-    EMPLOYMENT_SECONDMENT(WORK, null, null, INTERNAL, IMMEDIATE, null, null, MONDAY, 4, 1, PROGRAM_TYPE_EMPLOYMENT_SECONDMENT,
+    WORK_EXPERIENCE(EXPERIENCE, null, null, EXTERNAL, IMMEDIATE, null, null, MONDAY, 4, 1, SYSTEM_PROGRAM_TYPE_WORK_EXPERIENCE, new String[] {}), //
+    EMPLOYMENT(WORK, null, null, EXTERNAL, IMMEDIATE, null, null, MONDAY, 4, 1, SYSTEM_PROGRAM_TYPE_EMPLOYMENT, new String[] {}), //
+    EMPLOYMENT_SECONDMENT(WORK, null, null, INTERNAL, IMMEDIATE, null, null, MONDAY, 4, 1, SYSTEM_PROGRAM_TYPE_EMPLOYMENT_SECONDMENT,
             new String[] { "visiting research" }), //
-    TRAINING(LEARNING, null, null, INTERNAL, IMMEDIATE, null, null, MONDAY, 4, 1, PROGRAM_TYPE_TRAINING, new String[] {}); //
+    TRAINING(LEARNING, null, null, INTERNAL, IMMEDIATE, null, null, MONDAY, 4, 1, SYSTEM_PROGRAM_TYPE_TRAINING, new String[] {}); //
 
     private PrismProgramCategory programCategory;
 
@@ -77,7 +64,7 @@ public enum PrismProgramType {
 
     private static final HashMultimap<PrismProgramType, PrismProgramTypeRecommendation> recommendations = HashMultimap.create();
 
-    private static final HashMultimap<PrismProgramCategory, PrismProgramType> programTypesByCategory = HashMultimap.create();
+    private static final LinkedListMultimap<PrismProgramCategory, PrismProgramType> programTypesByCategory = LinkedListMultimap.create();
 
     private static final List<String> stringValues = Lists.newArrayList();
 
@@ -138,7 +125,7 @@ public enum PrismProgramType {
         }
     }
 
-    private PrismProgramType(PrismProgramCategory programClass, Integer defaultMinimumDurationMonth, Integer defaultMaximumDurationMonth,
+    PrismProgramType(PrismProgramCategory programClass, Integer defaultMinimumDurationMonth, Integer defaultMaximumDurationMonth,
             PrismProgramTypeVisibility defaultVisibility, PrismProgramStartType defaultStartType, Integer defaultStartMonth, Integer defaultStartWeek,
             Integer defaultStartDay, Integer defaultStartDelay, Integer defaultStartBuffer, PrismDisplayPropertyDefinition displayProperty, String[] prefixes) {
         this.programCategory = programClass;
@@ -155,47 +142,47 @@ public enum PrismProgramType {
         this.prefixes = prefixes;
     }
 
-    public final PrismProgramCategory getProgramCategory() {
+    public PrismProgramCategory getProgramCategory() {
         return programCategory;
     }
 
-    public final Integer getDefaultMinimumDurationMonth() {
+    public Integer getDefaultMinimumDurationMonth() {
         return defaultMinimumDurationMonth;
     }
 
-    public final Integer getDefaultMaximumDurationMonth() {
+    public Integer getDefaultMaximumDurationMonth() {
         return defaultMaximumDurationMonth;
     }
 
-    public final PrismProgramTypeVisibility getDefaultVisibility() {
+    public PrismProgramTypeVisibility getDefaultVisibility() {
         return defaultVisibility;
     }
 
-    public final PrismProgramStartType getDefaultStartType() {
+    public PrismProgramStartType getDefaultStartType() {
         return defaultStartType;
     }
 
-    public final Integer getDefaultStartMonth() {
+    public Integer getDefaultStartMonth() {
         return defaultStartMonth;
     }
 
-    public final Integer getDefaultStartWeek() {
+    public Integer getDefaultStartWeek() {
         return defaultStartWeek;
     }
 
-    public final Integer getDefaultStartDay() {
+    public Integer getDefaultStartDay() {
         return defaultStartDay;
     }
 
-    public final Integer getDefaultStartDelay() {
+    public Integer getDefaultStartDelay() {
         return defaultStartDelay;
     }
 
-    public final Integer getDefaultStartBuffer() {
+    public Integer getDefaultStartBuffer() {
         return defaultStartBuffer;
     }
 
-    public final PrismDisplayPropertyDefinition getDisplayProperty() {
+    public PrismDisplayPropertyDefinition getDisplayProperty() {
         return displayProperty;
     }
 
@@ -240,7 +227,7 @@ public enum PrismProgramType {
         return recommendations.get(this);
     }
 
-    public static Set<PrismProgramType> getProgramTypes(PrismProgramCategory programCategory) {
+    public static List<PrismProgramType> getProgramTypes(PrismProgramCategory programCategory) {
         return programTypesByCategory.get(programCategory);
     }
 

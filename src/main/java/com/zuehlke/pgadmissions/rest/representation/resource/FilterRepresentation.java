@@ -2,9 +2,9 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class FilterRepresentation {

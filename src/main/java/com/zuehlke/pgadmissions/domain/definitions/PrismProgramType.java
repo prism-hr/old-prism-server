@@ -1,23 +1,37 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
-import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
-import org.joda.time.LocalDate;
-
-import java.util.List;
-import java.util.Set;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.*;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_TYPE_EMPLOYMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_TYPE_EMPLOYMENT_SECONDMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_RESEARCH;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_TAUGHT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_TYPE_SCHOLARSHIP_UNDERGRADUATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_TYPE_STUDY_POSTGRADUATE_RESEARCH;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_TYPE_STUDY_POSTGRADUATE_TAUGHT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_TYPE_STUDY_UNDERGRADUATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_TYPE_TRAINING;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_TYPE_WORK_EXPERIENCE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.EXPERIENCE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.FUNDING;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.LEARNING;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.STUDY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.WORK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramTypeVisibility.EXTERNAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramTypeVisibility.INTERNAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.IMMEDIATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
 import static org.joda.time.DateTimeConstants.MONDAY;
 import static org.joda.time.DateTimeConstants.SEPTEMBER;
+
+import java.util.List;
+import java.util.Set;
+
+import org.joda.time.LocalDate;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
+import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
 
 public enum PrismProgramType {
 

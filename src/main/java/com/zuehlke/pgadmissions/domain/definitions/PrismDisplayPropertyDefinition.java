@@ -1,78 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ACTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDITIONAL_INFORMATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDRESS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_DOCUMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_EMPLOYMENT_POSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FORM;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FUNDING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PERSONAL_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PRIZE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_QUALIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REPORT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_STUDY_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_ADVERT_CATEGORIES;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_ADVERT_CLOSING_DATES;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_ADVERT_DETAILS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_ADVERT_FEES_AND_PAYMENTS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_FORM;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ACCOUNT_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ACTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ACTION_CONFIRMATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERTISE_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_DOMAIN;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_FUNCTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_INDUSTRY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DECLINE_ACTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_EXPRESSION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_PROPERTY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_ADDRESS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_COMMON;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_FIELDS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_GENERAL_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_MANAGE_USERS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_WORKFLOW_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_INTEGRATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_LOCALE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION_TEMPLATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_PROGRAM_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_PROGRAM_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REFEREE_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESERVE_STATUS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCES_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ROLE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STUDY_OPTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_WORKFLOW;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_YES_NO_UNSURE;
-
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.*;
 
 public enum PrismDisplayPropertyDefinition {
 
@@ -326,7 +260,7 @@ public enum PrismDisplayPropertyDefinition {
     SYSTEM_ROLE_SYSTEM_ADMINISTRATOR(SYSTEM_ROLE, "Administrator"),
 
 	/*
-	 * *************** SYSTEM PROGRAM TYPE *********************
+     * *************** SYSTEM PROGRAM TYPE *********************
 	 */
 
     SYSTEM_PROGRAM_TYPE_STUDY_UNDERGRADUATE(SYSTEM_PROGRAM_TYPE, "Undergraduate Study"),
@@ -341,7 +275,7 @@ public enum PrismDisplayPropertyDefinition {
     SYSTEM_PROGRAM_TYPE_TRAINING(SYSTEM_PROGRAM_TYPE, "Training"),
 
 	/*
-	 * *************** SYSTEM YES NO UNSURE *********************
+     * *************** SYSTEM YES NO UNSURE *********************
 	 */
 
     SYSTEM_YES_NO_UNSURE_YES(SYSTEM_YES_NO_UNSURE, "Yes"),
@@ -349,7 +283,7 @@ public enum PrismDisplayPropertyDefinition {
     SYSTEM_YES_NO_UNSURE_UNSURE(SYSTEM_YES_NO_UNSURE, "Unsure"),
 
 	/*
-	 * *************** SYSTEM STUDY OPTION *********************
+     * *************** SYSTEM STUDY OPTION *********************
 	 */
 
     SYSTEM_STUDY_OPTION_FULL_TIME(SYSTEM_STUDY_OPTION, "Full Time"),
@@ -673,25 +607,20 @@ public enum PrismDisplayPropertyDefinition {
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_COMPLETE_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Complete Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_COMPLETE_REQUEST(SYSTEM_NOTIFICATION_TEMPLATE, "Complete Request"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_COMPLETE_REQUEST_REMINDER(SYSTEM_NOTIFICATION_TEMPLATE, "Complete Request Reminder"),
-    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE,
-            "Confirm Interview Arrangements Notification"),
-    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE,
-            "Confirm Offer Recommendation Notification"),
+    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Confirm Interview Arrangements Notification"),
+    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Confirm Offer Recommendation Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_CONFIRM_REJECTION_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Confirm Rejection Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_CORRECT_REQUEST(SYSTEM_NOTIFICATION, "Application Correct Request"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_CORRECT_REQUEST_REMINDER(SYSTEM_NOTIFICATION, "Application Correct Request Reminder"),
-    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE,
-            "Provide Interview Availability Notification"),
+    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Provide Interview Availability Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST(SYSTEM_NOTIFICATION_TEMPLATE, "Provide Interview Availability Request"),
-    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_REMINDER(SYSTEM_NOTIFICATION_TEMPLATE,
-            "Provide Interview Availability Request Reminder"),
+    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_REMINDER(SYSTEM_NOTIFICATION_TEMPLATE, "Provide Interview Availability Request Reminder"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_PROVIDE_REFERENCE_REQUEST(SYSTEM_NOTIFICATION_TEMPLATE, "Provide Reference Request"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER(SYSTEM_NOTIFICATION_TEMPLATE, "Provide Reference Request Reminder"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_RESERVE_NOTIFICATION(SYSTEM_NOTIFICATION, "Application Reserve Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_REVERSE_REJECTION_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Rejection Reversed Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_TERMINATE_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Terminate Notification"),
-    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE,
-            "Update Interview Availability Notification"),
+    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Update Interview Availability Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Complete Approval Stage Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_INSTITUTION_CORRECT_REQUEST(SYSTEM_NOTIFICATION_TEMPLATE, "Correct Request"),
     SYSTEM_NOTIFICATION_TEMPLATE_INSTITUTION_CORRECT_REQUEST_REMINDER(SYSTEM_NOTIFICATION_TEMPLATE, "Correct Request Reminder"),
@@ -750,11 +679,22 @@ public enum PrismDisplayPropertyDefinition {
 	 * *************** SYSTEM VALIDATION ERROR *********************
 	 */
 
+    SYSTEM_VALIDATION_UNKNOWN(SYSTEM_VALIDATION_ERROR, "This field is invalid."),
+    SYSTEM_VALIDATION_REQUIRED(SYSTEM_VALIDATION_ERROR, "This field is required."),
+    SYSTEM_VALIDATION_EMAIL(SYSTEM_VALIDATION_ERROR, "This field must be a valid email address."),
+    SYSTEM_VALIDATION_MINLENGTH(SYSTEM_VALIDATION_ERROR, "This field must be at least {1} character(s)."),
+    SYSTEM_VALIDATION_MAXLENGTH(SYSTEM_VALIDATION_ERROR, "This field must be less than {1} characters."),
+    SYSTEM_VALIDATION_TA_MAX_TEXT(SYSTEM_VALIDATION_ERROR, "This field is too long."),
+    SYSTEM_VALIDATION_TIMESLOTS_REQUIRED(SYSTEM_VALIDATION_ERROR, "You have to specify at least one date and time."),
+    SYSTEM_VALIDATION_SELECTION(SYSTEM_VALIDATION_ERROR, "You have to make a selection."),
+    SYSTEM_VALIDATION_MIN_ASSIGNED_USERS(SYSTEM_VALIDATION_ERROR, "You have to assign more users."),
+    SYSTEM_VALIDATION_MAX_ASSIGNED_USERS(SYSTEM_VALIDATION_ERROR, "Too many users selected."),
+
     SYSTEM_VALIDATION_USER_ALREADY_LINKED(SYSTEM_VALIDATION_ERROR, "User is already linked"),
-    SYSTEM_VALIDATION_ARRAY_MIN_LENGTH(SYSTEM_VALIDATION_ERROR, "You need to specify at least {1} item(s)."),
-    SYSTEM_VALIDATION_ARRAY_MAX_LENGTH(SYSTEM_VALIDATION_ERROR, "You need to specify at most {1} item(s)."),
     SYSTEM_VALIDATION_SECTION_NOT_COMPLETED(SYSTEM_VALIDATION_ERROR, "This section needs to be completed"),
-    SYSTEM_VALIDATION_SECTION_SIZE_EXACT(SYSTEM_VALIDATION_ERROR, "This section requires exactly {{arg0}} items."),
+    SYSTEM_VALIDATION_SECTION_ITEM_NOT_COMPLETED(SYSTEM_VALIDATION_ERROR, "At least one of the items is not completed"),
+    SYSTEM_VALIDATION_SECTION_MIN_ITEMS(SYSTEM_VALIDATION_ERROR, "Min items: {{min}}"),
+    SYSTEM_VALIDATION_SECTION_MAX_ITEMS(SYSTEM_VALIDATION_ERROR, "Max items: {{min}}"),
 
 	/*
 	 * *************** SYSTEM INTEGRATION *********************
@@ -769,8 +709,7 @@ public enum PrismDisplayPropertyDefinition {
 	 */
 
     APPLICATION_CONFIRM_ELIGIBILITY_DURATION_LABEL(SYSTEM_STATE_DURATION, "Eligibility Confirmation Duration"),
-    APPLICATION_CONFIRM_ELIGIBILITY_DURATION_TOOLTIP(SYSTEM_STATE_DURATION,
-            "The length of time you expect it to take to confirm the eligibility of an applicant"),
+    APPLICATION_CONFIRM_ELIGIBILITY_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you expect it to take to confirm the eligibility of an applicant"),
     APPLICATION_PROVIDE_REFERENCE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Reference Duration"),
     APPLICATION_PROVIDE_REFERENCE_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you expect it to take to collect applicant references"),
     APPLICATION_PROVIDE_REVIEW_DURATION_LABEL(SYSTEM_STATE_DURATION, "Review Duration"),
@@ -778,28 +717,21 @@ public enum PrismDisplayPropertyDefinition {
     APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION_LABEL(SYSTEM_STATE_DURATION, "Interview Scheduling Duration"),
     APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you expect it to take to schedule an interview"),
     APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION_LABEL(SYSTEM_STATE_DURATION, "Interview Feedback Duration"),
-    APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION_TOOLTIP(SYSTEM_STATE_DURATION,
-            "The length of time you expect it to take to collect feedback on an interview"),
+    APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you expect it to take to collect feedback on an interview"),
     APPLICATION_CONFIRM_SUPERVISION_DURATION_LABEL(SYSTEM_STATE_DURATION, "Supervision Confirmation Duration"),
-    APPLICATION_CONFIRM_SUPERVISION_DURATION_TOOLTIP(SYSTEM_STATE_DURATION,
-            "The length of time you expect it to take for a supervisor to confirm that they are willing to supervise an applicant"),
+    APPLICATION_CONFIRM_SUPERVISION_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you expect it to take for a supervisor to confirm that they are willing to supervise an applicant"),
     APPLICATION_ESCALATE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Escalation Duration"),
-    APPLICATION_ESCALATE_DURATION_TOOLTIP(SYSTEM_STATE_DURATION,
-            "The length of time you wish to allow an application that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
+    APPLICATION_ESCALATE_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you wish to allow an application that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
     APPLICATION_RESERVE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Reserve Duration"),
     APPLICATION_RESERVE_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you expect an application to be held in reserve for"),
     APPLICATION_PURGE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Expiry Duration"),
-    APPLICATION_PURGE_DURATION_TOOLTIP(SYSTEM_STATE_DURATION,
-            "The length of time you wish to keep information about a rejected or withdrawn application on record"),
+    APPLICATION_PURGE_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you wish to keep information about a rejected or withdrawn application on record"),
     PROJECT_ESCALATE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Escalation Duration"),
-    PROJECT_ESCALATE_DURATION_TOOLTIP(SYSTEM_STATE_DURATION,
-            "The length of time you wish to allow a new project request that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
+    PROJECT_ESCALATE_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you wish to allow a new project request that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
     PROGRAM_ESCALATE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Escalation Duration"),
-    PROGRAM_ESCALATE_DURATION_TOOLTIP(SYSTEM_STATE_DURATION,
-            "The length of time you wish to allow a new program request that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
+    PROGRAM_ESCALATE_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you wish to allow a new program request that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
     INSTITUTION_ESCALATE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Escalation Duration"),
-    INSTITUTION_ESCALATE_DURATION_TOOLTIP(SYSTEM_STATE_DURATION,
-            "The length of time you wish to allow a new institution request that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
+    INSTITUTION_ESCALATE_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you wish to allow a new institution request that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
 
 	/*
 	 * *************** SYSTEM WORKFLOW *********************
@@ -850,11 +782,9 @@ public enum PrismDisplayPropertyDefinition {
     SYSTEM_APPLICATION_ASSIGN_INTERVIEWER_LABEL(SYSTEM_WORKFLOW, "Interviewer Assignment"),
     SYSTEM_APPLICATION_ASSIGN_INTERVIEWER_HINT(SYSTEM_WORKFLOW, "Specify how many interviewers may be assigned during any application processing action"),
     SYSTEM_APPLICATION_ASSIGN_PRIMARY_SUPERVISOR_LABEL(SYSTEM_WORKFLOW, "Primary Supervisor Assignment"),
-    SYSTEM_APPLICATION_ASSIGN_PRIMARY_SUPERVISOR_HINT(SYSTEM_WORKFLOW,
-            "Specify how many primary supervisors may be assigned during any application processing action"),
+    SYSTEM_APPLICATION_ASSIGN_PRIMARY_SUPERVISOR_HINT(SYSTEM_WORKFLOW, "Specify how many primary supervisors may be assigned during any application processing action"),
     SYSTEM_APPLICATION_ASSIGN_SECONDARY_SUPERVISOR_LABEL(SYSTEM_WORKFLOW, "Secondary Supervisor Assignment"),
-    SYSTEM_APPLICATION_ASSIGN_SECONDARY_SUPERVISOR_HINT(SYSTEM_WORKFLOW,
-            "Specify how many secondary supervisors may be assigned during any application processing action"),
+    SYSTEM_APPLICATION_ASSIGN_SECONDARY_SUPERVISOR_HINT(SYSTEM_WORKFLOW, "Specify how many secondary supervisors may be assigned during any application processing action"),
     SYSTEM_APPLICATION_POSITION_DETAIL_LABEL(SYSTEM_WORKFLOW, "Project Detail"),
     SYSTEM_APPLICATION_POSITION_DETAIL_HINT(SYSTEM_WORKFLOW, "Enable collection of advanced project information"),
     SYSTEM_APPLICATION_OFFER_DETAIL_LABEL(SYSTEM_WORKFLOW, "Offer Detail"),
@@ -901,8 +831,7 @@ public enum PrismDisplayPropertyDefinition {
     SYSTEM_HTML_GENERAL_FIELD_EMAIL_HINT(SYSTEM_HTML_GENERAL_SECTION, "Please enter your e-mail address."),
     SYSTEM_HTML_GENERAL_FIELD_PASSWORD_LABEL(SYSTEM_HTML_GENERAL_SECTION, "Password"),
     SYSTEM_HTML_GENERAL_FIELD_PASSWORD_HINT(SYSTEM_HTML_GENERAL_SECTION, "Please enter your password."),
-    SYSTEM_HTML_GENERAL_FIELD_PASSWORD_REGISTRATION_HINT(SYSTEM_HTML_GENERAL_SECTION,
-            "Please enter a password with a minimum of 8 and a maximum of 15 characters."),
+    SYSTEM_HTML_GENERAL_FIELD_PASSWORD_REGISTRATION_HINT(SYSTEM_HTML_GENERAL_SECTION, "Please enter a password with a minimum of 8 and a maximum of 15 characters."),
     SYSTEM_HTML_GENERAL_FIELD_CONFIRM_PASSWORD_LABEL(SYSTEM_HTML_GENERAL_SECTION, "Confirm"),
     SYSTEM_HTML_GENERAL_FIELD_CONFIRM_PASSWORD_HINT(SYSTEM_HTML_GENERAL_SECTION, "Please confirm your password."),
     SYSTEM_HTML_GENERAL_FIELD_FIRST_NAME_LABEL(SYSTEM_HTML_GENERAL_SECTION, "First Name"),
@@ -938,12 +867,10 @@ public enum PrismDisplayPropertyDefinition {
     SYSTEM_AUTHENTICATE_USE_ANOTHER_METHOD(SYSTEM_AUTHENTICATE_SECTION, "Use another method"),
     SYSTEM_AUTHENTICATE_ACCOUNT_ACTIVATED(SYSTEM_AUTHENTICATE_SECTION, "Your account has been activated. Click below to sign in."),
     SYSTEM_AUTHENTICATE_CONFIRM_DETAILS(SYSTEM_AUTHENTICATE_SECTION, "Please confirm your details."),
-    SYSTEM_AUTHENTICATE_PASSWORD_RESENT_CONFIRMATION(SYSTEM_AUTHENTICATE_SECTION,
-            "An e-mail with the new password will be sent to {{forgottenPasswordEmail}} shortly."),
+    SYSTEM_AUTHENTICATE_PASSWORD_RESENT_CONFIRMATION(SYSTEM_AUTHENTICATE_SECTION, "An e-mail with the new password will be sent to {{forgottenPasswordEmail}} shortly."),
     SYSTEM_AUTHENTICATE_ASSOCIATE_WITH_CURRENT_USER(SYSTEM_AUTHENTICATE_SECTION, "Connect to any of the follow social networks to obtain your profile picture"),
     SYSTEM_AUTHENTICATE_JUST_REGISTERED_ALMOST_THERE_MESSAGE(SYSTEM_AUTHENTICATE_SECTION, "Almost there..."),
-    SYSTEM_AUTHENTICATE_JUST_REGISTERED_ACTIVATION_MESSAGE(SYSTEM_AUTHENTICATE_SECTION,
-            "To activate your account click the activation link in our confirmation email."),
+    SYSTEM_AUTHENTICATE_JUST_REGISTERED_ACTIVATION_MESSAGE(SYSTEM_AUTHENTICATE_SECTION, "To activate your account click the activation link in our confirmation email."),
     SYSTEM_AUTHENTICATE_ADVERTISE_MODAL_TITLE(SYSTEM_AUTHENTICATE_SECTION, "Advertise"),
     SYSTEM_AUTHENTICATE_APPLY_TO_MODAL_TITLE(SYSTEM_AUTHENTICATE_SECTION, "Apply to {{title}}"),
     SYSTEM_AUTHENTICATE_LOGIN_MODAL_TITLE(SYSTEM_AUTHENTICATE_SECTION, "Login"),
@@ -1088,10 +1015,9 @@ public enum PrismDisplayPropertyDefinition {
     SYSTEM_ACCOUNT_LINK_WITH_EXTERNAL_ACCOUNT_UNLINK_BUTTON(SYSTEM_ACCOUNT_SECTION, "Unlink"),
 
     SYSTEM_ACCOUNT_LINKED_ACCOUNTS(SYSTEM_ACCOUNT_SECTION, "Linked Accounts"),
-    SYSTEM_ACCOUNT_SELECT_PRIMARY_SUBHEADER(SYSTEM_ACCOUNT_SECTION, "Select new primary account"),
+    SYSTEM_ACCOUNT_LINKED_SELECT_PRIMARY_SUBHEADER(SYSTEM_ACCOUNT_SECTION, "Select new primary account"),
     SYSTEM_ACCOUNT_LINKED_LINK_ACCOUNT_SUBHEADER(SYSTEM_ACCOUNT_SECTION, "Link new Account"),
     SYSTEM_ACCOUNT_LINKED_PRIMARY_LABEL(SYSTEM_ACCOUNT_SECTION, "Primary email account"),
-    SYSTEM_ACCOUNT_SELECT_PRIMARY_ACCOUNT_SUBHEADER(SYSTEM_ACCOUNT_SECTION, "Select new primary account"),
     SYSTEM_ACCOUNT_LINKED_PRIMARY_BUTTON(SYSTEM_ACCOUNT_SECTION, "Select as Primary"),
     SYSTEM_ACCOUNT_LINKED_UNLINK(SYSTEM_ACCOUNT_SECTION, "Unlink"),
     SYSTEM_ACCOUNT_LINKED_LINK_ACCOUNT_BUTTON(SYSTEM_ACCOUNT_SECTION, "Link new Account"),
@@ -1159,8 +1085,7 @@ public enum PrismDisplayPropertyDefinition {
     SYSTEM_ADDRESS_DOMICILE_LABEL(SYSTEM_HTML_ADDRESS, "Country"),
     SYSTEM_ADDRESS_DOMICILE_HINT(SYSTEM_HTML_ADDRESS, "The country of your address."),
     SYSTEM_ADDRESS_CONTACT_SAME_AS_CURRENT_LABEL(SYSTEM_HTML_ADDRESS, "Is this the same as your current address?"),
-    SYSTEM_ADDRESS_CONTACT_SAME_AS_CURRENT_HINT(SYSTEM_HTML_ADDRESS,
-            "This tells us that your contact address is the same as your current address. If you wish to specify a different address, you may choose to."),
+    SYSTEM_ADDRESS_CONTACT_SAME_AS_CURRENT_HINT(SYSTEM_HTML_ADDRESS, "This tells us that your contact address is the same as your current address. If you wish to specify a different address, you may choose to."),
 	/*
 	 * *************** SYSTEM HTML RESOURCE CONFIGURATION *********************
 	 */
@@ -1207,8 +1132,7 @@ public enum PrismDisplayPropertyDefinition {
     SYSTEM_CUSTOM_FORMS_CONFIGURATION_COMMENT_TYPE_HINT(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "???"),
     SYSTEM_CUSTOM_FORMS_CONFIGURATION_CANVAS_SUBHEADER(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "Canvas"),
     SYSTEM_CUSTOM_FORMS_CONFIGURATION_CANVAS_DESCRIPTION(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "To edit the field just click on it"),
-    SYSTEM_CUSTOM_FORMS_CONFIGURATION_COMPONENTS_PANEL_DESCRIPTION(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION,
-            "Drag and drop the fields below to the canvas panel on the left."),
+    SYSTEM_CUSTOM_FORMS_CONFIGURATION_COMPONENTS_PANEL_DESCRIPTION(SYSTEM_HTML_CUSTOM_FORMS_CONFIGURATION, "Drag and drop the fields below to the canvas panel on the left."),
 
 	/*
 	 * *************** SYSTEM HTML WORKFLOW CONFIGURATION *********************
@@ -1240,11 +1164,8 @@ public enum PrismDisplayPropertyDefinition {
 	 * *************** INSTITUTION COMMENT *********************
 	 */
 
-    INSTITUTION_COMMENT_APPROVED(
-            INSTITUTION_COMMENT,
-            "We are pleased to tell you that your institution has been approved. We will send you a message with further instructions when your institution is ready to use. If you do not receive this message within 1 hour, please contact our helpdesk"),
-    INSTITUTION_COMMENT_CORRECTION(INSTITUTION_COMMENT,
-            "Further information is required to activate your institution. Please login to address the reviewers comments"),
+    INSTITUTION_COMMENT_APPROVED(INSTITUTION_COMMENT, "We are pleased to tell you that your institution has been approved. We will send you a message with further instructions when your institution is ready to use. If you do not receive this message within 1 hour, please contact our helpdesk"),
+    INSTITUTION_COMMENT_CORRECTION(INSTITUTION_COMMENT, "Further information is required to activate your institution. Please login to address the reviewers comments"),
     INSTITUTION_COMMENT_REJECTED(INSTITUTION_COMMENT, "We are sorry to inform you that your institution has been rejected"),
     INSTITUTION_COMMENT_UPDATED(INSTITUTION_COMMENT, "Updated institution"),
     INSTITUTION_COMMENT_UPDATED_USER_ROLE(INSTITUTION_COMMENT, "Updated institution user roles"),
@@ -1269,8 +1190,7 @@ public enum PrismDisplayPropertyDefinition {
 	 * *************** PROGRAM COMMENT *********************
 	 */
 
-    PROGRAM_COMMENT_APPROVED(PROGRAM_COMMENT,
-            "We are pleased to tell you that your program has been approved. You may now login to create users and projects, and manage your recruitment"),
+    PROGRAM_COMMENT_APPROVED(PROGRAM_COMMENT, "We are pleased to tell you that your program has been approved. You may now login to create users and projects, and manage your recruitment"),
     PROGRAM_COMMENT_CORRECTION(PROGRAM_COMMENT, "Further information is required to activate your program. Please login to address the reviewers comments"),
     PROGRAM_COMMENT_REJECTED(PROGRAM_COMMENT, "We are sorry to inform you that your program has been rejected"),
     PROGRAM_COMMENT_UPDATED(PROGRAM_COMMENT, "Updated program"),
@@ -1375,8 +1295,7 @@ public enum PrismDisplayPropertyDefinition {
     PROGRAM_CATEGORIES_COMPETENCIES_LABEL(PROGRAM_ADVERT_CATEGORIES, "Competencies"),
     PROGRAM_CATEGORIES_COMPETENCIES_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the competencies that you are looking for in your applicants."),
     PROGRAM_CATEGORIES_SUBJECTS_LABEL(PROGRAM_ADVERT_CATEGORIES, "Subjects"),
-    PROGRAM_CATEGORIES_SUBJECTS_HINT(PROGRAM_ADVERT_CATEGORIES,
-            "Specify the subject/thematic areas that your applicants can indicate preference for when they apply."),
+    PROGRAM_CATEGORIES_SUBJECTS_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the subject/thematic areas that your applicants can indicate preference for when they apply."),
     PROGRAM_CATEGORIES_INSTITUTIONS_LABEL(PROGRAM_ADVERT_CATEGORIES, "Institutions"),
     PROGRAM_CATEGORIES_INSTITUTIONS_HINT(PROGRAM_ADVERT_CATEGORIES, "Specify the institutions that you wish to target your advert to."),
     PROGRAM_CATEGORIES_PROGRAM_TYPES_LABEL(PROGRAM_ADVERT_CATEGORIES, "Program Types"),
@@ -1396,8 +1315,7 @@ public enum PrismDisplayPropertyDefinition {
 	 * *************** PROJECT COMMENT *********************
 	 */
 
-    PROJECT_COMMENT_APPROVED(PROJECT_COMMENT,
-            "We are pleased to tell you that your project has been approved. You may now login to create users and manage your recruitment"),
+    PROJECT_COMMENT_APPROVED(PROJECT_COMMENT, "We are pleased to tell you that your project has been approved. You may now login to create users and manage your recruitment"),
     PROJECT_COMMENT_CORRECTION(PROJECT_COMMENT, "Further information is required to activate your project. Please login to address the reviewers comments"),
     PROJECT_COMMENT_REJECTED(PROJECT_COMMENT, "We are sorry to inform you that your project has been rejected"),
     PROJECT_COMMENT_UPDATED(PROJECT_COMMENT, "Updated project"),
@@ -1434,8 +1352,7 @@ public enum PrismDisplayPropertyDefinition {
 	 */
 
     APPLICATION_PROGRAM_DETAIL_HEADER(APPLICATION_PROGRAM_DETAIL, "Program Detail"),
-    APPLICATION_PROGRAM_DETAIL_DESCRIPTION(APPLICATION_PROGRAM_DETAIL,
-            "This section allows you to provide details about the program/opportunity that you are applying for."),
+    APPLICATION_PROGRAM_DETAIL_DESCRIPTION(APPLICATION_PROGRAM_DETAIL, "This section allows you to provide details about the program/opportunity that you are applying for."),
     APPLICATION_PROGRAM_DETAIL_PROGRAM_HINT(APPLICATION_PROGRAM_DETAIL, "The PRiSM Program that you are applying for."),
     APPLICATION_PROGRAM_DETAIL_PROJECT_HINT(APPLICATION_PROGRAM_DETAIL, "The PRiSM Project that you are applying for."),
     APPLICATION_PROGRAM_DETAIL_PREVIOUS_APPLICATION_LABEL(APPLICATION_PROGRAM_DETAIL, "Have you applied before?"),
@@ -1466,53 +1383,36 @@ public enum PrismDisplayPropertyDefinition {
     APPLICATION_STUDY_DETAIL_START_DATE_HINT(APPLICATION_STUDY_DETAIL, "The expected start date of your studies, or the confirmed start date if you have already started."),
 
     APPLICATION_SUPERVISOR_HEADER(APPLICATION_SUPERVISOR, "Supervisors"),
-    APPLICATION_SUPERVISOR_DESCRIPTION(APPLICATION_SUPERVISOR,
-            "If you have discussed your application with any potential supervisors prior to submission (recommended), please provide their details below."),
+    APPLICATION_SUPERVISOR_DESCRIPTION(APPLICATION_SUPERVISOR, "If you have discussed your application with any potential supervisors prior to submission (recommended), please provide their details below."),
     APPLICATION_SUPERVISOR_SUBHEADER(APPLICATION_SUPERVISOR, "Supervisor"),
     APPLICATION_SUPERVISOR_ACCEPTED_SUPERVISION_LABEL(APPLICATION_SUPERVISOR, "Is this supervisor aware of your application?"),
-    APPLICATION_SUPERVISOR_ACCEPTED_SUPERVISION_HINT(
-            APPLICATION_SUPERVISOR,
-            "This tells us whether the supervisor is aware of your application. We strongly recommend that you contact the supervisor before specifying them in your application."),
+    APPLICATION_SUPERVISOR_ACCEPTED_SUPERVISION_HINT(APPLICATION_SUPERVISOR, "This tells us whether the supervisor is aware of your application. We strongly recommend that you contact the supervisor before specifying them in your application."),
 
     APPLICATION_PERSONAL_DETAIL_HEADER(APPLICATION_PERSONAL_DETAIL, "Personal Details"),
     APPLICATION_PERSONAL_DETAIL_DESCRIPTION(APPLICATION_PERSONAL_DETAIL, "This section allows you to provide details about yourself."),
     APPLICATION_PERSONAL_DETAIL_TITLE_LABEL(APPLICATION_PERSONAL_DETAIL, "Title"),
     APPLICATION_PERSONAL_DETAIL_TITLE_HINT(APPLICATION_PERSONAL_DETAIL, "The title that you wish us to address you by."),
     APPLICATION_PERSONAL_DETAIL_GENDER_LABEL(APPLICATION_PERSONAL_DETAIL, "Gender"),
-    APPLICATION_PERSONAL_DETAIL_GENDER_HINT(
-            APPLICATION_PERSONAL_DETAIL,
-            "Your gender. We collect this infomration to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
+    APPLICATION_PERSONAL_DETAIL_GENDER_HINT(APPLICATION_PERSONAL_DETAIL, "Your gender. We collect this infomration to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
     APPLICATION_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL(APPLICATION_PERSONAL_DETAIL, "Date of Birth"),
-    APPLICATION_PERSONAL_DETAIL_DATE_OF_BIRTH_HINT(
-            APPLICATION_PERSONAL_DETAIL,
-            "Your date of birth. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
+    APPLICATION_PERSONAL_DETAIL_DATE_OF_BIRTH_HINT(APPLICATION_PERSONAL_DETAIL, "Your date of birth. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
     APPLICATION_PERSONAL_DETAIL_COUNTRY_OF_BIRTH_LABEL(APPLICATION_PERSONAL_DETAIL, "Country of Birth"),
-    APPLICATION_PERSONAL_DETAIL_COUNTRY_OF_BIRTH_HINT(
-            APPLICATION_PERSONAL_DETAIL,
-            "Your country of birth. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
+    APPLICATION_PERSONAL_DETAIL_COUNTRY_OF_BIRTH_HINT(APPLICATION_PERSONAL_DETAIL, "Your country of birth. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
 
     APPLICATION_PERSONAL_DETAIL_NATIONALITIES_SUBHEADER(APPLICATION_PERSONAL_DETAIL, "Nationalities"),
     APPLICATION_PERSONAL_DETAIL_NATIONALITY_LABEL(APPLICATION_PERSONAL_DETAIL, "Nationality"),
     APPLICATION_PERSONAL_DETAIL_FIRST_NATIONALITY_LABEL(APPLICATION_PERSONAL_DETAIL, "Primary Nationality"),
-    APPLICATION_PERSONAL_DETAIL_FIRST_NATIONALITY_HINT(
-            APPLICATION_PERSONAL_DETAIL,
-            "Select your primary nationality. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
+    APPLICATION_PERSONAL_DETAIL_FIRST_NATIONALITY_HINT(APPLICATION_PERSONAL_DETAIL, "Select your primary nationality. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
     APPLICATION_PERSONAL_DETAIL_SECOND_NATIONALITY_LABEL(APPLICATION_PERSONAL_DETAIL, "Secondary Nationality"),
-    APPLICATION_PERSONAL_DETAIL_SECOND_NATIONALITY_HINT(
-            APPLICATION_PERSONAL_DETAIL,
-            "Select your secondary nationality. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
+    APPLICATION_PERSONAL_DETAIL_SECOND_NATIONALITY_HINT(APPLICATION_PERSONAL_DETAIL, "Select your secondary nationality. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
 
     APPLICATION_PERSONAL_DETAIL_LANGUAGE_SUBHEADER(APPLICATION_PERSONAL_DETAIL, "Language"),
     APPLICATION_PERSONAL_DETAIL_FIRST_LANGUAGE_LOCALE_LABEL(APPLICATION_PERSONAL_DETAIL, "Is English your first language?"),
-    APPLICATION_PERSONAL_DETAIL_FIRST_LANGUAGE_LOCALE_HINT(
-            APPLICATION_PERSONAL_DETAIL,
-            "Tell us whether English is your first language. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
+    APPLICATION_PERSONAL_DETAIL_FIRST_LANGUAGE_LOCALE_HINT(APPLICATION_PERSONAL_DETAIL, "Tell us whether English is your first language. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
     APPLICATION_PERSONAL_DETAIL_LANGUAGE_QUALIFICATION_AVAILABLE_LABEL(APPLICATION_PERSONAL_DETAIL, "Do you have an English language qualification?"),
-    APPLICATION_PERSONAL_DETAIL_LANGUAGE_QUALIFICATION_AVAILABLE_HINT(APPLICATION_PERSONAL_DETAIL,
-            "Tell us whether you have an English language qualification."),
+    APPLICATION_PERSONAL_DETAIL_LANGUAGE_QUALIFICATION_AVAILABLE_HINT(APPLICATION_PERSONAL_DETAIL, "Tell us whether you have an English language qualification."),
     APPLICATION_PERSONAL_DETAIL_LANGUAGE_QUALIFICATION_DOCUMENT_LABEL(APPLICATION_PERSONAL_DETAIL, "Certificate (PDF)"),
-    APPLICATION_PERSONAL_DETAIL_LANGUAGE_QUALIFICATION_DOCUMENT_HINT(APPLICATION_PERSONAL_DETAIL,
-            "Certificate of award. Please provide a complete grade transcript if you have this."),
+    APPLICATION_PERSONAL_DETAIL_LANGUAGE_QUALIFICATION_DOCUMENT_HINT(APPLICATION_PERSONAL_DETAIL, "Certificate of award. Please provide a complete grade transcript if you have this."),
 
     APPLICATION_LANGUAGE_QUALIFICATION_HEADER(APPLICATION_PERSONAL_DETAIL, "Language Qualification"),
     APPLICATION_LANGUAGE_QUALIFICATION_TYPE_LABEL(APPLICATION_PERSONAL_DETAIL, "Qualification Type"),
@@ -1533,33 +1433,21 @@ public enum PrismDisplayPropertyDefinition {
 
     APPLICATION_PERSONAL_DETAIL_RESIDENCE_HEADER(APPLICATION_PERSONAL_DETAIL, "Residence"),
     APPLICATION_PERSONAL_DETAIL_DOMICILE_LABEL(APPLICATION_PERSONAL_DETAIL, "Country of Residence"),
-    APPLICATION_PERSONAL_DETAIL_DOMICILE_HINT(
-            APPLICATION_PERSONAL_DETAIL,
-            "The country in which you are ordinarily (e.g. normally) resident. Be aware that this may not be the country that you currently live in. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
+    APPLICATION_PERSONAL_DETAIL_DOMICILE_HINT(APPLICATION_PERSONAL_DETAIL, "The country in which you are ordinarily (e.g. normally) resident. Be aware that this may not be the country that you currently live in. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
     APPLICATION_PERSONAL_DETAIL_VISA_REQUIRED_LABEL(APPLICATION_PERSONAL_DETAIL, "Do you Require a Visa to Study in the UK?"),
-    APPLICATION_PERSONAL_DETAIL_VISA_REQUIRED_HINT(
-            APPLICATION_PERSONAL_DETAIL,
-            "Tell us whether you need a visa to study in the UK. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
+    APPLICATION_PERSONAL_DETAIL_VISA_REQUIRED_HINT(APPLICATION_PERSONAL_DETAIL, "Tell us whether you need a visa to study in the UK. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
     APPLICATION_PERSONAL_DETAIL_PASSPORT_AVAILABLE_LABEL(APPLICATION_PERSONAL_DETAIL, "Do you have a passport?"),
     APPLICATION_PERSONAL_DETAIL_PASSPORT_AVAILABLE_HINT(APPLICATION_PERSONAL_DETAIL, "Tell us whether you have a current passport."),
 
     APPLICATION_PASSPORT_HEADER(APPLICATION_PERSONAL_DETAIL, "Passport"),
     APPLICATION_PASSPORT_NUMBER_LABEL(APPLICATION_PERSONAL_DETAIL, "Passport Number"),
-    APPLICATION_PASSPORT_NUMBER_HINT(
-            APPLICATION_PERSONAL_DETAIL,
-            "Your passport number. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
+    APPLICATION_PASSPORT_NUMBER_HINT(APPLICATION_PERSONAL_DETAIL, "Your passport number. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
     APPLICATION_PASSPORT_NAME_LABEL(APPLICATION_PERSONAL_DETAIL, "Name on Passport"),
-    APPLICATION_PASSPORT_NAME_HINT(
-            APPLICATION_PERSONAL_DETAIL,
-            "Your full name as it appears on your passport. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
+    APPLICATION_PASSPORT_NAME_HINT(APPLICATION_PERSONAL_DETAIL, "Your full name as it appears on your passport. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
     APPLICATION_PASSPORT_ISSUE_DATE_LABEL(APPLICATION_PERSONAL_DETAIL, "Issue Date"),
-    APPLICATION_PASSPORT_ISSUE_DATE_HINT(
-            APPLICATION_PERSONAL_DETAIL,
-            "The date at which your passport was issued. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
+    APPLICATION_PASSPORT_ISSUE_DATE_HINT(APPLICATION_PERSONAL_DETAIL, "The date at which your passport was issued. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
     APPLICATION_PASSPORT_EXPIRY_DATE_LABEL(APPLICATION_PERSONAL_DETAIL, "Expiry Date"),
-    APPLICATION_PASSPORT_EXPIRY_DATE_HINT(
-            APPLICATION_PERSONAL_DETAIL,
-            "The date at which your passport expires. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
+    APPLICATION_PASSPORT_EXPIRY_DATE_HINT(APPLICATION_PERSONAL_DETAIL, "The date at which your passport expires. We collect this information to comply with UK equal opportunities legislation. The information that you provide will not be considering during shortlisting and will not affect the outcome of your application."),
 
     APPLICATION_PERSONAL_DETAIL_CONTACT_DETAIL_HEADER(APPLICATION_PERSONAL_DETAIL, "Contact Details"),
     APPLICATION_PERSONAL_DETAIL_EMAIL_LABEL(APPLICATION_PERSONAL_DETAIL, "Email"),
@@ -1571,34 +1459,26 @@ public enum PrismDisplayPropertyDefinition {
 
     APPLICATION_PERSONAL_DETAIL_EQUAL_OPPORTUNITIES_HEADER(APPLICATION_PERSONAL_DETAIL, "Equal Opportunities"),
     APPLICATION_PERSONAL_DETAIL_ETHNICITY_LABEL(APPLICATION_PERSONAL_DETAIL, "Ethnicity"),
-    APPLICATION_PERSONAL_DETAIL_ETHNICITY_HINT(
-            APPLICATION_PERSONAL_DETAIL,
-            "Please specify your ethnic background. We have to ask you for this to comply with UK equal opportunities legislation. The information that you provide will not be considered during shortlisting and will not affect the outcome of your application."),
+    APPLICATION_PERSONAL_DETAIL_ETHNICITY_HINT(APPLICATION_PERSONAL_DETAIL, "Please specify your ethnic background. We have to ask you for this to comply with UK equal opportunities legislation. The information that you provide will not be considered during shortlisting and will not affect the outcome of your application."),
     APPLICATION_PERSONAL_DETAIL_DISABILITY_LABEL(APPLICATION_PERSONAL_DETAIL, "Disability"),
-    APPLICATION_PERSONAL_DETAIL_DISABILITY_HINT(
-            APPLICATION_PERSONAL_DETAIL,
-            "Please let us know if you have a recognised disability. We have to ask you for this to comply with UK equal opportunities legislation. The information that you provide will not be considered during shortlisting and will not affect the outcome of your application."),
+    APPLICATION_PERSONAL_DETAIL_DISABILITY_HINT(APPLICATION_PERSONAL_DETAIL, "Please let us know if you have a recognised disability. We have to ask you for this to comply with UK equal opportunities legislation. The information that you provide will not be considered during shortlisting and will not affect the outcome of your application."),
 
     APPLICATION_ADDRESS_HEADER(APPLICATION_ADDRESS, "Address Detail"),
     APPLICATION_ADDRESS_DESCRIPTION(APPLICATION_ADDRESS, "Your current residence and contact address(es)."),
     APPLICATION_ADDRESS_CURRENT_HEADER(APPLICATION_ADDRESS, "Current Address"),
     APPLICATION_ADDRESS_CONTACT_HEADER(APPLICATION_ADDRESS, "Contact Address"),
     APPLICATION_ADDRESS_CONTACT_SAME_AS_CURRENT_LABEL(APPLICATION_ADDRESS, "Is this the same as your current address?"),
-    APPLICATION_ADDRESS_CONTACT_SAME_AS_CURRENT_HINT(APPLICATION_ADDRESS,
-            "This tells us that your contact address is the same as your current address. If you wish to specify a different address, you may choose to."),
+    APPLICATION_ADDRESS_CONTACT_SAME_AS_CURRENT_HINT(APPLICATION_ADDRESS, "This tells us that your contact address is the same as your current address. If you wish to specify a different address, you may choose to."),
 
     APPLICATION_QUALIFICATION_HEADER(APPLICATION_QUALIFICATION, "Qualifications"),
-    APPLICATION_QUALIFICATION_DESCRIPTION(
-            APPLICATION_STUDY_DETAIL,
-            "This section allows you to provide details about your qualifications. Please only provide details of those qualifications that are relevant to your application."),
+    APPLICATION_QUALIFICATION_DESCRIPTION(APPLICATION_STUDY_DETAIL, "This section allows you to provide details about your qualifications. Please only provide details of those qualifications that are relevant to your application."),
     APPLICATION_QUALIFICATION_SUBHEADER(APPLICATION_QUALIFICATION, "Qualification"),
     APPLICATION_QUALIFICATION_DOMICILE_LABEL(APPLICATION_QUALIFICATION, "Institution Country"),
     APPLICATION_QUALIFICATION_DOMICILE_HINT(APPLICATION_QUALIFICATION, "The country in which the qualifying institution / provider is located."),
     APPLICATION_QUALIFICATION_PROVIDER_LABEL(APPLICATION_QUALIFICATION, "Institution / Provider Name"),
     APPLICATION_QUALIFICATION_PROVIDER_HINT(APPLICATION_QUALIFICATION, "The name of the qualifying institution / provider."),
     APPLICATION_QUALIFICATION_TYPE_LABEL(APPLICATION_PERSONAL_DETAIL, "Qualification Type"),
-    APPLICATION_QUALIFICATION_TYPE_HINT(APPLICATION_PERSONAL_DETAIL,
-            "Select the type of the qualification from the list. If you cannot find an appropriate type, select 'Other'."),
+    APPLICATION_QUALIFICATION_TYPE_HINT(APPLICATION_PERSONAL_DETAIL, "Select the type of the qualification from the list. If you cannot find an appropriate type, select 'Other'."),
     APPLICATION_QUALIFICATION_TITLE_LABEL(APPLICATION_QUALIFICATION, "Qualification Title"),
     APPLICATION_QUALIFICATION_TITLE_HINT(APPLICATION_QUALIFICATION, "The title of the qualification, e.g. MSc, BSc."),
     APPLICATION_QUALIFICATION_SUBJECT_LABEL(APPLICATION_QUALIFICATION, "Qualification Subject"),
@@ -1617,19 +1497,15 @@ public enum PrismDisplayPropertyDefinition {
     APPLICATION_QUALIFICATION_CONFIRMED_AWARD_DATE_LABEL(APPLICATION_QUALIFICATION, "Confirmed Award Date"),
     APPLICATION_QUALIFICATION_AWARD_DATE_HINT(APPLICATION_QUALIFICATION, "The award date of the qualification (expected or confirmed)."),
     APPLICATION_QUALIFICATION_DOCUMENT_LABEL(APPLICATION_QUALIFICATION, "Interim/Final Transcript (PDF)"),
-    APPLICATION_QUALIFICATION_DOCUMENT_HINT(APPLICATION_QUALIFICATION,
-            "Proof of the award of your progression towards the qualification. We require a complete grade transcript for university level qualifications."),
+    APPLICATION_QUALIFICATION_DOCUMENT_HINT(APPLICATION_QUALIFICATION, "Proof of the award of your progression towards the qualification. We require a complete grade transcript for university level qualifications."),
     APPLICATION_QUALIFICATION_STUDY_PERIOD_LABEL(APPLICATION_QUALIFICATION, "Study Period"),
     APPLICATION_QUALIFICATION_APPENDIX(APPLICATION_QUALIFICATION, "Qualification Transcript"),
     APPLICATION_QUALIFICATION_NO_ITEMS(APPLICATION_QUALIFICATION, "This Application doesn't contain any Qualification"),
     APPLICATION_QUALIFICATION_EQUIVALENT_HEADER(APPLICATION_QUALIFICATION, "Equivalent Experience"),
-    APPLICATION_QUALIFICATION_EXPERIENCE_MESSAGE(
-            APPLICATION_QUALIFICATION,
-            "We consider that the applicant has experience equivalent to the typical academic entrance requirements for our program. It is therefore our recommendation that an appointment be made"),
+    APPLICATION_QUALIFICATION_EXPERIENCE_MESSAGE(APPLICATION_QUALIFICATION, "We consider that the applicant has experience equivalent to the typical academic entrance requirements for our program. It is therefore our recommendation that an appointment be made"),
 
     APPLICATION_EMPLOYMENT_POSITION_HEADER(APPLICATION_EMPLOYMENT_POSITION, "Employment Positions"),
-    APPLICATION_EMPLOYMENT_POSITION_DESCRIPTION(APPLICATION_EMPLOYMENT_POSITION,
-            "This section allows you to provide details about your employment history. Please only provide details that are relevant to your application."),
+    APPLICATION_EMPLOYMENT_POSITION_DESCRIPTION(APPLICATION_EMPLOYMENT_POSITION, "This section allows you to provide details about your employment history. Please only provide details that are relevant to your application."),
     APPLICATION_EMPLOYMENT_POSITION_SUBHEADER(APPLICATION_EMPLOYMENT_POSITION, "Position"),
     APPLICATION_EMPLOYMENT_POSITION_EMPLOYER_NAME_LABEL(APPLICATION_EMPLOYMENT_POSITION, "Employer Name"),
     APPLICATION_EMPLOYMENT_POSITION_EMPLOYER_NAME_HINT(APPLICATION_EMPLOYMENT_POSITION, "Type the name of your institution here."),
@@ -1653,26 +1529,21 @@ public enum PrismDisplayPropertyDefinition {
     APPLICATION_FUNDING_TYPE_LABEL(APPLICATION_FUNDING, "Award Type"),
     APPLICATION_FUNDING_TYPE_HINT(APPLICATION_FUNDING, "The type of the award."),
     APPLICATION_FUNDING_SPONSOR_LABEL(APPLICATION_FUNDING, "Award Sponsor"),
-    APPLICATION_FUNDING_SPONSOR_HINT(
-            APPLICATION_FUNDING,
-            "The name of the sponsor of the award. Sponsors may typically include public research funders such as government research councils/sponsors, industrial sponsors, or acacemic prize awarding bodies."),
+    APPLICATION_FUNDING_SPONSOR_HINT(APPLICATION_FUNDING, "The name of the sponsor of the award. Sponsors may typically include public research funders such as government research councils/sponsors, industrial sponsors, or acacemic prize awarding bodies."),
     APPLICATION_FUNDING_DESCRIPTION_LABEL(APPLICATION_FUNDING, "Award Description"),
     APPLICATION_FUNDING_DESCRIPTION_HINT(APPLICATION_FUNDING, "A concise description of the award and the purpose for which it was granted."),
     APPLICATION_FUNDING_VALUE_LABEL(APPLICATION_FUNDING, "Award Value"),
     APPLICATION_FUNDING_VALUE_HINT(APPLICATION_FUNDING, "The value of the award, please specify both the amount and the currency."),
     APPLICATION_FUNDING_AWARD_DATE_LABEL(APPLICATION_FUNDING, "Commencement Date"),
-    APPLICATION_FUNDING_AWARD_DATE_HINT(APPLICATION_FUNDING,
-            "The start date of the award. Please enter the date upon which the award commenced rather than the date upon which you received the award."),
+    APPLICATION_FUNDING_AWARD_DATE_HINT(APPLICATION_FUNDING, "The start date of the award. Please enter the date upon which the award commenced rather than the date upon which you received the award."),
     APPLICATION_FUNDING_TERMS_LABEL(APPLICATION_FUNDING, "Terms of Award"),
     APPLICATION_FUNDING_TERMS_HINT(APPLICATION_FUNDING, "A concise description of any terms attached to the award, e.g. duration."),
     APPLICATION_FUNDING_DOCUMENT_LABEL(APPLICATION_FUNDING, "Proof of Award"),
-    APPLICATION_FUNDING_DOCUMENT_HINT(APPLICATION_FUNDING,
-            "Proof of the award. You should upload a copy of the official award letter or your bank statement showing the funds entering your account."),
+    APPLICATION_FUNDING_DOCUMENT_HINT(APPLICATION_FUNDING, "Proof of the award. You should upload a copy of the official award letter or your bank statement showing the funds entering your account."),
     APPLICATION_FUNDING_NO_ITEMS(APPLICATION_FUNDING, "This Application doesn't contain any Funding"),
 
     APPLICATION_PRIZE_HEADER(APPLICATION_PRIZE, "Awards, Prizes & Achievements"),
-    APPLICATION_PRIZE_DESCRIPTION(APPLICATION_PRIZE,
-            "Please provide details of any awards, prizes or other outstanding achievements relevant to your application."),
+    APPLICATION_PRIZE_DESCRIPTION(APPLICATION_PRIZE, "Please provide details of any awards, prizes or other outstanding achievements relevant to your application."),
     APPLICATION_PRIZE_SUBHEADER(APPLICATION_PRIZE, "Prize"),
     APPLICATION_PRIZE_PROVIDER_LABEL(APPLICATION_PRIZE, "Provider"),
     APPLICATION_PRIZE_PROVIDER_HINT(APPLICATION_PRIZE, "The provider of the prize/award."),
@@ -1685,8 +1556,7 @@ public enum PrismDisplayPropertyDefinition {
     APPLICATION_PRIZE_AWARD_NO_ITEMS(APPLICATION_PRIZE, "This Application doesn't contain any Prizes/Awards"),
 
     APPLICATION_REFEREE_HEADER(APPLICATION_REFEREE, "Referees"),
-    APPLICATION_REFEREE_DESCRIPTION(APPLICATION_REFEREE,
-            "Specify you referee(s) here. Each referee will be asked to provide a statement in support of your application."),
+    APPLICATION_REFEREE_DESCRIPTION(APPLICATION_REFEREE, "Specify you referee(s) here. Each referee will be asked to provide a statement in support of your application."),
     APPLICATION_REFEREE_SUBHEADER(APPLICATION_REFEREE, "Referee"),
     APPLICATION_REFEREE_POSITION_DETAILS_SUBHEADER(APPLICATION_REFEREE, "Position Details"),
     APPLICATION_REFEREE_TYPE_LABEL(APPLICATION_REFEREE, "Referee Type"),
@@ -1706,44 +1576,31 @@ public enum PrismDisplayPropertyDefinition {
 
     APPLICATION_DOCUMENT_HEADER(APPLICATION_DOCUMENT, "Documents"),
     APPLICATION_DOCUMENT_PERSONAL_STATEMENT_LABEL(APPLICATION_DOCUMENT, "Personal Statement (PDF)"),
-    APPLICATION_DOCUMENT_PERSONAL_STATEMENT_HINT(
-            APPLICATION_DOCUMENT,
-            "Your personal statement. This should describe your motivation for pursuing a career in research and summarise your research interests. Please provide no more than 1 page of A4."),
+    APPLICATION_DOCUMENT_PERSONAL_STATEMENT_HINT(APPLICATION_DOCUMENT, "Your personal statement. This should describe your motivation for pursuing a career in research and summarise your research interests. Please provide no more than 1 page of A4."),
     APPLICATION_DOCUMENT_CV_LABEL(APPLICATION_DOCUMENT, "CV / Resume (PDF)"),
-    APPLICATION_DOCUMENT_CV_HINT(APPLICATION_DOCUMENT,
-            "Your CV/resume. This should summarise your academic and professional achievements. Please provide no more than 2 pages of A4."),
+    APPLICATION_DOCUMENT_CV_HINT(APPLICATION_DOCUMENT, "Your CV/resume. This should summarise your academic and professional achievements. Please provide no more than 2 pages of A4."),
     APPLICATION_DOCUMENT_COVERING_LETTER_LABEL(APPLICATION_DOCUMENT, "Covering Letter (PDF)"),
-    APPLICATION_DOCUMENT_COVERING_LETTER_HINT(APPLICATION_DOCUMENT,
-            "Your covering letter. This should describe why your are suitable for the opportunity that you are applying for. Please provide no more than 2 pages of A4."),
+    APPLICATION_DOCUMENT_COVERING_LETTER_HINT(APPLICATION_DOCUMENT, "Your covering letter. This should describe why your are suitable for the opportunity that you are applying for. Please provide no more than 2 pages of A4."),
     APPLICATION_DOCUMENT_RESEARCH_STATEMENT_LABEL(APPLICATION_DOCUMENT, "Research Statement (PDF)"),
-    APPLICATION_DOCUMENT_RESEARCH_STATEMENT_HINT(
-            APPLICATION_DOCUMENT,
-            "Your research statement. This should summarise your proposed project and its significance to your field, and why the project is appropriate for your proposed institution, and explain why you would like to work with your proposed supervisor. Please provide no more than 1 page of A4."),
+    APPLICATION_DOCUMENT_RESEARCH_STATEMENT_HINT(APPLICATION_DOCUMENT, "Your research statement. This should summarise your proposed project and its significance to your field, and why the project is appropriate for your proposed institution, and explain why you would like to work with your proposed supervisor. Please provide no more than 1 page of A4."),
 
     APPLICATION_ADDITIONAL_INFORMATION_HEADER(APPLICATION_ADDITIONAL_INFORMATION, "Additional Information"),
     APPLICATION_ADDITIONAL_INFORMATION_HAS_CONVICTION_LABEL(APPLICATION_ADDITIONAL_INFORMATION, "Do you have any unspent Criminal Convictions?"),
-    APPLICATION_ADDITIONAL_INFORMATION_HAS_CONVICTION_HINT(APPLICATION_ADDITIONAL_INFORMATION,
-            "Please tell us whether you have any unspent criminal convictions."),
+    APPLICATION_ADDITIONAL_INFORMATION_HAS_CONVICTION_HINT(APPLICATION_ADDITIONAL_INFORMATION, "Please tell us whether you have any unspent criminal convictions."),
     APPLICATION_ADDITIONAL_INFORMATION_CONVICTION_LABEL(APPLICATION_ADDITIONAL_INFORMATION, "Unspent Criminal Convictions"),
     APPLICATION_ADDITIONAL_INFORMATION_CONVICTION_HINT(APPLICATION_ADDITIONAL_INFORMATION, "Provide a short summary of each of your unspent convictions."),
     APPLICATION_ADDITIONAL_INFORMATION_EMPTY(APPLICATION_ADDITIONAL_INFORMATION, "No additional information is been provided for this Application"),
 
-    APPLICATION_FORM_FOOTER_CONFIRM_TRUE(
-            APPLICATION_FORM,
-            "Confirm that the information that you have provided in this form is true and correct.<br/><em>Failure to provide true and correct information may result in a subsequent offer of study being withdrawn.</em>"),
-    APPLICATION_FORM_FOOTER_KEEP_RECORD(APPLICATION_FORM,
-            "Keep my application on record indefinitely.<br/><em>Uncheck this if you want your application to be destroyed when we have finished processing it.</em>"),
-    APPLICATION_FORM_FOOTER_SEND_RECOMMENDATIONS(APPLICATION_FORM,
-            "Send me recommendations about other opportunities to apply for.<br/><em>Uncheck this if you do not want us to send you recommendations.</em>"),
+    APPLICATION_FORM_FOOTER_CONFIRM_TRUE(APPLICATION_FORM, "Confirm that the information that you have provided in this form is true and correct.<br/><em>Failure to provide true and correct information may result in a subsequent offer of study being withdrawn.</em>"),
+    APPLICATION_FORM_FOOTER_KEEP_RECORD(APPLICATION_FORM, "Keep my application on record indefinitely.<br/><em>Uncheck this if you want your application to be destroyed when we have finished processing it.</em>"),
+    APPLICATION_FORM_FOOTER_SEND_RECOMMENDATIONS(APPLICATION_FORM, "Send me recommendations about other opportunities to apply for.<br/><em>Uncheck this if you do not want us to send you recommendations.</em>"),
     APPLICATION_FORM_GO_TO_TIMELINE(APPLICATION_FORM, "Go to Timeline"),
     APPLICATION_FORM_SAVE_FOR_LATER(APPLICATION_FORM, "Save for later"),
     APPLICATION_FORM_SUBMIT_APPLICATION(APPLICATION_FORM, "Submit Application"),
 
     APPLICATION_REFEREE_REFERENCE_APPENDIX(APPLICATION_REFEREE, "Reference"),
     APPLICATION_REFEREE_REFERENCE_COMMENT(APPLICATION_REFEREE, "Reference Comment"),
-    APPLICATION_REFEREE_REFERENCE_COMMENT_EQUIVALENT(
-            APPLICATION_REFEREE,
-            "Having considered the whole application, including both written and spoken feedback from referees, we are happy to make an appointment based upon the information available to us"),
+    APPLICATION_REFEREE_REFERENCE_COMMENT_EQUIVALENT(APPLICATION_REFEREE, "Having considered the whole application, including both written and spoken feedback from referees, we are happy to make an appointment based upon the information available to us"),
 
 	/*
 	 * *************** APPLICATION ACTION *********************
@@ -1758,8 +1615,7 @@ public enum PrismDisplayPropertyDefinition {
     APPLICATION_ACTION_INTERESTED_IN_APPLICANT_LABEL(APPLICATION_ACTION, "Interested in this applicant?"),
     APPLICATION_ACTION_INTERESTED_IN_APPLICANT_HINT(APPLICATION_ACTION, "Tell us whether you would like to consider the applicant as a potential student."),
     APPLICATION_ACTION_RATING_LABEL(APPLICATION_ACTION, "How do they rate?"),
-    APPLICATION_ACTION_RATING_HINT(APPLICATION_ACTION,
-            "Specify how highly you rate the applicant in comparison to other applicants that you have seen, with 5 stars being the highest rating and 0 the lowest."),
+    APPLICATION_ACTION_RATING_HINT(APPLICATION_ACTION, "Specify how highly you rate the applicant in comparison to other applicants that you have seen, with 5 stars being the highest rating and 0 the lowest."),
     APPLICATION_ACTION_ELIGIBLE_LABEL(APPLICATION_ACTION, "Is the applicant Eligible?"),
     APPLICATION_ACTION_ELIGIBLE_HINT(APPLICATION_ACTION, "Assess whether the applicant is eligible."),
     APPLICATION_ACTION_TRANSITION_STATE_LABEL(APPLICATION_ACTION, "Next Stage"),
@@ -1814,8 +1670,7 @@ public enum PrismDisplayPropertyDefinition {
     APPLICATION_ACTION_POSITION_OFFER_TYPE_UNCONDITIONAL(APPLICATION_ACTION, "Unconditional"),
     APPLICATION_ACTION_POSITION_OFFER_TYPE_CONDITIONAL(APPLICATION_ACTION, "Conditional"),
     APPLICATION_ACTION_POSITION_APPOINTMENT_CONDITIONS_LABEL(APPLICATION_ACTION, "Recommended conditions"),
-    APPLICATION_ACTION_POSITION_APPOINTMENT_CONDITIONS_HINT(APPLICATION_ACTION,
-            "If you wish to recommend any specific conditions to the study offer you may do so here."),
+    APPLICATION_ACTION_POSITION_APPOINTMENT_CONDITIONS_HINT(APPLICATION_ACTION, "If you wish to recommend any specific conditions to the study offer you may do so here."),
     APPLICATION_ACTION_REJECTION_REASON_LABEL(APPLICATION_ACTION, "Reasons for Rejection"),
     APPLICATION_ACTION_REJECTION_REASON_HINT(APPLICATION_ACTION, "Specify the pertinent reason for rejection."),
     APPLICATION_ACTION_RESERVE_STATUS_LABEL(APPLICATION_ACTION, "Priority status"),

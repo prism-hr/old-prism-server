@@ -174,7 +174,7 @@ public class SystemInitialisationHelper {
 	public void verifyStateGroupCreation() {
 
 		for (StateGroup stateGroup : stateService.getStateGroups()) {
-			assertEquals(stateGroup.getId().getSequenceOrder(), stateGroup.getSequenceOrder());
+			assertEquals(stateGroup.getId().ordinal(), stateGroup.getOrdinal());
 			assertEquals(stateGroup.getId().isRepeatable(), stateGroup.getRepeatable());
 			assertEquals(stateGroup.getId().getScope(), stateGroup.getScope().getId());
 		}
@@ -183,7 +183,7 @@ public class SystemInitialisationHelper {
 	public void verifyStateCreation() {
 		for (State state : stateService.getStates()) {
 			assertEquals(state.getId().getStateGroup(), state.getStateGroup().getId());
-			assertEquals(state.getId().getScope(), state.getScope().getId());
+			assertEquals(state.getId().getStateGroup().getScope(), state.getScope().getId());
 			assertEquals(state.getId().isParallelizable(), state.getParallelizable());
 		}
 	}
@@ -286,11 +286,10 @@ public class SystemInitialisationHelper {
 			PrismStateAction prismStateAction = PrismState.getStateAction(stateAction.getState().getId(), stateAction.getAction().getId());
 			assertNotNull(prismStateAction);
 			assertEquals(prismStateAction.isRaisesUrgentFlag(), stateAction.getRaisesUrgentFlag());
-			assertEquals(prismStateAction.isDefaultAction(), stateAction.isDefaultAction());
 			assertEquals(prismStateAction.getActionEnhancement(), stateAction.getActionEnhancement());
 
 			NotificationDefinition template = stateAction.getNotificationDefinition();
-			PrismNotificationDefinition prismTemplate = prismStateAction.getNotificationTemplate();
+			PrismNotificationDefinition prismTemplate = prismStateAction.getNotification();
 			if (prismTemplate == null) {
 				assertNull(template);
 			} else {
@@ -348,15 +347,16 @@ public class SystemInitialisationHelper {
 			PrismStateTransition prismStateTransition = new PrismStateTransition()
 			        .withTransitionState(transitionState == null ? null : transitionState.getId())
 			        .withTransitionAction(stateTransition.getTransitionAction().getId())
-			        .withStateTransitionEvaluation(evaluation == null ? null : evaluation.getId());
+			        .withTransitionEvaluation(evaluation == null ? null : evaluation.getId());
 
 			for (RoleTransition roleTransition : stateTransition.getRoleTransitions()) {
 				WorkflowPropertyDefinition workflowPropertyDefinition = roleTransition.getWorkflowPropertyDefinition();
-				prismStateTransition.getRoleTransitions().add(
-				        new PrismRoleTransition().withRole(roleTransition.getRole().getId()).withTransitionType(roleTransition.getRoleTransitionType())
-				                .withTransitionRole(roleTransition.getTransitionRole().getId()).withRestrictToOwner(roleTransition.getRestrictToActionOwner())
-				                .withMinimumPermitted(roleTransition.getMinimumPermitted()).withMaximumPermitted(roleTransition.getMaximumPermitted())
-				                .withPropertyDefinition(workflowPropertyDefinition == null ? null : workflowPropertyDefinition.getId()));
+				PrismRoleTransition prismRoleTransition = new PrismRoleTransition().withRole(roleTransition.getRole().getId())
+				        .withTransitionType(roleTransition.getRoleTransitionType()).withTransitionRole(roleTransition.getTransitionRole().getId())
+				        .withMinimumPermitted(roleTransition.getMinimumPermitted()).withMaximumPermitted(roleTransition.getMaximumPermitted())
+				        .withPropertyDefinition(workflowPropertyDefinition == null ? null : workflowPropertyDefinition.getId());
+				prismRoleTransition.setRestrictToActionOwner(roleTransition.getRestrictToActionOwner());
+				prismStateTransition.getRoleTransitions().add(prismRoleTransition);
 			}
 
 			for (Action propagatedAction : stateTransition.getPropagatedActions()) {

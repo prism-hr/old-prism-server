@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -155,6 +156,10 @@ public class RoleService {
 		return roleDAO.getRoleUsers(resource, prismRoles);
 	}
 
+	public List<User> getRoleUsers(Resource resource, PrismRoleGroup prismRoleGroup) {
+		return roleDAO.getRoleUsers(resource, prismRoleGroup.getRoles());
+	}
+
 	public List<PrismRole> getCreatableRoles(PrismScope scopeId) {
 		return roleDAO.getCreatableRoles(scopeId);
 	}
@@ -168,7 +173,8 @@ public class RoleService {
 	}
 
 	public void executeDelegatedRoleTransitions(Resource resource, Comment comment) throws DeduplicationException {
-		PrismReflectionUtils.invokeMethod(this, PrismReflectionUtils.getMethodName(comment.getAction().getId(), "execute") + "RoleTransition", resource, comment);
+		PrismReflectionUtils.invokeMethod(this, PrismReflectionUtils.getMethodName(comment.getAction().getId(), "execute") + "RoleTransition", resource,
+		        comment);
 		entityService.flush();
 	}
 
@@ -209,7 +215,7 @@ public class RoleService {
 		}
 	}
 
-	public List<UserRole> getUserRolesByRoleCategory(User user, PrismRoleCategory prismRoleCategory, PrismScope ...exludedPrismScopes) {
+	public List<UserRole> getUserRolesByRoleCategory(User user, PrismRoleCategory prismRoleCategory, PrismScope... exludedPrismScopes) {
 		return roleDAO.getUserRoleByRoleCategory(user, prismRoleCategory, exludedPrismScopes);
 	}
 
@@ -297,7 +303,7 @@ public class RoleService {
 		entityService.delete(userRole);
 		reassignResourceOwner(resource);
 	}
-	
+
 	public List<PrismRole> getRolesByScope(PrismScope prismScope) {
 		return roleDAO.getRolesByScopes(prismScope);
 	}

@@ -338,7 +338,7 @@ public class SystemService {
 	private void initializeStateGroups() throws DeduplicationException {
 		for (PrismStateGroup prismStateGroup : PrismStateGroup.values()) {
 			Scope scope = scopeService.getById(prismStateGroup.getScope());
-			StateGroup transientStateGroup = new StateGroup().withId(prismStateGroup).withSequenceOrder(prismStateGroup.getSequenceOrder())
+			StateGroup transientStateGroup = new StateGroup().withId(prismStateGroup).withSequenceOrder(prismStateGroup.ordinal())
 			        .withRepeatable(prismStateGroup.isRepeatable()).withScope(scope);
 			entityService.createOrUpdate(transientStateGroup);
 		}
@@ -347,7 +347,7 @@ public class SystemService {
 	private void initializeStates() throws DeduplicationException {
 		for (PrismState prismState : PrismState.values()) {
 			StateDurationDefinition stateDurationDefinition = stateService.getStateDurationDefinitionById(prismState.getDefaultDuration());
-			Scope scope = entityService.getByProperty(Scope.class, "id", prismState.getScope());
+			Scope scope = entityService.getByProperty(Scope.class, "id", prismState.getStateGroup().getScope());
 			StateGroup stateGroup = entityService.getByProperty(StateGroup.class, "id", prismState.getStateGroup());
 			State transientState = new State().withId(prismState).withStateGroup(stateGroup).withStateDurationDefinition(stateDurationDefinition)
 			        .withStateDurationEvaluation(prismState.getStateDurationEvaluation()).withParallelizable(prismState.isParallelizable())
@@ -504,10 +504,9 @@ public class SystemService {
 		for (State state : stateService.getStates()) {
 			for (PrismStateAction prismStateAction : PrismState.getStateActions(state.getId())) {
 				Action action = actionService.getById(prismStateAction.getAction());
-				NotificationDefinition template = notificationService.getById(prismStateAction.getNotificationTemplate());
+				NotificationDefinition template = notificationService.getById(prismStateAction.getNotification());
 				StateAction stateAction = new StateAction().withState(state).withAction(action).withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag())
-				        .withDefaultAction(prismStateAction.isDefaultAction()).withActionEnhancement(prismStateAction.getActionEnhancement())
-				        .withNotificationDefinition(template);
+				        .withActionEnhancement(prismStateAction.getActionEnhancement()).withNotificationDefinition(template);
 				entityService.save(stateAction);
 				state.getStateActions().add(stateAction);
 
@@ -536,7 +535,7 @@ public class SystemService {
 	private void initializeStateActionNotifications(PrismStateAction prismStateAction, StateAction stateAction) {
 		for (PrismStateActionNotification prismNotification : prismStateAction.getNotifications()) {
 			Role role = roleService.getById(prismNotification.getRole());
-			NotificationDefinition template = notificationService.getById(prismNotification.getDefinition());
+			NotificationDefinition template = notificationService.getById(prismNotification.getNotification());
 			StateActionNotification notification = new StateActionNotification().withStateAction(stateAction).withRole(role)
 			        .withNotificationDefinition(template);
 			entityService.save(notification);
@@ -547,8 +546,8 @@ public class SystemService {
 	private void initializeStateTransitions(PrismStateAction prismStateAction, StateAction stateAction) {
 		List<PrismStateTransition> stateTransitions = prismStateAction.getTransitions();
 		if (stateTransitions.isEmpty()) {
-			stateTransitions.add(new PrismStateTransition().withTransitionState(stateAction.getState().getId()).withTransitionAction(
-			        stateAction.getAction().getId()));
+			stateTransitions.add(new PrismStateTransition().withTransitionState(stateAction.getState().getId()) //
+			        .withTransitionAction(stateAction.getAction().getId()));
 		}
 
 		for (PrismStateTransition prismStateTransition : stateTransitions) {
@@ -556,7 +555,7 @@ public class SystemService {
 			Action transitionAction = actionService.getById(prismStateTransition.getTransitionAction());
 
 			StateTransitionEvaluation stateTransitionEvaluation = null;
-			PrismStateTransitionEvaluation prismStateTransitionEvaluation = prismStateTransition.getStateTransitionEvaluation();
+			PrismStateTransitionEvaluation prismStateTransitionEvaluation = prismStateTransition.getTransitionEvaluation();
 			if (prismStateTransitionEvaluation != null) {
 				stateTransitionEvaluation = stateService.getStateTransitionEvaluationById(prismStateTransitionEvaluation);
 				if (stateTransitionEvaluation == null) {

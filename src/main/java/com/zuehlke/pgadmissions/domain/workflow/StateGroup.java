@@ -13,7 +13,7 @@ import javax.persistence.UniqueConstraint;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 
 @Entity
-@Table(name = "STATE_GROUP", uniqueConstraints = {@UniqueConstraint(columnNames = {"scope_id", "sequence_order"})})
+@Table(name = "STATE_GROUP", uniqueConstraints = {@UniqueConstraint(columnNames = {"scope_id", "ordinal"})})
 public class StateGroup extends WorkflowDefinition {
 
     @Id
@@ -21,8 +21,8 @@ public class StateGroup extends WorkflowDefinition {
     @Enumerated(EnumType.STRING)
     private PrismStateGroup id;
 
-    @Column(name = "sequence_order", nullable = false)
-    private Integer sequenceOrder;
+    @Column(name = "ordinal", nullable = false)
+    private Integer ordinal;
 
     @Column(name = "repeatable", nullable = false)
     private Boolean repeatable;
@@ -40,12 +40,12 @@ public class StateGroup extends WorkflowDefinition {
         this.id = id;
     }
 
-    public int getSequenceOrder() {
-        return sequenceOrder;
+    public int getOrdinal() {
+        return ordinal;
     }
 
-    public void setSequenceOrder(Integer sequenceOrder) {
-        this.sequenceOrder = sequenceOrder;
+    public void setOrdinal(Integer ordinal) {
+        this.ordinal = ordinal;
     }
 
     public final Boolean getRepeatable() {
@@ -71,8 +71,8 @@ public class StateGroup extends WorkflowDefinition {
         return this;
     }
 
-    public StateGroup withSequenceOrder(int sequenceOrder) {
-        this.sequenceOrder = sequenceOrder;
+    public StateGroup withSequenceOrder(Integer ordinal) {
+        this.ordinal = ordinal;
         return this;
     }
 

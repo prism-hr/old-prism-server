@@ -1,97 +1,125 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleGroup;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PrismStateTransitionGroup;
 
 public class PrismStateAction {
 
-    private PrismAction action;
+	private PrismAction action;
 
-    private Boolean raisesUrgentFlag;
+	private Boolean raisesUrgentFlag = false;
 
-    private Boolean defaultAction;
+	private PrismActionEnhancement actionEnhancement;
 
-    private PrismActionEnhancement actionEnhancement;
+	private PrismNotificationDefinition notification;
 
-    private PrismNotificationDefinition notificationTemplate;
+	private List<PrismStateActionAssignment> assignments = Lists.newLinkedList();
 
-    private List<PrismStateActionAssignment> assignments = Lists.newArrayList();
+	private List<PrismStateActionNotification> notifications = Lists.newLinkedList();
 
-    private List<PrismStateActionNotification> notifications = Lists.newArrayList();
+	private List<PrismStateTransition> transitions = Lists.newLinkedList();
 
-    private List<PrismStateTransition> transitions = Lists.newArrayList();
+	public PrismAction getAction() {
+		return action;
+	}
 
-    public PrismAction getAction() {
-        return action;
-    }
+	public boolean isRaisesUrgentFlag() {
+		return raisesUrgentFlag;
+	}
 
-    public boolean isRaisesUrgentFlag() {
-        return raisesUrgentFlag;
-    }
+	public PrismActionEnhancement getActionEnhancement() {
+		return actionEnhancement;
+	}
 
-    public boolean isDefaultAction() {
-        return defaultAction;
-    }
+	public PrismNotificationDefinition getNotification() {
+		return notification;
+	}
 
-    public PrismActionEnhancement getActionEnhancement() {
-        return actionEnhancement;
-    }
+	public List<PrismStateActionAssignment> getAssignments() {
+		return assignments;
+	}
 
-    public PrismNotificationDefinition getNotificationTemplate() {
-        return notificationTemplate;
-    }
+	public List<PrismStateActionNotification> getNotifications() {
+		return notifications;
+	}
 
-    public List<PrismStateActionAssignment> getAssignments() {
-        return assignments;
-    }
+	public List<PrismStateTransition> getTransitions() {
+		return transitions;
+	}
 
-    public List<PrismStateActionNotification> getNotifications() {
-        return notifications;
-    }
+	public PrismStateAction withAction(PrismAction action) {
+		this.action = action;
+		return this;
+	}
 
-    public List<PrismStateTransition> getTransitions() {
-        return transitions;
-    }
+	public PrismStateAction withRaisesUrgentFlag() {
+		this.raisesUrgentFlag = true;
+		return this;
+	}
 
-    public PrismStateAction withAction(PrismAction action) {
-        this.action = action;
-        return this;
-    }
+	public PrismStateAction withActionEnhancement(PrismActionEnhancement actionEnhancement) {
+		this.actionEnhancement = actionEnhancement;
+		return this;
+	}
 
-    public PrismStateAction withRaisesUrgentFlag(boolean raisesUrgentFlag) {
-        this.raisesUrgentFlag = raisesUrgentFlag;
-        return this;
-    }
+	public PrismStateAction withNotification(PrismNotificationDefinition notification) {
+		this.notification = notification;
+		return this;
+	}
 
-    public PrismStateAction withDefaultAction(boolean defaultAction) {
-        this.defaultAction = defaultAction;
-        return this;
-    }
+	public PrismStateAction withAssignments(PrismStateActionAssignment... assignments) {
+		this.assignments.addAll(Arrays.asList(assignments));
+		return this;
+	}
+	
+	public PrismStateAction withAssignments(PrismRole... roles) {
+		List<PrismStateActionAssignment> assignments = Lists.newLinkedList();
+		for (PrismRole role : roles) {
+			assignments.add(new PrismStateActionAssignment().withRole(role));
+		}
+		this.assignments.addAll(assignments);
+		return this;
+	}
 
-    public PrismStateAction withActionEnhancement(PrismActionEnhancement actionEnhancement) {
-        this.actionEnhancement = actionEnhancement;
-        return this;
-    }
+	public PrismStateAction withAssignments(PrismRoleGroup roleGroup) {
+		List<PrismStateActionAssignment> assignments = Lists.newLinkedList();
+		for (PrismRole role : roleGroup.getRoles()) {
+			assignments.add(new PrismStateActionAssignment().withRole(role));
+		}
+		this.assignments.addAll(assignments);
+		return this;
+	}
 
-    public PrismStateAction withNotificationTemplate(PrismNotificationDefinition notificationTemplate) {
-        this.notificationTemplate = notificationTemplate;
-        return this;
-    }
+	public PrismStateAction withNotifications(PrismStateActionNotification... notifications) {
+		this.notifications.addAll(Arrays.asList(notifications));
+		return this;
+	}
 
-    public PrismStateAction withAssignments(List<PrismStateActionAssignment> assignments) {
-        this.assignments = assignments == null ? this.assignments : assignments;
-        return this;
-    }
+	public PrismStateAction withNotifications(PrismRoleGroup roleGroup, PrismNotificationDefinition notification) {
+		List<PrismStateActionNotification> notifications = Lists.newLinkedList();
+		for (PrismRole role : roleGroup.getRoles()) {
+			notifications.add(new PrismStateActionNotification().withRole(role).withDefinition(notification));
+		}
+		this.notifications.addAll(notifications);
+		return this;
+	}
 
-    public PrismStateAction withNotifications(List<PrismStateActionNotification> notifications) {
-        this.notifications = notifications == null ? this.notifications : notifications;
-        return this;
-    }
+	public PrismStateAction withTransitions(PrismStateTransition... transitions) {
+		this.transitions.addAll(Arrays.asList(transitions));
+		return this;
+	}
 
-    public PrismStateAction withTransitions(List<PrismStateTransition> transitions) {
-        this.transitions = transitions == null ? this.transitions : transitions;
-        return this;
-    }
+	public PrismStateAction withTransitions(PrismStateTransitionGroup stateTransitionGroup) {
+		List<PrismStateTransition> transitions = Lists.newLinkedList();
+		for (PrismStateTransition stateTransition : stateTransitionGroup.getStateTransitions()) {
+			transitions.add(stateTransition);
+		}
+		this.transitions.addAll(transitions);
+		return this;
+	}
 
 }

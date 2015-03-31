@@ -63,7 +63,7 @@ public class PrismApplicationRejectedPendingCorrection extends PrismWorkflowStat
             .withAction(PrismAction.APPLICATION_CORRECT) //
             .withRaisesUrgentFlag(true) //
             .withDefaultAction(false) //
-            .withNotificationTemplate(PrismNotificationDefinition.APPLICATION_CORRECT_REQUEST) //
+            .withNotification(PrismNotificationDefinition.APPLICATION_CORRECT_REQUEST) //
                 .withAssignments(Arrays.asList( //
                     new PrismStateActionAssignment() //
                         .withRole(PrismRole.INSTITUTION_ADMINISTRATOR))) //

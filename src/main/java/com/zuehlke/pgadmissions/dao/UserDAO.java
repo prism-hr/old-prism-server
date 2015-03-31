@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.Arrays;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleGroup.APPLICATION_RECRUITER_GROUP;
+
 import java.util.List;
 
 import org.apache.commons.lang3.text.WordUtils;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -82,82 +84,44 @@ public class UserDAO {
 	}
 
 	public List<User> getSuggestedSupervisors(Application application) {
-		return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-		        .setProjection(Projections.groupProperty("user")) //
+		return (List<User>) sessionFactory.getCurrentSession().createCriteria(ApplicationSupervisor.class) //
+		        .setProjection(Projections.groupProperty("user.parentUser")) //
 		        .createAlias("user", "user", JoinType.INNER_JOIN) //
+		        .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
 		        .add(Restrictions.eq("application", application)) //
-		        .add(Restrictions.eq("role.id", PrismRole.APPLICATION_SUGGESTED_SUPERVISOR)) //
+		        .add(Restrictions.disjunction() //
+		                .add(Restrictions.isNull("user.userAccount")) //
+		                .add(Restrictions.eq("userAccount.enabled", true))) //
 		        .addOrder(Order.asc("user.firstName")) //
 		        .addOrder(Order.asc("user.lastName")) //
+		        .addOrder(Order.asc("user.id")) //
 		        .list();
 	}
 
-	public List<User> getRecruitersAssignedToApplication(Application application, List<User> usersToExclude) {
+	public List<User> getUsersPotentiallyInterestedInApplication(Program applicationProgram, List<User> interestedUsers) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
 		        .setProjection(Projections.groupProperty("user.parentUser")) //
 		        .createAlias("user", "user", JoinType.INNER_JOIN) //
-		        .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+		        .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
+		        .createAlias("program.projects", "programProject", JoinType.LEFT_OUTER_JOIN) //
+		        .createAlias("program.applications", "programApplication", JoinType.LEFT_OUTER_JOIN) //
 		        .add(Restrictions.disjunction() //
-		                .add(Restrictions.eq("program", application.getProgram())) //
-		                .add(Restrictions.eq("project", application.getProject())) //
-		                .add(Restrictions.eq("application", application))) //
-		        .add(Restrictions.in("role.id", Arrays.asList(PrismRole.PROGRAM_APPROVER, PrismRole.PROGRAM_VIEWER, //
-		                PrismRole.PROJECT_PRIMARY_SUPERVISOR, PrismRole.PROJECT_SECONDARY_SUPERVISOR, //
-		                PrismRole.APPLICATION_ADMINISTRATOR, PrismRole.APPLICATION_REVIEWER, //
-		                PrismRole.APPLICATION_INTERVIEWER, PrismRole.APPLICATION_PRIMARY_SUPERVISOR, //
-		                PrismRole.APPLICATION_SECONDARY_SUPERVISOR, PrismRole.APPLICATION_VIEWER_RECRUITER))) //
-		        .add(Restrictions.eq("userAccount.enabled", true)); //
+		                .add(Restrictions.eq("program", applicationProgram)) //
+		                .add(Restrictions.eq("programProject.program", applicationProgram)) //
+		                .add(Restrictions.eq("programApplication.program", applicationProgram))) //
+		        .add(Restrictions.in("role.id", APPLICATION_RECRUITER_GROUP.getRoles())) //
+		        .add(Restrictions.disjunction() //
+		                .add(Restrictions.isNull("user.userAccount")) //
+		                .add(Restrictions.eq("userAccount.enabled", true))); //
 
-		for (User excludedUser : usersToExclude) {
-			criteria.add(Restrictions.ne("user", excludedUser));
+		if (!interestedUsers.isEmpty()) {
+			criteria.add(Restrictions.not( //
+			        Restrictions.in("user.parentUser", interestedUsers)));
 		}
 
 		return criteria.addOrder(Order.asc("user.lastName")) //
 		        .addOrder(Order.asc("user.firstName")) //
-		        .list();
-	}
-
-	public List<User> getRecruitersAssignedToProgramApplications(Program program, List<User> usersToExclude) {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Program.class) //
-		        .setProjection(Projections.groupProperty("user.parentUser")) //
-		        .createAlias("applications", "application", JoinType.INNER_JOIN) //
-		        .createAlias("application.userRoles", "userRole") //
-		        .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-		        .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-		        .add(Restrictions.eq("id", program.getId())) //
-		        .add(Restrictions.in("userRole.role.id", Arrays.asList(PrismRole.APPLICATION_ADMINISTRATOR, //
-		                PrismRole.APPLICATION_REVIEWER, PrismRole.APPLICATION_INTERVIEWER, //
-		                PrismRole.APPLICATION_PRIMARY_SUPERVISOR, PrismRole.APPLICATION_SECONDARY_SUPERVISOR, //
-		                PrismRole.APPLICATION_VIEWER_RECRUITER))) //
-		        .add(Restrictions.eq("userAccount.enabled", true)); //
-
-		for (User excludedUser : usersToExclude) {
-			criteria.add(Restrictions.ne("userRole.user", excludedUser));
-		}
-
-		return criteria.addOrder(Order.asc("user.lastName")) //
-		        .addOrder(Order.asc("user.firstName")) //
-		        .list();
-	}
-
-	public List<User> getRecruitersAssignedToProgramProjects(Program program, List<User> usersToExclude) {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Program.class) //
-		        .setProjection(Projections.groupProperty("user.parentUser")) //
-		        .createAlias("projects", "project", JoinType.INNER_JOIN) //
-		        .createAlias("project.userRoles", "userRole") //
-		        .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-		        .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-		        .add(Restrictions.eq("id", program.getId())) //
-		        .add(Restrictions.in("userRole.role.id", Arrays.asList(PrismRole.PROJECT_PRIMARY_SUPERVISOR, //
-		                PrismRole.PROJECT_SECONDARY_SUPERVISOR))) //
-		        .add(Restrictions.eq("userAccount.enabled", true)); //
-
-		for (User excludedUser : usersToExclude) {
-			criteria.add(Restrictions.ne("userRole.user", excludedUser));
-		}
-
-		return criteria.addOrder(Order.asc("user.lastName")) //
-		        .addOrder(Order.asc("user.firstName")) //
+		        .addOrder(Order.asc("user.id")) //
 		        .list();
 	}
 

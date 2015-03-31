@@ -6,14 +6,14 @@ public class PrismStateActionNotification {
     
     private PrismRole role;
     
-    private PrismNotificationDefinition definition;
+    private PrismNotificationDefinition notification;
 
     public PrismRole getRole() {
         return role;
     }
 
-    public PrismNotificationDefinition getDefinition() {
-        return definition;
+    public PrismNotificationDefinition getNotification() {
+        return notification;
     }
 
     public PrismStateActionNotification withRole(PrismRole role) {
@@ -21,14 +21,14 @@ public class PrismStateActionNotification {
         return this;
     }
     
-    public PrismStateActionNotification withDefinition(PrismNotificationDefinition definition) {
-        this.definition = definition;
+    public PrismStateActionNotification withDefinition(PrismNotificationDefinition notification) {
+        this.notification = notification;
         return this;
     }
     
     @Override
     public int hashCode() {
-        return Objects.hashCode(role, definition);
+        return Objects.hashCode(role, notification);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class PrismStateActionNotification {
             return false;
         }
         final PrismStateActionNotification other = (PrismStateActionNotification) obj;
-        return Objects.equal(role, other.getRole()) && Objects.equal(definition, other.getDefinition());
+        return Objects.equal(role, other.getRole()) && Objects.equal(notification, other.getNotification());
     }
     
 }

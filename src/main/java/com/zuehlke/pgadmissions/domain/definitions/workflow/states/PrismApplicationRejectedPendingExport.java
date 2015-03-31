@@ -101,15 +101,15 @@ public class PrismApplicationRejectedPendingExport extends PrismWorkflowState {
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_REJECTED_COMPLETED) //
                         .withTransitionAction(PrismAction.APPLICATION_EXPORT) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME), //
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME), //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_REJECTED_PENDING_CORRECTION) //
                         .withTransitionAction(PrismAction.APPLICATION_EXPORT) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME), //
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME), //
                     new PrismStateTransition() //
                         .withTransitionState(PrismState.APPLICATION_REJECTED_PENDING_EXPORT) //
                         .withTransitionAction(PrismAction.APPLICATION_EXPORT) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME)))); //
+                        .withTransitionEvaluation(PrismStateTransitionEvaluation.APPLICATION_EXPORTED_OUTCOME)))); //
         
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_REVERSE_REJECTION) //

@@ -131,8 +131,6 @@ public class WorkflowConfigurationHelper {
 
 	private void verifyStateActions(State state) {
 		Set<Action> escalationActions = Sets.newHashSet();
-		Set<Action> userDefaultActions = Sets.newHashSet();
-		Set<Action> systemDefaultActions = Sets.newHashSet();
 		Set<Action> viewEditActions = Sets.newHashSet();
 
 		for (StateAction stateAction : state.getStateActions()) {
@@ -154,14 +152,6 @@ public class WorkflowConfigurationHelper {
 				assertNotNull(stateAction.getNotificationDefinition());
 			}
 
-			if (stateAction.isDefaultAction()) {
-				if (action.getActionType() == PrismActionType.USER_INVOCATION) {
-					userDefaultActions.add(action);
-				} else {
-					systemDefaultActions.add(action);
-				}
-			}
-
 			if (actionCategory == PrismActionCategory.ESCALATE_RESOURCE || actionCategory == PrismActionCategory.PURGE_RESOURCE) {
 				escalationActions.add(action);
 			}
@@ -175,9 +165,7 @@ public class WorkflowConfigurationHelper {
 		}
 
 		boolean actionsEmpty = state.getStateActions().isEmpty();
-		assertTrue(actionsEmpty || userDefaultActions.size() == 1);
-		assertTrue(systemDefaultActions.size() <= 1);
-		assertTrue(actionsEmpty || viewEditActions.size() >= 1);
+		assertTrue(actionsEmpty || viewEditActions.size() == 1);
 
 		System system = systemService.getSystem();
 		StateDurationDefinition definition = state.getStateDurationDefinition();

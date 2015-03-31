@@ -1,109 +1,55 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_APPROVAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_INTERVIEW;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_REFERENCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_REJECTED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_RESERVED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_REVIEW;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_UNSUBMITTED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_VALIDATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_VERIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_APPLICATION_WITHDRAWN;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_INSTITUTION_APPROVAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_INSTITUTION_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_INSTITUTION_REJECTED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_INSTITUTION_WITHDRAWN;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_PROGRAM_APPROVAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_PROGRAM_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_PROGRAM_DISABLED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_PROGRAM_REJECTED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_PROGRAM_WITHDRAWN;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_PROJECT_APPROVAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_PROJECT_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_PROJECT_DISABLED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_PROJECT_REJECTED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_PROJECT_WITHDRAWN;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE_GROUP_SYSTEM_RUNNING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
-import org.apache.commons.lang3.text.WordUtils;
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-
-
 public enum PrismStateGroup {
 
-    APPLICATION_UNSUBMITTED(1, false, APPLICATION, SYSTEM_STATE_GROUP_APPLICATION_UNSUBMITTED), //
-    APPLICATION_VALIDATION(2, false, APPLICATION, SYSTEM_STATE_GROUP_APPLICATION_VALIDATION), //
-    APPLICATION_VERIFICATION(3, false, APPLICATION, SYSTEM_STATE_GROUP_APPLICATION_VERIFICATION), //
-    APPLICATION_REFERENCE(4, false, APPLICATION, SYSTEM_STATE_GROUP_APPLICATION_REFERENCE), //
-    APPLICATION_REVIEW(5, true, APPLICATION, SYSTEM_STATE_GROUP_APPLICATION_REVIEW), //
-    APPLICATION_INTERVIEW(6, true, APPLICATION, SYSTEM_STATE_GROUP_APPLICATION_INTERVIEW), //
-    APPLICATION_APPROVAL(7, true, APPLICATION, SYSTEM_STATE_GROUP_APPLICATION_APPROVAL), //
-    APPLICATION_APPROVED(8, true, APPLICATION, SYSTEM_STATE_GROUP_APPLICATION_APPROVED), //
-    APPLICATION_RESERVED(9, true, APPLICATION, SYSTEM_STATE_GROUP_APPLICATION_RESERVED), //
-    APPLICATION_REJECTED(10, true, APPLICATION, SYSTEM_STATE_GROUP_APPLICATION_REJECTED), //
-    APPLICATION_WITHDRAWN(11, false, APPLICATION, SYSTEM_STATE_GROUP_APPLICATION_WITHDRAWN), //
-    PROJECT_APPROVAL(1, false, PROJECT, SYSTEM_STATE_GROUP_PROJECT_APPROVAL), //
-    PROJECT_APPROVED(2, true, PROJECT, SYSTEM_STATE_GROUP_PROJECT_APPROVED), //
-    PROJECT_REJECTED(3, false, PROJECT, SYSTEM_STATE_GROUP_PROJECT_REJECTED), //
-    PROJECT_DISABLED(4, true, PROJECT, SYSTEM_STATE_GROUP_PROJECT_DISABLED), //
-    PROJECT_WITHDRAWN(5, false, PROJECT, SYSTEM_STATE_GROUP_PROJECT_WITHDRAWN), //
-    PROGRAM_APPROVAL(1, false, PROGRAM, SYSTEM_STATE_GROUP_PROGRAM_APPROVAL), //
-    PROGRAM_APPROVED(2, true, PROGRAM, SYSTEM_STATE_GROUP_PROGRAM_APPROVED), //
-    PROGRAM_REJECTED(3, false, PROGRAM, SYSTEM_STATE_GROUP_PROGRAM_REJECTED), //
-    PROGRAM_DISABLED(4, true, PROGRAM, SYSTEM_STATE_GROUP_PROGRAM_DISABLED), //
-    PROGRAM_WITHDRAWN(5, false, PROGRAM, SYSTEM_STATE_GROUP_PROGRAM_WITHDRAWN), //
-    INSTITUTION_APPROVAL(1, false, INSTITUTION, SYSTEM_STATE_GROUP_INSTITUTION_APPROVAL), //
-    INSTITUTION_APPROVED(2, false, INSTITUTION, SYSTEM_STATE_GROUP_INSTITUTION_APPROVED), //
-    INSTITUTION_REJECTED(3, false, INSTITUTION, SYSTEM_STATE_GROUP_INSTITUTION_REJECTED), //
-    INSTITUTION_WITHDRAWN(4, false, INSTITUTION, SYSTEM_STATE_GROUP_INSTITUTION_WITHDRAWN), //
-    SYSTEM_RUNNING(1, false, SYSTEM, SYSTEM_STATE_GROUP_SYSTEM_RUNNING);
+	APPLICATION_UNSUBMITTED(false, APPLICATION), //
+	APPLICATION_VALIDATION(false, APPLICATION), //
+	APPLICATION_VERIFICATION(false, APPLICATION), //
+	APPLICATION_REFERENCE(false, APPLICATION), //
+	APPLICATION_REVIEW(true, APPLICATION), //
+	APPLICATION_INTERVIEW(true, APPLICATION), //
+	APPLICATION_APPROVAL(true, APPLICATION), //
+	APPLICATION_APPROVED(true, APPLICATION), //
+	APPLICATION_RESERVED(true, APPLICATION), //
+	APPLICATION_REJECTED(true, APPLICATION), //
+	APPLICATION_WITHDRAWN(false, APPLICATION), //
+	PROJECT_APPROVAL(false, PROJECT), //
+	PROJECT_APPROVED(true, PROJECT), //
+	PROJECT_REJECTED(false, PROJECT), //
+	PROJECT_DISABLED(true, PROJECT), //
+	PROJECT_WITHDRAWN(false, PROJECT), //
+	PROGRAM_APPROVAL(false, PROGRAM), //
+	PROGRAM_APPROVED(true, PROGRAM), //
+	PROGRAM_REJECTED(false, PROGRAM), //
+	PROGRAM_DISABLED(true, PROGRAM), //
+	PROGRAM_WITHDRAWN(false, PROGRAM), //
+	INSTITUTION_APPROVAL(false, INSTITUTION), //
+	INSTITUTION_APPROVED(false, INSTITUTION), //
+	INSTITUTION_REJECTED(false, INSTITUTION), //
+	INSTITUTION_WITHDRAWN(false, INSTITUTION), //
+	SYSTEM_RUNNING(false, SYSTEM);
 
-    private Integer sequenceOrder;
+	private boolean repeatable;
 
-    private boolean repeatable;
+	private PrismScope scope;
 
-    private PrismScope scope;
+	private PrismStateGroup(boolean repeatable, PrismScope scope) {
+		this.repeatable = repeatable;
+		this.scope = scope;
+	}
 
-    private PrismDisplayPropertyDefinition displayProperty;
+	public final boolean isRepeatable() {
+		return repeatable;
+	}
 
-    private PrismStateGroup(Integer sequenceOrder, boolean repeatable, PrismScope scope, PrismDisplayPropertyDefinition displayProperty) {
-        this.sequenceOrder = sequenceOrder;
-        this.repeatable = repeatable;
-        this.scope = scope;
-        this.displayProperty = displayProperty;
-    }
-
-    public int getSequenceOrder() {
-        return sequenceOrder;
-    }
-
-    public final boolean isRepeatable() {
-        return repeatable;
-    }
-
-    public PrismScope getScope() {
-        return scope;
-    }
-
-    public final PrismDisplayPropertyDefinition getDisplayProperty() {
-        return displayProperty;
-    }
-
-    public String getReference() {
-        String reference = "";
-        String[] tokens = name().split("_");
-        for (int i = 0; i < tokens.length; i++) {
-            reference = i == 0 ? reference + tokens[i].toLowerCase() : WordUtils.capitalize(tokens[i]);
-        }
-        return reference;
-    }
+	public PrismScope getScope() {
+		return scope;
+	}
 
 }

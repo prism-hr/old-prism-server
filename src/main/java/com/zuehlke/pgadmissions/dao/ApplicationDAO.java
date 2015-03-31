@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -201,8 +204,9 @@ public class ApplicationDAO {
 		        .add(Restrictions.eq("user", application.getUser())) //
 		        .add(Restrictions.ne("id", application.getId())) //
 		        .add(Restrictions.disjunction() //
-		                .add(Restrictions.between("stateGroup.sequenceOrder", 2, 7)) //
-		                .add(Restrictions.in("state.id", Arrays.asList(PrismState.APPLICATION_APPROVAL, PrismState.APPLICATION_REJECTED)))) //
+		                .add(Restrictions.between("stateGroup.ordinal", PrismStateGroup.APPLICATION_VALIDATION.ordinal(), //
+		                        PrismStateGroup.APPLICATION_REJECTED.ordinal())) //
+		                .add(Restrictions.in("state.id", Arrays.asList(APPLICATION_APPROVAL, APPLICATION_REJECTED)))) //
 		        .addOrder(Order.desc("sequenceIdentifier")) //
 		        .setResultTransformer(Transformers.aliasToBean(OtherApplicationSummaryRepresentation.class)) //
 		        .list();
@@ -267,20 +271,20 @@ public class ApplicationDAO {
 		        .list();
 	}
 
-    public <T extends Resource> List<Application> getUserAdministratorApplications(HashMultimap<PrismScope, T> userAdministratorResources) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("application")) //
-                .createAlias("application", "application", JoinType.INNER_JOIN) //
-                .createAlias("role", "role", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("role.scopeCreator", false));
+	public <T extends Resource> List<Application> getUserAdministratorApplications(HashMultimap<PrismScope, T> userAdministratorResources) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+		        .setProjection(Projections.groupProperty("application")) //
+		        .createAlias("application", "application", JoinType.INNER_JOIN) //
+		        .createAlias("role", "role", JoinType.INNER_JOIN) //
+		        .add(Restrictions.eq("role.scopeCreator", false));
 
-        Disjunction disjunction = Restrictions.disjunction();
-        for (PrismScope scope : userAdministratorResources.keySet()) {
-            disjunction.add(Restrictions.in("application." + scope.getLowerCamelName(), userAdministratorResources.get(scope)));
-        }
+		Disjunction disjunction = Restrictions.disjunction();
+		for (PrismScope scope : userAdministratorResources.keySet()) {
+			disjunction.add(Restrictions.in("application." + scope.getLowerCamelName(), userAdministratorResources.get(scope)));
+		}
 
-        return (List<Application>) criteria.add(disjunction) //
-                .list();
-    }
+		return (List<Application>) criteria.add(disjunction) //
+		        .list();
+	}
 
 }

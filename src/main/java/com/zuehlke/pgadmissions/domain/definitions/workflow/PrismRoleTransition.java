@@ -10,7 +10,7 @@ public class PrismRoleTransition {
 
     private PrismRole transitionRole;
 
-    private Boolean restrictToActionOwner;
+    private Boolean restrictToActionOwner = false;
 
     private Integer minimumPermitted;
 
@@ -34,7 +34,11 @@ public class PrismRoleTransition {
         return restrictToActionOwner;
     }
 
-    public Integer getMinimumPermitted() {
+    public void setRestrictToActionOwner(Boolean restrictToActionOwner) {
+		this.restrictToActionOwner = restrictToActionOwner;
+	}
+
+	public Integer getMinimumPermitted() {
         return minimumPermitted;
     }
 
@@ -61,8 +65,8 @@ public class PrismRoleTransition {
         return this;
     }
 
-    public PrismRoleTransition withRestrictToOwner(Boolean restrictToActionOwner) {
-        this.restrictToActionOwner = restrictToActionOwner;
+    public PrismRoleTransition withRestrictToOwner() {
+        this.restrictToActionOwner = true;
         return this;
     }
 

@@ -123,7 +123,7 @@ public class StateDAO {
 		return (List<State>) criteria //
 		        .addOrder(Order.asc("creationScope.ordinal")) //
 		        .addOrder(Order.asc("scope.ordinal")) //
-		        .addOrder(Order.asc("stateGroup.sequenceOrder")) //
+		        .addOrder(Order.asc("stateGroup.ordinal")) //
 		        .list();
 	}
 
@@ -208,7 +208,7 @@ public class StateDAO {
 
 		appendImportedResourceConstraint(criteria, importedResource);
 
-		return (List<NextStateRepresentation>) criteria.addOrder(Order.asc("transitionStateGroup.sequenceOrder")) //
+		return (List<NextStateRepresentation>) criteria.addOrder(Order.asc("transitionStateGroup.ordinal")) //
 		        .setResultTransformer(Transformers.aliasToBean(NextStateRepresentation.class)) //
 		        .list();
 	}
@@ -228,7 +228,7 @@ public class StateDAO {
 
 		appendImportedResourceConstraint(criteria, importedResource);
 
-		return (List<NextStateRepresentation>) criteria.addOrder(Order.asc("transitionStateGroup.sequenceOrder")) //
+		return (List<NextStateRepresentation>) criteria.addOrder(Order.asc("transitionStateGroup.ordinal")) //
 		        .setResultTransformer(Transformers.aliasToBean(NextStateRepresentation.class)) //
 		        .list();
 	}

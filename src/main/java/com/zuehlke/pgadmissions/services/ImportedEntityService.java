@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static org.springframework.transaction.annotation.Isolation.REPEATABLE_READ;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +71,7 @@ import com.zuehlke.pgadmissions.utils.ConversionUtils;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Service
-@Transactional(timeout = 600)
+@Transactional(timeout = 600, isolation = REPEATABLE_READ)
 @SuppressWarnings("unchecked")
 public class ImportedEntityService {
 

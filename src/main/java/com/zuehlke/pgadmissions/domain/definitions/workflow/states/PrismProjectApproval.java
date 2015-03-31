@@ -1,137 +1,111 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.states;
 
-import java.util.Arrays;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_COMPLETE_APPROVAL_STAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_EMAIL_CREATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_ESCALATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_SUSPEND;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_TERMINATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_VIEW_EDIT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_WITHDRAW;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_PROJECT_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PROJECT_VIEW_AS_USER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROJECT_TASK_REQUEST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROJECT_UPDATE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleGroup.PROJECT_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleGroup.PROJECT_PARENT_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVAL_PENDING_CORRECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_REJECTED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_WITHDRAWN;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PrismStateTransitionGroup.PROJECT_APPROVE_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.PROJECT_APPROVED_OUTCOME;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 
 public class PrismProjectApproval extends PrismWorkflowState {
 
-    @Override
-    protected void setStateActions() {
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROJECT_COMPLETE_APPROVAL_STAGE) //
-            .withRaisesUrgentFlag(true) //
-            .withDefaultAction(false) //
-            .withNotificationTemplate(PrismNotificationDefinition.SYSTEM_PROJECT_TASK_REQUEST) //
-                .withAssignments(Arrays.asList( //
-                    new PrismStateActionAssignment() //
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), //
-                    new PrismStateActionAssignment() //
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR))) //
-                .withNotifications(Arrays.asList( //
-                    new PrismStateActionNotification() //
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) //
-                        .withDefinition(PrismNotificationDefinition.SYSTEM_PROJECT_UPDATE_NOTIFICATION), //
-                    new PrismStateActionNotification() //
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
-                        .withDefinition(PrismNotificationDefinition.SYSTEM_PROJECT_UPDATE_NOTIFICATION),
-                    new PrismStateActionNotification() //
-                        .withRole(PrismRole.PROJECT_ADMINISTRATOR) //
-                        .withDefinition(PrismNotificationDefinition.PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION),
-                    new PrismStateActionNotification() //
-                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
-                        .withDefinition(PrismNotificationDefinition.PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION))) //
-                .withTransitions(Arrays.asList( //
-                    new PrismStateTransition() //
-                        .withTransitionState(PrismState.PROJECT_APPROVAL_PENDING_CORRECTION) //
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_PROJECT_LIST) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_APPROVED_OUTCOME), //
-                    new PrismStateTransition() //
-                        .withTransitionState(PrismState.PROJECT_APPROVED) //
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_PROJECT_LIST) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_APPROVED_OUTCOME), //
-                    new PrismStateTransition() //
-                        .withTransitionState(PrismState.PROJECT_REJECTED) //
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_PROJECT_LIST) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_APPROVED_OUTCOME)))); //
+	@Override
+	protected void setStateActions() {
+		stateActions.add(projectCompleteApprovalStage() //
+		        .withRaisesUrgentFlag() //
+		        .withNotification(SYSTEM_PROJECT_TASK_REQUEST) //
+		        .withTransitions(new PrismStateTransition() //
+		                .withTransitionState(PROJECT_APPROVAL_PENDING_CORRECTION) //
+		                .withTransitionAction(SYSTEM_VIEW_PROJECT_LIST) //
+		                .withTransitionEvaluation(PROJECT_APPROVED_OUTCOME)));
 
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROJECT_EMAIL_CREATOR) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-                .withAssignments(Arrays.asList( //
-                    new PrismStateActionAssignment() //
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), //
-                    new PrismStateActionAssignment() //
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR)))); //
+		stateActions.add(projectEmailCreatorApproval());
 
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROJECT_ESCALATE) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-                .withTransitions(Arrays.asList( //
-                    new PrismStateTransition() //
-                        .withTransitionState(PrismState.PROJECT_REJECTED) //
-                        .withTransitionAction(PrismAction.PROJECT_ESCALATE)))); //
+		stateActions.add(projectEscalateApproval());
 
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROJECT_SUSPEND) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-                .withTransitions(Arrays.asList( //
-                    new PrismStateTransition() //
-                        .withTransitionState(PrismState.PROJECT_DISABLED_PENDING_REACTIVATION) //
-                        .withTransitionAction(PrismAction.PROJECT_SUSPEND)))); //
+		stateActions.add(projectSuspendApproval());
 
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROJECT_TERMINATE) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-                .withNotifications(Arrays.asList( //
-                    new PrismStateActionNotification() //
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) //
-                        .withDefinition(PrismNotificationDefinition.SYSTEM_PROJECT_UPDATE_NOTIFICATION), //
-                    new PrismStateActionNotification() //
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
-                        .withDefinition(PrismNotificationDefinition.SYSTEM_PROJECT_UPDATE_NOTIFICATION), //
-                    new PrismStateActionNotification() //
-                        .withRole(PrismRole.PROJECT_ADMINISTRATOR) //
-                        .withDefinition(PrismNotificationDefinition.SYSTEM_PROJECT_UPDATE_NOTIFICATION), //
-                    new PrismStateActionNotification() //
-                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
-                        .withDefinition(PrismNotificationDefinition.SYSTEM_PROJECT_UPDATE_NOTIFICATION))) //
-                .withTransitions(Arrays.asList( //
-                    new PrismStateTransition() //
-                        .withTransitionState(PrismState.PROJECT_WITHDRAWN) //
-                        .withTransitionAction(PrismAction.PROJECT_TERMINATE)))); //
+		stateActions.add(projectTerminateApproval());
 
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROJECT_VIEW_EDIT) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(true) //
-            .withActionEnhancement(PrismActionEnhancement.PROJECT_VIEW_AS_USER) //
-                .withAssignments(Arrays.asList( //
-                    new PrismStateActionAssignment() //
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), //
-                    new PrismStateActionAssignment() //
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR), //
-                    new PrismStateActionAssignment() //
-                        .withRole(PrismRole.PROJECT_ADMINISTRATOR), //
-                    new PrismStateActionAssignment() //
-                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR)))); //
+		stateActions.add(projectViewEditApproval());
 
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.PROJECT_WITHDRAW) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-                .withAssignments(Arrays.asList( //
-                    new PrismStateActionAssignment() //
-                        .withRole(PrismRole.PROJECT_ADMINISTRATOR),
-                    new PrismStateActionAssignment() //
-                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR))) //
-                .withTransitions(Arrays.asList( //
-                    new PrismStateTransition() //
-                        .withTransitionState(PrismState.PROJECT_WITHDRAWN) //
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_PROJECT_LIST))));
-    }
+		stateActions.add(projectWithdrawApproval());
+	}
+
+	public static PrismStateAction projectCompleteApprovalStage() {
+		return new PrismStateAction() //
+		        .withAction(PROJECT_COMPLETE_APPROVAL_STAGE) //
+		        .withAssignments(PROJECT_PARENT_ADMINISTRATOR_GROUP) //
+		        .withNotifications(PROJECT_PARENT_ADMINISTRATOR_GROUP, SYSTEM_PROJECT_UPDATE_NOTIFICATION) //
+		        .withNotifications(new PrismStateActionNotification() //
+		                .withRole(PROJECT_ADMINISTRATOR) //
+		                .withDefinition(PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION)) //
+		        .withTransitions(PROJECT_APPROVE_TRANSITION);
+	}
+
+	public static PrismStateAction projectEmailCreatorApproval() {
+		return new PrismStateAction() //
+		        .withAction(PROJECT_EMAIL_CREATOR) //
+		        .withAssignments(PROJECT_PARENT_ADMINISTRATOR_GROUP);
+	}
+
+	public static PrismStateAction projectEscalateApproval() {
+		return new PrismStateAction() //
+		        .withAction(PROJECT_ESCALATE) //
+		        .withTransitions(new PrismStateTransition() //
+		                .withTransitionState(PROJECT_REJECTED) //
+		                .withTransitionAction(PROJECT_ESCALATE));
+	}
+
+	public static PrismStateAction projectSuspendApproval() {
+		return new PrismStateAction() //
+		        .withAction(PROJECT_SUSPEND) //
+		        .withTransitions(new PrismStateTransition() //
+		                .withTransitionState(PROJECT_REJECTED) //
+		                .withTransitionAction(PROJECT_SUSPEND));
+	}
+
+	public static PrismStateAction projectTerminateApproval() {
+		return new PrismStateAction() //
+		        .withAction(PROJECT_TERMINATE) //
+		        .withNotifications(PROJECT_ADMINISTRATOR_GROUP, SYSTEM_PROJECT_UPDATE_NOTIFICATION) //
+		        .withTransitions(new PrismStateTransition() //
+		                .withTransitionState(PROJECT_REJECTED) //
+		                .withTransitionAction(PROJECT_TERMINATE));
+	}
+
+	public static PrismStateAction projectViewEditApproval() {
+		return new PrismStateAction() //
+		        .withAction(PROJECT_VIEW_EDIT) //
+		        .withActionEnhancement(PROJECT_VIEW_AS_USER) //
+		        .withAssignments(PROJECT_ADMINISTRATOR_GROUP);
+	}
+
+	public static PrismStateAction projectWithdrawApproval() {
+		return new PrismStateAction() //
+		        .withAction(PROJECT_WITHDRAW) //
+		        .withAssignments(PROJECT_ADMINISTRATOR)
+		        .withTransitions(new PrismStateTransition() //
+		                .withTransitionState(PROJECT_WITHDRAWN) //
+		                .withTransitionAction(SYSTEM_VIEW_PROJECT_LIST));
+	}
 
 }

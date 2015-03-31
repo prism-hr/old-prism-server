@@ -558,6 +558,10 @@ public class Program extends ResourceParent {
 		return projects;
 	}
 
+	public Set<Application> getApplications() {
+		return applications;
+	}
+
 	public Set<Comment> getComments() {
 		return comments;
 	}

@@ -37,9 +37,6 @@ public class StateAction implements UniqueEntity {
     @Column(name = "raises_urgent_flag", nullable = false)
     private Boolean raisesUrgentFlag;
 
-    @Column(name = "is_default_action", nullable = false)
-    private Boolean defaultAction;
-
     @Column(name = "action_enhancement")
     @Enumerated(EnumType.STRING)
     private PrismActionEnhancement actionEnhancement;
@@ -89,14 +86,6 @@ public class StateAction implements UniqueEntity {
         this.raisesUrgentFlag = raisesUrgentFlag;
     }
 
-    public boolean isDefaultAction() {
-        return defaultAction;
-    }
-
-    public void setDefaultAction(boolean defaultAction) {
-        this.defaultAction = defaultAction;
-    }
-
     public NotificationDefinition getNotificationDefinition() {
         return notificationDefinition;
     }
@@ -137,11 +126,6 @@ public class StateAction implements UniqueEntity {
 
     public StateAction withRaisesUrgentFlag(boolean raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
-        return this;
-    }
-
-    public StateAction withDefaultAction(boolean defaultAction) {
-        this.defaultAction = defaultAction;
         return this;
     }
 

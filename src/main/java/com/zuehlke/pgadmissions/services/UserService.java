@@ -38,7 +38,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.document.FileCategory;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
@@ -109,19 +108,17 @@ public class UserService {
 	}
 
 	public User getOrCreateUser(String firstName, String lastName, String email, PrismLocale locale) throws DeduplicationException {
-		User user;
 		User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email)
 		        .withLocale(locale);
 		User duplicateUser = entityService.getDuplicateEntity(transientUser);
 		if (duplicateUser == null) {
-			user = transientUser;
-			user.setActivationCode(EncryptionUtils.getUUID());
-			entityService.save(user);
-			user.setParentUser(user);
+			transientUser.setActivationCode(EncryptionUtils.getUUID());
+			entityService.save(transientUser);
+			transientUser.setParentUser(transientUser);
+			return transientUser;
 		} else {
-			user = duplicateUser;
+			return duplicateUser;
 		}
-		return user;
 	}
 
 	public User getOrCreateUserWithRoles(String firstName, String lastName, String email, PrismLocale locale, Resource resource, Set<PrismRole> roles)
@@ -256,27 +253,7 @@ public class UserService {
 	}
 
 	public List<User> getUsersPotentiallyInterestedInApplication(Application application, List<User> usersToExclude) {
-		usersToExclude = Lists.newArrayList(usersToExclude);
-
-		List<User> recruiters = userDAO.getRecruitersAssignedToApplication(application, usersToExclude);
-		usersToExclude.addAll(recruiters);
-
-		Program program = application.getProgram();
-
-		List<User> programRecruiters = userDAO.getRecruitersAssignedToProgramApplications(program, usersToExclude);
-		recruiters.addAll(programRecruiters);
-		usersToExclude.addAll(programRecruiters);
-
-		List<User> projectRecruiters = userDAO.getRecruitersAssignedToProgramProjects(program, usersToExclude);
-		recruiters.addAll(projectRecruiters);
-
-		TreeMap<String, User> orderedRecruiters = Maps.newTreeMap();
-
-		for (User recruiter : recruiters) {
-			orderedRecruiters.put(recruiter.getLastName() + recruiter.getFirstName(), recruiter);
-		}
-
-		return Lists.newArrayList(orderedRecruiters.values());
+		return userDAO.getUsersPotentiallyInterestedInApplication(application.getProgram(), usersToExclude);
 	}
 
 	public List<UserRepresentation> getSimilarUsers(String searchTerm) {
@@ -312,7 +289,7 @@ public class UserService {
 		return userAdministratorResources.isEmpty() ? Lists.<User> newArrayList() : userDAO.getBouncedOrUnverifiedUsers(userAdministratorResources,
 		        userListFilterDTO);
 	}
-	
+
 	public <T extends Resource> void correctBouncedOrUnverifiedUser(Integer userId, UserCorrectionDTO userCorrectionDTO) {
 		HashMultimap<PrismScope, T> userAdministratorResources = resourceService.getUserAdministratorResources(getCurrentUser());
 		User user = userDAO.getBouncedOrUnverifiedUser(userAdministratorResources, userId);
@@ -333,22 +310,22 @@ public class UserService {
 			throw new WorkflowPermissionException(systemService.getSystem(), actionService.getById(SYSTEM_VIEW_APPLICATION_LIST));
 		}
 	}
-	
+
 	private void mergeUsers(User oldUser, User newUser) {
-	    reassignUserRoles(oldUser, newUser);
-	    resourceService.reassignResources(oldUser, newUser);
-	    applicationSectionService.reassignApplicationSections(oldUser, newUser);
-	    commentService.reassignComments(oldUser, newUser);
-	    documentService.reassignDoucments(oldUser, newUser);
-	    userDAO.reassignUsers(oldUser, newUser);
-	    reassignUserInsitutionIdentities(oldUser, newUser);
-	   
-	    oldUser.setActivationCode(null);
-	    UserAccount oldUserAccount = oldUser.getUserAccount();
-	    if (oldUserAccount != null) {
-	    	oldUserAccount.setEnabled(false);
-	    }
-    }
+		reassignUserRoles(oldUser, newUser);
+		resourceService.reassignResources(oldUser, newUser);
+		applicationSectionService.reassignApplicationSections(oldUser, newUser);
+		commentService.reassignComments(oldUser, newUser);
+		documentService.reassignDoucments(oldUser, newUser);
+		userDAO.reassignUsers(oldUser, newUser);
+		reassignUserInsitutionIdentities(oldUser, newUser);
+
+		oldUser.setActivationCode(null);
+		UserAccount oldUserAccount = oldUser.getUserAccount();
+		if (oldUserAccount != null) {
+			oldUserAccount.setEnabled(false);
+		}
+	}
 
 	private void reassignUserRoles(User oldUser, User newUser) {
 		for (UserRole userRole : oldUser.getUserRoles()) {
@@ -357,7 +334,7 @@ public class UserService {
 			entityService.delete(userRole);
 		}
 	}
-	
+
 	private void reassignUserInsitutionIdentities(User oldUser, User newUser) {
 		for (UserInstitutionIdentity userInstitutionIdentity : oldUser.getInstitutionIdentities()) {
 			userInstitutionIdentity.setUser(newUser);

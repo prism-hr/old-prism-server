@@ -48,7 +48,7 @@ public class ApplicationSummaryDAO {
                         .add(Projections.property("dayDurationAverage"), "instanceDurationAverage")) //
                 .createAlias("stateGroup", "stateGroup", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("application", application)) //
-                .addOrder(Order.asc("stateGroup.sequenceOrder")) //
+                .addOrder(Order.asc("stateGroup.ordinal")) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingRepresentation.class)) //
                 .list();
     }
@@ -64,7 +64,7 @@ public class ApplicationSummaryDAO {
                         .add(Projections.property("dayDurationAverage"), "instanceDurationAverage")) //
                 .createAlias("stateGroup", "stateGroup", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .addOrder(Order.asc("stateGroup.sequenceOrder")) //
+                .addOrder(Order.asc("stateGroup.ordinal")) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryRepresentation.class)) //
                 .list();
     }

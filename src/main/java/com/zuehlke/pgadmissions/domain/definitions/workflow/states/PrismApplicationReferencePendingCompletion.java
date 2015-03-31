@@ -5,16 +5,17 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_TERMINATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleTransitionGroup.APPLICATION_DELETE_REFEREE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleTransitionGroup.APPLICATION_PROVIDE_REFERENCE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_REFEREE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_PROVIDE_REFERENCE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE_PENDING_COMPLETION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PrismStateTerminationGroup.APPLICATION_TERMINATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PrismStateTransitionGroup.APPLICATION_ESCALATE_SUBMITTED_TRANSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReference.applicationCommentReference;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_ESCALATE_SUBMITTED_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReference.applicationCompleteReference;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReference.applicationEmailCreatorReference;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReference.applicationProvideReference;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReference.applicationViewEditReference;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidation.applicationWithdrawValidation;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationVerification.applicationCommentVerification;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationVerification.applicationEmailCreatorVerification;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
@@ -24,13 +25,13 @@ public class PrismApplicationReferencePendingCompletion extends PrismWorkflowSta
 
 	@Override
 	protected void setStateActions() {
-		stateActions.add(applicationCommentReference()); //
+		stateActions.add(applicationCommentVerification()); //
 
 		stateActions.add(applicationCompleteReference() //
 		        .withRaisesUrgentFlag() //
 		        .withNotification(SYSTEM_APPLICATION_TASK_REQUEST)); //
 
-		stateActions.add(applicationEmailCreatorReference()); //
+		stateActions.add(applicationEmailCreatorVerification()); //
 
 		stateActions.add(new PrismStateAction() //
 		        .withAction(APPLICATION_ESCALATE) //
@@ -46,9 +47,9 @@ public class PrismApplicationReferencePendingCompletion extends PrismWorkflowSta
 		                .withTransitionAction(APPLICATION_COMPLETE_REFERENCE_STAGE) //
 		                .withRoleTransitions(APPLICATION_PROVIDE_REFERENCE_GROUP))); //
 
-		stateActions.add(applicationViewEditReference()); //
+		stateActions.add(applicationViewEditReference(state)); //
 
-		stateActions.add(PrismApplicationReference.applicationWithdrawReference());
+		stateActions.add(applicationWithdrawValidation());
 	}
 
 }

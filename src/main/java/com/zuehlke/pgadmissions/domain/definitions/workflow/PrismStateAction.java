@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleGroup;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PrismStateTransitionGroup;
 
 public class PrismStateAction {
 

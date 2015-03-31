@@ -763,6 +763,7 @@ public enum PrismDisplayPropertyDefinition {
     SYSTEM_ADDRESS_LINE_MOCK(SYSTEM_INTEGRATION, "Address Line"),
     SYSTEM_ADDRESS_CODE_MOCK(SYSTEM_INTEGRATION, "Address Code"),
     SYSTEM_PHONE_MOCK(SYSTEM_INTEGRATION, "0000000000"),
+    SYSTEM_NO_PROGRAM_INSTANCE(SYSTEM_INTEGRATION, "No export program instance for application"),
 
 	/*
 	 * *************** SYSTEM STATE DURATION *********************

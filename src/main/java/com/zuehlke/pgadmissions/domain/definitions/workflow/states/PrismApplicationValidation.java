@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_VALIDATION_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_WITHDRAW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_REFEREE;
@@ -11,27 +12,23 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEn
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMITTER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_APPROVER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_VIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleGroup.APPLICATION_PARENT_VIEWER_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleTransitionGroup.APPLICATION_CREATE_REFEREE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleTransitionGroup.APPLICATION_DELETE_REFEREE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.UPDATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_VIEWER_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_REFEREE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_REFEREE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PrismStateTransitionGroup.APPLICATION_COMPLETE_STATE_TRANSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PrismStateTransitionGroup.APPLICATION_WITHDRAW_SUBMITTED_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_COMPLETE_STATE_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_WITHDRAW_SUBMITTED_TRANSITION;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
@@ -53,7 +50,7 @@ public class PrismApplicationValidation extends PrismWorkflowState {
 		                .withTransitionState(APPLICATION_VALIDATION_PENDING_COMPLETION) //
 		                .withTransitionAction(APPLICATION_ESCALATE))); //
 
-		stateActions.add(applicationViewEditValidation()); //
+		stateActions.add(applicationViewEditValidation(state)); //
 
 		stateActions.add(applicationWithdrawValidation());
 	}
@@ -81,12 +78,12 @@ public class PrismApplicationValidation extends PrismWorkflowState {
 		        .withAssignments(APPLICATION_VIEWER_REFEREE);
 	}
 
-	public static PrismStateAction applicationViewEditValidation() {
+	public static PrismStateAction applicationViewEditValidation(PrismState state) {
 		return new PrismStateAction() //
 		        .withAction(PrismAction.APPLICATION_VIEW_EDIT) //
 		        .withTransitions(new PrismStateTransition() //
-		                .withTransitionState(PrismState.APPLICATION_VALIDATION) //
-		                .withTransitionAction(PrismAction.APPLICATION_VIEW_EDIT) //
+		                .withTransitionState(state) //
+		                .withTransitionAction(APPLICATION_VIEW_EDIT) //
 		                .withRoleTransitions(APPLICATION_CREATE_REFEREE_GROUP, APPLICATION_DELETE_REFEREE_GROUP)) //
 		        .withAssignments(new PrismStateActionAssignment() //
 		                .withRole(APPLICATION_CREATOR) //
@@ -110,7 +107,7 @@ public class PrismApplicationValidation extends PrismWorkflowState {
 		                        .withRole(PROGRAM_APPROVER) //
 		                        .withActionEnhancement(APPLICATION_VIEW_AS_RECRUITER), //
 		                new PrismStateActionAssignment() //
-		                        .withRole(PrismRole.PROGRAM_VIEWER) //
+		                        .withRole(PROGRAM_VIEWER) //
 		                        .withActionEnhancement(APPLICATION_VIEW_AS_RECRUITER), //
 		                new PrismStateActionAssignment() //
 		                        .withRole(PROJECT_ADMINISTRATOR) //
@@ -118,8 +115,7 @@ public class PrismApplicationValidation extends PrismWorkflowState {
 		                        .withDelegatedAction(APPLICATION_PROVIDE_REFERENCE), //
 		                new PrismStateActionAssignment() //
 		                        .withRole(PROJECT_PRIMARY_SUPERVISOR) //
-		                        .withActionEnhancement(APPLICATION_VIEW_AS_RECRUITER)
-		                        .withDelegatedAction(APPLICATION_PROVIDE_REFERENCE));
+		                        .withActionEnhancement(APPLICATION_VIEW_AS_RECRUITER));
 	}
 
 	public static PrismStateAction applicationWithdrawValidation() {
@@ -127,11 +123,8 @@ public class PrismApplicationValidation extends PrismWorkflowState {
 		        .withAction(APPLICATION_WITHDRAW) //
 		        .withAssignments(APPLICATION_CREATOR) //
 		        .withNotifications(APPLICATION_PARENT_ADMINISTRATOR_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
-		        .withTransitions(APPLICATION_WITHDRAW_SUBMITTED_TRANSITION.withRoleTransitions( //
-		                Lists.newArrayList(new PrismRoleTransition() //
-		                        .withRole(APPLICATION_REFEREE) //
-		                        .withTransitionType(UPDATE) //
-		                        .withTransitionRole(APPLICATION_VIEWER_REFEREE))));
+		        .withTransitions(APPLICATION_WITHDRAW_SUBMITTED_TRANSITION //
+		                .withRoleTransitions(APPLICATION_DELETE_REFEREE_GROUP));
 	}
 
 }

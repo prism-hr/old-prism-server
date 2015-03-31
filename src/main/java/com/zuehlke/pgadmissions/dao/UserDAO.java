@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleGroup.APPLICATION_RECRUITER_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_POTENTIAL_SUPERVISOR_GROUP;
 
 import java.util.List;
 
@@ -109,7 +109,7 @@ public class UserDAO {
 		                .add(Restrictions.eq("program", applicationProgram)) //
 		                .add(Restrictions.eq("programProject.program", applicationProgram)) //
 		                .add(Restrictions.eq("programApplication.program", applicationProgram))) //
-		        .add(Restrictions.in("role.id", APPLICATION_RECRUITER_GROUP.getRoles())) //
+		        .add(Restrictions.in("role.id", APPLICATION_POTENTIAL_SUPERVISOR_GROUP.getRoles())) //
 		        .add(Restrictions.disjunction() //
 		                .add(Restrictions.isNull("user.userAccount")) //
 		                .add(Restrictions.eq("userAccount.enabled", true))); //

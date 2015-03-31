@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.workflow.selectors.filter;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter.SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter.USER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleGroup.APPLICATION_SUPERVISOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_SUPERVISOR_GROUP;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class ResourceByUserAndRoleSelector implements PrismResourceListFilterSel
 		List<PrismRole> roles = Lists.newArrayList();
 		PrismResourceListFilter filter = constraint.getFilterProperty();
 		if (filter == SUPERVISOR) {
-			roles.addAll(Lists.<PrismRole> newArrayList(APPLICATION_SUPERVISOR_GROUP.getRoles()));
+			roles.addAll(Lists.<PrismRole> newArrayList(APPLICATION_CONFIRMED_SUPERVISOR_GROUP.getRoles()));
 		} else if (filter == USER) {
 			roles.add(APPLICATION_CREATOR);
 		} else {

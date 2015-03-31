@@ -8,16 +8,16 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_TERMINATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PROGRAM_VIEW_EDIT_AS_USER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROGRAM_UPDATE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleGroup.PROGRAM_ADMINISTRATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleTransitionGroup.PROGRAM_CREATE_ADMINISTRATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleTransitionGroup.PROGRAM_MANAGE_USERS_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROGRAM_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROGRAM_CREATE_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROGRAM_MANAGE_USERS_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_UNSUBMITTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_COMPLETED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PrismStateTransitionGroup.PROGRAM_ESCALATE_APPROVED_TRANSITION_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PrismStateTransitionGroup.PROGRAM_VIEW_EDIT_TRANSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PrismStateTransitionGroup.PROJECT_CREATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.PROGRAM_UPDATED_OUTCOME;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROGRAM_ESCALATE_APPROVED_TRANSITION_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROGRAM_VIEW_EDIT_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_CREATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismProjectApproval.projectEmailCreatorApproval;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
@@ -44,11 +44,11 @@ public class PrismProgramApproved extends PrismWorkflowState {
 	}
 
 	public static PrismStateAction programCreateProjectApproved() {
-	    return new PrismStateAction() //
+		return new PrismStateAction() //
 		        .withAction(PROGRAM_CREATE_PROJECT) //
 		        .withTransitions(PROJECT_CREATE_TRANSITION //
 		                .withRoleTransitions(PROGRAM_CREATE_ADMINISTRATOR_GROUP));
-    }
+	}
 
 	public static PrismStateAction programEscalateApproved() {
 		return new PrismStateAction() //

@@ -526,8 +526,8 @@ public class ResourceService {
 		return resourceDAO.getResourcesByMatchingUsersAndRole(prismScope, searchTerm, prismRoles);
 	}
 
-	public List<Integer> getResourcesByMatchingParentResource(PrismScope parentResourceScope, String searchTerm) {
-		return resourceDAO.getMatchingParentResources(parentResourceScope, searchTerm);
+	public List<Integer> getResourcesByMatchingEnclosingResource(PrismScope enclosingResourceScope, String searchTerm) {
+		return resourceDAO.getResourcesByMatchingEnclosingResources(enclosingResourceScope, searchTerm);
 	}
 
 	private Junction getFilterConditions(PrismScope resourceScope, ResourceListFilterDTO filter) {

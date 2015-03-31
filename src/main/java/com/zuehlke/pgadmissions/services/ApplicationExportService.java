@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_PROGRAM_INSTANCE;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -147,7 +149,7 @@ public class ApplicationExportService {
 		List<ApplicationReferenceDTO> applicationExportReferences = applicationService.getApplicationExportReferees(application);
 
 		if (exportProgramInstance == null) {
-			throw new ApplicationExportException("No export program instance for application " + application.getCode());
+			throw new ApplicationExportException(SYSTEM_NO_PROGRAM_INSTANCE.name() + application.getCode());
 		}
 
 		return applicationContext

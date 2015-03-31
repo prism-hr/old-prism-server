@@ -4,11 +4,12 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_ELIGIBILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMITTER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_VERIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_VERIFICATION_PENDING_COMPLETION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_ELIGIBILITY_OUTCOME;
@@ -16,7 +17,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismA
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidation.applicationCompleteValidation;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidation.applicationEmailCreatorValidation;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidation.applicationViewEditValidation;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidation.applicationWithdrawValidation;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
@@ -49,9 +52,9 @@ public class PrismApplicationVerification extends PrismWorkflowState {
 		                .withTransitionState(APPLICATION_VERIFICATION_PENDING_COMPLETION) //
 		                .withTransitionAction(APPLICATION_ESCALATE))); //
 
-		stateActions.add(applicationViewEditVerification()); //
+		stateActions.add(applicationViewEditVerification(state)); //
 
-		stateActions.add(applicationWithdrawVerification());
+		stateActions.add(applicationWithdrawValidation());
 	}
 
 	public static PrismStateAction applicationCommentVerification() {
@@ -81,13 +84,11 @@ public class PrismApplicationVerification extends PrismWorkflowState {
 		        .withAssignments(APPLICATION_VIEWER_RECRUITER);
 	}
 
-	public static PrismStateAction applicationViewEditVerification() {
-		return applicationViewEditValidation() //
-		        .withAssignments(APPLICATION_VIEWER_RECRUITER);
-	}
-
-	public static PrismStateAction applicationWithdrawVerification() {
-		return PrismApplicationValidation.applicationWithdrawValidation();
+	public static PrismStateAction applicationViewEditVerification(PrismState state) {
+		return applicationViewEditValidation(state) //
+		        .withAssignments(new PrismStateActionAssignment() //
+		                .withRole(APPLICATION_VIEWER_RECRUITER) //
+		                .withActionEnhancement(APPLICATION_VIEW_AS_RECRUITER));
 	}
 
 }

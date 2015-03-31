@@ -9,7 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.CONDITIONAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.UNCONDITIONAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 
 import java.beans.IntrospectionException;
 import java.io.IOException;

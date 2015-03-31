@@ -222,7 +222,7 @@ public class ResourceDAO {
 		return (List<Integer>) criteria.list();
 	}
 
-	public List<Integer> getMatchingParentResources(PrismScope parentResourceScope, String searchTerm) {
+	public List<Integer> getResourcesByMatchingEnclosingResources(PrismScope parentResourceScope, String searchTerm) {
 		return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(parentResourceScope.getResourceClass()) //
 		        .setProjection(Projections.property("id")) //
 		        .add(Restrictions.disjunction() //

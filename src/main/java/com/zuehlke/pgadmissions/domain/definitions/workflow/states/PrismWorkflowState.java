@@ -6,9 +6,12 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 
 public abstract class PrismWorkflowState {
+
+	protected PrismState state;
 
 	protected List<PrismStateAction> stateActions = Lists.newArrayList();
 
@@ -25,6 +28,11 @@ public abstract class PrismWorkflowState {
 
 	public PrismStateAction getStateActionsByAction(PrismAction action) {
 		return stateActionsByAction.get(action);
+	}
+
+	public PrismWorkflowState withState(PrismState state) {
+		this.state = state;
+		return this;
 	}
 
 	protected abstract void setStateActions();

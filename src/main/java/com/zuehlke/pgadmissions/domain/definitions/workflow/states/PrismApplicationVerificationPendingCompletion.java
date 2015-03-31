@@ -4,9 +4,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_TERMINATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleTransitionGroup.APPLICATION_DELETE_REFEREE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PrismStateTerminationGroup.APPLICATION_TERMINATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PrismStateTransitionGroup.APPLICATION_ESCALATE_SUBMITTED_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_REFEREE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_ESCALATE_SUBMITTED_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidation.applicationWithdrawValidation;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationVerification.applicationCommentVerification;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationVerification.applicationCompleteVerification;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationVerification.applicationEmailCreatorVerification;
@@ -35,9 +36,9 @@ public class PrismApplicationVerificationPendingCompletion extends PrismWorkflow
 		        .withTransitions(APPLICATION_ESCALATE_SUBMITTED_TRANSITION.withRoleTransitionsAndStateTerminations( //
 		                APPLICATION_DELETE_REFEREE_GROUP, APPLICATION_TERMINATE_GROUP))); //
 
-		stateActions.add(applicationViewEditVerification()); //
+		stateActions.add(applicationViewEditVerification(state)); //
 
-		stateActions.add(PrismApplicationVerification.applicationWithdrawVerification());
+		stateActions.add(applicationWithdrawValidation());
 	}
 
 }

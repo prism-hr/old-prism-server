@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleTransitionGroup;
 
 public class PrismStateTransition {
 

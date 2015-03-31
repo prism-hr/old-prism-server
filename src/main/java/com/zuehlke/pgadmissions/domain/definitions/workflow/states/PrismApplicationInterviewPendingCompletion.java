@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.states;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReview.applicationCommentReview;
+
 import java.util.Arrays;
 
 import com.google.common.collect.Lists;
@@ -21,51 +23,7 @@ public class PrismApplicationInterviewPendingCompletion extends PrismWorkflowSta
 
     @Override
     protected void setStateActions() {
-        stateActions.add(new PrismStateAction() //
-            .withAction(PrismAction.APPLICATION_COMMENT) //
-            .withRaisesUrgentFlag(false) //
-            .withDefaultAction(false) //
-                .withAssignments(Arrays.asList( //
-                    new PrismStateActionAssignment() //
-                        .withRole(PrismRole.APPLICATION_ADMINISTRATOR), //
-                    new PrismStateActionAssignment() //
-                        .withRole(PrismRole.APPLICATION_VIEWER_RECRUITER), //
-                    new PrismStateActionAssignment() //
-                        .withRole(PrismRole.APPLICATION_VIEWER_REFEREE), //
-                    new PrismStateActionAssignment() //
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR), //
-                    new PrismStateActionAssignment() //
-                        .withRole(PrismRole.INSTITUTION_ADMITTER), //
-                    new PrismStateActionAssignment() //
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR), //
-                    new PrismStateActionAssignment() //
-                        .withRole(PrismRole.PROGRAM_APPROVER), //
-                    new PrismStateActionAssignment() //
-                        .withRole(PrismRole.PROGRAM_VIEWER), //
-                    new PrismStateActionAssignment() //
-                        .withRole(PrismRole.PROJECT_ADMINISTRATOR), //
-                    new PrismStateActionAssignment() //
-                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR))) //
-                .withNotifications(Arrays.asList( //
-                    new PrismStateActionNotification() //
-                        .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
-                        .withDefinition(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), //
-                    new PrismStateActionNotification() //
-                        .withRole(PrismRole.INSTITUTION_ADMINISTRATOR) //
-                        .withDefinition(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), //
-                    new PrismStateActionNotification() //
-                        .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
-                        .withDefinition(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), //
-                    new PrismStateActionNotification() //
-                        .withRole(PrismRole.PROJECT_ADMINISTRATOR) //
-                        .withDefinition(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION), //
-                    new PrismStateActionNotification() //
-                        .withRole(PrismRole.PROJECT_PRIMARY_SUPERVISOR) //
-                        .withDefinition(PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION))) //
-                .withTransitions(Arrays.asList( //
-                    new PrismStateTransition() //
-                        .withTransitionState(PrismState.APPLICATION_INTERVIEW_PENDING_COMPLETION) //
-                        .withTransitionAction(PrismAction.APPLICATION_COMMENT)))); //
+        stateActions.add(applicationCommentReview()); //
 
         stateActions.add(new PrismStateAction() //
             .withAction(PrismAction.APPLICATION_COMPLETE_INTERVIEW_STAGE) //

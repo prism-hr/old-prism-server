@@ -31,3 +31,9 @@ alter table state_group
 alter table state_action
 	drop column is_default_action
 ;
+
+update comment
+set application_export_exception = replace(application_export_exception, 
+	"No export program instance for application", "SYSTEM_NO_PROGRAM_INSTANCE")
+where application_export_exception is not null
+;

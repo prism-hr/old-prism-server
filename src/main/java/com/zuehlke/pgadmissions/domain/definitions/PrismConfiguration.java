@@ -1,33 +1,19 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.google.common.base.CaseFormat.LOWER_CAMEL;
-import static com.google.common.base.CaseFormat.UPPER_CAMEL;
-
-import java.util.Map;
-
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
-import com.zuehlke.pgadmissions.rest.representation.configuration.ActionCustomQuestionConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.configuration.DisplayPropertyConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.configuration.NotificationConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.configuration.StateDurationConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
+import com.zuehlke.pgadmissions.domain.workflow.*;
+import com.zuehlke.pgadmissions.rest.representation.configuration.*;
 import com.zuehlke.pgadmissions.rest.representation.workflow.NotificationDefinitionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.StateDurationDefinitionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowPropertyDefinitionRepresentation;
+
+import java.util.Map;
+
+import static com.google.common.base.CaseFormat.LOWER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 
 public enum PrismConfiguration {
 
@@ -36,7 +22,7 @@ public enum PrismConfiguration {
     DISPLAY_PROPERTY(DisplayPropertyConfiguration.class, DisplayPropertyDefinition.class, DisplayPropertyConfigurationRepresentation.class,
             WorkflowDefinitionRepresentation.class, true, false, null, null, "_COMMENT_UPDATED_DISPLAY_PROPERTY", true, true, new String[] { "category", "id" }), //
     NOTIFICATION(NotificationConfiguration.class, NotificationDefinition.class, NotificationConfigurationRepresentation.class,
-            NotificationDefinitionRepresentation.class, false, false, 1, 28, "_COMMENT_UPDATED_NOTIFICATION", true, true, new String[] { "id" }), //
+            NotificationDefinitionRepresentation.class, false, false, 1, 28, "_COMMENT_UPDATED_NOTIFICATION", true, false, new String[] { "id" }), //
     STATE_DURATION(StateDurationConfiguration.class, StateDurationDefinition.class, StateDurationConfigurationRepresentation.class,
             StateDurationDefinitionRepresentation.class, true, false, 1, 168, "_COMMENT_UPDATED_STATE_DURATION", true, true, new String[] { "id" }), //
     WORKFLOW_PROPERTY(WorkflowPropertyConfiguration.class, WorkflowPropertyDefinition.class, WorkflowPropertyConfigurationRepresentation.class,

@@ -1,12 +1,10 @@
 package com.zuehlke.pgadmissions.services.builders;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.NOT_SPECIFIED;
-
-import java.math.BigDecimal;
-import java.util.List;
-
-import javax.inject.Inject;
-
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
+import com.zuehlke.pgadmissions.workflow.selectors.filter.PrismResourceListFilterSelector;
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Junction;
@@ -17,11 +15,11 @@ import org.joda.time.LocalDate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
-import com.zuehlke.pgadmissions.workflow.selectors.filter.PrismResourceListFilterSelector;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.NOT_SPECIFIED;
 
 @Component
 public class PrismResourceListConstraintBuilder {
@@ -33,7 +31,10 @@ public class PrismResourceListConstraintBuilder {
 		PrismResourceListFilter filterProperty = constraint.getFilterProperty();
 		PrismResourceListFilterExpression filterExpression = constraint.getFilterExpression();
 
+		String resourceQualifier = resourceScope.getLowerCamelName() + ".";
 		String filterPropertyName = filterProperty.getPropertyName();
+		filterPropertyName = filterPropertyName.startsWith(resourceQualifier) ? filterPropertyName.replace(resourceQualifier, "") : filterPropertyName;
+
 		Boolean negated = BooleanUtils.toBooleanObject(constraint.getNegated());
 
 		if (filterExpression == NOT_SPECIFIED) {
@@ -64,7 +65,7 @@ public class PrismResourceListConstraintBuilder {
 				}
 			} else {
 				appendInCollectionFilter(conditions, filterPropertyName, constraint.getFilterExpression(), negated, //
-				        applicationContext.getBean(filterProperty.getPropertyValueSelector()).getPossible(resourceScope, constraint));
+						applicationContext.getBean(filterProperty.getPropertyValueSelector()).getPossible(resourceScope, constraint));
 			}
 		}
 	}

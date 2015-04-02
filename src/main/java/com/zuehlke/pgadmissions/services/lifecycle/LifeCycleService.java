@@ -26,11 +26,11 @@ public class LifeCycleService {
 
 	private static final Logger logger = LoggerFactory.getLogger(LifeCycleService.class);
 
-	private ExecutorService executorService;
-
 	private Object lock = new Object();
 
 	private Set<PrismMaintenanceTask> executions = Sets.newHashSet();
+
+	private ExecutorService executorService;
 
 	@Value("${startup.display.initialize}")
 	private Boolean initializeDisplayProperties;
@@ -61,7 +61,7 @@ public class LifeCycleService {
 		try {
 			if (BooleanUtils.isTrue(initializeDisplayProperties)) {
 				if (BooleanUtils.isTrue(dropDisplayProperties)) {
-					systemService.dropDisplayProperties();
+					systemService.destroyDisplayProperties();
 				}
 				systemService.initializeDisplayProperties();
 			}
@@ -91,26 +91,28 @@ public class LifeCycleService {
 		}
 	}
 
-	@Scheduled(initialDelay = 60, fixedDelay = 60)
+	@Scheduled(fixedDelay = 60)
 	private void maintain() {
-		for (final PrismMaintenanceTask execution : PrismMaintenanceTask.values()) {
-			synchronized (lock) {
-				if (!executions.contains(execution)) {
-					executions.add(execution);
-					executorService.submit(new Runnable() {
-						@Override
-						public void run() {
-							try {
-								applicationContext.getBean(execution.getExecutor()).execute();
-							} catch (Exception e) {
-								logger.error("Error performing maintenance task: " + execution.name(), e);
-							} finally {
-								synchronized (lock) {
-									executions.remove(execution);
+		if (executorService != null) {
+			for (final PrismMaintenanceTask execution : PrismMaintenanceTask.values()) {
+				synchronized (lock) {
+					if (!executions.contains(execution)) {
+						executions.add(execution);
+						executorService.submit(new Runnable() {
+							@Override
+							public void run() {
+								try {
+									applicationContext.getBean(execution.getExecutor()).execute();
+								} catch (Exception e) {
+									logger.error("Error performing maintenance task: " + execution.name(), e);
+								} finally {
+									synchronized (lock) {
+										executions.remove(execution);
+									}
 								}
 							}
-						}
-					});
+						});
+					}
 				}
 			}
 		}

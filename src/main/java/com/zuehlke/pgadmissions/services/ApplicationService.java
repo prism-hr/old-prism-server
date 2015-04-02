@@ -93,7 +93,6 @@ import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentApplicationOfferDetailDTO;
@@ -357,8 +356,7 @@ public class ApplicationService {
 		}
 	}
 
-	public ActionOutcomeDTO executeAction(@PathVariable Integer applicationId, @Valid @RequestBody CommentDTO commentDTO) throws DeduplicationException,
-	        InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
+	public ActionOutcomeDTO executeAction(@PathVariable Integer applicationId, @Valid @RequestBody CommentDTO commentDTO) throws Exception {
 		Application application = entityService.getById(Application.class, applicationId);
 		PrismAction actionId = commentDTO.getAction();
 

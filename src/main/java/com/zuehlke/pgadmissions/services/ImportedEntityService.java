@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import static org.springframework.transaction.annotation.Isolation.REPEATABLE_READ;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,7 +13,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,8 +53,6 @@ import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.dto.InstitutionDomicileImportDTO;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.IntegrationException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.iso.jaxb.CategoryNameType;
 import com.zuehlke.pgadmissions.iso.jaxb.CategoryType;
 import com.zuehlke.pgadmissions.iso.jaxb.CountryType;
@@ -139,9 +135,7 @@ public class ImportedEntityService {
 		return importedEntityDAO.getImportedEntityFeeds();
 	}
 
-	public void mergeImportedPrograms(Integer importedEntityFeedId, Institution institution, List<ProgrammeOccurrence> programDefinitions)
-	        throws DeduplicationException, DataImportException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException,
-	        IOException, IntegrationException {
+	public void mergeImportedPrograms(Integer importedEntityFeedId, Institution institution, List<ProgrammeOccurrence> programDefinitions) throws Exception {
 		DateTime baselineTime = new DateTime();
 		LocalDate baseline = baselineTime.toLocalDate();
 
@@ -231,7 +225,7 @@ public class ImportedEntityService {
 		return new InstitutionDomicileImportDTO().withDomicile(persistentInstitutionDomicile).withSubdivisions(subdivisions).withCategories(categories);
 	}
 
-	public List<Integer> getPendingImportEntityFeeds(Integer institutionId) {
+	public List<Integer> getPendingImportedEntityFeeds(Integer institutionId) {
 		return importedEntityDAO.getPendingImportedEntityFeeds(institutionId);
 	}
 
@@ -347,8 +341,7 @@ public class ImportedEntityService {
 		return importedInstitution;
 	}
 
-	private void executeProgramImportAction(Program program, DateTime baselineTime) throws DeduplicationException, InstantiationException,
-	        IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
+	private void executeProgramImportAction(Program program, DateTime baselineTime) throws Exception {
 		Comment lastImportComment = commentService.getLatestComment(program, PrismAction.INSTITUTION_IMPORT_PROGRAM);
 		Action action = actionService.getById(lastImportComment == null ? PrismAction.INSTITUTION_CREATE_PROGRAM : PrismAction.INSTITUTION_IMPORT_PROGRAM);
 
@@ -391,8 +384,7 @@ public class ImportedEntityService {
 	}
 
 	private void mergeImportedProgram(Institution institution, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline, DateTime baselineTime)
-	        throws DeduplicationException, DataImportException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException,
-	        IOException, IntegrationException {
+	        throws Exception {
 		Programme programDefinition = programInstanceDefinitions.iterator().next().getProgramme();
 		Program persistentProgram = mergeProgram(institution, programDefinition, baseline);
 

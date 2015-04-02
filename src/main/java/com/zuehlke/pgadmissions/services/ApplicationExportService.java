@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_PROGRAM_INSTANCE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_EXPORT_PROGRAM_INSTANCE;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,7 +20,6 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -50,10 +49,8 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ApplicationExportDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.builders.ApplicationDocumentExportBuilder;
 import com.zuehlke.pgadmissions.services.builders.ApplicationExportBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -149,7 +146,7 @@ public class ApplicationExportService {
 		List<ApplicationReferenceDTO> applicationExportReferences = applicationService.getApplicationExportReferees(application);
 
 		if (exportProgramInstance == null) {
-			throw new ApplicationExportException(SYSTEM_NO_PROGRAM_INSTANCE.name() + application.getCode());
+			throw new ApplicationExportException(SYSTEM_NO_EXPORT_PROGRAM_INSTANCE.name() + application.getCode());
 		}
 
 		return applicationContext
@@ -168,8 +165,7 @@ public class ApplicationExportService {
 	}
 
 	protected void executeExportAction(Application application, SubmitAdmissionsApplicationRequest exportRequest, String exportId, String exportUserId,
-	        String exportException) throws DeduplicationException, InstantiationException, IllegalAccessException, JAXBException, BeansException,
-	        WorkflowEngineException, IOException, IntegrationException {
+	        String exportException) throws Exception {
 		Action exportAction = actionService.getById(PrismAction.APPLICATION_EXPORT);
 		Institution exportInstitution = application.getInstitution();
 

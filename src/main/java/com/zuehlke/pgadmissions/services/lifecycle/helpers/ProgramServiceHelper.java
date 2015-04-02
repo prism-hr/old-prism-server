@@ -8,12 +8,12 @@ import com.zuehlke.pgadmissions.services.ProgramService;
 @Component
 public class ProgramServiceHelper implements AbstractServiceHelper {
 
-    @Autowired
-    private ProgramService programService;
+	@Autowired
+	private ProgramService programService;
 
-    @Override
-    public void execute() {
-        programService.disableElapsedProgramStudyOptions();
-    }
+	@Override
+	public void execute() {
+		programService.disableElapsedProgramStudyOptions();
+	}
 
 }

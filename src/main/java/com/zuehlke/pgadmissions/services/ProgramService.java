@@ -3,12 +3,10 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -36,9 +34,6 @@ import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.IntegrationException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
@@ -48,253 +43,252 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 @Transactional
 public class ProgramService {
 
-    @Autowired
-    private ProgramDAO programDAO;
+	@Autowired
+	private ProgramDAO programDAO;
 
-    @Autowired
-    private EntityService entityService;
+	@Autowired
+	private EntityService entityService;
 
-    @Autowired
-    private ImportedEntityService importedEntityService;
+	@Autowired
+	private ImportedEntityService importedEntityService;
 
-    @Autowired
-    private ActionService actionService;
+	@Autowired
+	private ActionService actionService;
 
-    @Autowired
-    private CommentService commentService;
+	@Autowired
+	private CommentService commentService;
 
-    @Autowired
-    private SystemService systemService;
+	@Autowired
+	private SystemService systemService;
 
-    @Autowired
-    private InstitutionService institutionService;
+	@Autowired
+	private InstitutionService institutionService;
 
-    @Autowired
-    private ProjectService projectService;
+	@Autowired
+	private ProjectService projectService;
 
-    @Autowired
-    private UserService userService;
+	@Autowired
+	private UserService userService;
 
-    @Autowired
-    private AdvertService advertService;
+	@Autowired
+	private AdvertService advertService;
 
-    @Autowired
-    private StateService stateService;
+	@Autowired
+	private StateService stateService;
 
-    @Autowired
-    private ApplicationContext applicationContext;
+	@Autowired
+	private ApplicationContext applicationContext;
 
-    public Program getById(Integer id) {
-        return entityService.getById(Program.class, id);
-    }
+	public Program getById(Integer id) {
+		return entityService.getById(Program.class, id);
+	}
 
-    public void save(Program program) {
-        entityService.save(program);
-        for (ProgramStudyOption studyOption : program.getStudyOptions()) {
-            entityService.save(studyOption);
-        }
-    }
+	public void save(Program program) {
+		entityService.save(program);
+		for (ProgramStudyOption studyOption : program.getStudyOptions()) {
+			entityService.save(studyOption);
+		}
+	}
 
-    public Program getProgramByImportedCode(String importedCode) {
-        return getProgramByImportedCode(null, importedCode);
-    }
+	public Program getProgramByImportedCode(String importedCode) {
+		return getProgramByImportedCode(null, importedCode);
+	}
 
-    public Program getProgramByImportedCode(Institution institution, String importedCode) {
-        institution = institution == null ? institutionService.getUclInstitution() : institution;
-        return programDAO.getProgramByImportedCode(institution, importedCode);
-    }
+	public Program getProgramByImportedCode(Institution institution, String importedCode) {
+		institution = institution == null ? institutionService.getUclInstitution() : institution;
+		return programDAO.getProgramByImportedCode(institution, importedCode);
+	}
 
-    public List<Program> getPrograms() {
-        return programDAO.getPrograms();
-    }
+	public List<Program> getPrograms() {
+		return programDAO.getPrograms();
+	}
 
-    public ProgramStudyOptionInstance getFirstEnabledProgramStudyOptionInstance(Program program, StudyOption studyOption) {
-        return programDAO.getFirstEnabledProgramStudyOptionInstance(program, studyOption);
-    }
+	public ProgramStudyOptionInstance getFirstEnabledProgramStudyOptionInstance(Program program, StudyOption studyOption) {
+		return programDAO.getFirstEnabledProgramStudyOptionInstance(program, studyOption);
+	}
 
-    public Program create(User user, ProgramDTO programDTO) {
-        Institution institution = entityService.getById(Institution.class, programDTO.getInstitutionId());
-        Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withInstitution(institution).withImported(false)
-                .withRequireProjectDefinition(false);
-        copyProgramDetails(program, programDTO);
-        program.setEndDate(new LocalDate().plusMonths(3));
-        copyStudyOptions(program, programDTO);
-        return program;
-    }
+	public Program create(User user, ProgramDTO programDTO) {
+		Institution institution = entityService.getById(Institution.class, programDTO.getInstitutionId());
+		Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withInstitution(institution).withImported(false)
+		        .withRequireProjectDefinition(false);
+		copyProgramDetails(program, programDTO);
+		program.setEndDate(new LocalDate().plusMonths(3));
+		copyStudyOptions(program, programDTO);
+		return program;
+	}
 
-    public void postProcessProgram(Program program, Comment comment) {
-        DateTime updatedTimestamp = program.getUpdatedTimestamp();
-        program.setUpdatedTimestampSitemap(updatedTimestamp);
-        program.getInstitution().setUpdatedTimestampSitemap(updatedTimestamp);
+	public void postProcessProgram(Program program, Comment comment) {
+		DateTime updatedTimestamp = program.getUpdatedTimestamp();
+		program.setUpdatedTimestampSitemap(updatedTimestamp);
+		program.getInstitution().setUpdatedTimestampSitemap(updatedTimestamp);
 
-        if (comment.isProgramApproveOrDeactivateComment()) {
-            projectService.synchronizeProjects(program);
-            if (comment.isProgramRestoreComment()) {
-                projectService.restoreProjects(program, comment.getCreatedTimestamp().toLocalDate());
-            }
-        }
+		if (comment.isProgramApproveOrDeactivateComment()) {
+			projectService.synchronizeProjects(program);
+			if (comment.isProgramRestoreComment()) {
+				projectService.restoreProjects(program, comment.getCreatedTimestamp().toLocalDate());
+			}
+		}
 
-        advertService.setSequenceIdentifier(program.getAdvert(), program.getSequenceIdentifier().substring(0, 13));
-    }
+		advertService.setSequenceIdentifier(program.getAdvert(), program.getSequenceIdentifier().substring(0, 13));
+	}
 
-    public List<ProgramStudyOption> getEnabledProgramStudyOptions(Program program) {
-        return programDAO.getEnabledProgramStudyOptions(program);
-    }
+	public List<ProgramStudyOption> getEnabledProgramStudyOptions(Program program) {
+		return programDAO.getEnabledProgramStudyOptions(program);
+	}
 
-    public ProgramStudyOption getEnabledProgramStudyOption(Program program, StudyOption studyOption) {
-        return programDAO.getEnabledProgramStudyOption(program, studyOption);
-    }
+	public ProgramStudyOption getEnabledProgramStudyOption(Program program, StudyOption studyOption) {
+		return programDAO.getEnabledProgramStudyOption(program, studyOption);
+	}
 
-    public void disableElapsedProgramStudyOptions() {
-    	LocalDate baseline = new LocalDate();
-    	programDAO.disableElapsedProgramStudyOptions(baseline);
-    	programDAO.disableElapsedProgramStudyOptionInstances(baseline);
-    }
+	public void disableElapsedProgramStudyOptions() {
+		LocalDate baseline = new LocalDate();
+		programDAO.disableElapsedProgramStudyOptions(baseline);
+		programDAO.disableElapsedProgramStudyOptionInstances(baseline);
+	}
 
-    public List<ProgramRepresentation> getSimilarPrograms(Integer institutionId, String searchTerm) {
-        return programDAO.getSimilarPrograms(institutionId, searchTerm);
-    }
+	public List<ProgramRepresentation> getSimilarPrograms(Integer institutionId, String searchTerm) {
+		return programDAO.getSimilarPrograms(institutionId, searchTerm);
+	}
 
-    public ActionOutcomeDTO executeAction(Integer programId, CommentDTO commentDTO) throws DeduplicationException, InstantiationException,
-            IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
-        User user = userService.getById(commentDTO.getUser());
-        Program program = getById(programId);
+	public ActionOutcomeDTO executeAction(Integer programId, CommentDTO commentDTO) throws Exception {
+		User user = userService.getById(commentDTO.getUser());
+		Program program = getById(programId);
 
-        PrismAction actionId = commentDTO.getAction();
-        Action action = actionService.getById(actionId);
+		PrismAction actionId = commentDTO.getAction();
+		Action action = actionService.getById(actionId);
 
-        boolean viewEditAction = actionId == PrismAction.PROGRAM_VIEW_EDIT;
+		boolean viewEditAction = actionId == PrismAction.PROGRAM_VIEW_EDIT;
 
-        String commentContent = viewEditAction ? applicationContext.getBean(PropertyLoader.class).localize(program)
-                .load(PrismDisplayPropertyDefinition.PROGRAM_COMMENT_UPDATED) : commentDTO.getContent();
+		String commentContent = viewEditAction ? applicationContext.getBean(PropertyLoader.class).localize(program)
+		        .load(PrismDisplayPropertyDefinition.PROGRAM_COMMENT_UPDATED) : commentDTO.getContent();
 
-        ProgramDTO programDTO = (ProgramDTO) commentDTO.fetchResourceDTO();
-        LocalDate dueDate = programDTO.getEndDate();
+		ProgramDTO programDTO = (ProgramDTO) commentDTO.fetchResourceDTO();
+		LocalDate dueDate = programDTO.getEndDate();
 
-        State transitionState = stateService.getById(commentDTO.getTransitionState());
-        if (viewEditAction && !program.getImported() && transitionState == null && dueDate.isAfter(new LocalDate())) {
-            transitionState = programDAO.getPreviousState(program);
-        }
+		State transitionState = stateService.getById(commentDTO.getTransitionState());
+		if (viewEditAction && !program.getImported() && transitionState == null && dueDate.isAfter(new LocalDate())) {
+			transitionState = programDAO.getPreviousState(program);
+		}
 
-        Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
-                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
-        commentService.appendCommentProperties(comment, commentDTO);
+		Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
+		        .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
+		commentService.appendCommentProperties(comment, commentDTO);
 
-        update(programId, programDTO);
+		update(programId, programDTO);
 
-        return actionService.executeUserAction(program, action, comment);
-    }
+		return actionService.executeUserAction(program, action, comment);
+	}
 
-    public List<String> getPossibleLocations(Program program) {
-        return programDAO.getPossibleLocations(program);
-    }
+	public List<String> getPossibleLocations(Program program) {
+		return programDAO.getPossibleLocations(program);
+	}
 
-    public List<String> getSuggestedDivisions(Integer programId, String location) {
-        Program program = getById(programId);
-        return programDAO.getSuggestedDivisions(program, location);
-    }
+	public List<String> getSuggestedDivisions(Integer programId, String location) {
+		Program program = getById(programId);
+		return programDAO.getSuggestedDivisions(program, location);
+	}
 
-    public List<String> getSuggestedStudyAreas(Integer programId, String location, String division) {
-        Program program = getById(programId);
-        return programDAO.getSuggestedStudyAreas(program, location, division);
-    }
+	public List<String> getSuggestedStudyAreas(Integer programId, String location, String division) {
+		Program program = getById(programId);
+		return programDAO.getSuggestedStudyAreas(program, location, division);
+	}
 
-    public Integer getActiveProgramCount(Institution institution) {
-        Long count = programDAO.getActiveProgramCount(institution);
-        return count == null ? null : count.intValue();
-    }
+	public Integer getActiveProgramCount(Institution institution) {
+		Long count = programDAO.getActiveProgramCount(institution);
+		return count == null ? null : count.intValue();
+	}
 
-    public DateTime getLatestUpdatedTimestampSitemap(List<PrismState> states) {
-        return programDAO.getLatestUpdatedTimestampSitemap(states);
-    }
+	public DateTime getLatestUpdatedTimestampSitemap(List<PrismState> states) {
+		return programDAO.getLatestUpdatedTimestampSitemap(states);
+	}
 
-    public List<SitemapEntryDTO> getSitemapEntries() {
-        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
-        return programDAO.getSitemapEntries(activeProgramStates);
-    }
+	public List<SitemapEntryDTO> getSitemapEntries() {
+		List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
+		return programDAO.getSitemapEntries(activeProgramStates);
+	}
 
-    public SocialMetadataDTO getSocialMetadata(Program program) {
-        return advertService.getSocialMetadata(program.getAdvert());
-    }
+	public SocialMetadataDTO getSocialMetadata(Program program) {
+		return advertService.getSocialMetadata(program.getAdvert());
+	}
 
-    public SearchEngineAdvertDTO getSearchEngineAdvert(Integer programId) {
-        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
-        SearchEngineAdvertDTO searchEngineDTO = programDAO.getSearchEngineAdvert(programId, activeProgramStates);
+	public SearchEngineAdvertDTO getSearchEngineAdvert(Integer programId) {
+		List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
+		SearchEngineAdvertDTO searchEngineDTO = programDAO.getSearchEngineAdvert(programId, activeProgramStates);
 
-        if (searchEngineDTO != null) {
-            searchEngineDTO.setRelatedProjects(projectService.getActiveProjectsByProgram(programId));
+		if (searchEngineDTO != null) {
+			searchEngineDTO.setRelatedProjects(projectService.getActiveProjectsByProgram(programId));
 
-            List<String> relatedUsers = Lists.newArrayList();
-            List<User> programAcademics = userService.getUsersForResourceAndRoles(getById(programId), PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR);
-            for (User programAcademic : programAcademics) {
-                relatedUsers.add(programAcademic.getSearchEngineRepresentation());
-            }
-            searchEngineDTO.setRelatedUsers(relatedUsers);
-        }
+			List<String> relatedUsers = Lists.newArrayList();
+			List<User> programAcademics = userService.getUsersForResourceAndRoles(getById(programId), PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR);
+			for (User programAcademic : programAcademics) {
+				relatedUsers.add(programAcademic.getSearchEngineRepresentation());
+			}
+			searchEngineDTO.setRelatedUsers(relatedUsers);
+		}
 
-        return searchEngineDTO;
-    }
+		return searchEngineDTO;
+	}
 
-    public List<ResourceSearchEngineDTO> getActiveProgramsByInstitution(Integer institutionId) {
-        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
-        return programDAO.getActiveProgramsByInstitution(institutionId, activeProgramStates);
-    }
-    
-    private void update(Integer programId, ProgramDTO programDTO) {
-        Program program = entityService.getById(Program.class, programId);
-        copyProgramDetails(program, programDTO);
+	public List<ResourceSearchEngineDTO> getActiveProgramsByInstitution(Integer institutionId) {
+		List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
+		return programDAO.getActiveProgramsByInstitution(institutionId, activeProgramStates);
+	}
 
-        if (!program.getImported()) {
-            programDAO.deleteProgramStudyOptionInstances(program);
-            programDAO.deleteProgramStudyOptions(program);
-            program.getStudyOptions().clear();
-            copyStudyOptions(program, programDTO);
-            for (ProgramStudyOption studyOption : program.getStudyOptions()) {
-                entityService.save(studyOption);
-            }
-        }
-    }
+	private void update(Integer programId, ProgramDTO programDTO) {
+		Program program = entityService.getById(Program.class, programId);
+		copyProgramDetails(program, programDTO);
 
-    private void copyProgramDetails(Program program, ProgramDTO programDTO) {
-        Advert advert;
-        if (program.getAdvert() == null) {
-            advert = new Advert();
-            advert.setAddress(advertService.createAddressCopy(program.getInstitution().getAddress()));
-            program.setAdvert(advert);
-        } else {
-            advert = program.getAdvert();
-        }
+		if (!program.getImported()) {
+			programDAO.deleteProgramStudyOptionInstances(program);
+			programDAO.deleteProgramStudyOptions(program);
+			program.getStudyOptions().clear();
+			copyStudyOptions(program, programDTO);
+			for (ProgramStudyOption studyOption : program.getStudyOptions()) {
+				entityService.save(studyOption);
+			}
+		}
+	}
 
-        if (!program.getImported()) {
-            String title = programDTO.getTitle();
-            program.setTitle(title);
-            advert.setTitle(title);
-            program.setProgramType((ProgramType) importedEntityService.getImportedEntityByCode(ProgramType.class, program.getInstitution(), programDTO
-                    .getProgramType().name()));
-            program.setEndDate(programDTO.getEndDate());
-        }
+	private void copyProgramDetails(Program program, ProgramDTO programDTO) {
+		Advert advert;
+		if (program.getAdvert() == null) {
+			advert = new Advert();
+			advert.setAddress(advertService.createAddressCopy(program.getInstitution().getAddress()));
+			program.setAdvert(advert);
+		} else {
+			advert = program.getAdvert();
+		}
 
-        program.getLocations().clear();
-        entityService.flush();
+		if (!program.getImported()) {
+			String title = programDTO.getTitle();
+			program.setTitle(title);
+			advert.setTitle(title);
+			program.setProgramType((ProgramType) importedEntityService.getImportedEntityByCode(ProgramType.class, program.getInstitution(), programDTO
+			        .getProgramType().name()));
+			program.setEndDate(programDTO.getEndDate());
+		}
 
-        for (String location : programDTO.getLocations()) {
-            program.addLocation(location);
-        }
+		program.getLocations().clear();
+		entityService.flush();
 
-        advert.setSummary(programDTO.getSummary());
-        advert.setApplyHomepage(programDTO.getApplyHomepage());
-        
-        advert.setStudyDurationMinimum(programDTO.getStudyDurationMinimum());
-        advert.setStudyDurationMaximum(programDTO.getStudyDurationMaximum());
-    }
+		for (String location : programDTO.getLocations()) {
+			program.addLocation(location);
+		}
 
-    private void copyStudyOptions(Program program, ProgramDTO programDTO) {
-        for (PrismStudyOption prismStudyOption : programDTO.getStudyOptions()) {
-            StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, program.getInstitution(), prismStudyOption.name());
-            ProgramStudyOption programStudyOption = new ProgramStudyOption().withStudyOption(studyOption).withApplicationStartDate(new LocalDate())
-                    .withApplicationCloseDate(program.getEndDate()).withEnabled(true).withProgram(program);
-            program.getStudyOptions().add(programStudyOption);
-        }
-    }
+		advert.setSummary(programDTO.getSummary());
+		advert.setApplyHomepage(programDTO.getApplyHomepage());
+
+		advert.setStudyDurationMinimum(programDTO.getStudyDurationMinimum());
+		advert.setStudyDurationMaximum(programDTO.getStudyDurationMaximum());
+	}
+
+	private void copyStudyOptions(Program program, ProgramDTO programDTO) {
+		for (PrismStudyOption prismStudyOption : programDTO.getStudyOptions()) {
+			StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, program.getInstitution(), prismStudyOption.name());
+			ProgramStudyOption programStudyOption = new ProgramStudyOption().withStudyOption(studyOption).withApplicationStartDate(new LocalDate())
+			        .withApplicationCloseDate(program.getEndDate()).withEnabled(true).withProgram(program);
+			program.getStudyOptions().add(programStudyOption);
+		}
+	}
 
 }

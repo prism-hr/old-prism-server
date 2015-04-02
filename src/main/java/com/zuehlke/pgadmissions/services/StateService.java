@@ -208,9 +208,7 @@ public class StateService {
 		return getStateTransition(resource, comment.getAction(), resource.getState().getId());
 	}
 
-	public <T extends Resource> void executeDeferredStateTransition(Class<T> resourceClass, Integer resourceId, PrismAction actionId)
-	        throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException,
-	        IntegrationException {
+	public <T extends Resource> void executeDeferredStateTransition(Class<T> resourceClass, Integer resourceId, PrismAction actionId) throws Exception {
 		Resource resource = resourceService.getById(resourceClass, resourceId);
 		Action action = actionService.getById(actionId);
 		Comment comment = new Comment().withResource(resource).withUser(systemService.getSystem().getUser()).withAction(action).withDeclinedResponse(false)
@@ -279,7 +277,8 @@ public class StateService {
 		Resource operative = resourceService.getOperativeResource(resource, action);
 		List<StateTransition> potentialStateTransitions = getPotentialStateTransitions(operative, action);
 		if (potentialStateTransitions.size() > 1) {
-			return applicationContext.getBean(potentialStateTransitions.get(0).getStateTransitionEvaluation().getId().getResolver()).resolve(operative, comment);
+			return applicationContext.getBean(potentialStateTransitions.get(0).getStateTransitionEvaluation().getId().getResolver())
+			        .resolve(operative, comment);
 		}
 		return potentialStateTransitions.isEmpty() ? null : potentialStateTransitions.get(0);
 	}

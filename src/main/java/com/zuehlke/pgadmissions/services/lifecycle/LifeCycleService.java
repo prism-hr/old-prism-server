@@ -1,13 +1,12 @@
 package com.zuehlke.pgadmissions.services.lifecycle;
 
-import javax.inject.Inject;
-
+import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperSystem;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityServiceHelperSystem;
+import javax.inject.Inject;
 
 @Service
 public class LifeCycleService implements InitializingBean {
@@ -32,19 +31,19 @@ public class LifeCycleService implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		if (initializeDisplayProperties) {
+			if (dropDisplayProperties) {
+				systemService.dropDisplayProperties();
+			}
+			systemService.initializeDisplayProperties();
+		}
+
 		if (initializeWorkflow) {
 			systemService.initializeSystem();
 		}
 
 		if (initializeData) {
 			importedEntityServiceHelperSystem.execute();
-		}
-
-		if (initializeDisplayProperties) {
-			if (dropDisplayProperties) {
-				systemService.dropDisplayProperties();
-			}
-			systemService.initializeDisplayProperties();
 		}
 	}
 

@@ -55,9 +55,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyCategory.APPLICATION_DATA;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyCategory.APPLICATION_WORKFLOW;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfigurationLocalizable;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 
-public enum PrismWorkflowPropertyDefinition {
+public enum PrismWorkflowPropertyDefinition implements PrismConfigurationLocalizable {
 
     APPLICATION_STUDY_DETAIL(APPLICATION_DATA, null, null, false, null, null, null, APPLICATION, SYSTEM_APPLICATION_STUDY_DETAIL_LABEL, SYSTEM_APPLICATION_STUDY_DETAIL_LABEL), //
     APPLICATION_THEME_PRIMARY(APPLICATION_DATA, 0, 10, null, null, 0, 0, APPLICATION, SYSTEM_APPLICATION_THEME_PRIMARY_LABEL, SYSTEM_APPLICATION_THEME_PRIMARY_HINT), //

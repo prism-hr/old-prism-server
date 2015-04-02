@@ -9,7 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_PROVIDE_REFERENCE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE_PENDING_COMPLETION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_ESCALATE_SUBMITTED_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_ESCALATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReference.applicationCompleteReference;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReference.applicationProvideReference;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReference.applicationViewEditReference;
@@ -18,7 +18,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismA
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationVerification.applicationEmailCreatorVerification;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
 public class PrismApplicationReferencePendingCompletion extends PrismWorkflowState {
@@ -35,11 +34,10 @@ public class PrismApplicationReferencePendingCompletion extends PrismWorkflowSta
 
 		stateActions.add(new PrismStateAction() //
 		        .withAction(APPLICATION_ESCALATE) //
-		        .withNotifications(new PrismStateActionNotification() //
-		                .withRole(APPLICATION_CREATOR) //
-		                .withDefinition(APPLICATION_TERMINATE_NOTIFICATION)) //
-		        .withTransitions(APPLICATION_ESCALATE_SUBMITTED_TRANSITION.withRoleTransitionsAndStateTerminations( //
-		                APPLICATION_DELETE_REFEREE_GROUP, APPLICATION_TERMINATE_GROUP))); //
+		        .withNotifications(APPLICATION_CREATOR, APPLICATION_TERMINATE_NOTIFICATION) //
+		        .withTransitions(APPLICATION_ESCALATE_TRANSITION //
+		                .withRoleTransitionsAndStateTerminations(APPLICATION_DELETE_REFEREE_GROUP, //
+		                        APPLICATION_TERMINATE_GROUP))); //
 
 		stateActions.add(applicationProvideReference()
 		        .withTransitions(new PrismStateTransition() //

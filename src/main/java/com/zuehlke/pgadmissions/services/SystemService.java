@@ -385,9 +385,9 @@ public class SystemService {
 
 	private void initializeDisplayPropertyDefinitions() throws DeduplicationException {
 		for (PrismDisplayPropertyDefinition prismDisplayPropertyDefinition : PrismDisplayPropertyDefinition.values()) {
-			Scope scope = scopeService.getById(prismDisplayPropertyDefinition.getDisplayCategory().getScope());
+			Scope scope = scopeService.getById(prismDisplayPropertyDefinition.getCategory().getScope());
 			entityService.createOrUpdate(new DisplayPropertyDefinition().withId(prismDisplayPropertyDefinition)
-			        .withCategory(prismDisplayPropertyDefinition.getDisplayCategory()).withScope(scope));
+			        .withCategory(prismDisplayPropertyDefinition.getCategory()).withScope(scope));
 		}
 	}
 
@@ -451,7 +451,7 @@ public class SystemService {
 		for (PrismScope prismScope : scopeService.getScopesDescending()) {
 			DisplayPropertyConfigurationDTO configurationDTO = new DisplayPropertyConfigurationDTO();
 			for (PrismDisplayPropertyDefinition prismDisplayPropertyDefinition : PrismDisplayPropertyDefinition.values()) {
-				if (prismScope == prismDisplayPropertyDefinition.getDisplayCategory().getScope()) {
+				if (prismScope == prismDisplayPropertyDefinition.getCategory().getScope()) {
 					configurationDTO.add(new DisplayPropertyConfigurationValueDTO().withDefinitionId(prismDisplayPropertyDefinition).withValue(
 					        prismDisplayPropertyDefinition.getDefaultValue()));
 				}

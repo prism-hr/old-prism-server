@@ -8,7 +8,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED_PURGED;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
 public class PrismApplicationWithdrawnCompletedUnsubmitted extends PrismWorkflowState {
@@ -23,9 +22,7 @@ public class PrismApplicationWithdrawnCompletedUnsubmitted extends PrismWorkflow
 
 		stateActions.add(new PrismStateAction() //
 		        .withAction(APPLICATION_VIEW_EDIT) //
-		        .withAssignments(new PrismStateActionAssignment() //
-		                .withRole(APPLICATION_CREATOR) //
-		                .withActionEnhancement(APPLICATION_VIEW_AS_CREATOR))); //
+		        .withAssignments(APPLICATION_CREATOR, APPLICATION_VIEW_AS_CREATOR)); //
 	}
 
 }

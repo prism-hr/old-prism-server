@@ -18,11 +18,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGrou
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVAL_PENDING_CORRECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_WITHDRAWN;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_APPROVE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.PROJECT_APPROVED_OUTCOME;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_APPROVE_TRANSITION;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
 public class PrismProjectApproval extends PrismWorkflowState {
@@ -55,9 +54,7 @@ public class PrismProjectApproval extends PrismWorkflowState {
 		        .withAction(PROJECT_COMPLETE_APPROVAL_STAGE) //
 		        .withAssignments(PROJECT_PARENT_ADMINISTRATOR_GROUP) //
 		        .withNotifications(PROJECT_PARENT_ADMINISTRATOR_GROUP, SYSTEM_PROJECT_UPDATE_NOTIFICATION) //
-		        .withNotifications(new PrismStateActionNotification() //
-		                .withRole(PROJECT_ADMINISTRATOR) //
-		                .withDefinition(PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION)) //
+		        .withNotifications(PROJECT_ADMINISTRATOR, PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
 		        .withTransitions(PROJECT_APPROVE_TRANSITION);
 	}
 

@@ -6,8 +6,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_INTERVIEWEE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_INTERVIEWER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REVIEWER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SECONDARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
@@ -18,14 +20,18 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PRO
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.BRANCH;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.EXHUME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.RETIRE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.REVIVE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.UPDATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_INTERVIEWER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REVIEWER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_SECONDARY_SUPERVISOR;
 
 public enum PrismRoleTransitionGroup {
 
@@ -76,7 +82,7 @@ public enum PrismRoleTransitionGroup {
 	                .withRole(APPLICATION_REVIEWER) //
 	                .withTransitionType(CREATE) //
 	                .withTransitionRole(APPLICATION_REVIEWER) //
-	                .withPropertyDefinition(APPLICATION_ASSIGN_REVIEWER)), //	
+	                .withPropertyDefinition(APPLICATION_ASSIGN_REVIEWER)), //
 
 	APPLICATION_DELETE_REVIEWER_GROUP( //
 	        new PrismRoleTransition() //
@@ -96,6 +102,25 @@ public enum PrismRoleTransitionGroup {
 	                .withRole(APPLICATION_ADMINISTRATOR) //
 	                .withTransitionType(UPDATE) //
 	                .withTransitionRole(APPLICATION_VIEWER_RECRUITER)),
+
+	APPLICATION_CREATE_POTENTIAL_INTERVIEWEE_GROUP( //
+	        new PrismRoleTransition() //
+	                .withRole(PrismRole.APPLICATION_CREATOR) //
+	                .withTransitionType(BRANCH) //
+	                .withTransitionRole(APPLICATION_POTENTIAL_INTERVIEWEE)),
+
+	APPLICATION_CREATE_POTENTIAL_INTERVIEWER_GROUP( //
+	        new PrismRoleTransition() //
+	                .withRole(APPLICATION_POTENTIAL_INTERVIEWER) //
+	                .withTransitionType(CREATE) //
+	                .withTransitionRole(APPLICATION_POTENTIAL_INTERVIEWER) //
+	                .withPropertyDefinition(APPLICATION_ASSIGN_INTERVIEWER)),
+
+	APPLICATION_CREATE_INTERVIEWEE_GROUP( //
+	        new PrismRoleTransition() //
+	                .withRole(APPLICATION_CREATOR) //
+	                .withTransitionType(BRANCH) //
+	                .withTransitionRole(APPLICATION_INTERVIEWEE)), //
 
 	APPLICATION_CREATE_INTERVIEWER_GROUP( //
 	        new PrismRoleTransition() //
@@ -159,6 +184,55 @@ public enum PrismRoleTransitionGroup {
 	                .withTransitionType(UPDATE) //
 	                .withTransitionRole(APPLICATION_INTERVIEWER) //
 	                .withRestrictToOwner()), //
+
+	APPLICATION_CREATE_SUPERVISOR_GROUP( //
+	        new PrismRoleTransition() //
+	                .withRole(APPLICATION_PRIMARY_SUPERVISOR) //
+	                .withTransitionType(CREATE) //
+	                .withTransitionRole(APPLICATION_PRIMARY_SUPERVISOR) //
+	                .withPropertyDefinition(APPLICATION_ASSIGN_PRIMARY_SUPERVISOR), //
+	        new PrismRoleTransition() //
+	                .withRole(APPLICATION_SECONDARY_SUPERVISOR) //
+	                .withTransitionType(CREATE) //
+	                .withTransitionRole(APPLICATION_SECONDARY_SUPERVISOR) //
+	                .withPropertyDefinition(APPLICATION_ASSIGN_SECONDARY_SUPERVISOR)), //
+
+	APPLICATION_DELETE_SUPERVISOR_GROUP( //
+	        new PrismRoleTransition() //
+	                .withRole(APPLICATION_PRIMARY_SUPERVISOR) //
+	                .withTransitionType(UPDATE) //
+	                .withTransitionRole(APPLICATION_VIEWER_RECRUITER), //
+	        new PrismRoleTransition() //
+	                .withRole(APPLICATION_SECONDARY_SUPERVISOR) //
+	                .withTransitionType(UPDATE) //
+	                .withTransitionRole(APPLICATION_VIEWER_RECRUITER)),
+
+	APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_GROUP( //
+	        new PrismRoleTransition() //
+	                .withRole(APPLICATION_INTERVIEWER) //
+	                .withTransitionType(UPDATE) //
+	                .withTransitionRole(APPLICATION_VIEWER_RECRUITER) //
+	                .withRestrictToOwner()), //
+
+	APPLICATION_CONFIRM_PRIMARY_SUPERVISION_GROUP( //
+	        new PrismRoleTransition() //
+	                .withRole(APPLICATION_PRIMARY_SUPERVISOR) //
+	                .withTransitionType(UPDATE) //
+	                .withTransitionRole(APPLICATION_VIEWER_RECRUITER) //
+	                .withRestrictToOwner()),
+
+	APPLICATION_CONFIRM_SECONDARY_SUPERVISION_GROUP( //
+	        new PrismRoleTransition() //
+	                .withRole(APPLICATION_SECONDARY_SUPERVISOR) //
+	                .withTransitionType(UPDATE) //
+	                .withTransitionRole(APPLICATION_VIEWER_RECRUITER) //
+	                .withRestrictToOwner()),
+
+	APPLICATION_EXHUME_REFEREE_GROUP( //
+	        new PrismRoleTransition() //
+	                .withRole(APPLICATION_VIEWER_REFEREE) //
+	                .withTransitionType(EXHUME) //
+	                .withTransitionRole(APPLICATION_REFEREE)),
 
 	PROJECT_CREATE_ADMINISTRATOR_GROUP( //
 	        new PrismRoleTransition() //

@@ -29,9 +29,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfigurationLocalizable;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 
-public enum PrismStateDurationDefinition {
+public enum PrismStateDurationDefinition implements PrismConfigurationLocalizable {
 
 	APPLICATION_CONFIRM_ELIGIBILITY_DURATION(3, false, APPLICATION, APPLICATION_CONFIRM_ELIGIBILITY_DURATION_LABEL,
 	        APPLICATION_CONFIRM_ELIGIBILITY_DURATION_TOOLTIP), //

@@ -25,8 +25,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismA
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTermination;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
@@ -75,8 +73,8 @@ public class PrismApplicationReference extends PrismWorkflowState {
 		        .withAction(PrismAction.APPLICATION_COMPLETE_REFERENCE_STAGE) //
 		        .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
 		        .withNotifications(APPLICATION_PARENT_ADMINISTRATOR_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
-		        .withTransitions(APPLICATION_COMPLETE_STATE_TRANSITION.withRoleTransitions( //
-		                APPLICATION_REVIVE_REFEREE_GROUP));
+		        .withTransitions(APPLICATION_COMPLETE_STATE_TRANSITION //
+		                .withRoleTransitions(APPLICATION_REVIVE_REFEREE_GROUP));
 	}
 
 	public static PrismStateAction applicationProvideReference() {
@@ -86,16 +84,12 @@ public class PrismApplicationReference extends PrismWorkflowState {
 		        .withNotification(APPLICATION_PROVIDE_REFERENCE_REQUEST) //
 		        .withAssignments(APPLICATION_REFEREE) //
 		        .withNotifications(APPLICATION_PARENT_ADMINISTRATOR_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
-		        .withNotifications(new PrismStateActionNotification() //
-		                .withRole(APPLICATION_CREATOR) //
-		                .withDefinition(SYSTEM_APPLICATION_UPDATE_NOTIFICATION));
+		        .withNotifications(APPLICATION_CREATOR, SYSTEM_APPLICATION_UPDATE_NOTIFICATION);
 	}
 
 	public static PrismStateAction applicationViewEditReference(PrismState state) {
 		return applicationViewEditVerification(state) //
-		        .withAssignments(new PrismStateActionAssignment() //
-		                .withRole(APPLICATION_REFEREE) //
-		                .withActionEnhancement(APPLICATION_VIEW_AS_REFEREE));
+		        .withAssignments(APPLICATION_REFEREE, APPLICATION_VIEW_AS_REFEREE);
 	}
 
 }

@@ -16,11 +16,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGrou
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVAL_PENDING_CORRECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_WITHDRAWN;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.INSTITUTION_APPROVE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.INSTITUTION_APPROVED_OUTCOME;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.INSTITUTION_APPROVE_TRANSITION;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
 public class PrismInstitutionApproval extends PrismWorkflowState {
@@ -48,12 +47,8 @@ public class PrismInstitutionApproval extends PrismWorkflowState {
 		return new PrismStateAction() //
 		        .withAction(INSTITUTION_COMPLETE_APPROVAL_STAGE) //
 		        .withAssignments(SYSTEM_ADMINISTRATOR) //
-		        .withNotifications(new PrismStateActionNotification() //
-		                .withRole(SYSTEM_ADMINISTRATOR) //
-		                .withDefinition(SYSTEM_INSTITUTION_UPDATE_NOTIFICATION),
-		                new PrismStateActionNotification() //
-		                        .withRole(INSTITUTION_ADMINISTRATOR) //
-		                        .withDefinition(INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION)) //
+		        .withNotifications(SYSTEM_ADMINISTRATOR, SYSTEM_INSTITUTION_UPDATE_NOTIFICATION)
+		        .withNotifications(INSTITUTION_ADMINISTRATOR, INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
 		        .withTransitions(INSTITUTION_APPROVE_TRANSITION);
 	}
 

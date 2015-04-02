@@ -2,16 +2,17 @@ package com.zuehlke.pgadmissions.rest.representation.configuration;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 
-public class DisplayPropertyConfigurationRepresentation extends WorkflowConfigurationRepresentation {
+public class DisplayPropertyConfigurationRepresentation extends WorkflowConfigurationRepresentation implements
+        PrismConfigurationRepresentationCategorizable<PrismDisplayPropertyCategory> {
 
-    private PrismDisplayPropertyCategory category;
+	private PrismDisplayPropertyCategory category;
 
-    public final PrismDisplayPropertyCategory getCategory() {
-        return category;
-    }
+	public final PrismDisplayPropertyCategory getCategory() {
+		return category;
+	}
 
-    public final void setCategory(PrismDisplayPropertyCategory category) {
-        this.category = category;
-    }
+	public final void setCategory(PrismDisplayPropertyCategory category) {
+		this.category = category;
+	}
 
 }

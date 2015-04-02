@@ -13,8 +13,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_COMPLETE_TRANSITION;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
 public class PrismApplicationUnsubmitted extends PrismWorkflowState {
@@ -31,16 +29,12 @@ public class PrismApplicationUnsubmitted extends PrismWorkflowState {
 
 		stateActions.add(applicationWithdrawUnsubmitted());
 	}
-	
+
 	public static PrismStateAction applicationCompleteUnsubmitted() {
 		return new PrismStateAction() //
 		        .withAction(APPLICATION_COMPLETE) //
-		        .withAssignments(new PrismStateActionAssignment() //
-		                .withRole(APPLICATION_CREATOR)
-		                .withActionEnhancement(APPLICATION_VIEW_EDIT_AS_CREATOR)) //
-		        .withNotifications(new PrismStateActionNotification() //
-		                .withRole(APPLICATION_CREATOR) //
-		                .withDefinition(APPLICATION_COMPLETE_NOTIFICATION)) //
+		        .withAssignments(APPLICATION_CREATOR, APPLICATION_VIEW_EDIT_AS_CREATOR) //
+		        .withNotifications(APPLICATION_CREATOR, APPLICATION_COMPLETE_NOTIFICATION) //
 		        .withTransitions(APPLICATION_COMPLETE_TRANSITION.withRoleTransitions( //
 		                APPLICATION_CREATE_REFEREE_GROUP));
 	}
@@ -48,8 +42,7 @@ public class PrismApplicationUnsubmitted extends PrismWorkflowState {
 	public static PrismStateAction applicationWithdrawUnsubmitted() {
 		return new PrismStateAction() //
 		        .withAction(APPLICATION_WITHDRAW) //
-		        .withAssignments(new PrismStateActionAssignment() //
-		                .withRole(APPLICATION_CREATOR)) //
+		        .withAssignments(APPLICATION_CREATOR) //
 		        .withTransitions(new PrismStateTransition() //
 		                .withTransitionState(APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED) //
 		                .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST));

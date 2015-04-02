@@ -6,7 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_REFEREE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_ESCALATE_SUBMITTED_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_ESCALATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationValidation.applicationWithdrawValidation;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationVerification.applicationCommentVerification;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationVerification.applicationCompleteVerification;
@@ -14,7 +14,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismA
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationVerification.applicationViewEditVerification;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 
 public class PrismApplicationVerificationPendingCompletion extends PrismWorkflowState {
 
@@ -30,10 +29,8 @@ public class PrismApplicationVerificationPendingCompletion extends PrismWorkflow
 
 		stateActions.add(new PrismStateAction() //
 		        .withAction(APPLICATION_ESCALATE) //
-		        .withNotifications(new PrismStateActionNotification() //
-		                .withRole(APPLICATION_CREATOR) //
-		                .withDefinition(APPLICATION_TERMINATE_NOTIFICATION)) //
-		        .withTransitions(APPLICATION_ESCALATE_SUBMITTED_TRANSITION.withRoleTransitionsAndStateTerminations( //
+		        .withNotifications(APPLICATION_CREATOR, APPLICATION_TERMINATE_NOTIFICATION) //
+		        .withTransitions(APPLICATION_ESCALATE_TRANSITION.withRoleTransitionsAndStateTerminations( //
 		                APPLICATION_DELETE_REFEREE_GROUP, APPLICATION_TERMINATE_GROUP))); //
 
 		stateActions.add(applicationViewEditVerification(state)); //

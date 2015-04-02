@@ -8,7 +8,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismI
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismInstitutionApproval.institutionViewEditApproval;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
 public class PrismInstitutionApproved extends PrismWorkflowState {
@@ -24,9 +23,7 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
 		        .withTransitions(new PrismStateTransition() //
 		                .withTransitionState(INSTITUTION_APPROVED_COMPLETED) //
 		                .withTransitionAction(INSTITUTION_STARTUP))
-		        .withNotifications(new PrismStateActionNotification() //
-		                .withRole(INSTITUTION_ADMINISTRATOR) //
-		                .withDefinition(INSTITUTION_STARTUP_NOTIFICATION))); //
+		        .withNotifications(INSTITUTION_ADMINISTRATOR, INSTITUTION_STARTUP_NOTIFICATION)); //
 	}
 
 	public static PrismStateAction institutionEmailCreatorApproved() {

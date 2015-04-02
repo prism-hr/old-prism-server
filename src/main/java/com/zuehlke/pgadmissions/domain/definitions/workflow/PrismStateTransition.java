@@ -70,7 +70,7 @@ public class PrismStateTransition {
 		}
 		return this;
 	}
-	
+
 	public PrismStateTransition withPropagatedActions(PrismAction... propagatedActions) {
 		this.propagatedActions.addAll(Arrays.asList(propagatedActions));
 		return this;

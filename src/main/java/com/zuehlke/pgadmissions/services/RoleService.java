@@ -121,7 +121,7 @@ public class RoleService {
 
 	public boolean hasUserRole(Resource resource, User user, PrismRole... prismRoles) {
 		for (PrismRole prismRole : prismRoles) {
-			if (roleDAO.getUserRole(resource, user, prismRole) != null) {
+			if (roleDAO.getUserRole(resource.getEnclosingResource(prismRole.getScope()), user, prismRole) != null) {
 				return true;
 			}
 		}

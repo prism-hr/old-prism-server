@@ -21,8 +21,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismA
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTermination;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
@@ -71,12 +69,9 @@ public class PrismApplicationVerification extends PrismWorkflowState {
 		        .withAction(APPLICATION_CONFIRM_ELIGIBILITY) //
 		        .withRaisesUrgentFlag() //
 		        .withNotification(SYSTEM_APPLICATION_TASK_REQUEST) //
-		        .withAssignments(new PrismStateActionAssignment() //
-		                .withRole(INSTITUTION_ADMITTER)) //
+		        .withAssignments(INSTITUTION_ADMITTER) //
 		        .withNotifications(APPLICATION_PARENT_ADMINISTRATOR_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION)
-		        .withNotifications(new PrismStateActionNotification() //
-		                .withRole(INSTITUTION_ADMITTER) //
-		                .withDefinition(SYSTEM_APPLICATION_UPDATE_NOTIFICATION));
+		        .withNotifications(INSTITUTION_ADMITTER, SYSTEM_APPLICATION_UPDATE_NOTIFICATION);
 	}
 
 	public static PrismStateAction applicationEmailCreatorVerification() {
@@ -86,9 +81,7 @@ public class PrismApplicationVerification extends PrismWorkflowState {
 
 	public static PrismStateAction applicationViewEditVerification(PrismState state) {
 		return applicationViewEditValidation(state) //
-		        .withAssignments(new PrismStateActionAssignment() //
-		                .withRole(APPLICATION_VIEWER_RECRUITER) //
-		                .withActionEnhancement(APPLICATION_VIEW_AS_RECRUITER));
+		        .withAssignments(APPLICATION_VIEWER_RECRUITER, APPLICATION_VIEW_AS_RECRUITER);
 	}
 
 }

@@ -2,54 +2,34 @@ package com.zuehlke.pgadmissions.rest.representation.configuration;
 
 public class NotificationConfigurationRepresentation extends WorkflowConfigurationRepresentation {
 
-    private String label;
+	private String subject;
 
-    private String tooltip;
+	private String content;
 
-    private String subject;
+	private Integer reminderInterval;
 
-    private String content;
+	public String getSubject() {
+		return subject;
+	}
 
-    private Integer reminderInterval;
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
 
-    public final String getLabel() {
-        return label;
-    }
+	public String getContent() {
+		return content;
+	}
 
-    public final void setLabel(String label) {
-        this.label = label;
-    }
+	public void setContent(String content) {
+		this.content = content;
+	}
 
-    public final String getTooltip() {
-        return tooltip;
-    }
+	public Integer getReminderInterval() {
+		return reminderInterval;
+	}
 
-    public final void setTooltip(String tooltip) {
-        this.tooltip = tooltip;
-    }
+	public void setReminderInterval(Integer reminderInterval) {
+		this.reminderInterval = reminderInterval;
+	}
 
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Integer getReminderInterval() {
-        return reminderInterval;
-    }
-
-    public void setReminderInterval(Integer reminderInterval) {
-        this.reminderInterval = reminderInterval;
-    }
-    
 }

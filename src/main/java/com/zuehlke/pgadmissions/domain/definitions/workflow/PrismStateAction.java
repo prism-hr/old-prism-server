@@ -69,40 +69,39 @@ public class PrismStateAction {
 		return this;
 	}
 
-	public PrismStateAction withAssignments(PrismStateActionAssignment... assignments) {
-		this.assignments.addAll(Arrays.asList(assignments));
+	public PrismStateAction withAssignments(PrismRole role, PrismActionEnhancement actionEnhancement) {
+		withAssignments(role, actionEnhancement, null);
 		return this;
 	}
-	
+
+	public PrismStateAction withAssignments(PrismRole role, PrismActionEnhancement actionEnhancement, PrismAction delegatedAction) {
+		this.assignments.add(new PrismStateActionAssignment().withRole(role).withActionEnhancement(actionEnhancement).withDelegatedAction(delegatedAction));
+		return this;
+	}
+
 	public PrismStateAction withAssignments(PrismRole... roles) {
-		List<PrismStateActionAssignment> assignments = Lists.newLinkedList();
 		for (PrismRole role : roles) {
 			assignments.add(new PrismStateActionAssignment().withRole(role));
 		}
-		this.assignments.addAll(assignments);
 		return this;
 	}
 
 	public PrismStateAction withAssignments(PrismRoleGroup roleGroup) {
-		List<PrismStateActionAssignment> assignments = Lists.newLinkedList();
 		for (PrismRole role : roleGroup.getRoles()) {
 			assignments.add(new PrismStateActionAssignment().withRole(role));
 		}
-		this.assignments.addAll(assignments);
-		return this;
-	}
-
-	public PrismStateAction withNotifications(PrismStateActionNotification... notifications) {
-		this.notifications.addAll(Arrays.asList(notifications));
 		return this;
 	}
 
 	public PrismStateAction withNotifications(PrismRoleGroup roleGroup, PrismNotificationDefinition notification) {
-		List<PrismStateActionNotification> notifications = Lists.newLinkedList();
 		for (PrismRole role : roleGroup.getRoles()) {
-			notifications.add(new PrismStateActionNotification().withRole(role).withDefinition(notification));
+			withNotifications(role, notification);
 		}
-		this.notifications.addAll(notifications);
+		return this;
+	}
+
+	public PrismStateAction withNotifications(PrismRole role, PrismNotificationDefinition notification) {
+		notifications.add(new PrismStateActionNotification().withRole(role).withDefinition(notification));
 		return this;
 	}
 

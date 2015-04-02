@@ -11,16 +11,16 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_PROVIDE_REVIEW_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REVIEW_PENDING_COMPLETION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_ESCALATE_SUBMITTED_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_ESCALATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReview.applicationCommentReview;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReviewPendingFeedback.applicationCompleteReviewStage;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReviewPendingFeedback.applicationProvideReviewReview;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReview.applicationEmailCreatorReview;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReviewPendingFeedback.applicationCompleteReviewStagePendingFeedback;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReviewPendingFeedback.applicationProvideReview;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReviewPendingFeedback.applicationViewEditReviewPendingFeedback;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReviewPendingFeedback.applicationWithdrawReviewPendingFeedback;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionNotification;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
 public class PrismApplicationReviewPendingCompletion extends PrismWorkflowState {
@@ -29,25 +29,23 @@ public class PrismApplicationReviewPendingCompletion extends PrismWorkflowState 
 	protected void setStateActions() {
 		stateActions.add(applicationCommentReview()); //
 
-		stateActions.add(applicationCompleteReviewStage() //
+		stateActions.add(applicationCompleteReviewStagePendingFeedback() //
 		        .withRaisesUrgentFlag() //
 		        .withNotification(SYSTEM_APPLICATION_TASK_REQUEST)); //
 
-		stateActions.add(PrismApplicationReview.applicationEmailCreatorReview()); //
+		stateActions.add(applicationEmailCreatorReview()); //
 
 		stateActions.add(new PrismStateAction() //
 		        .withAction(APPLICATION_ESCALATE) //
-		        .withNotifications(new PrismStateActionNotification() //
-		                .withRole(APPLICATION_CREATOR) //
-		                .withDefinition(APPLICATION_TERMINATE_NOTIFICATION)) //
-		        .withTransitions(APPLICATION_ESCALATE_SUBMITTED_TRANSITION //
+		        .withNotifications(APPLICATION_CREATOR, APPLICATION_TERMINATE_NOTIFICATION) //
+		        .withTransitions(APPLICATION_ESCALATE_TRANSITION //
 		                .withRoleTransitionsAndStateTerminations(Lists.newArrayList(
 		                        APPLICATION_DELETE_ADMINISTRATOR_GROUP, //
 		                        APPLICATION_DELETE_REVIEWER_GROUP, //
 		                        APPLICATION_DELETE_REFEREE_GROUP), //
 		                        APPLICATION_TERMINATE_GROUP))); //
 
-		stateActions.add(applicationProvideReviewReview() //
+		stateActions.add(applicationProvideReview() //
 		        .withTransitions(new PrismStateTransition() //
 		                .withTransitionState(APPLICATION_REVIEW_PENDING_COMPLETION) //
 		                .withTransitionAction(APPLICATION_COMPLETE_REVIEW_STAGE) //

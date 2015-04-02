@@ -10,6 +10,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEn
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_ADMITTER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_REFEREE;
@@ -26,12 +27,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_REFEREE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_VALIDATION_PENDING_COMPLETION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_COMPLETE_STATE_TRANSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_WITHDRAW_SUBMITTED_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_WITHDRAW_TRANSITION;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateActionAssignment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
 public class PrismApplicationValidation extends PrismWorkflowState {
@@ -80,42 +80,20 @@ public class PrismApplicationValidation extends PrismWorkflowState {
 
 	public static PrismStateAction applicationViewEditValidation(PrismState state) {
 		return new PrismStateAction() //
-		        .withAction(PrismAction.APPLICATION_VIEW_EDIT) //
+		        .withAction(APPLICATION_VIEW_EDIT) //
+		        .withAssignments(INSTITUTION_ADMINISTRATOR, APPLICATION_VIEW_EDIT_AS_ADMITTER, APPLICATION_PROVIDE_REFERENCE) //
+		        .withAssignments(INSTITUTION_ADMITTER, APPLICATION_VIEW_EDIT_AS_ADMITTER, APPLICATION_PROVIDE_REFERENCE) //
+		        .withAssignments(PROGRAM_ADMINISTRATOR, APPLICATION_VIEW_EDIT_AS_RECRUITER, APPLICATION_PROVIDE_REFERENCE) //
+		        .withAssignments(PROGRAM_APPROVER, APPLICATION_VIEW_AS_RECRUITER) //
+		        .withAssignments(PROGRAM_VIEWER, APPLICATION_VIEW_AS_RECRUITER) //
+		        .withAssignments(PROJECT_ADMINISTRATOR, APPLICATION_VIEW_EDIT_AS_RECRUITER, APPLICATION_PROVIDE_REFERENCE) //
+		        .withAssignments(PROJECT_PRIMARY_SUPERVISOR, APPLICATION_VIEW_AS_RECRUITER) //
+		        .withAssignments(APPLICATION_CREATOR, APPLICATION_VIEW_EDIT_AS_CREATOR) //
+		        .withAssignments(APPLICATION_VIEWER_REFEREE, APPLICATION_VIEW_AS_REFEREE) //
 		        .withTransitions(new PrismStateTransition() //
 		                .withTransitionState(state) //
 		                .withTransitionAction(APPLICATION_VIEW_EDIT) //
-		                .withRoleTransitions(APPLICATION_CREATE_REFEREE_GROUP, APPLICATION_DELETE_REFEREE_GROUP)) //
-		        .withAssignments(new PrismStateActionAssignment() //
-		                .withRole(APPLICATION_CREATOR) //
-		                .withActionEnhancement(APPLICATION_VIEW_EDIT_AS_CREATOR), //
-		                new PrismStateActionAssignment() //
-		                        .withRole(APPLICATION_VIEWER_REFEREE) //
-		                        .withActionEnhancement(APPLICATION_VIEW_AS_REFEREE),
-		                new PrismStateActionAssignment() //
-		                        .withRole(INSTITUTION_ADMINISTRATOR) //
-		                        .withActionEnhancement(APPLICATION_VIEW_EDIT_AS_ADMITTER) //
-		                        .withDelegatedAction(APPLICATION_PROVIDE_REFERENCE), //
-		                new PrismStateActionAssignment() //
-		                        .withRole(INSTITUTION_ADMITTER) //
-		                        .withActionEnhancement(APPLICATION_VIEW_EDIT_AS_ADMITTER) //
-		                        .withDelegatedAction(APPLICATION_PROVIDE_REFERENCE), //
-		                new PrismStateActionAssignment() //
-		                        .withRole(PROGRAM_ADMINISTRATOR) //
-		                        .withActionEnhancement(APPLICATION_VIEW_AS_RECRUITER) //
-		                        .withDelegatedAction(APPLICATION_PROVIDE_REFERENCE), //
-		                new PrismStateActionAssignment() //
-		                        .withRole(PROGRAM_APPROVER) //
-		                        .withActionEnhancement(APPLICATION_VIEW_AS_RECRUITER), //
-		                new PrismStateActionAssignment() //
-		                        .withRole(PROGRAM_VIEWER) //
-		                        .withActionEnhancement(APPLICATION_VIEW_AS_RECRUITER), //
-		                new PrismStateActionAssignment() //
-		                        .withRole(PROJECT_ADMINISTRATOR) //
-		                        .withActionEnhancement(APPLICATION_VIEW_AS_RECRUITER) //
-		                        .withDelegatedAction(APPLICATION_PROVIDE_REFERENCE), //
-		                new PrismStateActionAssignment() //
-		                        .withRole(PROJECT_PRIMARY_SUPERVISOR) //
-		                        .withActionEnhancement(APPLICATION_VIEW_AS_RECRUITER));
+		                .withRoleTransitions(APPLICATION_CREATE_REFEREE_GROUP, APPLICATION_DELETE_REFEREE_GROUP)); //
 	}
 
 	public static PrismStateAction applicationWithdrawValidation() {
@@ -123,7 +101,7 @@ public class PrismApplicationValidation extends PrismWorkflowState {
 		        .withAction(APPLICATION_WITHDRAW) //
 		        .withAssignments(APPLICATION_CREATOR) //
 		        .withNotifications(APPLICATION_PARENT_ADMINISTRATOR_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
-		        .withTransitions(APPLICATION_WITHDRAW_SUBMITTED_TRANSITION //
+		        .withTransitions(APPLICATION_WITHDRAW_TRANSITION //
 		                .withRoleTransitions(APPLICATION_DELETE_REFEREE_GROUP));
 	}
 

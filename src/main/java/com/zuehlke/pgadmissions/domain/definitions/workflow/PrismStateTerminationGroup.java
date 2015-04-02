@@ -1,12 +1,15 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_VERIFICATION;
+
 public enum PrismStateTerminationGroup {
 
 	APPLICATION_TERMINATE_GROUP( //
 	        new PrismStateTermination() //
-	                .withTerminationState(PrismState.APPLICATION_REFERENCE), //
+	                .withTerminationState(APPLICATION_REFERENCE), //
 	        new PrismStateTermination() //
-	                .withTerminationState(PrismState.APPLICATION_VERIFICATION));
+	                .withTerminationState(APPLICATION_VERIFICATION));
 
 	private PrismStateTermination[] stateTerminations;
 

@@ -34,6 +34,8 @@ public enum PrismResourceListFilter {
 	        Arrays.asList(APPLICATION)), //
 	CODE("code", STRING, Arrays.asList(CONTAIN), //
 	        Arrays.asList(APPLICATION, PROJECT, PROGRAM, INSTITUTION)), //
+	TITLE("title", STRING, Arrays.asList(CONTAIN), //
+	        Arrays.asList(PROJECT, PROGRAM, INSTITUTION)), //
 	INSTITUTION_TITLE("institution.id", STRING, ResourceByParentResourceSelector.class, Arrays.asList(CONTAIN), //
 	        Arrays.asList(APPLICATION, PROJECT, PROGRAM)), //
 	PROGRAM_TITLE("program.id", STRING, ResourceByParentResourceSelector.class, Arrays.asList(CONTAIN), //
@@ -42,8 +44,8 @@ public enum PrismResourceListFilter {
 	        Arrays.asList(APPLICATION)), //
 	STATE_GROUP_TITLE("state.id", STATE_GROUP, StateByStateGroupSelector.class, Arrays.asList(EQUAL), //
 	        Arrays.asList(APPLICATION, PROJECT, PROGRAM, INSTITUTION)), //
-	CREATED_TIMESTAMP("createdTimestamp", DATE_TIME, StateByStateGroupSelector.class, Arrays.asList(BETWEEN, GREATER, LESSER), Arrays.asList(APPLICATION,
-	        PROJECT, PROGRAM, INSTITUTION)), //
+	CREATED_TIMESTAMP("createdTimestamp", DATE_TIME, StateByStateGroupSelector.class, Arrays.asList(BETWEEN, GREATER, LESSER), //
+			Arrays.asList(APPLICATION, PROJECT, PROGRAM, INSTITUTION)), //
 	SUBMITTED_TIMESTAMP("submittedTimestamp", DATE_TIME, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER, NOT_SPECIFIED), //
 	        Arrays.asList(APPLICATION)), //
 	UPDATED_TIMESTAMP("updatedTimestamp", DATE_TIME, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER), //
@@ -101,7 +103,8 @@ public enum PrismResourceListFilter {
 		}
 	}
 
-	private PrismResourceListFilter(String propertyName, PrismResourceListFilterPropertyType propertyType, List<PrismResourceListFilterExpression> permittedExpressions,
+	private PrismResourceListFilter(String propertyName, PrismResourceListFilterPropertyType propertyType,
+	        List<PrismResourceListFilterExpression> permittedExpressions,
 	        List<PrismScope> permittedScopes) {
 		this.propertyName = propertyName;
 		this.propertyType = propertyType;
@@ -109,7 +112,8 @@ public enum PrismResourceListFilter {
 		this.permittedScopes = permittedScopes;
 	}
 
-	private PrismResourceListFilter(String propertyName, PrismResourceListFilterPropertyType propertyType, Class<? extends PrismResourceListFilterSelector<?>> propertyValueSelector,
+	private PrismResourceListFilter(String propertyName, PrismResourceListFilterPropertyType propertyType,
+	        Class<? extends PrismResourceListFilterSelector<?>> propertyValueSelector,
 	        List<PrismResourceListFilterExpression> permittedExpressions, List<PrismScope> permittedScopes) {
 		this(propertyName, propertyType, permittedExpressions, permittedScopes);
 		this.propertyValueSelector = propertyValueSelector;

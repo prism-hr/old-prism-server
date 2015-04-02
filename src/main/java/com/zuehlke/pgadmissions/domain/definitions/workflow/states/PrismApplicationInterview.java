@@ -7,31 +7,25 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_INTERVIEWEE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_INTERVIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_INTERVIEWEE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_INTERVIEWER_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_POTENTIAL_INTERVIEWEE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_POTENTIAL_INTERVIEWER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_ADMINISTRATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.BRANCH;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_ASSIGNED_INTERVIEWER_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_COMPLETE_STATE_TRANSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_INTERVIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReview.applicationCommentReview;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReview.applicationEmailCreatorReview;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReview.applicationEscalateReview;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReview.applicationViewEditReview;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReview.applicationWithdrawReview;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationVerification.applicationViewEditVerification;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
@@ -54,15 +48,8 @@ public class PrismApplicationInterview extends PrismWorkflowState {
 		                        .withTransitionState(APPLICATION_INTERVIEW_PENDING_AVAILABILITY) //
 		                        .withTransitionAction(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY) //
 		                        .withTransitionEvaluation(APPLICATION_ASSIGNED_INTERVIEWER_OUTCOME) //
-		                        .withRoleTransitions(new PrismRoleTransition() //
-		                                .withRole(PrismRole.APPLICATION_CREATOR) //
-		                                .withTransitionType(BRANCH) //
-		                                .withTransitionRole(APPLICATION_POTENTIAL_INTERVIEWEE), //
-		                                new PrismRoleTransition() //
-		                                        .withRole(APPLICATION_POTENTIAL_INTERVIEWER) //
-		                                        .withTransitionType(CREATE) //
-		                                        .withTransitionRole(APPLICATION_POTENTIAL_INTERVIEWER) //
-		                                        .withPropertyDefinition(APPLICATION_ASSIGN_INTERVIEWER)), //
+		                        .withRoleTransitions(APPLICATION_CREATE_POTENTIAL_INTERVIEWEE_GROUP, //
+		                                APPLICATION_CREATE_POTENTIAL_INTERVIEWER_GROUP), //
 		                new PrismStateTransition() //
 		                        .withTransitionState(APPLICATION_INTERVIEW_PENDING_FEEDBACK) //
 		                        .withTransitionAction(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK) //
@@ -72,18 +59,12 @@ public class PrismApplicationInterview extends PrismWorkflowState {
 		                        .withTransitionState(APPLICATION_INTERVIEW_PENDING_INTERVIEW) //
 		                        .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
 		                        .withTransitionEvaluation(APPLICATION_ASSIGNED_INTERVIEWER_OUTCOME) //
-		                        .withRoleTransitions(new PrismRoleTransition() //
-		                                .withRole(APPLICATION_CREATOR) //
-		                                .withTransitionType(BRANCH) //
-		                                .withTransitionRole(APPLICATION_INTERVIEWEE))
-		                        .withRoleTransitions(APPLICATION_CREATE_INTERVIEWER_GROUP))); //
+		                        .withRoleTransitions(APPLICATION_CREATE_INTERVIEWEE_GROUP, //
+		                                APPLICATION_CREATE_INTERVIEWER_GROUP))); //
 
 		stateActions.add(applicationCommentReview()); //
 
-		stateActions.add(new PrismStateAction() //
-		        .withAction(APPLICATION_COMPLETE_INTERVIEW_STAGE) //
-		        .withAssignments(APPLICATION_ADMINISTRATOR_GROUP) //
-		        .withNotifications(APPLICATION_ADMINISTRATOR_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
+		stateActions.add(applicationCompleteInterviewStage() //
 		        .withTransitions(APPLICATION_COMPLETE_STATE_TRANSITION //
 		                .withRoleTransitions(APPLICATION_DELETE_ADMINISTRATOR_GROUP))); //
 
@@ -91,9 +72,16 @@ public class PrismApplicationInterview extends PrismWorkflowState {
 
 		stateActions.add(applicationEscalateReview()); //
 
-		stateActions.add(applicationViewEditVerification(state)); //
+		stateActions.add(applicationViewEditReview(state)); //
 
 		stateActions.add(applicationWithdrawReview());
+	}
+
+	public static PrismStateAction applicationCompleteInterviewStage() {
+		return new PrismStateAction() //
+		        .withAction(APPLICATION_COMPLETE_INTERVIEW_STAGE) //
+		        .withAssignments(APPLICATION_ADMINISTRATOR_GROUP) //
+		        .withNotifications(APPLICATION_ADMINISTRATOR_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION);
 	}
 
 }

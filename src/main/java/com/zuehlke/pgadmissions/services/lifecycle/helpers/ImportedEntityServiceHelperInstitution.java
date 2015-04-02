@@ -16,7 +16,6 @@ import javax.xml.validation.SchemaFactory;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
@@ -32,9 +31,6 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationTyp
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.IntegrationException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
@@ -57,8 +53,7 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
 	@Autowired
 	private NotificationService notificationService;
 
-	public void execute() throws DeduplicationException, InstantiationException, IllegalAccessException, IOException, JAXBException, SAXException,
-	        BeansException, WorkflowEngineException, IntegrationException {
+	public void execute() throws Exception {
 		institutionService.populateDefaultImportedEntityFeeds();
 		for (ImportedEntityFeed importedEntityFeed : importedEntityService.getImportedEntityFeeds()) {
 			String maxRedirects = null;
@@ -84,8 +79,7 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
 		}
 	}
 
-	private void importEntities(ImportedEntityFeed importedEntityFeed) throws IOException, JAXBException, SAXException, DataImportException,
-	        DeduplicationException, InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IntegrationException {
+	private void importEntities(ImportedEntityFeed importedEntityFeed) throws Exception {
 		Institution institution = importedEntityFeed.getInstitution();
 		if (contextEnvironment.equals("prod") || !institutionService.hasAuthenticatedFeeds(institution)) {
 			List unmarshalled = unmarshalEntities(importedEntityFeed);

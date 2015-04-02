@@ -13,7 +13,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -22,7 +21,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -85,7 +83,6 @@ import com.zuehlke.pgadmissions.exceptions.CustomizationException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO.DisplayPropertyConfigurationValueDTO;
 import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
@@ -169,8 +166,7 @@ public class SystemService {
 	}
 
 	@Transactional(timeout = 600)
-	public void initializeSystem() throws WorkflowConfigurationException, DeduplicationException, CustomizationException, InstantiationException,
-	        IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
+	public void initializeSystem() throws Exception {
 		LOGGER.info("Initializing scope definitions");
 		verifyBackwardCompatibility(Scope.class);
 		initializeScopes();
@@ -610,8 +606,7 @@ public class SystemService {
 		}
 	}
 
-	private void initializeSystemUser(System system) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException,
-	        WorkflowEngineException, IOException, IntegrationException {
+	private void initializeSystemUser(System system) throws Exception {
 		User user = system.getUser();
 		if (user.getUserAccount() == null) {
 			Action action = actionService.getById(SYSTEM_STARTUP);

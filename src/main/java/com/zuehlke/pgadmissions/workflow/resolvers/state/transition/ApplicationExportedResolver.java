@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.workflow.resolvers.state.transition;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_PROGRAM_INSTANCE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_EXPORT_PROGRAM_INSTANCE;
 
 import javax.inject.Inject;
 
@@ -21,7 +21,7 @@ public class ApplicationExportedResolver implements StateTransitionResolver {
 	@Override
 	public StateTransition resolve(Resource resource, Comment comment) {
 		String exportException = comment.getExportException();
-		if (exportException == null || exportException.contains(SYSTEM_NO_PROGRAM_INSTANCE.name())) {
+		if (exportException == null || exportException.contains(SYSTEM_NO_EXPORT_PROGRAM_INSTANCE.name())) {
 			return stateService.getStateTransition(resource, comment.getAction(),
 			        PrismState.valueOf(resource.getState().getStateGroup().getId() + "_COMPLETED"));
 		}

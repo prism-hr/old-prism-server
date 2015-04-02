@@ -13,7 +13,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.joda.time.DateTime;
-import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,8 +38,6 @@ import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.IntegrationException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
@@ -184,8 +181,7 @@ public class InstitutionService {
 		}
 	}
 
-	public void initializeInstitution(Integer institutionId) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException,
-	        WorkflowEngineException, IOException, IntegrationException {
+	public void initializeInstitution(Integer institutionId) throws Exception {
 		Institution institution = getById(institutionId);
 		User user = systemService.getSystem().getUser();
 		Action action = actionService.getById(INSTITUTION_STARTUP);
@@ -207,8 +203,7 @@ public class InstitutionService {
 		return institutionDAO.getActivatedInstitutionByGoogleId(googleId);
 	}
 
-	public ActionOutcomeDTO executeAction(Integer institutionId, CommentDTO commentDTO) throws DeduplicationException, InstantiationException,
-	        IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
+	public ActionOutcomeDTO executeAction(Integer institutionId, CommentDTO commentDTO) throws Exception {
 		User user = userService.getById(commentDTO.getUser());
 		Institution institution = getById(institutionId);
 

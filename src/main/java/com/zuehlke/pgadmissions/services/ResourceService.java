@@ -217,8 +217,7 @@ public class ResourceService {
 		entityService.flush();
 	}
 
-	public ActionOutcomeDTO executeAction(Integer resourceId, CommentDTO commentDTO) throws DeduplicationException, InstantiationException,
-	        IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
+	public ActionOutcomeDTO executeAction(Integer resourceId, CommentDTO commentDTO) throws Exception {
 		switch (commentDTO.getAction().getScope()) {
 		case APPLICATION:
 			return applicationService.executeAction(resourceId, commentDTO);
@@ -313,8 +312,7 @@ public class ResourceService {
 		return "PRiSM-" + PrismScope.getByResourceClass(resource.getClass()).getShortCode() + "-" + String.format("%010d", resource.getId());
 	}
 
-	public void executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees) throws DeduplicationException,
-	        InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
+	public void executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees) throws Exception {
 		User user = userService.getCurrentUser();
 		Action action = actionService.getViewEditAction(resource);
 

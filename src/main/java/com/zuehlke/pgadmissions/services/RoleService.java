@@ -6,13 +6,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.UPDATE;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.joda.time.DateTime;
-import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +36,6 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
@@ -95,8 +92,7 @@ public class RoleService {
 		return userRole;
 	}
 
-	public void assignUserRoles(Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) throws DeduplicationException,
-	        InstantiationException, IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
+	public void assignUserRoles(Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) throws Exception {
 		if (roles.length > 0) {
 			User invoker = userService.getCurrentUser();
 			Action action = actionService.getViewEditAction(resource);
@@ -186,8 +182,7 @@ public class RoleService {
 		entityService.flush();
 	}
 
-	public void deleteUserRoles(Resource resource, User user) throws DeduplicationException, InstantiationException, IllegalAccessException, BeansException,
-	        WorkflowEngineException, IOException, IntegrationException {
+	public void deleteUserRoles(Resource resource, User user) throws Exception {
 		List<PrismRole> roles = roleDAO.getRolesForResource(resource, user);
 		assignUserRoles(resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
 	}

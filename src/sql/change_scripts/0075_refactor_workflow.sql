@@ -9,8 +9,13 @@ where "APPLICATION_SUGGESTED_SUPERVISOR" in (role_id, transition_role_id)
 ;
 
 delete
+from comment_assigned_user
+where role_id = "APPLICATION_SUGGESTED_SUPERVISOR"
+;
+
+delete
 from role
-where id = "APPLICATION_SUGGESTED_SUPERVSIOR"
+where id = "APPLICATION_SUGGESTED_SUPERVISOR"
 ;
 
 alter table state_group

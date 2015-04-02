@@ -98,7 +98,7 @@ import com.zuehlke.pgadmissions.utils.FileUtils;
 @Service
 public class SystemService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(SystemService.class);
+	private static final Logger logger = LoggerFactory.getLogger(SystemService.class);
 
 	@Value("${application.url}")
 	private String applicationUrl;
@@ -167,58 +167,58 @@ public class SystemService {
 
 	@Transactional(timeout = 600)
 	public void initializeSystem() throws Exception {
-		LOGGER.info("Initializing scope definitions");
+		logger.info("Initializing scope definitions");
 		verifyBackwardCompatibility(Scope.class);
 		initializeScopes();
 
-		LOGGER.info("Initializing role definitions");
+		logger.info("Initializing role definitions");
 		verifyBackwardCompatibility(Role.class);
 		initializeRoles();
 
-		LOGGER.info("Initializing action custom question definitions");
+		logger.info("Initializing action custom question definitions");
 		verifyBackwardCompatibility(ActionCustomQuestionDefinition.class);
 		initializeActionCustomQuestionDefinitions();
 
-		LOGGER.info("Initializing action definitions");
+		logger.info("Initializing action definitions");
 		verifyBackwardCompatibility(Action.class);
 		initializeActions();
 
-		LOGGER.info("Initializing state group definitions");
+		logger.info("Initializing state group definitions");
 		verifyBackwardCompatibility(StateGroup.class);
 		initializeStateGroups();
 
-		LOGGER.info("Initializing state definitions");
+		logger.info("Initializing state definitions");
 		verifyBackwardCompatibility(State.class);
 		initializeStates();
 
-		LOGGER.info("Initializing state duration definitions");
+		logger.info("Initializing state duration definitions");
 		verifyBackwardCompatibility(StateDurationDefinition.class);
 		initializeStateDurationDefinitions();
 
-		LOGGER.info("Initializing workflow property definitions");
+		logger.info("Initializing workflow property definitions");
 		verifyBackwardCompatibility(WorkflowPropertyDefinition.class);
 		initializeWorkflowPropertyDefinitions();
 
-		LOGGER.info("Initializing notification definitions");
+		logger.info("Initializing notification definitions");
 		verifyBackwardCompatibility(NotificationDefinition.class);
 		initializeNotificationDefinitions();
 
-		LOGGER.info("Initializing state action definitions");
+		logger.info("Initializing state action definitions");
 		initializeStateActions();
 
-		LOGGER.info("Initializing system object");
+		logger.info("Initializing system object");
 		System system = initializeSystemResource();
 
-		LOGGER.info("Initializing state duration configurations");
+		logger.info("Initializing state duration configurations");
 		initializeStateDurationConfigurations(system);
 
-		LOGGER.info("Initializing workflow property configurations");
+		logger.info("Initializing workflow property configurations");
 		initializeWorkflowPropertyConfigurations(system);
 
-		LOGGER.info("Initializing notification configurations");
+		logger.info("Initializing notification configurations");
 		initializeNotificationConfigurations(system);
 
-		LOGGER.info("Initializing system user");
+		logger.info("Initializing system user");
 		initializeSystemUser(system);
 
 		entityService.flush();
@@ -226,19 +226,19 @@ public class SystemService {
 	}
 
 	@Transactional
-	public void dropDisplayProperties() {
-		LOGGER.info("Dropping display properties");
+	public void destroyDisplayProperties() {
+		logger.info("Destroying display properties");
 		entityService.deleteAll(DisplayPropertyConfiguration.class);
 		entityService.deleteAll(DisplayPropertyDefinition.class);
 	}
 
 	@Transactional
 	public void initializeDisplayProperties() throws Exception {
-		LOGGER.info("Initializing display property definitions");
+		logger.info("Initializing display property definitions");
 		verifyBackwardCompatibility(DisplayPropertyDefinition.class);
 		initializeDisplayPropertyDefinitions();
 
-		LOGGER.info("Initializing display property configurations");
+		logger.info("Initializing display property configurations");
 		initializeDisplayPropertyConfigurations(getSystem());
 	}
 
@@ -498,8 +498,12 @@ public class SystemService {
 		stateService.deleteStateActions();
 
 		for (State state : stateService.getStates()) {
+			logger.info("Initializing state: " + state.toString());
+
 			for (PrismStateAction prismStateAction : PrismState.getStateActions(state.getId())) {
 				Action action = actionService.getById(prismStateAction.getAction());
+				logger.info("Initializing state action: " + action.toString());
+
 				NotificationDefinition template = notificationService.getById(prismStateAction.getNotification());
 				StateAction stateAction = new StateAction().withState(state).withAction(action).withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag())
 				        .withActionEnhancement(prismStateAction.getActionEnhancement()).withNotificationDefinition(template);
@@ -562,6 +566,10 @@ public class SystemService {
 				}
 			}
 
+			logger.info("Initializing state transition " //
+			        + (transitionState == null ? "" : transitionState.toString() + "-") //
+			        + transitionAction.toString() //
+			        + (stateTransitionEvaluation == null ? "" : "-" + stateTransitionEvaluation.toString()));
 			StateTransition stateTransition = new StateTransition().withStateAction(stateAction).withTransitionState(transitionState)
 			        .withTransitionAction(transitionAction).withStateTransitionEvaluation(stateTransitionEvaluation);
 			entityService.save(stateTransition);

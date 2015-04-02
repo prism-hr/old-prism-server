@@ -1,8 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.states;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_WITHDRAW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_CONFIRMED_INTERVIEWEE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_CONFIRMED_INTERVIEWER_GROUP;
@@ -45,7 +49,10 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
 
 		stateActions.add(applicationViewEditPendingInterview(state)); //
 
-		stateActions.add(PrismApplicationReview.applicationWithdrawReview() //
+		stateActions.add(new PrismStateAction() //
+		        .withAction(APPLICATION_WITHDRAW) //
+		        .withAssignments(APPLICATION_CREATOR) //
+		        .withNotifications(APPLICATION_ADMINISTRATOR_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
 		        .withTransitions(APPLICATION_WITHDRAW_TRANSITION //
 		                .withRoleTransitions(APPLICATION_DELETE_ADMINISTRATOR_GROUP, //
 		                        APPLICATION_DELETE_CONFIRMED_INTERVIEWEE_GROUP, //

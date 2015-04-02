@@ -30,7 +30,9 @@
         <property name="jndiName" value="${data.source}"/>
     </bean>
 
-    <bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager"/>
+    <bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
+    	<property name="allowCustomIsolationLevels" value="true"/>
+    </bean>
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
 

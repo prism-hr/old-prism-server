@@ -1110,7 +1110,7 @@ public enum PrismDisplayPropertyDefinition {
 	 * *************** SYSTEM HTML MANAGE USERS *********************
 	 */
 
-    SYSTEM_MANAGE_USERS_HEADER(SYSTEM_HTML_MANAGE_USERS, "Manage Email Templates: {{title}}"),
+    SYSTEM_MANAGE_USERS_HEADER(SYSTEM_HTML_MANAGE_USERS, "Manage Users: {{title}}"),
     SYSTEM_MANAGE_USERS_ROLES_LABEL(SYSTEM_HTML_MANAGE_USERS, "Roles"),
     SYSTEM_MANAGE_USERS_ROLES_HINT(SYSTEM_HTML_MANAGE_USERS, "Select the roles that you wish to assign."),
     SYSTEM_MANAGE_USERS_ADD_USER_BUTTON(SYSTEM_HTML_MANAGE_USERS, "Add User"),

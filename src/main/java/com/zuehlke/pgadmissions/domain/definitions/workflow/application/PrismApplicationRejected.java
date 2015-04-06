@@ -8,8 +8,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_APPROVER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_APPROVER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_REFEREE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_EXHUME_REFEREE_GROUP;
@@ -39,7 +37,6 @@ public class PrismApplicationRejected extends PrismWorkflowState {
 		        .withRaisesUrgentFlag() //
 		        .withNotification(SYSTEM_APPLICATION_TASK_REQUEST) //
 		        .withAssignments(APPLICATION_PARENT_APPROVER_GROUP) //
-		        .withAssignments(PROGRAM_APPROVER) //
 		        .withNotifications(APPLICATION_CREATOR, APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION) //
 		        .withNotifications(APPLICATION_PARENT_APPROVER_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
 		        .withTransitions(APPLICATION_CONFIRM_REJECTION_TRANSITION //
@@ -60,11 +57,9 @@ public class PrismApplicationRejected extends PrismWorkflowState {
 	public static PrismStateAction applicationReverseRejection() {
 		return new PrismStateAction() //
 		        .withAction(APPLICATION_REVERSE_REJECTION) //
-		        .withAssignments(APPLICATION_ADMINISTRATOR_GROUP) //
-		        .withAssignments(PROGRAM_APPROVER) //
+		        .withAssignments(APPLICATION_PARENT_APPROVER_GROUP) //
 		        .withNotifications(APPLICATION_CREATOR, APPLICATION_REVERSE_REJECTION_NOTIFICATION) //
-		        .withNotifications(APPLICATION_ADMINISTRATOR_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
-		        .withNotifications(PROGRAM_APPROVER, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
+		        .withNotifications(APPLICATION_PARENT_APPROVER_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
 		        .withTransitions(new PrismStateTransition() //
 		                .withTransitionState(APPLICATION_REJECTED) //
 		                .withTransitionAction(APPLICATION_COMPLETE_STAGE) //

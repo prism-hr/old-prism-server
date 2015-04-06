@@ -4,8 +4,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.I
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.INSTITUTION_STARTUP_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED_COMPLETED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApproval.institutionEmailCreatorApproval;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApproval.institutionViewEditApproval;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionEmailCreator;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionViewEditUnapproved;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
@@ -15,9 +15,7 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
 
 	@Override
 	protected void setStateActions() {
-		stateActions.add(institutionEmailCreatorApproved()); //
-
-		stateActions.add(institutionViewEditApproved()); //
+		stateActions.add(institutionEmailCreator()); //
 
 		stateActions.add(new PrismStateAction() //
 		        .withAction(INSTITUTION_STARTUP) //
@@ -25,14 +23,8 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
 		                .withTransitionState(INSTITUTION_APPROVED_COMPLETED) //
 		                .withTransitionAction(INSTITUTION_STARTUP))
 		        .withNotifications(INSTITUTION_ADMINISTRATOR, INSTITUTION_STARTUP_NOTIFICATION)); //
-	}
 
-	public static PrismStateAction institutionEmailCreatorApproved() {
-		return institutionEmailCreatorApproval();
-	}
-
-	public static PrismStateAction institutionViewEditApproved() {
-		return institutionViewEditApproval();
+		stateActions.add(institutionViewEditUnapproved()); //
 	}
 
 }

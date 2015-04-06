@@ -5,13 +5,13 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PROJECT_CORRECT_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApproval.projectCompleteApprovalStage;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApproval.projectEmailCreatorApproval;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApproval.projectEscalateApproval;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApproval.projectSuspendApproval;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApproval.projectTerminateApproval;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApproval.projectViewEditApproval;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApproval.projectWithdrawApproval;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApproval.projectCompleteApproval;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectEmailCreator;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectEscalateUnapproved;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectSuspendUnapproved;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectTerminateUnapproved;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectViewEditUnapproved;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectWithdraw;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
@@ -21,7 +21,7 @@ public class PrismProjectApprovalPendingCorrection extends PrismWorkflowState {
 
 	@Override
 	protected void setStateActions() {
-		stateActions.add(projectCompleteApprovalStage());
+		stateActions.add(projectCompleteApproval());
 
 		stateActions.add(new PrismStateAction() //
 		        .withAction(PROJECT_CORRECT) //
@@ -32,17 +32,12 @@ public class PrismProjectApprovalPendingCorrection extends PrismWorkflowState {
 		                .withTransitionState(PROJECT_APPROVAL) //
 		                .withTransitionAction(SYSTEM_VIEW_PROJECT_LIST))); //
 
-		stateActions.add(projectEmailCreatorApproval()); //
-
-		stateActions.add(projectEscalateApproval()); //
-
-		stateActions.add(projectSuspendApproval()); //
-
-		stateActions.add(projectTerminateApproval()); //
-
-		stateActions.add(projectViewEditApproval()); //
-
-		stateActions.add(projectWithdrawApproval());
+		stateActions.add(projectEmailCreator()); //
+		stateActions.add(projectEscalateUnapproved());
+		stateActions.add(projectSuspendUnapproved()); //
+		stateActions.add(projectTerminateUnapproved());
+		stateActions.add(projectViewEditUnapproved());
+		stateActions.add(projectWithdraw());
 	}
 
 }

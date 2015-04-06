@@ -20,6 +20,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PRO
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.BRANCH;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
@@ -329,7 +330,17 @@ public enum PrismRoleTransitionGroup {
 	        new PrismRoleTransition() //
 	                .withRole(INSTITUTION_ADMITTER) //
 	                .withTransitionType(DELETE) //
-	                .withTransitionRole(INSTITUTION_ADMITTER));
+	                .withTransitionRole(INSTITUTION_ADMITTER)),
+
+	SYSTEM_MANAGE_USER_GROUP( //
+	        new PrismRoleTransition() //
+	                .withRole(SYSTEM_ADMINISTRATOR) //
+	                .withTransitionType(CREATE) //
+	                .withTransitionRole(SYSTEM_ADMINISTRATOR),
+	        new PrismRoleTransition() //
+	                .withRole(SYSTEM_ADMINISTRATOR) //
+	                .withTransitionType(DELETE) //
+	                .withTransitionRole(SYSTEM_ADMINISTRATOR));
 
 	private PrismRoleTransition[] roleTransitions;
 

@@ -5,11 +5,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PROGRAM_CORRECT_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApproval.programEmailCreatorApproval;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApproval.programEscalateApproval;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApproval.programViewEditApproval;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApproval.programWithdrawApproval;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApproval.projectCompleteApprovalStage;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programEmailCreator;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programEscalateUnapproved;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programViewEditUnapproved;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programWithdraw;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
@@ -30,13 +30,10 @@ public class PrismProgramApprovalPendingCorrection extends PrismWorkflowState {
 		                .withTransitionState(PROGRAM_APPROVAL) //
 		                .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST))); //
 
-		stateActions.add(programEmailCreatorApproval()); //
-
-		stateActions.add(programEscalateApproval()); //
-
-		stateActions.add(programViewEditApproval()); //
-
-		stateActions.add(programWithdrawApproval());
+		stateActions.add(programEmailCreator()); //
+		stateActions.add(programEscalateUnapproved()); //
+		stateActions.add(programViewEditUnapproved()); //
+		stateActions.add(programWithdraw());
 	}
 
 }

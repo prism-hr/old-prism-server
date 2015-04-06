@@ -167,3 +167,26 @@ where id like "APPLICATION_COMPLETE_%"
 set foreign_key_checks = 1
 ;
 
+update state_action
+set action_id = "APPLICATION_COMPLETE_STAGE"
+where action_id = "APPLICATION_MOVE_TO_DIFFERENT_STAGE"
+;
+
+delete
+from action_redaction
+;
+
+update comment
+set action_id = "APPLICATION_COMPLETE_STAGE"
+where action_id = "APPLICATION_MOVE_TO_DIFFERENT_STAGE"
+;
+
+update state_transition
+set transition_action_id = "APPLICATION_COMPLETE_STAGE"
+where transition_action_id = "APPLICATION_MOVE_TO_DIFFERENT_STAGE"
+;
+
+delete
+from action
+where id = "APPLICATION_MOVE_TO_DIFFERENT_STAGE"
+;

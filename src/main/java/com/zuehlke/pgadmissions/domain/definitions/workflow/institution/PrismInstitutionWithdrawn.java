@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.institution;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApproval.institutionEmailCreatorApproval;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApproval.institutionViewEditApproval;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionEmailCreator;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionViewEditUnapproved;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
@@ -9,9 +9,8 @@ public class PrismInstitutionWithdrawn extends PrismWorkflowState {
 
 	@Override
 	protected void setStateActions() {
-		stateActions.add(institutionEmailCreatorApproval()); //
-
-		stateActions.add(institutionViewEditApproval()); //
+		stateActions.add(institutionEmailCreator());
+		stateActions.add(institutionViewEditUnapproved());
 	}
 
 }

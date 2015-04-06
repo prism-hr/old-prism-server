@@ -5,11 +5,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.INSTITUTION_CORRECT_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApproval.institutionCompleteApprovalStage;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApproval.institutionEmailCreatorApproval;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApproval.institutionEscalateApproval;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApproval.institutionViewEditApproval;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApproval.institutionWithdrawApproval;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApproval.institutionCompleteApproval;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionEmailCreator;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionEscalateUnapproved;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionViewEditUnapproved;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionWithdraw;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
@@ -19,8 +19,8 @@ public class PrismInstitutionApprovalPendingCorrection extends PrismWorkflowStat
 
 	@Override
 	protected void setStateActions() {
-		stateActions.add(institutionCompleteApprovalStage());
-		
+		stateActions.add(institutionCompleteApproval());
+
 		stateActions.add(new PrismStateAction() //
 		        .withAction(INSTITUTION_CORRECT) //
 		        .withRaisesUrgentFlag() //
@@ -30,13 +30,10 @@ public class PrismInstitutionApprovalPendingCorrection extends PrismWorkflowStat
 		                .withTransitionState(INSTITUTION_APPROVAL) //
 		                .withTransitionAction(SYSTEM_VIEW_INSTITUTION_LIST))); //
 
-		stateActions.add(institutionEmailCreatorApproval()); //
-
-		stateActions.add(institutionEscalateApproval()); //
-
-		stateActions.add(institutionViewEditApproval()); //
-
-		stateActions.add(institutionWithdrawApproval());
+		stateActions.add(institutionEmailCreator()); //
+		stateActions.add(institutionEscalateUnapproved()); //
+		stateActions.add(institutionViewEditUnapproved()); //
+		stateActions.add(institutionWithdraw());
 	}
 
 }

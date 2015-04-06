@@ -9,7 +9,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SECONDARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_APPROVER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_APPROVER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_SUPERVISOR_GROUP;
@@ -41,7 +40,6 @@ public class PrismApplicationApproval extends PrismWorkflowState {
 		        .withNotification(SYSTEM_APPLICATION_TASK_REQUEST) //
 		        .withAssignments(APPLICATION_APPROVER_GROUP) //
 		        .withNotifications(APPLICATION_APPROVER_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
-		        .withNotifications(PROGRAM_APPROVER, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
 		        .withTransitions(new PrismStateTransition() //
 		                .withTransitionState(APPLICATION_APPROVAL) //
 		                .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
@@ -75,8 +73,7 @@ public class PrismApplicationApproval extends PrismWorkflowState {
 		        .withRaisesUrgentFlag() //
 		        .withNotification(SYSTEM_APPLICATION_TASK_REQUEST) //
 		        .withAssignments(APPLICATION_PRIMARY_SUPERVISOR) //
-		        .withNotifications(APPLICATION_APPROVER_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
-		        .withNotifications(PROGRAM_APPROVER, SYSTEM_APPLICATION_UPDATE_NOTIFICATION);
+		        .withNotifications(APPLICATION_APPROVER_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION);
 	}
 
 	public static PrismStateAction applicationConfirmSecondarySupervision() {
@@ -85,8 +82,7 @@ public class PrismApplicationApproval extends PrismWorkflowState {
 		        .withRaisesUrgentFlag() //
 		        .withNotification(SYSTEM_APPLICATION_TASK_REQUEST) //
 		        .withAssignments(APPLICATION_SECONDARY_SUPERVISOR) //
-		        .withNotifications(APPLICATION_APPROVER_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
-		        .withNotifications(PROGRAM_APPROVER, SYSTEM_APPLICATION_UPDATE_NOTIFICATION);
+		        .withNotifications(APPLICATION_APPROVER_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION);
 	}
 
 	public static PrismStateAction applicationViewEditApproval(PrismState state) {

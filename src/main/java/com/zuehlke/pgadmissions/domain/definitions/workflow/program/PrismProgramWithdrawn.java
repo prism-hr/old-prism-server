@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.program;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApproval.programEmailCreatorApproval;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApproval.programViewEditApproval;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programEmailCreator;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programViewEditUnapproved;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
@@ -9,9 +9,8 @@ public class PrismProgramWithdrawn extends PrismWorkflowState {
 
 	@Override
 	protected void setStateActions() {
-		stateActions.add(programEmailCreatorApproval()); //
-
-		stateActions.add(programViewEditApproval()); //
+		stateActions.add(programEmailCreator()); //
+		stateActions.add(programViewEditUnapproved()); //
 	}
 
 }

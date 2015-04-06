@@ -26,7 +26,7 @@ public class ApplicationProvidedReferenceResolver implements StateTransitionReso
 
 	@Override
 	public StateTransition resolve(Resource resource, Comment comment) {
-		if (resource.getState().getStateGroup().getId() == PrismStateGroup.APPLICATION_REFERENCE) {
+		if (resource.getState().getStateGroup().getId().equals(PrismStateGroup.APPLICATION_REFERENCE)) {
 			if (roleService.getRoleUsers(resource, APPLICATION_REFEREE).size() == 1) {
 				return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_REFERENCE_PENDING_COMPLETION);
 			}

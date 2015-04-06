@@ -26,7 +26,8 @@ public class ProgramCreatedResolver implements StateTransitionResolver {
 
 	@Override
 	public StateTransition resolve(Resource resource, Comment comment) {
-		if (roleService.hasUserRole(resource, comment.getUser(), INSTITUTION_ADMINISTRATOR) || BooleanUtils.isTrue(comment.getProgram().getImported())) {
+		if (roleService.hasUserRole(resource, comment.getUser(), INSTITUTION_ADMINISTRATOR)
+		        || BooleanUtils.isTrue(resource.getProgram().getImported())) {
 			return stateService.getStateTransition(resource, comment.getAction(), PROGRAM_APPROVED);
 		}
 		return stateService.getStateTransition(resource, comment.getAction(), PROGRAM_APPROVAL);

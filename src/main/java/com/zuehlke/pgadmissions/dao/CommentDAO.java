@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -168,20 +165,14 @@ public class CommentDAO {
 		        .createAlias("transitionState", "transitionState", JoinType.INNER_JOIN) //
 		        .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN) //
 		        .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
-		        .add(Restrictions.not( //
-		                Restrictions.conjunction() //
-		                        .add(Restrictions.in("action.actionCategory", Arrays.asList(ESCALATE_RESOURCE, IMPORT_RESOURCE))) //
-		                        .add(Restrictions.eqProperty("stateGroup.id", "transitionStateGroup.id")))) //
+		        .add(Restrictions.isNotNull("action.transitionAction")) //
 		        .add(Restrictions.disjunction() //
+		                .add(Restrictions.isNotNull("transitionStateGroup.repeatable")) //
 		                .add(Restrictions.conjunction() //
-		                        .add(Restrictions.eq("action.transitionAction", true)) //
-		                        .add(Restrictions.disjunction() //
-		                                .add(Restrictions.eq("transitionStateGroup.repeatable", true)) //
-		                                .add(Restrictions.conjunction() //
-		                                        .add(Restrictions.isNotNull("stateGroup.id")) //
-		                                        .add(Restrictions.isNotNull("transitionStateGroup.id")) //
-		                                        .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id"))) //
-		                                .add(Restrictions.isNotNull("action.creationScope"))))) //
+		                        .add(Restrictions.isNotNull("stateGroup.id")) //
+		                        .add(Restrictions.isNotNull("transitionStateGroup.id")) //
+		                        .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id"))) //
+		                .add(Restrictions.isNotNull("action.creationScope"))) //
 		        .addOrder(Order.asc("createdTimestamp")) //
 		        .addOrder(Order.asc("id")) //
 		        .list();
@@ -193,9 +184,7 @@ public class CommentDAO {
 		        .createAlias("state", "state", JoinType.LEFT_OUTER_JOIN) //
 		        .createAlias("transitionState", "transitionState", JoinType.LEFT_OUTER_JOIN) //
 		        .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
-		        .add(Restrictions.disjunction() //
-		                .add(Restrictions.eq("action.visibleAction", true)) //
-		                .add(Restrictions.neProperty("state.stateGroup", "transitionState.stateGroup"))) //
+		        .add(Restrictions.eq("action.visibleAction", true)) //
 		        .add(Restrictions.disjunction() //
 		                .add(Restrictions.eq("state.stateGroup.id", stateGroupId)) //
 		                .add(Restrictions.isNull("state"))) //

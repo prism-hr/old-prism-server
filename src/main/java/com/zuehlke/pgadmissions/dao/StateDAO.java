@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
+import com.zuehlke.pgadmissions.dto.StateTransitionDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.NextStateRepresentation;
 
@@ -231,6 +232,57 @@ public class StateDAO {
 		return (List<NextStateRepresentation>) criteria.addOrder(Order.asc("transitionStateGroup.ordinal")) //
 		        .setResultTransformer(Transformers.aliasToBean(NextStateRepresentation.class)) //
 		        .list();
+	}
+
+	public List<StateTransitionDTO> getStateTransitions() {
+		return (List<StateTransitionDTO>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+		        .setProjection(Projections.projectionList() //
+		                .add(Projections.property("state"), "state") //
+		                .add(Projections.property("action"), "action") //
+		                .add(Projections.property("stateTransition.transitionState"), "transitionState")) //
+		        .createAlias("action", "action", JoinType.INNER_JOIN) //
+		        .createAlias("stateTransitions", "stateTransition", JoinType.INNER_JOIN) //
+		        .add(Restrictions.isNotNull("action.transitionAction")) //
+		        .add(Restrictions.isNotNull("stateTransition.transitionState")) //
+		        .addOrder(Order.asc("state")) //
+		        .addOrder(Order.asc("action")) //
+		        .addOrder(Order.asc("stateTransition.transitionState")) //
+		        .setResultTransformer(Transformers.aliasToBean(StateTransitionDTO.class)) //
+		        .list();
+	}
+
+	public List<PrismState> getHiddenStates() {
+		return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(State.class) //
+		        .setProjection(Projections.groupProperty("id")) //
+		        .createAlias("stateActions", "stateAction", JoinType.LEFT_OUTER_JOIN) //
+		        .add(Restrictions.isNull("stateAction.id")) //
+		        .list();
+	}
+
+	public void setHiddenStates(List<PrismState> states) {
+		sessionFactory.getCurrentSession().createQuery( //
+		        "update State " //
+		                + "set hidden = true " //
+		                + "where id in (:states)")
+		        .setParameterList("states", states) //
+		        .executeUpdate();
+	}
+
+	public List<PrismState> getParallelizableStates() {
+		return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+		        .setProjection(Projections.groupProperty("state.id")) //
+		        .createAlias("stateTransitions", "stateTransition", JoinType.INNER_JOIN) //
+		        .add(Restrictions.isNull("stateTransition.transitionState")) //
+		        .list();
+	}
+
+	public void setParallelizableStates(List<PrismState> states) {
+		sessionFactory.getCurrentSession().createQuery( //
+		        "update State " //
+		                + "set parallelizable = true " //
+		                + "where id in (:states)")
+		        .setParameterList("states", states) //
+		        .executeUpdate();
 	}
 
 	private void appendImportedResourceConstraint(Criteria criteria, boolean importedResource) {

@@ -146,10 +146,8 @@ public class SystemInitialisationHelper {
 			assertEquals(action.getId().getActionType(), action.getActionType());
 			assertEquals(action.getId().getActionCategory(), action.getActionCategory());
 			assertEquals(action.getId().isRatingAction(), action.getRatingAction());
-			assertEquals(action.getId().isTransitionAction(), action.getTransitionAction());
 			assertEquals(action.getId().isDeclinableAction(), action.getDeclinableAction());
 			assertEquals(action.getId().isVisibleAction(), action.getVisibleAction());
-			assertEquals(action.getId().isEmphasizedAction(), action.getEmphasizedAction());
 			assertEquals(PrismAction.getFallBackAction(action.getId()), action.getFallbackAction().getId());
 			assertEquals(action.getId().getScope(), action.getScope().getId());
 			assertEquals(action.getId().getCreationScope(), action.getCreationScope() == null ? null : action.getCreationScope().getId());
@@ -175,7 +173,6 @@ public class SystemInitialisationHelper {
 
 		for (StateGroup stateGroup : stateService.getStateGroups()) {
 			assertEquals(stateGroup.getId().ordinal(), stateGroup.getOrdinal());
-			assertEquals(stateGroup.getId().isRepeatable(), stateGroup.getRepeatable());
 			assertEquals(stateGroup.getId().getScope(), stateGroup.getScope().getId());
 		}
 	}
@@ -184,7 +181,6 @@ public class SystemInitialisationHelper {
 		for (State state : stateService.getStates()) {
 			assertEquals(state.getId().getStateGroup(), state.getStateGroup().getId());
 			assertEquals(state.getId().getStateGroup().getScope(), state.getScope().getId());
-			assertEquals(state.getId().isParallelizable(), state.getParallelizable());
 		}
 	}
 

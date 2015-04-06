@@ -22,8 +22,6 @@ public class CommentRepresentation {
 
     private PrismAction action;
 
-    private Boolean emphasizedAction;
-
     private Boolean declinedResponse;
 
     private String content;
@@ -111,15 +109,7 @@ public class CommentRepresentation {
     public void setAction(PrismAction action) {
         this.action = action;
     }
-
-    public Boolean getEmphasizedAction() {
-        return emphasizedAction;
-    }
-
-    public void setEmphasizedAction(Boolean emphasizedAction) {
-        this.emphasizedAction = emphasizedAction;
-    }
-
+    
     public Boolean getDeclinedResponse() {
         return declinedResponse;
     }

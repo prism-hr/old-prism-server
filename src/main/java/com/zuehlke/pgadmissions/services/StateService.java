@@ -12,6 +12,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.StateDAO;
@@ -39,11 +40,13 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTermination;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
+import com.zuehlke.pgadmissions.dto.StateTransitionDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.NextStateRepresentation;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
 
 @Service
 @Transactional
@@ -154,7 +157,7 @@ public class StateService {
 		State state = resource.getState();
 		StateTransition stateTransition = getStateTransition(resource, action, comment);
 
-		if (stateTransition == null && comment.isDelegateComment()) {
+		if (comment.isDelegateComment() && stateTransition == null) {
 			commentService.recordDelegatedStateTransition(comment, state);
 			roleService.executeDelegatedRoleTransitions(resource, comment);
 		} else {
@@ -273,12 +276,52 @@ public class StateService {
 		return stateDAO.getSelectableTransitionStates(state, actionId, importedResource);
 	}
 
+	public void setRepeatableStateGroups() {
+		State currentState = null;
+		Action currentAction = null;
+
+		Set<StateGroup> transitionStateGroups = Sets.newHashSet();
+		List<StateTransitionDTO> stateTransitions = stateDAO.getStateTransitions();
+		for (StateTransitionDTO stateTransition : stateTransitions) {
+			State state = stateTransition.getState();
+			Action action = stateTransition.getAction();
+
+			boolean stateChanged = !Objects.equal(currentState, state);
+			boolean actionChanged = !Objects.equal(currentAction, action);
+			if (stateChanged || actionChanged) {
+				if (transitionStateGroups.size() > 1 && transitionStateGroups.contains(state.getStateGroup())) {
+					currentState.getStateGroup().setRepeatable(true);
+				}
+
+				currentState = stateChanged ? state : currentState;
+				currentAction = actionChanged ? action : currentAction;
+				transitionStateGroups.clear();
+			}
+
+			transitionStateGroups.add(stateTransition.getTransitionState().getStateGroup());
+		}
+	}
+
+	public void setHiddenStates() {
+		List<PrismState> states = stateDAO.getHiddenStates();
+		if (!states.isEmpty()) {
+			stateDAO.setHiddenStates(states);
+		}
+	}
+
+	public void setParallelizableStates() {
+		List<PrismState> states = stateDAO.getParallelizableStates();
+		if (!states.isEmpty()) {
+			stateDAO.setParallelizableStates(states);
+		}
+	}
+
 	private StateTransition getStateTransition(Resource resource, Action action, Comment comment) {
-		Resource operative = resourceService.getOperativeResource(resource, action);
-		List<StateTransition> potentialStateTransitions = getPotentialStateTransitions(operative, action);
+		Resource operativeResource = resourceService.getOperativeResource(resource, action);
+		List<StateTransition> potentialStateTransitions = getPotentialStateTransitions(operativeResource, action);
 		if (potentialStateTransitions.size() > 1) {
-			return applicationContext.getBean(potentialStateTransitions.get(0).getStateTransitionEvaluation().getId().getResolver())
-			        .resolve(operative, comment);
+			Class<? extends StateTransitionResolver> resolver = potentialStateTransitions.get(0).getStateTransitionEvaluation().getId().getResolver();
+			return applicationContext.getBean(resolver).resolve(resource, comment);
 		}
 		return potentialStateTransitions.isEmpty() ? null : potentialStateTransitions.get(0);
 	}

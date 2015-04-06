@@ -38,10 +38,10 @@ public class State extends WorkflowDefinition {
     @Enumerated(EnumType.STRING)
     private PrismStateDurationEvaluation stateDurationEvaluation;
 
-    @Column(name = "parallelizable", nullable = false)
+    @Column(name = "parallelizable")
     private Boolean parallelizable;
 
-    @Column(name = "hidden", nullable = false)
+    @Column(name = "hidden")
     private Boolean hidden;
 
     @ManyToOne

@@ -389,7 +389,7 @@ public class CommentService {
 	}
 
 	public void recordDelegatedStateTransition(Comment comment, State state) {
-		recordStateTransition(comment, state, state, Collections.<State>emptySet());
+		recordStateTransition(comment, state, state, Collections.<State> emptySet());
 	}
 
 	public void recordStateTransition(Comment comment, State state, State transitionState, Set<State> stateTerminations) {
@@ -580,8 +580,6 @@ public class CommentService {
 
 	private CommentRepresentation getCommentRepresentation(User user, Comment comment, List<PrismRole> rolesOverridingRedactions,
 	        Set<PrismActionRedactionType> redactions, List<PrismRole> creatableRoles) {
-		Action action = comment.getAction();
-
 		User author = comment.getUser();
 		User authorDelegate = comment.getDelegateUser();
 
@@ -622,7 +620,6 @@ public class CommentService {
 			}
 		}
 
-		representation.setEmphasizedAction(action.getEmphasizedAction());
 		return representation;
 	}
 

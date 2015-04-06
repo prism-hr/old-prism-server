@@ -3,8 +3,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_REVIEWERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_SUPERVISORS;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_REVIEW_STAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_ELIGIBILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
@@ -105,16 +104,16 @@ public enum PrismStateTransitionGroup {
 
 	APPLICATION_COMPLETE_STATE_TRANSITION( //
 	        new PrismStateTransition() //
-	                .withTransitionState(APPLICATION_REVIEW) //
-	                .withTransitionAction(APPLICATION_ASSIGN_REVIEWERS) //
-	                .withTransitionEvaluation(APPLICATION_COMPLETED_STATE_OUTCOME), //
-	        new PrismStateTransition() //
 	                .withTransitionState(APPLICATION_VERIFICATION) //
 	                .withTransitionAction(APPLICATION_CONFIRM_ELIGIBILITY) //
 	                .withTransitionEvaluation(APPLICATION_COMPLETED_STATE_OUTCOME), //
 	        new PrismStateTransition() //
 	                .withTransitionState(APPLICATION_REFERENCE) //
 	                .withTransitionAction(APPLICATION_PROVIDE_REFERENCE) //
+	                .withTransitionEvaluation(APPLICATION_COMPLETED_STATE_OUTCOME), //
+	        new PrismStateTransition() //
+	                .withTransitionState(APPLICATION_REVIEW) //
+	                .withTransitionAction(APPLICATION_ASSIGN_REVIEWERS) //
 	                .withTransitionEvaluation(APPLICATION_COMPLETED_STATE_OUTCOME), //
 	        new PrismStateTransition() //
 	                .withTransitionState(APPLICATION_INTERVIEW) //
@@ -164,7 +163,7 @@ public enum PrismStateTransitionGroup {
 	                .withTransitionEvaluation(APPLICATION_PROVIDED_REVIEW_OUTCOME),
 	        new PrismStateTransition() //
 	                .withTransitionState(APPLICATION_REVIEW_PENDING_COMPLETION) //
-	                .withTransitionAction(APPLICATION_COMPLETE_REVIEW_STAGE) //
+	                .withTransitionAction(APPLICATION_COMPLETE_STAGE) //
 	                .withTransitionEvaluation(APPLICATION_PROVIDED_REVIEW_OUTCOME)),
 
 	APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_TRANSITION( //
@@ -184,13 +183,13 @@ public enum PrismStateTransitionGroup {
 	                .withTransitionEvaluation(APPLICATION_PROVIDED_INTERVIEW_FEEDBACK_OUTCOME), //
 	        new PrismStateTransition() //
 	                .withTransitionState(APPLICATION_INTERVIEW_PENDING_COMPLETION) //
-	                .withTransitionAction(APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS) //
+	                .withTransitionAction(APPLICATION_COMPLETE_STAGE) //
 	                .withTransitionEvaluation(APPLICATION_PROVIDED_INTERVIEW_FEEDBACK_OUTCOME)), //
 
 	APPLICATION_CONFIRM_SUPERVISION_TRANSITION( //
 	        new PrismStateTransition() //
 	                .withTransitionState(APPLICATION_APPROVAL_PENDING_COMPLETION) //
-	                .withTransitionAction(APPLICATION_COMPLETE_APPROVAL_STAGE) //
+	                .withTransitionAction(APPLICATION_COMPLETE_STAGE) //
 	                .withTransitionEvaluation(APPLICATION_CONFIRMED_SUPERVISION_OUTCOME),
 	        new PrismStateTransition() //
 	                .withTransitionState(APPLICATION_APPROVAL_PENDING_FEEDBACK) //
@@ -370,14 +369,14 @@ public enum PrismStateTransitionGroup {
 		return withRoleTransitionsAndStateTerminations(roleTransitions, Collections.<PrismStateTermination> emptyList());
 	}
 
-	public PrismStateTransition[] withRoleTransitionsAndStateTerminations(PrismRoleTransitionGroup roleTransitionGroup,
-	        PrismStateTerminationGroup stateTerminationGroup) {
+	public PrismStateTransition[] withRoleTransitionsAndStateTerminations(PrismStateTerminationGroup stateTerminationGroup,
+	        PrismRoleTransitionGroup roleTransitionGroup) {
 		return withRoleTransitionsAndStateTerminations(Lists.newArrayList(roleTransitionGroup.getRoleTransitions()),
 		        Lists.newArrayList(stateTerminationGroup.getStateTerminations()));
 	}
 
-	public PrismStateTransition[] withRoleTransitionsAndStateTerminations(List<PrismRoleTransitionGroup> roleTransitionGroups,
-	        PrismStateTerminationGroup stateTerminationGroup) {
+	public PrismStateTransition[] withRoleTransitionsAndStateTerminations(PrismStateTerminationGroup stateTerminationGroup,
+	        PrismRoleTransitionGroup... roleTransitionGroups) {
 		List<PrismRoleTransition> roleTransitions = Lists.newLinkedList();
 		for (PrismRoleTransitionGroup roleTransitionGroup : roleTransitionGroups) {
 			roleTransitions.addAll(Lists.newArrayList(roleTransitionGroup.getRoleTransitions()));
@@ -398,4 +397,5 @@ public enum PrismStateTransitionGroup {
 		}
 		return stateTransitions.toArray(new PrismStateTransition[stateTransitions.size()]);
 	}
+
 }

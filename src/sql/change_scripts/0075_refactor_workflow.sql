@@ -42,3 +42,23 @@ set application_export_exception = replace(application_export_exception,
 	"No export program instance for application", "SYSTEM_NO_PROGRAM_INSTANCE")
 where application_export_exception is not null
 ;
+
+alter table action
+	modify column transition_action int(1) unsigned
+;
+
+alter table state_group
+	modify column repeatable int(1) unsigned
+;
+
+alter table state
+	modify column hidden int(1) unsigned
+;
+
+alter table state
+	modify column parallelizable int(1) unsigned
+;
+
+alter table action
+	drop column emphasized_action
+;

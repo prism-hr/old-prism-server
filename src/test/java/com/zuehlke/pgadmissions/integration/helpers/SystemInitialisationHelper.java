@@ -137,7 +137,7 @@ public class SystemInitialisationHelper {
 	public void verifyRoleCreation() {
 		for (Role role : roleService.getRoles()) {
 			assertEquals(role.getId().getScope(), role.getScope().getId());
-			assertEquals(role.getId().isScopeOwner(), role.getScopeCreator());
+			assertEquals(role.getId().isScopeCreator(), role.getScopeCreator());
 		}
 	}
 

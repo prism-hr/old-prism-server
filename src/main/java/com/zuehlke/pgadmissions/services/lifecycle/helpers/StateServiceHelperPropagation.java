@@ -33,20 +33,17 @@ public class StateServiceHelperPropagation implements AbstractServiceHelper {
 	public void execute() throws Exception {
 		List<PrismScope> scopeIds = scopeService.getScopesDescending();
 		for (PrismScope scopeId : scopeIds) {
-			List<StateTransitionPendingDTO> stateTransitionPendingDTOs = stateService.getStateTransitionsPending(scopeId);
-			for (StateTransitionPendingDTO stateTransitionPendingDTO : stateTransitionPendingDTOs) {
-				Integer stateTransitionPendingId = stateTransitionPendingDTO.getId();
-				List<PrismAction> actionIds = actionService.getPropagatedActions(stateTransitionPendingId);
-				for (PrismAction actionId : actionIds) {
-					Class<? extends Resource> resourceClass = actionId.getScope().getResourceClass();
-					List<Integer> resourceIds = resourceService.getResourcesToPropagate(scopeId, stateTransitionPendingDTO.getResourceId(),
-					        actionId.getScope(), actionId);
-					for (Integer resourceId : resourceIds) {
-						stateService.executeDeferredStateTransition(resourceClass, resourceId, actionId);
-					}
-					if (resourceIds.size() == 0) {
-						stateService.deleteStateTransitionPending(stateTransitionPendingId);
-					}
+			List<StateTransitionPendingDTO> stateTransitionsPending = stateService.getStateTransitionsPending(scopeId);
+			for (StateTransitionPendingDTO stateTransitionPending : stateTransitionsPending) {
+				PrismAction actionId = stateTransitionPending.getActionId();
+				PrismScope actionScope = actionId.getScope();
+				Class<? extends Resource> resourceClass = actionScope.getResourceClass();
+				List<Integer> resourceIds = resourceService.getResourcesToPropagate(scopeId, stateTransitionPending.getResourceId(), actionScope, actionId);
+				for (Integer resourceId : resourceIds) {
+					stateService.executeDeferredStateTransition(resourceClass, resourceId, actionId);
+				}
+				if (resourceIds.size() == 0) {
+					stateService.deleteStateTransitionPending(stateTransitionPending.getId());
 				}
 			}
 		}

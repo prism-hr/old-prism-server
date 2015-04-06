@@ -207,10 +207,6 @@ public class ActionService {
 		return actionDAO.getEscalationActions();
 	}
 
-	public List<PrismAction> getPropagatedActions(Integer stateTransitionPendingId) {
-		return actionDAO.getPropagatedActions(stateTransitionPendingId);
-	}
-
 	public boolean hasRedactions(Resource resource, User user) {
 		return !getRedactions(resource, user).isEmpty();
 	}

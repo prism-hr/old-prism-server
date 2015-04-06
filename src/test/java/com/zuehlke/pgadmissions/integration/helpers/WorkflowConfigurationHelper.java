@@ -61,8 +61,6 @@ public class WorkflowConfigurationHelper {
 
 	private final HashMultimap<PrismScope, PrismScope> actualParentScopes = HashMultimap.create();
 
-	private final Set<PrismRole> actualRolesCreated = Sets.newHashSet();
-
 	private final HashMultimap<PrismScope, PrismRole> actualCreatorRoles = HashMultimap.create();
 
 	private final Set<StateTransition> propagatingStateTransitions = Sets.newHashSet();
@@ -214,7 +212,7 @@ public class WorkflowConfigurationHelper {
 					assertTrue(lastTransitionEvaluation == null || lastTransitionEvaluation == thisTransitionEvaluationId);
 				}
 
-				assertTrue(state.getScope() == transitionState.getScope() || action.getCreationScope() == transitionState.getScope());
+				assertTrue(state.getScope().equals(transitionState.getScope()) || action.getCreationScope().equals(transitionState.getScope()));
 
 				lastTransitionEvaluation = thisTransitionEvaluationId;
 				verifyRoleTransitions(stateTransition);
@@ -247,7 +245,6 @@ public class WorkflowConfigurationHelper {
 			assertEquals(transitionState.getScope(), transitionRole.getScope());
 
 			if (roleTransitionType != PrismRoleTransitionType.RETIRE) {
-				actualRolesCreated.add(transitionRoleId);
 
 				PrismActionCategory actionCategory = action.getActionCategory();
 				if (transitionRole.getScopeCreator() && roleTransitionType == PrismRoleTransitionType.CREATE
@@ -263,8 +260,6 @@ public class WorkflowConfigurationHelper {
 				}
 			}
 		}
-
-		assertTrue(actualRolesCreated.containsAll(actualProcessedRoles));
 	}
 
 	private void verifyStateActionAssignments(State state) {
@@ -281,7 +276,6 @@ public class WorkflowConfigurationHelper {
 				logger.info("Verifying assignment: " + assignedRole.getId().toString());
 
 				assertTrue(assignedRole.getScope().getOrdinal() <= state.getScope().getOrdinal());
-				assertTrue(actualRolesCreated.contains(assignedRole.getId()));
 			}
 		}
 	}
@@ -295,7 +289,6 @@ public class WorkflowConfigurationHelper {
 
 				assertTrue(state.getScope() == templateScope || templateScope.getId() == PrismScope.SYSTEM
 				        || stateAction.getAction().getCreationScope() == templateScope);
-				assertTrue(actualRolesCreated.contains(notification.getRole().getId()));
 			}
 		}
 	}
@@ -308,7 +301,6 @@ public class WorkflowConfigurationHelper {
 			logger.info("Verifying role transition exclusion: " + role + " " + excludedRole);
 			assertEquals(role.getScope(), excludedRole.getScope());
 			assertNotSame(role, excludedRole);
-			assertTrue(actualRolesCreated.contains(excludedRole));
 		}
 	}
 

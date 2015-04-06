@@ -4,7 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROGRAM_CREATE_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROJECT_CREATE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_UNSUBMITTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_CREATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programEmailCreator;
@@ -36,7 +36,7 @@ public class PrismProgramApproved extends PrismWorkflowState {
 		return new PrismStateAction() //
 		        .withAction(PROGRAM_CREATE_PROJECT) //
 		        .withTransitions(PROJECT_CREATE_TRANSITION //
-		                .withRoleTransitions(PROGRAM_CREATE_ADMINISTRATOR_GROUP));
+		                .withRoleTransitions(PROJECT_CREATE_ADMINISTRATOR_GROUP));
 	}
 
 }

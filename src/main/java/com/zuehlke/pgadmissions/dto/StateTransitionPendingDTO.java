@@ -1,25 +1,37 @@
 package com.zuehlke.pgadmissions.dto;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+
 public class StateTransitionPendingDTO {
 
-    private Integer id;
-    
-    private Integer resourceId;
+	private Integer id;
 
-    public final Integer getId() {
-        return id;
-    }
+	private Integer resourceId;
 
-    public final void setId(Integer id) {
-        this.id = id;
-    }
+	private PrismAction actionId;
 
-    public final Integer getResourceId() {
-        return resourceId;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public final void setResourceId(Integer resourceId) {
-        this.resourceId = resourceId;
-    }
-    
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public final Integer getResourceId() {
+		return resourceId;
+	}
+
+	public final void setResourceId(Integer resourceId) {
+		this.resourceId = resourceId;
+	}
+
+	public PrismAction getActionId() {
+		return actionId;
+	}
+
+	public void setActionId(PrismAction actionId) {
+		this.actionId = actionId;
+	}
+
 }

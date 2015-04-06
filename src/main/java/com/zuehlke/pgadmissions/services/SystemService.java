@@ -165,11 +165,28 @@ public class SystemService {
 		return entityService.getByProperty(System.class, "title", systemName);
 	}
 
+	@Transactional
+	public void destroyDisplayProperties() {
+		logger.info("Destroying display properties");
+		entityService.deleteAll(DisplayPropertyConfiguration.class);
+		entityService.deleteAll(DisplayPropertyDefinition.class);
+	}
+
 	@Transactional(timeout = 600)
-	public void initializeSystem() throws Exception {
+	public void initializeDisplayProperties() throws Exception {
+		logger.info("Initializing display property definitions");
+		verifyBackwardCompatibility(DisplayPropertyDefinition.class);
+		initializeDisplayPropertyDefinitions();
+
+		logger.info("Initializing display property configurations");
+		initializeDisplayPropertyConfigurations(getSystem());
+	}
+
+	@Transactional(timeout = 600)
+	public void initializeWorkflow() throws Exception {
 		logger.info("Initializing scope definitions");
 		verifyBackwardCompatibility(Scope.class);
-		initializeScopes();
+		initializeScopeDefinitions();
 
 		logger.info("Initializing role definitions");
 		verifyBackwardCompatibility(Role.class);
@@ -218,28 +235,22 @@ public class SystemService {
 		logger.info("Initializing notification configurations");
 		initializeNotificationConfigurations(system);
 
-		logger.info("Initializing system user");
-		initializeSystemUser(system);
-
 		entityService.flush();
 		entityService.clear();
 	}
 
 	@Transactional
-	public void destroyDisplayProperties() {
-		logger.info("Destroying display properties");
-		entityService.deleteAll(DisplayPropertyConfiguration.class);
-		entityService.deleteAll(DisplayPropertyDefinition.class);
-	}
-
-	@Transactional
-	public void initializeDisplayProperties() throws Exception {
-		logger.info("Initializing display property definitions");
-		verifyBackwardCompatibility(DisplayPropertyDefinition.class);
-		initializeDisplayPropertyDefinitions();
-
-		logger.info("Initializing display property configurations");
-		initializeDisplayPropertyConfigurations(getSystem());
+	public void initializeSystemUser() throws Exception {
+		System system = getSystem();
+		User user = system.getUser();
+		if (user.getUserAccount() == null) {
+			Action action = actionService.getById(SYSTEM_STARTUP);
+			String content = applicationContext.getBean(PropertyLoader.class).localize(system).load(SYSTEM_COMMENT_INITIALIZED_SYSTEM);
+			Comment comment = new Comment().withAction(action).withContent(content).withDeclinedResponse(false).withUser(user)
+			        .withCreatedTimestamp(new DateTime()).addAssignedUser(user, roleService.getCreatorRole(system), CREATE);
+			ActionOutcomeDTO outcome = actionService.executeAction(system, action, comment);
+			notificationService.sendRegistrationNotification(user, outcome, comment);
+		}
 	}
 
 	@Transactional
@@ -275,7 +286,7 @@ public class SystemService {
 		return new BasicAWSCredentials(accessKey, secretKey);
 	}
 
-	private void initializeScopes() throws DeduplicationException {
+	private void initializeScopeDefinitions() throws DeduplicationException {
 		for (PrismScope prismScope : PrismScope.values()) {
 			entityService.createOrUpdate(new Scope().withId(prismScope).withShortCode(prismScope.getShortCode()).withOrdinal(prismScope.ordinal()));
 		}
@@ -284,7 +295,8 @@ public class SystemService {
 	private void initializeRoles() throws DeduplicationException {
 		for (PrismRole prismRole : PrismRole.values()) {
 			Scope scope = scopeService.getById(prismRole.getScope());
-			entityService.createOrUpdate(new Role().withId(prismRole).withRoleCategory(prismRole.getRoleCategory()).withScopeCreator(prismRole.isScopeOwner())
+			entityService.createOrUpdate(new Role().withId(prismRole).withRoleCategory(prismRole.getRoleCategory())
+			        .withScopeCreator(prismRole.isScopeCreator())
 			        .withScope(scope));
 		}
 	}
@@ -507,7 +519,7 @@ public class SystemService {
 				initializeStateTransitions(prismStateAction, stateAction);
 			}
 		}
-		
+
 		actionService.setStateGroupTransitionActions();
 		stateService.setRepeatableStateGroups();
 		stateService.setHiddenStates();
@@ -604,18 +616,6 @@ public class SystemService {
 		for (PrismAction prismAction : prismStateTransition.getPropagatedActions()) {
 			Action action = actionService.getById(prismAction);
 			propagatedActions.add(action);
-		}
-	}
-
-	private void initializeSystemUser(System system) throws Exception {
-		User user = system.getUser();
-		if (user.getUserAccount() == null) {
-			Action action = actionService.getById(SYSTEM_STARTUP);
-			String content = applicationContext.getBean(PropertyLoader.class).localize(system).load(SYSTEM_COMMENT_INITIALIZED_SYSTEM);
-			Comment comment = new Comment().withAction(action).withContent(content).withDeclinedResponse(false).withUser(user)
-			        .withCreatedTimestamp(new DateTime()).addAssignedUser(user, roleService.getCreatorRole(system), CREATE);
-			ActionOutcomeDTO outcome = actionService.executeAction(system, action, comment);
-			notificationService.sendRegistrationNotification(user, outcome, comment);
 		}
 	}
 

@@ -10,10 +10,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
-import java.util.Set;
-
-import com.google.common.collect.HashMultimap;
-
 public enum PrismRole {
 
 	APPLICATION_ADMINISTRATOR(ADMINISTRATOR, false, APPLICATION), //
@@ -33,22 +29,20 @@ public enum PrismRole {
 	PROGRAM_ADMINISTRATOR(ADMINISTRATOR, true, PROGRAM), //
 	PROGRAM_APPROVER(RECRUITER, false, PROGRAM), //
 	PROGRAM_VIEWER(RECRUITER, false, PROGRAM), //
-	PROJECT_ADMINISTRATOR(ADMINISTRATOR, false, PROJECT), //
-	PROJECT_PRIMARY_SUPERVISOR(RECRUITER, true, PROJECT), //
+	PROJECT_ADMINISTRATOR(ADMINISTRATOR, true, PROJECT), //
+	PROJECT_PRIMARY_SUPERVISOR(RECRUITER, false, PROJECT), //
 	PROJECT_SECONDARY_SUPERVISOR(RECRUITER, false, PROJECT), //
 	SYSTEM_ADMINISTRATOR(ADMINISTRATOR, true, SYSTEM);
 
 	private PrismRoleCategory roleCategory;
 
-	private boolean scopeOwner;
+	private boolean scopeCreator;
 
 	private PrismScope scope;
 
-	private static HashMultimap<PrismScope, PrismRole> scopeOwners = HashMultimap.create();
-
-	private PrismRole(PrismRoleCategory roleCategory, boolean scopeOwner, PrismScope scope) {
+	private PrismRole(PrismRoleCategory roleCategory, boolean scopeCreator, PrismScope scope) {
 		this.roleCategory = roleCategory;
-		this.scopeOwner = scopeOwner;
+		this.scopeCreator = scopeCreator;
 		this.scope = scope;
 	}
 
@@ -56,16 +50,12 @@ public enum PrismRole {
 		return roleCategory;
 	}
 
-	public boolean isScopeOwner() {
-		return scopeOwner;
+	public boolean isScopeCreator() {
+		return scopeCreator;
 	}
 
 	public PrismScope getScope() {
 		return scope;
-	}
-
-	public static Set<PrismRole> getScopeOwners(PrismScope scope) {
-		return scopeOwners.get(scope);
 	}
 
 }

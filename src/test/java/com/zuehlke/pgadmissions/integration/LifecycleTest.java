@@ -19,59 +19,59 @@ import com.zuehlke.pgadmissions.services.SystemService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
 @Service
-public class LifecycleTest {
+public class LifeCycleTest {
 
-    @Autowired
-    private SystemService systemService;
+	@Autowired
+	private SystemService systemService;
 
-    @Autowired
-    private EntityService entityService;
+	@Autowired
+	private EntityService entityService;
 
-    @Autowired
-    private MailSenderMock mailSenderMock;
+	@Autowired
+	private MailSenderMock mailSenderMock;
 
-    @Autowired
-    private SystemInitialisationHelper systemInitialisationHelper;
+	@Autowired
+	private SystemInitialisationHelper systemInitialisationHelper;
 
-    @Autowired
-    private SystemDataImportHelper systemDataImportHelper;
+	@Autowired
+	private SystemDataImportHelper systemDataImportHelper;
 
-    @Autowired
-    private PropertyLoaderHelper propertyLoaderHelper;
+	@Autowired
+	private PropertyLoaderHelper propertyLoaderHelper;
 
-    @Autowired
-    private ApplicationContext applicationContext;
+	@Autowired
+	private ApplicationContext applicationContext;
 
-    @Test
-    public void run() throws Exception {
-        for (int i = 0; i < 2; i++) {
-            systemService.initializeSystem();
-            systemService.initializeDisplayProperties();
+	@Test
+	public void run() throws Exception {
+		for (int i = 0; i < 2; i++) {
+			systemService.initializeWorkflow();
+			systemService.initializeDisplayProperties();
+			systemService.initializeSystemUser();
 
-            systemInitialisationHelper.verifyScopeCreation();
-            systemInitialisationHelper.verifyRoleCreation();
-            systemInitialisationHelper.verifyActionCreation();
-            systemInitialisationHelper.verifyStateCreation();
+			systemInitialisationHelper.verifyScopeCreation();
+			systemInitialisationHelper.verifyRoleCreation();
+			systemInitialisationHelper.verifyActionCreation();
+			systemInitialisationHelper.verifyStateCreation();
 
-            systemInitialisationHelper.verifySystemCreation();
-            systemInitialisationHelper.verifySystemUserCreation();
+			systemInitialisationHelper.verifySystemCreation();
+			systemInitialisationHelper.verifySystemUserCreation();
 
-            systemInitialisationHelper.verifyNotificationTemplateCreation();
-            systemInitialisationHelper.verifyStateDurationCreation();
+			systemInitialisationHelper.verifyNotificationTemplateCreation();
+			systemInitialisationHelper.verifyStateDurationCreation();
 
-            systemInitialisationHelper.verifyStateActionCreation();
-            applicationContext.getBean(WorkflowConfigurationHelper.class).verifyWorkflowConfiguration();
+			systemInitialisationHelper.verifyStateActionCreation();
+			applicationContext.getBean(WorkflowConfigurationHelper.class).verifyWorkflowConfiguration();
 
-            if (i == 0) {
-                systemInitialisationHelper.verifySystemUserRegistration();
-            }
+			if (i == 0) {
+				systemInitialisationHelper.verifySystemUserRegistration();
+			}
 
-            mailSenderMock.verify();
-            entityService.flush();
-        }
+			mailSenderMock.verify();
+		}
 
-        systemDataImportHelper.verifyImport();
-        propertyLoaderHelper.verifyPropertyLoader();
-    }
+		systemDataImportHelper.verifyImport();
+		propertyLoaderHelper.verifyPropertyLoader();
+	}
 
 }

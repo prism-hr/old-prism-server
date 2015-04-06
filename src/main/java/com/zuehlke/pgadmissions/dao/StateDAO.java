@@ -80,10 +80,11 @@ public class StateDAO {
 
 	public List<StateTransitionPendingDTO> getStateTransitionsPending(PrismScope scopeId) {
 		String scopeReference = scopeId.getLowerCamelName();
-		return (List<StateTransitionPendingDTO>) sessionFactory.getCurrentSession().createCriteria(StateTransitionPending.class, "stateTransitionPending") //
+		return (List<StateTransitionPendingDTO>) sessionFactory.getCurrentSession().createCriteria(StateTransitionPending.class) //
 		        .setProjection(Projections.projectionList() //
 		                .add(Projections.property("id"), "id") //
-		                .add(Projections.property(scopeReference + ".id"), "resourceId")) //
+		                .add(Projections.property(scopeReference + ".id"), "resourceId") //
+		                .add(Projections.property("action.id"), "actionId")) //
 		        .add(Restrictions.isNotNull(scopeReference)) //
 		        .addOrder(Order.asc(scopeReference + ".id")) //
 		        .addOrder(Order.asc("id")) //

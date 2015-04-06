@@ -190,3 +190,23 @@ delete
 from action
 where id = "APPLICATION_MOVE_TO_DIFFERENT_STAGE"
 ;
+
+delete 
+from state_transition_pending
+;
+
+alter table state_transition_pending
+	add column action_id varchar(100) not null,
+	add index (action_id),
+	add foreign key (action_id) references action (id),
+	drop index system_id,
+	drop index institution_id,
+	drop index program_id,
+	drop index project_id,
+	drop index application_id,
+	add unique index (system_id, action_id),
+	add unique index (institution_id, action_id),
+	add unique index (program_id, action_id),
+	add unique index (project_id, action_id),	
+	add unique index (application_id, action_id)
+;

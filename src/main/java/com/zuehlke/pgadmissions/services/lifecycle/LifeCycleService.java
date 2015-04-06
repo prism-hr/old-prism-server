@@ -36,7 +36,7 @@ public class LifeCycleService {
 	private Boolean initializeDisplayProperties;
 
 	@Value("${startup.display.initialize.drop}")
-	private Boolean dropDisplayProperties;
+	private Boolean destroyDisplayProperties;
 
 	@Value("${startup.workflow.initialize}")
 	private Boolean initializeWorkflow;
@@ -58,42 +58,51 @@ public class LifeCycleService {
 
 	@PostConstruct
 	public void startup() {
+		boolean doInitializeWorkflow = BooleanUtils.isTrue(initializeWorkflow);
+
 		try {
+			if (doInitializeWorkflow) {
+				systemService.initializeWorkflow();
+			}
+			
+			if (BooleanUtils.isTrue(destroyDisplayProperties)) {
+				systemService.destroyDisplayProperties();
+			}
+
 			if (BooleanUtils.isTrue(initializeDisplayProperties)) {
-				if (BooleanUtils.isTrue(dropDisplayProperties)) {
-					systemService.destroyDisplayProperties();
-				}
 				systemService.initializeDisplayProperties();
 			}
-	
-			if (BooleanUtils.isTrue(initializeWorkflow)) {
-				systemService.initializeSystem();
+			
+			if (doInitializeWorkflow) {
+				systemService.initializeSystemUser();
 			}
-	
+
 			if (BooleanUtils.isTrue(initializeData)) {
 				importedEntityServiceHelperSystem.execute();
 			}
-	
+
 			if (BooleanUtils.isTrue(maintain)) {
 				executorService = Executors.newFixedThreadPool(PrismMaintenanceTask.values().length);
 			}
-	} catch (Exception e) {
-		logger.error("Error initializing system", e);
+		} catch (Exception e) {
+			logger.error("Error initializing system", e);
 		}
 	}
 
 	@PreDestroy
 	public void shutdown() {
-		try {
-			executorService.shutdownNow();
-		} catch (Exception e) {
-			logger.error("Error shutting down maintenance task executor", e);
+		if (BooleanUtils.isTrue(maintain)) {
+			try {
+				executorService.shutdownNow();
+			} catch (Exception e) {
+				logger.error("Error shutting down maintenance task executor", e);
+			}
 		}
 	}
 
 	@Scheduled(fixedDelay = 60)
 	private void maintain() {
-		if (executorService != null) {
+		if (BooleanUtils.isTrue(maintain)) {
 			for (final PrismMaintenanceTask execution : PrismMaintenanceTask.values()) {
 				synchronized (lock) {
 					if (!executions.contains(execution)) {

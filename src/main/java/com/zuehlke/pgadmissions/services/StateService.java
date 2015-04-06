@@ -174,8 +174,8 @@ public class StateService {
 
 			roleService.executeRoleTransitions(resource, comment, stateTransition);
 
-			if (stateTransition.hasPropagatedActions()) {
-				getOrCreateStateTransitionPending(resource, stateTransition);
+			for (Action propagatedAction : stateTransition.getPropagatedActions()) {
+				getOrCreateStateTransitionPending(resource, propagatedAction);
 			}
 
 			notificationService.sendWorkflowNotifications(resource, comment);
@@ -339,8 +339,8 @@ public class StateService {
 		return stateTerminations;
 	}
 
-	private void getOrCreateStateTransitionPending(Resource resource, StateTransition stateTransition) {
-		StateTransitionPending transientTransitionPending = new StateTransitionPending().withResource(resource).withStateTransition(stateTransition);
+	private void getOrCreateStateTransitionPending(Resource resource, Action action) {
+		StateTransitionPending transientTransitionPending = new StateTransitionPending().withResource(resource).withAction(action);
 		entityService.getOrCreate(transientTransitionPending);
 	}
 

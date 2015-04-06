@@ -62,3 +62,108 @@ alter table state
 alter table action
 	drop column emphasized_action
 ;
+
+set foreign_key_checks = 0
+;
+
+update comment
+set action_id = "APPLICATION_COMPLETE_STAGE"
+where action_id = "APPLICATION_COMPLETE_VALIDATION_STAGE"
+;
+
+update state_action
+set action_id = "APPLICATION_COMPLETE_STAGE"
+where action_id = "APPLICATION_COMPLETE_VALIDATION_STAGE"
+;
+
+update state_action_assignment
+set delegated_action_id = "APPLICATION_COMPLETE_STAGE"
+where delegated_action_id = "APPLICATION_COMPLETE_VALIDATION_STAGE"
+;
+
+update state_transition
+set transition_action_id = "APPLICATION_COMPLETE_STAGE"
+where transition_action_id = "APPLICATION_COMPLETE_VALIDATION_STAGE"
+;
+
+update state_transition_propagation
+set propagated_action_id = "APPLICATION_COMPLETE_STAGE"
+where propagated_action_id = "APPLICATION_COMPLETE_VALIDATION_STAGE"
+;
+
+update action_redaction
+set action_id = "APPLICATION_COMPLETE_STAGE"
+where action_id = "APPLICATION_COMPLETE_VALIDATION_STAGE"
+;
+
+update user_feedback
+set action_id = "APPLICATION_COMPLETE_STAGE"
+where action_id = "APPLICATION_COMPLETE_VALIDATION_STAGE"
+;
+
+update action
+set fallback_action_id = "APPLICATION_COMPLETE_STAGE"
+where fallback_action_id = "APPLICATION_COMPLETE_VALIDATION_STAGE"
+;
+
+update action
+set id = "APPLICATION_COMPLETE_STAGE"
+where id = "APPLICATION_COMPLETE_VALIDATION_STAGE"
+;
+
+set foreign_key_checks = 1
+;
+
+set foreign_key_checks = 0
+;
+
+update comment
+set action_id = "APPLICATION_COMPLETE_STAGE"
+where action_id like "APPLICATION_COMPLETE_%"
+;
+
+update state_action
+set action_id = "APPLICATION_COMPLETE_STAGE"
+where action_id like "APPLICATION_COMPLETE_%"
+;
+
+update state_action_assignment
+set delegated_action_id = "APPLICATION_COMPLETE_STAGE"
+where delegated_action_id like "APPLICATION_COMPLETE_%"
+;
+
+update state_transition
+set transition_action_id = "APPLICATION_COMPLETE_STAGE"
+where transition_action_id like "APPLICATION_COMPLETE_%"
+;
+
+update state_transition_propagation
+set propagated_action_id = "APPLICATION_COMPLETE_STAGE"
+where propagated_action_id like "APPLICATION_COMPLETE_%"
+;
+
+delete
+from action_redaction
+where action_id like "APPLICATION_COMPLETE_%"
+	and action_id != "APPLICATION_COMPLETE_STAGE"
+;
+
+update user_feedback
+set action_id = "APPLICATION_COMPLETE_STAGE"
+where action_id like "APPLICATION_COMPLETE_%"
+;
+
+update action
+set fallback_action_id = "APPLICATION_COMPLETE_STAGE"
+where fallback_action_id like "APPLICATION_COMPLETE_%"
+;
+
+delete
+from action
+where id like "APPLICATION_COMPLETE_%"
+	and id != "APPLICATION_COMPLETE_STAGE"
+;
+
+set foreign_key_checks = 1
+;
+

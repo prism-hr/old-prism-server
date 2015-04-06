@@ -1,26 +1,32 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.states;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_SUPERVISORS;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_SECONDARY_SUPERVISION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SECONDARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_APPROVER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_APPROVER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_REFEREE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL_PENDING_FEEDBACK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_ASSIGNED_SUPERVISOR_OUTCOME;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_COMPLETE_STATE_TRANSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReview.applicationCommentReview;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReview.applicationEmailCreatorReview;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReview.applicationEscalateReview;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReview.applicationViewEditReview;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationReview.applicationWithdrawReview;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWorkflow.applicationCommentWithViewerRecruiterAndAdministrator;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWorkflow.applicationCompleteState;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiterAndAdministrator;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWorkflow.applicationEscalate;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWorkflow.applicationViewEditWithViewerRecruiterAndAdministrator;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWorkflow.applicationWithdraw;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
@@ -32,8 +38,8 @@ public class PrismApplicationApproval extends PrismWorkflowState {
 		        .withAction(APPLICATION_ASSIGN_SUPERVISORS) //
 		        .withRaisesUrgentFlag() //
 		        .withNotification(SYSTEM_APPLICATION_TASK_REQUEST) //
-		        .withAssignments(APPLICATION_ADMINISTRATOR_GROUP) //
-		        .withNotifications(APPLICATION_ADMINISTRATOR_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
+		        .withAssignments(APPLICATION_APPROVER_GROUP) //
+		        .withNotifications(APPLICATION_APPROVER_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
 		        .withNotifications(PROGRAM_APPROVER, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
 		        .withTransitions(new PrismStateTransition() //
 		                .withTransitionState(APPLICATION_APPROVAL) //
@@ -46,27 +52,53 @@ public class PrismApplicationApproval extends PrismWorkflowState {
 		                        .withTransitionEvaluation(APPLICATION_ASSIGNED_SUPERVISOR_OUTCOME) //
 		                        .withRoleTransitions(APPLICATION_CREATE_SUPERVISOR_GROUP))); //
 
-		stateActions.add(applicationCommentReview()); //
-
-		stateActions.add(applicationEmailCreatorReview()); //
-
-		stateActions.add(applicationEscalateReview()); //
-
-		stateActions.add(applicationCompleteApprovalStage() //
-		        .withTransitions(APPLICATION_COMPLETE_STATE_TRANSITION //
-		                .withRoleTransitions(APPLICATION_DELETE_ADMINISTRATOR_GROUP))); //
-
-		stateActions.add(applicationViewEditReview(state)); //
-
-		stateActions.add(applicationWithdrawReview());
+		stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator()); //
+		stateActions.add(applicationCompleteState(APPLICATION_APPROVER_GROUP, APPLICATION_DELETE_ADMINISTRATOR_GROUP));
+		stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator()); //
+		stateActions.add(applicationEscalate(APPLICATION_DELETE_REFEREE_GROUP, APPLICATION_DELETE_ADMINISTRATOR_GROUP)); //
+		stateActions.add(applicationViewEditWithViewerRecruiterAndAdministrator(state)); //
+		stateActions.add(applicationWithdraw(APPLICATION_APPROVER_GROUP, //
+		        APPLICATION_DELETE_REFEREE_GROUP, //
+		        APPLICATION_DELETE_ADMINISTRATOR_GROUP));
 	}
 
-	public static PrismStateAction applicationCompleteApprovalStage() {
+	public static PrismStateAction applicationCompleteApproval() {
+		return applicationCompleteState(APPLICATION_APPROVER_GROUP, //
+		        APPLICATION_DELETE_ADMINISTRATOR_GROUP, //
+		        APPLICATION_DELETE_SUPERVISOR_GROUP); //
+	}
+
+	public static PrismStateAction applicationConfirmPrimarySupervision() {
 		return new PrismStateAction() //
-		        .withAction(APPLICATION_COMPLETE_APPROVAL_STAGE) //
-		        .withAssignments(APPLICATION_ADMINISTRATOR_GROUP) //
-		        .withAssignments(PROGRAM_APPROVER) //
-		        .withNotifications(APPLICATION_ADMINISTRATOR_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION);
+		        .withAction(APPLICATION_CONFIRM_PRIMARY_SUPERVISION) //
+		        .withRaisesUrgentFlag() //
+		        .withNotification(SYSTEM_APPLICATION_TASK_REQUEST) //
+		        .withAssignments(APPLICATION_PRIMARY_SUPERVISOR) //
+		        .withNotifications(APPLICATION_APPROVER_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
+		        .withNotifications(PROGRAM_APPROVER, SYSTEM_APPLICATION_UPDATE_NOTIFICATION);
+	}
+
+	public static PrismStateAction applicationConfirmSecondarySupervision() {
+		return new PrismStateAction() //
+		        .withAction(APPLICATION_CONFIRM_SECONDARY_SUPERVISION) //
+		        .withRaisesUrgentFlag() //
+		        .withNotification(SYSTEM_APPLICATION_TASK_REQUEST) //
+		        .withAssignments(APPLICATION_SECONDARY_SUPERVISOR) //
+		        .withNotifications(APPLICATION_APPROVER_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
+		        .withNotifications(PROGRAM_APPROVER, SYSTEM_APPLICATION_UPDATE_NOTIFICATION);
+	}
+
+	public static PrismStateAction applicationViewEditApproval(PrismState state) {
+		return PrismApplicationWorkflow.applicationViewEditWithViewerRecruiterAndAdministrator(state) //
+		        .withAssignments(APPLICATION_PRIMARY_SUPERVISOR, APPLICATION_VIEW_AS_RECRUITER)
+		        .withAssignments(APPLICATION_SECONDARY_SUPERVISOR, APPLICATION_VIEW_AS_RECRUITER);
+	}
+
+	public static PrismStateAction applicationWithdrawApproval() {
+		return applicationWithdraw(APPLICATION_APPROVER_GROUP, //
+		        APPLICATION_DELETE_REFEREE_GROUP,
+		        APPLICATION_DELETE_ADMINISTRATOR_GROUP, //
+		        APPLICATION_DELETE_SUPERVISOR_GROUP);
 	}
 
 }

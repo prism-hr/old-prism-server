@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.USER_INVOCATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
@@ -24,6 +25,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.OrderBy;
@@ -33,6 +35,7 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
@@ -727,18 +730,11 @@ public class Comment {
 	public boolean isStateGroupTransitionComment() {
 		StateGroup stateGroup = state == null ? null : state.getStateGroup();
 		StateGroup transitionStateGroup = transitionState == null ? null : transitionState.getStateGroup();
-		if (action.getTransitionAction()) {
-			if (action.getActionType() == PrismActionType.USER_INVOCATION) {
+		if (BooleanUtils.isTrue(action.getTransitionAction())) {
+			if (!Objects.equal(stateGroup, transitionStateGroup)) {
 				return true;
-			} else if (stateGroup == null) {
-				return false;
-			} else if (stateGroup.getRepeatable()) {
-				return true;
-			} else if (transitionStateGroup == null) {
-				return false;
-			} else if (!stateGroup.getId().equals(transitionStateGroup.getId())) {
-				return true;
-			} else if (action.getCreationScope() != null) {
+			} else if (action.getActionType().equals(USER_INVOCATION) && BooleanUtils.isTrue(stateGroup.getRepeatable())
+			        && !Objects.equal(state, transitionState)) {
 				return true;
 			}
 		}

@@ -1,28 +1,21 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.states;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_PENDING_EXPORT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationApprovedPendingCorrection.applicationCorrect;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationApprovedPendingExport.applicationEscalateApprovedPendingExport;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationApprovedPendingExport.applicationViewEditApprovedPendingExport;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationRejectedPendingExport.applicationReverseRejection;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationVerification.applicationCommentVerification;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationVerification.applicationEmailCreatorVerification;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationRejected.applicationEscalateRejected;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWorkflow.applicationCorrect;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.states.PrismApplicationWorkflow.applicationViewEdit;
 
 public class PrismApplicationRejectedPendingCorrection extends PrismWorkflowState {
 
 	@Override
 	protected void setStateActions() {
-		stateActions.add(applicationCommentVerification()); //
-
+		stateActions.add(applicationCommentWithViewerRecruiter()); //
 		stateActions.add(applicationCorrect(APPLICATION_REJECTED_PENDING_EXPORT)); //
-
-		stateActions.add(applicationEmailCreatorVerification()); //
-
-		stateActions.add(applicationEscalateApprovedPendingExport()); //
-
-		stateActions.add(applicationReverseRejection()); //
-
-		stateActions.add(applicationViewEditApprovedPendingExport());
+		stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
+		stateActions.add(applicationEscalateRejected()); //
+		stateActions.add(applicationViewEdit());
 	}
 
 }

@@ -37,7 +37,7 @@ public class Action extends WorkflowDefinition {
     @Column(name = "rating_action", nullable = false)
     private Boolean ratingAction;
 
-    @Column(name = "transition_action", nullable = false)
+    @Column(name = "transition_action")
     private Boolean transitionAction;
 
     @Column(name = "declinable_action", nullable = false)
@@ -45,9 +45,6 @@ public class Action extends WorkflowDefinition {
 
     @Column(name = "visible_action", nullable = false)
     private Boolean visibleAction;
-
-    @Column(name = "emphasized_action", nullable = false)
-    private Boolean emphasizedAction;
 
     @OneToOne
     @JoinColumn(name = "action_custom_question_definition_id")
@@ -126,14 +123,6 @@ public class Action extends WorkflowDefinition {
 
     public final void setVisibleAction(Boolean visibleAction) {
         this.visibleAction = visibleAction;
-    }
-
-    public final Boolean getEmphasizedAction() {
-        return emphasizedAction;
-    }
-
-    public final void setEmphasizedAction(Boolean emphasizedAction) {
-        this.emphasizedAction = emphasizedAction;
     }
 
     public final ActionCustomQuestionDefinition getActionCustomQuestionDefinition() {
@@ -218,11 +207,6 @@ public class Action extends WorkflowDefinition {
 
     public Action withVisibleAction(Boolean visibleAction) {
         this.visibleAction = visibleAction;
-        return this;
-    }
-
-    public Action withEmphasizedAction(Boolean emphasizedAction) {
-        this.emphasizedAction = emphasizedAction;
         return this;
     }
 

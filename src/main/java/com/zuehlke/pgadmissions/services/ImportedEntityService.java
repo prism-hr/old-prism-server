@@ -1,5 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DEACTIVATED;
 import static org.springframework.transaction.annotation.Isolation.REPEATABLE_READ;
 
 import java.util.List;
@@ -28,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.department.Department;
@@ -342,16 +345,16 @@ public class ImportedEntityService {
 	}
 
 	private void executeProgramImportAction(Program program, DateTime baselineTime) throws Exception {
-		Comment lastImportComment = commentService.getLatestComment(program, PrismAction.INSTITUTION_IMPORT_PROGRAM);
-		Action action = actionService.getById(lastImportComment == null ? PrismAction.INSTITUTION_CREATE_PROGRAM : PrismAction.INSTITUTION_IMPORT_PROGRAM);
+		Comment lastImportComment = commentService.getLatestComment(program, INSTITUTION_IMPORT_PROGRAM);
+		Action action = actionService.getById(lastImportComment == null ? INSTITUTION_CREATE_PROGRAM : INSTITUTION_IMPORT_PROGRAM);
 
 		User invoker = program.getUser();
 		Role invokerRole = roleService.getCreatorRole(program);
 
 		State state = program.getState();
-		PrismState transitionStateId = PrismState.PROGRAM_APPROVED;
-		if (state != null && state.getId() == PrismState.PROGRAM_DEACTIVATED) {
-			transitionStateId = PrismState.PROGRAM_DEACTIVATED;
+		PrismState transitionStateId = PROGRAM_APPROVED;
+		if (state != null && state.getId() == PROGRAM_DEACTIVATED) {
+			transitionStateId = PROGRAM_DEACTIVATED;
 		}
 
 		State transitionState = stateService.getById(transitionStateId);

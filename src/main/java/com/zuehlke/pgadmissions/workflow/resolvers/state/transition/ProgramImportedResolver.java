@@ -14,7 +14,7 @@ public class ProgramImportedResolver implements StateTransitionResolver {
 
 	@Inject
 	private StateService stateService;
-	
+
 	@Override
 	public StateTransition resolve(Resource resource, Comment comment) {
 		return stateService.getPredefinedStateTransition(resource, comment);

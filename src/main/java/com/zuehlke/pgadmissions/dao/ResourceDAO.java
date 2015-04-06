@@ -192,7 +192,7 @@ public class ResourceDAO {
 		        .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
 		        .add(Restrictions.eq("userRole.user", user)) //
 		        .add(Restrictions.eqProperty("stateAction.state", "state")) //
-		        .add(Restrictions.eq("state.hidden", false));
+		        .add(Restrictions.isNull("state.hidden"));
 
 		appendResourceListFilterCriterion(criteria, conditions, filter);
 		appendResourceListLimitCriterion(criteria, filter, lastIdentifier, recordsToRetrieve);
@@ -214,7 +214,7 @@ public class ResourceDAO {
 		        .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
 		        .add(Restrictions.eq("userRole.user", user)) //
 		        .add(Restrictions.eqProperty("stateAction.state", "state")) //
-		        .add(Restrictions.eq("state.hidden", false));
+		        .add(Restrictions.isNull("state.hidden"));
 
 		appendResourceListFilterCriterion(criteria, conditions, filter);
 		appendResourceListLimitCriterion(criteria, filter, lastIdentifier, recordsToRetrieve);
@@ -291,7 +291,7 @@ public class ResourceDAO {
 			}
 		}
 	}
-	
+
 	private static void appendResourceListFilterCriterion(Criteria criteria, Junction conditions, ResourceListFilterDTO filter) {
 		if (filter.isUrgentOnly()) {
 			criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
@@ -302,7 +302,8 @@ public class ResourceDAO {
 		}
 	}
 
-	private static Criteria appendResourceListLimitCriterion(Criteria criteria, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer recordsToRetrieve) {
+	private static Criteria appendResourceListLimitCriterion(Criteria criteria, ResourceListFilterDTO filter, String lastSequenceIdentifier,
+	        Integer recordsToRetrieve) {
 		PrismResourceListFilterSortOrder sortOrder = filter.getSortOrder();
 
 		if (lastSequenceIdentifier != null) {

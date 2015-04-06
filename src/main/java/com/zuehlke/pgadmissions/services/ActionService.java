@@ -269,6 +269,13 @@ public class ActionService {
 		}
 		return creationActions;
 	}
+	
+	public void setStateGroupTransitionActions() {
+		List<PrismAction> actions = actionDAO.getStateGroupTransitionActions();
+		if (!actions.isEmpty()) {
+			actionDAO.setStateGroupTransitionActions(actions);
+		}
+	}
 
 	private boolean checkActionAvailable(Resource resource, Action action, User user) {
 		return actionDAO.getPermittedAction(resource, action, user) != null;

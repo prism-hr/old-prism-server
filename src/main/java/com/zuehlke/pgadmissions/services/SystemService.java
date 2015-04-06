@@ -308,10 +308,8 @@ public class SystemService {
 			        .getCustomQuestionDefinitionById(prismAction.getActionCustomQuestion());
 			Action transientAction = new Action().withId(prismAction).withActionType(prismAction.getActionType())
 			        .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
-			        .withTransitionAction(prismAction.isTransitionAction()).withDeclinableAction(prismAction.isDeclinableAction())
-			        .withVisibleAction(prismAction.isVisibleAction()).withEmphasizedAction(prismAction.isEmphasizedAction())
-			        .withActionCustomQuestionDefinition(actionCustomQuestionDefinition)
-			        .withScope(scope).withCreationScope(creationScope);
+			        .withDeclinableAction(prismAction.isDeclinableAction()).withVisibleAction(prismAction.isVisibleAction())
+			        .withActionCustomQuestionDefinition(actionCustomQuestionDefinition).withScope(scope).withCreationScope(creationScope);
 			Action action = entityService.createOrUpdate(transientAction);
 			action.getRedactions().clear();
 
@@ -334,8 +332,7 @@ public class SystemService {
 	private void initializeStateGroups() throws DeduplicationException {
 		for (PrismStateGroup prismStateGroup : PrismStateGroup.values()) {
 			Scope scope = scopeService.getById(prismStateGroup.getScope());
-			StateGroup transientStateGroup = new StateGroup().withId(prismStateGroup).withSequenceOrder(prismStateGroup.ordinal())
-			        .withRepeatable(prismStateGroup.isRepeatable()).withScope(scope);
+			StateGroup transientStateGroup = new StateGroup().withId(prismStateGroup).withSequenceOrder(prismStateGroup.ordinal()).withScope(scope);
 			entityService.createOrUpdate(transientStateGroup);
 		}
 	}
@@ -346,8 +343,7 @@ public class SystemService {
 			Scope scope = entityService.getByProperty(Scope.class, "id", prismState.getStateGroup().getScope());
 			StateGroup stateGroup = entityService.getByProperty(StateGroup.class, "id", prismState.getStateGroup());
 			State transientState = new State().withId(prismState).withStateGroup(stateGroup).withStateDurationDefinition(stateDurationDefinition)
-			        .withStateDurationEvaluation(prismState.getStateDurationEvaluation()).withParallelizable(prismState.isParallelizable())
-			        .withHidden(prismState.isHidden()).withScope(scope);
+			        .withStateDurationEvaluation(prismState.getStateDurationEvaluation()).withScope(scope);
 			entityService.createOrUpdate(transientState);
 		}
 	}
@@ -498,12 +494,8 @@ public class SystemService {
 		stateService.deleteStateActions();
 
 		for (State state : stateService.getStates()) {
-			logger.info("Initializing state: " + state.toString());
-
 			for (PrismStateAction prismStateAction : PrismState.getStateActions(state.getId())) {
 				Action action = actionService.getById(prismStateAction.getAction());
-				logger.info("Initializing state action: " + action.toString());
-
 				NotificationDefinition template = notificationService.getById(prismStateAction.getNotification());
 				StateAction stateAction = new StateAction().withState(state).withAction(action).withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag())
 				        .withActionEnhancement(prismStateAction.getActionEnhancement()).withNotificationDefinition(template);
@@ -515,6 +507,11 @@ public class SystemService {
 				initializeStateTransitions(prismStateAction, stateAction);
 			}
 		}
+		
+		actionService.setStateGroupTransitionActions();
+		stateService.setRepeatableStateGroups();
+		stateService.setHiddenStates();
+		stateService.setParallelizableStates();
 
 		stateService.deleteObsoleteStateDurations();
 		notificationService.deleteObsoleteNotificationConfigurations();
@@ -566,10 +563,6 @@ public class SystemService {
 				}
 			}
 
-			logger.info("Initializing state transition " //
-			        + (transitionState == null ? "" : transitionState.toString() + "-") //
-			        + transitionAction.toString() //
-			        + (stateTransitionEvaluation == null ? "" : "-" + stateTransitionEvaluation.toString()));
 			StateTransition stateTransition = new StateTransition().withStateAction(stateAction).withTransitionState(transitionState)
 			        .withTransitionAction(transitionAction).withStateTransitionEvaluation(stateTransitionEvaluation);
 			entityService.save(stateTransition);

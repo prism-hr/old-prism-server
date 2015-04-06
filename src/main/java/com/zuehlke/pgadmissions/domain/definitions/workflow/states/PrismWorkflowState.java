@@ -17,9 +17,11 @@ public abstract class PrismWorkflowState {
 
 	protected HashMap<PrismAction, PrismStateAction> stateActionsByAction = Maps.newHashMap();
 
-	protected PrismWorkflowState() {
+	public PrismWorkflowState initialize(PrismState state) {
+		this.state = state;
 		setStateActions();
 		indexStateActionsByAction();
+		return this;
 	}
 
 	public List<PrismStateAction> getStateActions() {
@@ -28,11 +30,6 @@ public abstract class PrismWorkflowState {
 
 	public PrismStateAction getStateActionsByAction(PrismAction action) {
 		return stateActionsByAction.get(action);
-	}
-
-	public PrismWorkflowState withState(PrismState state) {
-		this.state = state;
-		return this;
 	}
 
 	protected abstract void setStateActions();

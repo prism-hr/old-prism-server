@@ -62,7 +62,6 @@ public class EntityService {
 
     public <T extends UniqueEntity> T replace(T persistentResource, T transientResource) {
         persistentResource = overwriteProperties(persistentResource, transientResource);
-        flush();
         return persistentResource;
     }
 

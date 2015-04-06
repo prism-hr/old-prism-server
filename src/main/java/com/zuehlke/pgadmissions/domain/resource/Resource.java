@@ -118,8 +118,7 @@ public abstract class Resource implements UniqueEntity {
 	}
 
 	public Resource getParentResource() {
-		PrismScope resourceScope = PrismScope.getByResourceClass(this.getClass());
-		switch (resourceScope) {
+		switch (PrismScope.getByResourceClass(this.getClass())) {
 		case SYSTEM:
 			return this;
 		case INSTITUTION:
@@ -150,11 +149,7 @@ public abstract class Resource implements UniqueEntity {
 	}
 
 	public Resource getEnclosingResource(PrismScope resourceScope) {
-		if (getResourceScope().equals(resourceScope)) {
-			return this;
-		} else {
-			return (Resource) PrismReflectionUtils.getProperty(this, resourceScope.getLowerCamelName());
-		}
+		return (Resource) PrismReflectionUtils.getProperty(this, resourceScope.getLowerCamelName());
 	}
 
 	@Override

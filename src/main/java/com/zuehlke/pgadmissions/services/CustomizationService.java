@@ -145,6 +145,16 @@ public class CustomizationService {
 		return parseRepresentations(resource, configurationType, configurations);
 	}
 
+	public List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource resource, PrismScope scope,
+	        PrismLocale locale, PrismProgramType programType, Enum<?> category) {
+		Resource configuredResource = getConfiguredResource(resource);
+		PrismProgramType configuredProgramType = getConfiguredProgramType(resource, programType);
+
+		List<WorkflowConfiguration> configurations = customizationDAO.getConfigurations(configurationType, configuredResource, scope, locale,
+		        configuredProgramType, category);
+		return parseRepresentations(resource, configurationType, configurations);
+	}
+
 	public List<WorkflowConfiguration> getConfigurationsWithVersion(PrismConfiguration configurationType, Integer version) {
 		return customizationDAO.getConfigurationsWithVersion(configurationType, version);
 	}

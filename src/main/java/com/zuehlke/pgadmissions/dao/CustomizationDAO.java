@@ -79,11 +79,20 @@ public class CustomizationDAO {
 
     public List<WorkflowConfiguration> getConfigurations(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
             PrismProgramType programType) {
+    	return getConfigurations(configurationType, resource, scope, locale, programType, null);
+    }
+    
+    public List<WorkflowConfiguration> getConfigurations(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
+            PrismProgramType programType, Enum<?> category) {
         String definitionReference = configurationType.getDefinitionPropertyName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
                 .createAlias(definitionReference, definitionReference, JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(definitionReference + ".scope.id", scope)) //
                 .add(getResourceLocalizationCriterion(resource, scope, locale, programType));
+        
+        if (category != null) {
+        	criteria.add(Restrictions.eq(definitionReference + ".category", category));
+        }
 
         addActiveVersionCriterion(configurationType, criteria);
 

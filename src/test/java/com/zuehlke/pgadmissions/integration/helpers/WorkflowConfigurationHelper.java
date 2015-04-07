@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
@@ -212,7 +213,7 @@ public class WorkflowConfigurationHelper {
 					assertTrue(lastTransitionEvaluation == null || lastTransitionEvaluation == thisTransitionEvaluationId);
 				}
 
-				assertTrue(state.getScope().equals(transitionState.getScope()) || action.getCreationScope().equals(transitionState.getScope()));
+				assertTrue(Objects.equal(state.getScope(), equals(transitionState.getScope())) || Objects.equal(action.getCreationScope(), equals(transitionState.getScope())));
 
 				lastTransitionEvaluation = thisTransitionEvaluationId;
 				verifyRoleTransitions(stateTransition);

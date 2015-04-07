@@ -276,7 +276,7 @@ public class ApplicationDAO {
 		        .setProjection(Projections.groupProperty("application")) //
 		        .createAlias("application", "application", JoinType.INNER_JOIN) //
 		        .createAlias("role", "role", JoinType.INNER_JOIN) //
-		        .add(Restrictions.eq("role.scopeCreator", false));
+		        .add(Restrictions.isNull("role.scopeCreator"));
 
 		Disjunction disjunction = Restrictions.disjunction();
 		for (PrismScope scope : userAdministratorResources.keySet()) {

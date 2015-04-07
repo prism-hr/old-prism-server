@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -23,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
+import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 
 @Repository
@@ -142,7 +145,7 @@ public class RoleDAO {
 	public Role getCreatorRole(Resource resource) {
 		return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class) //
 		        .add(Restrictions.eq("scope.id", PrismScope.getByResourceClass(resource.getClass()))) //
-		        .add(Restrictions.eq("scopeCreator", true)) //
+		        .add(Restrictions.isNotNull("scopeCreator")) //
 		        .uniqueResult();
 	}
 
@@ -258,6 +261,18 @@ public class RoleDAO {
 		return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(Role.class) //
 		        .setProjection(Projections.property("id")) //
 		        .add(Restrictions.eq("scope.id", prismScope)) //
+		        .list();
+	}
+
+	public List<Role> getCreatorRoles() {
+		return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+		        .setProjection(Projections.groupProperty("roleTransition.transitionRole")) //
+		        .createAlias("action", "action", JoinType.INNER_JOIN) //
+		        .createAlias("stateTransitions", "stateTransition", JoinType.INNER_JOIN) //
+		        .createAlias("stateTransition.roleTransitions", "roleTransition", JoinType.INNER_JOIN) //
+		        .add(Restrictions.isNotNull("action.creationScope")) //
+		        .add(Restrictions.eq("roleTransition.roleTransitionType", CREATE)) //
+		        .add(Restrictions.eq("roleTransition.restrictToActionOwner", true)) //
 		        .list();
 	}
 

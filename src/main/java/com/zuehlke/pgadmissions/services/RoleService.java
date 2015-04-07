@@ -117,8 +117,11 @@ public class RoleService {
 
 	public boolean hasUserRole(Resource resource, User user, PrismRole... prismRoles) {
 		for (PrismRole prismRole : prismRoles) {
-			if (roleDAO.getUserRole(resource.getEnclosingResource(prismRole.getScope()), user, prismRole) != null) {
-				return true;
+			PrismScope roleScope = prismRole.getScope();
+			if (roleScope.ordinal() <= resource.getResourceScope().ordinal()) {
+				if (roleDAO.getUserRole(resource.getEnclosingResource(roleScope), user, prismRole) != null) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -214,6 +217,24 @@ public class RoleService {
 		return roleDAO.getUserRoleByRoleCategory(user, prismRoleCategory, exludedPrismScopes);
 	}
 
+	public void setCreatorRoles() {
+		List<Role> creatorRoles = roleDAO.getCreatorRoles();
+		for (Role creatorRole : creatorRoles) {
+			creatorRole.setScopeCreator(true);
+		}
+	}
+	
+	public void deleteUserRole(Resource resource, User user, Role role) {
+		UserRole userRole = roleDAO.getUserRole(resource, user, role);
+		validateUserRoleRemoval(resource, userRole.getRole());
+		entityService.delete(userRole);
+		reassignResourceOwner(resource);
+	}
+
+	public List<PrismRole> getRolesByScope(PrismScope prismScope) {
+		return roleDAO.getRolesByScopes(prismScope);
+	}
+
 	private void executeRoleTransitions(Resource resource, Comment comment, List<RoleTransition> roleTransitions) {
 		for (RoleTransition roleTransition : roleTransitions) {
 			List<User> users = getRoleTransitionUsers(resource, comment, roleTransition);
@@ -290,17 +311,6 @@ public class RoleService {
 		        .withAssignedTimestamp(baseline);
 
 		applicationContext.getBean(roleTransition.getRoleTransitionType().getResolver()).resolve(userRole, transitionUserRole, comment);
-	}
-
-	public void deleteUserRole(Resource resource, User user, Role role) {
-		UserRole userRole = roleDAO.getUserRole(resource, user, role);
-		validateUserRoleRemoval(resource, userRole.getRole());
-		entityService.delete(userRole);
-		reassignResourceOwner(resource);
-	}
-
-	public List<PrismRole> getRolesByScope(PrismScope prismScope) {
-		return roleDAO.getRolesByScopes(prismScope);
 	}
 
 	private void validateUserRoleRemoval(Resource resource, Role roleToRemove) {

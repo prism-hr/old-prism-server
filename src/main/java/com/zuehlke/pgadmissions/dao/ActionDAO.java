@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PURGE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
@@ -32,6 +34,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
+import com.zuehlke.pgadmissions.dto.ActionCreationScopeDTO;
 import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
 import com.zuehlke.pgadmissions.dto.StateActionDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
@@ -348,6 +351,21 @@ public class ActionDAO {
 		                + "where id in (:actions)")
 		        .setParameterList("actions", actions) //
 		        .executeUpdate();
+	}
+
+	public List<ActionCreationScopeDTO> getCreationActions() {
+		return (List<ActionCreationScopeDTO>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+		        .setProjection(Projections.projectionList() //
+		                .add(Projections.groupProperty("action"), "action") //
+		                .add(Projections.groupProperty("transitionState.scope"), "creationScope"))
+		        .createAlias("action", "action", JoinType.INNER_JOIN) //
+		        .createAlias("stateTransitions", "stateTransition", JoinType.INNER_JOIN) //
+		        .createAlias("stateTransition.transitionState", "transitionState", JoinType.INNER_JOIN) //
+		        .add(Restrictions.disjunction() //
+		        		.add(Restrictions.eq("action.actionCategory", CREATE_RESOURCE)) //
+		        		.add(Restrictions.eq("action.id", SYSTEM_STARTUP))) //
+		        .setResultTransformer(Transformers.aliasToBean(ActionCreationScopeDTO.class)) //
+		        .list();
 	}
 
 }

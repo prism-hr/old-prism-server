@@ -34,7 +34,7 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
 	@Column(name = "role_category", nullable = false)
 	private PrismRoleCategory roleCategory;
 
-	@Column(name = "scope_creator", nullable = false)
+	@Column(name = "scope_creator")
 	private Boolean scopeCreator;
 
 	@ManyToOne

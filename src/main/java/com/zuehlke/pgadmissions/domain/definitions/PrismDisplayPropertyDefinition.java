@@ -856,20 +856,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 	 * *************** SYSTEM ACTION CONFIRMATION *********************
 	 */
 
-    APPLICATION_COMPLETE_APPROVAL_STAGE_CONFIRMATION(SYSTEM_ACTION_CONFIRMATION, "You have successfully completed approval stage."),
-    APPLICATION_COMPLETE_CONFIRMATION(SYSTEM_ACTION_CONFIRMATION, "You have successfully submitted your application."),
-    APPLICATION_COMPLETE_INTERVIEW_STAGE_CONFIRMATION(SYSTEM_ACTION_CONFIRMATION, "You have successfully completed the interview stage."),
-    APPLICATION_COMPLETE_REFERENCE_STAGE_CONFIRMATION(SYSTEM_ACTION_CONFIRMATION, "You have successfully completed the reference stage."),
-    APPLICATION_COMPLETE_REVIEW_STAGE_CONFIRMATION(SYSTEM_ACTION_CONFIRMATION, "You have successfully completed the review stage."),
-    APPLICATION_COMPLETE_VALIDATION_STAGE_CONFIRMATION(SYSTEM_ACTION_CONFIRMATION, "You have successfully completed the validation stage."),
-    APPLICATION_COMPLETE_VERIFICATION_STAGE_CONFIRMATION(SYSTEM_ACTION_CONFIRMATION, "You have successfully completed the verification stage."),
-    APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_CONFIRMATION(SYSTEM_ACTION_CONFIRMATION, "You have successfully confirmed interview arrangements."),
-    APPLICATION_CONFIRM_OFFER_RECOMMENDATION_CONFIRMATION(SYSTEM_ACTION_CONFIRMATION, "You have successfully confirmed offer recommendation."),
-    APPLICATION_RESERVE_CONFIRMATION(SYSTEM_ACTION_CONFIRMATION, "You have successfully committed the application to the reserve list."),
-    APPLICATION_CONFIRM_REJECTION_CONFIRMATION(SYSTEM_ACTION_CONFIRMATION, "You have successfully rejected application."),
-    APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_CONFIRMATION(SYSTEM_ACTION_CONFIRMATION, "You have successfully provided your interview feedback."),
-    APPLICATION_PROVIDE_REFERENCE_CONFIRMATION(SYSTEM_ACTION_CONFIRMATION, "You have successfully provided your reference."),
-    APPLICATION_PROVIDE_REVIEW_CONFIRMATION(SYSTEM_ACTION_CONFIRMATION, "You have successfully provided your review."),
+    SYSTEM_ACTION_PERFORMED_CONFIRMATION(SYSTEM_ACTION_CONFIRMATION, "Action completed successfully"),
 
 	/*
 	 * *************** SYSTEM DECLINE ACTION *********************

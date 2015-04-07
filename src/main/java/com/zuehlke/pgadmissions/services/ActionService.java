@@ -1,14 +1,23 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_EDIT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_INSTITUTION_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_PROGRAM_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_PROJECT_LIST;
+
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.api.client.util.Maps;
 import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -32,7 +41,9 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.ActionCustomQuestionDefinition;
+import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
+import com.zuehlke.pgadmissions.dto.ActionCreationScopeDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
 import com.zuehlke.pgadmissions.dto.StateActionDTO;
@@ -44,22 +55,22 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentatio
 @Transactional
 public class ActionService {
 
-	@Autowired
+	@Inject
 	private ActionDAO actionDAO;
 
-	@Autowired
+	@Inject
 	private EntityService entityService;
 
-	@Autowired
+	@Inject
 	private ResourceService resourceService;
 
-	@Autowired
+	@Inject
 	private RoleService roleService;
 
-	@Autowired
+	@Inject
 	private StateService stateService;
 
-	@Autowired
+	@Inject
 	private UserService userService;
 
 	public Action getById(PrismAction id) {
@@ -265,7 +276,48 @@ public class ActionService {
 		}
 		return creationActions;
 	}
-	
+
+	public void setCreationActions() {
+		List<ActionCreationScopeDTO> actionCreationScopes = actionDAO.getCreationActions();
+		for (ActionCreationScopeDTO actionCreationScope : actionCreationScopes) {
+			actionCreationScope.getAction().setCreationScope(actionCreationScope.getCreationScope());
+		}
+	}
+
+	public void setFallbackActions() {
+		List<Action> actions = getActions();
+		Map<PrismAction, Action> fallbackActions = Maps.newHashMap();
+		for (Action action : actions) {
+			PrismAction fallbackActionId;
+			Scope creationScope = action.getCreationScope();
+			switch (creationScope == null ? action.getScope().getId() : creationScope.getId()) {
+			case APPLICATION:
+				fallbackActionId = SYSTEM_VIEW_APPLICATION_LIST;
+				break;
+			case INSTITUTION:
+				fallbackActionId = SYSTEM_VIEW_INSTITUTION_LIST;
+				break;
+			case PROGRAM:
+				fallbackActionId = SYSTEM_VIEW_PROGRAM_LIST;
+				break;
+			case PROJECT:
+				fallbackActionId = SYSTEM_VIEW_PROJECT_LIST;
+				break;
+			case SYSTEM:
+				fallbackActionId = SYSTEM_VIEW_EDIT;
+				break;
+			default:
+				throw new UnsupportedOperationException();
+			}
+			Action fallbackAction = fallbackActions.get(fallbackActionId);
+			if (fallbackAction == null) {
+				fallbackAction = getById(fallbackActionId);
+				fallbackActions.put(fallbackActionId, fallbackAction);
+			}
+			action.setFallbackAction(fallbackAction);
+		}
+	}
+
 	public void setStateGroupTransitionActions() {
 		List<PrismAction> actions = actionDAO.getStateGroupTransitionActions();
 		if (!actions.isEmpty()) {

@@ -11,13 +11,12 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.SYSTEM_VIEW_EDIT_AS_USER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.INSTITUTION_CREATE_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.SYSTEM_CREATE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.SYSTEM_MANAGE_USER_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.INSTITUTION_CREATE_TRANSITION;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
@@ -49,12 +48,7 @@ public class PrismSystemRunning extends PrismWorkflowState {
 		        .withTransitions(new PrismStateTransition() //
 		                .withTransitionState(SYSTEM_RUNNING) //
 		                .withTransitionAction(SYSTEM_VIEW_EDIT)
-		                .withRoleTransitions(new PrismRoleTransition() //
-		                        .withRole(SYSTEM_ADMINISTRATOR) //
-		                        .withTransitionType(CREATE) //
-		                        .withTransitionRole(SYSTEM_ADMINISTRATOR) //
-		                        .withMinimumPermitted(1) //
-		                        .withMaximumPermitted(1))));
+		                .withRoleTransitions(SYSTEM_CREATE_ADMINISTRATOR_GROUP)));
 
 		stateActions.add(new PrismStateAction() //
 		        .withAction(SYSTEM_VIEW_APPLICATION_LIST)); //

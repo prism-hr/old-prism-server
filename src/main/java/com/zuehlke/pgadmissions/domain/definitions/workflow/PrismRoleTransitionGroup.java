@@ -332,6 +332,15 @@ public enum PrismRoleTransitionGroup {
 	                .withTransitionType(DELETE) //
 	                .withTransitionRole(INSTITUTION_ADMITTER)),
 
+	SYSTEM_CREATE_ADMINISTRATOR_GROUP( //
+	        new PrismRoleTransition() //
+	                .withRole(SYSTEM_ADMINISTRATOR) //
+	                .withTransitionType(CREATE) //
+	                .withTransitionRole(SYSTEM_ADMINISTRATOR) //
+	                .withRestrictToOwner()
+	                .withMinimumPermitted(1) //
+	                .withMaximumPermitted(1)),
+
 	SYSTEM_MANAGE_USER_GROUP( //
 	        new PrismRoleTransition() //
 	                .withRole(SYSTEM_ADMINISTRATOR) //

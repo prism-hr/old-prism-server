@@ -137,7 +137,6 @@ public class SystemInitialisationHelper {
 	public void verifyRoleCreation() {
 		for (Role role : roleService.getRoles()) {
 			assertEquals(role.getId().getScope(), role.getScope().getId());
-			assertEquals(role.getId().isScopeCreator(), role.getScopeCreator());
 		}
 	}
 
@@ -148,9 +147,7 @@ public class SystemInitialisationHelper {
 			assertEquals(action.getId().isRatingAction(), action.getRatingAction());
 			assertEquals(action.getId().isDeclinableAction(), action.getDeclinableAction());
 			assertEquals(action.getId().isVisibleAction(), action.getVisibleAction());
-			assertEquals(PrismAction.getFallBackAction(action.getId()), action.getFallbackAction().getId());
 			assertEquals(action.getId().getScope(), action.getScope().getId());
-			assertEquals(action.getId().getCreationScope(), action.getCreationScope() == null ? null : action.getCreationScope().getId());
 
 			if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
 				assertEquals(action.getTransitionAction(), true);

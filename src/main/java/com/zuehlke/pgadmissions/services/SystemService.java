@@ -295,9 +295,7 @@ public class SystemService {
 	private void initializeRoles() throws DeduplicationException {
 		for (PrismRole prismRole : PrismRole.values()) {
 			Scope scope = scopeService.getById(prismRole.getScope());
-			entityService.createOrUpdate(new Role().withId(prismRole).withRoleCategory(prismRole.getRoleCategory())
-			        .withScopeCreator(prismRole.isScopeCreator())
-			        .withScope(scope));
+			entityService.createOrUpdate(new Role().withId(prismRole).withRoleCategory(prismRole.getRoleCategory()).withScope(scope));
 		}
 	}
 
@@ -315,13 +313,12 @@ public class SystemService {
 
 		for (PrismAction prismAction : PrismAction.values()) {
 			Scope scope = scopeService.getById(prismAction.getScope());
-			Scope creationScope = scopeService.getById(prismAction.getCreationScope());
 			ActionCustomQuestionDefinition actionCustomQuestionDefinition = actionService
 			        .getCustomQuestionDefinitionById(prismAction.getActionCustomQuestion());
 			Action transientAction = new Action().withId(prismAction).withActionType(prismAction.getActionType())
 			        .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
 			        .withDeclinableAction(prismAction.isDeclinableAction()).withVisibleAction(prismAction.isVisibleAction())
-			        .withActionCustomQuestionDefinition(actionCustomQuestionDefinition).withScope(scope).withCreationScope(creationScope);
+			        .withActionCustomQuestionDefinition(actionCustomQuestionDefinition).withScope(scope);
 			Action action = entityService.createOrUpdate(transientAction);
 			action.getRedactions().clear();
 
@@ -332,12 +329,6 @@ public class SystemService {
 				ActionRedaction actionRedaction = entityService.createOrUpdate(transientActionRedaction);
 				action.getRedactions().add(actionRedaction);
 			}
-		}
-
-		for (PrismAction prismAction : PrismAction.values()) {
-			Action action = actionService.getById(prismAction);
-			Action fallbackAction = actionService.getById(PrismAction.getFallBackAction(prismAction));
-			action.setFallbackAction(fallbackAction);
 		}
 	}
 
@@ -520,10 +511,15 @@ public class SystemService {
 			}
 		}
 
+		actionService.setCreationActions();
+		actionService.setFallbackActions();
 		actionService.setStateGroupTransitionActions();
+		
 		stateService.setRepeatableStateGroups();
 		stateService.setHiddenStates();
 		stateService.setParallelizableStates();
+		
+		roleService.setCreatorRoles();
 
 		stateService.deleteObsoleteStateDurations();
 		notificationService.deleteObsoleteNotificationConfigurations();

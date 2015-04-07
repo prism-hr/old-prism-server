@@ -110,8 +110,7 @@ public class StaticDataService {
 		for (Action action : actions) {
 			PrismActionCustomQuestionDefinition customQuestionDefinitionId = action.getActionCustomQuestionDefinition() != null ? action
 			        .getActionCustomQuestionDefinition().getId() : null;
-			actionRepresentations.add(new ActionRepresentation(action.getId(), action.getActionCategory(), customQuestionDefinitionId, action.getId()
-			        .getDisplayProperties()));
+			actionRepresentations.add(new ActionRepresentation(action.getId(), action.getActionCategory(), customQuestionDefinitionId));
 		}
 
 		staticData.put("actions", actionRepresentations);

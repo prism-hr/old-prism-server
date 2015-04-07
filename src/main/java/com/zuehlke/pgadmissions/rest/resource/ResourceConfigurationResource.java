@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.rest.resource;
 
 import com.google.common.base.CaseFormat;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
@@ -60,14 +61,17 @@ public class ResourceConfigurationResource {
 
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "{configurationType:displayProperties}", method = RequestMethod.GET)
+    @RequestMapping(value = "{configurationType:displayProperties}/{category}", method = RequestMethod.GET)
     public List<WorkflowConfigurationRepresentation> getDisplayPropertyConfigurations(
-            @ModelAttribute PrismConfiguration configurationType, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @PathVariable Integer resourceId, @RequestParam PrismScope scope,
-            @RequestParam(required = false) PrismLocale locale,
+            @ModelAttribute PrismConfiguration configurationType,
+            @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @PathVariable Integer resourceId,
+            @PathVariable PrismDisplayPropertyCategory category,
+            @RequestParam PrismScope scope,
+            @RequestParam PrismLocale locale,
             @RequestParam(required = false) PrismProgramType programType) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        return customizationService.getConfigurationRepresentations(configurationType, resource, scope, locale, programType);
+        return customizationService.getConfigurationRepresentations(configurationType, resource, scope, locale, programType, category);
     }
 
     @PreAuthorize("isAuthenticated()")

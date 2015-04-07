@@ -213,7 +213,7 @@ public class WorkflowConfigurationHelper {
 					assertTrue(lastTransitionEvaluation == null || lastTransitionEvaluation == thisTransitionEvaluationId);
 				}
 
-				assertTrue(Objects.equal(state.getScope(), equals(transitionState.getScope())) || Objects.equal(action.getCreationScope(), equals(transitionState.getScope())));
+				assertTrue(Objects.equal(state.getScope(), transitionState.getScope()) || Objects.equal(action.getCreationScope(), transitionState.getScope()));
 
 				lastTransitionEvaluation = thisTransitionEvaluationId;
 				verifyRoleTransitions(stateTransition);

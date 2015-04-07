@@ -139,7 +139,6 @@ public class CustomizationService {
 	        PrismLocale locale, PrismProgramType programType) {
 		Resource configuredResource = getConfiguredResource(resource);
 		PrismProgramType configuredProgramType = getConfiguredProgramType(resource, programType);
-
 		List<WorkflowConfiguration> configurations = customizationDAO.getConfigurations(configurationType, configuredResource, scope, locale,
 		        configuredProgramType);
 		return parseRepresentations(resource, configurationType, configurations);
@@ -149,10 +148,12 @@ public class CustomizationService {
 	        PrismLocale locale, PrismProgramType programType, Enum<?> category) {
 		Resource configuredResource = getConfiguredResource(resource);
 		PrismProgramType configuredProgramType = getConfiguredProgramType(resource, programType);
-
-		List<WorkflowConfiguration> configurations = customizationDAO.getConfigurations(configurationType, configuredResource, scope, locale,
-		        configuredProgramType, category);
-		return parseRepresentations(resource, configurationType, configurations);
+		if (configurationType.isCategorizable()) {
+			List<WorkflowConfiguration> configurations = customizationDAO.getConfigurations(configurationType, configuredResource, scope, locale,
+			        configuredProgramType, category);
+			return parseRepresentations(resource, configurationType, configurations);
+		}
+		return getConfigurationRepresentations(configurationType, configuredResource, scope, locale, configuredProgramType);
 	}
 
 	public List<WorkflowConfiguration> getConfigurationsWithVersion(PrismConfiguration configurationType, Integer version) {
@@ -325,7 +326,7 @@ public class CustomizationService {
 			        resource.getWorkflowPropertyConfigurationVersion());
 			return configuration != null && BooleanUtils.isTrue((Boolean) PrismReflectionUtils.getProperty(configuration, "enabled"));
 		}
-		throw new Error();
+		throw new UnsupportedOperationException();
 	}
 
 	private WorkflowConfiguration createConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale,

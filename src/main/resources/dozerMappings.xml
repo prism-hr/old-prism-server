@@ -122,13 +122,6 @@
 				</class-b>
 			</converter>
 			<converter
-				type="com.zuehlke.pgadmissions.rest.converter.DisplayPropertyConfigurationConverter">
-				<class-a>com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO.DisplayPropertyConfigurationValueDTO
-				</class-a>
-				<class-b>com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration
-				</class-b>
-			</converter>
-			<converter
 				type="com.zuehlke.pgadmissions.rest.converter.NotificationConfigurationConverter">
 				<class-a>com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO
 				</class-a>

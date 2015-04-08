@@ -1,8 +1,9 @@
 package com.zuehlke.pgadmissions.rest.converter;
 
+import org.dozer.DozerConverter;
+
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO;
-import org.dozer.DozerConverter;
 
 public class DisplayPropertyConfigurationConverter extends DozerConverter<DisplayPropertyConfigurationDTO, DisplayPropertyConfiguration> {
 

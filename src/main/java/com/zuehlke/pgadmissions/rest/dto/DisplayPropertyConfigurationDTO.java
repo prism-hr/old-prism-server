@@ -1,10 +1,11 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import org.hibernate.validator.constraints.NotEmpty;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 
 public class DisplayPropertyConfigurationDTO extends WorkflowConfigurationDTO {
 

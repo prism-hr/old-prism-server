@@ -1,10 +1,12 @@
 package com.zuehlke.pgadmissions.services.builders;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
-import com.zuehlke.pgadmissions.workflow.selectors.filter.PrismResourceListFilterSelector;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.NOT_SPECIFIED;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Junction;
@@ -15,11 +17,11 @@ import org.joda.time.LocalDate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.util.List;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.NOT_SPECIFIED;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
+import com.zuehlke.pgadmissions.workflow.selectors.filter.PrismResourceListFilterSelector;
 
 @Component
 public class PrismResourceListConstraintBuilder {

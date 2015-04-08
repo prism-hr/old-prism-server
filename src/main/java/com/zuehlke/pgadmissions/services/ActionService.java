@@ -18,7 +18,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,9 +75,6 @@ public class ActionService {
 
 	@Inject
 	private UserService userService;
-
-	@Inject
-	private ApplicationContext applicationContext;
 
 	public Action getById(PrismAction id) {
 		return entityService.getById(Action.class, id);

@@ -1,5 +1,11 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import java.math.BigDecimal;
+import java.util.Collection;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -7,11 +13,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
-import java.math.BigDecimal;
-import java.util.Collection;
 
 public class ResourceListFilterConstraintDTO {
 

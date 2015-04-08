@@ -1,47 +1,45 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.util.ArrayList;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO.DisplayPropertyConfigurationValueDTO;
+import org.hibernate.validator.constraints.NotEmpty;
 
-public class DisplayPropertyConfigurationDTO extends ArrayList<DisplayPropertyConfigurationValueDTO> {
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-    private static final long serialVersionUID = 5008263877226224685L;
+public class DisplayPropertyConfigurationDTO extends WorkflowConfigurationDTO {
 
-    public static class DisplayPropertyConfigurationValueDTO extends WorkflowConfigurationDTO {
+    @NotNull
+    private PrismDisplayPropertyDefinition definitionId;
 
-        private PrismDisplayPropertyDefinition definitionId;
+    @NotEmpty
+    @Size(max = 1500)
+    private String value;
 
-        private String value;
-
-        @Override
-        public PrismDisplayPropertyDefinition getDefinitionId() {
-            return definitionId;
-        }
-
-        public void setDefinitionId(PrismDisplayPropertyDefinition definitionId) {
-            this.definitionId = definitionId;
-        }
-
-        public final String getValue() {
-            return value;
-        }
-
-        public final void setValue(String value) {
-            this.value = value;
-        }
-        
-        public DisplayPropertyConfigurationDTO.DisplayPropertyConfigurationValueDTO withDefinitionId(PrismDisplayPropertyDefinition definitionId) {
-            this.definitionId = definitionId;
-            return this;
-        }
-        
-        public DisplayPropertyConfigurationDTO.DisplayPropertyConfigurationValueDTO withValue(String value) {
-            this.value = value;
-            return this;
-        }
-
+    @Override
+    public PrismDisplayPropertyDefinition getDefinitionId() {
+        return definitionId;
     }
-    
+
+    public void setDefinitionId(PrismDisplayPropertyDefinition definitionId) {
+        this.definitionId = definitionId;
+    }
+
+    public  String getValue() {
+        return value;
+    }
+
+    public  void setValue(String value) {
+        this.value = value;
+    }
+
+    public DisplayPropertyConfigurationDTO withValue(final String value) {
+        this.value = value;
+        return this;
+    }
+
+    public DisplayPropertyConfigurationDTO withDefinitionId(final PrismDisplayPropertyDefinition definitionId) {
+        this.definitionId = definitionId;
+        return this;
+    }
+
 }

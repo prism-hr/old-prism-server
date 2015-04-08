@@ -1556,7 +1556,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_PRIZE_AWARD_NO_ITEMS(APPLICATION_PRIZE, "This Application doesn't contain any Prizes/Awards"),
 
     APPLICATION_REFEREE_HEADER(APPLICATION_REFEREE, "Referees"),
-    APPLICATION_REFEREE_DESCRIPTION(APPLICATION_REFEREE, "Specify you referee(s) here. Each referee will be asked to provide a statement in support of your application."),
+    APPLICATION_REFEREE_DESCRIPTION(APPLICATION_REFEREE, "Specify your referee(s) here. Each referee will be asked to provide a statement in support of your application."),
     APPLICATION_REFEREE_SUBHEADER(APPLICATION_REFEREE, "Referee"),
     APPLICATION_REFEREE_POSITION_DETAILS_SUBHEADER(APPLICATION_REFEREE, "Position Details"),
     APPLICATION_REFEREE_TYPE_LABEL(APPLICATION_REFEREE, "Referee Type"),

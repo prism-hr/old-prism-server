@@ -59,7 +59,6 @@ public class LifeCycleService {
 	@PostConstruct
 	public void startup() {
 		boolean doInitializeWorkflow = BooleanUtils.isTrue(initializeWorkflow);
-
 		try {
 			if (doInitializeWorkflow) {
 				systemService.initializeWorkflow();
@@ -100,7 +99,7 @@ public class LifeCycleService {
 		}
 	}
 
-	@Scheduled(fixedDelay = 60)
+	@Scheduled(fixedDelay = 6000)
 	private void maintain() {
 		if (BooleanUtils.isTrue(maintain)) {
 			for (final PrismMaintenanceTask execution : PrismMaintenanceTask.values()) {

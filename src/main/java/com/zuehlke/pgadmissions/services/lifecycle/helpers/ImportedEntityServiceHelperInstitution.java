@@ -6,6 +6,7 @@ import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -15,6 +16,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +25,8 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
 
+import com.google.api.client.util.Lists;
+import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
@@ -31,6 +35,8 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationTyp
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.exceptions.DataImportException;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
@@ -87,15 +93,15 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
 				Integer importedEntityFeedId = importedEntityFeed.getId();
 				Class<?> importedEntityClass = (Class<?>) importedEntityFeed.getImportedEntityType().getEntityClass();
 				if (importedEntityClass.equals(Program.class)) {
-					importedEntityService.mergeImportedPrograms(importedEntityFeedId, institution, (List<ProgrammeOccurrence>) unmarshalled);
+					mergeImportedPrograms(importedEntityFeedId, institution, (List<ProgrammeOccurrence>) unmarshalled);
 				} else if (importedEntityClass.equals(ImportedInstitution.class)) {
-					importedEntityService.mergeImportedInstitutions(importedEntityFeedId, institution,
+					mergeImportedInstitutions(importedEntityFeedId, institution,
 					        (List<com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution>) unmarshalled);
 				} else if (importedEntityClass.equals(ImportedLanguageQualificationType.class)) {
-					importedEntityService.mergeImportedLanguageQualificationTypes(importedEntityFeedId, institution,
+					mergeImportedLanguageQualificationTypes(importedEntityFeedId, institution,
 					        (List<com.zuehlke.pgadmissions.referencedata.jaxb.LanguageQualificationTypes.LanguageQualificationType>) unmarshalled);
 				} else {
-					importedEntityService.mergeImportedEntities(importedEntityFeedId, institution, (Class<ImportedEntity>) importedEntityClass,
+					mergeImportedEntities(importedEntityFeedId, institution, (Class<ImportedEntity>) importedEntityClass,
 					        (List<Object>) unmarshalled);
 				}
 			}
@@ -144,6 +150,59 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
 		} catch (Exception e) {
 			return null;
 		}
+	}
+
+	private void mergeImportedPrograms(Integer importedEntityFeedId, Institution institution, List<ProgrammeOccurrence> programDefinitions) throws Exception {
+		DateTime baselineTime = new DateTime();
+		LocalDate baseline = baselineTime.toLocalDate();
+		
+		List<Integer> updates = Lists.newArrayList();
+		HashMultimap<String, ProgrammeOccurrence> batchedOccurrences = getBatchedImportedPrograms(programDefinitions);
+		for (String programCode : batchedOccurrences.keySet()) {
+			Set<ProgrammeOccurrence> occurrencesInBatch = batchedOccurrences.get(programCode);
+			updates.add(importedEntityService.mergeImportedProgram(institution, occurrencesInBatch, baseline, baselineTime));
+		}
+
+		importedEntityService.disableImportedPrograms(institution, updates, baseline);
+		importedEntityService.setLastImportedTimestamp(importedEntityFeedId);
+	}
+
+	private void mergeImportedInstitutions(Integer importedEntityFeedId, Institution institution,
+	        List<com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution> institutionDefinitions) throws Exception {
+		List<Integer> updates = Lists.newArrayList();
+		for (com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution transientImportedInstitution : institutionDefinitions) {
+			updates.add(importedEntityService.mergeImportedInstitution(institution, transientImportedInstitution));
+		}
+		importedEntityService.disableAllInstitutions(institution, updates);
+		importedEntityService.setLastImportedTimestamp(importedEntityFeedId);
+	}
+
+	private void mergeImportedLanguageQualificationTypes(Integer importedEntityFeedId, Institution institution,
+	        List<LanguageQualificationType> languageQualificationTypeDefinitions) throws DeduplicationException {
+		List<Integer> updates = Lists.newArrayList();
+		for (LanguageQualificationType languageQualificationTypeDefinition : languageQualificationTypeDefinitions) {
+			updates.add(importedEntityService.mergeImportedLanguageQualificationType(institution, languageQualificationTypeDefinition));
+		}
+		importedEntityService.disableEntities(ImportedLanguageQualificationType.class, institution, updates);
+		importedEntityService.setLastImportedTimestamp(importedEntityFeedId);
+	}
+
+	private void mergeImportedEntities(Integer importedEntityFeedId, Institution institution, Class<ImportedEntity> importedEntityClass,
+	        List<Object> entityDefinitions) throws Exception {
+		List<Integer> updates = Lists.newArrayList();
+		for (Object entityDefinition : entityDefinitions) {
+			updates.add(importedEntityService.mergeImportedEntity(importedEntityClass, institution, entityDefinition));
+		}
+		importedEntityService.disableEntities(importedEntityClass, institution, updates);
+		importedEntityService.setLastImportedTimestamp(importedEntityFeedId);
+	}
+
+	private HashMultimap<String, ProgrammeOccurrence> getBatchedImportedPrograms(List<ProgrammeOccurrence> importedPrograms) {
+		HashMultimap<String, ProgrammeOccurrence> batchedImports = HashMultimap.create();
+		for (ProgrammeOccurrence occurrence : importedPrograms) {
+			batchedImports.put(occurrence.getProgramme().getCode(), occurrence);
+		}
+		return batchedImports;
 	}
 
 }

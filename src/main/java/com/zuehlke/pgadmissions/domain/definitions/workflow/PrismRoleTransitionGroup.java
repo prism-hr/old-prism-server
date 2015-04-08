@@ -244,6 +244,12 @@ public enum PrismRoleTransitionGroup {
 	                .withMinimumPermitted(1) //
 	                .withMaximumPermitted(1)),
 
+	PROJECT_REVIVE_ADMINISTRATOR_GROUP( //
+	        new PrismRoleTransition() //
+	                .withRole(PROJECT_ADMINISTRATOR) //
+	                .withTransitionType(REVIVE) //
+	                .withTransitionRole(PROJECT_ADMINISTRATOR)),
+
 	PROJECT_MANAGE_USERS_GROUP( //
 	        new PrismRoleTransition() //
 	                .withRole(PROJECT_ADMINISTRATOR) //
@@ -279,6 +285,12 @@ public enum PrismRoleTransitionGroup {
 	                .withMinimumPermitted(1) //
 	                .withMaximumPermitted(1)),
 
+	PROGRAM_REVIVE_ADMINISTRATOR_GROUP( //
+	        new PrismRoleTransition() //
+	                .withRole(PROGRAM_ADMINISTRATOR) //
+	                .withTransitionType(REVIVE) //
+	                .withTransitionRole(PROGRAM_ADMINISTRATOR)),
+
 	PROGRAM_MANAGE_USERS_GROUP( //
 	        new PrismRoleTransition() //
 	                .withRole(PROGRAM_ADMINISTRATOR) //
@@ -313,6 +325,12 @@ public enum PrismRoleTransitionGroup {
 	                .withRestrictToOwner() //
 	                .withMinimumPermitted(1) //
 	                .withMaximumPermitted(1)),
+
+	INSTITUTION_REVIVE_ADMINISTRATOR_GROUP( //
+	        new PrismRoleTransition() //
+	                .withRole(INSTITUTION_ADMINISTRATOR) //
+	                .withTransitionType(REVIVE) //
+	                .withTransitionRole(INSTITUTION_ADMINISTRATOR)),
 
 	INSTITUTION_MANAGE_USERS_GROUP( //
 	        new PrismRoleTransition() //

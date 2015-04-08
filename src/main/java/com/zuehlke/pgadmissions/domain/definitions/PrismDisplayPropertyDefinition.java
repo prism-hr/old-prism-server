@@ -690,6 +690,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_VALIDATION_SECTION_ITEM_NOT_COMPLETED(SYSTEM_VALIDATION_ERROR, "At least one of the items is not completed"),
     SYSTEM_VALIDATION_SECTION_MIN_ITEMS(SYSTEM_VALIDATION_ERROR, "Min items: {{min}}"),
     SYSTEM_VALIDATION_SECTION_MAX_ITEMS(SYSTEM_VALIDATION_ERROR, "Max items: {{min}}"),
+    
+    SYSTEM_DUPLICATE_INSTITTION(SYSTEM_VALIDATION_ERROR, "Institution already exists"), 
+    SYSTEM_DUPLICATE_PROGRAM(SYSTEM_VALIDATION_ERROR, "Program already exists"),
+    SYSTEM_DUPLICATE_PROJECT(SYSTEM_VALIDATION_ERROR, "Project already exists"),
 
 	/*
 	 * *************** SYSTEM INTEGRATION *********************

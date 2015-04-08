@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDe
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationEvaluation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -314,6 +315,10 @@ public class StateService {
 		if (!states.isEmpty()) {
 			stateDAO.setParallelizableStates(states);
 		}
+	}
+
+	public PrismState getProjectLastApprovedOrDeactivatedState(Project project) {
+		return stateDAO.getProjectLastApprovedOrDeactivatedState(project);
 	}
 
 	private StateTransition getStateTransition(Resource resource, Action action, Comment comment) {

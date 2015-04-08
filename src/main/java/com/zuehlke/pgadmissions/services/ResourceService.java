@@ -173,7 +173,7 @@ public class ResourceService {
 			resource = applicationService.create(resourceUser, (ApplicationDTO) resourceDTO);
 			break;
 		default:
-			throw new Error("Attempted to create a resource of invalid type");
+			throw new UnsupportedOperationException();
 		}
 
 		resource.setReferrer(referrer);

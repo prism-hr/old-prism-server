@@ -2,10 +2,12 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_RESTORE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DEACTIVATED;
-import static org.springframework.transaction.annotation.Isolation.REPEATABLE_READ;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -32,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.department.Department;
@@ -70,7 +72,7 @@ import com.zuehlke.pgadmissions.utils.ConversionUtils;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Service
-@Transactional(timeout = 600, isolation = REPEATABLE_READ)
+@Transactional
 @SuppressWarnings("unchecked")
 public class ImportedEntityService {
 
@@ -136,49 +138,6 @@ public class ImportedEntityService {
 
 	public List<ImportedEntityFeed> getImportedEntityFeeds() {
 		return importedEntityDAO.getImportedEntityFeeds();
-	}
-
-	public void mergeImportedPrograms(Integer importedEntityFeedId, Institution institution, List<ProgrammeOccurrence> programDefinitions) throws Exception {
-		DateTime baselineTime = new DateTime();
-		LocalDate baseline = baselineTime.toLocalDate();
-
-		disableAllImportedPrograms(institution, baseline);
-		HashMultimap<String, ProgrammeOccurrence> batchedOccurrences = getBatchedImportedPrograms(programDefinitions);
-
-		for (String programCode : batchedOccurrences.keySet()) {
-			Set<ProgrammeOccurrence> occurrencesInBatch = batchedOccurrences.get(programCode);
-			mergeImportedProgram(institution, occurrencesInBatch, baseline, baselineTime);
-		}
-
-		setLastImportedTimestamp(importedEntityFeedId);
-	}
-
-	public void mergeImportedInstitutions(Integer importedEntityFeedId, Institution institution,
-	        List<com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution> institutionDefinitions) throws DataImportException,
-	        DeduplicationException {
-		disableAllInstitutions(institution);
-		for (com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution transientImportedInstitution : institutionDefinitions) {
-			mergeImportedInstitution(institution, transientImportedInstitution);
-		}
-		setLastImportedTimestamp(importedEntityFeedId);
-	}
-
-	public void mergeImportedLanguageQualificationTypes(Integer importedEntityFeedId, Institution institution,
-	        List<LanguageQualificationType> languageQualificationTypeDefinitions) throws DeduplicationException {
-		disableAllEntities(ImportedLanguageQualificationType.class, institution);
-		for (LanguageQualificationType languageQualificationTypeDefinition : languageQualificationTypeDefinitions) {
-			mergeImportedLanguageQualificationType(institution, languageQualificationTypeDefinition);
-		}
-		setLastImportedTimestamp(importedEntityFeedId);
-	}
-
-	public void mergeImportedEntities(Integer importedEntityFeedId, Institution institution, Class<ImportedEntity> importedEntityClass,
-	        List<Object> entityDefinitions) throws InstantiationException, IllegalAccessException, DeduplicationException {
-		disableAllEntities(importedEntityClass, institution);
-		for (Object entityDefinition : entityDefinitions) {
-			mergeImportedEntity(importedEntityClass, institution, entityDefinition);
-		}
-		setLastImportedTimestamp(importedEntityFeedId);
 	}
 
 	public void disableAllInstitutionDomiciles() {
@@ -259,6 +218,117 @@ public class ImportedEntityService {
 
 	public DomicileUseDTO getMostUsedDomicile(Institution institution) {
 		return importedEntityDAO.getMostUsedEnabledDomicile(institution);
+	}
+
+	public void disableEntities(Class<? extends ImportedEntity> entityClass, Institution institution, List<Integer> updates) {
+		importedEntityDAO.disableEntities(entityClass, institution, updates);
+	}
+
+	public void disableAllInstitutions(Institution institution, List<Integer> updates) {
+		importedEntityDAO.disableInstitutions(institution, updates);
+	}
+
+	public void disableImportedPrograms(Institution institution, List<Integer> updates, LocalDate baseline) {
+		importedEntityDAO.disableImportedPrograms(institution, updates, baseline);
+		importedEntityDAO.disableImportedProgramStudyOptions(institution, updates);
+		importedEntityDAO.disableImportedProgramStudyOptionInstances(institution, updates);
+	}
+
+	public Integer mergeImportedProgram(Institution institution, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline, DateTime baselineTime)
+	        throws Exception {
+		Programme programDefinition = programInstanceDefinitions.iterator().next().getProgramme();
+		Program persistentProgram = mergeProgram(institution, programDefinition, baseline);
+
+		LocalDate startDate = null;
+		LocalDate closeDate = null;
+		for (ProgrammeOccurrence occurrence : programInstanceDefinitions) {
+			StudyOption studyOption = mergeStudyOption(institution, occurrence.getModeOfAttendance());
+
+			LocalDate transientStartDate = DATE_FORMAT.parseLocalDate(occurrence.getStartDate());
+			LocalDate transientCloseDate = DATE_FORMAT.parseLocalDate(occurrence.getEndDate());
+
+			ProgramStudyOption transientProgramStudyOption = new ProgramStudyOption().withProgram(persistentProgram).withStudyOption(studyOption)
+			        .withApplicationStartDate(transientStartDate).withApplicationCloseDate(transientCloseDate)
+			        .withEnabled(transientCloseDate.isAfter(baseline));
+
+			ProgramStudyOption persistentProgramStudyOption = mergeProgramStudyOption(transientProgramStudyOption, baseline);
+			persistentProgram.getStudyOptions().add(persistentProgramStudyOption);
+
+			ProgramStudyOptionInstance transientProgramStudyOptionInstance = new ProgramStudyOptionInstance().withStudyOption(persistentProgramStudyOption)
+			        .withApplicationStartDate(transientStartDate).withApplicationCloseDate(transientCloseDate)
+			        .withAcademicYear(Integer.toString(transientStartDate.getYear())).withIdentifier(occurrence.getIdentifier())
+			        .withEnabled(transientCloseDate.isAfter(baseline));
+
+			ProgramStudyOptionInstance persistentProgramStudyOptionInstance = entityService.createOrUpdate(transientProgramStudyOptionInstance);
+			persistentProgramStudyOption.getStudyOptionInstances().add(persistentProgramStudyOptionInstance);
+
+			startDate = startDate == null || startDate.isBefore(transientStartDate) ? transientStartDate : startDate;
+			closeDate = closeDate == null || closeDate.isBefore(transientCloseDate) ? transientCloseDate : closeDate;
+		}
+
+		persistentProgram.setEndDate(closeDate);
+		executeProgramImportAction(persistentProgram, baselineTime);
+		return persistentProgram.getId();
+	}
+
+	public Integer mergeImportedInstitution(Institution institution, com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution institutionDefinition)
+	        throws DataImportException, DeduplicationException {
+		String domicileCode = institutionDefinition.getDomicile();
+
+		Domicile domicile = entityService.getByProperties(Domicile.class, ImmutableMap.of("institution", institution, "code", domicileCode, "enabled", true));
+
+		String institutionNameClean = institutionDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "");
+
+		ImportedInstitution transientImportedInstitution = new ImportedInstitution().withInstitution(institution).withDomicile(domicile)
+		        .withCode(institutionDefinition.getCode()).withName(institutionNameClean).withEnabled(true).withCustom(false);
+
+		if (domicile == null) {
+			throw new DataImportException("No enabled domicile for Institution " + transientImportedInstitution.getResourceSignature().toString()
+			        + ". Code specified was " + domicileCode);
+		}
+
+		return entityService.createOrUpdate(transientImportedInstitution).getId();
+	}
+
+	public Integer mergeImportedLanguageQualificationType(Institution institution, LanguageQualificationType languageQualificationTypeDefinition)
+	        throws DeduplicationException {
+		int precision = 2;
+		String languageQualificationTypeNameClean = languageQualificationTypeDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "");
+
+		ImportedLanguageQualificationType transientImportedLanguageQualificationType = new ImportedLanguageQualificationType().withInstitution(institution)
+		        .withCode(languageQualificationTypeDefinition.getCode()).withName(languageQualificationTypeNameClean)
+		        .withMinimumOverallScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumOverallScore(), precision))
+		        .withMaximumOverallScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumOverallScore(), precision))
+		        .withMinimumReadingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumReadingScore(), precision))
+		        .withMaximumReadingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumReadingScore(), precision))
+		        .withMinimumWritingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumWritingScore(), precision))
+		        .withMaximumWritingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumWritingScore(), precision))
+		        .withMinimumSpeakingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumSpeakingScore(), precision))
+		        .withMaximumSpeakingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumSpeakingScore(), precision))
+		        .withMinimumListeningScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumListeningScore(), precision))
+		        .withMaximumListeningScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumListeningScore(), precision))
+		        .withEnabled(true);
+		return entityService.createOrUpdate(transientImportedLanguageQualificationType).getId();
+	}
+
+	public <T extends ImportedEntity> Integer mergeImportedEntity(Class<T> entityClass, Institution institution, Object entityDefinition)
+	        throws Exception {
+		SimpleImportedEntity transientEntity = (SimpleImportedEntity) entityClass.newInstance();
+		transientEntity.setInstitution(institution);
+		transientEntity.setType(PrismImportedEntity.getByEntityClass(entityClass));
+		transientEntity.setCode((String) PrismReflectionUtils.getProperty(entityDefinition, "code"));
+
+		String name = (String) PrismReflectionUtils.getProperty(entityDefinition, "name");
+		String nameClean = name.replace("\n", " ").replace("\r", " ").replace("\t", " ").replaceAll(" +", " ");
+		transientEntity.setName(nameClean);
+
+		transientEntity.setEnabled(true);
+		return entityService.createOrUpdate(transientEntity).getId();
+	}
+
+	public void setLastImportedTimestamp(Integer importedEntityFeedId) {
+		ImportedEntityFeed persistentImportedEntityFeed = entityService.getById(ImportedEntityFeed.class, importedEntityFeedId);
+		persistentImportedEntityFeed.setLastImportedTimestamp(new DateTime());
 	}
 
 	private Program mergeProgram(Institution institution, Programme programDefinition, LocalDate baseline) throws DeduplicationException {
@@ -346,147 +416,27 @@ public class ImportedEntityService {
 
 	private void executeProgramImportAction(Program program, DateTime baselineTime) throws Exception {
 		Comment lastImportComment = commentService.getLatestComment(program, INSTITUTION_IMPORT_PROGRAM);
-		Action action = actionService.getById(lastImportComment == null ? INSTITUTION_CREATE_PROGRAM : INSTITUTION_IMPORT_PROGRAM);
+		PrismAction actionId = lastImportComment == null ? INSTITUTION_CREATE_PROGRAM : INSTITUTION_IMPORT_PROGRAM;
 
 		User invoker = program.getUser();
 		Role invokerRole = roleService.getCreatorRole(program);
 
 		State state = program.getState();
-		PrismState transitionStateId = PROGRAM_APPROVED;
-		if (state != null && state.getId() == PROGRAM_DEACTIVATED) {
-			transitionStateId = PROGRAM_DEACTIVATED;
+		State transitionState = null;
+		if (state == null) {
+			transitionState = stateService.getById(PROGRAM_APPROVED);
+		} else {
+			PrismState stateId = state.getId();
+			if (Arrays.asList(PROGRAM_APPROVED, PROGRAM_DEACTIVATED).contains(stateId)) {
+				transitionState = state;
+			} else if (stateId.equals(PROGRAM_DISABLED_PENDING_REACTIVATION)) {
+				actionId = PROGRAM_RESTORE;
+			}
 		}
 
-		State transitionState = stateService.getById(transitionStateId);
-
+		Action action = actionService.getById(actionId);
 		Comment comment = new Comment().withUser(invoker).withCreatedTimestamp(baselineTime).withAction(action).withDeclinedResponse(false)
 		        .withTransitionState(transitionState).addAssignedUser(invoker, invokerRole, PrismRoleTransitionType.CREATE);
 		actionService.executeAction(program, action, comment);
 	}
-
-	private HashMultimap<String, ProgrammeOccurrence> getBatchedImportedPrograms(List<ProgrammeOccurrence> importedPrograms) {
-		HashMultimap<String, ProgrammeOccurrence> batchedImports = HashMultimap.create();
-		for (ProgrammeOccurrence occurrence : importedPrograms) {
-			batchedImports.put(occurrence.getProgramme().getCode(), occurrence);
-		}
-		return batchedImports;
-	}
-
-	private void disableAllEntities(Class<? extends ImportedEntity> entityClass, Institution institution) {
-		importedEntityDAO.disableAllEntities(entityClass, institution);
-	}
-
-	private void disableAllInstitutions(Institution institution) {
-		importedEntityDAO.disableAllInstitutions(institution);
-	}
-
-	private void disableAllImportedPrograms(Institution institution, LocalDate baseline) {
-		importedEntityDAO.disableAllImportedPrograms(institution, baseline);
-		importedEntityDAO.disableAllImportedProgramStudyOptions(institution);
-		importedEntityDAO.disableAllImportedProgramStudyOptionInstances(institution);
-	}
-
-	private void mergeImportedProgram(Institution institution, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline, DateTime baselineTime)
-	        throws Exception {
-		Programme programDefinition = programInstanceDefinitions.iterator().next().getProgramme();
-		Program persistentProgram = mergeProgram(institution, programDefinition, baseline);
-
-		LocalDate startDate = null;
-		LocalDate closeDate = null;
-		for (ProgrammeOccurrence occurrence : programInstanceDefinitions) {
-			StudyOption studyOption = mergeStudyOption(institution, occurrence.getModeOfAttendance());
-
-			LocalDate transientStartDate = DATE_FORMAT.parseLocalDate(occurrence.getStartDate());
-			LocalDate transientCloseDate = DATE_FORMAT.parseLocalDate(occurrence.getEndDate());
-
-			ProgramStudyOption transientProgramStudyOption = new ProgramStudyOption().withProgram(persistentProgram).withStudyOption(studyOption)
-			        .withApplicationStartDate(transientStartDate).withApplicationCloseDate(transientCloseDate)
-			        .withEnabled(transientCloseDate.isAfter(baseline));
-
-			ProgramStudyOption persistentProgramStudyOption = mergeProgramStudyOption(transientProgramStudyOption, baseline);
-			persistentProgram.getStudyOptions().add(persistentProgramStudyOption);
-
-			ProgramStudyOptionInstance transientProgramStudyOptionInstance = new ProgramStudyOptionInstance().withStudyOption(persistentProgramStudyOption)
-			        .withApplicationStartDate(transientStartDate).withApplicationCloseDate(transientCloseDate)
-			        .withAcademicYear(Integer.toString(transientStartDate.getYear())).withIdentifier(occurrence.getIdentifier())
-			        .withEnabled(transientCloseDate.isAfter(baseline));
-
-			ProgramStudyOptionInstance persistentProgramStudyOptionInstance = entityService.createOrUpdate(transientProgramStudyOptionInstance);
-			persistentProgramStudyOption.getStudyOptionInstances().add(persistentProgramStudyOptionInstance);
-
-			startDate = startDate == null || startDate.isBefore(transientStartDate) ? transientStartDate : startDate;
-			closeDate = closeDate == null || closeDate.isBefore(transientCloseDate) ? transientCloseDate : closeDate;
-		}
-
-		persistentProgram.setEndDate(closeDate);
-		executeProgramImportAction(persistentProgram, baselineTime);
-	}
-
-	private void mergeImportedInstitution(Institution institution, com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution institutionDefinition)
-	        throws DataImportException, DeduplicationException {
-		String domicileCode = institutionDefinition.getDomicile();
-
-		Domicile domicile = entityService.getByProperties(Domicile.class, ImmutableMap.of("institution", institution, "code", domicileCode, "enabled", true));
-
-		String institutionNameClean = institutionDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "");
-
-		ImportedInstitution transientImportedInstitution = new ImportedInstitution().withInstitution(institution).withDomicile(domicile)
-		        .withCode(institutionDefinition.getCode()).withName(institutionNameClean).withEnabled(true).withCustom(false);
-
-		if (domicile == null) {
-			throw new DataImportException("No enabled domicile for Institution " + transientImportedInstitution.getResourceSignature().toString()
-			        + ". Code specified was " + domicileCode);
-		}
-
-		entityService.createOrUpdate(transientImportedInstitution);
-	}
-
-	private void mergeImportedLanguageQualificationType(Institution institution, LanguageQualificationType languageQualificationTypeDefinition)
-	        throws DeduplicationException {
-		int precision = 2;
-		String languageQualificationTypeNameClean = languageQualificationTypeDefinition.getName().replace("\n", "").replace("\r", "").replace("\t", "");
-
-		ImportedLanguageQualificationType transientImportedLanguageQualificationType = new ImportedLanguageQualificationType().withInstitution(institution)
-		        .withCode(languageQualificationTypeDefinition.getCode()).withName(languageQualificationTypeNameClean)
-		        .withMinimumOverallScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumOverallScore(), precision))
-		        .withMaximumOverallScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumOverallScore(), precision))
-		        .withMinimumReadingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumReadingScore(), precision))
-		        .withMaximumReadingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumReadingScore(), precision))
-		        .withMinimumWritingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumWritingScore(), precision))
-		        .withMaximumWritingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumWritingScore(), precision))
-		        .withMinimumSpeakingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumSpeakingScore(), precision))
-		        .withMaximumSpeakingScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumSpeakingScore(), precision))
-		        .withMinimumListeningScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMinimumListeningScore(), precision))
-		        .withMaximumListeningScore(ConversionUtils.floatToBigDecimal(languageQualificationTypeDefinition.getMaximumListeningScore(), precision))
-		        .withEnabled(true);
-		entityService.createOrUpdate(transientImportedLanguageQualificationType);
-	}
-
-	private <T extends ImportedEntity> void mergeImportedEntity(Class<T> entityClass, Institution institution, Object entityDefinition)
-	        throws DeduplicationException {
-		try {
-			SimpleImportedEntity transientEntity = (SimpleImportedEntity) entityClass.newInstance();
-			transientEntity.setInstitution(institution);
-			transientEntity.setType(PrismImportedEntity.getByEntityClass(entityClass));
-			transientEntity.setCode((String) PrismReflectionUtils.getProperty(entityDefinition, "code"));
-
-			String name = (String) PrismReflectionUtils.getProperty(entityDefinition, "name");
-			String nameClean = name.replace("\n", " ").replace("\r", " ").replace("\t", " ").replaceAll(" +", " ");
-			transientEntity.setName(nameClean);
-
-			transientEntity.setEnabled(true);
-			entityService.createOrUpdate(transientEntity);
-		} catch (InstantiationException e) {
-			throw new Error(e);
-		} catch (IllegalAccessException e) {
-			throw new Error(e);
-		}
-
-	}
-
-	private void setLastImportedTimestamp(Integer importedEntityFeedId) {
-		ImportedEntityFeed persistentImportedEntityFeed = entityService.getById(ImportedEntityFeed.class, importedEntityFeedId);
-		persistentImportedEntityFeed.setLastImportedTimestamp(new DateTime());
-	}
-
 }

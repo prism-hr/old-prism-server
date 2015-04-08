@@ -115,6 +115,10 @@ public class RoleService {
 		return roleDAO.getActionOwnerRoles(user, resource, action);
 	}
 
+	public boolean hasUserRole(Resource resource, User user, PrismRoleGroup prismRoles) {
+		return hasUserRole(resource, user, prismRoles.getRoles());
+	}
+	
 	public boolean hasUserRole(Resource resource, User user, PrismRole... prismRoles) {
 		for (PrismRole prismRole : prismRoles) {
 			PrismScope roleScope = prismRole.getScope();

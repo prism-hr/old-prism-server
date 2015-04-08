@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_PROJECT_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.PROJECT_CORRECT_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROJECT_REVIVE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApproval.projectCompleteApproval;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWorkflow.projectEmailCreator;
@@ -30,7 +31,8 @@ public class PrismProjectApprovalPendingCorrection extends PrismWorkflowState {
 		        .withAssignments(PROJECT_ADMINISTRATOR) //
 		        .withTransitions(new PrismStateTransition() //
 		                .withTransitionState(PROJECT_APPROVAL) //
-		                .withTransitionAction(SYSTEM_VIEW_PROJECT_LIST))); //
+		                .withTransitionAction(SYSTEM_VIEW_PROJECT_LIST) //
+		                .withRoleTransitions(PROJECT_REVIVE_ADMINISTRATOR_GROUP))); //
 
 		stateActions.add(projectEmailCreator()); //
 		stateActions.add(projectEscalateUnapproved());

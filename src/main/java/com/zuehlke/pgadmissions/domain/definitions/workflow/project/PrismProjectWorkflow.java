@@ -45,6 +45,12 @@ public class PrismProjectWorkflow {
 		                .withTransitionAction(PROJECT_ESCALATE));
 	}
 
+	public static PrismStateAction projectRestore() {
+		return projectViewEditAbstract()
+		        .withActionEnhancement(PROJECT_VIEW_AS_USER) //
+		        .withAssignments(PROJECT_ADMINISTRATOR_GROUP);
+	}
+	
 	public static PrismStateAction projectSuspendUnapproved() {
 		return projectSuspendAbstract()
 		        .withTransitions(new PrismStateTransition() //

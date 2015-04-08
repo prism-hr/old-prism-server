@@ -5,6 +5,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_INSTITUTION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_PROGRAM_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_PROJECT_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.USER_INVOCATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 
 import java.util.List;
 import java.util.Map;
@@ -14,6 +18,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,11 +31,9 @@ import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -47,6 +50,7 @@ import com.zuehlke.pgadmissions.dto.ActionCreationScopeDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
 import com.zuehlke.pgadmissions.dto.StateActionDTO;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
@@ -72,6 +76,9 @@ public class ActionService {
 
 	@Inject
 	private UserService userService;
+
+	@Inject
+	private ApplicationContext applicationContext;
 
 	public Action getById(PrismAction id) {
 		return entityService.getById(Action.class, id);
@@ -135,7 +142,7 @@ public class ActionService {
 
 			if (BooleanUtils.isTrue(action.getPrimaryState())) {
 				action.addNextStates(stateService.getSelectableTransitionStates(resource.getState(), actionId,
-				        scope == PrismScope.PROGRAM && program.getImported()));
+				        scope == PROGRAM && program.getImported()));
 			}
 		}
 
@@ -164,12 +171,15 @@ public class ActionService {
 	public ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment) throws Exception {
 		User actionOwner = comment.getUser();
 
-		if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE || action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE) {
+		if (action.getActionCategory() == CREATE_RESOURCE || action.getActionCategory() == VIEW_EDIT_RESOURCE) {
 			Resource duplicateResource = entityService.getDuplicateEntity(resource);
 
 			if (duplicateResource != null) {
-				if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
+				if (action.getActionCategory() == CREATE_RESOURCE) {
 					Action redirectAction = getRedirectAction(action, actionOwner, duplicateResource);
+					if (redirectAction == null) {
+						throw new DeduplicationException("SYSTEM_DUPLICATE_" + action.getCreationScope().getId().name());
+					}
 					return new ActionOutcomeDTO().withUser(actionOwner).withResource(duplicateResource).withTransitionResource(duplicateResource)
 					        .withTransitionAction(redirectAction);
 				} else if (!Objects.equal(resource.getId(), duplicateResource.getId())) {
@@ -188,7 +198,7 @@ public class ActionService {
 
 	public ActionOutcomeDTO getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO) throws Exception {
 		Action action = getById(registrationDTO.getAction().getActionId());
-		if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
+		if (action.getActionCategory() == CREATE_RESOURCE) {
 			Object operativeResourceDTO = registrationDTO.getAction().getOperativeResourceDTO();
 			return resourceService.create(user, action, operativeResourceDTO, registrationDTO.getAction().getReferer(), registrationDTO.getAction()
 			        .getWorkflowPropertyConfigurationVersion());
@@ -203,7 +213,7 @@ public class ActionService {
 	}
 
 	public Action getRedirectAction(Action action, User actionOwner, Resource duplicateResource) {
-		if (action.getActionType() == PrismActionType.USER_INVOCATION) {
+		if (action.getActionType() == USER_INVOCATION) {
 			return actionDAO.getUserRedirectAction(duplicateResource, actionOwner);
 		} else {
 			return actionDAO.getSystemRedirectAction(duplicateResource);
@@ -337,7 +347,7 @@ public class ActionService {
 	private void authenticateActionInvocation(Action action, User user, Boolean declineComment) {
 		if (action.getDeclinableAction() && BooleanUtils.toBoolean(declineComment)) {
 			return;
-		} else if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
+		} else if (action.getActionCategory() == CREATE_RESOURCE) {
 			return;
 		} else if (userService.isCurrentUser(user)) {
 			return;

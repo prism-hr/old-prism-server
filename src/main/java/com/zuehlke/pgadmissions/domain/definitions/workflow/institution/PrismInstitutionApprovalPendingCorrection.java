@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.I
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_INSTITUTION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.INSTITUTION_CORRECT_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.INSTITUTION_REVIVE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionApproval.institutionCompleteApproval;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionEmailCreator;
@@ -28,7 +29,8 @@ public class PrismInstitutionApprovalPendingCorrection extends PrismWorkflowStat
 		        .withAssignments(INSTITUTION_ADMINISTRATOR) //
 		        .withTransitions(new PrismStateTransition() //
 		                .withTransitionState(INSTITUTION_APPROVAL) //
-		                .withTransitionAction(SYSTEM_VIEW_INSTITUTION_LIST))); //
+		                .withTransitionAction(SYSTEM_VIEW_INSTITUTION_LIST) //
+		                .withRoleTransitions(INSTITUTION_REVIVE_ADMINISTRATOR_GROUP))); //
 
 		stateActions.add(institutionEmailCreator()); //
 		stateActions.add(institutionEscalateUnapproved()); //

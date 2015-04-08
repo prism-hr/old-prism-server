@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DEACTIVATED;
+
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -12,10 +15,12 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
@@ -285,6 +290,17 @@ public class StateDAO {
 		        .setParameterList("states", states) //
 		        .executeUpdate();
 	}
+	
+	public PrismState getProjectLastApprovedOrDeactivatedState(Project project) {
+		return (PrismState) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+				.setProjection(Projections.property("transitionState.id")) //
+				.add(Restrictions.eq("project", project)) //
+				.add(Restrictions.in("transitionState.id", new PrismState[] {PROJECT_APPROVED, PROJECT_DEACTIVATED})) //
+				.addOrder(Order.desc("createdTimestamp")) //
+				.addOrder(Order.desc("id")) //
+				.setMaxResults(1) //
+				.uniqueResult();
+ 	}
 
 	private void appendImportedResourceConstraint(Criteria criteria, boolean importedResource) {
 		if (importedResource) {

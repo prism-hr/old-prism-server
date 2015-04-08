@@ -264,6 +264,7 @@ public enum PrismAction {
 	PROGRAM_CREATE_PROJECT(USER_INVOCATION, CREATE_RESOURCE, false, false, true, null, PROGRAM, null, null), //
 	PROGRAM_EMAIL_CREATOR(USER_INVOCATION, EMAIL_RESOURCE_CREATOR, false, false, false, null, PROGRAM, null, null), //
 	PROGRAM_ESCALATE(SYSTEM_INVOCATION, ESCALATE_RESOURCE, false, false, false, null, PROGRAM, null, null), //
+	PROGRAM_RESTORE(SYSTEM_INVOCATION, PROCESS_RESOURCE, false, false, false, null, PROGRAM, null, null), //
 	PROGRAM_WITHDRAW(USER_INVOCATION, WITHDRAW_RESOURCE, false, false, true, null, PROGRAM, null, null), //
 	PROJECT_COMPLETE_APPROVAL_STAGE(USER_INVOCATION, PROCESS_RESOURCE, false, false, true, null, PROJECT, null, null), //
 	PROJECT_VIEW_EDIT(USER_INVOCATION, VIEW_EDIT_RESOURCE, false, false, false, null, PROJECT, null, null), //
@@ -271,6 +272,7 @@ public enum PrismAction {
 	PROJECT_CREATE_APPLICATION(USER_INVOCATION, CREATE_RESOURCE, false, false, true, null, PROJECT, null, null), //
 	PROJECT_EMAIL_CREATOR(USER_INVOCATION, EMAIL_RESOURCE_CREATOR, false, false, false, null, PROJECT, null, null), //
 	PROJECT_ESCALATE(SYSTEM_INVOCATION, ESCALATE_RESOURCE, false, false, false, null, PROJECT, null, null), //
+	PROJECT_RESTORE(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, false, false, null, PROJECT, null, null), //
 	PROJECT_SUSPEND(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, false, true, null, PROJECT, null, null), //
 	PROJECT_TERMINATE(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, false, true, null, PROJECT, null, null), //
 	PROJECT_WITHDRAW(USER_INVOCATION, WITHDRAW_RESOURCE, false, false, true, null, PROJECT, null, null), //

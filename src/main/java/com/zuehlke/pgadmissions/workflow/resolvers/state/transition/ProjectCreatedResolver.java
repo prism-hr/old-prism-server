@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.workflow.resolvers.state.transition;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROGRAM_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
 
@@ -26,10 +25,10 @@ public class ProjectCreatedResolver implements StateTransitionResolver {
 
 	@Override
 	public StateTransition resolve(Resource resource, Comment comment) {
-		if (roleService.hasUserRole(resource, comment.getUser(), INSTITUTION_ADMINISTRATOR, PROGRAM_ADMINISTRATOR)) {
-			return stateService.getStateTransition(resource, comment.getAction(), PROJECT_APPROVED);
+		if (roleService.hasUserRole(resource, comment.getUser(), PROGRAM_ADMINISTRATOR_GROUP)) {
+			return stateService.getStateTransition(resource.getParentResource(), comment.getAction(), PROJECT_APPROVED);
 		}
-		return stateService.getStateTransition(resource, comment.getAction(), PROJECT_APPROVAL);
+		return stateService.getStateTransition(resource.getParentResource(), comment.getAction(), PROJECT_APPROVAL);
 	}
 
 }

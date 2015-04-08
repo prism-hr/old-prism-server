@@ -1,23 +1,22 @@
 package com.zuehlke.pgadmissions.rest.converter;
 
+import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
+import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO;
 import org.dozer.DozerConverter;
 
-import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
-import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO.DisplayPropertyConfigurationValueDTO;
-
-public class DisplayPropertyConfigurationConverter extends DozerConverter<DisplayPropertyConfigurationValueDTO, DisplayPropertyConfiguration> {
+public class DisplayPropertyConfigurationConverter extends DozerConverter<DisplayPropertyConfigurationDTO, DisplayPropertyConfiguration> {
 
     public DisplayPropertyConfigurationConverter() {
-        super(DisplayPropertyConfigurationValueDTO.class, DisplayPropertyConfiguration.class);
+        super(DisplayPropertyConfigurationDTO.class, DisplayPropertyConfiguration.class);
     }
 
     @Override
-    public DisplayPropertyConfiguration convertTo(DisplayPropertyConfigurationValueDTO source, DisplayPropertyConfiguration destination) {
+    public DisplayPropertyConfiguration convertTo(DisplayPropertyConfigurationDTO source, DisplayPropertyConfiguration destination) {
         return new DisplayPropertyConfiguration().withValue(source.getValue());
     }
 
     @Override
-    public DisplayPropertyConfigurationValueDTO convertFrom(DisplayPropertyConfiguration source, DisplayPropertyConfigurationValueDTO destination) {
+    public DisplayPropertyConfigurationDTO convertFrom(DisplayPropertyConfiguration source, DisplayPropertyConfigurationDTO destination) {
         throw new UnsupportedOperationException();
     }
 

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.valueOf;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_INSTITUTION_LIST;
@@ -18,6 +19,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +55,7 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
@@ -75,6 +78,9 @@ public class ActionService {
 
 	@Inject
 	private UserService userService;
+
+	@Inject
+	private ApplicationContext applicationContext;
 
 	public Action getById(PrismAction id) {
 		return entityService.getById(Action.class, id);
@@ -165,20 +171,21 @@ public class ActionService {
 	}
 
 	public ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment) throws Exception {
-		User actionOwner = comment.getUser();
+		User user = comment.getUser();
 
 		if (action.getActionCategory() == CREATE_RESOURCE || action.getActionCategory() == VIEW_EDIT_RESOURCE) {
-			Resource duplicateResource = entityService.getDuplicateEntity(resource);
+			Resource duplicate = entityService.getDuplicateEntity(resource);
 
-			if (duplicateResource != null) {
+			if (duplicate != null) {
 				if (action.getActionCategory() == CREATE_RESOURCE) {
-					Action redirectAction = getRedirectAction(action, actionOwner, duplicateResource);
+					Action redirectAction = getRedirectAction(action, user, duplicate);
 					if (redirectAction == null) {
-						throw new DeduplicationException("SYSTEM_DUPLICATE_" + action.getCreationScope().getId().name());
+						PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(duplicate, user);
+						throw new DeduplicationException(loader.load(valueOf("SYSTEM_DUPLICATE_" + action.getCreationScope().getId().name())));
 					}
-					return new ActionOutcomeDTO().withUser(actionOwner).withResource(duplicateResource).withTransitionResource(duplicateResource)
+					return new ActionOutcomeDTO().withUser(user).withResource(duplicate).withTransitionResource(duplicate)
 					        .withTransitionAction(redirectAction);
-				} else if (!Objects.equal(resource.getId(), duplicateResource.getId())) {
+				} else if (!Objects.equal(resource.getId(), duplicate.getId())) {
 					throw new WorkflowPermissionException(resource, action);
 				}
 			}
@@ -188,7 +195,7 @@ public class ActionService {
 		Action transitionAction = stateTransition == null ? action.getFallbackAction() : stateTransition.getTransitionAction();
 		Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
-		return new ActionOutcomeDTO().withUser(actionOwner).withResource(resource).withTransitionResource(transitionResource)
+		return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(transitionResource)
 		        .withTransitionAction(transitionAction);
 	}
 

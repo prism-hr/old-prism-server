@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.services.DisplayPropertyService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 
@@ -56,7 +57,11 @@ public class PropertyLoader {
 	}
 
 	public PropertyLoader localize(Resource resource) {
-		return localize(resource, null);
+		return localize(resource, (PrismLocale) null);
+	}
+
+	public PropertyLoader localize(Resource resource, User user) {
+		return localize(resource, user.getLocale());
 	}
 
 	public PropertyLoader localize(Resource resource, PrismLocale prismLocale) {

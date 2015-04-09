@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_STAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_REVIEW_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_REFEREE_GROUP;
@@ -24,7 +24,7 @@ public class PrismApplicationReviewPendingCompletion extends PrismWorkflowState 
 	protected void setStateActions() {
 		stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator()); //
 
-		stateActions.add(applicationCompleteReview() //
+		stateActions.add(applicationCompleteReview(state) //
 		        .withRaisesUrgentFlag() //
 		        .withNotification(SYSTEM_APPLICATION_TASK_REQUEST)); //
 
@@ -37,7 +37,7 @@ public class PrismApplicationReviewPendingCompletion extends PrismWorkflowState 
 		stateActions.add(applicationProvideReview() //
 		        .withTransitions(new PrismStateTransition() //
 		                .withTransitionState(APPLICATION_REVIEW_PENDING_COMPLETION) //
-		                .withTransitionAction(APPLICATION_COMPLETE_STAGE) //
+		                .withTransitionAction(APPLICATION_COMPLETE_REVIEW_STAGE) //
 		                .withRoleTransitions(APPLICATION_PROVIDE_REVIEW_GROUP))); //
 
 		stateActions.add(applicationViewEditReview(state)); //

@@ -18,7 +18,7 @@ public class PrismApplicationInterviewPendingFeedback extends PrismWorkflowState
 	@Override
 	protected void setStateActions() {
 		stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator()); //
-		stateActions.add(applicationCompleteInterviewScheduled()); //
+		stateActions.add(applicationCompleteInterviewScheduled(state)); //
 		stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator()); //
 		stateActions.add(applicationEscalate(APPLICATION_INTERVIEW_PENDING_COMPLETION)); //
 

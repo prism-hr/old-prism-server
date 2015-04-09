@@ -1,7 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_STAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_VERIFICATION_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_ELIGIBILITY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_UPDATE_NOTIFICATION;
@@ -18,6 +19,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEditWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdraw;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTermination;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
@@ -28,7 +30,12 @@ public class PrismApplicationVerification extends PrismWorkflowState {
 	@Override
 	protected void setStateActions() {
 		stateActions.add(applicationCommentWithViewerRecruiter());
-		stateActions.add(applicationCompleteVerification());
+		
+		stateActions.add(applicationCompleteVerification(state) //
+				.withTransitions(new PrismStateTransition() //
+				.withTransitionAction(APPLICATION_VIEW_EDIT) //
+                .withStateTerminations(new PrismStateTermination() //
+                        .withTerminationState(APPLICATION_VERIFICATION))));
 
 		stateActions.add(new PrismStateAction() //
 		        .withAction(APPLICATION_CONFIRM_ELIGIBILITY) //
@@ -39,7 +46,7 @@ public class PrismApplicationVerification extends PrismWorkflowState {
 		        .withNotifications(INSTITUTION_ADMITTER, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
 		        .withTransitions(new PrismStateTransition() //
 		                .withTransitionState(APPLICATION_VERIFICATION_PENDING_COMPLETION) //
-		                .withTransitionAction(APPLICATION_COMPLETE_STAGE) //
+		                .withTransitionAction(APPLICATION_COMPLETE_VERIFICATION_STAGE) //
 		                .withTransitionEvaluation(APPLICATION_CONFIRMED_ELIGIBILITY_OUTCOME), //
 		                new PrismStateTransition() //
 		                        .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
@@ -57,8 +64,8 @@ public class PrismApplicationVerification extends PrismWorkflowState {
 		return applicationWithdraw(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_DELETE_REFEREE_GROUP);
 	}
 
-	public static PrismStateAction applicationCompleteVerification() {
-		return applicationCompleteState(APPLICATION_PARENT_ADMINISTRATOR_GROUP);
+	public static PrismStateAction applicationCompleteVerification(PrismState state) {
+		return applicationCompleteState(APPLICATION_COMPLETE_VERIFICATION_STAGE, state, APPLICATION_PARENT_ADMINISTRATOR_GROUP);
 	}
 
 }

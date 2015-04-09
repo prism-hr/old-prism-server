@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_INTERVIEW_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_CONFIRMED_INTERVIEWEE_GROUP;
@@ -23,7 +24,8 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
 	protected void setStateActions() {
 		stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator()); //
 
-		stateActions.add(applicationCompleteState(APPLICATION_ADMINISTRATOR_GROUP, //
+		stateActions.add(applicationCompleteState(APPLICATION_COMPLETE_INTERVIEW_STAGE, state, //
+		        APPLICATION_ADMINISTRATOR_GROUP, //
 		        APPLICATION_DELETE_ADMINISTRATOR_GROUP, //
 		        APPLICATION_DELETE_CONFIRMED_INTERVIEWEE_GROUP,
 		        APPLICATION_DELETE_CONFIRMED_INTERVIEWER_GROUP));

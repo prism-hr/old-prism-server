@@ -17,7 +17,7 @@ public class PrismApplicationReservedWaiting extends PrismWorkflowState {
 		stateActions.add(applicationCommentWithViewerRecruiter()); //
 		stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
 		stateActions.add(applicationEscalate(APPLICATION_RESERVED_PENDING_REALLOCATION)); //
-		stateActions.add(applicationCompleteReserved());
+		stateActions.add(applicationCompleteReserved(state));
 		stateActions.add(applicationViewEditWithViewerRecruiter(state)); //
 		stateActions.add(applicationWithdrawnReserved());
 	}

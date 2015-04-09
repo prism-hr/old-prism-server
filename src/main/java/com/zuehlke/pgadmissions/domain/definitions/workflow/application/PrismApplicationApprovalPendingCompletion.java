@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_STAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CONFIRM_PRIMARY_SUPERVISION_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CONFIRM_SECONDARY_SUPERVISION_GROUP;
@@ -24,20 +24,20 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
 	protected void setStateActions() {
 		stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator()); //
 
-		stateActions.add(applicationCompleteApproval() //
+		stateActions.add(applicationCompleteApproval(state) //
 		        .withRaisesUrgentFlag() //
 		        .withNotification(SYSTEM_APPLICATION_TASK_REQUEST)); //
 
 		stateActions.add(applicationConfirmPrimarySupervision() //
 		        .withTransitions(new PrismStateTransition() //
 		                .withTransitionState(state) //
-		                .withTransitionAction(APPLICATION_COMPLETE_STAGE) //
+		                .withTransitionAction(APPLICATION_COMPLETE_APPROVAL_STAGE) //
 		                .withRoleTransitions(APPLICATION_CONFIRM_PRIMARY_SUPERVISION_GROUP))); //
 
 		stateActions.add(applicationConfirmSecondarySupervision() //
 		        .withTransitions(new PrismStateTransition() //
 		                .withTransitionState(state) //
-		                .withTransitionAction(APPLICATION_COMPLETE_STAGE) //
+		                .withTransitionAction(APPLICATION_COMPLETE_APPROVAL_STAGE) //
 		                .withRoleTransitions(APPLICATION_CONFIRM_SECONDARY_SUPERVISION_GROUP))); //
 
 		stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator()); //

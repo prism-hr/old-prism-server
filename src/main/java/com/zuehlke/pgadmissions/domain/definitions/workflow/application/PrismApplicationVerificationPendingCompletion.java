@@ -17,7 +17,7 @@ public class PrismApplicationVerificationPendingCompletion extends PrismWorkflow
 	protected void setStateActions() {
 		stateActions.add(applicationCommentWithViewerRecruiter()); //
 
-		stateActions.add(applicationCompleteVerification() //
+		stateActions.add(applicationCompleteVerification(state) //
 		        .withRaisesUrgentFlag() //
 		        .withNotification(SYSTEM_APPLICATION_TASK_REQUEST)); //
 

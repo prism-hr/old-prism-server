@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.valueOf;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_INSTITUTION_LIST;
@@ -19,7 +18,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,7 +53,6 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
-import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
@@ -78,9 +75,6 @@ public class ActionService {
 
 	@Inject
 	private UserService userService;
-
-	@Inject
-	private ApplicationContext applicationContext;
 
 	public Action getById(PrismAction id) {
 		return entityService.getById(Action.class, id);
@@ -180,8 +174,7 @@ public class ActionService {
 				if (action.getActionCategory() == CREATE_RESOURCE) {
 					Action redirectAction = getRedirectAction(action, user, duplicate);
 					if (redirectAction == null) {
-						PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(duplicate, user);
-						throw new DeduplicationException(loader.load(valueOf("SYSTEM_DUPLICATE_" + action.getCreationScope().getId().name())));
+						throw new DeduplicationException("SYSTEM_DUPLICATE_" + action.getCreationScope().getId().name());
 					}
 					return new ActionOutcomeDTO().withUser(user).withResource(duplicate).withTransitionResource(duplicate)
 					        .withTransitionAction(redirectAction);

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_INTERVIEW_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK;
@@ -85,22 +86,25 @@ public class PrismApplicationInterview extends PrismWorkflowState {
 		stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator()); //
 		stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator()); //
 		stateActions.add(applicationEscalate(APPLICATION_DELETE_REFEREE_GROUP, APPLICATION_DELETE_ADMINISTRATOR_GROUP)); //
-		stateActions.add(applicationCompleteState(APPLICATION_ADMINISTRATOR_GROUP, APPLICATION_DELETE_ADMINISTRATOR_GROUP));
+		stateActions.add(applicationCompleteState(APPLICATION_COMPLETE_INTERVIEW_STAGE, state, APPLICATION_ADMINISTRATOR_GROUP,
+		        APPLICATION_DELETE_ADMINISTRATOR_GROUP));
 		stateActions.add(applicationViewEditWithViewerRecruiterAndAdministrator(state)); //
 		stateActions.add(applicationWithdraw(APPLICATION_ADMINISTRATOR_GROUP, //
 		        APPLICATION_DELETE_REFEREE_GROUP, //
 		        APPLICATION_DELETE_ADMINISTRATOR_GROUP));
 	}
 
-	public static PrismStateAction applicationCompleteInterviewScheduling() {
-		return applicationCompleteState(APPLICATION_ADMINISTRATOR_GROUP, //
+	public static PrismStateAction applicationCompleteInterviewScheduling(PrismState state) {
+		return applicationCompleteState(APPLICATION_COMPLETE_INTERVIEW_STAGE, state, //
+		        APPLICATION_ADMINISTRATOR_GROUP, //
 		        APPLICATION_DELETE_ADMINISTRATOR_GROUP, //
 		        APPLICATION_DELETE_INTERVIEWEE_GROUP,
 		        APPLICATION_DELETE_INTERVIEWER_GROUP);
 	}
 
-	public static PrismStateAction applicationCompleteInterviewScheduled() {
-		return applicationCompleteState(APPLICATION_ADMINISTRATOR_GROUP, //
+	public static PrismStateAction applicationCompleteInterviewScheduled(PrismState state) {
+		return applicationCompleteState(APPLICATION_COMPLETE_INTERVIEW_STAGE, state, //
+		        APPLICATION_ADMINISTRATOR_GROUP, //
 		        APPLICATION_DELETE_ADMINISTRATOR_GROUP, //
 		        APPLICATION_DELETE_CONFIRMED_INTERVIEWER_GROUP);
 	}

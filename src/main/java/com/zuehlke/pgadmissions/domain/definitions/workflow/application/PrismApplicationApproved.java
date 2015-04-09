@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_APPROVED_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
@@ -39,7 +40,7 @@ public class PrismApplicationApproved extends PrismWorkflowState {
 		                        APPLICATION_DELETE_REFEREE_GROUP))); //
 
 		stateActions.add(applicationEscalate(APPLICATION_DELETE_REFEREE_GROUP)); //
-		stateActions.add(applicationCompleteState(APPLICATION_PARENT_APPROVER_GROUP));
+		stateActions.add(applicationCompleteState(APPLICATION_COMPLETE_APPROVED_STAGE, state, APPLICATION_PARENT_APPROVER_GROUP));
 		stateActions.add(applicationViewEditWithViewerRecruiter(state)); //
 		stateActions.add(applicationWithdraw(APPLICATION_PARENT_APPROVER_GROUP, APPLICATION_DELETE_REFEREE_GROUP));
 	}

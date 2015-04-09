@@ -21,7 +21,7 @@ public class PrismApplicationApprovalPendingFeedback extends PrismWorkflowState 
 	protected void setStateActions() {
 		stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator()); //
 
-		stateActions.add(applicationCompleteApproval()); //
+		stateActions.add(applicationCompleteApproval(state)); //
 
 		stateActions.add(applicationConfirmPrimarySupervision() //
 		        .withTransitions(APPLICATION_CONFIRM_SUPERVISION_TRANSITION //

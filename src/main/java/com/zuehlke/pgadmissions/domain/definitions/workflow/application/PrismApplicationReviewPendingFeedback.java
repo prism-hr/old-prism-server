@@ -18,7 +18,7 @@ public class PrismApplicationReviewPendingFeedback extends PrismWorkflowState {
 	@Override
 	protected void setStateActions() {
 		stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator());
-		stateActions.add(applicationCompleteReview());
+		stateActions.add(applicationCompleteReview(state));
 		stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator());
 		stateActions.add(applicationEscalate(APPLICATION_REVIEW_PENDING_COMPLETION));
 

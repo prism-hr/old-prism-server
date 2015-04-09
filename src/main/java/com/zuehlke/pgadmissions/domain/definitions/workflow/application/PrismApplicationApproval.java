@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_SUPERVISORS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_SECONDARY_SUPERVISION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
@@ -52,7 +53,8 @@ public class PrismApplicationApproval extends PrismWorkflowState {
 		                        .withRoleTransitions(APPLICATION_CREATE_SUPERVISOR_GROUP))); //
 
 		stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator()); //
-		stateActions.add(applicationCompleteState(APPLICATION_APPROVER_GROUP, APPLICATION_DELETE_ADMINISTRATOR_GROUP));
+		stateActions.add(applicationCompleteState(APPLICATION_COMPLETE_APPROVAL_STAGE, state, APPLICATION_APPROVER_GROUP,
+		        APPLICATION_DELETE_ADMINISTRATOR_GROUP));
 		stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator()); //
 		stateActions.add(applicationEscalate(APPLICATION_DELETE_REFEREE_GROUP, APPLICATION_DELETE_ADMINISTRATOR_GROUP)); //
 		stateActions.add(applicationViewEditWithViewerRecruiterAndAdministrator(state)); //
@@ -61,8 +63,9 @@ public class PrismApplicationApproval extends PrismWorkflowState {
 		        APPLICATION_DELETE_ADMINISTRATOR_GROUP));
 	}
 
-	public static PrismStateAction applicationCompleteApproval() {
-		return applicationCompleteState(APPLICATION_APPROVER_GROUP, //
+	public static PrismStateAction applicationCompleteApproval(PrismState state) {
+		return applicationCompleteState(APPLICATION_COMPLETE_APPROVAL_STAGE, state, //
+		        APPLICATION_APPROVER_GROUP, //
 		        APPLICATION_DELETE_ADMINISTRATOR_GROUP, //
 		        APPLICATION_DELETE_SUPERVISOR_GROUP); //
 	}

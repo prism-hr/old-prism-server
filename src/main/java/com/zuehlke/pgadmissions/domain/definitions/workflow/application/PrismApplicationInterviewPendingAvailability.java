@@ -20,7 +20,7 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
 	@Override
 	protected void setStateActions() {
 		stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator()); //
-		stateActions.add(applicationCompleteInterviewScheduling());
+		stateActions.add(applicationCompleteInterviewScheduling(state));
 		stateActions.add(applicationConfirmInterviewArrangements()); //
 		stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator()); //
 		stateActions.add(applicationEscalate(APPLICATION_INTERVIEW_PENDING_SCHEDULING)); //

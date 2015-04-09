@@ -80,9 +80,12 @@ public class CommentDAO {
 		        .setMaxResults(1) //
 		        .uniqueResult();
 	}
-
+	
+	// FIXME: Better query to eliminate all of the silly post processing
 	public List<Comment> getApplicationAssessmentComments(Application application) {
 		return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+				.createAlias("application", "application", JoinType.INNER_JOIN) //
+				.createAlias("application.comments", "negativeComment", JoinType.LEFT_OUTER_JOIN) //
 		        .add(Restrictions.eq("application", application)) //
 		        .add(Restrictions.eq("applicationInterested", true)) //
 		        .addOrder(Order.asc("user")) //

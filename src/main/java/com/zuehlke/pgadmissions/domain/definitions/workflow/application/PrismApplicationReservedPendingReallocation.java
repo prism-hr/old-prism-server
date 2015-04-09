@@ -18,7 +18,7 @@ public class PrismApplicationReservedPendingReallocation extends PrismWorkflowSt
 		stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
 		stateActions.add(applicationEscalateReserved()); //
 
-		stateActions.add(applicationCompleteReserved() //
+		stateActions.add(applicationCompleteReserved(state) //
 		        .withRaisesUrgentFlag() //
 		        .withNotification(SYSTEM_APPLICATION_TASK_REQUEST));
 

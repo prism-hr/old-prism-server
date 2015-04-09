@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_REVIEWERS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_REVIEW_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER;
@@ -52,7 +53,8 @@ public class PrismApplicationReview extends PrismWorkflowState {
 		                        .withRoleTransitions(APPLICATION_CREATE_REVIEWER_GROUP)));
 
 		stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator());
-		stateActions.add(applicationCompleteState(APPLICATION_ADMINISTRATOR_GROUP, APPLICATION_DELETE_ADMINISTRATOR_GROUP));
+		stateActions.add(applicationCompleteState(APPLICATION_COMPLETE_REVIEW_STAGE, state, //
+		        APPLICATION_ADMINISTRATOR_GROUP, APPLICATION_DELETE_ADMINISTRATOR_GROUP));
 		stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator());
 		stateActions.add(applicationEscalate(APPLICATION_DELETE_REFEREE_GROUP, APPLICATION_DELETE_ADMINISTRATOR_GROUP));
 		stateActions.add(applicationViewEditWithViewerRecruiterAndAdministrator(state)); //
@@ -61,8 +63,9 @@ public class PrismApplicationReview extends PrismWorkflowState {
 		        APPLICATION_DELETE_ADMINISTRATOR_GROUP));
 	}
 
-	public static PrismStateAction applicationCompleteReview() {
-		return applicationCompleteState(APPLICATION_ADMINISTRATOR_GROUP, //
+	public static PrismStateAction applicationCompleteReview(PrismState state) {
+		return applicationCompleteState(APPLICATION_COMPLETE_REVIEW_STAGE, state, //
+		        APPLICATION_ADMINISTRATOR_GROUP, //
 		        APPLICATION_DELETE_ADMINISTRATOR_GROUP, //
 		        APPLICATION_DELETE_REVIEWER_GROUP);
 	}

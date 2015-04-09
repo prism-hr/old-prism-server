@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_STAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_REFERENCE_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_REFEREE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_PROVIDE_REFERENCE_GROUP;
@@ -22,7 +22,7 @@ public class PrismApplicationReferencePendingCompletion extends PrismWorkflowSta
 	protected void setStateActions() {
 		stateActions.add(applicationCommentWithViewerRecruiter()); //
 
-		stateActions.add(applicationCompleteReference() //
+		stateActions.add(applicationCompleteReference(state) //
 		        .withRaisesUrgentFlag() //
 		        .withNotification(SYSTEM_APPLICATION_TASK_REQUEST));
 
@@ -32,7 +32,7 @@ public class PrismApplicationReferencePendingCompletion extends PrismWorkflowSta
 		stateActions.add(applicationProvideReference()
 		        .withTransitions(new PrismStateTransition() //
 		                .withTransitionState(APPLICATION_REFERENCE_PENDING_COMPLETION) //
-		                .withTransitionAction(APPLICATION_COMPLETE_STAGE) //
+		                .withTransitionAction(APPLICATION_COMPLETE_REFERENCE_STAGE) //
 		                .withRoleTransitions(APPLICATION_PROVIDE_REFERENCE_GROUP))); //
 
 		stateActions.add(applicationViewEditReference(state)); //

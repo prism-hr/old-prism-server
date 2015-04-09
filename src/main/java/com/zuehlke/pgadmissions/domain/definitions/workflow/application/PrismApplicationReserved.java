@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_RESERVED_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_RESERVE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_RESERVE_NOTIFICATION;
@@ -17,6 +18,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEditWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdraw;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
@@ -40,13 +42,13 @@ public class PrismApplicationReserved extends PrismWorkflowState {
 		                .withTransitionState(APPLICATION_RESERVED_WAITING) //
 		                .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST)));
 
-		stateActions.add(applicationCompleteReserved());
+		stateActions.add(applicationCompleteReserved(state));
 		stateActions.add(applicationViewEditWithViewerRecruiter(state)); //
 		stateActions.add(applicationWithdrawnReserved());
 	}
 
-	public static PrismStateAction applicationCompleteReserved() {
-		return applicationCompleteState(APPLICATION_PARENT_ADMINISTRATOR_GROUP);
+	public static PrismStateAction applicationCompleteReserved(PrismState state) {
+		return applicationCompleteState(APPLICATION_COMPLETE_RESERVED_STAGE, state, APPLICATION_PARENT_ADMINISTRATOR_GROUP);
 	}
 
 	public static PrismStateAction applicationEscalateReserved() {

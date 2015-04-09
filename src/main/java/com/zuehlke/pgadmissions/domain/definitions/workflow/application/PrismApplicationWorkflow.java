@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CORRECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
@@ -39,6 +38,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTra
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_ESCALATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_WITHDRAW_TRANSITION;
 
+import java.util.List;
+
+import com.google.api.client.util.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup;
@@ -68,15 +70,17 @@ public class PrismApplicationWorkflow {
 		        .withNotifications(APPLICATION_ADMINISTRATOR, SYSTEM_APPLICATION_UPDATE_NOTIFICATION);
 	}
 
-	public static PrismStateAction applicationCompleteState(PrismRoleGroup assignees) {
-		return applicationCompleteStateAbstract(assignees)
-		        .withTransitions(APPLICATION_COMPLETE_STATE_TRANSITION);
+	public static PrismStateAction applicationCompleteState(PrismAction action, PrismState state, PrismRoleGroup assignees) {
+		return applicationCompleteStateAbstract(action, assignees)
+		        .withTransitions(APPLICATION_COMPLETE_STATE_TRANSITION //
+		                .withExclusions(applicationNextStateExclusions(state)));
 	}
 
-	public static PrismStateAction applicationCompleteState(PrismRoleGroup assignees, PrismRoleTransitionGroup... roleTransitions) {
-		return applicationCompleteStateAbstract(assignees)
+	public static PrismStateAction applicationCompleteState(PrismAction action, PrismState state, PrismRoleGroup assignees,
+	        PrismRoleTransitionGroup... roleTransitions) {
+		return applicationCompleteStateAbstract(action, assignees)
 		        .withTransitions(APPLICATION_COMPLETE_STATE_TRANSITION //
-		                .withRoleTransitions(roleTransitions));
+		                .withRoleTransitionsAndExclusions(applicationNextStateExclusions(state), roleTransitions));
 	}
 
 	public static PrismStateAction applicationCorrect(PrismState state) {
@@ -201,22 +205,30 @@ public class PrismApplicationWorkflow {
 		                .withRoleTransitions(roleTransitions));
 	}
 
-	private static PrismStateAction applicationCompleteStateAbstract(PrismRoleGroup assignees) {
+	private static PrismStateAction applicationCompleteStateAbstract(PrismAction action, PrismRoleGroup assignees) {
 		return new PrismStateAction() //
-		        .withAction(APPLICATION_COMPLETE_STAGE) //
+		        .withAction(action) //
 		        .withAssignments(assignees) //
 		        .withNotifications(assignees, SYSTEM_APPLICATION_UPDATE_NOTIFICATION);
 	}
-	
+
 	private static PrismStateAction applicationEscalateAbstract() {
 		return new PrismStateAction() //
 		        .withAction(APPLICATION_ESCALATE);
 	}
-	
+
 	private static PrismStateAction applicationWithdrawAbstract() {
-	    return new PrismStateAction() //
+		return new PrismStateAction() //
 		        .withAction(APPLICATION_WITHDRAW) //
 		        .withAssignments(APPLICATION_CREATOR);
-    }
+	}
+
+	private static List<PrismState> applicationNextStateExclusions(PrismState state) {
+		List<PrismState> exclusions = Lists.newArrayList();
+		if (state.name().equals(state.getStateGroup().name())) {
+			exclusions.add(state);
+		}
+		return exclusions;
+	}
 
 }

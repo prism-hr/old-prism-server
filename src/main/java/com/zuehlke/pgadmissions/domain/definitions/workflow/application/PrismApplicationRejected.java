@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_STAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_REFERENCE_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_REJECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_REVERSE_REJECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION;
@@ -45,7 +45,7 @@ public class PrismApplicationRejected extends PrismWorkflowState {
 
 		stateActions.add(applicationEmailCreatorWithViewerRecruiter());
 		stateActions.add(applicationEscalate(APPLICATION_DELETE_REFEREE_GROUP));
-		stateActions.add(applicationCompleteState(APPLICATION_PARENT_APPROVER_GROUP));
+		stateActions.add(applicationCompleteState(APPLICATION_COMPLETE_REFERENCE_STAGE, state, APPLICATION_PARENT_APPROVER_GROUP));
 		stateActions.add(applicationViewEditWithViewerRecruiter(state));
 		stateActions.add(applicationWithdraw(APPLICATION_PARENT_APPROVER_GROUP, APPLICATION_DELETE_REFEREE_GROUP));
 	}
@@ -62,7 +62,7 @@ public class PrismApplicationRejected extends PrismWorkflowState {
 		        .withNotifications(APPLICATION_PARENT_APPROVER_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
 		        .withTransitions(new PrismStateTransition() //
 		                .withTransitionState(APPLICATION_REJECTED) //
-		                .withTransitionAction(APPLICATION_COMPLETE_STAGE) //
+		                .withTransitionAction(APPLICATION_COMPLETE_REFERENCE_STAGE) //
 		                .withRoleTransitions(APPLICATION_EXHUME_REFEREE_GROUP));
 	}
 

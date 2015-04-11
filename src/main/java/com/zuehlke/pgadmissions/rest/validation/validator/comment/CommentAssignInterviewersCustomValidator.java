@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.validation.validator.comment;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
 import static com.zuehlke.pgadmissions.utils.ValidationUtils.rejectIfNotNull;
 
 import java.util.Set;
@@ -31,7 +32,7 @@ public class CommentAssignInterviewersCustomValidator implements Validator {
     public void validate(Object target, Errors errors) {
         Comment comment = (Comment) target;
         PrismAction action = comment.getAction().getId();
-        Preconditions.checkArgument(action == PrismAction.APPLICATION_ASSIGN_INTERVIEWERS, "Unexpected action: " + action);
+        Preconditions.checkArgument(action == APPLICATION_ASSIGN_INTERVIEWERS, "Unexpected action: " + action);
 
         boolean takenPlace = false;
         CommentApplicationInterviewAppointment interviewAppointment = comment.getInterviewAppointment();

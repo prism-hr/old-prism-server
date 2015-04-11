@@ -4,62 +4,84 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.validation.Validator;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public class PrismActionValidationDefinition {
 
-    private Map<PrismActionCommentField, List<PrismActionValidationFieldResolution>> fieldResolutions;
+	private Map<PrismActionCommentField, List<PrismActionValidationFieldResolution>> fieldResolutions;
 
-    private Validator customValidator;
+	private Set<PrismActionValidationFieldResolutionCaveat> fieldCaveats;
 
-    public PrismActionValidationDefinition(Map<PrismActionCommentField, List<PrismActionValidationFieldResolution>> fieldResolutions) {
-        this(fieldResolutions, null);
-    }
+	private Validator customValidator;
 
-    public PrismActionValidationDefinition(Map<PrismActionCommentField, List<PrismActionValidationFieldResolution>> fieldResolutions, Validator customValidator) {
-        this.fieldResolutions = fieldResolutions;
-        this.customValidator = customValidator;
-    }
+	public PrismActionValidationDefinition(Map<PrismActionCommentField, List<PrismActionValidationFieldResolution>> fieldResolutions) {
+		this(fieldResolutions, null);
+	}
 
-    public Map<PrismActionCommentField, List<PrismActionValidationFieldResolution>> getFieldResolutions() {
-        return fieldResolutions;
-    }
+	public PrismActionValidationDefinition(Map<PrismActionCommentField, List<PrismActionValidationFieldResolution>> fieldResolutions,
+	        Set<PrismActionValidationFieldResolutionCaveat> fieldCaveats) {
+		this(fieldResolutions, fieldCaveats, null);
+	}
 
-    public Validator getCustomValidator() {
-        return customValidator;
-    }
+	public PrismActionValidationDefinition(Map<PrismActionCommentField, List<PrismActionValidationFieldResolution>> fieldResolutions,
+	        Set<PrismActionValidationFieldResolutionCaveat> fieldCaveats, Validator customValidator) {
+		this.fieldResolutions = fieldResolutions;
+		this.fieldCaveats = fieldCaveats;
+		this.customValidator = customValidator;
+	}
 
-    public static PrismActionValidationDefinitionBuilder builder() {
-        return new PrismActionValidationDefinitionBuilder();
-    }
+	public Map<PrismActionCommentField, List<PrismActionValidationFieldResolution>> getFieldResolutions() {
+		return fieldResolutions;
+	}
+	
+	public Set<PrismActionValidationFieldResolutionCaveat> getFieldCaveats() {
+		return fieldCaveats;
+	}
 
-    public static class PrismActionValidationDefinitionBuilder {
+	public Validator getCustomValidator() {
+		return customValidator;
+	}
 
-        private Map<PrismActionCommentField, List<PrismActionValidationFieldResolution>> fieldDefinitions = Maps.newLinkedHashMap();
+	public static PrismActionValidationDefinitionBuilder builder() {
+		return new PrismActionValidationDefinitionBuilder();
+	}
 
-        private Validator customValidator;
+	public static class PrismActionValidationDefinitionBuilder {
 
-        public PrismActionValidationDefinitionBuilder addResolution(PrismActionCommentField field, PrismActionValidationFieldResolution... resolutions) {
-            fieldDefinitions.put(field, Arrays.asList(resolutions));
-            return this;
-        }
+		private Map<PrismActionCommentField, List<PrismActionValidationFieldResolution>> fieldResolutions = Maps.newLinkedHashMap();
 
-        public PrismActionValidationDefinitionBuilder addResolution(PrismActionCommentField field, PrismActionValidationFieldRestriction restriction) {
-            fieldDefinitions.put(field, Collections.singletonList(new PrismActionValidationFieldResolution(restriction)));
-            return this;
-        }
+		private Set<PrismActionValidationFieldResolutionCaveat> fieldCaveats = Sets.newLinkedHashSet();
 
-        public PrismActionValidationDefinitionBuilder setCustomValidator(Validator customValidator) {
-            this.customValidator = customValidator;
-            return this;
-        }
+		private Validator customValidator;
 
-        public PrismActionValidationDefinition build() {
-            return new PrismActionValidationDefinition(fieldDefinitions, customValidator);
-        }
-    }
+		public PrismActionValidationDefinitionBuilder addResolution(PrismActionCommentField field, PrismActionValidationFieldResolution... resolutions) {
+			fieldResolutions.put(field, Arrays.asList(resolutions));
+			return this;
+		}
+
+		public PrismActionValidationDefinitionBuilder addResolution(PrismActionCommentField field, PrismActionValidationFieldRestriction restriction) {
+			fieldResolutions.put(field, Collections.singletonList(new PrismActionValidationFieldResolution(restriction)));
+			return this;
+		}
+
+		public PrismActionValidationDefinitionBuilder addCaveat(PrismActionValidationFieldResolutionCaveat fieldCaveat) {
+			this.fieldCaveats.add(fieldCaveat);
+			return this;
+		}
+
+		public PrismActionValidationDefinitionBuilder setCustomValidator(Validator customValidator) {
+			this.customValidator = customValidator;
+			return this;
+		}
+
+		public PrismActionValidationDefinition build() {
+			return new PrismActionValidationDefinition(fieldResolutions, fieldCaveats, customValidator);
+		}
+	}
 
 }

@@ -29,7 +29,7 @@ public enum PrismActionCommentField {
         this.propertyPath = propertyPath;
     }
 
-    PrismActionCommentField() {
+    private PrismActionCommentField() {
         this.propertyPath = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name());
     }
 

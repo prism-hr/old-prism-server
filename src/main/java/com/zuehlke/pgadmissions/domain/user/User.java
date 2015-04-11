@@ -353,10 +353,6 @@ public class User implements UserDetails, UniqueEntity {
 		return userAccount != null && userAccount.getEnabled();
 	}
 
-	public String getIndexName() {
-		return lastName + " " + firstName;
-	}
-
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return Collections.emptyList();

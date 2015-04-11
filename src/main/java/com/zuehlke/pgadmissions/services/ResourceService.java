@@ -5,6 +5,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -144,6 +146,10 @@ public class ResourceService {
 
 	@Inject
 	private ApplicationContext applicationContext;
+
+	public Resource getById(PrismScope resourceScope, Integer id) {
+		return entityService.getById(resourceScope.getResourceClass(), id);
+	}
 
 	public <T extends Resource> T getById(Class<T> resourceClass, Integer id) {
 		return entityService.getById(resourceClass, id);
@@ -377,8 +383,8 @@ public class ResourceService {
 		        assignedResources, filter, lastSequenceIdentifier, maxRecords, hasRedactions);
 	}
 
-	public <T extends Resource> ResourceSummaryRepresentation getResourceSummary(Class<T> resourceClass, Integer resourceId) {
-		ResourceParent resource = (ResourceParent) getById(resourceClass, resourceId);
+	public ResourceSummaryRepresentation getResourceSummary(PrismScope resourceScope, Integer resourceId) {
+		ResourceParent resource = (ResourceParent) getById(resourceScope, resourceId);
 
 		ResourceSummaryRepresentation summary = new ResourceSummaryRepresentation().withCreatedDate(resource.getCreatedTimestamp().toLocalDate())
 		        .withApplicationCreatedCount(resource.getApplicationCreatedCount()).withApplicationSubmittedCount(resource.getApplicationSubmittedCount())
@@ -386,10 +392,10 @@ public class ResourceService {
 		        .withApplicationWithdrawnCount(resource.getApplicationWithdrawnCount()).withApplicationRatingCount(resource.getApplicationRatingCount())
 		        .withApplicationRatingOccurenceAverage(resource.getApplicationRatingCountAverageNonZero());
 
-		if (resourceClass == Institution.class) {
+		if (resourceScope == INSTITUTION) {
 			summary.setProgramCount(programService.getActiveProgramCount((Institution) resource));
 			summary.setProjectCount(projectService.getActiveProjectCount(resource));
-		} else if (resourceClass == Program.class) {
+		} else if (resourceScope == PROGRAM) {
 			summary.setProjectCount(projectService.getActiveProjectCount(resource));
 		}
 

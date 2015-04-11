@@ -196,6 +196,12 @@ public class Application extends Resource {
     @Column(name = "submitted_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime submittedTimestamp;
+    
+    @Column(name = "application_year")
+    private String applicationYear;
+    
+    @Column(name = "application_month")
+    private Integer applicationMonth;
 
     @ManyToOne
     @JoinColumn(name = "state_id")
@@ -441,7 +447,23 @@ public class Application extends Resource {
         this.submittedTimestamp = submittedTimestamp;
     }
 
-    public LocalDate getClosingDate() {
+    public String getApplicationYear() {
+		return applicationYear;
+	}
+
+	public void setApplicationYear(String applicationYear) {
+		this.applicationYear = applicationYear;
+	}
+
+	public Integer getApplicationMonth() {
+		return applicationMonth;
+	}
+
+	public void setApplicationMonth(Integer applicationMonth) {
+		this.applicationMonth = applicationMonth;
+	}
+
+	public LocalDate getClosingDate() {
         return closingDate;
     }
 

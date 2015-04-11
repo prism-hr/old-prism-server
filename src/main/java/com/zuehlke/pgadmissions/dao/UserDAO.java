@@ -21,16 +21,17 @@ import org.springframework.stereotype.Repository;
 import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
+import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -83,46 +84,99 @@ public class UserDAO {
 		        .uniqueResult();
 	}
 
-	public List<User> getSuggestedSupervisors(Application application) {
-		return (List<User>) sessionFactory.getCurrentSession().createCriteria(ApplicationSupervisor.class) //
-		        .setProjection(Projections.groupProperty("user.parentUser")) //
+	public List<UserSelectionDTO> getSuggestedSupervisors(Application application) {
+		return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(ApplicationSupervisor.class) //
+		        .setProjection(Projections.projectionList() //
+		                .add(Projections.property("parentUser.id"), "id") //
+		                .add(Projections.property("parentUser.firstName"), "firstName") //
+		                .add(Projections.property("parentUser.lastName"), "lastName") //
+		                .add(Projections.property("parentUser.email"), "email")) //
 		        .createAlias("user", "user", JoinType.INNER_JOIN) //
-		        .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
+		        .createAlias("user.parentUser", "parentUser", JoinType.INNER_JOIN) //
+		        .createAlias("parentUser.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
 		        .add(Restrictions.eq("application", application)) //
 		        .add(Restrictions.disjunction() //
-		                .add(Restrictions.isNull("user.userAccount")) //
+		                .add(Restrictions.isNull("userAccount.id")) //
 		                .add(Restrictions.eq("userAccount.enabled", true))) //
-		        .addOrder(Order.asc("user.firstName")) //
-		        .addOrder(Order.asc("user.lastName")) //
+		        .addOrder(Order.asc("parentUser.firstName")) //
+		        .addOrder(Order.asc("parentUser.lastName")) //
 		        .addOrder(Order.asc("user.id")) //
+		        .setResultTransformer(Transformers.aliasToBean(UserSelectionDTO.class)) //
 		        .list();
 	}
 
-	public List<User> getUsersPotentiallyInterestedInApplication(Program applicationProgram, List<User> interestedUsers) {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-		        .setProjection(Projections.groupProperty("user.parentUser")) //
+	public List<UserSelectionDTO> getUsersInterestedInApplication(Application application) {
+		return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+		        .setProjection(Projections.projectionList() //
+		                .add(Projections.groupProperty("parentUser.id"), "id") //
+		                .add(Projections.property("parentUser.firstName"), "firstName") //
+		                .add(Projections.property("parentUser.lastName"), "lastName") //
+		                .add(Projections.property("parentUser.email"), "email") //
+		                .add(Projections.max("createdTimestamp"), "eventTimestamp")) //
 		        .createAlias("user", "user", JoinType.INNER_JOIN) //
-		        .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
-		        .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN) //
-				.createAlias("program.projects", "programProject", JoinType.LEFT_OUTER_JOIN) //
-		        .createAlias("program.applications", "programApplication", JoinType.LEFT_OUTER_JOIN) //
+		        .createAlias("user.parentUser", "parentUser", JoinType.INNER_JOIN) //
+		        .createAlias("parentUser.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
+		        .add(Restrictions.eq("application", application)) //
 		        .add(Restrictions.disjunction() //
-		                .add(Restrictions.eq("program", applicationProgram)) //
-		                .add(Restrictions.eq("programProject.program", applicationProgram)) //
-		                .add(Restrictions.eq("programApplication.program", applicationProgram))) //
-		        .add(Restrictions.in("role.id", APPLICATION_POTENTIAL_SUPERVISOR_GROUP.getRoles())) //
-		        .add(Restrictions.disjunction() //
-		                .add(Restrictions.isNull("user.userAccount")) //
-		                .add(Restrictions.eq("userAccount.enabled", true))); //
+		                .add(Restrictions.isNull("userAccount.id")) //
+		                .add(Restrictions.eq("userAccount.enabled", true))) //
+		        .add(Restrictions.eq("applicationInterested", true)) //
+		        .addOrder(Order.asc("parentUser.firstName")) //
+		        .addOrder(Order.asc("parentUser.lastName")) //
+		        .setResultTransformer(Transformers.aliasToBean(UserSelectionDTO.class))
+		        .list();
+	}
 
-		if (!interestedUsers.isEmpty()) {
-			criteria.add(Restrictions.not( //
-			        Restrictions.in("user.parentUser", interestedUsers)));
+	public List<UserSelectionDTO> getUsersNotInterestedInApplication(Application application) {
+		return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+		        .setProjection(Projections.projectionList() //
+		                .add(Projections.groupProperty("parentUser.id"), "id") //
+		                .add(Projections.property("parentUser.firstName"), "firstName") //
+		                .add(Projections.property("parentUser.lastName"), "lastName") //
+		                .add(Projections.property("parentUser.email"), "email") //
+		                .add(Projections.max("createdTimestamp"), "eventTimestamp")) //
+		        .createAlias("user", "user", JoinType.INNER_JOIN) //
+		        .createAlias("user.parentUser", "parentUser", JoinType.INNER_JOIN) //
+		        .createAlias("parentUser.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
+		        .add(Restrictions.eq("application", application)) //
+		        .add(Restrictions.disjunction() //
+		                .add(Restrictions.isNull("userAccount.id")) //
+		                .add(Restrictions.eq("userAccount.enabled", true))) //
+		        .add(Restrictions.eq("applicationInterested", false)) //
+		        .setResultTransformer(Transformers.aliasToBean(UserSelectionDTO.class))
+		        .list();
+	}
+
+	public List<UserSelectionDTO> getUsersPotentiallyInterestedInApplication(Integer program, List<Integer> relatedProjects, List<Integer> relatedApplications) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+		        .setProjection(Projections.projectionList() //
+		                .add(Projections.groupProperty("parentUser.id"), "id") //
+		                .add(Projections.property("parentUser.firstName"), "firstName") //
+		                .add(Projections.property("parentUser.lastName"), "lastName") //
+		                .add(Projections.property("parentUser.email"), "email")) //
+		        .createAlias("user", "user", JoinType.INNER_JOIN) //
+		        .createAlias("user.parentUser", "parentUser", JoinType.INNER_JOIN) //
+		        .createAlias("parentUser.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN); //
+
+		Junction condition = Restrictions.disjunction() //
+		        .add(Restrictions.eq("program.id", program)); //
+
+		if (!relatedProjects.isEmpty()) {
+			condition.add(Restrictions.in("project.id", relatedProjects));
 		}
 
-		return criteria.addOrder(Order.asc("user.lastName")) //
-		        .addOrder(Order.asc("user.firstName")) //
-		        .addOrder(Order.asc("user.id")) //
+		if (!relatedApplications.isEmpty()) {
+			condition.add(Restrictions.in("application.id", relatedApplications));
+		}
+
+		return (List<UserSelectionDTO>) criteria.add(condition) //
+		        .add(Restrictions.in("role.id", APPLICATION_POTENTIAL_SUPERVISOR_GROUP.getRoles())) //
+		        .add(Restrictions.disjunction() //
+		                .add(Restrictions.isNull("userAccount.id")) //
+		                .add(Restrictions.eq("userAccount.enabled", true))) //
+		        .addOrder(Order.asc("parentUser.firstName")) //
+		        .addOrder(Order.asc("parentUser.lastName")) //
+		        .setResultTransformer(Transformers.aliasToBean(UserSelectionDTO.class))
 		        .list();
 	}
 

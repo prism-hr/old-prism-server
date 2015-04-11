@@ -234,6 +234,10 @@
 			<b>state</b>
 		</field>
 		<field>
+			<a>previousState.id</a>
+			<b>previousState</b>
+		</field>
+		<field>
 			<a>state.stateGroup.id</a>
 			<b>stateGroup</b>
 		</field>

@@ -19,6 +19,8 @@ public class AbstractResourceRepresentation {
     private String code;
 
     private PrismState state;
+    
+    private PrismState previousState;
 
     private PrismStateGroup stateGroup;
 
@@ -68,7 +70,15 @@ public class AbstractResourceRepresentation {
         this.state = state;
     }
 
-    public PrismStateGroup getStateGroup() {
+    public PrismState getPreviousState() {
+		return previousState;
+	}
+
+	public void setPreviousState(PrismState previousState) {
+		this.previousState = previousState;
+	}
+
+	public PrismStateGroup getStateGroup() {
         return stateGroup;
     }
 

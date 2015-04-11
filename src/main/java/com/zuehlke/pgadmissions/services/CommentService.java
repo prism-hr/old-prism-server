@@ -78,7 +78,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.Applica
 import com.zuehlke.pgadmissions.rest.representation.resource.application.InterviewRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.OfferRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.UserAppointmentPreferencesRepresentation;
-import com.zuehlke.pgadmissions.rest.validation.validator.comment.CommentValidator;
+import com.zuehlke.pgadmissions.rest.validation.validator.CommentValidator;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
 

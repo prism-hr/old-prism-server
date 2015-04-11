@@ -233,6 +233,14 @@ public class ProgramService {
 		List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
 		return programDAO.getActiveProgramsByInstitution(institutionId, activeProgramStates);
 	}
+	
+	public List<Integer> getProjects(Integer program) {
+		return programDAO.getProjects(program);
+	}
+	
+	public List<Integer> getApplications(Integer program) {
+		return programDAO.getApplications(program);
+	}
 
 	private void update(Integer programId, ProgramDTO programDTO) {
 		Program program = entityService.getById(Program.class, programId);

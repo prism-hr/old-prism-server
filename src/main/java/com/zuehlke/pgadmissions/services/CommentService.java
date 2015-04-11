@@ -211,10 +211,6 @@ public class CommentService {
 		return timeline;
 	}
 
-	public List<Comment> getApplicationAssessmentComments(Application application) {
-		return commentDAO.getApplicationAssessmentComments(application);
-	}
-
 	public InterviewRepresentation getInterview(Application application) {
 		Comment schedulingComment = commentDAO.getLatestComment(application, PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
 		if (schedulingComment == null) {

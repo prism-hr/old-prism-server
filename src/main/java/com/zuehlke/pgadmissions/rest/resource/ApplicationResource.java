@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
-import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDocumentDTO;
@@ -257,16 +257,16 @@ public class ApplicationResource {
             refereeRepresentations.get(referee.getId()).setCommentId(reference == null ? null : reference.getId());
         }
 
-        List<User> interested = userService.getUsersInterestedInApplication(application);
-        List<User> potentiallyInterested = userService.getUsersPotentiallyInterestedInApplication(application, interested);
+        List<UserSelectionDTO> interested = userService.getUsersInterestedInApplication(application);
+        List<UserSelectionDTO> potentiallyInterested = userService.getUsersPotentiallyInterestedInApplication(application, interested);
         List<UserRepresentation> interestedRepresentations = Lists.newArrayListWithCapacity(interested.size());
         List<UserRepresentation> potentiallyInterestedRepresentations = Lists.newArrayListWithCapacity(potentiallyInterested.size());
 
-        for (User user : interested) {
+        for (UserSelectionDTO user : interested) {
             interestedRepresentations.add(beanMapper.map(user, UserRepresentation.class));
         }
 
-        for (User user : potentiallyInterested) {
+        for (UserSelectionDTO user : potentiallyInterested) {
             potentiallyInterestedRepresentations.add(beanMapper.map(user, UserRepresentation.class));
         }
 

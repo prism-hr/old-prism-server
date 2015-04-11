@@ -34,6 +34,7 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.program.ProgramLocation;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
+import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
@@ -250,6 +251,20 @@ public class ProgramDAO {
 		        .addOrder(Order.desc("updatedTimestampSitemap")) //
 		        .setResultTransformer(Transformers.aliasToBean(ResourceSearchEngineDTO.class)) //
 		        .list();
+	}
+	
+	public List<Integer> getProjects(Integer program) {
+		return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Project.class) //
+				.setProjection(Projections.property("id")) //
+				.add(Restrictions.eq("program.id", program)) //
+				.list();
+	}
+	
+	public List<Integer> getApplications(Integer program) {
+		return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+				.setProjection(Projections.property("id")) //
+				.add(Restrictions.eq("program.id", program)) //
+				.list();
 	}
 
 }

@@ -296,7 +296,14 @@ public class ApplicationService {
 
 	public void preProcessApplication(Application application, Comment comment) {
 		if (comment.isApplicationSubmittedComment()) {
-			application.setSubmittedTimestamp(new DateTime());
+			DateTime submittedTimestamp = new DateTime();
+			application.setSubmittedTimestamp(submittedTimestamp);
+			
+			Integer applicationMonth = submittedTimestamp.getMonthOfYear();
+			Integer applicationYear = applicationMonth < 10 ? (submittedTimestamp.getYear() - 1) : submittedTimestamp.getYear();
+			application.setApplicationYear(applicationYear.toString() + "/" + new Integer(applicationYear + 1).toString());
+			application.setApplicationMonth(applicationMonth);
+			
 			AdvertClosingDate advertClosingDate = application.getAdvert().getClosingDate();
 			application.setClosingDate(advertClosingDate == null ? null : advertClosingDate.getClosingDate());
 		}

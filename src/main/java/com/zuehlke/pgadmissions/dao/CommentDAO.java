@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
@@ -81,19 +80,6 @@ public class CommentDAO {
 		        .uniqueResult();
 	}
 	
-	// FIXME: Better query to eliminate all of the silly post processing
-	public List<Comment> getApplicationAssessmentComments(Application application) {
-		return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-				.createAlias("application", "application", JoinType.INNER_JOIN) //
-				.createAlias("application.comments", "negativeComment", JoinType.LEFT_OUTER_JOIN) //
-		        .add(Restrictions.eq("application", application)) //
-		        .add(Restrictions.eq("applicationInterested", true)) //
-		        .addOrder(Order.asc("user")) //
-		        .addOrder(Order.desc("createdTimestamp")) //
-		        .addOrder(Order.desc("id")) //
-		        .list();
-	}
-
 	public List<User> getAppointmentInvitees(Comment comment) {
 		return (List<User>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
 		        .setProjection(Projections.groupProperty("user")) //

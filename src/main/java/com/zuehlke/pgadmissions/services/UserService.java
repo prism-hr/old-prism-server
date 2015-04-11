@@ -3,12 +3,12 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.security.core.Authentication;
@@ -22,10 +22,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
@@ -41,6 +39,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
+import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
@@ -63,6 +62,9 @@ public class UserService {
 
 	@Inject
 	private ApplicationSectionService applicationSectionService;
+
+	@Inject
+	private ProgramService programService;
 
 	@Inject
 	private RoleService roleService;
@@ -223,32 +225,45 @@ public class UserService {
 		return userDAO.getUserInstitutionId(user, institution, identityType);
 	}
 
-	public List<User> getUsersInterestedInApplication(Application application) {
-		Set<User> recruiters = Sets.newHashSet();
-		TreeMap<String, User> orderedRecruiters = Maps.newTreeMap();
+	public List<UserSelectionDTO> getUsersInterestedInApplication(Application application) {
+		TreeMap<String, UserSelectionDTO> orderedUsers = Maps.newTreeMap();
 
-		List<Comment> assessments = commentService.getApplicationAssessmentComments(application);
-		for (Comment comment : assessments) {
-			User recruiter = comment.getUser();
-			if (!recruiters.contains(recruiter)
-			        && ((BooleanUtils.isTrue(comment.getApplicationInterested())) || BooleanUtils.isTrue(comment.getRecruiterAcceptAppointment()))) {
-				orderedRecruiters.put(recruiter.getIndexName(), recruiter);
-			}
-			recruiters.add(recruiter);
+		Map<UserSelectionDTO, DateTime> userNotInterestedEvents = Maps.newHashMap();
+		List<UserSelectionDTO> usersNotInterested = userDAO.getUsersNotInterestedInApplication(application);
+		for (UserSelectionDTO userNotInterested : usersNotInterested) {
+			userNotInterestedEvents.put(userNotInterested, userNotInterested.getEventTimestamp());
 		}
 
-		List<User> suggestedSupervisors = userDAO.getSuggestedSupervisors(application);
-		for (User suggestedSupervisor : suggestedSupervisors) {
-			if (!recruiters.contains(suggestedSupervisor)) {
-				orderedRecruiters.put(suggestedSupervisor.getIndexName(), suggestedSupervisor);
+		List<UserSelectionDTO> usersInterested = userDAO.getUsersInterestedInApplication(application);
+		for (UserSelectionDTO userInterested : usersInterested) {
+			DateTime userNotInterestedTimestamp = userNotInterestedEvents.get(userInterested);
+			if (userNotInterestedTimestamp == null || userNotInterestedTimestamp.isBefore(userInterested.getEventTimestamp())) {
+				orderedUsers.put(userInterested.getIndexName(), userInterested);
 			}
 		}
 
-		return Lists.newLinkedList(orderedRecruiters.values());
+		List<UserSelectionDTO> suggestedSupervisors = userDAO.getSuggestedSupervisors(application);
+		for (UserSelectionDTO suggestedSupervisor : suggestedSupervisors) {
+			if (!(orderedUsers.containsValue(suggestedSupervisor) || userNotInterestedEvents.containsKey(suggestedSupervisor))) {
+				orderedUsers.put(suggestedSupervisor.getIndexName(), suggestedSupervisor);
+			}
+		}
+
+		return Lists.newLinkedList(orderedUsers.values());
 	}
 
-	public List<User> getUsersPotentiallyInterestedInApplication(Application application, List<User> usersToExclude) {
-		return userDAO.getUsersPotentiallyInterestedInApplication(application.getProgram(), usersToExclude);
+	public List<UserSelectionDTO> getUsersPotentiallyInterestedInApplication(Application application, List<UserSelectionDTO> usersToExclude) {
+		List<UserSelectionDTO> usersToInclude = Lists.newLinkedList();
+		Integer program = application.getProgram().getId();
+		List<Integer> relatedProjects = programService.getProjects(program);
+		List<Integer> relatedApplications = programService.getApplications(program);
+		List<UserSelectionDTO> usersPotentiallyInterested = userDAO.getUsersPotentiallyInterestedInApplication(program, relatedProjects, relatedApplications);
+		for (UserSelectionDTO userPotentiallyInterested : usersPotentiallyInterested) {
+			if (!usersToExclude.contains(userPotentiallyInterested)) {
+				usersToInclude.add(userPotentiallyInterested);
+			}
+		}
+		return usersToInclude;
 	}
 
 	public List<UserRepresentation> getSimilarUsers(String searchTerm) {

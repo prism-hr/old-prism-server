@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_INTERVIEWEE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_INTERVIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REVIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SECONDARY_SUPERVISOR;
@@ -37,6 +39,8 @@ public enum PrismRoleGroup {
 	        APPLICATION_ADMINISTRATOR, APPLICATION_REVIEWER, APPLICATION_INTERVIEWER, APPLICATION_PRIMARY_SUPERVISOR, APPLICATION_SECONDARY_SUPERVISOR,
 	        APPLICATION_VIEWER_RECRUITER), //
 
+	APPLICATION_POTENTIAL_INTERVIEW_GROUP(APPLICATION_POTENTIAL_INTERVIEWER, APPLICATION_POTENTIAL_INTERVIEWEE), //        
+	        
 	APPLICATION_CONFIRMED_INTERVIEW_GROUP(APPLICATION_INTERVIEWER, APPLICATION_INTERVIEWEE), //
 
 	PROJECT_SUPERVISOR_GROUP(PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR),

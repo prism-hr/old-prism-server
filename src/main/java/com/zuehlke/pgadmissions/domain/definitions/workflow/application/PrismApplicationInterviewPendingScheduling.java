@@ -44,7 +44,11 @@ public class PrismApplicationInterviewPendingScheduling extends PrismWorkflowSta
 		                .withTransitionAction(APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS) //
 		                .withRoleTransitions(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_GROUP)));
 
-		stateActions.add(applicationUpdateInterviewAvailability(state)); //
+		stateActions.add(applicationUpdateInterviewAvailability() //
+		        .withTransitions(new PrismStateTransition() //
+		                .withTransitionState(state) //
+		                .withTransitionAction(APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS)));
+
 		stateActions.add(applicationViewEditInterviewScheduling(state)); //
 		stateActions.add(applicationWithdrawInterviewScheduling());
 	}

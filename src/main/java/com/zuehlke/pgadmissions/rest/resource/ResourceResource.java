@@ -201,7 +201,6 @@ public class ResourceResource {
 	        @RequestParam PrismScope propertiesScope,
 	        @RequestParam(required = false) PrismLocale locale) throws Exception {
 		Resource resource = loadResource(resourceId, resourceDescriptor);
-		Thread.sleep(500);
 		return resourceService.getDisplayProperties(resource, propertiesScope, locale);
 	}
 

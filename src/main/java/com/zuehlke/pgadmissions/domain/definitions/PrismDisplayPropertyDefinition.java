@@ -919,6 +919,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 	 * *************** SYSTEM ADVERTISE SECTION *********************
 	 */
 
+    SYSTEM_ADVERTISE_PROGRAM_TYPE_LABEL(SYSTEM_ADVERTISE_SECTION, "Type"),
+    SYSTEM_ADVERTISE_PROGRAM_TYPE_HINT(SYSTEM_ADVERTISE_SECTION, "The type of the program."),
     SYSTEM_ADVERTISE_LOOKUP_ORGANIZATION_LABEL(SYSTEM_ADVERTISE_SECTION, "Lookup Organization"),
     SYSTEM_ADVERTISE_LOOKUP_GOOGLE_ORGANIZATION_LABEL(SYSTEM_ADVERTISE_SECTION, "Lookup Organization in Google"),
     SYSTEM_ADVERTISE_LOOKUP_ORGANIZATION_HINT(SYSTEM_ADVERTISE_SECTION, "Start typing the name of your organization."),
@@ -1231,8 +1233,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 	 * *************** PROGRAM FORM *********************
 	 */
 
-    PROGRAM_FORM_TYPE_LABEL(PROGRAM_FORM, "Type"),
-    PROGRAM_FORM_TYPE_HINT(PROGRAM_FORM, "The type of the programme."),
     PROGRAM_FORM_TITLE_LABEL(PROGRAM_FORM, "Title"),
     PROGRAM_FORM_TITLE_HINT(PROGRAM_FORM, "The title of your programme."),
     PROGRAM_FORM_SUMMARY_LABEL(PROGRAM_FORM, "Summary"),

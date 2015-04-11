@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.application;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_REQUIRED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.IMMEDIATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
 
@@ -52,6 +53,7 @@ import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.workflow.validation.PrismConstraintRequired;
 
 @Entity
 @Table(name = "APPLICATION")
@@ -221,6 +223,7 @@ public class Application extends Resource {
 
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	@PrismConstraintRequired(error = SYSTEM_VALIDATION_REQUIRED)
     private DateTime updatedTimestamp;
 
     @Column(name = "last_reminded_request_individual")

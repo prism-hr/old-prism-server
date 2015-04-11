@@ -1,10 +1,14 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_REQUIRED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.USER_INVOCATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_SCHEDULING;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -61,6 +65,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
+import com.zuehlke.pgadmissions.workflow.validation.PrismConstraintRequiredStateTransition;
 
 @Entity
 @Table(name = "COMMENT")
@@ -189,6 +194,7 @@ public class Comment {
 	@OrderBy(clause = "timeslot_datetime")
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "comment_id", nullable = false)
+	@PrismConstraintRequiredStateTransition(state = APPLICATION_INTERVIEW, action = APPLICATION_ASSIGN_INTERVIEWERS, transitionState = APPLICATION_INTERVIEW_PENDING_SCHEDULING, error = SYSTEM_VALIDATION_REQUIRED)
 	private Set<CommentAppointmentTimeslot> appointmentTimeslots = Sets.newHashSet();
 
 	@OrderBy(clause = "preference_datetime")

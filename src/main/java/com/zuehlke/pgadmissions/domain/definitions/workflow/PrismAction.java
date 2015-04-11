@@ -39,6 +39,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRe
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_CONTENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.SYSTEM_INVOCATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.USER_INVOCATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldResolutionCaveat.APPLICATION_DELEGATE_ADMINISTRATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldRestriction.NOT_EMPTY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldRestriction.NOT_NULL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionValidationFieldRestriction.SIZE;
@@ -78,6 +79,7 @@ public enum PrismAction {
 	                .addResolution(INTERVIEWEE_INSTRUCTIONS) //
 	                .addResolution(INTERVIEW_LOCATION) //
 	                .addResolution(TRANSITION_STATE) //
+	                .addCaveat(APPLICATION_DELEGATE_ADMINISTRATION) //
 	                .setCustomValidator(new CommentAssignInterviewersCustomValidator()) //
 	                .build()), //
 	APPLICATION_ASSIGN_REVIEWERS(USER_INVOCATION, PROCESS_RESOURCE, false, false, true, null, APPLICATION, //

@@ -9,12 +9,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,43 +86,40 @@ import com.zuehlke.pgadmissions.utils.PrismConstants;
 @Transactional
 public class CommentService {
 
-	@Autowired
+	@Inject
 	private CommentDAO commentDAO;
 
-	@Autowired
+	@Inject
 	private ActionService actionService;
 
-	@Autowired
+	@Inject
 	private ApplicationService applicationService;
 
-	@Autowired
-	private CustomizationService customizationService;
-
-	@Autowired
+	@Inject
 	private EntityService entityService;
 
-	@Autowired
+	@Inject
 	private RoleService roleService;
 
-	@Autowired
+	@Inject
 	private StateService stateService;
 
-	@Autowired
+	@Inject
 	private UserService userService;
 
-	@Autowired
+	@Inject
 	private DocumentService documentService;
 
-	@Autowired
+	@Inject
 	private Mapper mapper;
 
-	@Autowired
+	@Inject
 	private ApplicationContext applicationContext;
 
-	@Autowired
+	@Inject
 	private CommentValidator commentValidator;
 
-	@Autowired
+	@Inject
 	private Mapper dozerBeanMapper;
 
 	public Comment getById(int id) {

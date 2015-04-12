@@ -1,14 +1,27 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_REQUIRED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse.UNSURE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_REVERSE_REJECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.USER_INVOCATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_SCHEDULING;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DEACTIVATED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_WITHDRAWN;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -47,10 +60,7 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
@@ -632,7 +642,7 @@ public class Comment {
 	}
 
 	public boolean isApplicationCreatorEligibilityUnsure() {
-		return getApplicationEligible() == PrismYesNoUnsureResponse.UNSURE;
+		return getApplicationEligible() == UNSURE;
 	}
 
 	public User getActionOwner() {
@@ -640,12 +650,12 @@ public class Comment {
 	}
 
 	public boolean isProgramApproveOrDeactivateComment() {
-		return Arrays.asList(PrismState.PROGRAM_APPROVED, PrismState.PROGRAM_DEACTIVATED).contains(transitionState.getId());
+		return Arrays.asList(PROGRAM_APPROVED, PROGRAM_DEACTIVATED).contains(transitionState.getId());
 	}
 
 	public boolean isProgramRestoreComment() {
-		return action.getId() == PrismAction.INSTITUTION_IMPORT_PROGRAM && state.getId() == PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION
-		        && transitionState.getId() == PrismState.PROGRAM_APPROVED;
+		return action.getId() == INSTITUTION_IMPORT_PROGRAM && state.getId() == PROGRAM_DISABLED_PENDING_REACTIVATION
+		        && transitionState.getId() == PROGRAM_APPROVED;
 	}
 
 	public boolean isProjectCreateApplicationComment() {
@@ -707,18 +717,17 @@ public class Comment {
 	}
 
 	public boolean isApplicationAutomatedWithdrawalComment() {
-		return action.getId() == PrismAction.APPLICATION_ESCALATE && state.getStateGroup().getId() != PrismStateGroup.APPLICATION_WITHDRAWN
-		        && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_WITHDRAWN;
+		return action.getId() == APPLICATION_ESCALATE && state.getStateGroup().getId() != APPLICATION_WITHDRAWN
+		        && transitionState.getStateGroup().getId() == APPLICATION_WITHDRAWN;
 	}
 
 	public boolean isApplicationReverseRejectionComment() {
-		return action.getId() == PrismAction.APPLICATION_REVERSE_REJECTION;
+		return action.getId() == APPLICATION_REVERSE_REJECTION;
 	}
 
 	public boolean isInterviewScheduledExpeditedComment() {
-		return action.getId() == PrismAction.APPLICATION_ASSIGN_INTERVIEWERS
-		        && Arrays.asList(PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW, PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK).contains(
-		                transitionState.getId());
+		return action.getId() == APPLICATION_ASSIGN_INTERVIEWERS
+		        && Arrays.asList(APPLICATION_INTERVIEW_PENDING_INTERVIEW, APPLICATION_INTERVIEW_PENDING_FEEDBACK).contains(transitionState.getId());
 	}
 
 	public boolean isUserCreationComment() {
@@ -749,15 +758,15 @@ public class Comment {
 	}
 
 	public boolean isCreateComment() {
-		return action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE;
+		return action.getActionCategory() == CREATE_RESOURCE;
 	}
 
 	public boolean isViewEditComment() {
-		return action.getActionCategory() == PrismActionCategory.VIEW_EDIT_RESOURCE;
+		return action.getActionCategory() == VIEW_EDIT_RESOURCE;
 	}
 
 	public boolean isUserComment() {
-		return action.getActionType() == PrismActionType.USER_INVOCATION;
+		return action.getActionType() == USER_INVOCATION;
 	}
 
 	public boolean isSecondaryTransitionComment() {
@@ -769,7 +778,7 @@ public class Comment {
 	}
 
 	public boolean isApplicationProvideReferenceDelegateComment() {
-		return isDelegateComment() && action.getId() == PrismAction.APPLICATION_PROVIDE_REFERENCE;
+		return isDelegateComment() && action.getId() == APPLICATION_PROVIDE_REFERENCE;
 	}
 
 	public boolean isApplicationDelegateAdministrationComment() {

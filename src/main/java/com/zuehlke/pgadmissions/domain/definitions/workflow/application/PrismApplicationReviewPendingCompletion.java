@@ -2,9 +2,9 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_REVIEW_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_ADMINISTRATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_REFEREE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_REVIEWER_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REVIEWER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_PROVIDE_REVIEW_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REVIEW_PENDING_COMPLETION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReview.applicationCompleteReview;
@@ -30,9 +30,9 @@ public class PrismApplicationReviewPendingCompletion extends PrismWorkflowState 
 
 		stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator()); //
 
-		stateActions.add(applicationEscalate(APPLICATION_DELETE_REFEREE_GROUP, //
-		        APPLICATION_DELETE_ADMINISTRATOR_GROUP, //
-		        APPLICATION_DELETE_REVIEWER_GROUP)); //
+		stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP, //
+		        APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
+		        APPLICATION_RETIRE_REVIEWER_GROUP)); //
 
 		stateActions.add(applicationProvideReview() //
 		        .withTransitions(new PrismStateTransition() //

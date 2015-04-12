@@ -9,7 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_APPROVER_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_REFEREE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_RESERVED_WAITING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCompleteState;
@@ -52,12 +52,12 @@ public class PrismApplicationReserved extends PrismWorkflowState {
 	}
 
 	public static PrismStateAction applicationEscalateReserved() {
-		return applicationEscalate(APPLICATION_DELETE_REFEREE_GROUP);
+		return applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP);
 	}
 
 	public static PrismStateAction applicationWithdrawnReserved() {
 		return applicationWithdraw(APPLICATION_PARENT_ADMINISTRATOR_GROUP, //
-		        APPLICATION_DELETE_REFEREE_GROUP);
+		        APPLICATION_RETIRE_REFEREE_GROUP);
 	}
 
 }

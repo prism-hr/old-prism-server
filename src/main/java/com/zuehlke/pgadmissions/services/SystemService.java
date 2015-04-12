@@ -166,7 +166,7 @@ public class SystemService {
 
     @Transactional
     public void destroyDisplayProperties() {
-        logger.info("Destroying display properties");
+        logger.info("Destroying default display properties");
         entityService.deleteAll(DisplayPropertyConfiguration.class);
         entityService.deleteAll(DisplayPropertyDefinition.class);
     }

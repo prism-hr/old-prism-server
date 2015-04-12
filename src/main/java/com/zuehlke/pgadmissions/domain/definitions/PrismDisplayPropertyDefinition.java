@@ -1692,7 +1692,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     APPLICATION_ACTION_APPOINTMENT_PREFERENCES_SUBHEADER(APPLICATION_ACTION, "Please select the dates when you are available."),
     APPLICATION_ACTION_APPOINTMENT_PREFERENCES_SUBHEADER_BACKOUT(APPLICATION_ACTION, "Please tell us why you cannot make it and when we can reschedule."),
-    APPLICATION_ACTION_CONFIRM_INTERVIEW_ARRANGEMENTS_SUBHEADER(APPLICATION_ACTION, "Please select the final date when interview will take place."),
+    APPLICATION_ACTION_CONFIRM_INTERVIEW_ARRANGEMENTS_SUBHEADER(APPLICATION_ACTION, "Please select the date when interview will take place."),
     APPLICATION_ACTION_COMMENT_CONTENT_LABEL(APPLICATION_ACTION, "Comments"),
     APPLICATION_ACTION_COMMENT_CONTENT_HINT(APPLICATION_ACTION, "Enter your comments here."),
     APPLICATION_ACTION_DOCUMENTS_LABEL(APPLICATION_ACTION, "Attach Document (PDF)"),

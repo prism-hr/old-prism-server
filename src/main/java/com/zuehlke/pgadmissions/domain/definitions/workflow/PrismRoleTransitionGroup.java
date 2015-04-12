@@ -55,6 +55,12 @@ public enum PrismRoleTransitionGroup {
 	APPLICATION_DELETE_REFEREE_GROUP( //
 	        new PrismRoleTransition() //
 	                .withRole(APPLICATION_REFEREE) //
+	                .withTransitionType(DELETE) //
+	                .withTransitionRole(APPLICATION_REFEREE)), //
+
+	APPLICATION_RETIRE_REFEREE_GROUP( //
+	        new PrismRoleTransition() //
+	                .withRole(APPLICATION_REFEREE) //
 	                .withTransitionType(UPDATE) //
 	                .withTransitionRole(APPLICATION_VIEWER_REFEREE)), //
 
@@ -85,7 +91,7 @@ public enum PrismRoleTransitionGroup {
 	                .withTransitionRole(APPLICATION_REVIEWER) //
 	                .withPropertyDefinition(APPLICATION_ASSIGN_REVIEWER)), //
 
-	APPLICATION_DELETE_REVIEWER_GROUP( //
+	APPLICATION_RETIRE_REVIEWER_GROUP( //
 	        new PrismRoleTransition() //
 	                .withRole(APPLICATION_REVIEWER) //
 	                .withTransitionType(UPDATE) //
@@ -98,7 +104,7 @@ public enum PrismRoleTransitionGroup {
 	                .withTransitionRole(APPLICATION_VIEWER_RECRUITER) //
 	                .withRestrictToOwner()),
 
-	APPLICATION_DELETE_ADMINISTRATOR_GROUP( //
+	APPLICATION_RETIRE_ADMINISTRATOR_GROUP( //
 	        new PrismRoleTransition() //
 	                .withRole(APPLICATION_ADMINISTRATOR) //
 	                .withTransitionType(UPDATE) //
@@ -130,7 +136,7 @@ public enum PrismRoleTransitionGroup {
 	                .withTransitionRole(APPLICATION_INTERVIEWER) //
 	                .withPropertyDefinition(APPLICATION_ASSIGN_INTERVIEWER)),
 
-	APPLICATION_DELETE_INTERVIEWEE_GROUP( //
+	APPLICATION_RETIRE_INTERVIEWEE_GROUP( //
 	        new PrismRoleTransition() //
 	                .withRole(APPLICATION_INTERVIEWEE) //
 	                .withTransitionType(RETIRE) //
@@ -140,7 +146,7 @@ public enum PrismRoleTransitionGroup {
 	                .withTransitionType(RETIRE) //
 	                .withTransitionRole(APPLICATION_POTENTIAL_INTERVIEWEE)),
 
-	APPLICATION_DELETE_INTERVIEWER_GROUP( //
+	APPLICATION_RETIRE_INTERVIEWER_GROUP( //
 	        new PrismRoleTransition() //
 	                .withRole(APPLICATION_INTERVIEWER) //
 	                .withTransitionType(UPDATE) //
@@ -150,25 +156,25 @@ public enum PrismRoleTransitionGroup {
 	                .withTransitionType(UPDATE) //
 	                .withTransitionRole(APPLICATION_VIEWER_RECRUITER)), //
 
-	APPLICATION_DELETE_POTENTIAL_INTERVIEWEE_GROUP( //
+	APPLICATION_RETIRE_POTENTIAL_INTERVIEWEE_GROUP( //
 	        new PrismRoleTransition() //
 	                .withRole(APPLICATION_POTENTIAL_INTERVIEWEE) //
 	                .withTransitionType(RETIRE) //
 	                .withTransitionRole(APPLICATION_POTENTIAL_INTERVIEWEE)),
 
-	APPLICATION_DELETE_CONFIRMED_INTERVIEWEE_GROUP( //
+	APPLICATION_RETIRE_CONFIRMED_INTERVIEWEE_GROUP( //
 	        new PrismRoleTransition() //
 	                .withRole(APPLICATION_INTERVIEWEE) //
 	                .withTransitionType(RETIRE) //
 	                .withTransitionRole(APPLICATION_INTERVIEWEE)),
 
-	APPLICATION_DELETE_POTENTIAL_INTERVIEWER_GROUP( //
+	APPLICATION_RETIRE_POTENTIAL_INTERVIEWER_GROUP( //
 	        new PrismRoleTransition() //
 	                .withRole(APPLICATION_POTENTIAL_INTERVIEWER) //
 	                .withTransitionType(UPDATE) //
 	                .withTransitionRole(APPLICATION_VIEWER_RECRUITER)), //
 
-	APPLICATION_DELETE_CONFIRMED_INTERVIEWER_GROUP( //
+	APPLICATION_RETIRE_CONFIRMED_INTERVIEWER_GROUP( //
 	        new PrismRoleTransition() //
 	                .withRole(APPLICATION_INTERVIEWER) //
 	                .withTransitionType(UPDATE) //
@@ -198,7 +204,7 @@ public enum PrismRoleTransitionGroup {
 	                .withTransitionRole(APPLICATION_SECONDARY_SUPERVISOR) //
 	                .withPropertyDefinition(APPLICATION_ASSIGN_SECONDARY_SUPERVISOR)), //
 
-	APPLICATION_DELETE_SUPERVISOR_GROUP( //
+	APPLICATION_RETIRE_SUPERVISOR_GROUP( //
 	        new PrismRoleTransition() //
 	                .withRole(APPLICATION_PRIMARY_SUPERVISOR) //
 	                .withTransitionType(UPDATE) //

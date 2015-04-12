@@ -12,9 +12,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_REVIEWER_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_ADMINISTRATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_REFEREE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_REVIEWER_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REVIEWER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REVIEW_PENDING_FEEDBACK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_ASSIGNED_REVIEWER_OUTCOME;
@@ -54,20 +54,20 @@ public class PrismApplicationReview extends PrismWorkflowState {
 
 		stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator());
 		stateActions.add(applicationCompleteState(APPLICATION_COMPLETE_REVIEW_STAGE, state, //
-		        APPLICATION_ADMINISTRATOR_GROUP, APPLICATION_DELETE_ADMINISTRATOR_GROUP));
+		        APPLICATION_ADMINISTRATOR_GROUP, APPLICATION_RETIRE_ADMINISTRATOR_GROUP));
 		stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator());
-		stateActions.add(applicationEscalate(APPLICATION_DELETE_REFEREE_GROUP, APPLICATION_DELETE_ADMINISTRATOR_GROUP));
+		stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP, APPLICATION_RETIRE_ADMINISTRATOR_GROUP));
 		stateActions.add(applicationViewEditWithViewerRecruiterAndAdministrator(state)); //
 		stateActions.add(applicationWithdraw(APPLICATION_ADMINISTRATOR_GROUP, //
-		        APPLICATION_DELETE_REFEREE_GROUP, //
-		        APPLICATION_DELETE_ADMINISTRATOR_GROUP));
+		        APPLICATION_RETIRE_REFEREE_GROUP, //
+		        APPLICATION_RETIRE_ADMINISTRATOR_GROUP));
 	}
 
 	public static PrismStateAction applicationCompleteReview(PrismState state) {
 		return applicationCompleteState(APPLICATION_COMPLETE_REVIEW_STAGE, state, //
 		        APPLICATION_ADMINISTRATOR_GROUP, //
-		        APPLICATION_DELETE_ADMINISTRATOR_GROUP, //
-		        APPLICATION_DELETE_REVIEWER_GROUP);
+		        APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
+		        APPLICATION_RETIRE_REVIEWER_GROUP);
 	}
 
 	public static PrismStateAction applicationProvideReview() {
@@ -86,9 +86,9 @@ public class PrismApplicationReview extends PrismWorkflowState {
 
 	public static PrismStateAction applicationWithdrawReview() {
 		return applicationWithdraw(APPLICATION_ADMINISTRATOR_GROUP, //
-		        APPLICATION_DELETE_ADMINISTRATOR_GROUP, //
-		        APPLICATION_DELETE_REFEREE_GROUP,
-		        APPLICATION_DELETE_REVIEWER_GROUP);
+		        APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
+		        APPLICATION_RETIRE_REFEREE_GROUP,
+		        APPLICATION_RETIRE_REVIEWER_GROUP);
 	}
 
 }

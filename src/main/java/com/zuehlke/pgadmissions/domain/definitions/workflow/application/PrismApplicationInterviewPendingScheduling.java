@@ -2,10 +2,10 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_ADMINISTRATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_INTERVIEWEE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_INTERVIEWER_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_REFEREE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_INTERVIEWEE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_INTERVIEWER_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationCompleteInterviewScheduling;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationConfirmInterviewArrangements;
@@ -33,10 +33,10 @@ public class PrismApplicationInterviewPendingScheduling extends PrismWorkflowSta
 
 		stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator()); //
 
-		stateActions.add(applicationEscalate(APPLICATION_DELETE_REFEREE_GROUP,
-		        APPLICATION_DELETE_ADMINISTRATOR_GROUP, //
-		        APPLICATION_DELETE_INTERVIEWEE_GROUP, //
-		        APPLICATION_DELETE_INTERVIEWER_GROUP));
+		stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP,
+		        APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
+		        APPLICATION_RETIRE_INTERVIEWEE_GROUP, //
+		        APPLICATION_RETIRE_INTERVIEWER_GROUP));
 
 		stateActions.add(applicationProvideInterviewAvailability() //
 		        .withTransitions(new PrismStateTransition() //

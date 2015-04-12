@@ -23,14 +23,14 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_INTERVIEWER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_POTENTIAL_INTERVIEWEE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_POTENTIAL_INTERVIEWER_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_ADMINISTRATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_CONFIRMED_INTERVIEWEE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_CONFIRMED_INTERVIEWER_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_INTERVIEWEE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_INTERVIEWER_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_POTENTIAL_INTERVIEWEE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_POTENTIAL_INTERVIEWER_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_REFEREE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_CONFIRMED_INTERVIEWEE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_CONFIRMED_INTERVIEWER_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_INTERVIEWEE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_INTERVIEWER_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_POTENTIAL_INTERVIEWEE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_POTENTIAL_INTERVIEWER_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
@@ -45,7 +45,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdraw;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
@@ -86,28 +85,28 @@ public class PrismApplicationInterview extends PrismWorkflowState {
 
 		stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator()); //
 		stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator()); //
-		stateActions.add(applicationEscalate(APPLICATION_DELETE_REFEREE_GROUP, APPLICATION_DELETE_ADMINISTRATOR_GROUP)); //
+		stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP, APPLICATION_RETIRE_ADMINISTRATOR_GROUP)); //
 		stateActions.add(applicationCompleteState(APPLICATION_COMPLETE_INTERVIEW_STAGE, state, APPLICATION_ADMINISTRATOR_GROUP,
-		        APPLICATION_DELETE_ADMINISTRATOR_GROUP));
+		        APPLICATION_RETIRE_ADMINISTRATOR_GROUP));
 		stateActions.add(applicationViewEditWithViewerRecruiterAndAdministrator(state)); //
 		stateActions.add(applicationWithdraw(APPLICATION_ADMINISTRATOR_GROUP, //
-		        APPLICATION_DELETE_REFEREE_GROUP, //
-		        APPLICATION_DELETE_ADMINISTRATOR_GROUP));
+		        APPLICATION_RETIRE_REFEREE_GROUP, //
+		        APPLICATION_RETIRE_ADMINISTRATOR_GROUP));
 	}
 
 	public static PrismStateAction applicationCompleteInterviewScheduling(PrismState state) {
 		return applicationCompleteState(APPLICATION_COMPLETE_INTERVIEW_STAGE, state, //
 		        APPLICATION_ADMINISTRATOR_GROUP, //
-		        APPLICATION_DELETE_ADMINISTRATOR_GROUP, //
-		        APPLICATION_DELETE_INTERVIEWEE_GROUP,
-		        APPLICATION_DELETE_INTERVIEWER_GROUP);
+		        APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
+		        APPLICATION_RETIRE_INTERVIEWEE_GROUP,
+		        APPLICATION_RETIRE_INTERVIEWER_GROUP);
 	}
 
 	public static PrismStateAction applicationCompleteInterviewScheduled(PrismState state) {
 		return applicationCompleteState(APPLICATION_COMPLETE_INTERVIEW_STAGE, state, //
 		        APPLICATION_ADMINISTRATOR_GROUP, //
-		        APPLICATION_DELETE_ADMINISTRATOR_GROUP, //
-		        APPLICATION_DELETE_CONFIRMED_INTERVIEWER_GROUP);
+		        APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
+		        APPLICATION_RETIRE_CONFIRMED_INTERVIEWER_GROUP);
 	}
 
 	public static PrismStateAction applicationConfirmInterviewArrangements() {
@@ -120,21 +119,21 @@ public class PrismApplicationInterview extends PrismWorkflowState {
 		                .withTransitionState(APPLICATION_INTERVIEW) //
 		                .withTransitionAction(APPLICATION_ASSIGN_INTERVIEWERS) //
 		                .withTransitionEvaluation(APPLICATION_CONFIRMED_INTERVIEW_OUTCOME) //
-		                .withRoleTransitions(APPLICATION_DELETE_INTERVIEWEE_GROUP, //
-		                        APPLICATION_DELETE_INTERVIEWER_GROUP),
+		                .withRoleTransitions(APPLICATION_RETIRE_INTERVIEWEE_GROUP, //
+		                        APPLICATION_RETIRE_INTERVIEWER_GROUP),
 		                new PrismStateTransition() //
 		                        .withTransitionState(APPLICATION_INTERVIEW_PENDING_FEEDBACK) //
 		                        .withTransitionAction(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK) //
 		                        .withTransitionEvaluation(APPLICATION_CONFIRMED_INTERVIEW_OUTCOME) //
-		                        .withRoleTransitions(APPLICATION_DELETE_POTENTIAL_INTERVIEWEE_GROUP, //
-		                                APPLICATION_DELETE_POTENTIAL_INTERVIEWER_GROUP, //
-		                                APPLICATION_DELETE_CONFIRMED_INTERVIEWEE_GROUP), //
+		                        .withRoleTransitions(APPLICATION_RETIRE_POTENTIAL_INTERVIEWEE_GROUP, //
+		                                APPLICATION_RETIRE_POTENTIAL_INTERVIEWER_GROUP, //
+		                                APPLICATION_RETIRE_CONFIRMED_INTERVIEWEE_GROUP), //
 		                new PrismStateTransition() //
 		                        .withTransitionState(APPLICATION_INTERVIEW_PENDING_INTERVIEW) //
 		                        .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
 		                        .withTransitionEvaluation(APPLICATION_CONFIRMED_INTERVIEW_OUTCOME) //
-		                        .withRoleTransitions(APPLICATION_DELETE_POTENTIAL_INTERVIEWEE_GROUP, //
-		                                APPLICATION_DELETE_POTENTIAL_INTERVIEWER_GROUP));
+		                        .withRoleTransitions(APPLICATION_RETIRE_POTENTIAL_INTERVIEWEE_GROUP, //
+		                                APPLICATION_RETIRE_POTENTIAL_INTERVIEWER_GROUP));
 	}
 
 	public static PrismStateAction applicationProvideInterviewAvailability() {
@@ -174,17 +173,17 @@ public class PrismApplicationInterview extends PrismWorkflowState {
 
 	public static PrismStateAction applicationWithdrawInterviewScheduling() {
 		return applicationWithdraw(APPLICATION_ADMINISTRATOR_GROUP, //
-		        APPLICATION_DELETE_ADMINISTRATOR_GROUP, //
-		        APPLICATION_DELETE_REFEREE_GROUP,
-		        APPLICATION_DELETE_INTERVIEWEE_GROUP,
-		        APPLICATION_DELETE_INTERVIEWER_GROUP);
+		        APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
+		        APPLICATION_RETIRE_REFEREE_GROUP,
+		        APPLICATION_RETIRE_INTERVIEWEE_GROUP,
+		        APPLICATION_RETIRE_INTERVIEWER_GROUP);
 	}
 
 	public static PrismStateAction applicationWithdrawInterviewScheduled() {
 		return applicationWithdraw(APPLICATION_ADMINISTRATOR_GROUP, //
-		        APPLICATION_DELETE_ADMINISTRATOR_GROUP, //
-		        APPLICATION_DELETE_REFEREE_GROUP,
-		        APPLICATION_DELETE_CONFIRMED_INTERVIEWER_GROUP);
+		        APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
+		        APPLICATION_RETIRE_REFEREE_GROUP,
+		        APPLICATION_RETIRE_CONFIRMED_INTERVIEWER_GROUP);
 	}
 
 }

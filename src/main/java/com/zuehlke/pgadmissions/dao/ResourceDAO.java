@@ -185,13 +185,14 @@ public class ResourceDAO {
 	        Integer recordsToRetrieve) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
 		        .setProjection(Projections.groupProperty("id")) //
+		        .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
 		        .createAlias("userRoles", "userRole", JoinType.INNER_JOIN) //
 		        .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
 		        .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
 		        .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
 		        .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
 		        .add(Restrictions.eq("userRole.user", user)) //
-		        .add(Restrictions.eqProperty("stateAction.state", "state")) //
+		        .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
 		        .add(Restrictions.isNull("state.hidden"));
 
 		appendResourceListFilterCriterion(criteria, conditions, filter);
@@ -206,6 +207,7 @@ public class ResourceDAO {
 
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
 		        .setProjection(Projections.groupProperty("id")) //
+		        .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
 		        .createAlias(parentResourceReference, parentResourceReference, JoinType.INNER_JOIN) //
 		        .createAlias(parentResourceReference + ".userRoles", "userRole", JoinType.INNER_JOIN) //
 		        .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
@@ -213,7 +215,7 @@ public class ResourceDAO {
 		        .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
 		        .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
 		        .add(Restrictions.eq("userRole.user", user)) //
-		        .add(Restrictions.eqProperty("stateAction.state", "state")) //
+		        .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
 		        .add(Restrictions.isNull("state.hidden"));
 
 		appendResourceListFilterCriterion(criteria, conditions, filter);

@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_TASK_REQUEST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_DELETE_REFEREE_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationValidation.applicationCompleteValidation;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationValidation.applicationWithdrawValidation;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationComment;
@@ -22,7 +22,7 @@ public class PrismApplicationValidationPendingCompletion extends PrismWorkflowSt
 		        .withNotification(SYSTEM_APPLICATION_TASK_REQUEST)); //
 
 		stateActions.add(applicationEmailCreator()); //
-		stateActions.add(applicationEscalate(APPLICATION_DELETE_REFEREE_GROUP)); //
+		stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP)); //
 		stateActions.add(applicationViewEdit(state));
 		stateActions.add(applicationWithdrawValidation());
 	}

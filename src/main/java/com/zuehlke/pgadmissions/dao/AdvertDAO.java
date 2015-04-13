@@ -1,24 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFilterCategory;
@@ -34,6 +15,19 @@ import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.*;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -241,8 +235,8 @@ public class AdvertDAO {
 
 	private void appendLocationConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
 		if (queryDTO.getNeLat() != null) {
-			criteria.add(Restrictions.between("address.location.locationX", queryDTO.getNeLon(), queryDTO.getNeLat()));
-			criteria.add(Restrictions.between("address.location.locationY", queryDTO.getSwLat(), queryDTO.getSwLon()));
+			criteria.add(Restrictions.between("address.location.locationX", queryDTO.getSwLat(), queryDTO.getNeLat()));
+			criteria.add(Restrictions.between("address.location.locationY", queryDTO.getSwLon(), queryDTO.getNeLon()));
 		}
 	}
 

@@ -84,6 +84,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ORGANIZATION(SYSTEM_GLOBAL, "Organization"),
     SYSTEM_ORGANIZATIONS(SYSTEM_GLOBAL, "Organizations"),
     SYSTEM_DIVISION(SYSTEM_GLOBAL, "Division"),
+    SYSTEM_DASHBOARD(SYSTEM_GLOBAL, "Dashboard"),
     SYSTEM_DIVISIONS(SYSTEM_GLOBAL, "Divisions"),
     SYSTEM_OPPORTUNITY(SYSTEM_GLOBAL, "Opportunity"),
     SYSTEM_OPPORTUNITIES(SYSTEM_GLOBAL, "Opportunities"),
@@ -937,6 +938,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_AUTHENTICATE_APPLY_TO_MODAL_TITLE(SYSTEM_AUTHENTICATE_SECTION, "Apply to {{title}}"),
     SYSTEM_AUTHENTICATE_LOGIN_MODAL_TITLE(SYSTEM_AUTHENTICATE_SECTION, "Login"),
     SYSTEM_AUTHENTICATE_ASSOCIATE_WITH_CURRENT_USER_MODAL_TITLE(SYSTEM_AUTHENTICATE_SECTION, "Add profile picture"),
+    SYSTEM_AUTHENTICATE_WARNING_BLOCKER_HEADER_MODAL(SYSTEM_AUTHENTICATE_SECTION, "You have warnings"),
+    SYSTEM_AUTHENTICATE_WARNING_BLOCKER_TITLE_MODAL(SYSTEM_AUTHENTICATE_SECTION, "Your attention is required"),
+    SYSTEM_AUTHENTICATE_WARNING_BLOCKER_CONTENT_MODAL(SYSTEM_AUTHENTICATE_SECTION, "Our system has detected that a plugin that blocks adverts is installed in your browser. This may be blocking essential functions of our site. We would advise that you disable it for our pages."),
+
 
 	/*
 	 * *************** SYSTEM OPPORTUNITIES SECTION *********************

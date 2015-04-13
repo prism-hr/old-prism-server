@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.comment;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_REQUIRED;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse.UNSURE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_REVERSE_REJECTION;
@@ -726,8 +727,12 @@ public class Comment {
 	}
 
 	public boolean isInterviewScheduledExpeditedComment() {
-		return action.getId() == APPLICATION_ASSIGN_INTERVIEWERS
+		return action.getId().equals(APPLICATION_ASSIGN_INTERVIEWERS) //
 		        && Arrays.asList(APPLICATION_INTERVIEW_PENDING_INTERVIEW, APPLICATION_INTERVIEW_PENDING_FEEDBACK).contains(transitionState.getId());
+	}
+
+	public boolean isInterviewScheduledConfirmedComment() {
+		return action.getId().equals(APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS);
 	}
 
 	public boolean isUserCreationComment() {

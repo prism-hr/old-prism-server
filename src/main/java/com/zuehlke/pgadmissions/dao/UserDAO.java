@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -31,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
+import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
@@ -351,6 +353,27 @@ public class UserDAO {
 		        .setParameter("newUser", newUser) //
 		        .setParameter("oldUser", oldUser) //
 		        .executeUpdate();
+	}
+	
+	public List<User> getUsersWithAction(Resource resource, PrismAction... actions) {
+		return (List<User>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+				.setProjection(Projections.groupProperty("userRole.user")) //
+				.createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+				.createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
+				.createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
+				.createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+				.createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
+				.add(Restrictions.in("action.id", actions)) //
+		        .add(Restrictions.disjunction() //
+		                .add(Restrictions.eq("userRole.application", resource.getApplication())) //
+		                .add(Restrictions.eq("userRole.project", resource.getProject())) //
+		                .add(Restrictions.eq("userRole.program", resource.getProgram())) //
+		                .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
+		                .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
+		        .add(Restrictions.disjunction() //
+		        		.add(Restrictions.isNull("user.userAccount")) //
+		        		.add(Restrictions.eq("userAccount.enabled", true))) //
+		        .list();
 	}
 
 }

@@ -1,13 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.joda.time.DateTime;
-import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,8 +41,6 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
 import com.zuehlke.pgadmissions.dto.StateTransitionDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation.NextStateRepresentation;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
@@ -145,8 +141,7 @@ public class StateService {
 		return stateDAO.getStateTransitionsPending(scopeId);
 	}
 
-	public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) throws DeduplicationException, InstantiationException,
-	        IllegalAccessException, BeansException, WorkflowEngineException, IOException, IntegrationException {
+	public StateTransition executeStateTransition(Resource resource, Action action, Comment comment, boolean notify) throws Exception {
 		comment.setResource(resource);
 
 		resourceService.persistResource(resource, comment);
@@ -179,13 +174,19 @@ public class StateService {
 				getOrCreateStateTransitionPending(resource, propagatedAction);
 			}
 
-			notificationService.sendWorkflowNotifications(resource, comment);
+			if (notify) {
+				notificationService.sendWorkflowNotifications(resource, comment);
+			}
 		}
 
 		commentService.postProcessComment(comment);
 		resourceService.postProcessResource(resource, comment);
 
 		return stateTransition;
+	}
+	
+	public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) throws Exception {
+		return executeStateTransition(resource, action, comment, true);
 	}
 
 	public StateTransition getStateTransition(Resource resource, Action action) {

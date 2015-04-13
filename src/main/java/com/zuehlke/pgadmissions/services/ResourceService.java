@@ -276,8 +276,8 @@ public class ResourceService {
 
 			baseline = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
 
-			StateDurationConfiguration stateDurationConfiguration = stateDurationDefinition == null ? null : stateService.getStateDurationConfiguration(
-			        resource, comment.getUser(), stateDurationDefinition);
+			StateDurationConfiguration stateDurationConfiguration = stateDurationDefinition == null ? null //
+					: stateService.getStateDurationConfiguration(resource, comment.getUser(), stateDurationDefinition);
 			resource.setDueDate(baseline.plusDays(stateDurationConfiguration == null ? 0 : stateDurationConfiguration.getDuration()));
 
 			entityService.flush();

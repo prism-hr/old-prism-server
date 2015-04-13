@@ -320,6 +320,10 @@ public class UserService {
 			throw new WorkflowPermissionException(systemService.getSystem(), actionService.getById(SYSTEM_VIEW_APPLICATION_LIST));
 		}
 	}
+	
+	public List<User> getUsersWithAction(Resource resource, PrismAction... actions) {
+		return userDAO.getUsersWithAction(resource, actions);
+	}
 
 	private void mergeUsers(User oldUser, User newUser) {
 		reassignUserRoles(oldUser, newUser);

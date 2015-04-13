@@ -44,21 +44,36 @@ public class CommentDAO {
 		        .uniqueResult();
 	}
 
-	public Comment getLatestComment(Resource resource, PrismAction actionId) {
+	public Comment getLatestComment(Resource resource, PrismAction prismAction) {
 		return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
 		        .add(Restrictions.eq(PrismScope.getByResourceClass(resource.getClass()).getLowerCamelName(), resource)) //
-		        .add(Restrictions.eq("action.id", actionId)) //
+		        .add(Restrictions.eq("action.id", prismAction)) //
 		        .addOrder(Order.desc("createdTimestamp")) //
 		        .addOrder(Order.desc("id")) //
 		        .setMaxResults(1) //
 		        .uniqueResult();
 	}
 
-	public Comment getLatestComment(Resource resource, PrismAction actionId, User user, DateTime baseline) {
+	public Comment getLatestComment(Resource resource, User user, PrismAction... prismActions) {
 		return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
 		        .add(Restrictions.eq(PrismScope.getByResourceClass(resource.getClass()).getLowerCamelName(), resource)) //
-		        .add(Restrictions.eq("action.id", actionId)) //
-		        .add(Restrictions.eq("user", user)) //
+		        .add(Restrictions.in("action.id", prismActions)) //
+		        .add(Restrictions.disjunction() //
+		                .add(Restrictions.eq("user", user)) //
+		                .add(Restrictions.eq("delegateUser", user))) //
+		        .addOrder(Order.desc("createdTimestamp")) //
+		        .addOrder(Order.desc("id")) //
+		        .setMaxResults(1) //
+		        .uniqueResult();
+	}
+
+	public Comment getLatestComment(Resource resource, PrismAction prismAction, User user, DateTime baseline) {
+		return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+		        .add(Restrictions.eq(PrismScope.getByResourceClass(resource.getClass()).getLowerCamelName(), resource)) //
+		        .add(Restrictions.eq("action.id", prismAction)) //
+		        .add(Restrictions.disjunction() //
+		                .add(Restrictions.eq("user", user)) //
+		                .add(Restrictions.eq("delegateUser", user))) //
 		        .add(Restrictions.ge("createdTimestamp", baseline)) //
 		        .addOrder(Order.desc("createdTimestamp")) //
 		        .addOrder(Order.desc("id")) //
@@ -79,7 +94,7 @@ public class CommentDAO {
 		        .setMaxResults(1) //
 		        .uniqueResult();
 	}
-	
+
 	public List<User> getAppointmentInvitees(Comment comment) {
 		return (List<User>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
 		        .setProjection(Projections.groupProperty("user")) //
@@ -128,14 +143,6 @@ public class CommentDAO {
 		        .add(Restrictions.ge("createdTimestamp", assignmentComment.getCreatedTimestamp())) //
 		        .add(Restrictions.eq("action.id", PrismAction.APPLICATION_ASSIGN_SUPERVISORS)) //
 		        .add(Restrictions.eq("recruiterAcceptAppointment", false)) //
-		        .list();
-	}
-
-	public List<User> getAssignedUsers(Comment comment, PrismRole roleId) {
-		return (List<User>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
-		        .setProjection(Projections.property("user")) //
-		        .add(Restrictions.eq("comment", comment)) //
-		        .add(Restrictions.eq("role.id", roleId)) //
 		        .list();
 	}
 
@@ -189,6 +196,14 @@ public class CommentDAO {
 
 		return (List<Comment>) criteria.addOrder(Order.asc("createdTimestamp")) //
 		        .addOrder(Order.asc("id")) //
+		        .list();
+	}
+
+	public List<User> getAssignedUsers(Comment comment, PrismRole... roleIds) {
+		return (List<User>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
+		        .setProjection(Projections.property("user")) //
+		        .add(Restrictions.eq("comment", comment)) //
+		        .add(Restrictions.in("role.id", roleIds)) //
 		        .list();
 	}
 

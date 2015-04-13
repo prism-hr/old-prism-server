@@ -165,6 +165,10 @@ public class ActionService {
 	}
 
 	public ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment) throws Exception {
+		return executeAction(resource, action, comment, true);
+	}
+	
+	public ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment, boolean notify) throws Exception {
 		User user = comment.getUser();
 
 		if (action.getActionCategory() == CREATE_RESOURCE || action.getActionCategory() == VIEW_EDIT_RESOURCE) {
@@ -184,7 +188,7 @@ public class ActionService {
 			}
 		}
 
-		StateTransition stateTransition = stateService.executeStateTransition(resource, action, comment);
+		StateTransition stateTransition = stateService.executeStateTransition(resource, action, comment, notify);
 		Action transitionAction = stateTransition == null ? action.getFallbackAction() : stateTransition.getTransitionAction();
 		Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 

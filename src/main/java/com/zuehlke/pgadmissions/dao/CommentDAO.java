@@ -163,11 +163,10 @@ public class CommentDAO {
 		        .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
 		        .add(Restrictions.isNotNull("action.transitionAction")) //
 		        .add(Restrictions.disjunction() //
-		                .add(Restrictions.isNotNull("transitionStateGroup.repeatable")) //
+		                .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id")) //
 		                .add(Restrictions.conjunction() //
-		                        .add(Restrictions.isNotNull("stateGroup.id")) //
-		                        .add(Restrictions.isNotNull("transitionStateGroup.id")) //
-		                        .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id"))) //
+		                        .add(Restrictions.isNotNull("transitionStateGroup.repeatable")) //
+		                        .add(Restrictions.neProperty("state", "transitionState"))) //
 		                .add(Restrictions.isNotNull("action.creationScope"))) //
 		        .addOrder(Order.asc("createdTimestamp")) //
 		        .addOrder(Order.asc("id")) //

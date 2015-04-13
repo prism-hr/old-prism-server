@@ -189,7 +189,7 @@ public class ResourceResource {
             case SYSTEM:
                 break;
             default:
-                throw new UnsupportedOperationException();
+			break;
         }
 
         return representation;

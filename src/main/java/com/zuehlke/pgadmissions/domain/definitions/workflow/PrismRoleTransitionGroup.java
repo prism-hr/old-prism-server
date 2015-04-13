@@ -313,7 +313,7 @@ public enum PrismRoleTransitionGroup {
 	        new PrismRoleTransition() //
 	                .withRole(PROGRAM_APPROVER) //
 	                .withTransitionType(DELETE) //
-	                .withTransitionRole(PROGRAM_VIEWER),
+	                .withTransitionRole(PROGRAM_APPROVER),
 	        new PrismRoleTransition() //
 	                .withRole(PROGRAM_VIEWER) //
 	                .withTransitionType(CREATE) //

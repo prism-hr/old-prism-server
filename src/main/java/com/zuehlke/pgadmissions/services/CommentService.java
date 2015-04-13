@@ -700,7 +700,7 @@ public class CommentService {
 			List<LocalDateTime> oldPreferences = commentDAO.getAppointmentPreferences(oldPreferenceComment);
 			if (!oldPreferences.contains(interviewDateTime)) {
 				Comment newPreferenceComment = createAutomatedInterviewPreferenceComment(resource, action, invoker, user, interviewDateTime, baseline);
-				actionService.executeAction(resource, action, newPreferenceComment);
+				actionService.executeAction(resource, action, newPreferenceComment, false);
 			}
 		}
 	}

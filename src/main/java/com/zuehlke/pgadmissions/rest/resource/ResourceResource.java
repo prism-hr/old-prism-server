@@ -187,7 +187,7 @@ public class ResourceResource {
 			institutionRepresentation.setResourceSummary(resourceService.getResourceSummary(resourceScope, resourceId));
 			break;
 		default:
-			throw new UnsupportedOperationException();
+			break;
 		}
 
 		return representation;

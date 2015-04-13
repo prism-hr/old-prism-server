@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_RESERVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_VALIDATION;
 
 import java.util.Arrays;
 import java.util.List;
@@ -204,8 +206,7 @@ public class ApplicationDAO {
 		        .add(Restrictions.eq("user", application.getUser())) //
 		        .add(Restrictions.ne("id", application.getId())) //
 		        .add(Restrictions.disjunction() //
-		                .add(Restrictions.between("stateGroup.ordinal", PrismStateGroup.APPLICATION_VALIDATION.ordinal(), //
-		                        PrismStateGroup.APPLICATION_REJECTED.ordinal())) //
+		                .add(Restrictions.between("stateGroup.ordinal", APPLICATION_VALIDATION.ordinal(), APPLICATION_RESERVED.ordinal())) //
 		                .add(Restrictions.in("state.id", Arrays.asList(APPLICATION_APPROVAL, APPLICATION_REJECTED)))) //
 		        .addOrder(Order.desc("sequenceIdentifier")) //
 		        .setResultTransformer(Transformers.aliasToBean(OtherApplicationSummaryRepresentation.class)) //

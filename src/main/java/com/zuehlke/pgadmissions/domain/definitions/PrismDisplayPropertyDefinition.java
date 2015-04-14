@@ -717,30 +717,30 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 	 * *************** SYSTEM STATE DURATION *********************
 	 */
 
-    APPLICATION_CONFIRM_ELIGIBILITY_DURATION_LABEL(SYSTEM_STATE_DURATION, "Eligibility Confirmation Duration"),
-    APPLICATION_CONFIRM_ELIGIBILITY_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you expect it to take to confirm the eligibility of an applicant"),
-    APPLICATION_PROVIDE_REFERENCE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Reference Duration"),
-    APPLICATION_PROVIDE_REFERENCE_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you expect it to take to collect applicant references"),
-    APPLICATION_PROVIDE_REVIEW_DURATION_LABEL(SYSTEM_STATE_DURATION, "Review Duration"),
-    APPLICATION_PROVIDE_REVIEW_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you expect it to take to collect applicant reviews"),
-    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION_LABEL(SYSTEM_STATE_DURATION, "Interview Scheduling Duration"),
-    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you expect it to take to schedule an interview"),
-    APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION_LABEL(SYSTEM_STATE_DURATION, "Interview Feedback Duration"),
-    APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you expect it to take to collect feedback on an interview"),
-    APPLICATION_CONFIRM_SUPERVISION_DURATION_LABEL(SYSTEM_STATE_DURATION, "Supervision Confirmation Duration"),
-    APPLICATION_CONFIRM_SUPERVISION_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you expect it to take for a supervisor to confirm that they are willing to supervise an applicant"),
-    APPLICATION_ESCALATE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Escalation Duration"),
-    APPLICATION_ESCALATE_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you wish to allow an application that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
-    APPLICATION_RESERVE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Reserve Duration"),
-    APPLICATION_RESERVE_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you expect an application to be held in reserve for"),
-    APPLICATION_PURGE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Expiry Duration"),
-    APPLICATION_PURGE_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you wish to keep information about a rejected or withdrawn application on record"),
-    PROJECT_ESCALATE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Escalation Duration"),
-    PROJECT_ESCALATE_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you wish to allow a new project request that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
-    PROGRAM_ESCALATE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Escalation Duration"),
-    PROGRAM_ESCALATE_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you wish to allow a new program request that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
-    INSTITUTION_ESCALATE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Escalation Duration"),
-    INSTITUTION_ESCALATE_DURATION_TOOLTIP(SYSTEM_STATE_DURATION, "The length of time you wish to allow a new institution request that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
+    SYSTEM_APPLICATION_CONFIRM_ELIGIBILITY_DURATION_LABEL(SYSTEM_STATE_DURATION, "Eligibility Confirmation Duration"),
+    SYSTEM_APPLICATION_CONFIRM_ELIGIBILITY_DURATION_HINT(SYSTEM_STATE_DURATION, "The length of time you expect it to take to confirm the eligibility of an applicant"),
+    SYSTEM_APPLICATION_PROVIDE_REFERENCE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Reference Duration"),
+    SYSTEM_APPLICATION_PROVIDE_REFERENCE_DURATION_HINT(SYSTEM_STATE_DURATION, "The length of time you expect it to take to collect applicant references"),
+    SYSTEM_APPLICATION_PROVIDE_REVIEW_DURATION_LABEL(SYSTEM_STATE_DURATION, "Review Duration"),
+    SYSTEM_APPLICATION_PROVIDE_REVIEW_DURATION_HINT(SYSTEM_STATE_DURATION, "The length of time you expect it to take to collect applicant reviews"),
+    SYSTEM_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION_LABEL(SYSTEM_STATE_DURATION, "Interview Scheduling Duration"),
+    SYSTEM_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION_HINT(SYSTEM_STATE_DURATION, "The length of time you expect it to take to schedule an interview"),
+    SYSTEM_APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION_LABEL(SYSTEM_STATE_DURATION, "Interview Feedback Duration"),
+    SYSTEM_APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION_HINT(SYSTEM_STATE_DURATION, "The length of time you expect it to take to collect feedback on an interview"),
+    SYSTEM_APPLICATION_CONFIRM_SUPERVISION_DURATION_LABEL(SYSTEM_STATE_DURATION, "Supervision Confirmation Duration"),
+    SYSTEM_APPLICATION_CONFIRM_SUPERVISION_DURATION_HINT(SYSTEM_STATE_DURATION, "The length of time you expect it to take for a supervisor to confirm that they are willing to supervise an applicant"),
+    SYSTEM_APPLICATION_ESCALATE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Escalation Duration"),
+    SYSTEM_APPLICATION_ESCALATE_DURATION_HINT(SYSTEM_STATE_DURATION, "The length of time you wish to allow an application that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
+    SYSTEM_APPLICATION_RESERVE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Reserve Duration"),
+    SYSTEM_APPLICATION_RESERVE_DURATION_HINT(SYSTEM_STATE_DURATION, "The length of time you expect an application to be held in reserve for"),
+    SYSTEM_APPLICATION_PURGE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Expiry Duration"),
+    SYSTEM_APPLICATION_PURGE_DURATION_HINT(SYSTEM_STATE_DURATION, "The length of time you wish to keep information about a rejected or withdrawn application on record"),
+    SYSTEM_PROJECT_ESCALATE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Escalation Duration"),
+    SYSTEM_PROJECT_ESCALATE_DURATION_HINT(SYSTEM_STATE_DURATION, "The length of time you wish to allow a new project request that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
+    SYSTEM_PROGRAM_ESCALATE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Escalation Duration"),
+    SYSTEM_PROGRAM_ESCALATE_DURATION_HINT(SYSTEM_STATE_DURATION, "The length of time you wish to allow a new program request that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
+    SYSTEM_INSTITUTION_ESCALATE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Escalation Duration"),
+    SYSTEM_INSTITUTION_ESCALATE_DURATION_HINT(SYSTEM_STATE_DURATION, "The length of time you wish to allow a new institution request that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
 
 	/*
 	 * *************** SYSTEM WORKFLOW *********************
@@ -1745,7 +1745,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     private PrismDisplayPropertyCategory category;
     private String defaultValue;
 
-    private PrismDisplayPropertyDefinition(PrismDisplayPropertyCategory category, String defaultValue) {
+    PrismDisplayPropertyDefinition(PrismDisplayPropertyCategory category, String defaultValue) {
         this.category = category;
         this.defaultValue = defaultValue;
     }

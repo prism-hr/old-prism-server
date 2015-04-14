@@ -1,13 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.googleapis.services.CommonGoogleClientRequestInitializer;
 import com.google.api.client.http.HttpTransport;
@@ -25,6 +17,13 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
 @Service
 @Transactional
@@ -75,8 +74,6 @@ public class DisplayPropertyService {
                 translateProperties(locale, t, system, systemLocale, partition);
             }
         }
-
-
     }
 
     private void translateProperties(PrismLocale locale, Translate translationEndpoint, com.zuehlke.pgadmissions.domain.system.System system, PrismLocale systemLocale, List<DisplayPropertyConfiguration> referenceDisplayValues) throws IOException {

@@ -1,62 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_ASSIGN_INTERVIEWER_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_ASSIGN_INTERVIEWER_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_ASSIGN_PRIMARY_SUPERVISOR_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_ASSIGN_PRIMARY_SUPERVISOR_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_ASSIGN_REFEREE_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_ASSIGN_REFEREE_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_ASSIGN_REVIEWER_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_ASSIGN_REVIEWER_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_ASSIGN_SECONDARY_SUPERVISOR_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_ASSIGN_SECONDARY_SUPERVISOR_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_CREATOR_DEMOGRAPHIC_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_CREATOR_DEMOGRAPHIC_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_CRIMINAL_CONVICTION_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_CRIMINAL_CONVICTION_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_DOCUMENT_COVERING_LETTER_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_DOCUMENT_COVERING_LETTER_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_DOCUMENT_CV_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_DOCUMENT_CV_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_DOCUMENT_PERSONAL_STATEMENT_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_DOCUMENT_PERSONAL_STATEMENT_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_DOCUMENT_RESEARCH_STATEMENT_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_DOCUMENT_RESEARCH_STATEMENT_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_EMPLOYMENT_POSITION_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_EMPLOYMENT_POSITION_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_FUNDING_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_FUNDING_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_FUNDING_PROOF_OF_AWARD_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_FUNDING_PROOF_OF_AWARD_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_LANGUAGE_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_LANGUAGE_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_LANGUAGE_PROOF_OF_AWARD_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_LANGUAGE_PROOF_OF_AWARD_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_OFFER_DETAIL_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_OFFER_DETAIL_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_POSITION_DETAIL_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_POSITION_DETAIL_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_PRIZE_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_PRIZE_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_QUALIFICATION_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_QUALIFICATION_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_QUALIFICATION_PROOF_OF_AWARD_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_QUALIFICATION_PROOF_OF_AWARD_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_RESIDENCE_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_RESIDENCE_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_STUDY_DETAIL_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_THEME_PRIMARY_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_THEME_PRIMARY_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_THEME_SECONDARY_HINT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATION_THEME_SECONDARY_LABEL;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConfigurationLocalizable;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyCategory.APPLICATION_DATA;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyCategory.APPLICATION_WORKFLOW;
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfigurationLocalizable;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 
 public enum PrismWorkflowPropertyDefinition implements PrismConfigurationLocalizable {
 
@@ -65,8 +15,8 @@ public enum PrismWorkflowPropertyDefinition implements PrismConfigurationLocaliz
     APPLICATION_THEME_SECONDARY(APPLICATION_DATA, 0, 10, null, null, 0, 0, APPLICATION, SYSTEM_APPLICATION_THEME_SECONDARY_LABEL, SYSTEM_APPLICATION_THEME_SECONDARY_HINT), //
     APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR(APPLICATION_DATA, 0, 999, null, null, 0, 5, APPLICATION, SYSTEM_APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR_LABEL,
             SYSTEM_APPLICATION_ASSIGN_SUGGESTED_SUPERVISOR_HINT), //
-    APPLICATION_DEMOGRAPHIC(APPLICATION_DATA, null, null, true, true, null, null, APPLICATION, SYSTEM_APPLICATION_CREATOR_DEMOGRAPHIC_LABEL,
-            SYSTEM_APPLICATION_CREATOR_DEMOGRAPHIC_HINT), //
+    APPLICATION_DEMOGRAPHIC(APPLICATION_DATA, null, null, true, true, null, null, APPLICATION, SYSTEM_APPLICATION_DEMOGRAPHIC_LABEL,
+            SYSTEM_APPLICATION_DEMOGRAPHIC_HINT), //
     APPLICATION_LANGUAGE(APPLICATION_DATA, null, null, true, true, null, null, APPLICATION, SYSTEM_APPLICATION_LANGUAGE_LABEL, SYSTEM_APPLICATION_LANGUAGE_HINT), //
     APPLICATION_LANGUAGE_PROOF_OF_AWARD(APPLICATION_DATA, null, null, true, true, null, null, APPLICATION, SYSTEM_APPLICATION_LANGUAGE_PROOF_OF_AWARD_LABEL,
             SYSTEM_APPLICATION_LANGUAGE_PROOF_OF_AWARD_HINT), //
@@ -124,8 +74,8 @@ public enum PrismWorkflowPropertyDefinition implements PrismConfigurationLocaliz
     private PrismDisplayPropertyDefinition tooltip;
 
     private PrismWorkflowPropertyDefinition(PrismWorkflowPropertyCategory category, Integer minimumPermitted, Integer maximumPermitted, Boolean defaultEnabled,
-            Boolean defaultRequired, Integer defaultMinimum, Integer defaultMaximum, PrismScope scope, PrismDisplayPropertyDefinition label,
-            PrismDisplayPropertyDefinition tooltip) {
+                                            Boolean defaultRequired, Integer defaultMinimum, Integer defaultMaximum, PrismScope scope, PrismDisplayPropertyDefinition label,
+                                            PrismDisplayPropertyDefinition tooltip) {
         this.category = category;
         this.minimumPermitted = minimumPermitted;
         this.maximumPermitted = maximumPermitted;

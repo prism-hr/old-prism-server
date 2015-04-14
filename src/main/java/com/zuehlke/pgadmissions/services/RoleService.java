@@ -118,7 +118,7 @@ public class RoleService {
 	public boolean hasUserRole(Resource resource, User user, PrismRoleGroup prismRoles) {
 		return hasUserRole(resource, user, prismRoles.getRoles());
 	}
-	
+
 	public boolean hasUserRole(Resource resource, User user, PrismRole... prismRoles) {
 		for (PrismRole prismRole : prismRoles) {
 			PrismScope roleScope = prismRole.getScope();
@@ -152,15 +152,15 @@ public class RoleService {
 	}
 
 	public List<User> getRoleUsers(Resource resource, Role... roles) {
-		return roleDAO.getRoleUsers(resource, roles);
+		return resource == null ? Lists.<User> newArrayList() : roleDAO.getRoleUsers(resource, roles);
 	}
 
 	public List<User> getRoleUsers(Resource resource, PrismRole... prismRoles) {
-		return roleDAO.getRoleUsers(resource, prismRoles);
+		return resource == null ? Lists.<User>newArrayList() : roleDAO.getRoleUsers(resource, prismRoles);
 	}
 
 	public List<User> getRoleUsers(Resource resource, PrismRoleGroup prismRoleGroup) {
-		return roleDAO.getRoleUsers(resource, prismRoleGroup.getRoles());
+		return getRoleUsers(resource, prismRoleGroup.getRoles());
 	}
 
 	public List<PrismRole> getCreatableRoles(PrismScope scopeId) {
@@ -227,7 +227,7 @@ public class RoleService {
 			creatorRole.setScopeCreator(true);
 		}
 	}
-	
+
 	public void deleteUserRole(Resource resource, User user, Role role) {
 		UserRole userRole = roleDAO.getUserRole(resource, user, role);
 		validateUserRoleRemoval(resource, userRole.getRole());

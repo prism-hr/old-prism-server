@@ -21,10 +21,10 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.api.client.util.Maps;
 import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -168,32 +168,8 @@ public class ActionService {
 		return executeAction(resource, action, comment, true);
 	}
 	
-	public ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment, boolean notify) throws Exception {
-		User user = comment.getUser();
-
-		if (action.getActionCategory() == CREATE_RESOURCE || action.getActionCategory() == VIEW_EDIT_RESOURCE) {
-			Resource duplicate = entityService.getDuplicateEntity(resource);
-
-			if (duplicate != null) {
-				if (action.getActionCategory() == CREATE_RESOURCE) {
-					Action redirectAction = getRedirectAction(action, user, duplicate);
-					if (redirectAction == null) {
-						throw new DeduplicationException("SYSTEM_DUPLICATE_" + action.getCreationScope().getId().name());
-					}
-					return new ActionOutcomeDTO().withUser(user).withResource(duplicate).withTransitionResource(duplicate)
-					        .withTransitionAction(redirectAction);
-				} else if (!Objects.equal(resource.getId(), duplicate.getId())) {
-					throw new WorkflowPermissionException(resource, action);
-				}
-			}
-		}
-
-		StateTransition stateTransition = stateService.executeStateTransition(resource, action, comment, notify);
-		Action transitionAction = stateTransition == null ? action.getFallbackAction() : stateTransition.getTransitionAction();
-		Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
-
-		return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(transitionResource)
-		        .withTransitionAction(transitionAction);
+	public ActionOutcomeDTO executeActionSilent(Resource resource, Action action, Comment comment) throws Exception {
+		return executeAction(resource, action, comment, false);
 	}
 
 	public ActionOutcomeDTO getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO) throws Exception {
@@ -335,6 +311,34 @@ public class ActionService {
 		}
 	}
 
+	private ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment, boolean notify) throws Exception {
+		User user = comment.getUser();
+
+		if (action.getActionCategory() == CREATE_RESOURCE || action.getActionCategory() == VIEW_EDIT_RESOURCE) {
+			Resource duplicate = entityService.getDuplicateEntity(resource);
+
+			if (duplicate != null) {
+				if (action.getActionCategory() == CREATE_RESOURCE) {
+					Action redirectAction = getRedirectAction(action, user, duplicate);
+					if (redirectAction == null) {
+						throw new DeduplicationException("SYSTEM_DUPLICATE_" + action.getCreationScope().getId().name());
+					}
+					return new ActionOutcomeDTO().withUser(user).withResource(duplicate).withTransitionResource(duplicate)
+					        .withTransitionAction(redirectAction);
+				} else if (!Objects.equal(resource.getId(), duplicate.getId())) {
+					throw new WorkflowPermissionException(resource, action);
+				}
+			}
+		}
+
+		StateTransition stateTransition = stateService.executeStateTransition(resource, action, comment, notify);
+		Action transitionAction = stateTransition == null ? action.getFallbackAction() : stateTransition.getTransitionAction();
+		Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
+
+		return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(transitionResource)
+		        .withTransitionAction(transitionAction);
+	}
+	
 	private boolean checkActionAvailable(Resource resource, Action action, User user) {
 		return actionDAO.getPermittedAction(resource, action, user) != null;
 	}

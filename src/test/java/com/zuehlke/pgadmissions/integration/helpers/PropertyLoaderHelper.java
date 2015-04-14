@@ -12,9 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.system.System;
-import com.zuehlke.pgadmissions.exceptions.CustomizationException;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
 import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.SystemService;
@@ -25,31 +22,30 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 @Transactional
 public class PropertyLoaderHelper {
 
-    @Autowired
-    private CustomizationService customizationService;
+	@Autowired
+	private CustomizationService customizationService;
 
-    @Autowired
-    private SystemService systemService;
+	@Autowired
+	private SystemService systemService;
 
-    @Autowired
-    private UserService userService;
+	@Autowired
+	private UserService userService;
 
-    @Autowired
-    private ApplicationContext applicationContext;
+	@Autowired
+	private ApplicationContext applicationContext;
 
-    public void verifyPropertyLoader() throws WorkflowConfigurationException, DeduplicationException, CustomizationException, InstantiationException,
-            IllegalAccessException {
-        System system = systemService.getSystem();
+	public void verifyPropertyLoader() throws Exception {
+		System system = systemService.getSystem();
 
-        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(system);
-        assertEquals(propertyLoader.load(SYSTEM_YES), SYSTEM_YES.getDefaultValue());
+		PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(system);
+		assertEquals(propertyLoader.load(SYSTEM_YES), SYSTEM_YES.getDefaultValue());
 
-        customizationService.createOrUpdateConfiguration(PrismConfiguration.DISPLAY_PROPERTY, systemService.getSystem(), EN_GB, null,
-                new DisplayPropertyConfigurationDTO().withDefinitionId(SYSTEM_YES).withValue("Hej"));
-        PropertyLoader propertyLoaderSk = applicationContext.getBean(PropertyLoader.class).localize(system);
+		customizationService.createOrUpdateConfiguration(PrismConfiguration.DISPLAY_PROPERTY, systemService.getSystem(), EN_GB, null,
+		        new DisplayPropertyConfigurationDTO().withDefinitionId(SYSTEM_YES).withValue("Hej"));
+		PropertyLoader propertyLoaderSk = applicationContext.getBean(PropertyLoader.class).localize(system);
 
-        assertEquals(propertyLoaderSk.load(SYSTEM_YES), "Hej");
-        assertEquals(propertyLoader.load(SYSTEM_YES), SYSTEM_YES.getDefaultValue());
-        assertEquals(propertyLoaderSk.load(SYSTEM_NO), SYSTEM_NO.getDefaultValue());
-    }
+		assertEquals(propertyLoaderSk.load(SYSTEM_YES), "Hej");
+		assertEquals(propertyLoader.load(SYSTEM_YES), SYSTEM_YES.getDefaultValue());
+		assertEquals(propertyLoaderSk.load(SYSTEM_NO), SYSTEM_NO.getDefaultValue());
+	}
 }

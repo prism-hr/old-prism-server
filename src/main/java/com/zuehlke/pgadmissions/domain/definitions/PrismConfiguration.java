@@ -38,7 +38,7 @@ public enum PrismConfiguration {
 	NOTIFICATION(NotificationConfiguration.class, NotificationDefinition.class, NotificationConfigurationRepresentation.class,
 	        NotificationDefinitionRepresentation.class, false, false, 1, 28, "_COMMENT_UPDATED_NOTIFICATION", true, new String[] { "id" }), //
 	STATE_DURATION(StateDurationConfiguration.class, StateDurationDefinition.class, StateDurationConfigurationRepresentation.class,
-	        StateDurationDefinitionRepresentation.class, true, false, 1, 168, "_COMMENT_UPDATED_STATE_DURATION", true, new String[] { "id" }), //
+	        StateDurationDefinitionRepresentation.class, true, false, 1, 364, "_COMMENT_UPDATED_STATE_DURATION", true, new String[] { "id" }), //
 	WORKFLOW_PROPERTY(WorkflowPropertyConfiguration.class, WorkflowPropertyDefinition.class, WorkflowPropertyConfigurationRepresentation.class,
 	        WorkflowPropertyDefinitionRepresentation.class, true, true, null, null, "_COMMENT_UPDATED_WORKFLOW_PROPERTY", true, new String[] {
 	                "category", "id" });
@@ -65,7 +65,7 @@ public enum PrismConfiguration {
 
 	private String[] orderColumns;
 
-	private static final Map<Class<? extends WorkflowConfiguration>, PrismConfiguration> reverseMap = Maps.newHashMap();
+	private static Map<Class<? extends WorkflowConfiguration>, PrismConfiguration> reverseMap = Maps.newHashMap();
 
 	static {
 		for (PrismConfiguration type : values()) {
@@ -102,27 +102,27 @@ public enum PrismConfiguration {
 		return configurationRepresentationClass;
 	}
 
-	public final Class<? extends WorkflowDefinitionRepresentation> getDefinitionRepresentationClass() {
+	public Class<? extends WorkflowDefinitionRepresentation> getDefinitionRepresentationClass() {
 		return definitionRepresentationClass;
 	}
 
-	public final boolean isGrouped() {
+	public boolean isGrouped() {
 		return grouped;
 	}
 
-	public final boolean isVersioned() {
+	public boolean isVersioned() {
 		return versioned;
 	}
 
-	public final Integer getMinimumPermitted() {
+	public Integer getMinimumPermitted() {
 		return minimumPermitted;
 	}
 
-	public final Integer getMaximumPermitted() {
+	public Integer getMaximumPermitted() {
 		return maximumPermitted;
 	}
 
-	public final String getUpdateCommentProperty() {
+	public String getUpdateCommentProperty() {
 		return updateCommentProperty;
 	}
 
@@ -134,15 +134,15 @@ public enum PrismConfiguration {
 		return validateResponseSize;
 	}
 
-	public final boolean isLocalizable() {
-		return PrismConfigurationLocalizable.class.isAssignableFrom(definitionClass);
+	public boolean isLocalizable() throws Exception {
+		return PrismConfigurationLocalizable.class.isAssignableFrom(definitionClass.getDeclaredField("id").getType());
 	}
 
-	public final boolean isCategorizable() {
-		return PrismConfigurationCategorizable.class.isAssignableFrom(definitionClass);
+	public boolean isCategorizable() throws Exception {
+		return PrismConfigurationCategorizable.class.isAssignableFrom(definitionClass.getDeclaredField("id").getType());
 	}
 
-	public final String[] getOrderColumns() {
+	public String[] getOrderColumns() {
 		return orderColumns;
 	}
 

@@ -242,11 +242,11 @@ public class ApplicationResource {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{applicationId}", params = "type=summary")
-    public ApplicationSummaryRepresentation getSummary(@PathVariable Integer applicationId) {
+    public ApplicationSummaryRepresentation getSummary(@PathVariable Integer applicationId) throws Exception {
         return applicationService.getApplicationSummary(applicationId);
     }
 
-    public void enrichApplicationRepresentation(Application application, ApplicationExtendedRepresentation representation) {
+	public void enrichApplicationRepresentation(Application application, ApplicationExtendedRepresentation representation) throws Exception {
         HashMap<Integer, RefereeRepresentation> refereeRepresentations = Maps.newHashMap();
         for (RefereeRepresentation refereeRepresentation : representation.getReferees()) {
             refereeRepresentations.put(refereeRepresentation.getId(), refereeRepresentation);

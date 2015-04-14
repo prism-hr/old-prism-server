@@ -432,7 +432,7 @@ public class CommentService {
 		}
 	}
 
-	public void processComment(Comment comment) {
+	public void processComment(Comment comment) throws Exception {
 		if (comment.isApplicationAutomatedRejectionComment()) {
 			PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(comment.getApplication());
 			comment.setRejectionReasonSystem(propertyLoader.load(PrismDisplayPropertyDefinition.APPLICATION_COMMENT_REJECTION_SYSTEM));
@@ -700,7 +700,7 @@ public class CommentService {
 			List<LocalDateTime> oldPreferences = commentDAO.getAppointmentPreferences(oldPreferenceComment);
 			if (!oldPreferences.contains(interviewDateTime)) {
 				Comment newPreferenceComment = createAutomatedInterviewPreferenceComment(resource, action, invoker, user, interviewDateTime, baseline);
-				actionService.executeAction(resource, action, newPreferenceComment, false);
+				actionService.executeActionSilent(resource, action, newPreferenceComment);
 			}
 		}
 	}

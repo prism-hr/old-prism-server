@@ -40,7 +40,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTra
 
 import java.util.List;
 
-import com.google.api.client.util.Lists;
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup;

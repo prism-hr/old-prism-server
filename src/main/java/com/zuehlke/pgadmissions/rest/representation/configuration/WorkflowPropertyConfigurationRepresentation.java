@@ -6,10 +6,6 @@ public class WorkflowPropertyConfigurationRepresentation extends WorkflowConfigu
 
 	private PrismWorkflowPropertyCategory category;
 
-	private String label;
-
-	private String tooltip;
-
 	private Boolean enabled;
 
 	private Boolean required;
@@ -24,22 +20,6 @@ public class WorkflowPropertyConfigurationRepresentation extends WorkflowConfigu
 
 	public final void setCategory(PrismWorkflowPropertyCategory category) {
 		this.category = category;
-	}
-
-	public final String getLabel() {
-		return label;
-	}
-
-	public final void setLabel(String label) {
-		this.label = label;
-	}
-
-	public final String getTooltip() {
-		return tooltip;
-	}
-
-	public final void setTooltip(String tooltip) {
-		this.tooltip = tooltip;
 	}
 
 	public Boolean getEnabled() {

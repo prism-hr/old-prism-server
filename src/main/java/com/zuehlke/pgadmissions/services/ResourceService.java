@@ -422,7 +422,7 @@ public class ResourceService {
 		return assigned;
 	}
 
-	public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Resource resource) {
+	public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Resource resource) throws Exception {
 		switch (resource.getResourceScope()) {
 		case APPLICATION:
 			return applicationService.getWorkflowPropertyConfigurations((Application) resource);
@@ -432,7 +432,7 @@ public class ResourceService {
 		}
 	}
 
-	public SocialMetadataDTO getSocialMetadata(PrismScope resourceScope, Integer resourceId) {
+	public SocialMetadataDTO getSocialMetadata(PrismScope resourceScope, Integer resourceId) throws Exception {
 		Resource resource = getNotNullResource(resourceScope, resourceId);
 		switch (resourceScope) {
 		case INSTITUTION:
@@ -463,7 +463,7 @@ public class ResourceService {
 		}
 	}
 
-	public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource resource, PrismScope propertiesScope, PrismLocale locale) {
+	public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource resource, PrismScope propertiesScope, PrismLocale locale) throws Exception {
 		PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource, locale);
 		Map<PrismDisplayPropertyDefinition, String> properties = Maps.newLinkedHashMap();
 		for (PrismDisplayPropertyDefinition prismDisplayPropertyDefinition : PrismDisplayPropertyDefinition.getProperties(propertiesScope)) {

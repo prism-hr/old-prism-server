@@ -91,7 +91,7 @@ public class ApplicationExportBuilder {
 	@Autowired
 	private ApplicationExportBuilderHelper applicationExportBuilderHelper;
 
-	public SubmitAdmissionsApplicationRequest build(ApplicationExportDTO applicationExportDTO) {
+	public SubmitAdmissionsApplicationRequest build(ApplicationExportDTO applicationExportDTO) throws Exception {
 		SubmitAdmissionsApplicationRequest request = objectFactory.createSubmitAdmissionsApplicationRequest();
 		request.setApplication(buildApplication(applicationExportDTO));
 		return request;
@@ -102,7 +102,7 @@ public class ApplicationExportBuilder {
 		return this;
 	}
 
-	private ApplicationTp buildApplication(ApplicationExportDTO applicationExportDTO) {
+	private ApplicationTp buildApplication(ApplicationExportDTO applicationExportDTO) throws Exception {
 		ApplicationTp applicationTp = objectFactory.createApplicationTp();
 		applicationTp.setSource(exportSource);
 		applicationTp.setApplicant(buildApplicant(applicationExportDTO));
@@ -110,7 +110,7 @@ public class ApplicationExportBuilder {
 		return applicationTp;
 	}
 
-	private ApplicantTp buildApplicant(ApplicationExportDTO applicationExportDTO) {
+	private ApplicantTp buildApplicant(ApplicationExportDTO applicationExportDTO) throws Exception {
 		Application application = applicationExportDTO.getApplication();
 
 		ApplicantTp applicant = objectFactory.createApplicantTp();
@@ -201,7 +201,7 @@ public class ApplicationExportBuilder {
 		return countryTp;
 	}
 
-	private PassportTp buildPassport(Application application) {
+	private PassportTp buildPassport(Application application) throws Exception {
 		ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
 		if (personalDetail.getPassport() == null) {
 			PassportTp passportTp = objectFactory.createPassportTp();
@@ -237,7 +237,7 @@ public class ApplicationExportBuilder {
 		return ethnicityTp;
 	}
 
-	private ContactDtlsTp buildHomeAddress(Application application) {
+	private ContactDtlsTp buildHomeAddress(Application application) throws Exception {
 		ContactDtlsTp contactDtlsTp = objectFactory.createContactDtlsTp();
 		AddressTp addressTp = objectFactory.createAddressTp();
 		Address currentAddress = application.getAddress().getCurrentAddress();
@@ -256,7 +256,7 @@ public class ApplicationExportBuilder {
 		return contactDtlsTp;
 	}
 
-	private ContactDtlsTp buildCorrespondenceAddress(Application application) {
+	private ContactDtlsTp buildCorrespondenceAddress(Application application) throws Exception {
 		Address contactAddress = application.getAddress().getContactAddress();
 		ContactDtlsTp contactDtlsTp = objectFactory.createContactDtlsTp();
 		AddressTp addressTp = objectFactory.createAddressTp();
@@ -275,7 +275,7 @@ public class ApplicationExportBuilder {
 		return contactDtlsTp;
 	}
 
-	private CourseApplicationTp buildCourseApplication(ApplicationExportDTO applicationExportDTO) {
+	private CourseApplicationTp buildCourseApplication(ApplicationExportDTO applicationExportDTO) throws Exception {
 		Application application = applicationExportDTO.getApplication();
 
 		CourseApplicationTp applicationTp = objectFactory.createCourseApplicationTp();
@@ -331,7 +331,7 @@ public class ApplicationExportBuilder {
 		return applicationTp;
 	}
 
-	private ProgrammeOccurrenceTp buildProgrammeOccurence(ApplicationExportDTO applicationExportDTO) {
+	private ProgrammeOccurrenceTp buildProgrammeOccurence(ApplicationExportDTO applicationExportDTO) throws Exception {
 		Application application = applicationExportDTO.getApplication();
 
 		Program program = application.getProgram();
@@ -378,7 +378,7 @@ public class ApplicationExportBuilder {
 		return interestTp;
 	}
 
-	private QualificationDetailsTp buildQualificationDetails(Application application) {
+	private QualificationDetailsTp buildQualificationDetails(Application application) throws Exception {
 		QualificationDetailsTp resultList = objectFactory.createQualificationDetailsTp();
 
 		Set<ApplicationQualification> qualifications = application.getQualifications();
@@ -464,7 +464,7 @@ public class ApplicationExportBuilder {
 		return resultList;
 	}
 
-	private RefereeListTp buildReferee(List<ApplicationReferenceDTO> exportReferees) {
+	private RefereeListTp buildReferee(List<ApplicationReferenceDTO> exportReferees) throws Exception {
 		int referenceCount = exportReferees.size();
 		RefereeListTp resultList = objectFactory.createRefereeListTp();
 
@@ -495,7 +495,7 @@ public class ApplicationExportBuilder {
 		return resultList;
 	}
 
-	private EnglishLanguageQualificationDetailsTp buildEnglishLanguageQualification(Application application) {
+	private EnglishLanguageQualificationDetailsTp buildEnglishLanguageQualification(Application application) throws Exception {
 		ApplicationPersonalDetail personalDetail = application.getPersonalDetail();
 		EnglishLanguageQualificationDetailsTp englishLanguageQualificationDetailsTp = objectFactory.createEnglishLanguageQualificationDetailsTp();
 

@@ -34,7 +34,6 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpException;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResponse;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.ReferenceTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
@@ -49,7 +48,6 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ApplicationExportDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
-import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.builders.ApplicationDocumentExportBuilder;
 import com.zuehlke.pgadmissions.services.builders.ApplicationExportBuilder;
@@ -134,7 +132,7 @@ public class ApplicationExportService {
 		}
 	}
 
-	protected SubmitAdmissionsApplicationRequest buildDataExportRequest(Application application) throws ApplicationExportException {
+	protected SubmitAdmissionsApplicationRequest buildDataExportRequest(Application application) throws Exception {
 		localize(application);
 
 		String creatorExportId = userService.getUserInstitutionId(application.getUser(), application.getInstitution(), PrismUserIdentity.STUDY_APPLICANT);
@@ -157,8 +155,7 @@ public class ApplicationExportService {
 		                .withExportProgramInstance(exportProgramInstance).withApplicationReferences(applicationExportReferences));
 	}
 
-	protected OutputStream buildDocumentExportRequest(Application application, String exportReference, OutputStream outputStream) throws IOException,
-	        IntegrationException {
+	protected OutputStream buildDocumentExportRequest(Application application, String exportReference, OutputStream outputStream) throws Exception {
 		localize(application);
 		applicationDocumentExportBuilder.localize(propertyLoader).getDocuments(application, exportReference, outputStream);
 		return outputStream;
@@ -197,8 +194,7 @@ public class ApplicationExportService {
 		return exportResponse;
 	}
 
-	private OutputStream sendDocumentExportRequest(Application application, String exportId) throws SftpException, IOException, ResourceNotFoundException,
-	        JSchException, IntegrationException {
+	private OutputStream sendDocumentExportRequest(Application application, String exportId) throws Exception {
 		Session session = getSftpSession();
 		session.connect();
 		ChannelSftp sftpChannel = (ChannelSftp) session.openChannel("sftp");

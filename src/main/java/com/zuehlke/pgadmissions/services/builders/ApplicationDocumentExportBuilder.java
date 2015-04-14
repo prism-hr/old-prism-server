@@ -56,7 +56,7 @@ public class ApplicationDocumentExportBuilder {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public void getDocuments(Application application, String exportReference, OutputStream outputStream) throws IOException, IntegrationException {
+    public void getDocuments(Application application, String exportReference, OutputStream outputStream) throws Exception {
         Properties contentsProperties = new Properties();
         ZipOutputStream zos = null;
         try {
@@ -168,7 +168,7 @@ public class ApplicationDocumentExportBuilder {
         }
     }
 
-    private void buildReferences(Application application, Properties contentsProperties, ZipOutputStream zos) throws IOException {
+    private void buildReferences(Application application, Properties contentsProperties, ZipOutputStream zos) throws Exception {
         List<ApplicationReferenceDTO> references = applicationService.getApplicationExportReferees(application);
         for (int i = 0; i < 2; i++) {
             String filename = getRandomFilename();

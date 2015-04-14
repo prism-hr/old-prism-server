@@ -2,8 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.configuration;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyCategory;
 
-public class WorkflowPropertyConfigurationRepresentation extends WorkflowConfigurationVersionedRepresentation implements
-        PrismConfigurationRepresentationLocalizable {
+public class WorkflowPropertyConfigurationRepresentation extends WorkflowConfigurationVersionedRepresentation {
 
 	private PrismWorkflowPropertyCategory category;
 

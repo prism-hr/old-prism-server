@@ -1,14 +1,14 @@
 package com.zuehlke.pgadmissions.services.helpers;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.DISPLAY_PROPERTY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
+
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -21,8 +21,9 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.services.DisplayPropertyService;
-import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.rest.representation.configuration.DisplayPropertyConfigurationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
+import com.zuehlke.pgadmissions.services.CustomizationService;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
@@ -36,23 +37,20 @@ public class PropertyLoader {
 
 	private final HashMap<PrismDisplayPropertyDefinition, String> properties = Maps.newHashMap();
 
-	@Autowired
-	private DisplayPropertyService displayPropertyService;
+	@Inject
+	private CustomizationService customizationService;
 
-	@Autowired
-	private ResourceService resourceService;
-
-	public String load(PrismDisplayPropertyDefinition property) {
+	public String load(PrismDisplayPropertyDefinition property) throws Exception {
 		String value = properties.get(property);
 		if (value == null) {
 			PrismDisplayPropertyCategory category = property.getCategory();
-			properties.putAll(displayPropertyService.getDisplayProperties(resource, property.getCategory().getScope(), category, locale, programType));
+			properties.putAll(getDisplayProperties(resource, property.getCategory().getScope(), category, locale, programType));
 			value = properties.get(property);
 		}
 		return value;
 	}
 
-	public String load(PrismDisplayPropertyDefinition trueIndex, PrismDisplayPropertyDefinition falseIndex, boolean evaluation) {
+	public String load(PrismDisplayPropertyDefinition trueIndex, PrismDisplayPropertyDefinition falseIndex, boolean evaluation) throws Exception {
 		return evaluation ? load(trueIndex) : load(falseIndex);
 	}
 
@@ -66,7 +64,7 @@ public class PropertyLoader {
 
 	public PropertyLoader localize(Resource resource, PrismLocale prismLocale) {
 		PrismScope resourceScope = resource.getResourceScope();
-		if (Arrays.asList(PROGRAM, PROJECT, APPLICATION).contains(resourceScope)) {
+		if (resourceScope.ordinal() > INSTITUTION.ordinal()) {
 			Program program = resource.getProgram();
 			this.resource = program;
 			this.programType = program.getProgramType().getPrismProgramType();
@@ -76,6 +74,21 @@ public class PropertyLoader {
 		}
 		this.locale = prismLocale;
 		return this;
+	}
+
+	private HashMap<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource resource, PrismScope scope, PrismDisplayPropertyCategory category,
+	        PrismLocale locale, PrismProgramType programType) throws Exception {
+		List<WorkflowConfigurationRepresentation> values = customizationService.getConfigurationRepresentations(DISPLAY_PROPERTY, resource, scope, locale,
+		        programType, category);
+		HashMap<PrismDisplayPropertyDefinition, String> displayProperties = Maps.newHashMap();
+		for (WorkflowConfigurationRepresentation value : values) {
+			DisplayPropertyConfigurationRepresentation displayValue = (DisplayPropertyConfigurationRepresentation) value;
+			PrismDisplayPropertyDefinition displayPropertyId = (PrismDisplayPropertyDefinition) value.getDefinitionId();
+			if (!displayProperties.containsKey(displayPropertyId)) {
+				displayProperties.put(displayPropertyId, displayValue.getValue());
+			}
+		}
+		return displayProperties;
 	}
 
 }

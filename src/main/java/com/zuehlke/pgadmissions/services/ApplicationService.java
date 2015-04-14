@@ -1,7 +1,13 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.google.visualization.datasource.datatable.value.ValueType.TEXT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_COVERING_LETTER_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_CV_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_PERSONAL_STATEMENT_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_RESEARCH_STATEMENT_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ADDRESS_CODE_MOCK;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ADDRESS_LINE_MOCK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_LINK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PHONE_MOCK;
@@ -10,8 +16,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.CONDITI
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.UNCONDITIONAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE;
 
-import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +49,6 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.visualization.datasource.base.TypeMismatchException;
 import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.TableRow;
@@ -255,7 +260,7 @@ public class ApplicationService {
 		return applicationDAO.getApplicationExportQualifications(application);
 	}
 
-	public List<ApplicationReferenceDTO> getApplicationExportReferees(Application application) {
+	public List<ApplicationReferenceDTO> getApplicationExportReferees(Application application) throws Exception {
 		List<ApplicationReferenceDTO> references = applicationDAO.getApplicationRefereesResponded(application);
 
 		Institution institution = application.getInstitution();
@@ -266,11 +271,11 @@ public class ApplicationService {
 		}
 
 		PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(application);
-		String addressLineMock = loader.load(PrismDisplayPropertyDefinition.SYSTEM_ADDRESS_LINE_MOCK);
+		String addressLineMock = loader.load(SYSTEM_ADDRESS_LINE_MOCK);
 
 		WorkflowPropertyConfiguration configuration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithOrWithoutVersion(
-		        PrismConfiguration.WORKFLOW_PROPERTY, application, application.getInstitution().getUser(),
-		        PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE, application.getWorkflowPropertyConfigurationVersion());
+		        WORKFLOW_PROPERTY, application, application.getInstitution().getUser(), APPLICATION_ASSIGN_REFEREE,
+		        application.getWorkflowPropertyConfigurationVersion());
 
 		int referencesPending = configuration.getMinimum() - references.size();
 		for (int i = 0; i < referencesPending; i++) {
@@ -298,12 +303,12 @@ public class ApplicationService {
 		if (comment.isApplicationSubmittedComment()) {
 			DateTime submittedTimestamp = new DateTime();
 			application.setSubmittedTimestamp(submittedTimestamp);
-			
+
 			Integer applicationMonth = submittedTimestamp.getMonthOfYear();
 			Integer applicationYear = applicationMonth < 10 ? (submittedTimestamp.getYear() - 1) : submittedTimestamp.getYear();
 			application.setApplicationYear(applicationYear.toString() + "/" + new Integer(applicationYear + 1).toString());
 			application.setApplicationMonth(applicationMonth);
-			
+
 			AdvertClosingDate advertClosingDate = application.getAdvert().getClosingDate();
 			application.setClosingDate(advertClosingDate == null ? null : advertClosingDate.getClosingDate());
 		}
@@ -431,7 +436,7 @@ public class ApplicationService {
 		return applicationDAO.getApplicationsForExport();
 	}
 
-	public ApplicationSummaryRepresentation getApplicationSummary(Integer applicationId) {
+	public ApplicationSummaryRepresentation getApplicationSummary(Integer applicationId) throws Exception {
 		Application application = getById(applicationId);
 
 		PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(application);
@@ -468,11 +473,11 @@ public class ApplicationService {
 
 		ApplicationDocument applicationDocument = application.getDocument();
 		if (applicationDocument != null) {
-			Map<String, PrismDisplayPropertyDefinition> documentProperties = ImmutableMap.of("personalStatement",
-			        PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_PERSONAL_STATEMENT_LABEL, "researchStatement",
-			        PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_RESEARCH_STATEMENT_LABEL, "cv",
-			        PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_CV_LABEL, "coveringLetter",
-			        PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_COVERING_LETTER_LABEL);
+			Map<String, PrismDisplayPropertyDefinition> documentProperties = ImmutableMap.of( //
+					"personalStatement", APPLICATION_DOCUMENT_PERSONAL_STATEMENT_LABEL, //
+					"researchStatement", APPLICATION_DOCUMENT_RESEARCH_STATEMENT_LABEL, //
+					"cv", APPLICATION_DOCUMENT_CV_LABEL, //
+					"coveringLetter", APPLICATION_DOCUMENT_COVERING_LETTER_LABEL);
 
 			for (Entry<String, PrismDisplayPropertyDefinition> documentProperty : documentProperties.entrySet()) {
 				Document document = (Document) PrismReflectionUtils.getProperty(applicationDocument, documentProperty.getKey());
@@ -494,7 +499,7 @@ public class ApplicationService {
 		return summary;
 	}
 
-	public DataTable getApplicationReport(ResourceListFilterDTO filter) throws TypeMismatchException, IntrospectionException {
+	public DataTable getApplicationReport(ResourceListFilterDTO filter) throws Exception {
 		PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(systemService.getSystem());
 
 		PrismScope scopeId = PrismScope.APPLICATION;
@@ -553,10 +558,10 @@ public class ApplicationService {
 		return dataTable;
 	}
 
-	public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Application application) {
-		List<WorkflowPropertyConfigurationRepresentation> configurations = (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) customizationService
-		        .getConfigurationRepresentationsWithOrWithoutVersion(PrismConfiguration.WORKFLOW_PROPERTY, application,
-		                application.getWorkflowPropertyConfigurationVersion());
+	public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Application application) throws Exception {
+		List<WorkflowPropertyConfigurationRepresentation> configurations = (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) //
+		customizationService.getConfigurationRepresentationsWithOrWithoutVersion(PrismConfiguration.WORKFLOW_PROPERTY, application, //
+		        application.getWorkflowPropertyConfigurationVersion());
 		if (application.isSubmitted()) {
 			for (WorkflowPropertyConfigurationRepresentation configuration : configurations) {
 				PrismWorkflowPropertyDefinition definitionId = (PrismWorkflowPropertyDefinition) configuration.getDefinitionId();

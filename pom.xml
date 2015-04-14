@@ -356,11 +356,7 @@
 			<artifactId>aws-java-sdk</artifactId>
 			<version>1.9.21</version>
 		</dependency>
-        <dependency>
-            <groupId>com.google.apis</groupId>
-            <artifactId>google-api-services-translate</artifactId>
-            <version>v2-rev41-1.20.0</version>
-        </dependency>
+
 
     </dependencies>
 

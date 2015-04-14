@@ -205,7 +205,7 @@ public class ResourceConfigurationResource {
     public Integer getWorkflowPropertyConfigurationVersion(@ModelAttribute PrismConfiguration configurationType,
                                                            @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam PrismScope targetScope) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        return customizationService.getActiveConfigurationVersion(configurationType, resource, targetScope);
+		return customizationService.getActiveConfigurationVersion(configurationType, resource, targetScope);
     }
 
     @ModelAttribute

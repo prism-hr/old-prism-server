@@ -258,7 +258,7 @@ public class SystemService {
     }
 
     @Transactional
-    public SocialMetadataDTO getSocialMetadata() {
+    public SocialMetadataDTO getSocialMetadata() throws Exception {
         System system = getSystem();
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(system);
         return new SocialMetadataDTO().withAuthor(system.getUser().getFullName()).withTitle(system.getTitle())

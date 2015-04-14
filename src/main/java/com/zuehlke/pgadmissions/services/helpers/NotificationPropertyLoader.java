@@ -94,7 +94,7 @@ public class NotificationPropertyLoader {
     @Autowired
     private FreeMarkerConfig freemarkerConfig;
 
-    public String load(PrismNotificationDefinitionProperty property) {
+    public String load(PrismNotificationDefinitionProperty property) throws Exception {
         String value = (String) PrismReflectionUtils.invokeMethod(this, PrismReflectionUtils.getMethodName(property));
         return value == null ? "[" + propertyLoader.load(SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR) + ". " + propertyLoader.load(SYSTEM_HELPDESK_REPORT)
                 + ": " + notificationDefinitionModelDTO.getResource().getSystem().getHelpdesk() + "]" : value;
@@ -140,32 +140,32 @@ public class NotificationPropertyLoader {
         return notificationDefinitionModelDTO.getResource().getSystem().getTitle();
     }
 
-    public String getTemplateSystemHomepage() throws IOException, TemplateException {
+    public String getTemplateSystemHomepage() throws Exception {
         return buildRedirectionControl(applicationUrl, SYSTEM_HOMEPAGE);
     }
 
-    public String getTemplateHelpdesk() throws IOException, TemplateException {
+    public String getTemplateHelpdesk() throws Exception {
         return buildRedirectionControl(notificationDefinitionModelDTO.getResource().getHelpdeskDisplay(), SYSTEM_HELPDESK);
     }
 
-    public String getActionComplete() throws IOException, TemplateException {
+    public String getActionComplete() throws Exception {
         return buildRedirectionControl(SYSTEM_PROCEED, notificationDefinitionModelDTO.getTransitionAction().isDeclinableAction() ? SYSTEM_DECLINE : null);
     }
 
-    public String getActionViewEdit() throws IOException, TemplateException {
+    public String getActionViewEdit() throws Exception {
         return buildRedirectionControl(SYSTEM_VIEW_EDIT);
     }
 
-    public String getCommentContent() {
+    public String getCommentContent() throws Exception {
         String content = notificationDefinitionModelDTO.getComment().getContent();
         return content == null ? propertyLoader.load(SYSTEM_COMMENT_CONTENT_NOT_PROVIDED) : "\"" + content + "\"";
     }
 
-    public String getCommentDateTime() {
+    public String getCommentDateTime() throws Exception {
         return notificationDefinitionModelDTO.getComment().getCreatedTimestampDisplay(propertyLoader.load(SYSTEM_DATE_TIME_FORMAT));
     }
 
-    public String getCommentTransitionOutcome() {
+    public String getCommentTransitionOutcome() throws Exception {
         String resourceName = notificationDefinitionModelDTO.getResource().getResourceScope().name();
         String outcomePostfix = Iterables.getLast(Lists.newArrayList(notificationDefinitionModelDTO.getComment().getTransitionState().getId().name().split("_")));
         return propertyLoader.load(PrismDisplayPropertyDefinition.valueOf(resourceName + "_COMMENT_" + outcomePostfix));
@@ -187,12 +187,12 @@ public class NotificationPropertyLoader {
         return notificationDefinitionModelDTO.getResource().getApplication().getProjectOrProgramCodeDisplay();
     }
 
-    public String getApplicationProgramType() {
+    public String getApplicationProgramType() throws Exception {
         PrismProgramType programType = PrismProgramType.valueOf(notificationDefinitionModelDTO.getResource().getApplication().getProgram().getProgramType().getCode());
         return propertyLoader.load(programType.getDisplayProperty());
     }
 
-    public String getApplicationInterviewDateTime() {
+    public String getApplicationInterviewDateTime() throws Exception {
         return notificationDefinitionModelDTO.getComment().getInterviewDateTimeDisplay(propertyLoader.load(SYSTEM_DATE_TIME_FORMAT));
     }
 
@@ -200,19 +200,19 @@ public class NotificationPropertyLoader {
         return notificationDefinitionModelDTO.getComment().getInterviewTimeZoneDisplay();
     }
 
-    public String getApplicationInterviewerInstructions() {
+    public String getApplicationInterviewerInstructions() throws Exception {
         CommentApplicationInterviewInstruction interviewInstruction = notificationDefinitionModelDTO.getComment().getInterviewInstruction();
         String instructions = interviewInstruction == null ? null : interviewInstruction.getInterviewerInstructions();
         return instructions == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : instructions;
     }
 
-    public String getApplicationIntervieweeInstructions() {
+    public String getApplicationIntervieweeInstructions() throws Exception {
         CommentApplicationInterviewInstruction interviewInstruction = notificationDefinitionModelDTO.getComment().getInterviewInstruction();
         String instructions = interviewInstruction == null ? null : interviewInstruction.getIntervieweeInstructions();
         return instructions == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : instructions;
     }
 
-    public String getApplicationInterviewLocation() throws IOException, TemplateException {
+    public String getApplicationInterviewLocation() throws Exception {
         CommentApplicationInterviewInstruction interviewInstruction = notificationDefinitionModelDTO.getComment().getInterviewInstruction();
         String interviewLocation = interviewInstruction == null ? null : interviewInstruction.getInterviewLocation();
         return interviewLocation == null ? "<p>" + propertyLoader.load(APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED) + "</p>" : buildRedirectionControl(
@@ -229,7 +229,7 @@ public class NotificationPropertyLoader {
         return positionDetail == null ? null : positionDetail.getPositionDescription();
     }
 
-    public String getApplicationConfirmedStartDate() {
+    public String getApplicationConfirmedStartDate() throws Exception {
         return notificationDefinitionModelDTO.getComment().getPositionProvisionalStartDateDisplay(propertyLoader.load(SYSTEM_DATE_FORMAT));
     }
 
@@ -282,11 +282,11 @@ public class NotificationPropertyLoader {
         return notificationDefinitionModelDTO.getDataImportErrorMessage();
     }
 
-    public String getSystemApplicationHomepage() throws IOException, TemplateException {
+    public String getSystemApplicationHomepage() throws Exception {
         return buildRedirectionControl(SYSTEM_APPLICATIONS);
     }
 
-    public String getSystemApplicationRecommendation() throws IOException, TemplateException, AbortMailSendException {
+    public String getSystemApplicationRecommendation() throws Exception {
         List<AdvertRecommendationDTO> advertRecommendations = advertService.getRecommendedAdverts(notificationDefinitionModelDTO.getUser());
 
         if (!advertRecommendations.isEmpty()) {
@@ -313,15 +313,15 @@ public class NotificationPropertyLoader {
         throw new AbortMailSendException("No recommended adverts found for user: " + notificationDefinitionModelDTO.getUser().getId().toString());
     }
 
-    public String getSystemProjectHomepage() throws IOException, TemplateException {
+    public String getSystemProjectHomepage() throws Exception {
         return buildRedirectionControl(SYSTEM_PROJECTS);
     }
 
-    public String getSystemProgramHomepage() throws IOException, TemplateException {
+    public String getSystemProgramHomepage() throws Exception {
         return buildRedirectionControl(PrismDisplayPropertyDefinition.SYSTEM_PROGRAMS);
     }
 
-    public String getSystemInstitutionHomepage() throws IOException, TemplateException {
+    public String getSystemInstitutionHomepage() throws Exception {
         return buildRedirectionControl(SYSTEM_INSTITUTIONS);
     }
 
@@ -329,12 +329,12 @@ public class NotificationPropertyLoader {
         return notificationDefinitionModelDTO.getNewPassword();
     }
 
-    public String getSystemUserAccountManagement() throws IOException, TemplateException {
+    public String getSystemUserAccountManagement() throws Exception {
         String url = applicationApiUrl + "/mail/account-details";
         return buildRedirectionControl(url, SYSTEM_USER_ACCOUNT);
     }
 
-    public String getSystemUserAccountActivation() throws IOException, TemplateException {
+    public String getSystemUserAccountActivation() throws Exception {
         return buildRedirectionControl(SYSTEM_ACTIVATE_ACCOUNT);
     }
 
@@ -350,23 +350,22 @@ public class NotificationPropertyLoader {
         return this;
     }
 
-    private String buildRedirectionControl(PrismDisplayPropertyDefinition linkLabel) throws IOException, TemplateException {
+    private String buildRedirectionControl(PrismDisplayPropertyDefinition linkLabel) throws Exception {
         return buildRedirectionControl(linkLabel, null);
     }
 
-    private String buildRedirectionControl(String url, PrismDisplayPropertyDefinition linkLabel) throws IOException, TemplateException {
+    private String buildRedirectionControl(String url, PrismDisplayPropertyDefinition linkLabel) throws Exception {
         return buildRedirectionControl(url, linkLabel, null);
     }
 
-    private String buildRedirectionControl(PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel) throws IOException,
-            TemplateException {
+    private String buildRedirectionControl(PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel) throws Exception {
         Resource resource = notificationDefinitionModelDTO.getResource();
         String url = buildRedirectionUrl(resource, notificationDefinitionModelDTO.getTransitionAction(), notificationDefinitionModelDTO.getUser());
         return buildRedirectionControl(url, linkLabel, declineLinkLabel);
     }
 
     private String buildRedirectionControl(String url, PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel)
-            throws IOException, TemplateException {
+            throws Exception {
         Map<String, Object> model = Maps.newHashMap();
         ImmutableMap<String, String> link = ImmutableMap.of("url", url, "label", propertyLoader.load(linkLabel));
         model.put("link", link);

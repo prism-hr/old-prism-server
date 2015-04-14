@@ -45,7 +45,6 @@ import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
-import com.zuehlke.pgadmissions.exceptions.AbortMailSendException;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -57,142 +56,141 @@ import freemarker.template.TemplateException;
 @Scope(SCOPE_PROTOTYPE)
 public class MailSender {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MailSender.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(MailSender.class);
 
-    private PropertyLoader propertyLoader;
+	private PropertyLoader propertyLoader;
 
-    @Value("${context.environment}")
-    private String contextEnvironment;
+	@Value("${context.environment}")
+	private String contextEnvironment;
 
-    @Value("${email.source}")
-    private String emailSource;
+	@Value("${email.source}")
+	private String emailSource;
 
-    @Value("${application.url}")
-    private String applicationUrl;
+	@Value("${application.url}")
+	private String applicationUrl;
 
-    @Value("${application.api.url}")
-    private String applicationApiUrl;
+	@Value("${application.api.url}")
+	private String applicationApiUrl;
 
-    @Inject
-    private FreeMarkerConfig freemarkerConfig;
+	@Inject
+	private FreeMarkerConfig freemarkerConfig;
 
-    @Inject
-    private MailToPlainTextConverter mailToPlainTextConverter;
+	@Inject
+	private MailToPlainTextConverter mailToPlainTextConverter;
 
-    @Inject
-    private ApplicationContext applicationContext;
+	@Inject
+	private ApplicationContext applicationContext;
 
-    @Inject
-    private SystemService systemService;
+	@Inject
+	private SystemService systemService;
 
-    public void sendEmail(final MailMessageDTO messageDTO) {
-        NotificationDefinitionModelDTO modelDTO = messageDTO.getModelDTO();
-        final NotificationConfiguration configuration = messageDTO.getConfiguration();
-        try {
-            Map<String, Object> model = createNotificationModel(messageDTO.getConfiguration().getNotificationDefinition(), modelDTO);
-            final String subject = processHeader(configuration.getNotificationDefinition().getId(), configuration.getSubject(), model);
+	public void sendEmail(final MailMessageDTO messageDTO) {
+		NotificationDefinitionModelDTO modelDTO = messageDTO.getModelDTO();
+		final NotificationConfiguration configuration = messageDTO.getConfiguration();
+		try {
+			Map<String, Object> model = createNotificationModel(messageDTO.getConfiguration().getNotificationDefinition(), modelDTO);
+			final String subject = processHeader(configuration.getNotificationDefinition().getId(), configuration.getSubject(), model);
 
-            Institution institution = modelDTO.getResource().getInstitution();
-            Document logoDocument = institution != null ? institution.getLogoDocument() : null;
-            final String html = processContent(configuration.getNotificationDefinition().getId(), configuration.getContent(), model, subject,
-                    logoDocument);
-            final String plainText = mailToPlainTextConverter.getPlainText(html) + "\n\n" + propertyLoader.load(SYSTEM_EMAIL_LINK_MESSAGE);
+			Institution institution = modelDTO.getResource().getInstitution();
+			Document logoDocument = institution != null ? institution.getLogoDocument() : null;
+			final String html = processContent(configuration.getNotificationDefinition().getId(), configuration.getContent(), model, subject,
+			        logoDocument);
+			final String plainText = mailToPlainTextConverter.getPlainText(html) + "\n\n" + propertyLoader.load(SYSTEM_EMAIL_LINK_MESSAGE);
 
-            if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat")) {
-                LOGGER.info("Sending Production Email: " + messageDTO.toString());
+			if (contextEnvironment.equals("prod") || contextEnvironment.equals("uat")) {
+				LOGGER.info("Sending Production Email: " + messageDTO.toString());
 
-                Destination destination = new Destination().withToAddresses(new String[]{convertToInternetAddresses(modelDTO.getUser()).toString()});
-                Content subjectContent = new Content().withData(subject);
-                Content plainTextContent = new Content().withData(plainText);
-                Content htmlContent = new Content().withData(html);
-                Body body = new Body().withText(plainTextContent).withHtml(htmlContent);
-                Message message = new Message().withSubject(subjectContent).withBody(body);
-                SendEmailRequest request = new SendEmailRequest().withSource(emailSource).withDestination(destination)
-                        .withMessage(message);
+				Destination destination = new Destination().withToAddresses(new String[] { convertToInternetAddresses(modelDTO.getUser()).toString() });
+				Content subjectContent = new Content().withData(subject);
+				Content plainTextContent = new Content().withData(plainText);
+				Content htmlContent = new Content().withData(html);
+				Body body = new Body().withText(plainTextContent).withHtml(htmlContent);
+				Message message = new Message().withSubject(subjectContent).withBody(body);
+				SendEmailRequest request = new SendEmailRequest().withSource(emailSource).withDestination(destination)
+				        .withMessage(message);
 
-                AWSCredentials credentials = systemService.getAmazonCredentials();
-                AmazonSimpleEmailServiceClient client = new AmazonSimpleEmailServiceClient(credentials);
-                Region REGION = Region.getRegion(Regions.EU_WEST_1);
-                client.setRegion(REGION);
-                client.sendEmail(request);
-            } else if (contextEnvironment.equals("dev")) {
-                LOGGER.info("Sending Development Email: " + messageDTO.toString() + "\nSubject: " + subject + "\nContent:\n" + html);
-            } else {
-                LOGGER.info("Sending Development Email: " + messageDTO.toString());
-            }
-        } catch (Exception e) {
-            LOGGER.error(String.format("Failed to send email %s", messageDTO.toString()), e);
-        }
+				AWSCredentials credentials = systemService.getAmazonCredentials();
+				AmazonSimpleEmailServiceClient client = new AmazonSimpleEmailServiceClient(credentials);
+				Region REGION = Region.getRegion(Regions.EU_WEST_1);
+				client.setRegion(REGION);
+				client.sendEmail(request);
+			} else if (contextEnvironment.equals("dev")) {
+				LOGGER.info("Sending Development Email: " + messageDTO.toString() + "\nSubject: " + subject + "\nContent:\n" + html);
+			} else {
+				LOGGER.info("Sending Development Email: " + messageDTO.toString());
+			}
+		} catch (Exception e) {
+			LOGGER.error(String.format("Failed to send email %s", messageDTO.toString()), e);
+		}
 
-    }
+	}
 
-    public MailSender localize(PropertyLoader propertyLoader) {
-        this.propertyLoader = propertyLoader;
-        return this;
-    }
+	public MailSender localize(PropertyLoader propertyLoader) {
+		this.propertyLoader = propertyLoader;
+		return this;
+	}
 
-    public String processHeader(PrismNotificationDefinition templateId, String templateValue, Map<String, Object> model) throws IOException, TemplateException {
-        Template template = new Template(templateId.name(), new StringReader(templateValue), freemarkerConfig.getConfiguration());
-        return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
-    }
+	public String processHeader(PrismNotificationDefinition templateId, String templateValue, Map<String, Object> model) throws IOException, TemplateException {
+		Template template = new Template(templateId.name(), new StringReader(templateValue), freemarkerConfig.getConfiguration());
+		return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+	}
 
-    public String processContent(PrismNotificationDefinition templateId, String templateValue, Map<String, Object> model, String subject, Document logoDocument)
-            throws IOException, TemplateException {
-        Template template = new Template(templateId.name(), new StringReader(templateValue), freemarkerConfig.getConfiguration());
-        String content = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+	public String processContent(PrismNotificationDefinition templateId, String templateValue, Map<String, Object> model, String subject, Document logoDocument)
+	        throws IOException, TemplateException {
+		Template template = new Template(templateId.name(), new StringReader(templateValue), freemarkerConfig.getConfiguration());
+		String content = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
 
-        String emailTemplate = Resources.toString(Resources.getResource("email/email_template.ftl"), Charsets.UTF_8);
-        template = new Template("Email template", emailTemplate, freemarkerConfig.getConfiguration());
+		String emailTemplate = Resources.toString(Resources.getResource("email/email_template.ftl"), Charsets.UTF_8);
+		template = new Template("Email template", emailTemplate, freemarkerConfig.getConfiguration());
 
-        String imagesPath = applicationUrl + "/images/email";
-        String logoUrl = null;
-        if (logoDocument != null) {
-            logoUrl = applicationApiUrl + "/images/" + logoDocument.getId();
-        }
+		String imagesPath = applicationUrl + "/images/email";
+		String logoUrl = null;
+		if (logoDocument != null) {
+			logoUrl = applicationApiUrl + "/images/" + logoDocument.getId();
+		}
 
-        model = Maps.newHashMap();
-        if (logoUrl != null) {
-            model.put("LOGO_URL", logoUrl);
-        }
-        model.put("IMAGES_PATH", imagesPath);
-        model.put("SUBJECT", subject);
-        model.put("CONTENT", content);
-        return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
-    }
+		model = Maps.newHashMap();
+		if (logoUrl != null) {
+			model.put("LOGO_URL", logoUrl);
+		}
+		model.put("IMAGES_PATH", imagesPath);
+		model.put("SUBJECT", subject);
+		model.put("CONTENT", content);
+		return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+	}
 
-    public Map<String, Object> createNotificationModel(NotificationDefinition notificationTemplate, NotificationDefinitionModelDTO modelDTO)
-            throws AbortMailSendException {
-        return createNotificationModel(notificationTemplate, modelDTO, false);
-    }
+	public Map<String, Object> createNotificationModel(NotificationDefinition notificationTemplate, NotificationDefinitionModelDTO modelDTO) throws Exception {
+		return createNotificationModel(notificationTemplate, modelDTO, false);
+	}
 
-    private Map<String, Object> createNotificationModel(NotificationDefinition notificationTemplate, NotificationDefinitionModelDTO modelDTO,
-                                                        boolean validationMode) throws AbortMailSendException {
-        Map<String, Object> model = Maps.newHashMap();
-        List<PrismNotificationDefinitionPropertyCategory> categories = notificationTemplate.getId().getPropertyCategories();
-        NotificationPropertyLoader loader = applicationContext.getBean(NotificationPropertyLoader.class).localize(modelDTO, propertyLoader);
-        for (PrismNotificationDefinitionPropertyCategory propertyCategory : categories) {
-            for (PrismNotificationDefinitionProperty property : propertyCategory.getProperties()) {
-                String value = validationMode ? "placeholder" : loader.load(property);
-                model.put(property.name(), property.isEscapeHtml() ? StringEscapeUtils.escapeHtml(value) : value);
-            }
-        }
-        return model;
-    }
+	private Map<String, Object> createNotificationModel(NotificationDefinition notificationTemplate, NotificationDefinitionModelDTO modelDTO,
+	        boolean validationMode) throws Exception {
+		Map<String, Object> model = Maps.newHashMap();
+		List<PrismNotificationDefinitionPropertyCategory> categories = notificationTemplate.getId().getPropertyCategories();
+		NotificationPropertyLoader loader = applicationContext.getBean(NotificationPropertyLoader.class).localize(modelDTO, propertyLoader);
+		for (PrismNotificationDefinitionPropertyCategory propertyCategory : categories) {
+			for (PrismNotificationDefinitionProperty property : propertyCategory.getProperties()) {
+				String value = validationMode ? "placeholder" : loader.load(property);
+				model.put(property.name(), property.isEscapeHtml() ? StringEscapeUtils.escapeHtml(value) : value);
+			}
+		}
+		return model;
+	}
 
-    private InternetAddress convertToInternetAddresses(User user) {
-        try {
-            StringBuilder stringBuilder = new StringBuilder(user.getFirstName());
-            if (!StringUtils.isEmpty(user.getFirstName2())) {
-                stringBuilder.append(" ").append(user.getFirstName2());
-            }
-            if (!StringUtils.isEmpty(user.getFirstName3())) {
-                stringBuilder.append(" ").append(user.getFirstName3());
-            }
-            stringBuilder.append(" ").append(user.getLastName());
-            return new InternetAddress(user.getEmail(), stringBuilder.toString());
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
+	private InternetAddress convertToInternetAddresses(User user) {
+		try {
+			StringBuilder stringBuilder = new StringBuilder(user.getFirstName());
+			if (!StringUtils.isEmpty(user.getFirstName2())) {
+				stringBuilder.append(" ").append(user.getFirstName2());
+			}
+			if (!StringUtils.isEmpty(user.getFirstName3())) {
+				stringBuilder.append(" ").append(user.getFirstName3());
+			}
+			stringBuilder.append(" ").append(user.getLastName());
+			return new InternetAddress(user.getEmail(), stringBuilder.toString());
+		} catch (UnsupportedEncodingException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
 
 }

@@ -11,13 +11,13 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfImportedPage;
 import com.itextpdf.text.pdf.PdfPTable;
@@ -40,10 +40,10 @@ public class ApplicationDownloadReferenceBuilder {
 
     private ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper;
     
-    @Autowired
+    @Inject
     private DocumentService documentService;
     
-    @Autowired
+    @Inject
     private Mapper mapper;
 
     public byte[] build(final Application application, final Comment referenceComment) {
@@ -67,7 +67,7 @@ public class ApplicationDownloadReferenceBuilder {
     }
 
     public void addReferenceComment(Document pdfDocument, PdfPTable body, PdfWriter pdfWriter, Application application, Comment referenceComment)
-            throws DocumentException {
+            throws Exception {
         String rowTitle = propertyLoader.load(SYSTEM_COMMENT_HEADER);
 
         if (referenceComment == null) {

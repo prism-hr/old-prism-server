@@ -19,9 +19,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.api.client.util.Sets;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.NotificationDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;

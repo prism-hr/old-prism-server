@@ -50,13 +50,13 @@ public class ApplicationDownloadBuilderHelper {
         return pdfWriter;
     }
 
-    public PdfPTable startSection(Document pdfDocument, String title) throws DocumentException {
+	public PdfPTable startSection(Document pdfDocument, String title) throws Exception {
         pdfDocument.add(newSectionHeader(title));
         pdfDocument.add(newSectionSeparator());
         return newSectionBody();
     }
 
-    public PdfPTable startSubSection(String title) throws DocumentException {
+    public PdfPTable startSubSection(String title) throws Exception {
         PdfPTable subBody = newSectionBody();
         PdfPCell header = new PdfPCell(newSubsectionHeader(title));
         header.setColspan(2);
@@ -85,11 +85,11 @@ public class ApplicationDownloadBuilderHelper {
         return new Paragraph(" ");
     }
 
-    public PdfPTable newSectionHeader(String title) {
+    public PdfPTable newSectionHeader(String title) throws Exception {
         return newSectionHeader(title.toUpperCase(), ApplicationDownloadBuilderColor.GREY);
     }
 
-    public PdfPTable newSubsectionHeader(String title) {
+    public PdfPTable newSubsectionHeader(String title) throws Exception {
         return newSectionHeader(WordUtils.capitalizeFully(title), ApplicationDownloadBuilderColor.WHITE);
     }
 
@@ -99,27 +99,27 @@ public class ApplicationDownloadBuilderHelper {
         return table;
     }
 
-    public PdfPCell newTitleCellMedium(String content) {
+    public PdfPCell newTitleCellMedium(String content) throws Exception {
         return newTitleCell(content, ApplicationDownloadBuilderFontSize.MEDIUM);
     }
 
-    public PdfPCell newContentCellMedium(String content) {
+    public PdfPCell newContentCellMedium(String content) throws Exception {
         return newContentCell(content, ApplicationDownloadBuilderFontSize.MEDIUM);
     }
 
-    public PdfPCell newBookmarkCellMedium(String content, String index) {
+    public PdfPCell newBookmarkCellMedium(String content, String index) throws Exception {
         return newBookmarkCell(content, ApplicationDownloadBuilderFontSize.MEDIUM, index);
     }
 
-    public PdfPCell newContentCell(String content, ApplicationDownloadBuilderFontSize fontSize) {
+    public PdfPCell newContentCell(String content, ApplicationDownloadBuilderFontSize fontSize) throws Exception {
         return newTableCell(content, fontSize, null);
     }
 
-    public PdfPCell newTitleCell(String content, ApplicationDownloadBuilderFontSize fontSize) {
+    public PdfPCell newTitleCell(String content, ApplicationDownloadBuilderFontSize fontSize) throws Exception {
         return newTableCell(content, fontSize, null);
     }
 
-    public PdfPCell newBookmarkCell(String content, ApplicationDownloadBuilderFontSize fontSize, String index) {
+    public PdfPCell newBookmarkCell(String content, ApplicationDownloadBuilderFontSize fontSize, String index) throws Exception {
         return newTableCell(content, fontSize, index);
     }
 
@@ -132,7 +132,7 @@ public class ApplicationDownloadBuilderHelper {
         return this;
     }
 
-    private PdfPTable newSectionHeader(String title, ApplicationDownloadBuilderColor background) {
+    private PdfPTable newSectionHeader(String title, ApplicationDownloadBuilderColor background) throws Exception {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(ApplicationDownloadBuilderConfiguration.PAGE_WIDTH);
         PdfPCell cell = newTableCell(title, ApplicationDownloadBuilderFontSize.LARGE, null);
@@ -141,7 +141,7 @@ public class ApplicationDownloadBuilderHelper {
         return table;
     }
 
-    private PdfPCell newTableCell(String content, ApplicationDownloadBuilderFontSize fontSize, String index) {
+    private PdfPCell newTableCell(String content, ApplicationDownloadBuilderFontSize fontSize, String index) throws Exception {
         Phrase phrase;
         if (StringUtils.isBlank(content)) {
             phrase = new Phrase(propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED), ApplicationDownloadBuilderConfiguration.getEmptyFont(fontSize));

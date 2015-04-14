@@ -1173,12 +1173,12 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 	 * *************** SYSTEM HTML RESOURCE CONFIGURATION *********************
 	 */
 
-    SYSTEM_RESOURCE_CONFIGURATION_SCOPE_LABEL(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "Scope"),
-    SYSTEM_RESOURCE_CONFIGURATION_SCOPE_HINT(SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION, "???"),
+    SYSTEM_RESOURCE_CONFIGURATION_SCOPE_LABEL(SYSTEM_HTML_RESOURCE_CONFIGURATION, "Resource Scope"),
+    SYSTEM_RESOURCE_CONFIGURATION_SCOPE_HINT(SYSTEM_HTML_RESOURCE_CONFIGURATION, "The scope of the resource (e.g. system, institution, program, project, application) that you wish to define configuration for."),
     SYSTEM_RESOURCE_CONFIGURATION_PROGRAM_TYPE_LABEL(SYSTEM_HTML_RESOURCE_CONFIGURATION, "Program Type"),
-    SYSTEM_RESOURCE_CONFIGURATION_PROGRAM_TYPE_HINT(SYSTEM_HTML_RESOURCE_CONFIGURATION, "???"),
+    SYSTEM_RESOURCE_CONFIGURATION_PROGRAM_TYPE_HINT(SYSTEM_HTML_RESOURCE_CONFIGURATION, "The type of the program that you wish to define configuration for. Think about this in terms of the terminology that will make sense for different types of recruitment (e.g. student, intern, employee, etc)."),
     SYSTEM_RESOURCE_CONFIGURATION_LOCALE_LABEL(SYSTEM_HTML_RESOURCE_CONFIGURATION, "Locale"),
-    SYSTEM_RESOURCE_CONFIGURATION_LOCALE_HINT(SYSTEM_HTML_RESOURCE_CONFIGURATION, "???"),
+    SYSTEM_RESOURCE_CONFIGURATION_LOCALE_HINT(SYSTEM_HTML_RESOURCE_CONFIGURATION, "The language and culture that you wish to define configuration for. To improve experience for your uers you may wish to provide custom configurations for the locales that you support."),
     SYSTEM_RESOURCE_CONFIGURATION_OVERRIDE_LOCAL_VERSIONS_BUTTON(SYSTEM_HTML_RESOURCE_CONFIGURATION, "Override Local Versions"),
     SYSTEM_RESOURCE_CONFIGURATION_RESTORE_DEFAULT_BUTTON(SYSTEM_HTML_RESOURCE_CONFIGURATION, "Restore Default"),
 

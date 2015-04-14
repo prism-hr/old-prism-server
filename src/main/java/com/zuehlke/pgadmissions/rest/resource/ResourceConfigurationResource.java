@@ -1,28 +1,7 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
-import java.util.List;
-
-import javax.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.google.common.base.CaseFormat;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.*;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -30,16 +9,20 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestApiUtils;
-import com.zuehlke.pgadmissions.rest.dto.ActionCustomQuestionConfigurationDTO;
-import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO;
-import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
-import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO;
-import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO;
+import com.zuehlke.pgadmissions.rest.dto.*;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.ActionCustomQuestionValidator;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.utils.WordUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/{resourceScope:projects|programs|institutions|systems}/{resourceId}/configuration")
@@ -84,9 +67,13 @@ public class ResourceConfigurationResource {
             @PathVariable PrismDisplayPropertyCategory category,
             @RequestParam PrismScope scope,
             @RequestParam PrismLocale locale,
-            @RequestParam(required = false) PrismProgramType programType) throws Exception {
+            @RequestParam(required = false) PrismProgramType programType,
+            @RequestParam(required = false) Boolean referenceTranslations) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        return customizationService.getConfigurationRepresentations(configurationType, resource, scope, locale, programType, category);
+        if (BooleanUtils.isTrue(referenceTranslations)) {
+            return customizationService.getConfigurationRepresentations(configurationType, resource, scope, locale, programType, category);
+        }
+        return customizationService.getConfigurationRepresentationsTranslationMode(configurationType, resource, scope, locale, programType, category);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -205,7 +192,7 @@ public class ResourceConfigurationResource {
     public Integer getWorkflowPropertyConfigurationVersion(@ModelAttribute PrismConfiguration configurationType,
                                                            @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam PrismScope targetScope) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-		return customizationService.getActiveConfigurationVersion(configurationType, resource, targetScope);
+        return customizationService.getActiveConfigurationVersion(configurationType, resource, targetScope);
     }
 
     @ModelAttribute

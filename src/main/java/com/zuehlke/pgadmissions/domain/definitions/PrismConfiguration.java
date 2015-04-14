@@ -134,10 +134,6 @@ public enum PrismConfiguration {
 		return validateResponseSize;
 	}
 
-	public boolean isLocalizable() throws Exception {
-		return PrismConfigurationLocalizable.class.isAssignableFrom(definitionClass.getDeclaredField("id").getType());
-	}
-
 	public boolean isCategorizable() throws Exception {
 		return PrismConfigurationCategorizable.class.isAssignableFrom(definitionClass.getDeclaredField("id").getType());
 	}

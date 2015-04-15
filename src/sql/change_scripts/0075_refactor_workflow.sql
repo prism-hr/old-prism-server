@@ -1,16 +1,7 @@
-set foreign_key_checks = 0
-;
-
 alter table state_group
 	drop index scope_id,
-	change column sequence_order ordinal int(2) unsigned not null
-;
-
-alter table state_group
+	change column sequence_order ordinal int(2) unsigned not null,
 	add unique index (scope_id, ordinal)
-;
-
-set foreign_key_checks = 1
 ;
 
 alter table state_action

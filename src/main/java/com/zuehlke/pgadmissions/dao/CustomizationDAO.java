@@ -182,12 +182,12 @@ public class CustomizationDAO {
 		String programTypeCriterion = getProgramTypeCriterionUpdate(programType);
 
 		Query query;
-		if (resourceScope == SYSTEM) {
+		if (resourceScope.equals(SYSTEM)) {
 			query = sessionFactory.getCurrentSession().createQuery( //
 			        updateOperation //
 			                + definitionCriterion //
 			                + getSystemInheritanceCriterion(localeCriterion, programTypeCriterion));
-		} else if (resourceScope == INSTITUTION) {
+		} else if (resourceScope.equals(INSTITUTION)) {
 			query = sessionFactory.getCurrentSession().createQuery( //
 			        updateOperation //
 			                + definitionCriterion //

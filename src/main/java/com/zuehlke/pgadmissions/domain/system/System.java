@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -115,6 +116,9 @@ public class System extends Resource {
 
     @OneToMany(mappedBy = "system")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "system")
+    private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "system")
     private Set<Institution> institutions = Sets.newHashSet();
@@ -388,7 +392,12 @@ public class System extends Resource {
         return resourcePreviousStates;
     }
 
-    public final Set<Institution> getInstitutions() {
+    @Override
+    public Set<ResourceCondition> getResourceConditions() {
+		return resourceConditions;
+	}
+
+	public final Set<Institution> getInstitutions() {
         return institutions;
     }
 

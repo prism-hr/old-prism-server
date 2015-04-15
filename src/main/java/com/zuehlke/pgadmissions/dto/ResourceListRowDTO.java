@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -52,6 +54,10 @@ public class ResourceListRowDTO {
     private DateTime updatedTimestamp;
 
     private String sequenceIdentifier;
+    
+    private List<ResourceListActionDTO> actions;
+    
+    private List<ResourceListActionDTO> creations;
 
     public Integer getSystemId() {
         return systemId;
@@ -228,4 +234,25 @@ public class ResourceListRowDTO {
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
+
+    public List<ResourceListActionDTO> getActions() {
+        return actions;
+    }
+
+    public void setActions(List<ResourceListActionDTO> actions) {
+        this.actions = actions;
+    }
+
+    public List<ResourceListActionDTO> getCreations() {
+        return creations;
+    }
+
+    public void setCreations(List<ResourceListActionDTO> creations) {
+        this.creations = creations;
+    }
+    
+    public Integer getResourceId() {
+        return ObjectUtils.firstNonNull(applicationId, projectId, programId, institutionId, systemId);
+    }
+    
 }

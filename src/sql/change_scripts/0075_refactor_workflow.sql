@@ -18,11 +18,6 @@ from role
 where id = "APPLICATION_SUGGESTED_SUPERVISOR"
 ;
 
-alter table state_group
-	drop index scope_id,
-	add index (scope_id)
-;
-
 update state_group
 set sequence_order = sequence_order - 1
 ;

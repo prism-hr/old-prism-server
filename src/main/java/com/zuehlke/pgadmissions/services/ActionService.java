@@ -18,6 +18,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.dozer.Mapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,6 +76,9 @@ public class ActionService {
 
     @Inject
     private UserService userService;
+    
+    @Inject
+    private Mapper mapper;
 
     public Action getById(PrismAction id) {
         return entityService.getById(Action.class, id);
@@ -132,12 +136,12 @@ public class ActionService {
                 institution == null ? null : institution.getId(), program == null ? null : program.getId(), project == null ? null : project.getId(),
                 application == null ? null : application.getId(), user);
         for (ResourceListActionDTO action : actions) {
-            representations.add(action.getActionRepresentation());
+            representations.add(mapper.map(action, ActionRepresentation.class));
         }
 
-        List<ResourceListActionDTO> creations = actionDAO.getCreateResourceActions(resource);
-        for (ResourceListActionDTO creation : creations) {
-            representations.add(creation.getActionRepresentation());
+        List<ResourceListActionDTO> creationActions = actionDAO.getCreateResourceActions(resource);
+        for (ResourceListActionDTO creationAction : creationActions) {
+            representations.add(mapper.map(creationAction, ActionRepresentation.class));
         }
 
         for (ActionRepresentation action : representations) {

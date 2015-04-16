@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.dto;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.joda.time.DateTime;
@@ -55,9 +55,7 @@ public class ResourceListRowDTO {
 
     private String sequenceIdentifier;
     
-    private List<ResourceListActionDTO> actions;
-    
-    private List<ResourceListActionDTO> creations;
+    private Set<ResourceListActionDTO> actions;
 
     public Integer getSystemId() {
         return systemId;
@@ -234,23 +232,15 @@ public class ResourceListRowDTO {
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
-
-    public List<ResourceListActionDTO> getActions() {
+    
+    public Set<ResourceListActionDTO> getActions() {
         return actions;
     }
 
-    public void setActions(List<ResourceListActionDTO> actions) {
+    public void setActions(Set<ResourceListActionDTO> actions) {
         this.actions = actions;
     }
 
-    public List<ResourceListActionDTO> getCreations() {
-        return creations;
-    }
-
-    public void setCreations(List<ResourceListActionDTO> creations) {
-        this.creations = creations;
-    }
-    
     public Integer getResourceId() {
         return ObjectUtils.firstNonNull(applicationId, projectId, programId, institutionId, systemId);
     }

@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.dto;
 
+import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 
 public class ResourceListActionDTO {
 
@@ -44,9 +44,22 @@ public class ResourceListActionDTO {
     public void setPrimaryState(Boolean primaryState) {
         this.primaryState = primaryState;
     }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(resourceId, actionId);
+    }
 
-    public ActionRepresentation getActionRepresentation() {
-        return new ActionRepresentation().withId(actionId).withRaisesUrgentFlag(raisesUrgentFlag).withPrimaryState(primaryState);
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        final ResourceListActionDTO other = (ResourceListActionDTO) object;
+        return Objects.equal(resourceId, other.getResourceId()) && Objects.equal(actionId, other.getActionId());
     }
 
 }

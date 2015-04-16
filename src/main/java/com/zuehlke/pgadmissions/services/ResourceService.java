@@ -390,19 +390,21 @@ public class ResourceService {
 
         boolean hasRedactions = actionService.hasRedactions(resourceScope, assignedResources, user);
 
-        if (assignedResources.isEmpty()) {
-            return Lists.newArrayList();
+        if (!assignedResources.isEmpty()) {
+            HashMultimap<Integer, ResourceListActionDTO> creations = actionService.getCreateResourceActions(resourceScope, assignedResources);
+            List<ResourceListRowDTO> rows = resourceDAO.getResourceConsoleList(user, resourceScope, parentScopeIds, assignedResources, filter,
+                    lastSequenceIdentifier, maxRecords, hasRedactions);
+            for (ResourceListRowDTO row : rows) {
+                Set<ResourceListActionDTO> actions = Sets.newLinkedHashSet();
+                actions.addAll(actionService.getPermittedActions(resourceScope, row.getSystemId(), row.getInstitutionId(), row.getProgramId(), row.getProjectId(),
+                        row.getApplicationId(), user));
+                actions.addAll(creations.get(row.getResourceId()));
+                row.setActions(actions);
+            }
+            return rows;
         }
-
-        HashMultimap<Integer, ResourceListActionDTO> creations = actionService.getCreateResourceActions(resourceScope, assignedResources);
-        List<ResourceListRowDTO> rows = resourceDAO.getResourceConsoleList(user, resourceScope, parentScopeIds, assignedResources, filter,
-                lastSequenceIdentifier, maxRecords, hasRedactions);
-        for (ResourceListRowDTO row : rows) {
-            row.setActions(actionService.getPermittedActions(resourceScope, row.getSystemId(), row.getInstitutionId(), row.getProgramId(), row.getProjectId(),
-                    row.getApplicationId(), user));
-            row.setCreations(Lists.newArrayList(creations.get(row.getResourceId())));
-        }
-        return rows;
+        
+        return Lists.newArrayList();
     }
 
     public ResourceSummaryRepresentation getResourceSummary(PrismScope resourceScope, Integer resourceId) {

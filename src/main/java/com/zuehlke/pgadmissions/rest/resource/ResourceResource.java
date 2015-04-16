@@ -109,7 +109,7 @@ public class ResourceResource {
     private ApplicationResource applicationResource;
 
     @Autowired
-    private Mapper beanMapper;
+    private Mapper mapper;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -127,7 +127,7 @@ public class ResourceResource {
 
         ActionOutcomeDTO actionOutcome = resourceService.create(user, action, newResourceDTO, actionDTO.getReferer(),
                 actionDTO.getWorkflowPropertyConfigurationVersion());
-        return beanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
+        return mapper.map(actionOutcome, ActionOutcomeRepresentation.class);
     }
 
     @Transactional
@@ -138,7 +138,7 @@ public class ResourceResource {
         User currentUser = userService.getCurrentUser();
         Resource resource = loadResource(resourceId, resourceDescriptor);
 
-        AbstractResourceRepresentation representation = beanMapper.map(resource, resourceDescriptor.getRepresentationType());
+        AbstractResourceRepresentation representation = mapper.map(resource, resourceDescriptor.getRepresentationType());
         representation.setTimeline(commentService.getComments(resource, currentUser));
 
         Set<ActionRepresentation> permittedActions = actionService.getPermittedActions(resource, currentUser);
@@ -160,7 +160,7 @@ public class ResourceResource {
         List<User> users = userService.getResourceUsers(resource);
         List<ResourceUserRolesRepresentation> userRolesRepresentations = Lists.newArrayListWithCapacity(users.size());
         for (User user : users) {
-            UserRepresentation userRepresentation = beanMapper.map(user, UserRepresentation.class);
+            UserRepresentation userRepresentation = mapper.map(user, UserRepresentation.class);
             Set<PrismRole> roles = Sets.newHashSet(roleService.getRolesForResource(resource, user));
             userRolesRepresentations.add(new ResourceUserRolesRepresentation(userRepresentation, roles));
         }
@@ -215,17 +215,13 @@ public class ResourceResource {
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
 
         for (ResourceListRowDTO rowDTO : resourceService.getResourceList(resourceScope, filterDTO, lastSequenceIdentifier)) {
-            ResourceListRowRepresentation representation = beanMapper.map(rowDTO, ResourceListRowRepresentation.class);
+            ResourceListRowRepresentation representation = mapper.map(rowDTO, ResourceListRowRepresentation.class);
             representation.setResourceScope(resourceScope);
             representation.setId((Integer) PropertyUtils.getSimpleProperty(rowDTO, resourceScope.getLowerCamelName() + "Id"));
 
             Set<ActionRepresentation> actionRepresentations = Sets.newLinkedHashSet();
             for (ResourceListActionDTO actionDTO : rowDTO.getActions()) {
-                actionRepresentations.add(actionDTO.getActionRepresentation());
-            }
-
-            for (ResourceListActionDTO creationDTO : rowDTO.getCreations()) {
-                actionRepresentations.add(creationDTO.getActionRepresentation());
+                actionRepresentations.add(mapper.map(actionDTO, ActionRepresentation.class));
             }
             representation.setActions(actionRepresentations);
 
@@ -300,7 +296,7 @@ public class ResourceResource {
 
         User user = userService.getOrCreateUserWithRoles(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource.getLocale(), resource,
                 userRolesRepresentation.getRoles());
-        return beanMapper.map(user, UserRepresentation.class);
+        return mapper.map(user, UserRepresentation.class);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}", method = RequestMethod.DELETE)
@@ -316,7 +312,7 @@ public class ResourceResource {
     @PreAuthorize("isAuthenticated()")
     public ActionOutcomeRepresentation executeAction(@PathVariable Integer resourceId, @Valid @RequestBody CommentDTO commentDTO) throws Exception {
         ActionOutcomeDTO actionOutcome = resourceService.executeAction(resourceId, commentDTO);
-        return beanMapper.map(actionOutcome, ActionOutcomeRepresentation.class);
+        return mapper.map(actionOutcome, ActionOutcomeRepresentation.class);
     }
 
     @ModelAttribute

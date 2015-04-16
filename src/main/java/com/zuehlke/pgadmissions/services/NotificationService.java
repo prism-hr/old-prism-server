@@ -14,6 +14,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserNotification;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
@@ -125,21 +126,24 @@ public class NotificationService {
             User user = userService.getById(definition.getUserId());
 
             Role role = roleService.getById(definition.getRoleId());
-            UserRole userRole = roleService.getUserRole(resource, user, role);
+            UserRole userRole = roleService.getUserRole(resource.getEnclosingResource(role.getScope().getId()), user, role);
 
             NotificationDefinition notificationDefinition = getById(definition.getNotificationDefinitionId());
-            LocalDate lastNotifiedDate = userRole.getLastNotifiedDate();
+            UserNotification userNotification = notificationDAO.getUserNotification(resource, userRole, notificationDefinition);
+            LocalDate lastNotifiedDate = userNotification.getLastNotifiedDate();
 
             Integer reminderInterval = getReminderInterval(resource, user, notificationDefinition);
             LocalDate lastExpectedReminder = baseline.minusDays(reminderInterval);
 
-            if (!sent.get(notificationDefinition).contains(user)
-                    && (lastExpectedReminder.isAfter(lastNotifiedDate) || lastExpectedReminder.equals(lastNotifiedDate))) {
-                sendNotification(notificationDefinition.getReminderDefinition(), new NotificationDefinitionModelDTO().withUser(user).withAuthor(author)
-                        .withResource(resource).withTransitionAction(definition.getActionId()));
-                sent.put(notificationDefinition, user);
-                userRole.setLastNotifiedDate(baseline);
+            if ((lastExpectedReminder.isAfter(lastNotifiedDate) || lastExpectedReminder.equals(lastNotifiedDate))) {
+                if (!sent.get(notificationDefinition).contains(user)) {
+                    sendNotification(notificationDefinition.getReminderDefinition(), new NotificationDefinitionModelDTO().withUser(user).withAuthor(author)
+                            .withResource(resource).withTransitionAction(definition.getActionId()));
+                    sent.put(notificationDefinition, user);
+                }
+                userNotification.setLastNotifiedDate(baseline);
             }
+
         }
 
         resource.setLastRemindedRequestIndividual(baseline);
@@ -283,7 +287,7 @@ public class NotificationService {
             List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope);
             Set<Integer> assignedResources = resourceService.getAssignedResources(user, scope, parentScopes);
             if (!assignedResources.isEmpty()) {
-                notificationDAO.resetNotificationsSyndicated(user, scope, assignedResources);
+                notificationDAO.resetNotificationsSyndicated(scope, assignedResources);
             }
             PrismReflectionUtils.setProperty(user, "lastNotifiedDate" + scope.getUpperCamelName(), null);
         }
@@ -306,11 +310,12 @@ public class NotificationService {
             }
 
             Role role = roleService.getById(request.getRoleId());
-            UserRole userRole = roleService.getUserRole(resource, user, role);
-            if (userRole == null) {
-                log.error("Missing userRole for resource " + resource.getId() + ", user: " + user + ", role: " + role);
-            }
-            userRole.setLastNotifiedDate(baseline);
+
+            UserRole userRole = roleService.getUserRole(resource.getEnclosingResource(role.getScope().getId()), user, role);
+            UserNotification userNotification = new UserNotification().withUserRole(userRole)
+                    .withLastNotifiedDate(baseline).withResource(resource).withNotificationDefinition(definition);
+            userRole.getUserNotifications().add(userNotification);
+            entityService.createOrUpdate(userNotification);
         }
 
         return recipients;

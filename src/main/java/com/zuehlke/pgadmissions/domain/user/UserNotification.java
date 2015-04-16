@@ -1,25 +1,23 @@
 package com.zuehlke.pgadmissions.domain.user;
 
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
+import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
 import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
-@Table(name = "USER_ROLE", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "user_id", "role_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "user_id", "role_id" }), @UniqueConstraint(columnNames = { "program_id", "user_id", "role_id" }),
-        @UniqueConstraint(columnNames = { "project_id", "user_id", "role_id" }), @UniqueConstraint(columnNames = { "application_id", "user_id", "role_id" }) })
-public class UserRole extends WorkflowResourceExecution {
+@Table(name = "user_notification", uniqueConstraints = {@UniqueConstraint(columnNames = {"system_id", "user_role_id"}),
+        @UniqueConstraint(columnNames = {"institution_id", "user_role_id"}), @UniqueConstraint(columnNames = {"program_id", "user_role_id"}),
+        @UniqueConstraint(columnNames = {"project_id", "user_role_id"}), @UniqueConstraint(columnNames = {"application_id", "user_role_id"})})
+public class UserNotification extends WorkflowResourceExecution {
 
     @Id
     @GeneratedValue
@@ -46,19 +44,16 @@ public class UserRole extends WorkflowResourceExecution {
     private Application application;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "user_role_id", nullable = false)
+    private UserRole userRole;
 
     @ManyToOne
-    @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
+    @JoinColumn(name = "notification_definition_id", nullable = false)
+    private NotificationDefinition notificationDefinition;
 
-    @Column(name = "assigned_timestamp", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime assignedTimestamp;
-
-    @OneToMany(mappedBy = "userRole")
-    private Set<UserNotification> userNotifications = Sets.newHashSet();
+    @Column(name = "last_notified_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastNotifiedDate;
 
     public Integer getId() {
         return id;
@@ -118,57 +113,53 @@ public class UserRole extends WorkflowResourceExecution {
         this.application = application;
     }
 
-    public User getUser() {
-        return user;
+    public UserRole getUserRole() {
+        return userRole;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
     }
 
-    public Role getRole() {
-        return role;
+    public NotificationDefinition getNotificationDefinition() {
+        return notificationDefinition;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setNotificationDefinition(NotificationDefinition notificationDefinition) {
+        this.notificationDefinition = notificationDefinition;
     }
 
-    public DateTime getAssignedTimestamp() {
-        return assignedTimestamp;
+    public LocalDate getLastNotifiedDate() {
+        return lastNotifiedDate;
     }
 
-    public void setAssignedTimestamp(DateTime assignedTimestamp) {
-        this.assignedTimestamp = assignedTimestamp;
+    public void setLastNotifiedDate(LocalDate lastNotifiedDate) {
+        this.lastNotifiedDate = lastNotifiedDate;
     }
 
-    public Set<UserNotification> getUserNotifications() {
-        return userNotifications;
-    }
-
-    public UserRole withResource(Resource resource) {
+    public UserNotification withResource(Resource resource) {
         setResource(resource);
         return this;
     }
 
-    public UserRole withUser(User user) {
-        this.user = user;
+    public UserNotification withUserRole(final UserRole userRole) {
+        this.userRole = userRole;
         return this;
     }
 
-    public UserRole withRole(Role role) {
-        this.role = role;
+    public UserNotification withNotificationDefinition(final NotificationDefinition notificationDefinition) {
+        this.notificationDefinition = notificationDefinition;
         return this;
     }
 
-    public UserRole withAssignedTimestamp(DateTime assignedTimestamp) {
-        this.assignedTimestamp = assignedTimestamp;
+    public UserNotification withLastNotifiedDate(final LocalDate lastNotifiedDate) {
+        this.lastNotifiedDate = lastNotifiedDate;
         return this;
     }
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("user", user).addProperty("role", role);
+        return super.getResourceSignature().addProperty("userRole", userRole);
     }
 
 }

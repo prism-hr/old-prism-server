@@ -396,14 +396,15 @@ public class ResourceService {
                     lastSequenceIdentifier, maxRecords, hasRedactions);
             for (ResourceListRowDTO row : rows) {
                 Set<ResourceListActionDTO> actions = Sets.newLinkedHashSet();
-                actions.addAll(actionService.getPermittedActions(resourceScope, row.getSystemId(), row.getInstitutionId(), row.getProgramId(), row.getProjectId(),
+                actions.addAll(actionService.getPermittedActions(resourceScope, row.getSystemId(), row.getInstitutionId(), row.getProgramId(),
+                        row.getProjectId(),
                         row.getApplicationId(), user));
                 actions.addAll(creations.get(row.getResourceId()));
                 row.setActions(actions);
             }
             return rows;
         }
-        
+
         return Lists.newArrayList();
     }
 
@@ -455,8 +456,9 @@ public class ResourceService {
         case APPLICATION:
             return applicationService.getWorkflowPropertyConfigurations((Application) resource);
         default:
-            return (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) customizationService.getConfigurationRepresentationsWithOrWithoutVersion(
-                    PrismConfiguration.WORKFLOW_PROPERTY, resource, resource.getWorkflowPropertyConfigurationVersion());
+            return (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) //
+            customizationService.getConfigurationRepresentationsWithOrWithoutVersion(PrismConfiguration.WORKFLOW_PROPERTY, resource, resource.getLocale(),
+                    resource.getProgramType(), resource.getWorkflowPropertyConfigurationVersion());
         }
     }
 
@@ -510,7 +512,7 @@ public class ResourceService {
         if (resource.getResourceScope() == PrismScope.SYSTEM) {
             return defaultSocialThumbnail;
         } else {
-            Document logoDocument = resource.getInstitution().getLogoDocument();
+            Document logoDocument = resource.getInstitution().getAdvert().getLogoImage();
             if (logoDocument == null) {
                 return defaultSocialThumbnail;
             }

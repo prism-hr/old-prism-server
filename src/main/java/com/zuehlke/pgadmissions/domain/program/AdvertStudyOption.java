@@ -17,19 +17,20 @@ import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 
 @Entity
-@Table(name = "PROGRAM_STUDY_OPTION", uniqueConstraints = @UniqueConstraint(columnNames = { "program_id", "study_option_id" }))
-public class ProgramStudyOption implements UniqueEntity {
+@Table(name = "ADVERT_STUDY_OPTION", uniqueConstraints = @UniqueConstraint(columnNames = { "advert_id", "study_option_id" }))
+public class AdvertStudyOption implements UniqueEntity {
 
     @Id
     @GeneratedValue
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "program_id", nullable = false)
-    private Program program;
+    @JoinColumn(name = "advert_id", nullable = false)
+    private Advert advert;
 
     @ManyToOne
     @JoinColumn(name = "study_option_id", nullable = false)
@@ -47,7 +48,7 @@ public class ProgramStudyOption implements UniqueEntity {
     private Boolean enabled;
 
     @OneToMany(mappedBy = "studyOption")
-    private Set<ProgramStudyOptionInstance> studyOptionInstances = Sets.newHashSet();
+    private Set<AdvertStudyOptionInstance> studyOptionInstances = Sets.newHashSet();
 
     public final Integer getId() {
         return id;
@@ -57,12 +58,12 @@ public class ProgramStudyOption implements UniqueEntity {
         this.id = id;
     }
 
-    public final Program getProgram() {
-        return program;
+    public Advert getAdvert() {
+        return advert;
     }
 
-    public final void setProgram(Program program) {
-        this.program = program;
+    public void setAdvert(Advert advert) {
+        this.advert = advert;
     }
 
     public final StudyOption getStudyOption() {
@@ -97,38 +98,38 @@ public class ProgramStudyOption implements UniqueEntity {
         this.enabled = enabled;
     }
 
-    public final Set<ProgramStudyOptionInstance> getStudyOptionInstances() {
+    public final Set<AdvertStudyOptionInstance> getStudyOptionInstances() {
         return studyOptionInstances;
     }
 
-    public ProgramStudyOption withProgram(Program program) {
-        this.program = program;
+    public AdvertStudyOption withAdvert(Advert advert) {
+        this.advert = advert;
         return this;
     }
 
-    public ProgramStudyOption withStudyOption(StudyOption studyOption) {
+    public AdvertStudyOption withStudyOption(StudyOption studyOption) {
         this.studyOption = studyOption;
         return this;
     }
 
-    public ProgramStudyOption withApplicationStartDate(LocalDate applicationStartDate) {
+    public AdvertStudyOption withApplicationStartDate(LocalDate applicationStartDate) {
         this.applicationStartDate = applicationStartDate;
         return this;
     }
 
-    public ProgramStudyOption withApplicationCloseDate(LocalDate applicationCloseDate) {
+    public AdvertStudyOption withApplicationCloseDate(LocalDate applicationCloseDate) {
         this.applicationCloseDate = applicationCloseDate;
         return this;
     }
 
-    public ProgramStudyOption withEnabled(Boolean enabled) {
+    public AdvertStudyOption withEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
     }
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("program", program).addProperty("studyOption", studyOption);
+        return new ResourceSignature().addProperty("advert", advert).addProperty("studyOption", studyOption);
     }
 
 }

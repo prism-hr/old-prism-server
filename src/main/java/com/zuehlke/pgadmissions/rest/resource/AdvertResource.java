@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.rest.dto.AdvertCategoriesDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertClosingDateDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertFeesAndPaymentsDTO;
+import com.zuehlke.pgadmissions.rest.dto.AdvertResourceDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 
 @RestController
@@ -28,41 +29,47 @@ public class AdvertResource {
     @Autowired
     private AdvertService advertService;
 
+    @RequestMapping(value = "/advertResource", method = RequestMethod.PUT)
+    public void updateAdvertResource(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
+            @Valid @RequestBody AdvertResourceDTO advertResourceDTO) throws Exception {
+        advertService.updateResource(resourceDescriptor.getResourceScope(), resourceId, advertResourceDTO);
+    }
+
     @RequestMapping(value = "/advertDetails", method = RequestMethod.PUT)
-    public void updateAdvert(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
+    public void updateAdvertDetail(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @Valid @RequestBody AdvertDetailsDTO advertDetailsDTO) throws Exception {
-        advertService.updateDetail(resourceDescriptor.getType(), resourceId, advertDetailsDTO);
+        advertService.updateDetail(resourceDescriptor.getResourceScope(), resourceId, advertDetailsDTO);
     }
 
     @RequestMapping(value = "/feesAndPayments", method = RequestMethod.PUT)
     public void updateFeesAndPayments(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @Valid @RequestBody AdvertFeesAndPaymentsDTO feesAndPaymentsDTO) throws Exception {
-        advertService.updateFeesAndPayments(resourceDescriptor.getType(), resourceId, feesAndPaymentsDTO);
+        advertService.updateFeesAndPayments(resourceDescriptor.getResourceScope(), resourceId, feesAndPaymentsDTO);
     }
 
     @RequestMapping(value = "/categories", method = RequestMethod.PUT)
     public void updateCategories(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @Valid @RequestBody AdvertCategoriesDTO categoriesDTO) throws Exception {
-        advertService.updateCategories(resourceDescriptor.getType(), resourceId, categoriesDTO);
+        advertService.updateCategories(resourceDescriptor.getResourceScope(), resourceId, categoriesDTO);
     }
 
     @RequestMapping(value = "/closingDates", method = RequestMethod.POST)
     public Integer addClosingDate(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @Valid @RequestBody AdvertClosingDateDTO advertClosingDateDTO) throws Exception {
-        AdvertClosingDate closingDate = advertService.createClosingDate(resourceDescriptor.getType(), resourceId, advertClosingDateDTO);
+        AdvertClosingDate closingDate = advertService.createClosingDate(resourceDescriptor.getResourceScope(), resourceId, advertClosingDateDTO);
         return closingDate.getId();
     }
 
     @RequestMapping(value = "/closingDates/{closingDateId}", method = RequestMethod.PUT)
     public void updateClosingDate(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @PathVariable Integer closingDateId,
             @Valid @RequestBody AdvertClosingDateDTO advertClosingDateDTO) throws Exception {
-        advertService.updateClosingDate(resourceDescriptor.getType(), resourceId, closingDateId, advertClosingDateDTO);
+        advertService.updateClosingDate(resourceDescriptor.getResourceScope(), resourceId, closingDateId, advertClosingDateDTO);
     }
 
     @RequestMapping(value = "/closingDates/{closingDateId}", method = RequestMethod.DELETE)
     public void deleteClosingDate(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @PathVariable Integer closingDateId)
             throws Exception {
-        advertService.deleteClosingDate(resourceDescriptor.getType(), resourceId, closingDateId);
+        advertService.deleteClosingDate(resourceDescriptor.getResourceScope(), resourceId, closingDateId);
     }
 
     @ModelAttribute

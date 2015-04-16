@@ -9,6 +9,7 @@ import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -21,141 +22,135 @@ import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 public abstract class Resource implements UniqueEntity {
 
-	public abstract Integer getId();
+    public abstract Integer getId();
 
-	public abstract void setId(Integer id);
+    public abstract void setId(Integer id);
 
-	public abstract User getUser();
+    public abstract User getUser();
 
-	public abstract void setUser(User user);
+    public abstract void setUser(User user);
 
-	public abstract String getCode();
+    public abstract String getCode();
 
-	public abstract void setCode(String code);
+    public abstract void setCode(String code);
 
-	public abstract PrismLocale getLocale();
+    public abstract System getSystem();
 
-	public abstract System getSystem();
+    public abstract void setSystem(System system);
 
-	public abstract void setSystem(System system);
+    public abstract Institution getInstitution();
 
-	public abstract Institution getInstitution();
+    public abstract void setInstitution(Institution institution);
 
-	public abstract void setInstitution(Institution institution);
+    public abstract Program getProgram();
 
-	public abstract Program getProgram();
+    public abstract void setProgram(Program program);
 
-	public abstract void setProgram(Program program);
+    public abstract Project getProject();
 
-	public abstract Project getProject();
+    public abstract void setProject(Project project);
 
-	public abstract void setProject(Project project);
+    public abstract Application getApplication();
 
-	public abstract Application getApplication();
+    public abstract PrismLocale getLocale();
 
-	public abstract String getReferrer();
+    public abstract PrismProgramType getProgramType();
 
-	public abstract void setReferrer(String referrer);
+    public abstract String getReferrer();
 
-	public abstract State getState();
+    public abstract void setReferrer(String referrer);
 
-	public abstract void setState(State state);
+    public abstract State getState();
 
-	public abstract State getPreviousState();
+    public abstract void setState(State state);
 
-	public abstract void setPreviousState(State previousState);
+    public abstract State getPreviousState();
 
-	public abstract LocalDate getDueDate();
+    public abstract void setPreviousState(State previousState);
 
-	public abstract void setDueDate(LocalDate dueDate);
+    public abstract LocalDate getDueDate();
 
-	public abstract DateTime getCreatedTimestamp();
+    public abstract void setDueDate(LocalDate dueDate);
 
-	public abstract void setCreatedTimestamp(DateTime createdTimestamp);
+    public abstract DateTime getCreatedTimestamp();
 
-	public abstract DateTime getUpdatedTimestamp();
+    public abstract void setCreatedTimestamp(DateTime createdTimestamp);
 
-	public abstract void setUpdatedTimestamp(DateTime updatedTimestamp);
+    public abstract DateTime getUpdatedTimestamp();
 
-	public abstract LocalDate getLastRemindedRequestIndividual();
+    public abstract void setUpdatedTimestamp(DateTime updatedTimestamp);
 
-	public abstract void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual);
+    public abstract LocalDate getLastRemindedRequestIndividual();
 
-	public abstract LocalDate getLastRemindedRequestSyndicated();
+    public abstract void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual);
 
-	public abstract void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated);
+    public abstract LocalDate getLastRemindedRequestSyndicated();
 
-	public abstract LocalDate getLastNotifiedUpdateSyndicated();
+    public abstract void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated);
 
-	public abstract void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated);
+    public abstract LocalDate getLastNotifiedUpdateSyndicated();
 
-	public abstract Integer getWorkflowPropertyConfigurationVersion();
+    public abstract void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated);
 
-	public abstract void setWorkflowPropertyConfigurationVersion(Integer workflowResourceConfigurationVersion);
+    public abstract Integer getWorkflowPropertyConfigurationVersion();
 
-	public abstract String getSequenceIdentifier();
+    public abstract void setWorkflowPropertyConfigurationVersion(Integer workflowResourceConfigurationVersion);
 
-	public abstract void setSequenceIdentifier(String sequenceIdentifier);
+    public abstract String getSequenceIdentifier();
 
-	public abstract Set<ResourceState> getResourceStates();
+    public abstract void setSequenceIdentifier(String sequenceIdentifier);
 
-	public abstract Set<ResourcePreviousState> getResourcePreviousStates();
+    public abstract Set<ResourceState> getResourceStates();
 
-	public abstract Set<ResourceCondition> getResourceConditions();
-	
-	public abstract Set<Comment> getComments();
+    public abstract Set<ResourcePreviousState> getResourcePreviousStates();
 
-	public abstract Set<UserRole> getUserRoles();
-	
-	public void addComment(Comment comment) {
-		getComments().add(comment);
-	}
+    public abstract Set<ResourceCondition> getResourceConditions();
 
-	public String getHelpdeskDisplay() {
-		if (getResourceScope() == PrismScope.SYSTEM) {
-			return getSystem().getHelpdesk();
-		}
-		String helpdesk = getInstitution().getHelpdesk();
-		return helpdesk == null ? getSystem().getHelpdesk() : helpdesk;
-	}
+    public abstract Set<Comment> getComments();
 
-	public Resource getParentResource() {
-		switch (PrismScope.getByResourceClass(this.getClass())) {
-		case SYSTEM:
-			return this;
-		case INSTITUTION:
-			return getSystem();
-		case PROGRAM:
-			return getInstitution();
-		case PROJECT:
-			return getProgram();
-		case APPLICATION:
-			Resource project = getProject();
-			return project == null ? getProgram() : project;
-		default:
-			throw new UnsupportedOperationException();
-		}
-	}
+    public abstract Set<UserRole> getUserRoles();
 
-	public void setParentResource(Resource parentResource) {
-		if (parentResource.getId() != null) {
-			setProject(parentResource.getProject());
-			setProgram(parentResource.getProgram());
-			setInstitution(parentResource.getInstitution());
-			setSystem(parentResource.getSystem());
-		}
-	}
+    public void addComment(Comment comment) {
+        getComments().add(comment);
+    }
 
-	public PrismScope getResourceScope() {
-		return PrismScope.getByResourceClass(this.getClass());
-	}
+    public Resource getParentResource() {
+        switch (PrismScope.getByResourceClass(this.getClass())) {
+        case SYSTEM:
+            return this;
+        case INSTITUTION:
+            return getSystem();
+        case PROGRAM:
+            return getInstitution();
+        case PROJECT:
+            return getProgram();
+        case APPLICATION:
+            Resource project = getProject();
+            return project == null ? getProgram() : project;
+        default:
+            throw new UnsupportedOperationException();
+        }
+    }
 
-	public Resource getEnclosingResource(PrismScope resourceScope) {
-		return (Resource) PrismReflectionUtils.getProperty(this, resourceScope.getLowerCamelName());
-	}
+    public void setParentResource(Resource parentResource) {
+        if (parentResource.getId() != null) {
+            setProject(parentResource.getProject());
+            setProgram(parentResource.getProgram());
+            setInstitution(parentResource.getInstitution());
+            setSystem(parentResource.getSystem());
+        }
+    }
 
-	@Override
-	public String toString() {
-		return getResourceScope().name() + "#" + getId();
-	}
+    public PrismScope getResourceScope() {
+        return PrismScope.getByResourceClass(this.getClass());
+    }
+
+    public Resource getEnclosingResource(PrismScope resourceScope) {
+        return (Resource) PrismReflectionUtils.getProperty(this, resourceScope.getLowerCamelName());
+    }
+
+    @Override
+    public String toString() {
+        return getResourceScope().name() + "#" + getId();
+    }
 }

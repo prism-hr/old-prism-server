@@ -15,16 +15,16 @@ import org.joda.time.LocalDate;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 
 @Entity
-@Table(name = "PROGRAM_STUDY_OPTION_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "program_study_option_id", "academic_year" }) )
-public class ProgramStudyOptionInstance implements UniqueEntity {
+@Table(name = "ADVERT_STUDY_OPTION_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "advert_study_option_id", "academic_year" }) )
+public class AdvertStudyOptionInstance implements UniqueEntity {
 
     @Id
     @GeneratedValue
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "program_study_option_id", nullable = false)
-    private ProgramStudyOption studyOption;
+    @JoinColumn(name = "advert_study_option_id", nullable = false)
+    private AdvertStudyOption advertStudyOption;
 
     @Column(name = "application_start_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -51,12 +51,12 @@ public class ProgramStudyOptionInstance implements UniqueEntity {
         this.id = id;
     }
 
-    public final ProgramStudyOption getStudyOption() {
-        return studyOption;
+    public final AdvertStudyOption getAdvertStudyOption() {
+        return advertStudyOption;
     }
 
-    public final void setStudyOption(ProgramStudyOption studyOption) {
-        this.studyOption = studyOption;
+    public final void setAdvertStudyOption(AdvertStudyOption advertStudyOption) {
+        this.advertStudyOption = advertStudyOption;
     }
 
     public final LocalDate getApplicationStartDate() {
@@ -99,39 +99,39 @@ public class ProgramStudyOptionInstance implements UniqueEntity {
         this.enabled = enabled;
     }
 
-    public ProgramStudyOptionInstance withStudyOption(ProgramStudyOption studyOption) {
-        this.studyOption = studyOption;
+    public AdvertStudyOptionInstance withStudyOption(AdvertStudyOption studyOption) {
+        this.advertStudyOption = studyOption;
         return this;
     }
 
-    public ProgramStudyOptionInstance withApplicationStartDate(LocalDate applicationStartDate) {
+    public AdvertStudyOptionInstance withApplicationStartDate(LocalDate applicationStartDate) {
         this.applicationStartDate = applicationStartDate;
         return this;
     }
 
-    public ProgramStudyOptionInstance withApplicationCloseDate(LocalDate applicationCloseDate) {
+    public AdvertStudyOptionInstance withApplicationCloseDate(LocalDate applicationCloseDate) {
         this.applicationCloseDate = applicationCloseDate;
         return this;
     }
 
-    public ProgramStudyOptionInstance withAcademicYear(String academicYear) {
+    public AdvertStudyOptionInstance withAcademicYear(String academicYear) {
         this.academicYear = academicYear;
         return this;
     }
 
-    public ProgramStudyOptionInstance withIdentifier(String identifier) {
+    public AdvertStudyOptionInstance withIdentifier(String identifier) {
         this.identifier = identifier;
         return this;
     }
 
-    public ProgramStudyOptionInstance withEnabled(Boolean enabled) {
+    public AdvertStudyOptionInstance withEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
     }
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("studyOption", studyOption).addProperty("academicYear", academicYear);
+        return new ResourceSignature().addProperty("advertStudyOption", advertStudyOption).addProperty("academicYear", academicYear);
     }
 
 }

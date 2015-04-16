@@ -6,27 +6,23 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
-import org.joda.time.LocalDate;
+import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
-public class ProjectDTO {
+public class AdvertResourceDTO {
 
     @NotNull
-    private Integer programId;
+    private PrismLocale locale;
+
+    @NotNull
+    private PrismProgramType programType;
 
     @NotEmpty
     @Size(max = 255)
     private String title;
-
-    @NotNull
-    private PrismLocale locale;
-    
-    @NotNull
-    private PrismProgramType programType;
-
-    private LocalDate endDate;
 
     @NotEmpty
     @Size(max = 1000)
@@ -36,27 +32,16 @@ public class ProjectDTO {
     @Size(max = 2048)
     private String applyHomepage;
 
+    private DateTime endDate;
+
+    @Size(min = 1)
+    private PrismStudyOption[] studyOptions;
+
     @Min(1)
     private Integer studyDurationMinimum;
 
     @Min(1)
     private Integer studyDurationMaximum;
-
-    public Integer getProgramId() {
-        return programId;
-    }
-
-    public void setProgramId(Integer programId) {
-        this.programId = programId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
     public PrismLocale getLocale() {
         return locale;
@@ -65,7 +50,7 @@ public class ProjectDTO {
     public void setLocale(PrismLocale locale) {
         this.locale = locale;
     }
-    
+
     public PrismProgramType getProgramType() {
         return programType;
     }
@@ -74,12 +59,12 @@ public class ProjectDTO {
         this.programType = programType;
     }
 
-    public LocalDate getEndDate() {
-        return endDate;
+    public String getTitle() {
+        return title;
     }
 
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getSummary() {
@@ -98,6 +83,22 @@ public class ProjectDTO {
         this.applyHomepage = applyHomepage;
     }
 
+    public DateTime getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(DateTime endDate) {
+        this.endDate = endDate;
+    }
+
+    public PrismStudyOption[] getStudyOptions() {
+        return studyOptions;
+    }
+
+    public void setStudyOptions(PrismStudyOption[] studyOptions) {
+        this.studyOptions = studyOptions;
+    }
+
     public Integer getStudyDurationMinimum() {
         return studyDurationMinimum;
     }
@@ -113,4 +114,5 @@ public class ProjectDTO {
     public void setStudyDurationMaximum(Integer studyDurationMaximum) {
         this.studyDurationMaximum = studyDurationMaximum;
     }
+
 }

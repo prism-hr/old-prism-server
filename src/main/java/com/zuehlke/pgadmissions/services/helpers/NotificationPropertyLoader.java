@@ -79,6 +79,9 @@ public class NotificationPropertyLoader {
 
     private NotificationDefinitionModelDTO notificationDefinitionModelDTO;
 
+    @Value("${system.helpdesk}")
+    private String systemHelpdeskUrl;
+
     @Value("${application.url}")
     private String applicationUrl;
 
@@ -97,7 +100,7 @@ public class NotificationPropertyLoader {
     public String load(PrismNotificationDefinitionProperty property) throws Exception {
         String value = (String) PrismReflectionUtils.invokeMethod(this, PrismReflectionUtils.getMethodName(property));
         return value == null ? "[" + propertyLoader.load(SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR) + ". " + propertyLoader.load(SYSTEM_HELPDESK_REPORT)
-                + ": " + notificationDefinitionModelDTO.getResource().getSystem().getHelpdesk() + "]" : value;
+                + ": " + systemHelpdeskUrl + "]" : value;
     }
 
     public String getTemplateUserFullName() {
@@ -145,7 +148,7 @@ public class NotificationPropertyLoader {
     }
 
     public String getTemplateHelpdesk() throws Exception {
-        return buildRedirectionControl(notificationDefinitionModelDTO.getResource().getHelpdeskDisplay(), SYSTEM_HELPDESK);
+        return buildRedirectionControl(systemHelpdeskUrl, SYSTEM_HELPDESK);
     }
 
     public String getActionComplete() throws Exception {
@@ -167,7 +170,8 @@ public class NotificationPropertyLoader {
 
     public String getCommentTransitionOutcome() throws Exception {
         String resourceName = notificationDefinitionModelDTO.getResource().getResourceScope().name();
-        String outcomePostfix = Iterables.getLast(Lists.newArrayList(notificationDefinitionModelDTO.getComment().getTransitionState().getId().name().split("_")));
+        String outcomePostfix = Iterables.getLast(Lists
+                .newArrayList(notificationDefinitionModelDTO.getComment().getTransitionState().getId().name().split("_")));
         return propertyLoader.load(PrismDisplayPropertyDefinition.valueOf(resourceName + "_COMMENT_" + outcomePostfix));
     }
 
@@ -188,7 +192,8 @@ public class NotificationPropertyLoader {
     }
 
     public String getApplicationProgramType() throws Exception {
-        PrismProgramType programType = PrismProgramType.valueOf(notificationDefinitionModelDTO.getResource().getApplication().getProgram().getProgramType().getCode());
+        PrismProgramType programType = PrismProgramType.valueOf(notificationDefinitionModelDTO.getResource().getApplication().getProgram()
+                .getImportedProgramType().getCode());
         return propertyLoader.load(programType.getDisplayProperty());
     }
 
@@ -275,7 +280,7 @@ public class NotificationPropertyLoader {
     }
 
     public String getInstitutionHomepage() {
-        return notificationDefinitionModelDTO.getResource().getInstitution().getHomepage();
+        return notificationDefinitionModelDTO.getResource().getInstitution().getAdvert().getHomepage();
     }
 
     public String getInstitutionDataImportError() {
@@ -302,7 +307,8 @@ public class NotificationPropertyLoader {
                 String summary = advert.getSummary();
 
                 String applyHomepage = advert.getApplyHomepage();
-                applyHomepage = applyHomepage == null ? buildRedirectionUrl(project == null ? program : project, notificationDefinitionModelDTO.getTransitionAction(),
+                applyHomepage = applyHomepage == null ? buildRedirectionUrl(project == null ? program : project,
+                        notificationDefinitionModelDTO.getTransitionAction(),
                         notificationDefinitionModelDTO.getUser()) : applyHomepage;
 
                 recommendations.add(Joiner.on("<br/>").skipNulls().join(title, summary, buildRedirectionControl(applyHomepage, SYSTEM_APPLY)));

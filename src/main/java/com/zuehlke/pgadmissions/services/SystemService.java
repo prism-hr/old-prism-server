@@ -405,7 +405,7 @@ public class SystemService {
 
         if (system == null) {
             State systemRunning = stateService.getById(SYSTEM_RUNNING);
-            system = new System().withId(systemId).withTitle(systemName).withLocale(PrismLocale.getSystemLocale()).withHelpdesk(systemHelpdesk)
+            system = new System().withId(systemId).withTitle(systemName).withLocale(getSystemLocale()).withProgramType(getSystemProgramType())
                     .withUser(systemUser).withState(systemRunning).withCipherSalt(EncryptionUtils.getUUID()).withCreatedTimestamp(baseline)
                     .withUpdatedTimestamp(baseline);
             entityService.save(system);
@@ -416,8 +416,8 @@ public class SystemService {
         } else {
             system.setId(systemId);
             system.setTitle(systemName);
-            system.setLocale(PrismLocale.getSystemLocale());
-            system.setHelpdesk(systemHelpdesk);
+            system.setLocale(getSystemLocale());
+            system.setProgramType(getSystemProgramType());
             system.setUser(systemUser);
             system.setUpdatedTimestamp(baseline);
         }

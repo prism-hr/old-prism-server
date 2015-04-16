@@ -23,6 +23,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -56,9 +57,10 @@ public class System extends Resource {
     @Enumerated(EnumType.STRING)
     private PrismLocale locale;
 
-    @Column(name = "helpdesk", nullable = false)
-    private String helpdesk;
-
+    @Column(name = "locale", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismProgramType programType;
+    
     @Column(name = "last_data_import_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastDataImportDate;
@@ -174,13 +176,14 @@ public class System extends Resource {
     public final void setLocale(PrismLocale locale) {
         this.locale = locale;
     }
-
-    public final String getHelpdesk() {
-        return helpdesk;
+    
+    @Override
+    public PrismProgramType getProgramType() {
+        return programType;
     }
 
-    public final void setHelpdesk(String helpdesk) {
-        this.helpdesk = helpdesk;
+    public void setProgramType(PrismProgramType programType) {
+        this.programType = programType;
     }
 
     public final LocalDate getLastDataImportDate() {
@@ -437,9 +440,9 @@ public class System extends Resource {
         this.locale = locale;
         return this;
     }
-
-    public System withHelpdesk(String helpdesk) {
-        this.helpdesk = helpdesk;
+    
+    public System withProgramType(PrismProgramType programType) {
+        this.programType = programType;
         return this;
     }
 

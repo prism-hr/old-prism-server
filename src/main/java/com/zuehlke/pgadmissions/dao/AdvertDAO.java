@@ -28,7 +28,10 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.program.AdvertStudyOption;
+import com.zuehlke.pgadmissions.domain.program.AdvertStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -49,14 +52,12 @@ public class AdvertDAO {
                 .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program.institution", "institution", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program.department", "department", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("program.programType", "programType", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program.studyOptions", "programStudyOption", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("programStudyOption.studyOption", "studyOption", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("project", "project", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("project.program", "projectProgram", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("projectProgram.institution", "projectInstitution", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("projectProgram.department", "projectDepartment", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("projectProgram.programType", "projectProgramType", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("projectProgram.studyOptions", "projectProgramStudyOption", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("projectProgramStudyOption.studyOption", "projectStudyOption", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("project.userRoles", "userRole", JoinType.LEFT_OUTER_JOIN, //
@@ -112,7 +113,7 @@ public class AdvertDAO {
     }
 
     public List<AdvertRecommendationDTO> getRecommendedAdverts(User user, List<PrismState> activeProgramStates, List<PrismState> activeProjectStates,
-                                                               List<Integer> advertsRecentlyAppliedFor) {
+            List<Integer> advertsRecentlyAppliedFor) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Application.class, "application") //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("otherUserApplication.advert"), "advert") //
@@ -239,6 +240,70 @@ public class AdvertDAO {
                 .list();
     }
 
+    public AdvertStudyOption getEnabledAdvertStudyOption(Advert advert, StudyOption studyOption) {
+        return (AdvertStudyOption) sessionFactory.getCurrentSession().createCriteria(AdvertStudyOption.class) //
+                .add(Restrictions.eq("advert", advert)) //
+                .add(Restrictions.eq("studyOption", studyOption)) //
+                .add(Restrictions.eq("enabled", true)) //
+                .uniqueResult();
+    }
+
+    public List<AdvertStudyOption> getEnabledAdvertStudyOptions(Advert advert) {
+        return (List<AdvertStudyOption>) sessionFactory.getCurrentSession().createCriteria(AdvertStudyOption.class) //
+                .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("advert", advert)) //
+                .add(Restrictions.eq("enabled", true)) //
+                .addOrder(Order.asc("studyOption.code")) //
+                .list();
+    }
+
+    public AdvertStudyOptionInstance getFirstEnabledAdvertStudyOptionInstance(Advert advert, StudyOption studyOption) {
+        return (AdvertStudyOptionInstance) sessionFactory.getCurrentSession().createCriteria(AdvertStudyOptionInstance.class) //
+                .createAlias("advertStudyOption", "advertStudyOption", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("advertStudyOption.advert", advert)) //
+                .add(Restrictions.eq("advertStudyOption.studyOption", studyOption)) //
+                .add(Restrictions.eq("enabled", true)) //
+                .addOrder(Order.asc("applicationStartDate")) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
+
+    public void disableElapsedAdvertStudyOptions(LocalDate baseline) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update AdvertStudyOption " //
+                        + "set enabled = false " //
+                        + "where applicationCloseDate < :baseline") //
+                .setParameter("baseline", baseline) //
+                .executeUpdate();
+    }
+
+    public void disableElapsedAdvertStudyOptionInstances(LocalDate baseline) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update AdvertStudyOptionInstance " //
+                        + "set enabled = false " //
+                        + "where applicationCloseDate < :baseline") //
+                .setParameter("baseline", baseline) //
+                .executeUpdate();
+    }
+
+    public void deleteAdvertStudyOptions(Advert advert) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete AdvertStudyOption " //
+                        + "where advert = :advert") //
+                .setParameter("advert", advert) //
+                .executeUpdate();
+    }
+
+    public void deleteAdvertStudyOptionInstances(Advert advert) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete AdvertStudyOptionInstance " //
+                        + "where studyOption in ( " //
+                        + "from AdvertStudyOption " //
+                        + "where advert = :advert)") //
+                .setParameter("advert", advert) //
+                .executeUpdate();
+    }
+
     private void appendLocationConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
         if (queryDTO.getNeLat() != null) {
             criteria.add(Restrictions.between("address.location.locationX", queryDTO.getSwLat(), queryDTO.getNeLat()));
@@ -274,10 +339,9 @@ public class AdvertDAO {
 
         Disjunction programTypeConstraint = Restrictions.disjunction();
         for (PrismProgramType programType : programTypes) {
-            String programTypeReference = programType.name();
             programTypeConstraint //
-                    .add(Restrictions.eq("programType.code", programTypeReference)) //
-                    .add(Restrictions.eq("projectProgramType.code", programTypeReference));
+                    .add(Restrictions.eq("program.programType", programType)) //
+                    .add(Restrictions.eq("projectProgram.programType", programType));
 
         }
         criteria.add(programTypeConstraint);

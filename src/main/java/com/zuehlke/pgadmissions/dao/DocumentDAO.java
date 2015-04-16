@@ -34,7 +34,8 @@ public class DocumentDAO {
 		                .add(Restrictions.isNotNull("applicationCv.id")) //
 		                .add(Restrictions.isNotNull("applicationCoveringLetter.id")) //
 		                .add(Restrictions.isNotNull("userPortrait.id")) //
-		                .add(Restrictions.isNotNull("institutionLogo.id"))) //
+		                .add(Restrictions.isNotNull("advertLogoImage.id")) //
+		                .add(Restrictions.isNotNull("advertBackgroundImage.id"))) //
 		        .list();
 	}
 
@@ -49,7 +50,8 @@ public class DocumentDAO {
 		        .add(Restrictions.isNull("applicationCv.id")) //
 		        .add(Restrictions.isNull("applicationCoveringLetter.id")) //
 		        .add(Restrictions.isNull("userPortrait.id")) //
-		        .add(Restrictions.isNull("institutionLogo.id")) //
+		        .add(Restrictions.isNull("advertLogoImage.id")) //
+		        .add(Restrictions.isNull("advertBackgroundImage.id")) //
 		        .add(Restrictions.le("createdTimestamp", baselineTime.minusDays(1))) //
 		        .list();
 	}
@@ -84,7 +86,8 @@ public class DocumentDAO {
 		        .createAlias("applicationCv", "applicationCv", JoinType.LEFT_OUTER_JOIN) //
 		        .createAlias("applicationCoveringLetter", "applicationCoveringLetter", JoinType.LEFT_OUTER_JOIN) //
 		        .createAlias("userPortrait", "userPortrait", JoinType.LEFT_OUTER_JOIN) //
-		        .createAlias("institutionLogo", "institutionLogo", JoinType.LEFT_OUTER_JOIN);
+		        .createAlias("advertLogoImage", "advertLogoImage", JoinType.LEFT_OUTER_JOIN) //
+		        .createAlias("advertBackgroundImage", "advertBackgroundImage", JoinType.LEFT_OUTER_JOIN);
 	}
 
 }

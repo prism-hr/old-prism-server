@@ -1,5 +1,9 @@
 package com.zuehlke.pgadmissions.domain.project;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DISABLED_COMPLETED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_REJECTED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_WITHDRAWN;
+
 import java.math.BigDecimal;
 import java.util.Set;
 
@@ -25,7 +29,7 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
@@ -80,6 +84,12 @@ public class Project extends ResourceParent {
     @Column(name = "title", nullable = false)
     private String title;
 
+    @Column(name = "locale", nullable = false)
+    private PrismLocale locale;
+
+    @Column(name = "program_type", nullable = false)
+    private PrismProgramType programType;
+
     @Column(name = "application_created_count")
     private Integer applicationCreatedCount;
 
@@ -131,7 +141,7 @@ public class Project extends ResourceParent {
     @Column(name = "updated_timestamp_sitemap", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestampSitemap;
-    
+
     @Column(name = "last_reminded_request_individual")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastRemindedRequestIndividual;
@@ -155,7 +165,7 @@ public class Project extends ResourceParent {
 
     @OneToMany(mappedBy = "project")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "project")
     private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
@@ -181,10 +191,12 @@ public class Project extends ResourceParent {
         this.id = id;
     }
 
+    @Override
     public Advert getAdvert() {
         return advert;
     }
 
+    @Override
     public void setAdvert(Advert advert) {
         this.advert = advert;
     }
@@ -209,17 +221,34 @@ public class Project extends ResourceParent {
         this.code = code;
     }
 
+    @Override
     public String getTitle() {
         return title;
     }
 
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }
 
     @Override
     public PrismLocale getLocale() {
-        return program.getLocale();
+        return locale;
+    }
+
+    @Override
+    public void setLocale(PrismLocale locale) {
+        this.locale = locale;
+    }
+
+    @Override
+    public PrismProgramType getProgramType() {
+        return programType;
+    }
+
+    @Override
+    public void setProgramType(PrismProgramType programType) {
+        this.programType = programType;
     }
 
     @Override
@@ -273,22 +302,22 @@ public class Project extends ResourceParent {
     }
 
     @Override
-    public final Integer getApplicationRatingCount() {
+    public Integer getApplicationRatingCount() {
         return applicationRatingCount;
     }
 
     @Override
-    public final void setApplicationRatingCount(Integer applicationRatingCountSum) {
+    public void setApplicationRatingCount(Integer applicationRatingCountSum) {
         this.applicationRatingCount = applicationRatingCountSum;
     }
 
     @Override
-    public final BigDecimal getApplicationRatingCountAverageNonZero() {
+    public BigDecimal getApplicationRatingCountAverageNonZero() {
         return applicationRatingCountAverageNonZero;
     }
 
     @Override
-    public final void setApplicationRatingCountAverageNonZero(BigDecimal applicationRatingCountAverage) {
+    public void setApplicationRatingCountAverageNonZero(BigDecimal applicationRatingCountAverage) {
         this.applicationRatingCountAverageNonZero = applicationRatingCountAverage;
     }
 
@@ -319,7 +348,7 @@ public class Project extends ResourceParent {
     }
 
     @Override
-    public final Set<UserRole> getUserRoles() {
+    public Set<UserRole> getUserRoles() {
         return userRoles;
     }
 
@@ -387,11 +416,11 @@ public class Project extends ResourceParent {
         this.previousState = previousState;
     }
 
-    public final LocalDate getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public final void setEndDate(LocalDate endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 
@@ -425,41 +454,41 @@ public class Project extends ResourceParent {
         this.updatedTimestamp = updatedTimestamp;
     }
 
-    public final DateTime getUpdatedTimestampSitemap() {
+    public DateTime getUpdatedTimestampSitemap() {
         return updatedTimestampSitemap;
     }
 
-    public final void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap) {
+    public void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap) {
         this.updatedTimestampSitemap = updatedTimestampSitemap;
     }
 
     @Override
-    public final LocalDate getLastRemindedRequestIndividual() {
+    public LocalDate getLastRemindedRequestIndividual() {
         return lastRemindedRequestIndividual;
     }
 
     @Override
-    public final void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual) {
+    public void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual) {
         this.lastRemindedRequestIndividual = lastRemindedRequestIndividual;
     }
 
     @Override
-    public final LocalDate getLastRemindedRequestSyndicated() {
+    public LocalDate getLastRemindedRequestSyndicated() {
         return lastRemindedRequestSyndicated;
     }
 
     @Override
-    public final void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated) {
+    public void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated) {
         this.lastRemindedRequestSyndicated = lastRemindedRequestSyndicated;
     }
 
     @Override
-    public final LocalDate getLastNotifiedUpdateSyndicated() {
+    public LocalDate getLastNotifiedUpdateSyndicated() {
         return lastNotifiedUpdateSyndicated;
     }
 
     @Override
-    public final void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
+    public void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
         this.lastNotifiedUpdateSyndicated = lastNotifiedUpdateSyndicated;
     }
 
@@ -474,56 +503,51 @@ public class Project extends ResourceParent {
     }
 
     @Override
-    public final Integer getWorkflowPropertyConfigurationVersion() {
+    public Integer getWorkflowPropertyConfigurationVersion() {
         return workflowPropertyConfigurationVersion;
     }
 
     @Override
-    public final void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
+    public void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
         this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
     }
 
     @Override
-    public final Set<ResourceState> getResourceStates() {
+    public Set<ResourceState> getResourceStates() {
         return resourceStates;
     }
 
     @Override
-    public final Set<ResourcePreviousState> getResourcePreviousStates() {
+    public Set<ResourcePreviousState> getResourcePreviousStates() {
         return resourcePreviousStates;
     }
-    
+
     @Override
     public Set<ResourceCondition> getResourceConditions() {
-		return resourceConditions;
-	}
+        return resourceConditions;
+    }
 
-	public Project withUser(final User user) {
+    public Project withUser(User user) {
         this.user = user;
         return this;
     }
 
-    public Project withSystem(final System system) {
+    public Project withSystem(System system) {
         this.system = system;
         return this;
     }
 
-    public Project withInstitution(final Institution institution) {
+    public Project withInstitution(Institution institution) {
         this.institution = institution;
         return this;
     }
 
-    public Project withProgram(final Program program) {
+    public Project withProgram(Program program) {
         this.program = program;
         return this;
     }
 
-    public Project withTitle(final String title) {
-        this.title = title;
-        return this;
-    }
-
-    public Project withCode(final String code) {
+    public Project withCode(String code) {
         this.code = code;
         return this;
     }
@@ -531,8 +555,7 @@ public class Project extends ResourceParent {
     @Override
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addProperty("user", getUser()).addProperty("program", program).addProperty("title", title)
-                .addExclusion("state.id", PrismState.PROJECT_DISABLED_COMPLETED).addExclusion("state.id", PrismState.PROJECT_REJECTED)
-                .addExclusion("state.id", PrismState.PROJECT_WITHDRAWN);
+                .addExclusion("state.id", PROJECT_DISABLED_COMPLETED).addExclusion("state.id", PROJECT_REJECTED).addExclusion("state.id", PROJECT_WITHDRAWN);
     }
 
 }

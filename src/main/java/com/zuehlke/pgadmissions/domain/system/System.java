@@ -94,6 +94,10 @@ public class System extends Resource {
     @Column(name = "last_notified_update_syndicated")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedUpdateSyndicated;
+    
+    @Column(name = "last_notified_recommendation_syndicated")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastNotifiedRecommendationSyndicated;
 
     @Column(name = "cipher_salt", nullable = false)
     private String cipherSalt;
@@ -330,6 +334,14 @@ public class System extends Resource {
     public final void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
         this.lastNotifiedUpdateSyndicated = lastNotifiedUpdateSyndicated;
     }
+    
+    public LocalDate getLastNotifiedRecommendationSyndicated() {
+        return lastNotifiedRecommendationSyndicated;
+    }
+
+    public void setLastNotifiedRecommendationSyndicated(LocalDate lastNotifiedRecommendedSyndicated) {
+        this.lastNotifiedRecommendationSyndicated = lastNotifiedRecommendedSyndicated;
+    }
 
     public final String getCipherSalt() {
         return cipherSalt;
@@ -380,6 +392,7 @@ public class System extends Resource {
 
     @Override
     public void setWorkflowPropertyConfigurationVersion(Integer workflowResourceConfigurationVersion) {
+        return;
     }
 
     @Override

@@ -358,8 +358,8 @@ public class ResourceService {
         return Arrays.asList(CREATE_RESOURCE, IMPORT_RESOURCE).contains(action.getActionCategory()) ? resource.getParentResource() : resource;
     }
 
-    public <T extends Resource> List<Integer> getResourcesToEscalate(Class<T> resourceClass, PrismAction actionId, LocalDate baseline) {
-        return resourceDAO.getResourcesToEscalate(resourceClass, actionId, baseline);
+    public List<Integer> getResourcesToEscalate(PrismScope resourceScope, PrismAction actionId, LocalDate baseline) {
+        return resourceDAO.getResourcesToEscalate(resourceScope, actionId, baseline);
     }
 
     public <T extends Resource> List<Integer> getResourcesToPropagate(PrismScope propagatingResourceScope, Integer propagatingResourceId,
@@ -367,17 +367,16 @@ public class ResourceService {
         return resourceDAO.getResourcesToPropagate(propagatingResourceScope, propagatingResourceId, propagatedResourceScope, actionId);
     }
 
-    public <T extends Resource> List<Integer> getResourcesRequiringIndividualReminders(Class<T> resourceClass, LocalDate baseline) {
-        return resourceDAO.getResourcesRequiringIndividualReminders(resourceClass, baseline);
+    public List<Integer> getResourcesRequiringIndividualReminders(PrismScope resourceScope, LocalDate baseline) {
+        return resourceDAO.getResourcesRequiringIndividualReminders(resourceScope, baseline);
     }
 
-    public <T extends Resource> List<Integer> getResourcesRequiringSyndicatedReminders(Class<T> resourceClass, LocalDate baseline) {
-        return resourceDAO.getResourcesRequiringSyndicatedReminders(resourceClass, baseline);
+    public List<Integer> getResourcesRequiringSyndicatedReminders(PrismScope resourceScope, LocalDate baseline) {
+        return resourceDAO.getResourcesRequiringSyndicatedReminders(resourceScope, baseline);
     }
 
-    public <T extends Resource> List<Integer> getResourcesRequiringSyndicatedUpdates(Class<T> resourceClass, LocalDate baseline, DateTime rangeStart,
-            DateTime rangeClose) {
-        return resourceDAO.getResourceRequiringSyndicatedUpdates(resourceClass, baseline, rangeStart, rangeClose);
+    public List<Integer> getResourcesRequiringSyndicatedUpdates(PrismScope resourceScope, LocalDate baseline, DateTime rangeStart, DateTime rangeClose) {
+        return resourceDAO.getResourceRequiringSyndicatedUpdates(resourceScope, baseline, rangeStart, rangeClose);
     }
 
     public List<ResourceListRowDTO> getResourceList(PrismScope resourceScope, ResourceListFilterDTO filter, String lastSequenceIdentifier) throws Exception {
@@ -396,14 +395,15 @@ public class ResourceService {
                     lastSequenceIdentifier, maxRecords, hasRedactions);
             for (ResourceListRowDTO row : rows) {
                 Set<ResourceListActionDTO> actions = Sets.newLinkedHashSet();
-                actions.addAll(actionService.getPermittedActions(resourceScope, row.getSystemId(), row.getInstitutionId(), row.getProgramId(), row.getProjectId(),
+                actions.addAll(actionService.getPermittedActions(resourceScope, row.getSystemId(), row.getInstitutionId(), row.getProgramId(),
+                        row.getProjectId(),
                         row.getApplicationId(), user));
                 actions.addAll(creations.get(row.getResourceId()));
                 row.setActions(actions);
             }
             return rows;
         }
-        
+
         return Lists.newArrayList();
     }
 

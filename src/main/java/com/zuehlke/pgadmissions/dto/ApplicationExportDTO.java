@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.program.AdvertStudyOptionInstance;
+import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 
 public class ApplicationExportDTO {
@@ -19,7 +19,7 @@ public class ApplicationExportDTO {
     
     private User primarySupervisor;
     
-    private AdvertStudyOptionInstance exportProgramInstance;
+    private ProgramStudyOptionInstance exportProgramInstance;
     
     private List<ApplicationReferenceDTO> applicationReferences;
 
@@ -43,7 +43,7 @@ public class ApplicationExportDTO {
         return primarySupervisor;
     }
 
-    public final AdvertStudyOptionInstance getExportProgramInstance() {
+    public final ProgramStudyOptionInstance getExportProgramInstance() {
         return exportProgramInstance;
     }
 
@@ -75,7 +75,7 @@ public class ApplicationExportDTO {
         this.primarySupervisor = primarySupervisor;
     }
 
-    public final void setExportProgramInstance(AdvertStudyOptionInstance exportProgramInstance) {
+    public final void setExportProgramInstance(ProgramStudyOptionInstance exportProgramInstance) {
         this.exportProgramInstance = exportProgramInstance;
     }
 
@@ -104,7 +104,7 @@ public class ApplicationExportDTO {
         return this;
     }
     
-    public ApplicationExportDTO withExportProgramInstance(AdvertStudyOptionInstance exportProgramInstance) {
+    public ApplicationExportDTO withExportProgramInstance(ProgramStudyOptionInstance exportProgramInstance) {
         this.exportProgramInstance = exportProgramInstance;
         return this;
     }

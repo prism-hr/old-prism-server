@@ -79,14 +79,13 @@ public class ProjectService {
     }
 
     public void save(Project project) {
-        advertService.save(project.getAdvert());
         entityService.save(project);
     }
 
     public Project create(User user, ProjectDTO projectDTO) {
         Program program = entityService.getById(Program.class, projectDTO.getProgramId());
         Project project = new Project().withUser(user).withSystem(systemService.getSystem()).withInstitution(program.getInstitution()).withProgram(program);
-        updateProjectDetails(project, projectDTO);
+        copyProjectDetails(project, projectDTO);
         project.setEndDate(new LocalDate().plusMonths(3));
         return project;
     }
@@ -204,14 +203,14 @@ public class ProjectService {
 
     private void update(Integer projectId, ProjectDTO projectDTO) {
         Project project = entityService.getById(Project.class, projectId);
-        updateProjectDetails(project, projectDTO);
+        copyProjectDetails(project, projectDTO);
     }
 
-    private void updateProjectDetails(Project project, ProjectDTO projectDTO) {
+    private void copyProjectDetails(Project project, ProjectDTO projectDTO) {
         Advert advert;
         if (project.getAdvert() == null) {
             advert = new Advert();
-            advert.setAddress(advertService.createAddressCopy(project.getProgram().getAdvert().getAddress()));
+            advert.setAddress(advertService.createAddressCopy(project.getInstitution().getAddress()));
             project.setAdvert(advert);
         } else {
             advert = project.getAdvert();
@@ -220,8 +219,6 @@ public class ProjectService {
         String title = projectDTO.getTitle();
         project.setEndDate(projectDTO.getEndDate());
         project.setTitle(title);
-        project.setLocale(projectDTO.getLocale());
-        project.setProgramType(projectDTO.getProgramType());
         advert.setTitle(title);
         advert.setSummary(projectDTO.getSummary());
         advert.setApplyHomepage(projectDTO.getApplyHomepage());

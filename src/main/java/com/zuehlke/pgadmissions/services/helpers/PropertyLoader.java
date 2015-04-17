@@ -67,7 +67,7 @@ public class PropertyLoader {
 		if (resourceScope.ordinal() > INSTITUTION.ordinal()) {
 			Program program = resource.getProgram();
 			this.resource = program;
-			this.programType = program.getImportedProgramType().getPrismProgramType();
+			this.programType = program.getProgramType().getPrismProgramType();
 		} else {
 			this.resource = resource;
 			this.programType = null;

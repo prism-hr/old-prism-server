@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.domain.document;
 
-import static com.zuehlke.pgadmissions.utils.PrismConstants.DOT;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.FILE_EXTENSION_PDF;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -18,14 +15,15 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.utils.PrismConstants;
 
 @Entity
 @Table(name = "DOCUMENT")
@@ -89,11 +87,8 @@ public class Document {
     @OneToOne(mappedBy = "portraitDocument")
     private User userPortrait;
 
-    @OneToOne(mappedBy = "logoImage")
-    private Advert advertLogoImage;
-    
-    @OneToOne(mappedBy = "backgroundImage")
-    private Advert advertBackgroundImage;
+    @OneToOne(mappedBy = "logoDocument")
+    private Institution institutionLogo;
 
     public void setId(Integer id) {
         this.id = id;
@@ -195,12 +190,16 @@ public class Document {
         return userPortrait;
     }
 
-    public Advert getAdvertLogoImage() {
-        return advertLogoImage;
+    public void setUserPortrait(User userPortrait) {
+        this.userPortrait = userPortrait;
     }
 
-    public Advert getAdvertBackgroundImage() {
-        return advertBackgroundImage;
+    public Institution getInstitutionLogo() {
+        return institutionLogo;
+    }
+
+    public void setInstitutionLogo(Institution institutionLogo) {
+        this.institutionLogo = institutionLogo;
     }
 
     public Document withId(Integer id) {
@@ -270,7 +269,7 @@ public class Document {
     }
 
     public String getExportFilenameSits() {
-        return getExportFilenameAmazon() + DOT + FILE_EXTENSION_PDF;
+        return getExportFilenameAmazon() + PrismConstants.DOT + PrismConstants.FILE_EXTENSION_PDF;
     }
     
 }

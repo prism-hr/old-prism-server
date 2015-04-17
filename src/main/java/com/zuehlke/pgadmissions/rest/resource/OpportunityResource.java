@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.program.ProgramLocation;
-import com.zuehlke.pgadmissions.domain.program.AdvertStudyOption;
+import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
@@ -83,7 +83,7 @@ public class OpportunityResource {
         representation.setUser(dozerBeanMapper.map(resource.getUser(), UserRepresentation.class));
         representation.setResourceScope(resource.getResourceScope());
         representation.setResourceId(resource.getId());
-        representation.setProgramType(resource.getProgram().getImportedProgramType().getPrismProgramType());
+        representation.setProgramType(resource.getProgram().getProgramType().getPrismProgramType());
 
         List<String> locations = Lists.newArrayListWithCapacity(resource.getProgram().getLocations().size());
         for (ProgramLocation programLocation : resource.getProgram().getLocations()) {
@@ -92,7 +92,7 @@ public class OpportunityResource {
         representation.setLocations(locations);
 
         Set<PrismStudyOption> studyOptions = Sets.newHashSet();
-        for (AdvertStudyOption studyOption : resource.getProgram().getAdvertStudyOptions()) {
+        for (ProgramStudyOption studyOption : resource.getProgram().getStudyOptions()) {
             studyOptions.add(studyOption.getStudyOption().getPrismStudyOption());
         }
         representation.setStudyOptions(studyOptions);

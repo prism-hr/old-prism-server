@@ -29,18 +29,7 @@ public class LocationSearchResponseDTO {
 
     public static class Results {
         
-        @JsonProperty("place_id")        
-        private String placeId;
-        
         private Geometry geometry;
-        
-        public String getPlaceId() {
-            return placeId;
-        }
-
-        public void setPlaceId(String placeId) {
-            this.placeId = placeId;
-        }
 
         public final Geometry getGeometry() {
             return geometry;

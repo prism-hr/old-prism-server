@@ -38,7 +38,6 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
@@ -307,14 +306,9 @@ public class Application extends Resource {
 
     @Override
     public PrismLocale getLocale() {
-        return project == null ? program.getLocale() : project.getLocale();
+        return program.getLocale();
     }
-    
-    @Override
-    public PrismProgramType getProgramType() {
-        return project == null ? program.getProgramType() : project.getProgramType();
-    }
-    
+
     @Override
     public System getSystem() {
         return system;
@@ -884,7 +878,7 @@ public class Application extends Resource {
     }
 
     public PrismProgramStartType getDefaultStartType() {
-        return project == null && program.getImportedProgramType().getPrismProgramType().getDefaultStartType() == SCHEDULED ? SCHEDULED : IMMEDIATE;
+        return project == null && program.getProgramType().getPrismProgramType().getDefaultStartType() == SCHEDULED ? SCHEDULED : IMMEDIATE;
     }
 
     public boolean isProgramApplication() {

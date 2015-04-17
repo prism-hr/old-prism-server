@@ -70,7 +70,7 @@ import com.zuehlke.pgadmissions.domain.imported.Gender;
 import com.zuehlke.pgadmissions.domain.imported.Language;
 import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
 import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.program.AdvertStudyOptionInstance;
+import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.Address;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationExportDTO;
@@ -339,7 +339,7 @@ public class ApplicationExportBuilder {
 		occurrenceTp.setCode(program.getImportedCode());
 		occurrenceTp.setModeOfAttendance(buildModeofattendance(application));
 
-		AdvertStudyOptionInstance exportProgramInstance = applicationExportDTO.getExportProgramInstance();
+		ProgramStudyOptionInstance exportProgramInstance = applicationExportDTO.getExportProgramInstance();
 		occurrenceTp.setAcademicYear(applicationExportBuilderHelper.buildXmlDateYearOnly(exportProgramInstance.getAcademicYear()));
 		String exportInstanceIdentifier = exportProgramInstance.getIdentifier();
 		occurrenceTp.setIdentifier(exportInstanceIdentifier == null ? propertyLoader.load(SYSTEM_VALUE_NOT_PROVIDED) : exportInstanceIdentifier);

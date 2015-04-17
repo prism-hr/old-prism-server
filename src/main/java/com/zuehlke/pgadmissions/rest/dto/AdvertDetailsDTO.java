@@ -5,7 +5,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.URL;
 
 public class AdvertDetailsDTO {
-    
+
     @Size(max = 20000)
     private String description;
 

@@ -43,8 +43,8 @@ public class ResourceDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public <T extends Resource> List<Integer> getResourcesToEscalate(Class<T> resourceClass, PrismAction actionId, LocalDate baseline) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
+    public List<Integer> getResourcesToEscalate(PrismScope resourceScope, PrismAction actionId, LocalDate baseline) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
@@ -67,8 +67,8 @@ public class ResourceDAO {
                 .list();
     }
 
-    public <T extends Resource> List<Integer> getResourcesRequiringIndividualReminders(Class<T> resourceClass, LocalDate baseline) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
+    public List<Integer> getResourcesRequiringIndividualReminders(PrismScope resourceScope, LocalDate baseline) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
@@ -80,8 +80,8 @@ public class ResourceDAO {
                 .list();
     }
 
-    public <T extends Resource> List<Integer> getResourcesRequiringSyndicatedReminders(Class<T> resourceClass, LocalDate baseline) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
+    public List<Integer> getResourcesRequiringSyndicatedReminders(PrismScope resourceScope, LocalDate baseline) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
@@ -93,9 +93,8 @@ public class ResourceDAO {
                 .list();
     }
 
-    public <T extends Resource> List<Integer> getResourceRequiringSyndicatedUpdates(Class<T> resourceClass, LocalDate baseline, DateTime rangeStart,
-            DateTime rangeClose) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceClass) //
+    public List<Integer> getResourceRequiringSyndicatedUpdates(PrismScope resourceScope, LocalDate baseline, DateTime rangeStart, DateTime rangeClose) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("lastNotifiedUpdateSyndicated")) //

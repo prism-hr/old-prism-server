@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.StateService;
@@ -28,11 +28,11 @@ public class StateServiceHelperEscalation implements AbstractServiceHelper {
 	public void execute() throws Exception {
 		LocalDate baseline = new LocalDate();
 		List<PrismAction> actionIds = actionService.getEscalationActions();
-		for (PrismAction actionId : actionIds) {
-			Class<? extends Resource> resourceClass = actionId.getScope().getResourceClass();
-			List<Integer> resourceIds = resourceService.getResourcesToEscalate(resourceClass, actionId, baseline);
+		for (PrismAction prismAction : actionIds) {
+		    PrismScope resourceScope = prismAction.getScope();
+			List<Integer> resourceIds = resourceService.getResourcesToEscalate(resourceScope, prismAction, baseline);
 			for (Integer resourceId : resourceIds) {
-				stateService.executeDeferredStateTransition(resourceClass, resourceId, actionId);
+				stateService.executeDeferredStateTransition(resourceScope, resourceId, prismAction);
 			}
 		}
 	}

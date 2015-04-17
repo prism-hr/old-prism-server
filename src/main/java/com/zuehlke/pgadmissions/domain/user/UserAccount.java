@@ -16,7 +16,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -47,10 +46,6 @@ public class UserAccount {
 
     @Column(name = "send_application_recommendation_notification", nullable = false)
     private Boolean sendApplicationRecommendationNotification;
-
-    @Column(name = "last_notified_date_application_recommendation")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate lastNotifiedDateApplicationRecommendation;
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
@@ -108,14 +103,6 @@ public class UserAccount {
 
     public void setSendApplicationRecommendationNotification(Boolean sendApplicationRecommendationNotification) {
         this.sendApplicationRecommendationNotification = sendApplicationRecommendationNotification;
-    }
-
-    public LocalDate getLastNotifiedDateApplicationRecommendation() {
-        return lastNotifiedDateApplicationRecommendation;
-    }
-
-    public void setLastNotifiedDateApplicationRecommendation(LocalDate lastNotifiedDateApplicationRecommendation) {
-        this.lastNotifiedDateApplicationRecommendation = lastNotifiedDateApplicationRecommendation;
     }
 
     public Map<Scope, ResourceListFilter> getFilters() {

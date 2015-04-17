@@ -122,6 +122,7 @@ public enum PrismAction {
                     new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT), //
                     new PrismActionRedaction().withRole(APPLICATION_VIEWER_REFEREE).withRedactionType(ALL_CONTENT))), //
     APPLICATION_CORRECT(USER_INVOCATION, PROCESS_RESOURCE, false, false, true, null, APPLICATION, null), //
+    APPLICATION_FORGET_EXPORT(USER_INVOCATION, PROCESS_RESOURCE, false, false, true, null, APPLICATION, null), //
     APPLICATION_EMAIL_CREATOR(USER_INVOCATION, EMAIL_RESOURCE_CREATOR, false, false, false, null, APPLICATION, null), //
     APPLICATION_ESCALATE(SYSTEM_INVOCATION, ESCALATE_RESOURCE, false, false, false, null, APPLICATION, null), //
     APPLICATION_EXPORT(SYSTEM_INVOCATION, EXPORT_RESOURCE, false, false, true, null, APPLICATION,

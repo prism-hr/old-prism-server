@@ -62,6 +62,15 @@ public class PrismApplicationWorkflow {
 		                .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST));
 	}
 
+	public static PrismStateAction applicationForgetExport(PrismState state) {
+		return new PrismStateAction() //
+		        .withAction(APPLICATION_FORGET_EXPORT) //
+		        .withAssignments(INSTITUTION_ADMINISTRATOR) //
+		        .withTransitions(new PrismStateTransition() //
+		                .withTransitionState(state) //
+		                .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST));
+	}
+
 	public static PrismStateAction applicationEmailCreator() {
 		return new PrismStateAction() //
 		        .withAction(PrismAction.APPLICATION_EMAIL_CREATOR) //

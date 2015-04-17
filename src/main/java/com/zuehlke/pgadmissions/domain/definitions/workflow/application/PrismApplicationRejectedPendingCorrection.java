@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_PENDING_EXPORT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationRejected.applicationEscalateRejected;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationRejected.applicationReverseRejection;
@@ -13,6 +14,7 @@ public class PrismApplicationRejectedPendingCorrection extends PrismWorkflowStat
 	protected void setStateActions() {
 		stateActions.add(applicationCommentWithViewerRecruiter()); //
 		stateActions.add(applicationCorrect(APPLICATION_REJECTED_PENDING_EXPORT)); //
+		stateActions.add(applicationForgetExport(APPLICATION_REJECTED_COMPLETED)); //
 		stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
 		stateActions.add(applicationEscalateRejected()); //
 		stateActions.add(applicationReverseRejection());

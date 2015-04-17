@@ -127,9 +127,15 @@ public class NotificationService {
 
             Role role = roleService.getById(definition.getRoleId());
             UserRole userRole = roleService.getUserRole(resource.getEnclosingResource(role.getScope().getId()), user, role);
+            if (userRole == null) {
+                log.error("Could not find userRole for given user: " + user + ", role: " + role + ", and resource ID: " + role.getScope().getId());
+            }
 
             NotificationDefinition notificationDefinition = getById(definition.getNotificationDefinitionId());
             UserNotification userNotification = notificationDAO.getUserNotification(resource, userRole, notificationDefinition);
+            if (userNotification == null) {
+                log.error("Could not find userNotification for given userRole: " + userRole.getId() + ", resource: " + resource.getResourceScope() + "@" + resource.getId() + ", notificationDef: " + notificationDefinition);
+            }
             LocalDate lastNotifiedDate = userNotification.getLastNotifiedDate();
 
             Integer reminderInterval = getReminderInterval(resource, user, notificationDefinition);

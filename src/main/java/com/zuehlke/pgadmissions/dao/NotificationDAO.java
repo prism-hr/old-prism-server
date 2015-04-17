@@ -69,7 +69,9 @@ public class NotificationDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .createAlias("userRole.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id")) //
+                        Restrictions.conjunction() //
+                        .add(Restrictions.eq("userNotification." + resource.getResourceScope().getLowerCamelName(), resource)) //
+                        .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id"))) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", PrismNotificationType.INDIVIDUAL)) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.disjunction() //
@@ -126,7 +128,9 @@ public class NotificationDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .createAlias("userRole.userNotifications", "userNotification", JoinType.INNER_JOIN, //
-                        Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id")) //
+                        Restrictions.conjunction() //
+                                .add(Restrictions.eq("userNotification." + resource.getResourceScope().getLowerCamelName(), resource)) //
+                                .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id"))) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", PrismNotificationType.INDIVIDUAL)) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.disjunction() //

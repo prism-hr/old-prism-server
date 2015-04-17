@@ -28,7 +28,7 @@ public class InstitutionAddress extends GeocodableLocation {
     private InstitutionDomicile domicile;
 
     @ManyToOne
-    @JoinColumn(name = "institution_id")
+    @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
 
     @Column(name = "address_line_1", nullable = false)
@@ -123,11 +123,12 @@ public class InstitutionAddress extends GeocodableLocation {
         this.location = location;
     }
 
-    public InstitutionAddress withInstitution(Institution institution) {
+
+    public InstitutionAddress withInstitution(final Institution institution) {
         this.institution = institution;
         return this;
     }
-    
+
     public InstitutionAddress withDomicile(final InstitutionDomicile domicile) {
         this.domicile = domicile;
         return this;

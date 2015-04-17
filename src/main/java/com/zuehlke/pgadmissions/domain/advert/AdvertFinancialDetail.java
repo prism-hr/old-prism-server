@@ -131,10 +131,4 @@ public class AdvertFinancialDetail {
     public final void setConverted(Boolean converted) {
         this.converted = converted;
     }
-
-    public AdvertFinancialDetail withCurrencySpecified(String currencySpecified) {
-        this.currencySpecified = currencySpecified;
-        return this;
-    }
-
 }

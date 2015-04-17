@@ -8,9 +8,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-
 public class ProjectDTO {
 
     @NotNull
@@ -19,12 +16,6 @@ public class ProjectDTO {
     @NotEmpty
     @Size(max = 255)
     private String title;
-
-    @NotNull
-    private PrismLocale locale;
-    
-    @NotNull
-    private PrismProgramType programType;
 
     private LocalDate endDate;
 
@@ -56,22 +47,6 @@ public class ProjectDTO {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public PrismLocale getLocale() {
-        return locale;
-    }
-
-    public void setLocale(PrismLocale locale) {
-        this.locale = locale;
-    }
-    
-    public PrismProgramType getProgramType() {
-        return programType;
-    }
-
-    public void setProgramType(PrismProgramType programType) {
-        this.programType = programType;
     }
 
     public LocalDate getEndDate() {

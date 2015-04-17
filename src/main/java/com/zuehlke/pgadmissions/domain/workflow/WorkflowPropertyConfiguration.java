@@ -15,7 +15,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 
@@ -23,8 +22,7 @@ import com.zuehlke.pgadmissions.domain.system.System;
 @Table(name = "WORKFLOW_PROPERTY_CONFIGURATION", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"system_id", "locale", "program_type", "workflow_property_definition_id", "version"}),
         @UniqueConstraint(columnNames = {"institution_id", "program_type", "workflow_property_definition_id", "version"}),
-        @UniqueConstraint(columnNames = {"program_id", "locale", "workflow_property_definition_id", "version"}), 
-        @UniqueConstraint(columnNames = {"project_id", "locale", "workflow_property_definition_id", "version"}) })
+        @UniqueConstraint(columnNames = {"program_id", "workflow_property_definition_id", "version"})})
 public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersioned {
 
     @Id
@@ -42,10 +40,6 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
     @ManyToOne
     @JoinColumn(name = "program_id")
     private Program program;
-    
-    @ManyToOne
-    @JoinColumn(name = "project_id")
-    private Project project;
 
     @Column(name = "locale")
     @Enumerated(EnumType.STRING)
@@ -116,16 +110,6 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
     @Override
     public final void setProgram(Program program) {
         this.program = program;
-    }
-
-    @Override
-    public Project getProject() {
-        return project;
-    }
-
-    @Override
-    public void setProject(Project project) {
-        this.project = project;
     }
 
     @Override

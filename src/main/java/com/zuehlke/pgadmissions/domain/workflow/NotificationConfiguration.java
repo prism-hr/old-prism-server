@@ -16,7 +16,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 
@@ -24,8 +23,7 @@ import com.zuehlke.pgadmissions.domain.system.System;
 @Table(name = "NOTIFICATION_CONFIGURATION", uniqueConstraints = {
         @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "notification_definition_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "locale", "program_type", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "program_id", "locale", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "project_id", "locale", "notification_definition_id" }) })
+        @UniqueConstraint(columnNames = { "program_id", "notification_definition_id" }) })
 public class NotificationConfiguration extends WorkflowConfiguration {
 
     @Id
@@ -43,10 +41,6 @@ public class NotificationConfiguration extends WorkflowConfiguration {
     @ManyToOne
     @JoinColumn(name = "program_id")
     private Program program;
-
-    @ManyToOne
-    @JoinColumn(name = "project_id")
-    private Project project;
 
     @Column(name = "locale")
     @Enumerated(EnumType.STRING)
@@ -131,16 +125,6 @@ public class NotificationConfiguration extends WorkflowConfiguration {
     @Override
     public void setProgram(Program program) {
         this.program = program;
-    }
-
-    @Override
-    public Project getProject() {
-        return project;
-    }
-
-    @Override
-    public void setProject(Project project) {
-        this.project = project;
     }
 
     public NotificationDefinition getNotificationDefinition() {

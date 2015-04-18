@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -154,6 +155,9 @@ public class Project extends ResourceParent {
 
     @OneToMany(mappedBy = "project")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "project")
+    private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
     @OneToMany(mappedBy = "project")
     private Set<Application> applications = Sets.newHashSet();
@@ -488,8 +492,13 @@ public class Project extends ResourceParent {
     public final Set<ResourcePreviousState> getResourcePreviousStates() {
         return resourcePreviousStates;
     }
+    
+    @Override
+    public Set<ResourceCondition> getResourceConditions() {
+		return resourceConditions;
+	}
 
-    public Project withUser(final User user) {
+	public Project withUser(final User user) {
         this.user = user;
         return this;
     }

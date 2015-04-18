@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -93,6 +94,10 @@ public class System extends Resource {
     @Column(name = "last_notified_update_syndicated")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedUpdateSyndicated;
+    
+    @Column(name = "last_notified_recommendation_syndicated")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastNotifiedRecommendationSyndicated;
 
     @Column(name = "cipher_salt", nullable = false)
     private String cipherSalt;
@@ -115,6 +120,9 @@ public class System extends Resource {
 
     @OneToMany(mappedBy = "system")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "system")
+    private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "system")
     private Set<Institution> institutions = Sets.newHashSet();
@@ -326,6 +334,14 @@ public class System extends Resource {
     public final void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
         this.lastNotifiedUpdateSyndicated = lastNotifiedUpdateSyndicated;
     }
+    
+    public LocalDate getLastNotifiedRecommendationSyndicated() {
+        return lastNotifiedRecommendationSyndicated;
+    }
+
+    public void setLastNotifiedRecommendationSyndicated(LocalDate lastNotifiedRecommendedSyndicated) {
+        this.lastNotifiedRecommendationSyndicated = lastNotifiedRecommendedSyndicated;
+    }
 
     public final String getCipherSalt() {
         return cipherSalt;
@@ -376,6 +392,7 @@ public class System extends Resource {
 
     @Override
     public void setWorkflowPropertyConfigurationVersion(Integer workflowResourceConfigurationVersion) {
+        return;
     }
 
     @Override
@@ -388,7 +405,12 @@ public class System extends Resource {
         return resourcePreviousStates;
     }
 
-    public final Set<Institution> getInstitutions() {
+    @Override
+    public Set<ResourceCondition> getResourceConditions() {
+		return resourceConditions;
+	}
+
+	public final Set<Institution> getInstitutions() {
         return institutions;
     }
 

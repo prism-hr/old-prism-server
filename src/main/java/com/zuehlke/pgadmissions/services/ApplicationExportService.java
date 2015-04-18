@@ -144,7 +144,7 @@ public class ApplicationExportService {
 		List<ApplicationReferenceDTO> applicationExportReferences = applicationService.getApplicationExportReferees(application);
 
 		if (exportProgramInstance == null) {
-			throw new ApplicationExportException(SYSTEM_NO_EXPORT_PROGRAM_INSTANCE.name() + application.getCode());
+			throw new ApplicationExportException(SYSTEM_NO_EXPORT_PROGRAM_INSTANCE.name() + " for " + application.getCode());
 		}
 
 		return applicationContext

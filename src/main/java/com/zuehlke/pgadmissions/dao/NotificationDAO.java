@@ -1,10 +1,13 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType.INDIVIDUAL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType.SYNDICATED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
+
 import java.util.List;
 import java.util.Set;
 
-import com.zuehlke.pgadmissions.domain.user.UserNotification;
-import com.zuehlke.pgadmissions.domain.user.UserRole;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -15,12 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.comment.CommentState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserNotification;
+import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
@@ -63,16 +67,16 @@ public class NotificationDAO {
                         .add(Projections.groupProperty("stateAction.action.id"), "actionId")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .createAlias("userRole.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN, //
                         Restrictions.conjunction() //
-                        .add(Restrictions.eq("userNotification." + resource.getResourceScope().getLowerCamelName(), resource)) //
-                        .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id"))) //
-                .add(Restrictions.eq("notificationDefinition.notificationType", PrismNotificationType.INDIVIDUAL)) //
+                                .add(Restrictions.eq("userNotification." + resource.getResourceScope().getLowerCamelName(), resource)) //
+                                .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id"))) //
+                .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.system", resource.getSystem())) //
@@ -99,7 +103,7 @@ public class NotificationDAO {
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.action", action)) //
-                .add(Restrictions.eq("notificationDefinition.notificationType", PrismNotificationType.INDIVIDUAL)) //
+                .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
                 .add(Restrictions.not( //
                         Restrictions.in("userRole.user", exclusions))) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
@@ -122,16 +126,16 @@ public class NotificationDAO {
                         .add(Projections.groupProperty("stateAction.action.id"), "actionId")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .createAlias("userRole.userNotifications", "userNotification", JoinType.INNER_JOIN, //
                         Restrictions.conjunction() //
                                 .add(Restrictions.eq("userNotification." + resource.getResourceScope().getLowerCamelName(), resource)) //
                                 .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id"))) //
-                .add(Restrictions.eq("notificationDefinition.notificationType", PrismNotificationType.INDIVIDUAL)) //
+                .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.system", resource.getSystem())) //
@@ -145,19 +149,23 @@ public class NotificationDAO {
     }
 
     public List<UserNotificationDefinitionDTO> getSyndicatedRequestDefinitions(Resource resource, LocalDate baseline) {
-        String lastNotifiedDateReference = "user.lastNotifiedDate" + resource.getClass().getSimpleName();
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
+                        .add(Projections.groupProperty("role.id"), "roleId") //
                         .add(Projections.groupProperty("notificationDefinition.id"), "notificationDefinitionId")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("notificationDefinition.notificationType", PrismNotificationType.SYNDICATED)) //
+                .createAlias("userRole.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.conjunction() //
+                                .add(Restrictions.isNotNull("userNotification.system")) //
+                                .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id"))) //
+                .add(Restrictions.eq("notificationDefinition.notificationType", SYNDICATED)) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.system", resource.getSystem())) //
@@ -166,17 +174,17 @@ public class NotificationDAO {
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.application", resource.getApplication()))) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull(lastNotifiedDateReference)) //
-                        .add(Restrictions.lt(lastNotifiedDateReference, baseline))) //
+                        .add(Restrictions.isNull("userNotification.id")) //
+                        .add(Restrictions.lt("userNotification.lastNotifiedDate", baseline))) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
 
     public List<UserNotificationDefinitionDTO> getSyndicatedUpdateDefinitions(Resource resource, Action action, User invoker, LocalDate baseline) {
-        String lastNotifiedDateReference = "user.lastNotifiedDate" + resource.getClass().getSimpleName();
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(CommentState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
+                        .add(Projections.groupProperty("role.id"), "roleId") //
                         .add(Projections.groupProperty("notificationDefinition.id"), "notificationDefinitionId")) //
                 .createAlias("comment", "comment", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
@@ -186,8 +194,12 @@ public class NotificationDAO {
                 .createAlias("stateActionNotification.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("userRole.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.conjunction() //
+                                .add(Restrictions.isNotNull("userNotification.system")) //
+                                .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id"))) //
                 .add(Restrictions.eq("stateAction.action", action)) //
-                .add(Restrictions.eq("notificationDefinition.notificationType", PrismNotificationType.SYNDICATED)) //
+                .add(Restrictions.eq("notificationDefinition.notificationType", SYNDICATED)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("userRole.user", resource.getUser())) //
                         .add(Restrictions.ne("userRole.user", invoker))) //
@@ -199,35 +211,51 @@ public class NotificationDAO {
                         .add(Restrictions.eq("userRole.project", resource.getProject())) //
                         .add(Restrictions.eq("userRole.application", resource.getApplication()))) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull(lastNotifiedDateReference)) //
-                        .add(Restrictions.lt(lastNotifiedDateReference, baseline))) //
+                        .add(Restrictions.isNull("userNotification.id")) //
+                        .add(Restrictions.lt("userNotification.lastNotifiedDate", baseline))) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
 
-    public List<User> getRecommendationDefinitions(LocalDate baseline) {
-        LocalDate lastSentBaseline = baseline.minusWeeks(1);
-        return (List<User>) sessionFactory.getCurrentSession().createCriteria(User.class) //
-                .setProjection(Projections.property("id")) //
-                .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
+    public List<UserNotificationDefinitionDTO> getRecommendationDefinitions(Integer userId, LocalDate baseline) {
+        return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("application.id"), "resourceId") //
+                        .add(Projections.groupProperty("role.id"), "roleId")) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.conjunction() //
+                                .add(Restrictions.isNotNull("userNotification.application")) //
+                                .add(Restrictions.eq("notificationDefinition.id", SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION))) //
+                .add(Restrictions.eq("user.id", userId)) //
+                .add(Restrictions.eq("role.id", APPLICATION_CREATOR)) //
                 .add(Restrictions.eq("userAccount.sendApplicationRecommendationNotification", true)) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("userAccount.sendApplicationRecommendationNotification")) //
-                        .add(Restrictions.lt("userAccount.lastNotifiedDateApplicationRecommendation", lastSentBaseline))) //
+                        .add(Restrictions.isNull("userNotification.id")) //
+                        .add(Restrictions.lt("userNotification.lastNotifiedDate", baseline))) //
+                .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
 
     public UserNotification getUserNotification(Resource resource, UserRole userRole, NotificationDefinition notificationDefinition) {
         return (UserNotification) sessionFactory.getCurrentSession().createCriteria(UserNotification.class)
-                .add(Restrictions.disjunction()
-                        .add(Restrictions.eq("system", resource.getSystem()))
-                        .add(Restrictions.eq("institution", resource.getInstitution()))
-                        .add(Restrictions.eq("program", resource.getProgram()))
-                        .add(Restrictions.eq("project", resource.getProject()))
-                        .add(Restrictions.eq("application", resource.getApplication())))
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource))
                 .add(Restrictions.eq("userRole", userRole))
-                .add(Restrictions.eq("notificationDefinition.id", notificationDefinition.getId()))
+                .add(Restrictions.eq("notificationDefinition", notificationDefinition))
                 .uniqueResult();
+    }
+
+    public List<Integer> getRecentSyndicatedUserNotifications(Resource resource, User user, LocalDate baseline) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserNotification.class)
+                .setProjection(Projections.property("id")) //
+                .createAlias("userRole", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.eq("userRole.user", user)) //
+                .add(Restrictions.eq("notificationDefinition.notificationType", SYNDICATED)) //
+                .add(Restrictions.ge("lastNotifiedDate", baseline)) //
+                .list();
     }
 
     public void resetNotificationsIndividual(User user) {

@@ -16,10 +16,11 @@ import javax.persistence.UniqueConstraint;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 
 @Entity
-@Table(name = "STATE_ACTION", uniqueConstraints = {@UniqueConstraint(columnNames = {"state_id", "action_id"})})
+@Table(name = "STATE_ACTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_id", "action_id" }) })
 public class StateAction implements UniqueEntity {
 
     @Id
@@ -36,6 +37,10 @@ public class StateAction implements UniqueEntity {
 
     @Column(name = "raises_urgent_flag", nullable = false)
     private Boolean raisesUrgentFlag;
+
+    @Column(name = "action_condition")
+    @Enumerated(EnumType.STRING)
+    private PrismActionCondition actionCondition;
 
     @Column(name = "action_enhancement")
     @Enumerated(EnumType.STRING)
@@ -126,6 +131,11 @@ public class StateAction implements UniqueEntity {
 
     public StateAction withRaisesUrgentFlag(boolean raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
+        return this;
+    }
+
+    public StateAction withActionCondition(PrismActionCondition actionCondition) {
+        this.actionCondition = actionCondition;
         return this;
     }
 

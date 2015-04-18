@@ -22,13 +22,15 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SECONDARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -56,13 +58,14 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
 import com.zuehlke.pgadmissions.exceptions.AbortMailSendException;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
@@ -85,13 +88,16 @@ public class NotificationPropertyLoader {
     @Value("${application.api.url}")
     private String applicationApiUrl;
 
-    @Autowired
+    @Inject
+    private ActionService actionService;
+
+    @Inject
     private AdvertService advertService;
 
-    @Autowired
+    @Inject
     private SystemService systemService;
 
-    @Autowired
+    @Inject
     private FreeMarkerConfig freemarkerConfig;
 
     public String load(PrismNotificationDefinitionProperty property) throws Exception {
@@ -167,7 +173,8 @@ public class NotificationPropertyLoader {
 
     public String getCommentTransitionOutcome() throws Exception {
         String resourceName = notificationDefinitionModelDTO.getResource().getResourceScope().name();
-        String outcomePostfix = Iterables.getLast(Lists.newArrayList(notificationDefinitionModelDTO.getComment().getTransitionState().getId().name().split("_")));
+        String outcomePostfix = Iterables.getLast(Lists
+                .newArrayList(notificationDefinitionModelDTO.getComment().getTransitionState().getId().name().split("_")));
         return propertyLoader.load(PrismDisplayPropertyDefinition.valueOf(resourceName + "_COMMENT_" + outcomePostfix));
     }
 
@@ -188,7 +195,8 @@ public class NotificationPropertyLoader {
     }
 
     public String getApplicationProgramType() throws Exception {
-        PrismProgramType programType = PrismProgramType.valueOf(notificationDefinitionModelDTO.getResource().getApplication().getProgram().getProgramType().getCode());
+        PrismProgramType programType = PrismProgramType.valueOf(notificationDefinitionModelDTO.getResource().getApplication().getProgram().getProgramType()
+                .getCode());
         return propertyLoader.load(programType.getDisplayProperty());
     }
 
@@ -291,20 +299,18 @@ public class NotificationPropertyLoader {
 
         if (!advertRecommendations.isEmpty()) {
             List<String> recommendations = Lists.newLinkedList();
+            Map<PrismScope, PrismAction> createResourceActions = actionService.getCreateResourceActions(APPLICATION);
 
             for (AdvertRecommendationDTO advertRecommendation : advertRecommendations) {
                 Advert advert = advertRecommendation.getAdvert();
-
-                Program program = advert.getProgram();
-                Project project = advert.getProject();
+                ResourceParent resourceParent = advert.getResourceParent();
 
                 String title = "<b>" + advert.getTitle() + "</b>";
                 String summary = advert.getSummary();
 
                 String applyHomepage = advert.getApplyHomepage();
-                applyHomepage = applyHomepage == null ? buildRedirectionUrl(project == null ? program : project, notificationDefinitionModelDTO.getTransitionAction(),
+                applyHomepage = applyHomepage == null ? buildRedirectionUrl(resourceParent, createResourceActions.get(resourceParent.getResourceScope()),
                         notificationDefinitionModelDTO.getUser()) : applyHomepage;
-
                 recommendations.add(Joiner.on("<br/>").skipNulls().join(title, summary, buildRedirectionControl(applyHomepage, SYSTEM_APPLY)));
             }
 

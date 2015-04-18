@@ -46,6 +46,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -249,6 +250,9 @@ public class Application extends Resource {
 
     @OneToMany(mappedBy = "application")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "application")
+    private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
     @OneToMany(mappedBy = "application")
     private Set<Comment> comments = Sets.newHashSet();
@@ -620,7 +624,12 @@ public class Application extends Resource {
         return resourcePreviousStates;
     }
 
-    public Set<Comment> getComments() {
+    @Override
+    public Set<ResourceCondition> getResourceConditions() {
+		return resourceConditions;
+	}
+
+	public Set<Comment> getComments() {
         return comments;
     }
 

@@ -33,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.imported.ProgramType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -175,6 +176,9 @@ public class Program extends ResourceParent {
 
 	@OneToMany(mappedBy = "program")
 	private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
+
+	@OneToMany(mappedBy = "program")
+	private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "PROGRAM_RELATION", joinColumns = @JoinColumn(name = "program_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "program_relation_id", nullable = false))
@@ -546,6 +550,11 @@ public class Program extends ResourceParent {
 		return resourcePreviousStates;
 	}
 
+	@Override
+	public Set<ResourceCondition> getResourceConditions() {
+		return resourceConditions;
+	}
+
 	public Set<Program> getProgramRelations() {
 		return programRelations;
 	}
@@ -630,7 +639,7 @@ public class Program extends ResourceParent {
 		this.programType = programType;
 		return this;
 	}
-	
+
 	public Program withCreatedTimestamp(DateTime createdTimestamp) {
 		this.createdTimestamp = createdTimestamp;
 		return this;

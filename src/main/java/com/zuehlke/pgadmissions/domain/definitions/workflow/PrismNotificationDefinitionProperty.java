@@ -17,6 +17,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_PROGRAM_SYNDICATED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_PROJECT_SYNDICATED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_ACCOUNT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_ACTIVATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_PASSWORD;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.TEMPLATE_GLOBAL;
 
@@ -70,13 +71,13 @@ public enum PrismNotificationDefinitionProperty {
     INSTITUTION_HOMEPAGE(INSTITUTION_GLOBAL, true), //
     INSTITUTION_DATA_IMPORT_ERROR(INSTITUTION_APPROVED, true), //
     SYSTEM_APPLICATION_HOMEPAGE(SYSTEM_APPLICATION_SYNDICATED, false), //
-    SYSTEM_APPLICATION_RECOMMENDATION(SYSTEM_APPLICATION_MARKETING, true), //
+    SYSTEM_APPLICATION_RECOMMENDATION(SYSTEM_APPLICATION_MARKETING, false), //
     SYSTEM_PROJECT_HOMEPAGE(SYSTEM_PROJECT_SYNDICATED, false), //
     SYSTEM_PROGRAM_HOMEPAGE(SYSTEM_PROGRAM_SYNDICATED, false), //
     SYSTEM_INSTITUTION_HOMEPAGE(SYSTEM_INSTITUTION_SYNDICATED, false), //
     SYSTEM_USER_NEW_PASSWORD(SYSTEM_USER_PASSWORD, false), //
-    SYSTEM_USER_ACCOUNT_MANAGEMENT(SYSTEM_USER_PASSWORD, false), //
-    SYSTEM_USER_ACCOUNT_ACTIVATION(SYSTEM_USER_ACCOUNT, false);
+    SYSTEM_USER_ACCOUNT_MANAGEMENT(SYSTEM_USER_ACCOUNT, false), //
+    SYSTEM_USER_ACCOUNT_ACTIVATION(SYSTEM_USER_ACTIVATION, false);
 
     private PrismNotificationDefinitionPropertyCategory category;
 

@@ -173,9 +173,4 @@ public class ResourceListRowRepresentation {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    public ResourceListRowRepresentation addAction(ActionRepresentation action) {
-        actions.add(action);
-        return this;
-    }
-
 }

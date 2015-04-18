@@ -111,10 +111,6 @@ public class RoleService {
 		}
 	}
 
-	public List<PrismRole> getActionOwnerRoles(User user, Resource resource, Action action) {
-		return roleDAO.getActionOwnerRoles(user, resource, action);
-	}
-
 	public boolean hasUserRole(Resource resource, User user, PrismRoleGroup prismRoles) {
 		return hasUserRole(resource, user, prismRoles.getRoles());
 	}

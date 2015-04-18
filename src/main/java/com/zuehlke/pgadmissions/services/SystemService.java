@@ -258,6 +258,11 @@ public class SystemService {
     }
 
     @Transactional
+    public void setLastNotifiedRecommendationSyndicated(LocalDate baseline) {
+        getSystem().setLastNotifiedRecommendationSyndicated(baseline);
+    }
+
+    @Transactional
     public SocialMetadataDTO getSocialMetadata() throws Exception {
         System system = getSystem();
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(system);
@@ -445,9 +450,11 @@ public class SystemService {
         for (PrismScope prismScope : scopeService.getScopesDescending()) {
             for (PrismDisplayPropertyDefinition prismDisplayPropertyDefinition : PrismDisplayPropertyDefinition.values()) {
                 if (prismScope == prismDisplayPropertyDefinition.getCategory().getScope()) {
-                    DisplayPropertyConfigurationDTO configurationDTO = new DisplayPropertyConfigurationDTO().withDefinitionId(prismDisplayPropertyDefinition).withValue(
-                            prismDisplayPropertyDefinition.getDefaultValue());
-                    customizationService.createOrUpdateConfiguration(DISPLAY_PROPERTY, system, getSystemLocale(), prismScope.ordinal() > INSTITUTION.ordinal() ? getSystemProgramType() : null, configurationDTO);
+                    DisplayPropertyConfigurationDTO configurationDTO = new DisplayPropertyConfigurationDTO().withDefinitionId(prismDisplayPropertyDefinition)
+                            .withValue(
+                                    prismDisplayPropertyDefinition.getDefaultValue());
+                    customizationService.createOrUpdateConfiguration(DISPLAY_PROPERTY, system, getSystemLocale(),
+                            prismScope.ordinal() > INSTITUTION.ordinal() ? getSystemProgramType() : null, configurationDTO);
                 }
             }
         }
@@ -499,7 +506,8 @@ public class SystemService {
                 Action action = actionService.getById(prismStateAction.getAction());
                 NotificationDefinition template = notificationService.getById(prismStateAction.getNotification());
                 StateAction stateAction = new StateAction().withState(state).withAction(action).withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag())
-                        .withActionEnhancement(prismStateAction.getActionEnhancement()).withNotificationDefinition(template);
+                        .withActionCondition(prismStateAction.getActionCondition()).withActionEnhancement(prismStateAction.getActionEnhancement())
+                        .withNotificationDefinition(template);
                 entityService.save(stateAction);
                 state.getStateActions().add(stateAction);
 
@@ -614,7 +622,7 @@ public class SystemService {
     }
 
     private void persistConfigurations(PrismConfiguration configurationType, System system, PrismScope prismScope,
-                                       List<? extends WorkflowConfigurationDTO> configurationDTO) throws CustomizationException, DeduplicationException, InstantiationException,
+            List<? extends WorkflowConfigurationDTO> configurationDTO) throws CustomizationException, DeduplicationException, InstantiationException,
             IllegalAccessException {
         if (configurationDTO.size() > 0) {
             customizationService.createConfigurationGroup(configurationType, system, prismScope, getSystemLocale(),

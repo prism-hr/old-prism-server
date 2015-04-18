@@ -23,6 +23,7 @@ public enum PrismNotificationDefinitionPropertyCategory {
     SYSTEM_INSTITUTION_SYNDICATED, //
     SYSTEM_USER_PASSWORD, //
     SYSTEM_USER_ACCOUNT, //
+    SYSTEM_USER_ACTIVATION, //
     SYSTEM_USER_MERGE;
 
     public List<PrismNotificationDefinitionProperty> getProperties() {

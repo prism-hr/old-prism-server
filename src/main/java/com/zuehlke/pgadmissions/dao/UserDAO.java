@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_POTENTIAL_SUPERVISOR_GROUP;
 
 import java.util.List;
@@ -15,6 +17,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -380,6 +383,23 @@ public class UserDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("user.userAccount")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
+                .list();
+    }
+
+    public List<Integer> getUsersDueRecommendationNotification(LocalDate baseline) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("user.id")) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.conjunction() //
+                                .add(Restrictions.isNotNull("userNotification.application")) //
+                                .add(Restrictions.eq("notificationDefinition.id", SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION))) //
+                .add(Restrictions.eq("role.id", APPLICATION_CREATOR)) //
+                .add(Restrictions.eq("userAccount.sendApplicationRecommendationNotification", true)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("userNotification.id")) //
+                        .add(Restrictions.lt("userNotification.lastNotifiedDate", baseline))) //
                 .list();
     }
 

@@ -326,6 +326,15 @@ public class ActionService {
     public List<PrismActionCondition> getActionConditions(PrismScope prismScope) {
         return actionDAO.getActionConditions(prismScope);
     }
+    
+    public Map<PrismScope, PrismAction> getCreateResourceActions(PrismScope creationScope) {
+        Map<PrismScope, PrismAction> createResourceActions = Maps.newHashMap();
+        List<PrismAction> creationActions = actionDAO.getCreateResourceActions(creationScope);
+        for (PrismAction creationAction : creationActions) {
+            createResourceActions.put(creationAction.getScope(), creationAction);
+        }
+        return createResourceActions;
+    }
 
     private ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment, boolean notify) throws Exception {
         User user = comment.getUser();

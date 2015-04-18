@@ -1,1 +1,1 @@
-Updates to your ${TEMPLATE_SYSTEM_TITLE} Projects
+${TEMPLATE_SYSTEM_TITLE} - Recommended Opportunities

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.user;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -71,7 +72,8 @@ public class UserRole extends WorkflowResourceExecution {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime assignedTimestamp;
 
-    @OneToMany(mappedBy = "userRole")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_role_id", nullable = false)
     private Set<UserNotification> userNotifications = Sets.newHashSet();
 
     public Integer getId() {

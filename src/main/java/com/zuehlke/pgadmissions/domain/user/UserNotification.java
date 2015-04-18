@@ -23,9 +23,11 @@ import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
 
 @Entity
-@Table(name = "user_notification", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "user_role_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "user_role_id" }), @UniqueConstraint(columnNames = { "program_id", "user_role_id" }),
-        @UniqueConstraint(columnNames = { "project_id", "user_role_id" }), @UniqueConstraint(columnNames = { "application_id", "user_role_id" }) })
+@Table(name = "user_notification", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "user_role_id", "notification_definition_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "user_role_id", "notification_definition_id" }),
+        @UniqueConstraint(columnNames = { "program_id", "user_role_id", "notification_definition_id" }),
+        @UniqueConstraint(columnNames = { "project_id", "user_role_id", "notification_definition_id" }),
+        @UniqueConstraint(columnNames = { "application_id", "user_role_id", "notification_definition_id" }) })
 public class UserNotification extends WorkflowResourceExecution {
 
     @Id
@@ -53,14 +55,14 @@ public class UserNotification extends WorkflowResourceExecution {
     private Application application;
 
     @ManyToOne
-    @JoinColumn(name = "user_role_id", nullable = false)
+    @JoinColumn(name = "user_role_id", nullable = false, insertable = false, updatable = false)
     private UserRole userRole;
 
     @ManyToOne
     @JoinColumn(name = "notification_definition_id", nullable = false)
     private NotificationDefinition notificationDefinition;
 
-    @Column(name = "last_notified_date")
+    @Column(name = "last_notified_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedDate;
 

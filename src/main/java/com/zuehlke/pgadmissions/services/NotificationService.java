@@ -24,6 +24,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.NotificationDAO;
+import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
@@ -223,7 +224,6 @@ public class NotificationService {
                         UserRole userRole = roleService.getUserRole(resource.getEnclosingResource(role.getScope().getId()), user, role);
 
                         NotificationDefinition definition = getById(update.getNotificationDefinitionId());
-
                         if (!sent.get(definition).contains(user)) {
                             sendNotification(definition, new NotificationDefinitionModelDTO().withUser(user).withAuthor(author).withResource(resource)
                                     .withTransitionAction(transitionActionId));
@@ -250,20 +250,19 @@ public class NotificationService {
             NotificationDefinition definition = getById(SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION);
             
             int sent = 0;
-            Resource resource = null;
             for (UserNotificationDefinitionDTO recommend : recommends) {
                 User user = userService.getById(userId);
+                Application application = applicationService.getById(recommend.getResourceId());
 
                 if (sent == 0) {
                     sendNotification(definition, new NotificationDefinitionModelDTO().withUser(user).withAuthor(author).withResource(system)
                             .withTransitionAction(SYSTEM_MANAGE_ACCOUNT));
-                    resource = applicationService.getById(recommend.getResourceId());
                     sent++;
                 }
                 
                 Role role = roleService.getById(recommend.getRoleId());
-                UserRole userRole = roleService.getUserRole(resource, user, role);
-                createOrUpdateUserNotification(resource, userRole, definition, baseline);
+                UserRole userRole = roleService.getUserRole(application, user, role);
+                createOrUpdateUserNotification(application, userRole, definition, baseline);
             }
         }
     }

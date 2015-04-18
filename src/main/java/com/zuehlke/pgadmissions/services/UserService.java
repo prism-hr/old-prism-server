@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -324,7 +325,11 @@ public class UserService {
 	public List<User> getUsersWithAction(Resource resource, PrismAction... actions) {
 		return userDAO.getUsersWithAction(resource, actions);
 	}
-
+	
+	public List<Integer> getUsersDueRecommendationNotification(LocalDate baseline) {
+	    return userDAO.getUsersDueRecommendationNotification(baseline);
+	}
+ 
 	private void mergeUsers(User oldUser, User newUser) {
 		reassignUserRoles(oldUser, newUser);
 		resourceService.reassignResources(oldUser, newUser);

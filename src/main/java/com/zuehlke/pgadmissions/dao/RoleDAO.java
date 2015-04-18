@@ -13,16 +13,13 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
@@ -147,29 +144,6 @@ public class RoleDAO {
 		        .add(Restrictions.eq("scope.id", PrismScope.getByResourceClass(resource.getClass()))) //
 		        .add(Restrictions.isNotNull("scopeCreator")) //
 		        .uniqueResult();
-	}
-
-	public List<PrismRole> getActionOwnerRoles(User user, Resource resource, Action action) {
-		return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-		        .setProjection(Projections.groupProperty("role.id")) //
-		        .createAlias("state", "state", JoinType.INNER_JOIN) //
-		        .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-		        .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-		        .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-		        .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
-		        .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-		        .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-		        .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-		        .add(Restrictions.eq("stateAction.action", action)) //
-		        .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
-		        .add(Restrictions.disjunction() //
-		                .add(Restrictions.eq("userRole.application", resource.getApplication())) //
-		                .add(Restrictions.eq("userRole.project", resource.getProject())) //
-		                .add(Restrictions.eq("userRole.program", resource.getProgram())) //
-		                .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
-		                .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
-		        .add(Restrictions.eq("userRole.user", user)) //
-		        .list();
 	}
 
 	public List<RoleTransition> getRoleTransitions(StateTransition stateTransition, PrismRoleTransitionType roleTransitionType) {

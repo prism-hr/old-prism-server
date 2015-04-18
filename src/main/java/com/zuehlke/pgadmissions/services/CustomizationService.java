@@ -70,8 +70,7 @@ public class CustomizationService {
 	public WorkflowConfiguration getConfiguration(PrismConfiguration configurationType, Resource resource, User user, WorkflowDefinition definition) {
 		PrismScope resourceScope = resource.getResourceScope();
 		PrismLocale locale = resourceScope == SYSTEM ? user.getLocale() : resource.getLocale();
-		PrismProgramType programType = resourceScope.ordinal() > INSTITUTION.ordinal() ? resource.getProgram().getProgramType()
-		        .getPrismProgramType() : null;
+		PrismProgramType programType = resourceScope.ordinal() > INSTITUTION.ordinal() ? resource.getProgram().getProgramType().getPrismProgramType() : null;
 		return getConfiguration(configurationType, resource, locale, programType, definition);
 	}
 
@@ -141,11 +140,12 @@ public class CustomizationService {
 		return getConfigurationRepresentations(configurationType, resource, scope, locale, programType, category, false);
 	}
 
-	public List<WorkflowConfigurationRepresentation> getConfigurationRepresentationsTranslationMode(PrismConfiguration configurationType, Resource resource, PrismScope scope,
+	public List<WorkflowConfigurationRepresentation> getConfigurationRepresentationsTranslationMode(PrismConfiguration configurationType, Resource resource,
+	        PrismScope scope,
 	        PrismLocale locale, PrismProgramType programType, Enum<?> category) throws Exception {
 		return getConfigurationRepresentations(configurationType, resource, scope, locale, programType, category, true);
 	}
-	
+
 	public List<WorkflowConfiguration> getConfigurationsWithVersion(PrismConfiguration configurationType, Integer version) {
 		return customizationDAO.getConfigurationsWithVersion(configurationType, version);
 	}
@@ -300,7 +300,8 @@ public class CustomizationService {
 		throw new UnsupportedOperationException();
 	}
 
-	private List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource resource, PrismScope scope,
+	private List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource resource,
+	        PrismScope scope,
 	        PrismLocale locale, PrismProgramType programType, Enum<?> category, boolean translationMode) throws Exception {
 		Resource configuredResource = getConfiguredResource(resource);
 		PrismProgramType configuredProgramType = getConfiguredProgramType(resource, programType);

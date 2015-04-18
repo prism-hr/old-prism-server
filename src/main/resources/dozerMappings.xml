@@ -331,18 +331,20 @@
 		</field>
 	</mapping>
 
-    <mapping>
-        <class-a>com.zuehlke.pgadmissions.domain.user.User</class-a>
-        <class-b>com.zuehlke.pgadmissions.rest.representation.UserRepresentation</class-b>
-        <field custom-converter="com.zuehlke.pgadmissions.rest.converter.UserAccountToLinkedinProfileUrlConverter">
-            <a>userAccount</a>
-            <b>linkedinProfileUrl</b>
-        </field>
-        <field>
-            <a>userAccount.primaryExternalAccount.accountImageUrl</a>
-            <b>accountImageUrl</b>
-        </field>
-    </mapping>
+	<mapping>
+		<class-a>com.zuehlke.pgadmissions.domain.user.User</class-a>
+		<class-b>com.zuehlke.pgadmissions.rest.representation.UserRepresentation
+		</class-b>
+		<field
+			custom-converter="com.zuehlke.pgadmissions.rest.converter.UserAccountToLinkedinProfileUrlConverter">
+			<a>userAccount</a>
+			<b>linkedinProfileUrl</b>
+		</field>
+		<field>
+			<a>userAccount.primaryExternalAccount.accountImageUrl</a>
+			<b>accountImageUrl</b>
+		</field>
+	</mapping>
 
 	<mapping>
 		<class-a>com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser
@@ -400,6 +402,17 @@
 		</class-b>
 		<field copy-by-reference="true">
 			<a>id</a>
+			<b>id</b>
+		</field>
+	</mapping>
+
+	<mapping>
+		<class-a>com.zuehlke.pgadmissions.dto.ResourceListActionDTO
+		</class-a>
+		<class-b>com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation
+		</class-b>
+		<field>
+			<a>actionId</a>
 			<b>id</b>
 		</field>
 	</mapping>

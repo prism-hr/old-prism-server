@@ -35,7 +35,7 @@ alter table user
 ;
 
 alter table user_account
-	drop column send_application_recommendation_notification
+	drop column last_notified_date_application_recommendation
 ;
 
 alter table system

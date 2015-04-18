@@ -258,6 +258,11 @@ public class SystemService {
     }
 
     @Transactional
+    public void setLastNotifiedRecommendationSyndicated(LocalDate baseline) {
+        getSystem().setLastNotifiedRecommendationSyndicated(baseline);
+    }
+
+    @Transactional
     public SocialMetadataDTO getSocialMetadata() throws Exception {
         System system = getSystem();
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(system);

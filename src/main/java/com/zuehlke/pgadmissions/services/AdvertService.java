@@ -327,7 +327,7 @@ public class AdvertService {
 	}
 
 	public SocialMetadataDTO getSocialMetadata(Advert advert) {
-		Resource parentResource = advert.getParentResource();
+		Resource parentResource = advert.getResourceParent();
 		return new SocialMetadataDTO().withAuthor(parentResource.getUser().getFullName()).withTitle(advert.getTitle()).withDescription(advert.getSummary())
 		        .withThumbnailUrl(resourceService.getSocialThumbnailUrl(parentResource)).withResourceUrl(resourceService.getSocialResourceUrl(parentResource))
 		        .withLocale(resourceService.getOperativeLocale(parentResource).toString());

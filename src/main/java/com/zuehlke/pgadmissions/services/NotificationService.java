@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.INSTITUTION_IMPORT_ERROR_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION;
@@ -174,7 +175,7 @@ public class NotificationService {
 
                 NotificationDefinition definition = getById(request.getNotificationDefinitionId());
                 UserNotification userNotification = notificationDAO.getUserNotification(system, userRole, definition);
-                LocalDate lastNotifiedDate = userNotification.getLastNotifiedDate();
+                LocalDate lastNotifiedDate = userNotification == null ? null : userNotification.getLastNotifiedDate();
 
                 Integer reminderInterval = getReminderInterval(resource, user, definition);
                 LocalDate lastExpectedReminder = baseline.minusDays(reminderInterval);
@@ -240,37 +241,31 @@ public class NotificationService {
         resource.setLastNotifiedUpdateSyndicated(baseline);
     }
 
-    public void sendRecommendationNotifications() {
-        System system = systemService.getSystem();
-        LocalDate baseline = new LocalDate();
-        LocalDate lastBaseline = system.getLastNotifiedRecommendationSyndicated();
+    public void sendRecommendationNotifications(Integer userId, LocalDate baseline, LocalDate lastRecommendedBaseline) {
+        List<UserNotificationDefinitionDTO> recommends = notificationDAO.getRecommendationDefinitions(userId, lastRecommendedBaseline);
 
-        if (lastBaseline.isBefore(baseline)) {
-            List<UserNotificationDefinitionDTO> recommends = notificationDAO.getRecommendationDefinitions(baseline.minusDays(7));
+        if (recommends.size() > 0) {
+            System system = systemService.getSystem();
+            User author = system.getUser();
+            NotificationDefinition definition = getById(SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION);
+            
+            int sent = 0;
+            Resource resource = null;
+            for (UserNotificationDefinitionDTO recommend : recommends) {
+                User user = userService.getById(userId);
 
-            if (recommends.size() > 0) {
-                Set<User> sent = Sets.newHashSet();
-
-                User author = system.getUser();
-                NotificationDefinition definition = getById(SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION);
-
-                for (UserNotificationDefinitionDTO recommend : recommends) {
-                    User user = userService.getById(recommend.getUserId());
-
-                    if (!sent.contains(user)) {
-                        sendNotification(definition, new NotificationDefinitionModelDTO().withUser(user).withAuthor(author).withResource(system));
-                    }
-
-                    Resource resource = applicationService.getById(recommend.getResourceId());
-                    Role role = roleService.getById(recommend.getRoleId());
-                    UserRole userRole = roleService.getUserRole(resource, user, role);
-
-                    createOrUpdateUserNotification(resource, userRole, definition, baseline);
+                if (sent == 0) {
+                    sendNotification(definition, new NotificationDefinitionModelDTO().withUser(user).withAuthor(author).withResource(system)
+                            .withTransitionAction(SYSTEM_MANAGE_ACCOUNT));
+                    resource = applicationService.getById(recommend.getResourceId());
+                    sent++;
                 }
+                
+                Role role = roleService.getById(recommend.getRoleId());
+                UserRole userRole = roleService.getUserRole(resource, user, role);
+                createOrUpdateUserNotification(resource, userRole, definition, baseline);
             }
         }
-
-        system.setLastNotifiedRecommendationSyndicated(baseline);
     }
 
     public void sendNotification(PrismNotificationDefinition notificationTemplateId, NotificationDefinitionModelDTO modelDTO) {
@@ -406,10 +401,16 @@ public class NotificationService {
     }
 
     public void createOrUpdateUserNotification(Resource resource, UserRole userRole, NotificationDefinition definition, LocalDate baseline) {
-        UserNotification userNotification = new UserNotification().withUserRole(userRole)
-                .withLastNotifiedDate(baseline).withResource(resource).withNotificationDefinition(definition);
-        userRole.getUserNotifications().add(userNotification);
-        entityService.createOrUpdate(userNotification);
+        UserNotification transientUserNotification = new UserNotification().withResource(resource).withUserRole(userRole)
+                .withNotificationDefinition(definition);
+        UserNotification persistentUserNotification = entityService.getDuplicateEntity(transientUserNotification);
+        if (persistentUserNotification == null) {
+            transientUserNotification.setLastNotifiedDate(baseline);
+            userRole.getUserNotifications().add(transientUserNotification);
+            entityService.save(transientUserNotification);
+        } else {
+            persistentUserNotification.setLastNotifiedDate(baseline);
+            entityService.equals(transientUserNotification);
+        }
     }
-
 }

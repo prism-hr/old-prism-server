@@ -217,23 +217,24 @@ public class NotificationDAO {
                 .list();
     }
 
-    public List<UserNotificationDefinitionDTO> getRecommendationDefinitions(LocalDate baseline) {
+    public List<UserNotificationDefinitionDTO> getRecommendationDefinitions(Integer userId, LocalDate baseline) {
         return (List<UserNotificationDefinitionDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("application.id"), "resourceId") //
-                        .add(Projections.groupProperty("user.id"), "userId") //
                         .add(Projections.groupProperty("role.id"), "roleId")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .createAlias("userRole.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN, //
+                .createAlias("userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN, //
                         Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("userNotification.system")) //
+                                .add(Restrictions.isNotNull("userNotification.application")) //
                                 .add(Restrictions.eq("notificationDefinition.id", SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION))) //
+                .add(Restrictions.eq("user.id", userId)) //
                 .add(Restrictions.eq("role.id", APPLICATION_CREATOR)) //
                 .add(Restrictions.eq("userAccount.sendApplicationRecommendationNotification", true)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userNotification.id")) //
                         .add(Restrictions.lt("userNotification.lastNotifiedDate", baseline))) //
+                .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
 

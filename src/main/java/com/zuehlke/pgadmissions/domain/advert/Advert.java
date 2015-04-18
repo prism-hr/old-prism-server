@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
@@ -323,8 +324,8 @@ public class Advert {
         return this;
     }
 
-    public ResourceParent getParentResource() {
-        return project == null ? program : project;
+    public ResourceParent getResourceParent() {
+        return ObjectUtils.firstNonNull(project, program);
     }
 
     public boolean isProgramAdvert() {
@@ -336,7 +337,7 @@ public class Advert {
     }
 
     public Institution getInstitution() {
-        return isProjectAdvert() ? project.getInstitution() : program.getInstitution();
+        return getResourceParent().getInstitution();
     }
 
     public Department getDepartment() {

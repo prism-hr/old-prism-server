@@ -13,10 +13,13 @@ import org.joda.time.LocalDate;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.dto.DepartmentDTO;
 
 public class ProgramDTO {
 
     private Integer institutionId;
+    
+    private DepartmentDTO department;
 
     @NotNull
     private PrismProgramType programType;
@@ -52,6 +55,14 @@ public class ProgramDTO {
 
     public void setInstitutionId(Integer institutionId) {
         this.institutionId = institutionId;
+    }
+
+    public DepartmentDTO getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(DepartmentDTO department) {
+        this.department = department;
     }
 
     public PrismProgramType getProgramType() {

@@ -1,13 +1,14 @@
 package com.zuehlke.pgadmissions.workflow.resolvers.role.transition;
 
-import com.zuehlke.pgadmissions.dao.NotificationDAO;
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Component;
+
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.services.EntityService;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
+import com.zuehlke.pgadmissions.services.NotificationService;
 
 @Component
 public class ReviveResolver implements RoleTransitionResolver {
@@ -16,12 +17,12 @@ public class ReviveResolver implements RoleTransitionResolver {
     private EntityService entityService;
 
     @Inject
-    private NotificationDAO notificationDAO;
+    private NotificationService notificationService;
 
     @Override
     public void resolve(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
         UserRole persistentRole = entityService.getDuplicateEntity(userRole);
-        notificationDAO.removeUserNotifications(persistentRole);
+        notificationService.resetNotifications(persistentRole);
     }
 
 }

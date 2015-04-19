@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.domain.user;
 
-import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,14 +7,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -71,10 +66,6 @@ public class UserRole extends WorkflowResourceExecution {
     @Column(name = "assigned_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime assignedTimestamp;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_role_id", nullable = false)
-    private Set<UserNotification> userNotifications = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -156,10 +147,6 @@ public class UserRole extends WorkflowResourceExecution {
 
     public void setAssignedTimestamp(DateTime assignedTimestamp) {
         this.assignedTimestamp = assignedTimestamp;
-    }
-
-    public Set<UserNotification> getUserNotifications() {
-        return userNotifications;
     }
 
     public UserRole withResource(Resource resource) {

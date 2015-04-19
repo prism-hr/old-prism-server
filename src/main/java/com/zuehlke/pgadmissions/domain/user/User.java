@@ -86,6 +86,9 @@ public class User implements UserDetails, UniqueEntity {
 
     @OneToMany(mappedBy = "user")
     private Set<UserRole> userRoles = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "user")
+    private Set<UserNotification> userNotifications = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
     private Set<Application> applications = Sets.newHashSet();
@@ -203,6 +206,10 @@ public class User implements UserDetails, UniqueEntity {
 
     public Set<UserRole> getUserRoles() {
         return userRoles;
+    }
+
+    public Set<UserNotification> getUserNotifications() {
+        return userNotifications;
     }
 
     public Set<Application> getApplications() {

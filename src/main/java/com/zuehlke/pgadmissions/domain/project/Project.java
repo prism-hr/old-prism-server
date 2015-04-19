@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
@@ -46,14 +47,9 @@ public class Project extends ResourceParent {
     @GeneratedValue
     private Integer id;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "advert_id", nullable = false)
-    private Advert advert;
-
     @ManyToOne
     @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(name = "code", unique = true)
@@ -68,11 +64,21 @@ public class Project extends ResourceParent {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
+    
+    @ManyToOne
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     @ManyToOne
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
+    
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "advert_id", nullable = false)
+    private Advert advert;
 
     @Column(name = "referrer")
     private String referrer;
@@ -181,14 +187,6 @@ public class Project extends ResourceParent {
         this.id = id;
     }
 
-    public Advert getAdvert() {
-        return advert;
-    }
-
-    public void setAdvert(Advert advert) {
-        this.advert = advert;
-    }
-
     @Override
     public User getUser() {
         return user;
@@ -207,6 +205,52 @@ public class Project extends ResourceParent {
     @Override
     public void setCode(String code) {
         this.code = code;
+    }
+    
+    @Override
+    public System getSystem() {
+        return system;
+    }
+
+    @Override
+    public void setSystem(System system) {
+        this.system = system;
+    }
+
+    @Override
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    @Override
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    @Override
+    public Program getProgram() {
+        return program;
+    }
+
+    @Override
+    public void setProgram(Program program) {
+        this.program = program;
+    }
+    
+    public Advert getAdvert() {
+        return advert;
+    }
+
+    public void setAdvert(Advert advert) {
+        this.advert = advert;
     }
 
     public String getTitle() {
@@ -273,22 +317,22 @@ public class Project extends ResourceParent {
     }
 
     @Override
-    public final Integer getApplicationRatingCount() {
+    public Integer getApplicationRatingCount() {
         return applicationRatingCount;
     }
 
     @Override
-    public final void setApplicationRatingCount(Integer applicationRatingCountSum) {
+    public void setApplicationRatingCount(Integer applicationRatingCountSum) {
         this.applicationRatingCount = applicationRatingCountSum;
     }
 
     @Override
-    public final BigDecimal getApplicationRatingCountAverageNonZero() {
+    public BigDecimal getApplicationRatingCountAverageNonZero() {
         return applicationRatingCountAverageNonZero;
     }
 
     @Override
-    public final void setApplicationRatingCountAverageNonZero(BigDecimal applicationRatingCountAverage) {
+    public void setApplicationRatingCountAverageNonZero(BigDecimal applicationRatingCountAverage) {
         this.applicationRatingCountAverageNonZero = applicationRatingCountAverage;
     }
 
@@ -319,38 +363,8 @@ public class Project extends ResourceParent {
     }
 
     @Override
-    public final Set<UserRole> getUserRoles() {
+    public Set<UserRole> getUserRoles() {
         return userRoles;
-    }
-
-    @Override
-    public System getSystem() {
-        return system;
-    }
-
-    @Override
-    public void setSystem(System system) {
-        this.system = system;
-    }
-
-    @Override
-    public Institution getInstitution() {
-        return institution;
-    }
-
-    @Override
-    public void setInstitution(Institution institution) {
-        this.institution = institution;
-    }
-
-    @Override
-    public Program getProgram() {
-        return program;
-    }
-
-    @Override
-    public void setProgram(Program program) {
-        this.program = program;
     }
 
     @Override
@@ -387,11 +401,11 @@ public class Project extends ResourceParent {
         this.previousState = previousState;
     }
 
-    public final LocalDate getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public final void setEndDate(LocalDate endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 
@@ -425,41 +439,41 @@ public class Project extends ResourceParent {
         this.updatedTimestamp = updatedTimestamp;
     }
 
-    public final DateTime getUpdatedTimestampSitemap() {
+    public DateTime getUpdatedTimestampSitemap() {
         return updatedTimestampSitemap;
     }
 
-    public final void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap) {
+    public void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap) {
         this.updatedTimestampSitemap = updatedTimestampSitemap;
     }
 
     @Override
-    public final LocalDate getLastRemindedRequestIndividual() {
+    public LocalDate getLastRemindedRequestIndividual() {
         return lastRemindedRequestIndividual;
     }
 
     @Override
-    public final void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual) {
+    public void setLastRemindedRequestIndividual(LocalDate lastRemindedRequestIndividual) {
         this.lastRemindedRequestIndividual = lastRemindedRequestIndividual;
     }
 
     @Override
-    public final LocalDate getLastRemindedRequestSyndicated() {
+    public LocalDate getLastRemindedRequestSyndicated() {
         return lastRemindedRequestSyndicated;
     }
 
     @Override
-    public final void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated) {
+    public void setLastRemindedRequestSyndicated(LocalDate lastRemindedRequestSyndicated) {
         this.lastRemindedRequestSyndicated = lastRemindedRequestSyndicated;
     }
 
     @Override
-    public final LocalDate getLastNotifiedUpdateSyndicated() {
+    public LocalDate getLastNotifiedUpdateSyndicated() {
         return lastNotifiedUpdateSyndicated;
     }
 
     @Override
-    public final void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
+    public void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
         this.lastNotifiedUpdateSyndicated = lastNotifiedUpdateSyndicated;
     }
 
@@ -474,22 +488,22 @@ public class Project extends ResourceParent {
     }
 
     @Override
-    public final Integer getWorkflowPropertyConfigurationVersion() {
+    public Integer getWorkflowPropertyConfigurationVersion() {
         return workflowPropertyConfigurationVersion;
     }
 
     @Override
-    public final void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
+    public void setWorkflowPropertyConfigurationVersion(Integer workflowPropertyConfigurationVersion) {
         this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
     }
 
     @Override
-    public final Set<ResourceState> getResourceStates() {
+    public Set<ResourceState> getResourceStates() {
         return resourceStates;
     }
 
     @Override
-    public final Set<ResourcePreviousState> getResourcePreviousStates() {
+    public Set<ResourcePreviousState> getResourcePreviousStates() {
         return resourcePreviousStates;
     }
     
@@ -498,32 +512,37 @@ public class Project extends ResourceParent {
 		return resourceConditions;
 	}
 
-	public Project withUser(final User user) {
+	public Project withUser(User user) {
         this.user = user;
         return this;
     }
 
-    public Project withSystem(final System system) {
+    public Project withSystem(System system) {
         this.system = system;
         return this;
     }
 
-    public Project withInstitution(final Institution institution) {
+    public Project withInstitution(Institution institution) {
         this.institution = institution;
         return this;
     }
+    
+    public Project withDepartment(Department department) {
+        this.department = department;
+        return this;
+    }
 
-    public Project withProgram(final Program program) {
+    public Project withProgram(Program program) {
         this.program = program;
         return this;
     }
 
-    public Project withTitle(final String title) {
+    public Project withTitle(String title) {
         this.title = title;
         return this;
     }
 
-    public Project withCode(final String code) {
+    public Project withCode(String code) {
         this.code = code;
         return this;
     }

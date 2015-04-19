@@ -8,8 +8,12 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 import org.joda.time.LocalDate;
 
+import com.zuehlke.pgadmissions.dto.DepartmentDTO;
+
 public class ProjectDTO {
 
+    private DepartmentDTO department;
+    
     @NotNull
     private Integer programId;
 
@@ -32,6 +36,14 @@ public class ProjectDTO {
 
     @Min(1)
     private Integer studyDurationMaximum;
+    
+    public DepartmentDTO getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(DepartmentDTO department) {
+        this.department = department;
+    }
 
     public Integer getProgramId() {
         return programId;
@@ -88,4 +100,5 @@ public class ProjectDTO {
     public void setStudyDurationMaximum(Integer studyDurationMaximum) {
         this.studyDurationMaximum = studyDurationMaximum;
     }
+
 }

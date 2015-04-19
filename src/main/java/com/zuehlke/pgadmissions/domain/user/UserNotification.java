@@ -23,11 +23,11 @@ import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
 
 @Entity
-@Table(name = "user_notification", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "user_role_id", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "user_role_id", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "program_id", "user_role_id", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "project_id", "user_role_id", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "application_id", "user_role_id", "notification_definition_id" }) })
+@Table(name = "user_notification", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "user_id", "notification_definition_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "user_id", "notification_definition_id" }),
+        @UniqueConstraint(columnNames = { "program_id", "user_id", "notification_definition_id" }),
+        @UniqueConstraint(columnNames = { "project_id", "user_id", "notification_definition_id" }),
+        @UniqueConstraint(columnNames = { "application_id", "user_id", "notification_definition_id" }) })
 public class UserNotification extends WorkflowResourceExecution {
 
     @Id
@@ -55,8 +55,8 @@ public class UserNotification extends WorkflowResourceExecution {
     private Application application;
 
     @ManyToOne
-    @JoinColumn(name = "user_role_id", nullable = false, insertable = false, updatable = false)
-    private UserRole userRole;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "notification_definition_id", nullable = false)
@@ -124,12 +124,12 @@ public class UserNotification extends WorkflowResourceExecution {
         this.application = application;
     }
 
-    public UserRole getUserRole() {
-        return userRole;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserRole(UserRole userRole) {
-        this.userRole = userRole;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public NotificationDefinition getNotificationDefinition() {
@@ -153,24 +153,24 @@ public class UserNotification extends WorkflowResourceExecution {
         return this;
     }
 
-    public UserNotification withUserRole(final UserRole userRole) {
-        this.userRole = userRole;
+    public UserNotification withUser(User user) {
+        this.user = user;
         return this;
     }
 
-    public UserNotification withNotificationDefinition(final NotificationDefinition notificationDefinition) {
+    public UserNotification withNotificationDefinition(NotificationDefinition notificationDefinition) {
         this.notificationDefinition = notificationDefinition;
         return this;
     }
 
-    public UserNotification withLastNotifiedDate(final LocalDate lastNotifiedDate) {
+    public UserNotification withLastNotifiedDate(LocalDate lastNotifiedDate) {
         this.lastNotifiedDate = lastNotifiedDate;
         return this;
     }
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("userRole", userRole).addProperty("notificationDefinition", notificationDefinition);
+        return super.getResourceSignature().addProperty("user", user).addProperty("notificationDefinition", notificationDefinition);
     }
 
 }

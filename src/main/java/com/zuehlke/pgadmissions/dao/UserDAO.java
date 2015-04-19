@@ -1,12 +1,10 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_POTENTIAL_SUPERVISOR_GROUP;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
 
 import java.util.List;
 
-import org.apache.commons.lang3.text.WordUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Disjunction;
@@ -17,7 +15,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -40,7 +37,6 @@ import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import com.zuehlke.pgadmissions.utils.PrismConstants;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -290,19 +286,16 @@ public class UserDAO {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN); //
+                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("user.userNotifications", "userNotification", JoinType.INNER_JOIN); //
 
-        Junction sentDisjunction = Restrictions.disjunction() //
-                .add(Restrictions.isNotNull("lastNotifiedDate"));
         Junction roleDisjunction = Restrictions.disjunction();
         for (PrismScope scope : userAdministratorResources.keySet()) {
             String scopeReference = scope.getLowerCamelName();
-            sentDisjunction.add(Restrictions.isNotNull("user.lastNotifiedDate" + WordUtils.capitalize(scopeReference)));
             roleDisjunction.add(Restrictions.in(scopeReference, userAdministratorResources.get(scope)));
         }
 
-        criteria.add(sentDisjunction) //
-                .add(roleDisjunction);
+        criteria.add(roleDisjunction);
 
         if (userListFilterDTO.isInvalidOnly()) {
             criteria.add(Restrictions.isNotNull("user.emailBouncedMessage"));
@@ -328,7 +321,7 @@ public class UserDAO {
         }
 
         return (List<User>) criteria.addOrder(Order.desc("user.id")) //
-                .setMaxResults(PrismConstants.LIST_PAGE_ROW_COUNT) //
+                .setMaxResults(LIST_PAGE_ROW_COUNT) //
                 .list();
     }
 
@@ -383,23 +376,6 @@ public class UserDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("user.userAccount")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
-                .list();
-    }
-
-    public List<Integer> getUsersDueRecommendationNotification(LocalDate baseline) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("user.id")) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .createAlias("userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("userNotification.application")) //
-                                .add(Restrictions.eq("notificationDefinition.id", SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION))) //
-                .add(Restrictions.eq("role.id", APPLICATION_CREATOR)) //
-                .add(Restrictions.eq("userAccount.sendApplicationRecommendationNotification", true)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("userNotification.id")) //
-                        .add(Restrictions.lt("userNotification.lastNotifiedDate", baseline))) //
                 .list();
     }
 

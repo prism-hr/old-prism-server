@@ -5,9 +5,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PRO
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinitio
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -29,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.DepartmentDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
@@ -41,37 +44,34 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 @Transactional
 public class ProjectService {
 
-    @Autowired
+    @Inject
     private ProjectDAO projectDAO;
 
-    @Autowired
+    @Inject
     private ActionService actionService;
 
-    @Autowired
+    @Inject
     private CommentService commentService;
 
-    @Autowired
-    private ProgramService programService;
+    @Inject
+    private DepartmentService departmentService;
 
-    @Autowired
+    @Inject
     private EntityService entityService;
 
-    @Autowired
+    @Inject
     private UserService userService;
 
-    @Autowired
-    private ResourceService resourceService;
-
-    @Autowired
+    @Inject
     private StateService stateService;
 
-    @Autowired
+    @Inject
     private SystemService systemService;
 
-    @Autowired
+    @Inject
     private AdvertService advertService;
 
-    @Autowired
+    @Inject
     private ApplicationContext applicationContext;
 
     public Project getById(Integer id) {
@@ -84,9 +84,13 @@ public class ProjectService {
 
     public Project create(User user, ProjectDTO projectDTO) {
         Program program = entityService.getById(Program.class, projectDTO.getProgramId());
-        Project project = new Project().withUser(user).withSystem(systemService.getSystem()).withInstitution(program.getInstitution()).withProgram(program);
+        DepartmentDTO departmentDTO = projectDTO.getDepartment();
+        Department deparment = departmentDTO == null ? program.getDepartment() : departmentService.getOrCreateDepartment(departmentDTO);
+
+        Project project = new Project().withUser(user).withSystem(systemService.getSystem()).withInstitution(program.getInstitution())
+                .withDepartment(deparment).withProgram(program);
         copyProjectDetails(project, projectDTO);
-        project.setEndDate(new LocalDate().plusMonths(3));
+        project.setEndDate(new LocalDate().plusMonths(12));
         return project;
     }
 

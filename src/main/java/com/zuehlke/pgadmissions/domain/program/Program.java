@@ -57,7 +57,7 @@ public class Program extends ResourceParent {
 
 	@ManyToOne
 	@Fetch(FetchMode.SELECT)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
 	@Column(name = "code", unique = true)

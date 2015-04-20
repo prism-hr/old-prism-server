@@ -56,6 +56,7 @@ import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.advert.AdvertStudyOption;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
@@ -69,9 +70,9 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismReportColumn;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -82,7 +83,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropert
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -209,7 +209,7 @@ public class ApplicationService {
         Application application = getById(applicationId);
 
         StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, application.getInstitution(), studyOptionId.name());
-        ProgramStudyOption programStudyOption = programService.getEnabledProgramStudyOption(application.getProgram(), studyOption);
+        AdvertStudyOption programStudyOption = advertService.getEnabledAdvertStudyOption(application.getAdvert(), studyOption);
 
         if (programStudyOption != null) {
             return new ApplicationStartDateRepresentation().withEarliestDate(getEarliestStartDate(programStudyOption.getId(), baseline))
@@ -225,7 +225,7 @@ public class ApplicationService {
             return null;
         }
 
-        ProgramStudyOption studyOption = entityService.getById(ProgramStudyOption.class, studyOptionId);
+        AdvertStudyOption studyOption = entityService.getById(AdvertStudyOption.class, studyOptionId);
         LocalDate studyOptionStart = studyOption.getApplicationStartDate();
         LocalDate earliestStartDate = studyOptionStart.isBefore(baseline) ? baseline : studyOptionStart;
         earliestStartDate = earliestStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
@@ -237,9 +237,9 @@ public class ApplicationService {
             return null;
         }
 
-        ProgramStudyOption studyOption = entityService.getById(ProgramStudyOption.class, studyOptionId);
+        AdvertStudyOption studyOption = entityService.getById(AdvertStudyOption.class, studyOptionId);
         LocalDate closeDate = studyOption.getApplicationCloseDate().plusMonths(
-                studyOption.getProgram().getProgramType().getPrismProgramType().getDefaultStartBuffer());
+                studyOption.getAdvert().getAdvertType().getPrismAdvertType().getDefaultStartBuffer());
         LocalDate latestStartDate = closeDate.withDayOfWeek(DateTimeConstants.MONDAY);
         return latestStartDate.isAfter(closeDate) ? latestStartDate.minusWeeks(1) : latestStartDate;
     }
@@ -627,7 +627,7 @@ public class ApplicationService {
         application.getUser().getUserAccount().setSendApplicationRecommendationNotification(false);
     }
 
-    private LocalDate getRecommendedStartDate(Application application, ProgramStudyOption studyOption, LocalDate baseline) {
+    private LocalDate getRecommendedStartDate(Application application, AdvertStudyOption studyOption, LocalDate baseline) {
         if (studyOption == null) {
             return null;
         }
@@ -635,8 +635,8 @@ public class ApplicationService {
         LocalDate earliest = getEarliestStartDate(studyOption.getId(), baseline);
         LocalDate latest = getLatestStartDate(studyOption.getId());
 
-        PrismProgramType programType = application.getProgram().getProgramType().getPrismProgramType();
-        DefaultStartDateDTO defaults = programType.getDefaultStartDate(baseline);
+        PrismAdvertType advertType = application.getProgram().getAdvert().getAdvertType().getPrismAdvertType();
+        DefaultStartDateDTO defaults = advertType.getDefaultStartDate(baseline);
 
         LocalDate immediate = defaults.getImmediate();
         LocalDate scheduled = defaults.getScheduled();
@@ -644,7 +644,7 @@ public class ApplicationService {
         LocalDate recommended = application.getDefaultStartType() == SCHEDULED ? scheduled : immediate;
 
         if (recommended.isBefore(earliest)) {
-            recommended = earliest.plusWeeks(programType.getDefaultStartDelay());
+            recommended = earliest.plusWeeks(advertType.getDefaultStartDelay());
         }
 
         if (recommended.isAfter(latest)) {

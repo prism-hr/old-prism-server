@@ -22,10 +22,10 @@ public class ActionDTO {
     private InstitutionDTO newInstitution;
 
     @Valid
-    private ProgramDTO newProgram;
+    private AdvertApplicableDTO newProgram;
 
     @Valid
-    private ProjectDTO newProject;
+    private AdvertApplicableDTO newProject;
 
     @Valid
     private ApplicationDTO newApplication;
@@ -56,19 +56,19 @@ public class ActionDTO {
         this.newInstitution = newInstitution;
     }
 
-    public ProgramDTO getNewProgram() {
+    public AdvertApplicableDTO getNewProgram() {
         return newProgram;
     }
 
-    public void setNewProgram(ProgramDTO newProgram) {
+    public void setNewProgram(AdvertApplicableDTO newProgram) {
         this.newProgram = newProgram;
     }
 
-    public final ProjectDTO getNewProject() {
+    public final AdvertApplicableDTO getNewProject() {
         return newProject;
     }
 
-    public final void setNewProject(ProjectDTO newProject) {
+    public final void setNewProject(AdvertApplicableDTO newProject) {
         this.newProject = newProject;
     }
 
@@ -98,12 +98,12 @@ public class ActionDTO {
         return this;
     }
 
-    public ActionDTO withNewProgram(ProgramDTO newProgram) {
+    public ActionDTO withNewProgram(AdvertApplicableDTO newProgram) {
         this.newProgram = newProgram;
         return this;
     }
 
-    public ActionDTO withNewProject(ProjectDTO newProject) {
+    public ActionDTO withNewProject(AdvertApplicableDTO newProject) {
         this.newProject = newProject;
         return this;
     }

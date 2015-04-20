@@ -3,16 +3,19 @@ package com.zuehlke.pgadmissions.rest.validation.validator;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.advert.AdvertStudyOption;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
@@ -23,26 +26,24 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.Disability;
 import com.zuehlke.pgadmissions.domain.imported.Ethnicity;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
+import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CustomizationService;
-import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Component
 public class ApplicationValidator extends LocalValidatorFactoryBean implements Validator {
 
-    @Autowired
+    @Inject
+    private AdvertService advertService;
+
+    @Inject
     private ApplicationService applicationService;
 
-    @Autowired
+    @Inject
     private CustomizationService customizationService;
-
-    @Autowired
-    private ProgramService programService;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -143,11 +144,11 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
             errors.pushNestedPath("programDetail");
             LocalDate startDate = programDetail.getStartDate();
 
-            Program program = application.getProgram();
-            ProgramStudyOption studyOption = programService.getEnabledProgramStudyOption(program, programDetail.getStudyOption());
+            Advert advert = application.getAdvert();
+            AdvertStudyOption studyOption = advertService.getEnabledAdvertStudyOption(advert, programDetail.getStudyOption());
 
             if (studyOption == null) {
-                List<ProgramStudyOption> otherStudyOptions = programService.getEnabledProgramStudyOptions(program);
+                List<AdvertStudyOption> otherStudyOptions = advertService.getEnabledAdvertStudyOptions(advert);
                 if (otherStudyOptions.isEmpty()) {
                     throw new CannotApplyException();
                 }
@@ -157,9 +158,9 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
                 LocalDate latestStartDate = applicationService.getLatestStartDate(studyOption.getId());
 
                 if (startDate.isBefore(earliestStartDate)) {
-                    errors.rejectValue("startDate", "notBefore", new Object[]{earliestStartDate}, null);
+                    errors.rejectValue("startDate", "notBefore", new Object[] { earliestStartDate }, null);
                 } else if (startDate.isAfter(latestStartDate)) {
-                    errors.rejectValue("startDate", "notAfter", new Object[]{latestStartDate}, null);
+                    errors.rejectValue("startDate", "notAfter", new Object[] { latestStartDate }, null);
                 }
             }
 

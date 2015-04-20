@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-public enum PrismProgramCategory {
+public enum PrismAdvertCategory {
 
     STUDY(true, false, true),
     FUNDING(false, true, true),
@@ -14,7 +14,7 @@ public enum PrismProgramCategory {
 
     private boolean requireDuration;
 
-    PrismProgramCategory(boolean hasFee, boolean hasPay, boolean requireDuration) {
+    PrismAdvertCategory(boolean hasFee, boolean hasPay, boolean requireDuration) {
         this.hasFee = hasFee;
         this.hasPay = hasPay;
         this.requireDuration = requireDuration;

@@ -7,7 +7,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WOR
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DESCRIPTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertType.getSystemAdvertType;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
@@ -454,7 +454,7 @@ public class SystemService {
                             .withValue(
                                     prismDisplayPropertyDefinition.getDefaultValue());
                     customizationService.createOrUpdateConfiguration(DISPLAY_PROPERTY, system, getSystemLocale(),
-                            prismScope.ordinal() > INSTITUTION.ordinal() ? getSystemProgramType() : null, configurationDTO);
+                            prismScope.ordinal() > INSTITUTION.ordinal() ? getSystemAdvertType() : null, configurationDTO);
                 }
             }
         }
@@ -489,12 +489,12 @@ public class SystemService {
             String subject = FileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationDefinition.getInitialTemplateSubject());
             String content = FileUtils.getContent(defaultEmailContentDirectory + prismNotificationDefinition.getInitialTemplateContent());
 
-            PrismProgramType programType = prismNotificationDefinition.getScope().ordinal() > INSTITUTION.ordinal() ? PrismProgramType
-                    .getSystemProgramType() : null;
+            PrismAdvertType advertType = prismNotificationDefinition.getScope().ordinal() > INSTITUTION.ordinal() ? PrismAdvertType
+                    .getSystemAdvertType() : null;
 
             NotificationConfigurationDTO configurationDTO = new NotificationConfigurationDTO().withId(prismNotificationDefinition).withSubject(subject)
                     .withContent(content).withReminderInterval(prismNotificationDefinition.getDefaultReminderDuration());
-            customizationService.createOrUpdateConfiguration(NOTIFICATION, system, getSystemLocale(), programType, configurationDTO);
+            customizationService.createOrUpdateConfiguration(NOTIFICATION, system, getSystemLocale(), advertType, configurationDTO);
         }
     }
 
@@ -626,7 +626,7 @@ public class SystemService {
             IllegalAccessException {
         if (configurationDTO.size() > 0) {
             customizationService.createConfigurationGroup(configurationType, system, prismScope, getSystemLocale(),
-                    prismScope.ordinal() > INSTITUTION.ordinal() ? getSystemProgramType() : null, configurationDTO);
+                    prismScope.ordinal() > INSTITUTION.ordinal() ? getSystemAdvertType() : null, configurationDTO);
         }
     }
 

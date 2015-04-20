@@ -21,6 +21,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.advert.AdvertStudyOption;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
@@ -30,7 +31,6 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
@@ -279,11 +279,11 @@ public class ApplicationResource {
         representation.setAssignedSupervisors(commentService.getApplicationSupervisors(application));
 
         representation.setPossibleThemes(advertService.getLocalizedThemes(application));
-        representation.setPossibleLocations(programService.getPossibleLocations(application.getProgram()));
+        representation.setPossibleLocations(advertService.getPossibleLocations(application.getAdvert()));
 
-        List<ProgramStudyOption> enabledProgramStudyOptions = programService.getEnabledProgramStudyOptions(application.getProgram());
+        List<AdvertStudyOption> enabledProgramStudyOptions = advertService.getEnabledAdvertStudyOptions(application.getAdvert());
         List<PrismStudyOption> availableStudyOptions = Lists.newArrayListWithCapacity(enabledProgramStudyOptions.size());
-        for (ProgramStudyOption studyOption : enabledProgramStudyOptions) {
+        for (AdvertStudyOption studyOption : enabledProgramStudyOptions) {
             availableStudyOptions.add(studyOption.getStudyOption().getPrismStudyOption());
         }
 

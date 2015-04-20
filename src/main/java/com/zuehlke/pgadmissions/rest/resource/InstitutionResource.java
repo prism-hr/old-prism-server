@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertCompetency;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTheme;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
@@ -53,7 +54,8 @@ public class InstitutionResource {
         for (Institution institution : institutions) {
             ImportedEntityRepresentation institutionRepresentation = new ImportedEntityRepresentation();
             institutionRepresentation.setId(institution.getId());
-            String name = Joiner.on(" - ").skipNulls().join(institution.getTitle(), institution.getAddress().getAddressTown(), institution.getAddress().getAddressCode());
+            InstitutionAddress address = institution.getAdvert().getAddress();
+            String name = Joiner.on(" - ").skipNulls().join(institution.getTitle(), address.getAddressTown(), address.getAddressCode());
             institutionRepresentation.setName(name);
             institutionRepresentations.add(institutionRepresentation);
         }

@@ -32,7 +32,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.document.FileCategory;
+import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -152,7 +152,7 @@ public class UserService {
 
         Document portraitDocument = null;
         if (userDTO.getPortraitDocument() != null) {
-            portraitDocument = documentService.getById(userDTO.getPortraitDocument(), FileCategory.IMAGE);
+            portraitDocument = documentService.getById(userDTO.getPortraitDocument(), PrismFileCategory.IMAGE);
         }
 
         user.setPortraitDocument(portraitDocument);

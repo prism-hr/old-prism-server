@@ -4,7 +4,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ACTIVATE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLICATIONS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_CONTENT_NOT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_TIME_FORMAT;
@@ -14,6 +13,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_HOMEPAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_INSTITUTIONS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_NEW;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_NEW_PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_READ_MORE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_RELATED_PROJECTS_PLURAL_SAFE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROCEED;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROJECTS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_USER_ACCOUNT;
@@ -22,7 +25,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SECONDARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.ANGULAR_HASH;
 
 import java.io.IOException;
 import java.util.List;
@@ -53,20 +56,16 @@ import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewInstru
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
-import com.zuehlke.pgadmissions.exceptions.AbortMailSendException;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
@@ -87,12 +86,6 @@ public class NotificationPropertyLoader {
 
     @Value("${application.api.url}")
     private String applicationApiUrl;
-
-    @Inject
-    private ActionService actionService;
-
-    @Inject
-    private AdvertService advertService;
 
     @Inject
     private SystemService systemService;
@@ -194,10 +187,10 @@ public class NotificationPropertyLoader {
         return notificationDefinitionModelDTO.getResource().getApplication().getProjectOrProgramCodeDisplay();
     }
 
-    public String getApplicationProgramType() throws Exception {
-        PrismProgramType programType = PrismProgramType.valueOf(notificationDefinitionModelDTO.getResource().getApplication().getProgram().getProgramType()
+    public String getApplicationAdvertType() throws Exception {
+        PrismAdvertType advertType = PrismAdvertType.valueOf(notificationDefinitionModelDTO.getResource().getApplication().getAdvert().getAdvertType()
                 .getCode());
-        return propertyLoader.load(programType.getDisplayProperty());
+        return propertyLoader.load(PrismDisplayPropertyDefinition.valueOf("SYSTEM_ADVERT_TYPE_" + advertType.name()));
     }
 
     public String getApplicationInterviewDateTime() throws Exception {
@@ -283,7 +276,7 @@ public class NotificationPropertyLoader {
     }
 
     public String getInstitutionHomepage() {
-        return notificationDefinitionModelDTO.getResource().getInstitution().getHomepage();
+        return notificationDefinitionModelDTO.getResource().getInstitution().getAdvert().getHomepage();
     }
 
     public String getInstitutionDataImportError() {
@@ -295,28 +288,33 @@ public class NotificationPropertyLoader {
     }
 
     public String getSystemApplicationRecommendation() throws Exception {
-        List<AdvertRecommendationDTO> advertRecommendations = advertService.getRecommendedAdverts(notificationDefinitionModelDTO.getUser());
+        List<String> recommendations = Lists.newLinkedList();
 
-        if (!advertRecommendations.isEmpty()) {
-            List<String> recommendations = Lists.newLinkedList();
-            Map<PrismScope, PrismAction> createResourceActions = actionService.getCreateResourceActions(APPLICATION);
+        for (AdvertRecommendationDTO advertRecommendation : notificationDefinitionModelDTO.getRecommendations()) {
+            Advert advert = advertRecommendation.getAdvert();
+            ResourceParent resourceParent = advert.getResourceParent();
 
-            for (AdvertRecommendationDTO advertRecommendation : advertRecommendations) {
-                Advert advert = advertRecommendation.getAdvert();
-                ResourceParent resourceParent = advert.getResourceParent();
+            String title = "<b>" + advert.getTitle() + "</b>";
+            String summary = advert.getSummary();
 
-                String title = "<b>" + advert.getTitle() + "</b>";
-                String summary = advert.getSummary();
+            String newAdvert = advertRecommendation.isNewAdvert() ? propertyLoader.load(SYSTEM_OPPORTUNITIES_NEW) : null;
+            Integer projectCount = advertRecommendation.getProjectCount();
+            String relatedProject = projectCount == 0 ? null : (projectCount.toString() + " " + propertyLoader
+                    .load(SYSTEM_OPPORTUNITIES_RELATED_PROJECTS_PLURAL_SAFE));
+            String newProjectAdvert = advertRecommendation.isNewProjectAdvert() ? propertyLoader.load(SYSTEM_OPPORTUNITIES_NEW_PROJECT) : null;
 
-                String applyHomepage = advert.getApplyHomepage();
-                applyHomepage = applyHomepage == null ? buildRedirectionUrl(resourceParent, createResourceActions.get(resourceParent.getResourceScope()),
-                        notificationDefinitionModelDTO.getUser()) : applyHomepage;
-                recommendations.add(Joiner.on("<br/>").skipNulls().join(title, summary, buildRedirectionControl(applyHomepage, SYSTEM_APPLY)));
+            String grabber = Joiner.on(" | ").skipNulls().join(newAdvert, relatedProject, newProjectAdvert);
+            if (!(grabber == null || grabber.isEmpty())) {
+                grabber = "<b>" + grabber + "</b>";
             }
 
-            return "<p>" + Joiner.on("<p></p>").join(recommendations) + "</p>";
+            String applyHomepage = applicationUrl + "/" + ANGULAR_HASH + "/?" + resourceParent.getResourceScope().getLowerCamelName() + "="
+                    + resourceParent.getId().toString();
+            recommendations.add(Joiner.on("<br/>").skipNulls()
+                    .join(title, summary, grabber, buildRedirectionControl(applyHomepage, SYSTEM_OPPORTUNITIES_READ_MORE)));
         }
-        throw new AbortMailSendException("No recommended adverts found for user: " + notificationDefinitionModelDTO.getUser().getId().toString());
+
+        return "<p>" + Joiner.on("<p></p>").join(recommendations) + "</p>";
     }
 
     public String getSystemProjectHomepage() throws Exception {

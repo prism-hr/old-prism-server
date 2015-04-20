@@ -1,104 +1,27 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
-import org.hibernate.validator.constraints.NotEmpty;
-import org.hibernate.validator.constraints.URL;
-import org.joda.time.LocalDate;
+public class ProjectDTO extends AdvertApplicableDTO {
 
-import com.zuehlke.pgadmissions.dto.DepartmentDTO;
-
-public class ProjectDTO {
-
-    private DepartmentDTO department;
+    private PrismScope resourceScope;
     
-    @NotNull
-    private Integer programId;
+    private Integer resourceId;
 
-    @NotEmpty
-    @Size(max = 255)
-    private String title;
+    public PrismScope getResourceScope() {
+        return resourceScope;
+    }
 
-    private LocalDate endDate;
+    public void setResourceScope(PrismScope resourceScope) {
+        this.resourceScope = resourceScope;
+    }
 
-    @NotEmpty
-    @Size(max = 1000)
-    private String summary;
+    public Integer getResourceId() {
+        return resourceId;
+    }
 
-    @URL
-    @Size(max = 2048)
-    private String applyHomepage;
-
-    @Min(1)
-    private Integer studyDurationMinimum;
-
-    @Min(1)
-    private Integer studyDurationMaximum;
+    public void setResourceId(Integer resourceId) {
+        this.resourceId = resourceId;
+    }
     
-    public DepartmentDTO getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(DepartmentDTO department) {
-        this.department = department;
-    }
-
-    public Integer getProgramId() {
-        return programId;
-    }
-
-    public void setProgramId(Integer programId) {
-        this.programId = programId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
-
-    public String getSummary() {
-        return summary;
-    }
-
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
-
-    public String getApplyHomepage() {
-        return applyHomepage;
-    }
-
-    public void setApplyHomepage(String applyHomepage) {
-        this.applyHomepage = applyHomepage;
-    }
-
-    public Integer getStudyDurationMinimum() {
-        return studyDurationMinimum;
-    }
-
-    public void setStudyDurationMinimum(Integer studyDurationMinimum) {
-        this.studyDurationMinimum = studyDurationMinimum;
-    }
-
-    public Integer getStudyDurationMaximum() {
-        return studyDurationMaximum;
-    }
-
-    public void setStudyDurationMaximum(Integer studyDurationMaximum) {
-        this.studyDurationMaximum = studyDurationMaximum;
-    }
-
 }

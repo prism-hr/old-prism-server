@@ -169,16 +169,7 @@ public class ActionDAO {
                 .setResultTransformer(Transformers.aliasToBean(ResourceListActionDTO.class)) //
                 .list();
     }
-
-    public List<PrismAction> getCreateResourceActions(PrismScope creationScope) {
-        return (List<PrismAction>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
-                .setProjection(Projections.property("id")) //
-                .add(Restrictions.eq("actionType", USER_INVOCATION)) //
-                .add(Restrictions.eq("actionCategory", CREATE_RESOURCE)) //
-                .add(Restrictions.eq("creationScope.id", creationScope)) //
-                .list();
-    }
-
+    
     public List<ResourceListActionDTO> getCreateResourceActions(Resource resource) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<ResourceListActionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //

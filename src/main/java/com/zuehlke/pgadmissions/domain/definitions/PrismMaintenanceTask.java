@@ -12,13 +12,13 @@ import com.zuehlke.pgadmissions.services.lifecycle.helpers.ImportedEntityService
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.InstitutionServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.NotificationServiceHelperRecommendation;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.NotificationServiceHelperWorkflow;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.ProgramServiceHelper;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.AdvertServiceHelperStudyOption;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperEscalation;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperPropagation;
 
 public enum PrismMaintenanceTask {
 
-    SYSTEM_UPDATE_PROGRAM_STUDY_OPTION(ProgramServiceHelper.class), //
+    SYSTEM_UPDATE_PROGRAM_STUDY_OPTION(AdvertServiceHelperStudyOption.class), //
     SYSTEM_EXECUTE_ESCALATED_STATE_TRANSITION(StateServiceHelperEscalation.class), //
     SYSTEM_EXECUTE_PROPAGATED_STATE_TRANSITION(StateServiceHelperPropagation.class), //
     SYSTEM_IMPORT_INSTITUTION_REFERENCE_DATA(ImportedEntityServiceHelperInstitution.class), //

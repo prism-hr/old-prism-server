@@ -1,9 +1,12 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
+import static com.zuehlke.pgadmissions.utils.PrismConstants.RECOMMENDATION_INTERVAL;
+
 import java.util.List;
 import java.util.Set;
 
 import org.dozer.Mapper;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,11 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.advert.AdvertLocation;
+import com.zuehlke.pgadmissions.domain.advert.AdvertStudyOption;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.program.ProgramLocation;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
@@ -35,7 +38,7 @@ public class OpportunityResource {
 
     @Autowired
     private AdvertService advertService;
-    
+
     @Autowired
     private ApplicationService applicationService;
 
@@ -57,21 +60,22 @@ public class OpportunityResource {
             AdvertRepresentation representation = getAdvertRepresentation(advert, acceptingApplications);
             representations.add(representation);
         }
-        
+
         return representations;
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "/{applicationId}")
     public List<AdvertRepresentation> getRecommendedAdverts(Integer applicationId) {
         Application application = applicationService.getById(applicationId);
-        List<AdvertRecommendationDTO> advertRecommendations = advertService.getRecommendedAdverts(application.getUser());
+        List<AdvertRecommendationDTO> advertRecommendations = advertService.getRecommendedAdverts(application.getUser(),
+                new LocalDate().minusDays(RECOMMENDATION_INTERVAL));
 
         List<AdvertRepresentation> representations = Lists.newArrayListWithExpectedSize(advertRecommendations.size());
         for (AdvertRecommendationDTO advertRecommendation : advertRecommendations) {
             AdvertRepresentation representation = getAdvertRepresentation(advertRecommendation.getAdvert(), true);
             representations.add(representation);
         }
-        
+
         return representations;
     }
 
@@ -83,16 +87,16 @@ public class OpportunityResource {
         representation.setUser(dozerBeanMapper.map(resource.getUser(), UserRepresentation.class));
         representation.setResourceScope(resource.getResourceScope());
         representation.setResourceId(resource.getId());
-        representation.setProgramType(resource.getProgram().getProgramType().getPrismProgramType());
+        representation.setAdvertType(advert.getAdvertType().getPrismAdvertType());
 
-        List<String> locations = Lists.newArrayListWithCapacity(resource.getProgram().getLocations().size());
-        for (ProgramLocation programLocation : resource.getProgram().getLocations()) {
-            locations.add(programLocation.getLocation());
+        List<String> locations = Lists.newArrayListWithCapacity(advert.getLocations().size());
+        for (AdvertLocation advertLocation : advert.getLocations()) {
+            locations.add(advertLocation.getLocation());
         }
         representation.setLocations(locations);
 
         Set<PrismStudyOption> studyOptions = Sets.newHashSet();
-        for (ProgramStudyOption studyOption : resource.getProgram().getStudyOptions()) {
+        for (AdvertStudyOption studyOption : advert.getStudyOptions()) {
             studyOptions.add(studyOption.getStudyOption().getPrismStudyOption());
         }
         representation.setStudyOptions(studyOptions);

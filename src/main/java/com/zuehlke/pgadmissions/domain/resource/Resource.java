@@ -138,12 +138,10 @@ public abstract class Resource implements UniqueEntity {
 	}
 
 	public void setParentResource(Resource parentResource) {
-		if (parentResource.getId() != null) {
-			setProject(parentResource.getProject());
-			setProgram(parentResource.getProgram());
-			setInstitution(parentResource.getInstitution());
-			setSystem(parentResource.getSystem());
-		}
+		setProject(parentResource.getProject());
+		setProgram(parentResource.getProgram());
+		setInstitution(parentResource.getInstitution());
+		setSystem(parentResource.getSystem());
 	}
 
 	public PrismScope getResourceScope() {

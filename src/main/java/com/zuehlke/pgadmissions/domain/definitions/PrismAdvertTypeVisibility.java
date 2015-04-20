@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-public enum PrismProgramTypeVisibility {
+public enum PrismAdvertTypeVisibility {
 
     INTERNAL,
     EXTERNAL

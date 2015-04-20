@@ -35,7 +35,7 @@ public class Document {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category")
-    private FileCategory category;
+    private PrismFileCategory category;
 
     @Column(name = "file_name", nullable = false)
     private String fileName;
@@ -98,11 +98,11 @@ public class Document {
         return id;
     }
 
-    public final FileCategory getCategory() {
+    public final PrismFileCategory getCategory() {
         return category;
     }
 
-    public final void setCategory(FileCategory category) {
+    public final void setCategory(PrismFileCategory category) {
         this.category = category;
     }
 
@@ -207,7 +207,7 @@ public class Document {
         return this;
     }
 
-    public Document withCategory(final FileCategory category) {
+    public Document withCategory(final PrismFileCategory category) {
         this.category = category;
         return this;
     }

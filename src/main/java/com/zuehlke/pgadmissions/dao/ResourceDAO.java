@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.SEQUENCE_IDENTIFIER;
 
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -23,12 +26,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -280,6 +285,27 @@ public class ResourceDAO {
                 .setParameter("newUser", newUser) //
                 .setParameter("oldUser", oldUser) //
                 .executeUpdate();
+    }
+
+    public DateTime getResourcePublishedTimestamp(ResourceParent resource) {
+        return (DateTime) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .setProjection(Projections.property("createdTimestamp")) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.conjunction() //
+                                .add(Restrictions.eq("action.actionCategory", CREATE_RESOURCE)) //
+                                .add(Restrictions.eq("action.creationScope.id", APPLICATION))) //
+                .createAlias("transitionState", "transitionState", JoinType.INNER_JOIN) //
+                .createAlias("transitionState.stateActions", "transitionStateAction", JoinType.INNER_JOIN) //
+                .createAlias("transitionStateAction.action", "transitionAction", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.isNull("action.id")) //
+                .add(Restrictions.eq("transitionAction.actionCategory", CREATE_RESOURCE)) //
+                .add(Restrictions.eq("action.creationScope.id", APPLICATION)) //
+                .addOrder(Order.desc("createdTimestamp")) //
+                .setMaxResults(1) //
+                .uniqueResult();
     }
 
     private void addResourceListCustomColumns(PrismScope scopeId, ProjectionList projectionList) {

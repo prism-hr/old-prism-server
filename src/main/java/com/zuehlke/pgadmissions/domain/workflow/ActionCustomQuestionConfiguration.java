@@ -15,7 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismCustomQuestionType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -24,8 +24,8 @@ import com.zuehlke.pgadmissions.domain.system.System;
 
 @Entity
 @Table(name = "ACTION_CUSTOM_QUESTION_CONFIGURATION", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"system_id", "program_type", "locale", "action_custom_question_definition_id", "version", "display_index"}),
-        @UniqueConstraint(columnNames = {"institution_id", "program_type", "action_custom_question_definition_id", "version", "display_index"}),
+        @UniqueConstraint(columnNames = {"system_id", "advert_type", "locale", "action_custom_question_definition_id", "version", "display_index"}),
+        @UniqueConstraint(columnNames = {"institution_id", "advert_type", "action_custom_question_definition_id", "version", "display_index"}),
         @UniqueConstraint(columnNames = {"program_id", "action_custom_question_definition_id", "version", "display_index"})})
 public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVersioned {
 
@@ -49,9 +49,9 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
     @Enumerated(EnumType.STRING)
     private PrismLocale locale;
 
-    @Column(name = "program_type")
+    @Column(name = "advert_type")
     @Enumerated(EnumType.STRING)
-    private PrismProgramType programType;
+    private PrismAdvertType advertType;
 
     @ManyToOne
     @JoinColumn(name = "action_custom_question_definition_id", nullable = false)
@@ -157,13 +157,13 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
     }
 
     @Override
-    public PrismProgramType getProgramType() {
-        return programType;
+    public PrismAdvertType getAdvertType() {
+        return advertType;
     }
 
     @Override
-    public void setProgramType(PrismProgramType programType) {
-        this.programType = programType;
+    public void setAdvertType(PrismAdvertType advertType) {
+        this.advertType = advertType;
     }
 
     public ActionCustomQuestionDefinition getActionCustomQuestionDefinition() {
@@ -317,8 +317,8 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
         return this;
     }
 
-    public ActionCustomQuestionConfiguration withProgramType(PrismProgramType programType) {
-        this.programType = programType;
+    public ActionCustomQuestionConfiguration withAdvertType(PrismAdvertType advertType) {
+        this.advertType = advertType;
         return this;
     }
 

@@ -8,15 +8,20 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
@@ -26,8 +31,11 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertType;
 import com.zuehlke.pgadmissions.domain.department.Department;
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.imported.AdvertType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -41,9 +49,35 @@ public class Advert {
     @Id
     @GeneratedValue
     private Integer id;
+    
+    @ManyToOne
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "institution_id")
+    private Institution institution;
 
+    @ManyToOne
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "program_id")
+    private Program program;
+
+    @ManyToOne
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "project_id")
+    private Project project;
+    
     @Column(name = "title", nullable = false)
     private String title;
+    
+    @Column(name = "locale", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismLocale locale;
+    
+    @ManyToOne
+    @JoinColumn(name = "advert_type_id", nullable = false)
+    private AdvertType advertType;
+    
+    @Column(name = "currency")
+    private String currency;
 
     @Column(name = "summary")
     private String summary;
@@ -51,6 +85,14 @@ public class Advert {
     @Lob
     @Column(name = "description")
     private String description;
+    
+    @OneToOne
+    @JoinColumn(name = "logo_image_id")
+    private Document logoImage;
+    
+    @OneToOne
+    @JoinColumn(name = "background_image_id")
+    private Document backgroundImage;
 
     @Column(name = "homepage")
     private String homepage;
@@ -108,6 +150,14 @@ public class Advert {
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
+    
+    @OneToMany(mappedBy = "program")
+    private Set<AdvertStudyOption> studyOptions = Sets.newHashSet();
+    
+    @OrderBy(clause = "location")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "advert_id", nullable = false)
+    private Set<AdvertLocation> locations = Sets.newHashSet();
 
     @OrderBy(clause = "domain")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -142,13 +192,7 @@ public class Advert {
     @OrderBy(clause = "program_type")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
-    private Set<AdvertProgramType> programTypes = Sets.newHashSet();
-
-    @OneToOne(mappedBy = "advert")
-    private Program program;
-
-    @OneToOne(mappedBy = "advert")
-    private Project project;
+    private Set<AdvertAdvertType> advertTypes = Sets.newHashSet();
 
     @OrderBy(clause = "sequence_identifier desc")
     @OneToMany(mappedBy = "advert")
@@ -166,6 +210,30 @@ public class Advert {
     public void setId(Integer id) {
         this.id = id;
     }
+    
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
+    
+    public Program getProgram() {
+        return program;
+    }
+
+    public void setProgram(Program program) {
+        this.program = program;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
 
     public String getTitle() {
         return title;
@@ -173,6 +241,30 @@ public class Advert {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public PrismLocale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(PrismLocale locale) {
+        this.locale = locale;
+    }
+    
+    public AdvertType getAdvertType() {
+        return advertType;
+    }
+
+    public void setAdvertType(AdvertType advertType) {
+        this.advertType = advertType;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     public String getSummary() {
@@ -189,6 +281,22 @@ public class Advert {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Document getLogoImage() {
+        return logoImage;
+    }
+
+    public void setLogoImage(Document logoImage) {
+        this.logoImage = logoImage;
+    }
+
+    public Document getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    public void setBackgroundImage(Document backgroundImage) {
+        this.backgroundImage = backgroundImage;
     }
 
     public final String getHomepage() {
@@ -271,6 +379,14 @@ public class Advert {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
+    public Set<AdvertStudyOption> getStudyOptions() {
+        return studyOptions;
+    }
+
+    public Set<AdvertLocation> getLocations() {
+        return locations;
+    }
+
     public final Set<AdvertDomain> getDomains() {
         return domains;
     }
@@ -295,24 +411,8 @@ public class Advert {
         return institutions;
     }
 
-    public final Set<AdvertProgramType> getProgramTypes() {
-        return programTypes;
-    }
-
-    public Program getProgram() {
-        return program;
-    }
-
-    public void setProgram(Program program) {
-        this.program = program;
-    }
-
-    public Project getProject() {
-        return project;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
+    public final Set<AdvertAdvertType> getAdvertTypes() {
+        return advertTypes;
     }
 
     public Set<AdvertClosingDate> getClosingDates() {
@@ -323,11 +423,45 @@ public class Advert {
         this.title = title;
         return this;
     }
-
+    
+    public Advert withLocale(PrismLocale locale) {
+        this.locale = locale;
+        return this;
+    }
+    
+    public Advert withAdvertType(AdvertType advertType) {
+        this.advertType = advertType;
+        return this;
+    }
+    
+    public Advert withCurrency(String currency) {
+        this.currency = currency;
+        return this;
+    }
+    
+    public Advert withSummary(String summary) {
+        this.summary = summary;
+        return this;
+    }    
+    
+    public Advert withHomepage(String homepage) {
+        this.homepage = homepage;
+        return this;
+    }
+    
+    public Advert withAddress(InstitutionAddress address) {
+        this.address = address;
+        return this;
+    }
+    
     public ResourceParent getResourceParent() {
-        return ObjectUtils.firstNonNull(project, program);
+        return ObjectUtils.firstNonNull(project, program, institution);
     }
 
+    public boolean isInstitutionAdvert() {
+        return institution != null;
+    }
+    
     public boolean isProgramAdvert() {
         return program != null;
     }
@@ -336,8 +470,8 @@ public class Advert {
         return project != null;
     }
 
-    public Institution getInstitution() {
-        return getResourceParent().getInstitution();
+    public InstitutionAddress getInstitutionAddress() {
+        return getResourceParent().getInstitution().getAdvert().getAddress();
     }
 
     public Department getDepartment() {
@@ -392,10 +526,10 @@ public class Advert {
         institutions.add(advertInstitution);
     }
 
-    public void addProgramType(PrismProgramType programTypeId) {
-        AdvertProgramType advertProgramType = new AdvertProgramType().withAdvert(this);
-        advertProgramType.setProgramType(programTypeId);
-        programTypes.add(advertProgramType);
+    public void addAdvertType(PrismAdvertType advertTypeId) {
+        AdvertAdvertType advertType = new AdvertAdvertType().withAdvert(this);
+        advertType.setAdvertType(advertTypeId);
+        advertTypes.add(advertType);
     }
 
 }

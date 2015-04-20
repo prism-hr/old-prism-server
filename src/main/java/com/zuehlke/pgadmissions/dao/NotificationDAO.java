@@ -212,7 +212,7 @@ public class NotificationDAO {
                 .list();
     }
 
-    public List<Integer> getRecommendationDefinitions(LocalDate baseline) {
+    public List<Integer> getRecommendationDefinitions(LocalDate lastRecommendedBaseline) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
@@ -223,7 +223,7 @@ public class NotificationDAO {
                 .add(Restrictions.eq("userAccount.sendApplicationRecommendationNotification", true)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userNotification.id")) //
-                        .add(Restrictions.lt("userNotification.lastNotifiedDate", baseline))) //
+                        .add(Restrictions.lt("userNotification.lastNotifiedDate", lastRecommendedBaseline))) //
                 .list();
     }
 
@@ -264,7 +264,7 @@ public class NotificationDAO {
                 .executeUpdate();
     }
 
-    public void resetNotificationsSyndicated(PrismScope resourceScope, Set<Integer> assignedResources) {
+    public void resetNotifications(PrismScope resourceScope, Set<Integer> assignedResources) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update " + resourceScope.getResourceClass().getSimpleName() + " " //
                         + "set lastRemindedRequestIndividual = null, " //
@@ -275,7 +275,7 @@ public class NotificationDAO {
                 .executeUpdate();
     }
     
-    public List<NotificationDefinition> getNotificationDefinitionsIndividual(Role role) {
+    public List<NotificationDefinition> getNotificationDefinitions(Role role) {
         return (List<NotificationDefinition>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("notificationDefinition")) //
                 .createAlias("notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //

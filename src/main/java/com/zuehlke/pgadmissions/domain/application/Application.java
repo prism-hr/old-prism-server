@@ -177,9 +177,9 @@ public class Application extends Resource {
     @Column(name = "application_rating_average")
     private BigDecimal applicationRatingAverage;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "application_reserve_status")
-	private PrismApplicationReserveStatus applicationReserveStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "application_reserve_status")
+    private PrismApplicationReserveStatus applicationReserveStatus;
 
     @Column(name = "completion_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -199,10 +199,10 @@ public class Application extends Resource {
     @Column(name = "submitted_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime submittedTimestamp;
-    
+
     @Column(name = "application_year")
     private String applicationYear;
-    
+
     @Column(name = "application_month")
     private Integer applicationMonth;
 
@@ -224,7 +224,7 @@ public class Application extends Resource {
 
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	@PrismConstraintRequired(error = SYSTEM_VALIDATION_REQUIRED)
+    @PrismConstraintRequired(error = SYSTEM_VALIDATION_REQUIRED)
     private DateTime updatedTimestamp;
 
     @Column(name = "last_reminded_request_individual")
@@ -250,7 +250,7 @@ public class Application extends Resource {
 
     @OneToMany(mappedBy = "application")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "application")
     private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
@@ -306,7 +306,7 @@ public class Application extends Resource {
 
     @Override
     public PrismLocale getLocale() {
-        return program.getLocale();
+        return advert.getLocale();
     }
 
     @Override
@@ -455,22 +455,22 @@ public class Application extends Resource {
     }
 
     public String getApplicationYear() {
-		return applicationYear;
-	}
+        return applicationYear;
+    }
 
-	public void setApplicationYear(String applicationYear) {
-		this.applicationYear = applicationYear;
-	}
+    public void setApplicationYear(String applicationYear) {
+        this.applicationYear = applicationYear;
+    }
 
-	public Integer getApplicationMonth() {
-		return applicationMonth;
-	}
+    public Integer getApplicationMonth() {
+        return applicationMonth;
+    }
 
-	public void setApplicationMonth(Integer applicationMonth) {
-		this.applicationMonth = applicationMonth;
-	}
+    public void setApplicationMonth(Integer applicationMonth) {
+        this.applicationMonth = applicationMonth;
+    }
 
-	public LocalDate getClosingDate() {
+    public LocalDate getClosingDate() {
         return closingDate;
     }
 
@@ -555,14 +555,14 @@ public class Application extends Resource {
     }
 
     public PrismApplicationReserveStatus getApplicationReserveStatus() {
-		return applicationReserveStatus;
-	}
+        return applicationReserveStatus;
+    }
 
-	public void setApplicationReserveStatus(PrismApplicationReserveStatus applicationReserveRating) {
-		this.applicationReserveStatus = applicationReserveRating;
-	}
+    public void setApplicationReserveStatus(PrismApplicationReserveStatus applicationReserveRating) {
+        this.applicationReserveStatus = applicationReserveRating;
+    }
 
-	public LocalDate getCompletionDate() {
+    public LocalDate getCompletionDate() {
         return completionDate;
     }
 
@@ -626,10 +626,10 @@ public class Application extends Resource {
 
     @Override
     public Set<ResourceCondition> getResourceConditions() {
-		return resourceConditions;
-	}
+        return resourceConditions;
+    }
 
-	public Set<Comment> getComments() {
+    public Set<Comment> getComments() {
         return comments;
     }
 
@@ -878,7 +878,7 @@ public class Application extends Resource {
     }
 
     public PrismProgramStartType getDefaultStartType() {
-        return project == null && program.getProgramType().getPrismProgramType().getDefaultStartType() == SCHEDULED ? SCHEDULED : IMMEDIATE;
+        return project == null && advert.getAdvertType().getPrismAdvertType().getDefaultStartType() == SCHEDULED ? SCHEDULED : IMMEDIATE;
     }
 
     public boolean isProgramApplication() {

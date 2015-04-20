@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_COMPLETED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_REJECTED;
@@ -20,22 +22,19 @@ import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.advert.AdvertLocation;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.program.ProgramLocation;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.dto.ProgramProjectDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
@@ -68,70 +67,6 @@ public class ProgramDAO {
 		        .list();
 	}
 
-	public ProgramStudyOption getEnabledProgramStudyOption(Program program, StudyOption studyOption) {
-		return (ProgramStudyOption) sessionFactory.getCurrentSession().createCriteria(ProgramStudyOption.class) //
-		        .add(Restrictions.eq("program", program)) //
-		        .add(Restrictions.eq("studyOption", studyOption)) //
-		        .add(Restrictions.eq("enabled", true)) //
-		        .uniqueResult();
-	}
-
-	public List<ProgramStudyOption> getEnabledProgramStudyOptions(Program program) {
-		return (List<ProgramStudyOption>) sessionFactory.getCurrentSession().createCriteria(ProgramStudyOption.class) //
-		        .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
-		        .add(Restrictions.eq("program", program)) //
-		        .add(Restrictions.eq("enabled", true)) //
-		        .addOrder(Order.asc("studyOption.code")) //
-		        .list();
-	}
-
-	public ProgramStudyOptionInstance getFirstEnabledProgramStudyOptionInstance(Program program, StudyOption studyOption) {
-		return (ProgramStudyOptionInstance) sessionFactory.getCurrentSession().createCriteria(ProgramStudyOptionInstance.class) //
-		        .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
-		        .add(Restrictions.eq("studyOption.program", program)) //
-		        .add(Restrictions.eq("studyOption.studyOption", studyOption)) //
-		        .add(Restrictions.eq("enabled", true)) //
-		        .addOrder(Order.asc("applicationStartDate")) //
-		        .setMaxResults(1) //
-		        .uniqueResult();
-	}
-
-	public void disableElapsedProgramStudyOptions(LocalDate baseline) {
-		sessionFactory.getCurrentSession().createQuery( //
-		        "update ProgramStudyOption " //
-		                + "set enabled = false " //
-		                + "where applicationCloseDate < :baseline") //
-		        .setParameter("baseline", baseline) //
-		        .executeUpdate();
-	}
-
-	public void disableElapsedProgramStudyOptionInstances(LocalDate baseline) {
-		sessionFactory.getCurrentSession().createQuery( //
-		        "update ProgramStudyOptionInstance " //
-		                + "set enabled = false " //
-		                + "where applicationCloseDate < :baseline") //
-		        .setParameter("baseline", baseline) //
-		        .executeUpdate();
-	}
-
-	public void deleteProgramStudyOptions(Program program) {
-		sessionFactory.getCurrentSession().createQuery( //
-		        "delete ProgramStudyOption " //
-		                + "where program = :program") //
-		        .setParameter("program", program) //
-		        .executeUpdate();
-	}
-
-	public void deleteProgramStudyOptionInstances(Program program) {
-		sessionFactory.getCurrentSession().createQuery( //
-		        "delete ProgramStudyOptionInstance " //
-		                + "where studyOption in ( " //
-		                + "from ProgramStudyOption " //
-		                + "where program = :program)") //
-		        .setParameter("program", program) //
-		        .executeUpdate();
-	}
-
 	public List<ProgramRepresentation> getSimilarPrograms(Integer institutionId, String searchTerm) {
 		return (List<ProgramRepresentation>) sessionFactory.getCurrentSession().createCriteria(Program.class, "program") //
 		        .setProjection(Projections.projectionList() //
@@ -158,20 +93,12 @@ public class ProgramDAO {
 		        .uniqueResult();
 	}
 
-	public List<String> getPossibleLocations(Program program) {
-		return (List<String>) sessionFactory.getCurrentSession().createCriteria(ProgramLocation.class) //
-		        .setProjection(Projections.property("location")) //
-		        .add(Restrictions.eq("program", program)) //
-		        .addOrder(Order.asc("location")) //
-		        .list();
-	}
-
 	public List<String> getSuggestedDivisions(Program program, String location) {
 		return (List<String>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
 		        .setProjection(Projections.groupProperty("studyDetail.studyDivision")) //
 		        .add(Restrictions.eq("program", program)) //
 		        .add(Restrictions.eq("studyDetail.studyLocation", location)) //
-		        .add(Subqueries.in(location, DetachedCriteria.forClass(ProgramLocation.class) //
+		        .add(Subqueries.in(location, DetachedCriteria.forClass(AdvertLocation.class) //
 		                .setProjection(Projections.property("location")) //
 		                .add(Restrictions.eq("program", program)))) //
 		        .list();
@@ -183,7 +110,7 @@ public class ProgramDAO {
 		        .add(Restrictions.eq("program", program)) //
 		        .add(Restrictions.eq("studyDetail.studyLocation", location)) //
 		        .add(Restrictions.eq("studyDetail.studyDivision", division)) //
-		        .add(Subqueries.in(location, DetachedCriteria.forClass(ProgramLocation.class) //
+		        .add(Subqueries.in(location, DetachedCriteria.forClass(AdvertLocation.class) //
 		                .setProjection(Projections.property("location")) //
 		                .add(Restrictions.eq("program", program)))) //
 		        .list();
@@ -266,5 +193,28 @@ public class ProgramDAO {
 				.add(Restrictions.eq("program.id", program)) //
 				.list();
 	}
+	
+    public ProgramProjectDTO getProgramProjectSummary(Program program) {
+        return (ProgramProjectDTO) sessionFactory.getCurrentSession().createCriteria(Project.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.countDistinct("id"), "projectCount") //
+                        .add(Projections.max("comment.createdTimestamp"), "publishedTimestamp")) //
+                .createAlias("comments", "comment", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.conjunction() //
+                                .add(Restrictions.eq("action.actionCategory", CREATE_RESOURCE)) //
+                                .add(Restrictions.eq("action.creationScope.id", APPLICATION))) //
+                .createAlias("program", "program", JoinType.INNER_JOIN) //
+                .createAlias("transitionState", "transitionState", JoinType.INNER_JOIN) //
+                .createAlias("transitionState.stateActions", "transitionStateAction", JoinType.INNER_JOIN) //
+                .createAlias("transitionStateAction.action", "transitionAction", JoinType.INNER_JOIN) //
+                .add(Restrictions.isNull("action.id")) //
+                .add(Restrictions.eq("transitionAction.actionCategory", CREATE_RESOURCE)) //
+                .add(Restrictions.eq("action.creationScope.id", APPLICATION)) //
+                .setResultTransformer(Transformers.aliasToBean(ProgramProjectDTO.class))
+                .uniqueResult();
+    }
 
 }

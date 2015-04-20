@@ -23,7 +23,7 @@ import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.document.FileCategory;
+import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
 import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationDownloadService;
@@ -46,14 +46,14 @@ public class FileResource {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/documents", method = RequestMethod.POST)
     public Map<String, Object> uploadDocument(@RequestParam(value = "file-data") Part uploadStream) throws IOException {
-        Document document = documentService.create(FileCategory.DOCUMENT, uploadStream);
+        Document document = documentService.create(PrismFileCategory.DOCUMENT, uploadStream);
         return ImmutableMap.of("id", (Object) document.getId());
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/images", method = RequestMethod.POST)
     public Map<String, Object> uploadImage(@RequestParam(value = "file-data") Part uploadStream) throws IOException {
-        Document document = documentService.create(FileCategory.IMAGE, uploadStream);
+        Document document = documentService.create(PrismFileCategory.IMAGE, uploadStream);
         return ImmutableMap.of("id", (Object) document.getId());
     }
 
@@ -67,7 +67,7 @@ public class FileResource {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/documents/{fileId}", method = RequestMethod.GET)
     public void downloadFile(@PathVariable(value = "fileId") Integer documentId, HttpServletResponse response) throws Exception {
-        Document file = documentService.getById(documentId, FileCategory.DOCUMENT);
+        Document file = documentService.getById(documentId, PrismFileCategory.DOCUMENT);
         if(file == null){
             throw new ResourceNotFoundException("No document found");
         }
@@ -78,7 +78,7 @@ public class FileResource {
     @PreAuthorize("permitAll")
     @RequestMapping(value = "/images/{fileId}", method = RequestMethod.GET)
     public void downloadImage(@PathVariable(value = "fileId") Integer fileId, HttpServletResponse response) throws Exception {
-        Document file = documentService.getById(fileId, FileCategory.IMAGE);
+        Document file = documentService.getById(fileId, PrismFileCategory.IMAGE);
         if(file == null){
             throw new ResourceNotFoundException("No image found");
         }

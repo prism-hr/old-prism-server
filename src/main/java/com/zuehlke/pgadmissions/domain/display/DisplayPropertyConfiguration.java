@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -23,8 +23,8 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 
 @Entity
 @Table(name = "DISPLAY_PROPERTY_CONFIGURATION", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "display_property_definition_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "program_type", "display_property_definition_id" }),
+        @UniqueConstraint(columnNames = { "system_id", "locale", "advert_type", "display_property_definition_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "advert_type", "display_property_definition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "display_property_definition_id" }) })
 public class DisplayPropertyConfiguration extends WorkflowConfiguration {
 
@@ -48,9 +48,9 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
     @Enumerated(EnumType.STRING)
     private PrismLocale locale;
 
-    @Column(name = "program_type")
+    @Column(name = "advert_type")
     @Enumerated(EnumType.STRING)
-    private PrismProgramType programType;
+    private PrismAdvertType advertType;
 
     @ManyToOne
     @JoinColumn(name = "display_property_definition_id", nullable = false)
@@ -112,13 +112,13 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
     }
 
     @Override
-    public final PrismProgramType getProgramType() {
-        return programType;
+    public final PrismAdvertType getAdvertType() {
+        return advertType;
     }
 
     @Override
-    public final void setProgramType(PrismProgramType programType) {
-        this.programType = programType;
+    public final void setAdvertType(PrismAdvertType advertType) {
+        this.advertType = advertType;
     }
 
     public final DisplayPropertyDefinition getDisplayPropertyDefinition() {
@@ -162,8 +162,8 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
         return this;
     }
 
-    public DisplayPropertyConfiguration withProgramType(PrismProgramType programType) {
-        this.programType = programType;
+    public DisplayPropertyConfiguration withAdvertType(PrismAdvertType advertType) {
+        this.advertType = advertType;
         return this;
     }
 

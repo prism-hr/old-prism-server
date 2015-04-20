@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.domain.program;
+package com.zuehlke.pgadmissions.domain.advert;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,16 +12,16 @@ import javax.persistence.UniqueConstraint;
 import com.google.common.base.Objects;
 
 @Entity
-@Table(name = "PROGRAM_LOCATION", uniqueConstraints = @UniqueConstraint(columnNames = { "program_id", "location" }))
-public class ProgramLocation {
+@Table(name = "ADVERT_LOCATION", uniqueConstraints = @UniqueConstraint(columnNames = { "advert_id", "location" }))
+public class AdvertLocation {
 
     @Id
     @GeneratedValue
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "program_id", insertable = false, updatable = false)
-    private Program program;
+    @JoinColumn(name = "advert_id", insertable = false, updatable = false)
+    private Advert advert;
 
     @Column(name = "location", nullable = false)
     private String location;
@@ -34,12 +34,12 @@ public class ProgramLocation {
         this.id = id;
     }
 
-    public final Program getProgram() {
-        return program;
+    public Advert getAdvert() {
+        return advert;
     }
 
-    public final void setProgram(Program program) {
-        this.program = program;
+    public void setAdvert(Advert advert) {
+        this.advert = advert;
     }
 
     public final String getLocation() {
@@ -50,14 +50,14 @@ public class ProgramLocation {
         this.location = location;
     }
 
-    public ProgramLocation withLocation(String location) {
+    public AdvertLocation withLocation(String location) {
         this.location = location;
         return this;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(program, location);
+        return Objects.hashCode(advert, location);
     }
 
     @Override
@@ -68,8 +68,8 @@ public class ProgramLocation {
         if (getClass() != object.getClass()) {
             return false;
         }
-        final ProgramLocation other = (ProgramLocation) object;
-        return Objects.equal(program, other.getProgram()) && Objects.equal(location, other.getLocation());
+        final AdvertLocation other = (AdvertLocation) object;
+        return Objects.equal(advert, other.getAdvert()) && Objects.equal(location, other.getLocation());
     }
 
 }

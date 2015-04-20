@@ -6,7 +6,7 @@ import java.util.Set;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
@@ -61,9 +61,9 @@ public class AdvertRepresentation {
 
     private List<Integer> institutions;
 
-    private List<PrismProgramType> programTypes;
+    private List<PrismAdvertType> advertTypes;
 
-    private PrismProgramType programType;
+    private PrismAdvertType advertType;
 
     private Set<PrismStudyOption> studyOptions;
 
@@ -259,20 +259,20 @@ public class AdvertRepresentation {
         this.institutions = institutions;
     }
 
-    public final List<PrismProgramType> getProgramTypes() {
-        return programTypes;
+    public final List<PrismAdvertType> getAdvertTypes() {
+        return advertTypes;
     }
 
-    public final void setProgramTypes(List<PrismProgramType> programTypes) {
-        this.programTypes = programTypes;
+    public final void setAdvertTypes(List<PrismAdvertType> advertTypes) {
+        this.advertTypes = advertTypes;
     }
 
-    public final PrismProgramType getProgramType() {
-        return programType;
+    public final PrismAdvertType getAdvertType() {
+        return advertType;
     }
 
-    public final void setProgramType(PrismProgramType programType) {
-        this.programType = programType;
+    public final void setAdvertType(PrismAdvertType advertType) {
+        this.advertType = advertType;
     }
 
     public Set<PrismStudyOption> getStudyOptions() {

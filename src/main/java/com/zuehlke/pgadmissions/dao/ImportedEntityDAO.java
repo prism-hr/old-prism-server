@@ -126,12 +126,12 @@ public class ImportedEntityDAO {
 		        .executeUpdate();
 	}
 
-	public void disableImportedProgramStudyOptions(Institution institution, List<Integer> updates) {
+	public void disableImportedAdvertStudyOptions(Institution institution, List<Integer> updates) {
 		sessionFactory.getCurrentSession().createQuery( //
-		        "update ProgramStudyOption " //
+		        "update AdvertStudyOption " //
 		                + "set enabled = false " //
-		                + "where program in (" //
-		                + "select id " //
+		                + "where advert in (" //
+		                + "select advert.id " //
 		                + "from Program " //
 		                + "where institution = :institution " //
 		                + "and imported is true "
@@ -141,14 +141,15 @@ public class ImportedEntityDAO {
 		        .executeUpdate();
 	}
 
-	public void disableImportedProgramStudyOptionInstances(Institution institution, List<Integer> updates) {
+	public void disableImportedAdvertStudyOptionInstances(Institution institution, List<Integer> updates) {
 		sessionFactory.getCurrentSession().createQuery( //
-		        "update ProgramStudyOptionInstance " //
+		        "update AdvertStudyOptionInstance " //
 		                + "set enabled = false " //
 		                + "where studyOption in (" //
-		                + "select programStudyOption.id " //
-		                + "from ProgramStudyOption as programStudyOption " //
-		                + "join programStudyOption.program as program " //
+		                + "select arogramStudyOption.id " //
+		                + "from AdvertStudyOption as advertStudyOption " //
+		                + "join advertStudyOption.advert as advert " //
+		                + "join advert.program as program " //
 		                + "where program.institution = :institution " //
 		                + "and program.imported is true "
 		                + "and program.id not in (:updates))") //

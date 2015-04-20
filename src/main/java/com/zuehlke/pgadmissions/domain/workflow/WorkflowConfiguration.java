@@ -4,7 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public abstract class WorkflowConfiguration extends WorkflowResource {
@@ -13,9 +13,9 @@ public abstract class WorkflowConfiguration extends WorkflowResource {
 
     public abstract void setLocale(PrismLocale locale);
 
-    public abstract PrismProgramType getProgramType();
+    public abstract PrismAdvertType getAdvertType();
 
-    public abstract void setProgramType(PrismProgramType programType);
+    public abstract void setAdvertType(PrismAdvertType advertType);
 
     public abstract Boolean getSystemDefault();
 
@@ -28,9 +28,9 @@ public abstract class WorkflowConfiguration extends WorkflowResource {
         ResourceSignature resourceSignature = super.getResourceSignature();
         PrismScope resourceScope = getResource().getResourceScope();
         if (resourceScope == SYSTEM) {
-            resourceSignature.addProperty("locale", getLocale()).addProperty("programType", getProgramType());
+            resourceSignature.addProperty("locale", getLocale()).addProperty("advertType", getAdvertType());
         } else if (resourceScope == INSTITUTION) {
-            resourceSignature.addProperty("programType", getProgramType());
+            resourceSignature.addProperty("advertType", getAdvertType());
         }
         return resourceSignature;
     }

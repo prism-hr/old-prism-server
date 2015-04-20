@@ -16,23 +16,24 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.advert.AdvertStudyOption;
+import com.zuehlke.pgadmissions.domain.advert.AdvertStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.department.Department;
-import com.zuehlke.pgadmissions.domain.imported.ProgramType;
+import com.zuehlke.pgadmissions.domain.imported.AdvertType;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.DepartmentDTO;
+import com.zuehlke.pgadmissions.dto.ProgramProjectDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
@@ -91,7 +92,7 @@ public class ProgramService {
 
     public void save(Program program) {
         entityService.save(program);
-        for (ProgramStudyOption studyOption : program.getStudyOptions()) {
+        for (AdvertStudyOption studyOption : program.getAdvert().getStudyOptions()) {
             entityService.save(studyOption);
         }
     }
@@ -109,10 +110,6 @@ public class ProgramService {
         return programDAO.getPrograms();
     }
 
-    public ProgramStudyOptionInstance getFirstEnabledProgramStudyOptionInstance(Program program, StudyOption studyOption) {
-        return programDAO.getFirstEnabledProgramStudyOptionInstance(program, studyOption);
-    }
-
     public Program create(User user, ProgramDTO programDTO) {
         Institution institution = entityService.getById(Institution.class, programDTO.getInstitutionId());
         DepartmentDTO departmentDTO = programDTO.getDepartment();
@@ -122,7 +119,7 @@ public class ProgramService {
                 .withImported(false).withRequireProjectDefinition(false);
         copyProgramDetails(program, programDTO);
         program.setEndDate(new LocalDate().plusMonths(12));
-        copyStudyOptions(program, programDTO);
+        advertService.updateAdvertStudyOptions(program.getAdvert(), programDTO);
         return program;
     }
 
@@ -139,20 +136,6 @@ public class ProgramService {
         }
 
         advertService.setSequenceIdentifier(program.getAdvert(), program.getSequenceIdentifier().substring(0, 13));
-    }
-
-    public List<ProgramStudyOption> getEnabledProgramStudyOptions(Program program) {
-        return programDAO.getEnabledProgramStudyOptions(program);
-    }
-
-    public ProgramStudyOption getEnabledProgramStudyOption(Program program, StudyOption studyOption) {
-        return programDAO.getEnabledProgramStudyOption(program, studyOption);
-    }
-
-    public void disableElapsedProgramStudyOptions() {
-        LocalDate baseline = new LocalDate();
-        programDAO.disableElapsedProgramStudyOptions(baseline);
-        programDAO.disableElapsedProgramStudyOptionInstances(baseline);
     }
 
     public List<ProgramRepresentation> getSimilarPrograms(Integer institutionId, String searchTerm) {
@@ -186,10 +169,6 @@ public class ProgramService {
         update(programId, programDTO);
 
         return actionService.executeUserAction(program, action, comment);
-    }
-
-    public List<String> getPossibleLocations(Program program) {
-        return programDAO.getPossibleLocations(program);
     }
 
     public List<String> getSuggestedDivisions(Integer programId, String location) {
@@ -251,18 +230,16 @@ public class ProgramService {
         return programDAO.getApplications(program);
     }
 
+    public ProgramProjectDTO getProgramProjectSummary(Program program) {
+        return programDAO.getProgramProjectSummary(program);
+    }
+
     private void update(Integer programId, ProgramDTO programDTO) {
         Program program = entityService.getById(Program.class, programId);
         copyProgramDetails(program, programDTO);
 
         if (!program.getImported()) {
-            programDAO.deleteProgramStudyOptionInstances(program);
-            programDAO.deleteProgramStudyOptions(program);
-            program.getStudyOptions().clear();
-            copyStudyOptions(program, programDTO);
-            for (ProgramStudyOption studyOption : program.getStudyOptions()) {
-                entityService.save(studyOption);
-            }
+            advertService.updateAdvertStudyOptions(program.getAdvert(), programDTO);
         }
     }
 
@@ -270,7 +247,7 @@ public class ProgramService {
         Advert advert;
         if (program.getAdvert() == null) {
             advert = new Advert();
-            advert.setAddress(advertService.createAddressCopy(program.getInstitution().getAddress()));
+            advert.setAddress(advertService.createAddressCopy(program.getInstitution().getAdvert().getAddress()));
             program.setAdvert(advert);
         } else {
             advert = program.getAdvert();
@@ -280,8 +257,8 @@ public class ProgramService {
             String title = programDTO.getTitle();
             program.setTitle(title);
             advert.setTitle(title);
-            program.setProgramType((ProgramType) importedEntityService.getImportedEntityByCode(ProgramType.class, program.getInstitution(), programDTO
-                    .getProgramType().name()));
+            program.setAdvertType((AdvertType) importedEntityService.getImportedEntityByCode(AdvertType.class, program.getInstitution(), programDTO
+                    .getAdvertType().name()));
             program.setEndDate(programDTO.getEndDate());
         }
 
@@ -297,15 +274,6 @@ public class ProgramService {
 
         advert.setStudyDurationMinimum(programDTO.getStudyDurationMinimum());
         advert.setStudyDurationMaximum(programDTO.getStudyDurationMaximum());
-    }
-
-    private void copyStudyOptions(Program program, ProgramDTO programDTO) {
-        for (PrismStudyOption prismStudyOption : programDTO.getStudyOptions()) {
-            StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, program.getInstitution(), prismStudyOption.name());
-            ProgramStudyOption programStudyOption = new ProgramStudyOption().withStudyOption(studyOption).withApplicationStartDate(new LocalDate())
-                    .withApplicationCloseDate(program.getEndDate()).withEnabled(true).withProgram(program);
-            program.getStudyOptions().add(programStudyOption);
-        }
     }
 
 }

@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -20,8 +20,8 @@ import com.zuehlke.pgadmissions.domain.system.System;
 
 @Entity
 @Table(name = "WORKFLOW_PROPERTY_CONFIGURATION", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"system_id", "locale", "program_type", "workflow_property_definition_id", "version"}),
-        @UniqueConstraint(columnNames = {"institution_id", "program_type", "workflow_property_definition_id", "version"}),
+        @UniqueConstraint(columnNames = {"system_id", "locale", "advert_type", "workflow_property_definition_id", "version"}),
+        @UniqueConstraint(columnNames = {"institution_id", "advert_type", "workflow_property_definition_id", "version"}),
         @UniqueConstraint(columnNames = {"program_id", "workflow_property_definition_id", "version"})})
 public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersioned {
 
@@ -45,9 +45,9 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
     @Enumerated(EnumType.STRING)
     private PrismLocale locale;
 
-    @Column(name = "program_type")
+    @Column(name = "advert_type")
     @Enumerated(EnumType.STRING)
-    private PrismProgramType programType;
+    private PrismAdvertType advertType;
 
     @ManyToOne
     @JoinColumn(name = "workflow_property_definition_id", nullable = false)
@@ -123,13 +123,13 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
     }
 
     @Override
-    public final PrismProgramType getProgramType() {
-        return programType;
+    public final PrismAdvertType getAdvertType() {
+        return advertType;
     }
 
     @Override
-    public final void setProgramType(PrismProgramType programType) {
-        this.programType = programType;
+    public final void setAdvertType(PrismAdvertType advertType) {
+        this.advertType = advertType;
     }
 
     public final WorkflowPropertyDefinition getWorkflowPropertyDefinition() {
@@ -217,8 +217,8 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
         return this;
     }
 
-    public WorkflowPropertyConfiguration withProgramType(PrismProgramType programType) {
-        this.programType = programType;
+    public WorkflowPropertyConfiguration withAdvertType(PrismAdvertType advertType) {
+        this.advertType = advertType;
         return this;
     }
 

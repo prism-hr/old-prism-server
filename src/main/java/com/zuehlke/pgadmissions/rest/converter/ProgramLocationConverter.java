@@ -2,21 +2,21 @@ package com.zuehlke.pgadmissions.rest.converter;
 
 import org.dozer.DozerConverter;
 
-import com.zuehlke.pgadmissions.domain.program.ProgramLocation;
+import com.zuehlke.pgadmissions.domain.advert.AdvertLocation;
 
-public class ProgramLocationConverter extends DozerConverter<ProgramLocation, String> {
+public class ProgramLocationConverter extends DozerConverter<AdvertLocation, String> {
 
     public ProgramLocationConverter() {
-        super(ProgramLocation.class, String.class);
+        super(AdvertLocation.class, String.class);
     }
 
     @Override
-    public String convertTo(ProgramLocation source, String destination) {
+    public String convertTo(AdvertLocation source, String destination) {
         return source != null ? source.getLocation() : null;
     }
 
     @Override
-    public ProgramLocation convertFrom(String source, ProgramLocation destination) {
+    public AdvertLocation convertFrom(String source, AdvertLocation destination) {
         throw new UnsupportedOperationException();
     }
 

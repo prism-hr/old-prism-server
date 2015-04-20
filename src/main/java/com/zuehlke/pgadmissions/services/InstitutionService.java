@@ -7,25 +7,23 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.I
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.document.FileCategory;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
@@ -38,8 +36,6 @@ import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
-import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
@@ -49,248 +45,239 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 @Transactional
 public class InstitutionService {
 
-	@Inject
-	private InstitutionDAO institutionDAO;
+    @Inject
+    private InstitutionDAO institutionDAO;
 
-	@Inject
-	private DocumentService documentService;
+    @Inject
+    private AdvertService advertService;
 
-	@Inject
-	private EntityService entityService;
+    @Inject
+    private EntityService entityService;
 
-	@Inject
-	private ImportedEntityService importedEntityService;
+    @Inject
+    private ImportedEntityService importedEntityService;
 
-	@Inject
-	private ResourceService resourceService;
+    @Inject
+    private SystemService systemService;
 
-	@Inject
-	private SystemService systemService;
+    @Inject
+    private ActionService actionService;
 
-	@Inject
-	private ActionService actionService;
+    @Inject
+    private CommentService commentService;
 
-	@Inject
-	private CommentService commentService;
+    @Inject
+    private StateService stateService;
 
-	@Inject
-	private StateService stateService;
+    @Inject
+    private UserService userService;
 
-	@Inject
-	private UserService userService;
+    @Inject
+    private GeocodableLocationService geocodableLocationService;
 
-	@Inject
-	private GeocodableLocationService geocodableLocationService;
+    @Inject
+    private ProgramService programService;
 
-	@Inject
-	private ProgramService programService;
+    @Inject
+    private ProjectService projectService;
 
-	@Inject
-	private ProjectService projectService;
+    @Inject
+    private ApplicationContext applicationContext;
 
-	@Inject
-	private ApplicationContext applicationContext;
+    public Institution getById(Integer id) {
+        return entityService.getById(Institution.class, id);
+    }
 
-	public Institution getById(Integer id) {
-		return entityService.getById(Institution.class, id);
-	}
+    public List<InstitutionDomicile> getDomiciles() {
+        return institutionDAO.getDomciles();
+    }
 
-	public List<InstitutionDomicile> getDomiciles() {
-		return institutionDAO.getDomciles();
-	}
+    public List<Institution> listApprovedInstitutionsByCountry(InstitutionDomicile domicile) {
+        return institutionDAO.listApprovedInstitutionsByCountry(domicile);
+    }
 
-	public List<Institution> listApprovedInstitutionsByCountry(InstitutionDomicile domicile) {
-		return institutionDAO.listApprovedInstitutionsByCountry(domicile);
-	}
+    public Institution getUclInstitution() {
+        return institutionDAO.getUclInstitution();
+    }
 
-	public Institution getUclInstitution() {
-		return institutionDAO.getUclInstitution();
-	}
+    public Institution create(User user, InstitutionDTO institutionDTO) {
+        InstitutionAddressDTO addressDTO = institutionDTO.getAddress();
+        InstitutionDomicile addressDomicile = entityService.getById(InstitutionDomicile.class, addressDTO.getDomicile());
 
-	public Institution create(User user, InstitutionDTO institutionDTO) {
-		InstitutionAddressDTO institutionAddressDTO = institutionDTO.getAddress();
-		InstitutionDomicile institutionAddressCountry = entityService.getById(InstitutionDomicile.class, institutionAddressDTO.getDomicile());
+        InstitutionAddress address = new InstitutionAddress().withAddressLine1(addressDTO.getAddressLine1())
+                .withAddressLine2(addressDTO.getAddressLine2()).withAddressTown(addressDTO.getAddressTown())
+                .withAddressRegion(addressDTO.getAddressDistrict()).withAddressCode(addressDTO.getAddressCode())
+                .withDomicile(addressDomicile);
 
-		InstitutionAddress address = new InstitutionAddress().withAddressLine1(institutionAddressDTO.getAddressLine1())
-		        .withAddressLine2(institutionAddressDTO.getAddressLine2()).withAddressTown(institutionAddressDTO.getAddressTown())
-		        .withAddressRegion(institutionAddressDTO.getAddressDistrict()).withAddressCode(institutionAddressDTO.getAddressCode())
-		        .withDomicile(institutionAddressCountry);
+        String title = institutionDTO.getTitle();
 
-		InstitutionDomicile institutionCountry = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
+        Advert advert = new Advert().withTitle(title).withLocale(institutionDTO.getLocale()).withCurrency(institutionDTO.getCurrency())
+                .withSummary(institutionDTO.getSummary()).withHomepage(institutionDTO.getHomepage()).withAddress(address);
+        advertService.setImages(advert, institutionDTO.getImages());
 
-		Institution institution = new Institution().withSystem(systemService.getSystem()).withDomicile(institutionCountry).withAddress(address)
-		        .withTitle(institutionDTO.getTitle()).withLocale(institutionDTO.getLocale()).withSummary(institutionDTO.getSummary())
-		        .withHomepage(institutionDTO.getHomepage()).withUclInstitution(false).withDefaultProgramType(institutionDTO.getDefaultProgramType())
-		        .withDefaultStudyOption(institutionDTO.getDefaultStudyOption()).withGoogleId(institutionDTO.getGoogleIdentifier())
-		        .withCurrency(institutionDTO.getCurrency()).withUser(user);
+        InstitutionDomicile institutionDomicile = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
+        Institution institution = new Institution().withUser(user).withSystem(systemService.getSystem()).withDomicile(institutionDomicile)
+                .withTitle(title).withUclInstitution(false).withGoogleId(institutionDTO.getGoogleIdentifier());
 
-		address.setInstitution(institution);
-		setLogoDocument(institution, institutionDTO, PrismAction.SYSTEM_CREATE_INSTITUTION);
-		return institution;
-	}
+        if (BooleanUtils.isTrue(institutionDTO.getDefaultLocale())) {
+            institution.setAdvert(advert);
+        }
 
-	public void update(Integer institutionId, InstitutionDTO institutionDTO) {
-		Institution institution = entityService.getById(Institution.class, institutionId);
+        advert.setInstitution(institution);
+        address.setInstitution(institution);
+        return institution;
+    }
 
-		InstitutionAddress address = institution.getAddress();
-		InstitutionAddressDTO addressDTO = institutionDTO.getAddress();
-		InstitutionDomicile domicile = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
+    public void update(Integer institutionId, InstitutionDTO institutionDTO) {
+        Institution institution = entityService.getById(Institution.class, institutionId);
 
-		institution.setDomicile(domicile);
-		institution.setTitle(institutionDTO.getTitle());
-		institution.setLocale(institutionDTO.getLocale());
-		institution.setSummary(institutionDTO.getSummary());
-		institution.setDescription(institutionDTO.getDescription());
+        InstitutionAddressDTO addressDTO = institutionDTO.getAddress();
+        InstitutionDomicile domicile = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
 
-		address.setAddressLine1(addressDTO.getAddressLine1());
-		address.setAddressLine2(addressDTO.getAddressLine2());
-		address.setAddressTown(addressDTO.getAddressTown());
-		address.setAddressRegion(addressDTO.getAddressDistrict());
-		address.setAddressCode(addressDTO.getAddressCode());
+        institution.setDomicile(domicile);
 
-		geocodableLocationService.setLocation(address);
+        String title = institutionDTO.getTitle();
+        institution.setTitle(title);
 
-		institution.setCurrency(institutionDTO.getCurrency());
-		institution.setHomepage(institutionDTO.getHomepage());
+        Advert advert = advertService.getAdvertByLocale(institution, institutionDTO.getLocale());
 
-		institution.setDefaultProgramType(institutionDTO.getDefaultProgramType());
-		institution.setDefaultStudyOption(institutionDTO.getDefaultStudyOption());
+        advert.setTitle(title);
+        advert.setLocale(institutionDTO.getLocale());
+        advert.setCurrency(institutionDTO.getCurrency());
+        advert.setSummary(institutionDTO.getSummary());
+        advert.setDescription(institutionDTO.getDescription());
+        advert.setHomepage(institutionDTO.getHomepage());
+        advertService.setImages(advert, institutionDTO.getImages());
+        
+        if (BooleanUtils.isTrue(institutionDTO.getDefaultLocale())) {
+            institution.setAdvert(advert);
+        }
 
-		setLogoDocument(institution, institutionDTO, PrismAction.INSTITUTION_VIEW_EDIT);
-	}
+        InstitutionAddress address = advert.getInstitutionAddress();
+        address.setAddressLine1(addressDTO.getAddressLine1());
+        address.setAddressLine2(addressDTO.getAddressLine2());
+        address.setAddressTown(addressDTO.getAddressTown());
+        address.setAddressRegion(addressDTO.getAddressDistrict());
+        address.setAddressCode(addressDTO.getAddressCode());
+    }
+    
 
-	public List<String> listAvailableCurrencies() {
-		return institutionDAO.listAvailableCurrencies();
-	}
+    public List<String> listAvailableCurrencies() {
+        return institutionDAO.listAvailableCurrencies();
+    }
 
-	public void save(Institution institution) {
-		InstitutionAddress institutionAddress = institution.getAddress();
-		entityService.save(institution);
-		entityService.save(institutionAddress);
-		geocodableLocationService.setLocation(institutionAddress);
-	}
+    public void save(Institution institution) {
+        Advert advert = institution.getAdvert();
+        InstitutionAddress address = advert.getAddress();
+        geocodableLocationService.setLocation(address);
 
-	public void populateDefaultImportedEntityFeeds() throws DeduplicationException {
-		for (Institution institution : institutionDAO.getInstitutionsWithoutImportedEntityFeeds()) {
-			for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {
-				String defaultLocation = prismImportedEntity.getDefaultLocation();
-				if (defaultLocation != null) {
-					importedEntityService.getOrCreateImportedEntityFeed(institution, prismImportedEntity, defaultLocation);
-				}
-			}
-		}
-	}
+        entityService.save(address);
+        entityService.save(advert);
+        entityService.save(institution);
 
-	public void initializeInstitution(Integer institutionId) throws Exception {
-		Institution institution = getById(institutionId);
-		User user = systemService.getSystem().getUser();
-		Action action = actionService.getById(INSTITUTION_STARTUP);
-		Comment comment = new Comment().withAction(action)
-		        .withContent(applicationContext.getBean(PropertyLoader.class).localize(institution).load(SYSTEM_COMMENT_INITIALIZED_INSTITUTION))
-		        .withDeclinedResponse(false).withUser(user).withCreatedTimestamp(new DateTime());
-		actionService.executeAction(institution, action, comment);
-	}
+        address.setInstitution(institution);
+        advert.setInstitution(institution);
+    }
 
-	public List<Integer> getInstitutionsToActivate() {
-		return institutionDAO.getInstitutionsToActivate();
-	}
+    public void populateDefaultImportedEntityFeeds() throws DeduplicationException {
+        for (Institution institution : institutionDAO.getInstitutionsWithoutImportedEntityFeeds()) {
+            for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {
+                String defaultLocation = prismImportedEntity.getDefaultLocation();
+                if (defaultLocation != null) {
+                    importedEntityService.getOrCreateImportedEntityFeed(institution, prismImportedEntity, defaultLocation);
+                }
+            }
+        }
+    }
 
-	public List<Institution> list() {
-		return institutionDAO.list();
-	}
+    public void initializeInstitution(Integer institutionId) throws Exception {
+        Institution institution = getById(institutionId);
+        User user = systemService.getSystem().getUser();
+        Action action = actionService.getById(INSTITUTION_STARTUP);
+        Comment comment = new Comment().withAction(action)
+                .withContent(applicationContext.getBean(PropertyLoader.class).localize(institution).load(SYSTEM_COMMENT_INITIALIZED_INSTITUTION))
+                .withDeclinedResponse(false).withUser(user).withCreatedTimestamp(new DateTime());
+        actionService.executeAction(institution, action, comment);
+    }
 
-	public Institution getActivatedInstitutionByGoogleId(String googleId) {
-		return institutionDAO.getActivatedInstitutionByGoogleId(googleId);
-	}
+    public List<Integer> getInstitutionsToActivate() {
+        return institutionDAO.getInstitutionsToActivate();
+    }
 
-	public ActionOutcomeDTO executeAction(Integer institutionId, CommentDTO commentDTO) throws Exception {
-		User user = userService.getById(commentDTO.getUser());
-		Institution institution = getById(institutionId);
+    public List<Institution> list() {
+        return institutionDAO.list();
+    }
 
-		PrismAction actionId = commentDTO.getAction();
-		Action action = actionService.getById(actionId);
+    public Institution getActivatedInstitutionByGoogleId(String googleId) {
+        return institutionDAO.getActivatedInstitutionByGoogleId(googleId);
+    }
 
-		String commentContent = actionId == INSTITUTION_VIEW_EDIT ? applicationContext.getBean(PropertyLoader.class).localize(institution)
-		        .load(INSTITUTION_COMMENT_UPDATED) : commentDTO.getContent();
+    public ActionOutcomeDTO executeAction(Integer institutionId, CommentDTO commentDTO) throws Exception {
+        User user = userService.getById(commentDTO.getUser());
+        Institution institution = getById(institutionId);
 
-		State transitionState = stateService.getById(commentDTO.getTransitionState());
-		Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
-		        .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
-		commentService.appendCommentProperties(comment, commentDTO);
+        PrismAction actionId = commentDTO.getAction();
+        Action action = actionService.getById(actionId);
 
-		InstitutionDTO institutionDTO = (InstitutionDTO) commentDTO.fetchResourceDTO();
-		if (institutionDTO != null) {
-			update(institutionId, institutionDTO);
-		}
+        String commentContent = actionId == INSTITUTION_VIEW_EDIT ? applicationContext.getBean(PropertyLoader.class).localize(institution)
+                .load(INSTITUTION_COMMENT_UPDATED) : commentDTO.getContent();
 
-		return actionService.executeUserAction(institution, action, comment);
-	}
+        State transitionState = stateService.getById(commentDTO.getTransitionState());
+        Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
+                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
+        commentService.appendCommentProperties(comment, commentDTO);
 
-	public boolean hasAuthenticatedFeeds(Institution institution) {
-		return institutionDAO.getAuthenticatedFeedCount(institution) > 0;
-	}
+        InstitutionDTO institutionDTO = (InstitutionDTO) commentDTO.fetchResourceDTO();
+        if (institutionDTO != null) {
+            update(institutionId, institutionDTO);
+        }
 
-	public DateTime getLatestUpdatedTimestampSitemap(List<PrismState> programStates, List<PrismState> projectStates) {
-		return institutionDAO.getLatestUpdatedTimestampSitemap(programStates, projectStates);
-	}
+        return actionService.executeUserAction(institution, action, comment);
+    }
 
-	public List<SitemapEntryDTO> getSitemapEntries() {
-		List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
-		List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-		return institutionDAO.getSitemapEntries(activeProgramStates, activeProjectStates);
-	}
+    public boolean hasAuthenticatedFeeds(Institution institution) {
+        return institutionDAO.getAuthenticatedFeedCount(institution) > 0;
+    }
 
-	public SocialMetadataDTO getSocialMetadata(Institution institution) {
-		return new SocialMetadataDTO().withAuthor(institution.getUser().getFullName()).withTitle(institution.getTitle())
-		        .withDescription(institution.getSummary()).withThumbnailUrl(resourceService.getSocialThumbnailUrl(institution))
-		        .withResourceUrl(resourceService.getSocialResourceUrl(institution)).withLocale(resourceService.getOperativeLocale(institution).toString());
-	}
+    public DateTime getLatestUpdatedTimestampSitemap(List<PrismState> programStates, List<PrismState> projectStates) {
+        return institutionDAO.getLatestUpdatedTimestampSitemap(programStates, projectStates);
+    }
 
-	public SearchEngineAdvertDTO getSearchEngineAdvert(Integer institutionId) {
-		List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
-		List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-		SearchEngineAdvertDTO searchEngineDTO = institutionDAO.getSearchEngineAdvert(institutionId, activeProgramStates, activeProjectStates);
+    public List<SitemapEntryDTO> getSitemapEntries() {
+        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
+        List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
+        return institutionDAO.getSitemapEntries(activeProgramStates, activeProjectStates);
+    }
 
-		if (searchEngineDTO != null) {
-			searchEngineDTO.setRelatedPrograms(programService.getActiveProgramsByInstitution(institutionId));
-			searchEngineDTO.setRelatedProjects(projectService.getActiveProjectsByInstitution(institutionId));
+    public SocialMetadataDTO getSocialMetadata(Institution institution) {
+        return advertService.getSocialMetadata(institution.getAdvert());
+    }
 
-			List<String> relatedUsers = Lists.newArrayList();
-			List<User> institutionAcademics = userService.getUsersForResourceAndRoles(getById(institutionId), PROJECT_PRIMARY_SUPERVISOR,
-			        PROJECT_SECONDARY_SUPERVISOR);
-			for (User institutionAcademic : institutionAcademics) {
-				relatedUsers.add(institutionAcademic.getSearchEngineRepresentation());
-			}
-			searchEngineDTO.setRelatedUsers(relatedUsers);
-		}
+    public SearchEngineAdvertDTO getSearchEngineAdvert(Integer institutionId) {
+        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
+        List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
+        SearchEngineAdvertDTO searchEngineDTO = institutionDAO.getSearchEngineAdvert(institutionId, activeProgramStates, activeProjectStates);
 
-		return searchEngineDTO;
-	}
+        if (searchEngineDTO != null) {
+            searchEngineDTO.setRelatedPrograms(programService.getActiveProgramsByInstitution(institutionId));
+            searchEngineDTO.setRelatedProjects(projectService.getActiveProjectsByInstitution(institutionId));
 
-	public List<ResourceSearchEngineDTO> getActiveInstitions() {
-		List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
-		List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-		return institutionDAO.getRelatedInstitutions(activeProgramStates, activeProjectStates);
-	}
+            List<String> relatedUsers = Lists.newArrayList();
+            List<User> institutionAcademics = userService.getUsersForResourceAndRoles(getById(institutionId), PROJECT_PRIMARY_SUPERVISOR,
+                    PROJECT_SECONDARY_SUPERVISOR);
+            for (User institutionAcademic : institutionAcademics) {
+                relatedUsers.add(institutionAcademic.getSearchEngineRepresentation());
+            }
+            searchEngineDTO.setRelatedUsers(relatedUsers);
+        }
 
-	private void setLogoDocument(Institution institution, InstitutionDTO institutionDTO, PrismAction actionId) {
-		FileDTO logoDocumentDTO = institutionDTO.getLogoDocument();
-		String logoDocumentLink = institutionDTO.getLogoUri();
+        return searchEngineDTO;
+    }
 
-		if (logoDocumentDTO == null && logoDocumentLink == null) {
-			return;
-		} else if (logoDocumentDTO == null) {
-			try {
-				institution.setLogoDocument(documentService.getExternalFile(FileCategory.IMAGE, logoDocumentLink));
-			} catch (IOException e) {
-				Action action = actionService.getById(actionId);
-				throw new WorkflowPermissionException(institution, action);
-			}
-		} else {
-			Document image = documentService.getById(logoDocumentDTO.getId(), FileCategory.IMAGE);
-			Preconditions.checkState(image.getContentType().equals("image/jpeg"), "Unexpected image type: " + image.getContentType());
-			institution.setLogoDocument(image);
-		}
-	}
+    public List<ResourceSearchEngineDTO> getActiveInstitions() {
+        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
+        List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
+        return institutionDAO.getRelatedInstitutions(activeProgramStates, activeProjectStates);
+    }
 
 }

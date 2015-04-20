@@ -11,12 +11,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertType;
 
 @Entity
-@Table(name = "ADVERT_PROGRAM_TYPE", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "program_type" }),
-        @UniqueConstraint(columnNames = { "program_type", "advert_id" }) })
-public class AdvertProgramType extends AdvertFilterCategory {
+@Table(name = "ADVERT_ADVERT_TYPE", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "advert_type" }),
+        @UniqueConstraint(columnNames = { "advert_type", "advert_id" }) })
+public class AdvertAdvertType extends AdvertFilterCategory {
 
     @Id
     @GeneratedValue
@@ -26,9 +26,9 @@ public class AdvertProgramType extends AdvertFilterCategory {
     @JoinColumn(name = "advert_id", updatable = false, insertable = false)
     private Advert advert;
 
-    @Column(name = "program_type", nullable = false)
+    @Column(name = "advert_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PrismProgramType programType;
+    private PrismAdvertType advertType;
 
     @Override
     public Integer getId() {
@@ -50,22 +50,22 @@ public class AdvertProgramType extends AdvertFilterCategory {
         this.advert = advert;
     }
 
-    public final PrismProgramType getProgramType() {
-        return programType;
+    public final PrismAdvertType getAdvertType() {
+        return advertType;
     }
 
-    public final void setProgramType(PrismProgramType programType) {
-        this.programType = programType;
+    public final void setAdvertType(PrismAdvertType advertType) {
+        this.advertType = advertType;
     }
 
     @Override
     public Object getValue() {
-        return getProgramType();
+        return getAdvertType();
     }
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("programType", programType);
+        return super.getResourceSignature().addProperty("advertType", advertType);
     }
 
 }

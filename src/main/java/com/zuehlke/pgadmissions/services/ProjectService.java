@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -66,10 +68,10 @@ public class ProjectService {
     private StateService stateService;
 
     @Inject
-    private SystemService systemService;
+    private AdvertService advertService;
 
     @Inject
-    private AdvertService advertService;
+    private ResourceService resourceService;
 
     @Inject
     private ApplicationContext applicationContext;
@@ -83,12 +85,14 @@ public class ProjectService {
     }
 
     public Project create(User user, ProjectDTO projectDTO) {
-        Program program = entityService.getById(Program.class, projectDTO.getProgramId());
-        DepartmentDTO departmentDTO = projectDTO.getDepartment();
-        Department deparment = departmentDTO == null ? program.getDepartment() : departmentService.getOrCreateDepartment(departmentDTO);
+        PrismScope resourceScope = projectDTO.getResourceScope();
+        ResourceParent resourceParent = (ResourceParent) resourceService.getById(resourceScope, projectDTO.getResourceId());
 
-        Project project = new Project().withUser(user).withSystem(systemService.getSystem()).withInstitution(program.getInstitution())
-                .withDepartment(deparment).withProgram(program);
+        DepartmentDTO departmentDTO = projectDTO.getDepartment();
+        Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(departmentDTO);
+        department = resourceScope == PROGRAM ? resourceParent.getProgram().getDepartment() : null;
+
+        Project project = new Project().withUser(user).withParentResource(resourceParent).withDepartment(department);
         copyProjectDetails(project, projectDTO);
         project.setEndDate(new LocalDate().plusMonths(12));
         return project;
@@ -117,9 +121,7 @@ public class ProjectService {
         Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
                 .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
         commentService.appendCommentProperties(comment, commentDTO);
-
         update(programId, projectDTO);
-
         return actionService.executeUserAction(project, action, comment);
     }
 
@@ -214,13 +216,18 @@ public class ProjectService {
         Advert advert;
         if (project.getAdvert() == null) {
             advert = new Advert();
-            advert.setAddress(advertService.createAddressCopy(project.getInstitution().getAddress()));
+            advert.setAddress(advertService.createAddressCopy(project.getInstitution().getAdvert().getAddress()));
             project.setAdvert(advert);
         } else {
             advert = project.getAdvert();
         }
 
         String title = projectDTO.getTitle();
+        
+        // FIXME (Client): Always pass locale
+        PrismLocale locale = projectDTO.getLocale();
+        locale = locale == null ? project.getResourceParent().getLocale() : locale;
+        
         project.setEndDate(projectDTO.getEndDate());
         project.setTitle(title);
         advert.setTitle(title);

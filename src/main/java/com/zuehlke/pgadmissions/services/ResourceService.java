@@ -510,7 +510,7 @@ public class ResourceService {
         if (resource.getResourceScope() == PrismScope.SYSTEM) {
             return defaultSocialThumbnail;
         } else {
-            Document logoDocument = resource.getInstitution().getLogoDocument();
+            Document logoDocument = resource.getInstitution().getAdvert().getLogoImage();
             if (logoDocument == null) {
                 return defaultSocialThumbnail;
             }
@@ -560,6 +560,10 @@ public class ResourceService {
 
     public List<Integer> getResourcesByMatchingEnclosingResource(PrismScope enclosingResourceScope, String searchTerm) {
         return resourceDAO.getResourcesByMatchingEnclosingResources(enclosingResourceScope, searchTerm);
+    }
+    
+    public DateTime getResourcePublishedTimestamp(ResourceParent resource) {
+        return resourceDAO.getResourcePublishedTimestamp(resource);
     }
 
     private Junction getFilterConditions(PrismScope resourceScope, ResourceListFilterDTO filter) {

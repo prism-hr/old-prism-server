@@ -55,5 +55,9 @@ public enum PrismStudyOption {
         }
         return null;
     }
+    
+    public static PrismStudyOption getSystemStudyOption() {
+        return FULL_TIME;
+    }
 
 }

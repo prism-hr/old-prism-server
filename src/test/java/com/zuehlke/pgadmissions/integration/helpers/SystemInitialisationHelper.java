@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.integration.helpers;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertType.getSystemAdvertType;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -219,7 +219,7 @@ public class SystemInitialisationHelper {
 			DisplayPropertyDefinition displayProperty = value.getDisplayPropertyDefinition();
 			PrismDisplayPropertyDefinition prismDisplayProperty = displayProperty.getId();
 
-			assertEquals(value.getProgramType(), displayProperty.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemProgramType() : null);
+			assertEquals(value.getAdvertType(), displayProperty.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemAdvertType() : null);
 			assertEquals(displayProperty.getCategory(), prismDisplayProperty.getCategory());
 			assertEquals(value.getValue(), prismDisplayProperty.getDefaultValue());
 			assertTrue(value.getSystemDefault());
@@ -241,7 +241,7 @@ public class SystemInitialisationHelper {
 			        system, system.getUser(), definition);
 
 			assertEquals(configuration.getLocale(), getSystemLocale());
-			assertEquals(configuration.getProgramType(), definition.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemProgramType() : null);
+			assertEquals(configuration.getAdvertType(), definition.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemAdvertType() : null);
 			assertEquals(configuration.getNotificationDefinition(), definition);
 			assertEquals(prismNotificationDefinition.getDefaultReminderDuration(), configuration.getReminderInterval());
 			assertTrue(configuration.getSystemDefault());
@@ -260,7 +260,7 @@ public class SystemInitialisationHelper {
 			        PrismConfiguration.STATE_DURATION, system, system.getUser(), state.getStateDurationDefinition());
 
 			assertEquals(stateDurationConfiguration.getLocale(), getSystemLocale());
-			assertEquals(stateDurationConfiguration.getProgramType(), state.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemProgramType() : null);
+			assertEquals(stateDurationConfiguration.getAdvertType(), state.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemAdvertType() : null);
 			assertEquals(state.getId().getDefaultDuration().getDefaultDuration(), stateDurationConfiguration.getDuration());
 			assertTrue(stateDurationConfiguration.getSystemDefault());
 		}

@@ -40,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
 import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
@@ -56,6 +57,9 @@ public class NotificationService {
 
     @Inject
     private ActionService actionService;
+
+    @Inject
+    private AdvertService advertService;
 
     @Inject
     private UserService userService;
@@ -211,18 +215,21 @@ public class NotificationService {
         resource.setLastNotifiedUpdateSyndicated(baseline);
     }
 
-    public List<Integer> getRecommendationDefinitions(LocalDate baseline) {
-        return notificationDAO.getRecommendationDefinitions(baseline);
+    public List<Integer> getRecommendationDefinitions(LocalDate lastRecommendedBaseline) {
+        return notificationDAO.getRecommendationDefinitions(lastRecommendedBaseline);
     }
 
     public void sendRecommendationNotification(Integer userId, LocalDate baseline, LocalDate lastRecommendedBaseline) {
         User user = userService.getById(userId);
-        System system = systemService.getSystem();
-        User author = system.getUser();
+        List<AdvertRecommendationDTO> recommendations = advertService.getRecommendedAdverts(user, lastRecommendedBaseline);
 
+        System system = systemService.getSystem();
         NotificationDefinition definition = getById(SYSTEM_APPLICATION_RECOMMENDATION_NOTIFICATION);
-        sendNotification(definition, new NotificationDefinitionModelDTO().withUser(user).withAuthor(author).withResource(system)
-                .withTransitionAction(SYSTEM_MANAGE_ACCOUNT));
+
+        if (!recommendations.isEmpty()) {
+            sendNotification(definition, new NotificationDefinitionModelDTO().withUser(user).withAuthor(system.getUser()).withResource(system)
+                    .withTransitionAction(SYSTEM_MANAGE_ACCOUNT).withRecommendations(recommendations));
+        }
 
         createOrUpdateUserNotification(system, user, definition, baseline);
     }
@@ -290,15 +297,15 @@ public class NotificationService {
             List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope);
             Set<Integer> assignedResources = resourceService.getAssignedResources(user, scope, parentScopes);
             if (!assignedResources.isEmpty()) {
-                notificationDAO.resetNotificationsSyndicated(scope, assignedResources);
+                notificationDAO.resetNotifications(scope, assignedResources);
             }
         }
     }
-    
+
     public void resetNotifications(UserRole userRole) {
         User user = userRole.getUser();
         Role role = userRole.getRole();
-        List<NotificationDefinition> individualDefinitions = notificationDAO.getNotificationDefinitionsIndividual(role);
+        List<NotificationDefinition> individualDefinitions = notificationDAO.getNotificationDefinitions(role);
         notificationDAO.resetNotifications(user, individualDefinitions);
     }
 

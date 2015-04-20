@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.domain.imported.Gender;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
 import com.zuehlke.pgadmissions.domain.imported.Language;
-import com.zuehlke.pgadmissions.domain.imported.ProgramType;
+import com.zuehlke.pgadmissions.domain.imported.AdvertType;
 import com.zuehlke.pgadmissions.domain.imported.QualificationType;
 import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
 import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
@@ -56,7 +56,7 @@ public enum PrismImportedEntity {
 	REJECTION_REASON(RejectionReasons.class, "rejectionReason", RejectionReason.class, "xml/defaultEntities/rejectionReason.xml",
 	        "xsd/import/rejectionReason.xsd", false), //
 	STUDY_OPTION(StudyOptions.class, "studyOption", StudyOption.class, "xml/defaultEntities/studyOption.xml", "xsd/import/studyOption.xsd", false), //
-	PROGRAM_TYPE(ProgramTypes.class, "programType", ProgramType.class, "xml/defaultEntities/programType.xml", "xsd/import/programType.xsd", false), //
+	ADVERT_TYPE(ProgramTypes.class, "programType", AdvertType.class, "xml/defaultEntities/advertType.xml", "xsd/import/advertType.xsd", false), //
 	INSTITUTION(Institutions.class, "institution", ImportedInstitution.class, "xml/defaultEntities/institution.xml", "xsd/import/institution.xsd", true);
 
 	private Class<?> jaxbClass;

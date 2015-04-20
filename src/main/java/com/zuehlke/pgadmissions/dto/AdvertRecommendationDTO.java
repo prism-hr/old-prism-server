@@ -6,22 +6,47 @@ public class AdvertRecommendationDTO {
 
     private Advert advert;
     
-    private Long applicationCount;
+    private boolean newAdvert;
+    
+    private Integer projectCount;
+    
+    private boolean newProjectAdvert;
 
-    public final Advert getAdvert() {
+    public Advert getAdvert() {
         return advert;
     }
 
-    public final void setAdvert(Advert advert) {
+    public void setAdvert(Advert advert) {
         this.advert = advert;
     }
 
-    public final Long getApplicationCount() {
-        return applicationCount;
+    public boolean isNewAdvert() {
+        return newAdvert;
     }
 
-    public final void setApplicationCount(Long applicationCount) {
-        this.applicationCount = applicationCount;
+    public void setNewAdvert(boolean newAdvert) {
+        this.newAdvert = newAdvert;
+    }
+
+    public Integer getProjectCount() {
+        return projectCount;
+    }
+
+    public void setProjectCount(Integer projectCount) {
+        this.projectCount = projectCount;
+    }
+
+    public boolean isNewProjectAdvert() {
+        return newProjectAdvert;
+    }
+
+    public void setNewProjectAdvert(boolean newProjectAdvert) {
+        this.newProjectAdvert = newProjectAdvert;
+    }
+    
+    public AdvertRecommendationDTO withAdvert(Advert advert) {
+        this.advert = advert;
+        return this;
     }
     
 }

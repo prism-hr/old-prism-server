@@ -12,10 +12,10 @@
 				<class-b>java.lang.Integer</class-b>
 			</converter>
 			<converter
-				type="com.zuehlke.pgadmissions.rest.converter.ProgramTypeConverter">
-				<class-a>com.zuehlke.pgadmissions.domain.imported.ProgramType
+				type="com.zuehlke.pgadmissions.rest.converter.AdvertTypeConverter">
+				<class-a>com.zuehlke.pgadmissions.domain.imported.AdvertType
 				</class-a>
-				<class-b>com.zuehlke.pgadmissions.domain.definitions.PrismProgramType
+				<class-b>com.zuehlke.pgadmissions.domain.definitions.PrismAdvertType
 				</class-b>
 			</converter>
 			<converter

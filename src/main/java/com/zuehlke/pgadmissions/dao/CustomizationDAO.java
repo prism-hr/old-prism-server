@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertType.getSystemAdvertType;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
@@ -24,7 +24,7 @@ import org.springframework.stereotype.Repository;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
@@ -37,10 +37,10 @@ public class CustomizationDAO {
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	public WorkflowConfiguration getConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
+	public WorkflowConfiguration getConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismAdvertType advertType,
 	        WorkflowDefinition definition, boolean translationMode) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
-		        .add(getResourceLocalizationCriterion(resource, definition.getScope().getId(), locale, programType, translationMode)) //
+		        .add(getResourceLocalizationCriterion(resource, definition.getScope().getId(), locale, advertType, translationMode)) //
 		        .add(Restrictions.eq(configurationType.getDefinitionPropertyName(), definition));
 
 		addActiveVersionCriterion(configurationType, criteria);
@@ -54,9 +54,9 @@ public class CustomizationDAO {
 	}
 
 	public List<WorkflowConfiguration> getConfigurations(PrismConfiguration configurationType, Resource resource, PrismLocale locale,
-	        PrismProgramType programType, WorkflowDefinition definition, boolean translationMode) {
+	        PrismAdvertType advertType, WorkflowDefinition definition, boolean translationMode) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
-		        .add(getResourceLocalizationCriterion(resource, definition.getScope().getId(), locale, programType, translationMode)) //
+		        .add(getResourceLocalizationCriterion(resource, definition.getScope().getId(), locale, advertType, translationMode)) //
 		        .add(Restrictions.eq(configurationType.getDefinitionPropertyName(), definition));
 
 		addActiveVersionCriterion(configurationType, criteria);
@@ -69,12 +69,12 @@ public class CustomizationDAO {
 	}
 
 	public List<WorkflowConfiguration> getConfigurations(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
-	        PrismProgramType programType, Enum<?> category, boolean translationMode) {
+	        PrismAdvertType advertType, Enum<?> category, boolean translationMode) {
 		String definitionReference = configurationType.getDefinitionPropertyName();
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
 		        .createAlias(definitionReference, definitionReference, JoinType.INNER_JOIN) //
 		        .add(Restrictions.eq(definitionReference + ".scope.id", scope)) //
-		        .add(getResourceLocalizationCriterion(resource, scope, locale, programType, translationMode));
+		        .add(getResourceLocalizationCriterion(resource, scope, locale, advertType, translationMode));
 
 		if (category != null) {
 			criteria.add(Restrictions.eq(definitionReference + ".category", category));
@@ -94,8 +94,8 @@ public class CustomizationDAO {
 	}
 
 	public List<WorkflowConfiguration> getConfigurations(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
-	        PrismProgramType programType, boolean translationMode) {
-		return getConfigurations(configurationType, resource, scope, locale, programType, null, translationMode);
+	        PrismAdvertType advertType, boolean translationMode) {
+		return getConfigurations(configurationType, resource, scope, locale, advertType, null, translationMode);
 	}
 
 	public WorkflowConfiguration getConfigurationWithVersion(PrismConfiguration configurationType, WorkflowDefinition definition, Integer version) {
@@ -111,35 +111,35 @@ public class CustomizationDAO {
 		        .list();
 	}
 
-	public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
+	public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismAdvertType advertType,
 	        Enum<?> definitionId) {
 		Query query = sessionFactory.getCurrentSession().createQuery( //
 		        getUpdateOperation(configurationType) //
 		                + "where " + resource.getResourceScope().getLowerCamelName() + " = :resource " //
 		                + "and " + configurationType.getDefinitionPropertyName() + ".id" + " = :definitionId " //
 		                + getLocaleCriterionUpdate(locale) //
-		                + getProgramTypeCriterionUpdate(programType)) //
+		                + getAdvertTypeCriterionUpdate(advertType)) //
 		        .setParameter("resource", resource) //
 		        .setParameter("definitionId", definitionId);
-		applyLocalizationConstraintsRestoreDefault(locale, programType, query);
+		applyLocalizationConstraintsRestoreDefault(locale, advertType, query);
 		query.executeUpdate();
 	}
 
 	public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
-	        PrismProgramType programType) {
+	        PrismAdvertType advertType) {
 		Query query = sessionFactory.getCurrentSession().createQuery( //
 		        getUpdateOperation(configurationType) //
 		                + "where " + resource.getResourceScope().getLowerCamelName() + " = :resource " //
 		                + "and " + getScopeConstraint(configurationType) //
 		                + getLocaleCriterionUpdate(locale) //
-		                + getProgramTypeCriterionUpdate(programType)) //
+		                + getAdvertTypeCriterionUpdate(advertType)) //
 		        .setParameter("resource", resource) //
 		        .setParameter("scope", scope);
-		applyLocalizationConstraintsRestoreDefault(locale, programType, query);
+		applyLocalizationConstraintsRestoreDefault(locale, advertType, query);
 		query.executeUpdate();
 	}
 
-	public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
+	public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismAdvertType advertType,
 	        Enum<?> definitionId) {
 		PrismScope resourceScope = resource.getResourceScope();
 
@@ -147,19 +147,19 @@ public class CustomizationDAO {
 		String definitionCriterion = "where " + configurationType.getDefinitionPropertyName() + ".id" + " = :definitionId ";
 
 		String localeCriterion = getLocaleCriterionUpdate(locale);
-		String programTypeCriterion = getProgramTypeCriterionUpdate(programType);
+		String advertTypeCriterion = getAdvertTypeCriterionUpdate(advertType);
 
 		Query query;
 		if (resourceScope == SYSTEM) {
 			query = sessionFactory.getCurrentSession().createQuery( //
 			        updateOperation //
 			                + definitionCriterion //
-			                + getSystemInheritanceCriterion(localeCriterion, programTypeCriterion));
+			                + getSystemInheritanceCriterion(localeCriterion, advertTypeCriterion));
 		} else if (resourceScope == INSTITUTION) {
 			query = sessionFactory.getCurrentSession().createQuery( //
 			        updateOperation //
 			                + definitionCriterion //
-			                + getInstitionInheritanceCriterion(localeCriterion, programTypeCriterion));
+			                + getInstitionInheritanceCriterion(localeCriterion, advertTypeCriterion));
 		} else {
 			throw new Error();
 		}
@@ -167,31 +167,31 @@ public class CustomizationDAO {
 		query.setParameter(resourceScope.getLowerCamelName(), resource) //
 		        .setParameter("definitionId", definitionId);
 
-		applyLocalizationConstraintsRestoreGlobal(locale, programType, query);
+		applyLocalizationConstraintsRestoreGlobal(locale, advertType, query);
 		query.executeUpdate();
 	}
 
 	public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismLocale locale,
-	        PrismProgramType programType) {
+	        PrismAdvertType advertType) {
 		PrismScope resourceScope = resource.getResourceScope();
 
 		String updateOperation = getUpdateOperation(configurationType);
 		String definitionCriterion = "where " + getScopeConstraint(configurationType);
 
 		String localeCriterion = getLocaleCriterionUpdate(locale);
-		String programTypeCriterion = getProgramTypeCriterionUpdate(programType);
+		String advertTypeCriterion = getAdvertTypeCriterionUpdate(advertType);
 
 		Query query;
 		if (resourceScope.equals(SYSTEM)) {
 			query = sessionFactory.getCurrentSession().createQuery( //
 			        updateOperation //
 			                + definitionCriterion //
-			                + getSystemInheritanceCriterion(localeCriterion, programTypeCriterion));
+			                + getSystemInheritanceCriterion(localeCriterion, advertTypeCriterion));
 		} else if (resourceScope.equals(INSTITUTION)) {
 			query = sessionFactory.getCurrentSession().createQuery( //
 			        updateOperation //
 			                + definitionCriterion //
-			                + getInstitionInheritanceCriterion(localeCriterion, programTypeCriterion));
+			                + getInstitionInheritanceCriterion(localeCriterion, advertTypeCriterion));
 		} else {
 			throw new Error();
 		}
@@ -199,7 +199,7 @@ public class CustomizationDAO {
 		query.setParameter(resourceScope.getLowerCamelName(), resource) //
 		        .setParameter("scope", scope);
 
-		applyLocalizationConstraintsRestoreGlobal(locale, programType, query);
+		applyLocalizationConstraintsRestoreGlobal(locale, advertType, query);
 		query.executeUpdate();
 	}
 
@@ -210,12 +210,12 @@ public class CustomizationDAO {
 		        .list();
 	}
 
-	public Integer getActiveConfigurationVersion(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismProgramType programType,
+	public Integer getActiveConfigurationVersion(PrismConfiguration configurationType, Resource resource, PrismLocale locale, PrismAdvertType advertType,
 	        PrismScope scope) {
 		String definitionReference = configurationType.getDefinitionPropertyName();
 		return (Integer) sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
 		        .setProjection(Projections.property("version")) //
-		        .add(getResourceLocalizationCriterion(resource, scope, locale, programType, false)) //
+		        .add(getResourceLocalizationCriterion(resource, scope, locale, advertType, false)) //
 		        .createAlias(definitionReference, definitionReference, JoinType.INNER_JOIN) //
 		        .add(Restrictions.eq(definitionReference + ".scope.id", scope)) //
 		        .add(Restrictions.eq("active", true)) //
@@ -227,19 +227,19 @@ public class CustomizationDAO {
 		        .uniqueResult();
 	}
 
-	private Junction getResourceLocalizationCriterion(Resource resource, PrismScope scope, PrismLocale locale, PrismProgramType programType,
+	private Junction getResourceLocalizationCriterion(Resource resource, PrismScope scope, PrismLocale locale, PrismAdvertType advertType,
 	        boolean translationMode) {
 		Criterion localeCriterion = getLocaleCriterionSelect(locale, translationMode);
-		Criterion programTypeCriterion = getProgramTypeCriterionSelect(scope, programType);
+		Criterion advertTypeCriterion = getAdvertTypeCriterionSelect(scope, advertType);
 
 		return Restrictions.disjunction() //
 		        .add(Restrictions.conjunction() //
 		                .add(Restrictions.eq("system", resource.getSystem())) //
 		                .add(localeCriterion) //
-		                .add(programTypeCriterion)) //
+		                .add(advertTypeCriterion)) //
 		        .add(Restrictions.conjunction() //
 		                .add(Restrictions.eq("institution", resource.getInstitution())) //
-		                .add(programTypeCriterion)) //
+		                .add(advertTypeCriterion)) //
 		        .add(Restrictions.eq("program", resource.getProgram()));
 	}
 
@@ -252,20 +252,20 @@ public class CustomizationDAO {
 		return Restrictions.in("locale", Lists.newArrayList(locale, getSystemLocale()));
 	}
 
-	private Criterion getProgramTypeCriterionSelect(PrismScope scope, PrismProgramType programType) {
-		return scope.ordinal() < PROGRAM.ordinal() ? Restrictions.isNull("programType") : programType == null ? Restrictions.eq("programType",
-		        getSystemProgramType()) : Restrictions.in("programType", Arrays.asList(programType, getSystemProgramType()));
+	private Criterion getAdvertTypeCriterionSelect(PrismScope scope, PrismAdvertType advertType) {
+		return scope.ordinal() < PROGRAM.ordinal() ? Restrictions.isNull("advertType") : advertType == null ? Restrictions.eq("advertType",
+		        getSystemAdvertType()) : Restrictions.in("advertType", Arrays.asList(advertType, getSystemAdvertType()));
 	}
 
 	private String getLocaleCriterionUpdate(PrismLocale locale) {
 		return locale == null ? "and locale is null " : "and locale = :locale ";
 	}
 
-	private String getProgramTypeCriterionUpdate(PrismProgramType programType) {
-		return programType == null ? "and programType is null " : //
+	private String getAdvertTypeCriterionUpdate(PrismAdvertType advertType) {
+		return advertType == null ? "and advertType is null " : //
 		        "and (program is not null and " //
-		                + "programType is null " //
-		                + "or programType = :programType) ";
+		                + "advertType is null " //
+		                + "or advertType = :advertType) ";
 	}
 
 	private void addActiveVersionCriterion(PrismConfiguration configurationType, Criteria criteria) {
@@ -285,44 +285,44 @@ public class CustomizationDAO {
 		        + "where scope.id = :scope) ";
 	}
 
-	private void applyLocalizationConstraintsRestoreDefault(PrismLocale locale, PrismProgramType programType, Query query) {
+	private void applyLocalizationConstraintsRestoreDefault(PrismLocale locale, PrismAdvertType advertType, Query query) {
 		if (locale != null) {
 			query.setParameter("locale", locale);
 		}
 
-		if (programType != null) {
-			query.setParameter("programType", programType);
+		if (advertType != null) {
+			query.setParameter("advertType", advertType);
 		}
 	}
 
-	private void applyLocalizationConstraintsRestoreGlobal(PrismLocale locale, PrismProgramType programType, Query query) {
-		applyLocalizationConstraintsRestoreDefault(locale, programType, query);
+	private void applyLocalizationConstraintsRestoreGlobal(PrismLocale locale, PrismAdvertType advertType, Query query) {
+		applyLocalizationConstraintsRestoreDefault(locale, advertType, query);
 
-		if (programType != null) {
-			query.setParameter("programTypeName", programType.name());
+		if (advertType != null) {
+			query.setParameter("advertTypeName", advertType.name());
 		}
 	}
 
-	private static String getSystemInheritanceCriterion(String localeCriterion, String programTypeCriterion) {
+	private static String getSystemInheritanceCriterion(String localeCriterion, String advertTypeCriterion) {
 		return "and (institution in (" //
 		        + "from Institution " //
 		        + "where system = :system) " //
 		        + localeCriterion + " "//
-		        + programTypeCriterion //
+		        + advertTypeCriterion //
 		        + "or program in (" //
 		        + "from Program " //
 		        + "where system = :system " //
-		        + "and programType in (" + "from ProgramType " + "where code like :programTypeName)) " //
+		        + "and advertType in (" + "from AdvertType " + "where code like :advertTypeName)) " //
 		        + localeCriterion //
-		        + programTypeCriterion + ")";
+		        + advertTypeCriterion + ")";
 	}
 
-	private static String getInstitionInheritanceCriterion(String localeCriterion, String programTypeCriterion) {
+	private static String getInstitionInheritanceCriterion(String localeCriterion, String advertTypeCriterion) {
 		return "and (program in (" //
 		        + "from Program " //
-		        + "where institution = :institution " + "and programType in (" + "from ProgramType " + "where code like :programTypeName)) " //
+		        + "where institution = :institution " + "and advertType in (" + "from AdvertType " + "where code like :advertTypeName)) " //
 		        + localeCriterion //
-		        + programTypeCriterion + ")";
+		        + advertTypeCriterion + ")";
 	}
 
 }

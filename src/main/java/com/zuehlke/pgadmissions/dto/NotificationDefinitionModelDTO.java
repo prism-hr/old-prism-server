@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dto;
 
+import java.util.List;
+
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -22,7 +24,9 @@ public class NotificationDefinitionModelDTO {
     private String dataImportErrorMessage;
 
     private String newPassword;
-
+    
+    private List<AdvertRecommendationDTO> recommendations;
+    
     public User getUser() {
         return user;
     }
@@ -63,6 +67,10 @@ public class NotificationDefinitionModelDTO {
         return newPassword;
     }
 
+    public List<AdvertRecommendationDTO> getRecommendations() {
+        return recommendations;
+    }
+    
     public NotificationDefinitionModelDTO withUser(User user) {
         this.user = user;
         return this;
@@ -103,4 +111,9 @@ public class NotificationDefinitionModelDTO {
         return this;
     }
 
+    public NotificationDefinitionModelDTO withRecommendations(List<AdvertRecommendationDTO> recommendations) {
+        this.recommendations = recommendations;
+        return this;
+    }
+    
 }

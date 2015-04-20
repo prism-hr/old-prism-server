@@ -1,9 +1,12 @@
 package com.zuehlke.pgadmissions.domain.project;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DISABLED_COMPLETED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_REJECTED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_WITHDRAWN;
+
 import java.math.BigDecimal;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
@@ -25,10 +29,10 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
@@ -36,7 +40,6 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
-import com.zuehlke.pgadmissions.domain.workflow.ResourceAction;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
@@ -64,7 +67,7 @@ public class Project extends ResourceParent {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
-    
+
     @ManyToOne
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "department_id")
@@ -74,8 +77,8 @@ public class Project extends ResourceParent {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
-    
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @OneToOne
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
@@ -137,7 +140,7 @@ public class Project extends ResourceParent {
     @Column(name = "updated_timestamp_sitemap", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestampSitemap;
-    
+
     @Column(name = "last_reminded_request_individual")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastRemindedRequestIndividual;
@@ -161,7 +164,7 @@ public class Project extends ResourceParent {
 
     @OneToMany(mappedBy = "project")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "project")
     private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
@@ -174,8 +177,8 @@ public class Project extends ResourceParent {
     @OneToMany(mappedBy = "project")
     private Set<UserRole> userRoles = Sets.newHashSet();
 
-    @OneToMany(mappedBy = "project")
-    private Set<ResourceAction> resourceActions = Sets.newHashSet();
+    @OneToMany(mappedBy = "program")
+    private Set<Advert> adverts = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -206,7 +209,7 @@ public class Project extends ResourceParent {
     public void setCode(String code) {
         this.code = code;
     }
-    
+
     @Override
     public System getSystem() {
         return system;
@@ -244,11 +247,13 @@ public class Project extends ResourceParent {
     public void setProgram(Program program) {
         this.program = program;
     }
-    
+
+    @Override
     public Advert getAdvert() {
         return advert;
     }
 
+    @Override
     public void setAdvert(Advert advert) {
         this.advert = advert;
     }
@@ -263,7 +268,7 @@ public class Project extends ResourceParent {
 
     @Override
     public PrismLocale getLocale() {
-        return program.getLocale();
+        return advert.getLocale();
     }
 
     @Override
@@ -365,6 +370,11 @@ public class Project extends ResourceParent {
     @Override
     public Set<UserRole> getUserRoles() {
         return userRoles;
+    }
+
+    @Override
+    public Set<Advert> getAdverts() {
+        return adverts;
     }
 
     @Override
@@ -506,34 +516,28 @@ public class Project extends ResourceParent {
     public Set<ResourcePreviousState> getResourcePreviousStates() {
         return resourcePreviousStates;
     }
-    
+
     @Override
     public Set<ResourceCondition> getResourceConditions() {
-		return resourceConditions;
-	}
+        return resourceConditions;
+    }
 
-	public Project withUser(User user) {
+    public ResourceParent getResourceParent() {
+        return ObjectUtils.firstNonNull(program, institution);
+    }
+
+    public Project withUser(User user) {
         this.user = user;
         return this;
     }
 
-    public Project withSystem(System system) {
-        this.system = system;
+    public Project withParentResource(Resource resource) {
+        setParentResource(resource);
         return this;
     }
 
-    public Project withInstitution(Institution institution) {
-        this.institution = institution;
-        return this;
-    }
-    
     public Project withDepartment(Department department) {
         this.department = department;
-        return this;
-    }
-
-    public Project withProgram(Program program) {
-        this.program = program;
         return this;
     }
 
@@ -550,8 +554,7 @@ public class Project extends ResourceParent {
     @Override
     public ResourceSignature getResourceSignature() {
         return new ResourceSignature().addProperty("user", getUser()).addProperty("program", program).addProperty("title", title)
-                .addExclusion("state.id", PrismState.PROJECT_DISABLED_COMPLETED).addExclusion("state.id", PrismState.PROJECT_REJECTED)
-                .addExclusion("state.id", PrismState.PROJECT_WITHDRAWN);
+                .addExclusion("state.id", PROJECT_DISABLED_COMPLETED).addExclusion("state.id", PROJECT_REJECTED).addExclusion("state.id", PROJECT_WITHDRAWN);
     }
 
 }

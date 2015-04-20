@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
@@ -20,7 +20,7 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
 
     private String currency;
 
-    private PrismProgramType defaultProgramType;
+    private PrismAdvertType defaultAdvertType;
 
     private PrismStudyOption defaultStudyOption;
 
@@ -78,12 +78,12 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
         this.currency = currency;
     }
 
-    public PrismProgramType getDefaultProgramType() {
-        return defaultProgramType;
+    public PrismAdvertType getDefaultAdvertType() {
+        return defaultAdvertType;
     }
 
-    public void setDefaultProgramType(PrismProgramType defaultProgramType) {
-        this.defaultProgramType = defaultProgramType;
+    public void setDefaultAdvertType(PrismAdvertType defaultAdvertType) {
+        this.defaultAdvertType = defaultAdvertType;
     }
 
     public PrismStudyOption getDefaultStudyOption() {

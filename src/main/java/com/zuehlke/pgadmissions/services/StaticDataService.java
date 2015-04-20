@@ -26,8 +26,8 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
@@ -59,7 +59,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.rest.representation.InstitutionDomicileRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.StateRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.configuration.ProgramCategoryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.configuration.AdvertCategoryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.FilterRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.FilterRepresentation.FilterExpressionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
@@ -161,7 +161,7 @@ public class StaticDataService {
     public Map<String, Object> getSimpleProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        for (Class<?> enumClass : new Class[]{PrismProgramType.class, PrismStudyOption.class,
+        for (Class<?> enumClass : new Class[]{PrismAdvertType.class, PrismStudyOption.class,
                 PrismYesNoUnsureResponse.class, PrismDurationUnit.class, PrismAdvertDomain.class,
                 PrismAdvertFunction.class, PrismAdvertIndustry.class, PrismRefereeType.class,
                 PrismApplicationReserveStatus.class, PrismDisplayPropertyCategory.class}) {
@@ -173,7 +173,7 @@ public class StaticDataService {
         staticData.put("timeZones", TimeZoneUtils.getInstance().getTimeZoneDefinitions());
         staticData.put("currencies", institutionService.listAvailableCurrencies());
         staticData.put("defaultLocale", PrismLocale.getSystemLocale());
-        staticData.put("defaultProgramType", PrismProgramType.getSystemProgramType());
+        staticData.put("defaultAdvertType", PrismAdvertType.getSystemAdvertType());
         staticData.put("locales", PrismLocale.values());
         staticData.put("googleApiKey", googleApiKey);
 
@@ -223,13 +223,13 @@ public class StaticDataService {
     public Map<String, Object> getProgramCategories() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        List<ProgramCategoryRepresentation> programCategories = Lists.newArrayListWithCapacity(PrismProgramCategory.values().length);
-        for (PrismProgramCategory programCategory : PrismProgramCategory.values()) {
-            ProgramCategoryRepresentation category = new ProgramCategoryRepresentation();
-            category.setId(programCategory);
-            category.setHasFee(programCategory.isHasFee());
-            category.setHasPay(programCategory.isHasPay());
-            category.setProgramTypes(PrismProgramType.getProgramTypes(programCategory));
+        List<AdvertCategoryRepresentation> programCategories = Lists.newArrayListWithCapacity(PrismAdvertCategory.values().length);
+        for (PrismAdvertCategory advertCategory : PrismAdvertCategory.values()) {
+            AdvertCategoryRepresentation category = new AdvertCategoryRepresentation();
+            category.setId(advertCategory);
+            category.setHasFee(advertCategory.isHasFee());
+            category.setHasPay(advertCategory.isHasPay());
+            category.setAdvertTypes(PrismAdvertType.getAdvertTypes(advertCategory));
             programCategories.add(category);
         }
 

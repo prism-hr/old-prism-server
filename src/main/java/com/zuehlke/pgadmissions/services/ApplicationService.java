@@ -18,7 +18,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramS
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,6 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -95,7 +93,6 @@ import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
@@ -190,7 +187,7 @@ public class ApplicationService {
                 .withRetain(false).withCreatedTimestamp(new DateTime());
     }
 
-    public void save(Application application) throws BeansException, IOException, IntegrationException {
+    public void save(Application application) throws Exception {
         prepopulateApplication(application);
         entityService.save(application);
     }
@@ -655,7 +652,7 @@ public class ApplicationService {
         return errors;
     }
 
-    private void prepopulateApplication(Application application) throws BeansException, IOException, IntegrationException {
+    private void prepopulateApplication(Application application) throws Exception {
         Application previousApplication = applicationDAO.getPreviousSubmittedApplication(application);
         if (previousApplication != null) {
             applicationContext.getBean(ApplicationCopyHelper.class).copyApplication(application, previousApplication);

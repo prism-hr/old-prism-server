@@ -603,7 +603,8 @@ public class ApplicationService {
     private void synchroniseProjectSupervisors(Application application) {
         List<User> supervisorUsers = roleService.getRoleUsers(application.getProject(), PROJECT_SUPERVISOR_GROUP);
         for (User supervisorUser : supervisorUsers) {
-            application.getSupervisors().add(new ApplicationSupervisor().withUser(supervisorUser).withAcceptedSupervision(true));
+            application.getSupervisors().add(
+                    new ApplicationSupervisor().withUser(supervisorUser).withAcceptedSupervision(true).withLastUpdatedTimestamp(new DateTime()));
         }
     }
 

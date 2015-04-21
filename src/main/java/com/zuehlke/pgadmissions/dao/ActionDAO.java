@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -179,9 +180,9 @@ public class ActionDAO {
                 .list();
     }
 
-    public List<ResourceListActionDTO> getCreateResourceActions(Resource resource) {
+    public List<ResourceListActionDTO> getCreateResourceActions(Resource resource, PrismScope... exclusions) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
-        return (List<ResourceListActionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property(resourceReference + ".id"), "resourceId") //
                         .add(Projections.groupProperty("action.id"), "actionId") //
@@ -194,11 +195,15 @@ public class ActionDAO {
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(Restrictions.eq("action.actionType", USER_INVOCATION)) //
-                .add(Restrictions.eq("action.actionCategory", CREATE_RESOURCE)) //
-                .add(Restrictions.ne("action.creationScope.id", APPLICATION)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("stateAction.actionCondition")) //
-                        .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition"))) //
+                .add(Restrictions.eq("action.actionCategory", CREATE_RESOURCE));
+
+        for (PrismScope exclusion : exclusions) {
+            criteria.add(Restrictions.ne("action.creationScope.id", exclusion)); //
+        }
+
+        return (List<ResourceListActionDTO>) criteria.add(Restrictions.disjunction() //
+                .add(Restrictions.isNull("stateAction.actionCondition")) //
+                .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition"))) //
                 .addOrder(Order.asc("action.id")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceListActionDTO.class)) //
                 .list();

@@ -236,7 +236,7 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
         validateRequiredConstraint(visaRequired, "personalDetail", "visaRequired", configuration, errors);
     }
 
-    private void validateStudyDetailConstraint(Errors errors, Application application, WorkflowPropertyConfiguration configuration) throws Error {
+    private void validateStudyDetailConstraint(Errors errors, Application application, WorkflowPropertyConfiguration configuration) {
         if (BooleanUtils.isTrue(configuration.getEnabled())) {
             if (BooleanUtils.isTrue(configuration.getRequired())) {
                 ValidationUtils.rejectIfEmpty(errors, "studyDetail", "notNull");

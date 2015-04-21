@@ -1,5 +1,10 @@
 package com.zuehlke.pgadmissions.components;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DEMOGRAPHIC;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_RESIDENCE;
+
 import java.io.IOException;
 import java.util.Set;
 
@@ -86,17 +91,17 @@ public class ApplicationCopyHelper {
             personalDetail.setPhone(from.getPersonalDetail().getPhone());
             personalDetail.setSkype(from.getPersonalDetail().getSkype());
 
-            if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to, PrismWorkflowPropertyDefinition.APPLICATION_DEMOGRAPHIC)) {
+            if (customizationService.isConfigurationEnabled(WORKFLOW_PROPERTY, to, APPLICATION_DEMOGRAPHIC)) {
                 personalDetail.setEthnicity(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getEthnicity(), personalDetail));
                 personalDetail.setDisability(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getDisability(), personalDetail));
             }
 
-            if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to, PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE)) {
+            if (customizationService.isConfigurationEnabled(WORKFLOW_PROPERTY, to, APPLICATION_LANGUAGE)) {
                 personalDetail.setFirstLanguageLocale(from.getPersonalDetail().getFirstLanguageLocale());
                 personalDetail.setLanguageQualification(copyLanguageQualification(toInstitution, from.getPersonalDetail().getLanguageQualification(), to));
             }
 
-            if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to, PrismWorkflowPropertyDefinition.APPLICATION_RESIDENCE)) {
+            if (customizationService.isConfigurationEnabled(WORKFLOW_PROPERTY, to, APPLICATION_RESIDENCE)) {
                 personalDetail.setVisaRequired(from.getPersonalDetail().getVisaRequired());
                 personalDetail.setPassport(copyPassport(from.getPersonalDetail().getPassport()));
             }

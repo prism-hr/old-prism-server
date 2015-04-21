@@ -19,7 +19,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGrou
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -530,8 +529,8 @@ public class ApplicationService {
         dataTable.addColumns(headers);
 
         String dateFormat = loader.load(SYSTEM_DATE_FORMAT);
+        List<ApplicationReportListRowDTO> reportRows = applicationDAO.getApplicationReport(assignedApplications, Joiner.on(", ").join(columnAccessors));
 
-        List<ApplicationReportListRowDTO> reportRows = getApplicationReport(assignedApplications, Joiner.on(", ").join(columnAccessors));
         for (ApplicationReportListRowDTO reportRow : reportRows) {
             TableRow row = new TableRow();
             for (PrismReportColumn column : columns) {
@@ -580,11 +579,6 @@ public class ApplicationService {
     public <T extends Resource> List<Application> getUserAdministratorApplications(HashMultimap<PrismScope, T> userAdministratorResources) {
         return userAdministratorResources.isEmpty() ? Lists.<Application> newArrayList() : applicationDAO
                 .getUserAdministratorApplications(userAdministratorResources);
-    }
-
-    private List<ApplicationReportListRowDTO> getApplicationReport(Set<Integer> assignedApplications, String columns) {
-        return assignedApplications.isEmpty() ? new ArrayList<ApplicationReportListRowDTO>() : applicationDAO.getApplicationReport(assignedApplications,
-                columns);
     }
 
     private void purgeApplication(Application application, Comment comment) {

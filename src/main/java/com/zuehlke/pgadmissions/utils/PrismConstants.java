@@ -14,6 +14,8 @@ public class PrismConstants {
 	
 	public static final Integer RECOMMENDATION_INTERVAL = 7;
 	
+	public static final Integer TRIAL_PERIOD_LENGTH = 12;
+	
 	public static final String SEQUENCE_IDENTIFIER = "sequenceIdentifier";
 
 }

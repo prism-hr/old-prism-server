@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.TRIAL_PERIOD_LENGTH;
 
 import java.util.List;
 
@@ -94,7 +95,7 @@ public class ProjectService {
 
         Project project = new Project().withUser(user).withParentResource(resourceParent).withDepartment(department);
         copyProjectDetails(project, projectDTO);
-        project.setEndDate(new LocalDate().plusMonths(12));
+        project.setEndDate(new LocalDate().plusMonths(TRIAL_PERIOD_LENGTH));
         return project;
     }
 

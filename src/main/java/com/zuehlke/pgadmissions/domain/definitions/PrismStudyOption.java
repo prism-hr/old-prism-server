@@ -44,10 +44,10 @@ public enum PrismStudyOption implements PrismLocalizableDefinition {
         }
         return null;
     }
-
-    }
     
     @Override
     public PrismDisplayPropertyDefinition getDisplayProperty() {
         return PrismDisplayPropertyDefinition.valueOf("SYSTEM_STUDY_OPTION_" + name());
+    }
+
 }

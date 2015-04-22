@@ -45,7 +45,7 @@ public class StateDAO {
 		        .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
 		        .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
 		        .createAlias("state.resourceStates", "resourceState", JoinType.INNER_JOIN) //
-		        .add(Restrictions.eq("resourceState." + resource.getResourceScope().getLowerCamelName() + ".id", resource.getId())) //
+		        .add(Restrictions.eq("resourceState." + resource.getResourceScope().getLowerCamelName(), resource)) //
 		        .add(Restrictions.eq("stateAction.action", action)) //
 		        .add(Restrictions.disjunction() //
 		                .add(Restrictions.conjunction() //

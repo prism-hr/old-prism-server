@@ -159,7 +159,7 @@ public class NotificationDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN, //
                         Restrictions.conjunction() //
-                                .add(Restrictions.isNull("userNotification.system")) //
+                                .add(Restrictions.isNotNull("userNotification.system")) //
                                 .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id"))) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", SYNDICATED)) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
@@ -191,7 +191,7 @@ public class NotificationDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN, //
                         Restrictions.conjunction() //
-                                .add(Restrictions.isNull("userNotification.system")) //
+                                .add(Restrictions.isNotNull("userNotification.system")) //
                                 .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id"))) //
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", SYNDICATED)) //

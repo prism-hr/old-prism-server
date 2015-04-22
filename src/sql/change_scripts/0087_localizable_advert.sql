@@ -116,7 +116,7 @@ alter table program
 ;
 
 alter table institution
-	drop column locale
+	drop column locale,
 	drop column default_program_type,
 	drop column default_study_option,
 	drop index institution_domicile_id,
@@ -258,4 +258,22 @@ rename table advert_program_type to advert_advert_type
 
 alter table advert_advert_type
 	change column program_type advert_type varchar(50) not null
+;
+
+alter table imported_entity_feed
+	add column advert_id int(10) unsigned after institution_id,
+	add unique index (advert_id, imported_entity_type),
+	add foreign key (advert_id) references advert (id)
+;
+
+update institution inner join imported_entity_feed
+	on institution.id = imported_entity_feed.institution_id
+set imported_entity_feed.advert_id = institution.advert_id
+;
+
+alter table imported_entity_feed
+	modify column advert_id int(10) unsigned not null,
+	drop index institution_id,
+	drop foreign key program_feed_institution_fk,
+	drop column institution_id
 ;

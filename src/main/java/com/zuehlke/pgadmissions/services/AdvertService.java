@@ -433,6 +433,10 @@ public class AdvertService {
             entityService.save(studyOption);
         }
     }
+    
+    public boolean hasAuthenticatedFeeds(Advert advert) {
+        return advertDAO.getAuthenticatedFeedCount(advert) > 0;
+    }
 
     private String getCurrencyAtLocale(Advert advert) {
         InstitutionAddress localeAddress = advert.getAddress();

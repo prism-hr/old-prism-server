@@ -6,7 +6,7 @@ create table user_notification (
 	project_id INT(10) unsigned null,
 	application_id INT(10) unsigned null,
 	user_role_id int(10) unsigned not null,
-	notification_definition_id varchar(100) not null,
+	notification_definition_id varchar(100),
 	last_notified_date date,
 	primary key (id),
 	unique index (system_id, user_role_id),
@@ -19,8 +19,7 @@ create table user_notification (
 	foreign key (program_id) references program (id),
 	foreign key (project_id) references project (id),
 	foreign key (application_id) references application (id),
-	foreign key (user_role_id) references user_role (id)
-	)
+	foreign key (user_role_id) references user_role (id))
 ;
 
 insert into user_notification (system_id, institution_id, program_id, project_id, application_id, user_role_id, notification_definition_id, last_notified_date)

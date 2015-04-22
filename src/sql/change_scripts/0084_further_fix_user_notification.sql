@@ -38,6 +38,7 @@ insert into user_notification (system_id, institution_id, program_id, project_id
 		max(old_user_notification.last_notified_date)
 	from old_user_notification inner join user_role
 		on old_user_notification.user_role_id = user_role.id
+	where old_user_notification.notification_definition_id is not null
 	group by user_role.user_id
 ;
 

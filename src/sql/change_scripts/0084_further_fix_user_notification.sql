@@ -1,4 +1,33 @@
+rename table user_notification to old_user_notification
+;
 
+create table user_notification (
+	id int(10) unsigned not null auto_increment,
+	system_id int(10) unsigned null default null,
+	institution_id int(10) unsigned null default null,
+	program_id int(10) unsigned null default null,
+	project_id int(10) unsigned null default null,
+	application_id int(10) unsigned null default null,
+	user_id int(10) unsigned not null,
+	notification_definition_id varchar(100) not null,
+	last_notified_date date not null,
+	primary key (id),
+	unique index (system_id, user_id, notification_definition_id),
+	unique index (institution_id, user_id, notification_definition_id),
+	unique index (program_id, user_id, notification_definition_id),
+	unique index (project_id, user_id, notification_definition_id),
+	unique index (application_id, user_id, notification_definition_id),
+	index (user_id),
+	foreign key (system_id) references system (id),
+	foreign key (institution_id) references institution (id),
+	foreign key (program_id) references program (id),
+	foreign key (project_id) references project (id),
+	foreign key (application_id) references application (id),
+	foreign key (user_id) references user (id)
+)
+collate = utf8_general_ci
+engine = innodb
+;
 
 insert into user_notification (system_id, institution_id, program_id, project_id,
 	application_id, user_id, notification_definition_id, last_notified_date)

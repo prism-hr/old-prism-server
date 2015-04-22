@@ -235,10 +235,6 @@ public class InstitutionService {
         return actionService.executeUserAction(institution, action, comment);
     }
 
-    public boolean hasAuthenticatedFeeds(Institution institution) {
-        return institutionDAO.getAuthenticatedFeedCount(institution) > 0;
-    }
-
     public DateTime getLatestUpdatedTimestampSitemap(List<PrismState> programStates, List<PrismState> projectStates) {
         return institutionDAO.getLatestUpdatedTimestampSitemap(programStates, projectStates);
     }

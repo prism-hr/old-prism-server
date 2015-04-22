@@ -15,11 +15,11 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
 
 @Entity
-@Table(name = "imported_entity_feed", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "imported_entity_type" }) })
+@Table(name = "imported_entity_feed", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "imported_entity_type" }) })
 public class ImportedEntityFeed implements UniqueEntity {
 
     @Id
@@ -27,8 +27,8 @@ public class ImportedEntityFeed implements UniqueEntity {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "institution_id", nullable = false)
-    private Institution institution;
+    @JoinColumn(name = "advert_id", nullable = false)
+    private Advert advert;
 
     @Column(name = "imported_entity_type", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -55,12 +55,12 @@ public class ImportedEntityFeed implements UniqueEntity {
         this.id = id;
     }
 
-    public Institution getInstitution() {
-        return institution;
+    public Advert getAdvert() {
+        return advert;
     }
 
-    public void setInstitution(Institution institution) {
-        this.institution = institution;
+    public void setInstitution(Advert advert) {
+        this.advert = advert;
     }
 
     public PrismImportedEntity getImportedEntityType() {
@@ -103,8 +103,8 @@ public class ImportedEntityFeed implements UniqueEntity {
         this.lastImportedTimestamp = lastImportedTimestamp;
     }
 
-    public ImportedEntityFeed withInstitution(Institution institution) {
-        this.institution = institution;
+    public ImportedEntityFeed withInstitution(Advert advert) {
+        this.advert = advert;
         return this;
     }
 
@@ -139,7 +139,7 @@ public class ImportedEntityFeed implements UniqueEntity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("institution", institution).addProperty("importedEntityType", importedEntityType);
+        return new ResourceSignature().addProperty("advert", advert).addProperty("importedEntityType", importedEntityType);
     }
 
 }

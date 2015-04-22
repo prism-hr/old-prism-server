@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -319,6 +320,13 @@ public class AdvertDAO {
                         + "where advert = :advert)") //
                 .setParameter("advert", advert) //
                 .executeUpdate();
+    }
+    
+    public Long getAuthenticatedFeedCount(Advert advert) {
+        return (Long) sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class) //
+                .setProjection(Projections.rowCount()) //
+                .add(Restrictions.eq("advert", advert)) //
+                .add(Restrictions.isNotNull("username")).uniqueResult();
     }
 
     private void appendLocationConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {

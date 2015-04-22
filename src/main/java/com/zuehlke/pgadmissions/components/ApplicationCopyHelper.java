@@ -1,11 +1,28 @@
 package com.zuehlke.pgadmissions.components;
 
-import java.io.IOException;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_CRIMINAL_CONVICTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DEMOGRAPHIC;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_COVERING_LETTER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_CV;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_PERSONAL_STATEMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_RESEARCH_STATEMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_FUNDING;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE_PROOF_OF_AWARD;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_PRIZE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_QUALIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_QUALIFICATION_PROOF_OF_AWARD;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_RESIDENCE;
+
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -28,32 +45,29 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.imported.Disability;
+import com.zuehlke.pgadmissions.domain.imported.Ethnicity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.Address;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
-import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.DocumentService;
-import com.zuehlke.pgadmissions.services.ImportedEntityService;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ApplicationCopyHelper {
 
-    @Autowired
-    private ImportedEntityService importedEntityService;
-
-    @Autowired
+    @Inject
     private CustomizationService customizationService;
 
-    @Autowired
+    @Inject
     private DocumentService documentService;
 
     private final Set<ApplicationSection> sectionsWithErrors = Sets.newHashSet();
 
     @Transactional
-    public void copyApplication(Application to, Application from) throws IOException, IntegrationException {
+    public void copyApplication(Application to, Application from) throws Exception {
         copyApplicationPersonalDetail(to, from);
         copyApplicationAddress(to, from);
         copyApplicationQualifications(to, from);
@@ -69,7 +83,7 @@ public class ApplicationCopyHelper {
         }
     }
 
-    private void copyApplicationPersonalDetail(Application to, Application from) throws IOException, IntegrationException {
+    private void copyApplicationPersonalDetail(Application to, Application from) throws Exception {
         if (from.getPersonalDetail() != null) {
             ApplicationPersonalDetail personalDetail = new ApplicationPersonalDetail();
             to.setPersonalDetail(personalDetail);
@@ -86,19 +100,45 @@ public class ApplicationCopyHelper {
             personalDetail.setPhone(from.getPersonalDetail().getPhone());
             personalDetail.setSkype(from.getPersonalDetail().getSkype());
 
-            if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to, PrismWorkflowPropertyDefinition.APPLICATION_DEMOGRAPHIC)) {
-                personalDetail.setEthnicity(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getEthnicity(), personalDetail));
-                personalDetail.setDisability(getEnabledImportedObject(toInstitution, from.getPersonalDetail().getDisability(), personalDetail));
+            WorkflowPropertyConfiguration demographicConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
+                    WORKFLOW_PROPERTY, APPLICATION_DEMOGRAPHIC, to.getWorkflowPropertyConfigurationVersion());
+
+            if (BooleanUtils.isTrue(demographicConfiguration.getEnabled())) {
+                Ethnicity ethnicity = from.getPersonalDetail().getEthnicity();
+                Disability disability = from.getPersonalDetail().getDisability();
+
+                personalDetail.setEthnicity(getEnabledImportedObject(toInstitution, ethnicity, personalDetail));
+                personalDetail.setDisability(getEnabledImportedObject(toInstitution, disability, personalDetail));
+
+                if (BooleanUtils.isTrue(demographicConfiguration.getRequired()) && (ethnicity == null || disability == null)) {
+                    sectionsWithErrors.add(personalDetail);
+                }
             }
 
-            if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to, PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE)) {
-                personalDetail.setFirstLanguageLocale(from.getPersonalDetail().getFirstLanguageLocale());
+            WorkflowPropertyConfiguration languageConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
+                    WORKFLOW_PROPERTY, APPLICATION_LANGUAGE, to.getWorkflowPropertyConfigurationVersion());
+
+            if (BooleanUtils.isTrue(languageConfiguration.getEnabled())) {
+                Boolean firstLanguageLocale = from.getPersonalDetail().getFirstLanguageLocale();
+                personalDetail.setFirstLanguageLocale(firstLanguageLocale);
                 personalDetail.setLanguageQualification(copyLanguageQualification(toInstitution, from.getPersonalDetail().getLanguageQualification(), to));
+
+                if (BooleanUtils.isTrue(languageConfiguration.getRequired()) && firstLanguageLocale == null) {
+                    sectionsWithErrors.add(personalDetail);
+                }
             }
 
-            if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to, PrismWorkflowPropertyDefinition.APPLICATION_RESIDENCE)) {
-                personalDetail.setVisaRequired(from.getPersonalDetail().getVisaRequired());
+            WorkflowPropertyConfiguration residenceConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
+                    WORKFLOW_PROPERTY, APPLICATION_RESIDENCE, to.getWorkflowPropertyConfigurationVersion());
+
+            if (BooleanUtils.isTrue(residenceConfiguration.getEnabled())) {
+                Boolean visaRequired = from.getPersonalDetail().getVisaRequired();
+                personalDetail.setVisaRequired(visaRequired);
                 personalDetail.setPassport(copyPassport(from.getPersonalDetail().getPassport()));
+
+                if (BooleanUtils.isTrue(residenceConfiguration.getRequired()) && visaRequired == null) {
+                    sectionsWithErrors.add(personalDetail);
+                }
             }
 
             personalDetail.setLastUpdatedTimestamp(new DateTime());
@@ -117,13 +157,14 @@ public class ApplicationCopyHelper {
         }
     }
 
-    private void copyApplicationQualifications(Application to, Application from) throws IOException, IntegrationException {
+    private void copyApplicationQualifications(Application to, Application from) throws Exception {
         WorkflowPropertyConfiguration qualificationConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
-                PrismConfiguration.WORKFLOW_PROPERTY, PrismWorkflowPropertyDefinition.APPLICATION_QUALIFICATION, to.getWorkflowPropertyConfigurationVersion());
+                WORKFLOW_PROPERTY, APPLICATION_QUALIFICATION, to.getWorkflowPropertyConfigurationVersion());
 
         if (BooleanUtils.isTrue(qualificationConfiguration.getEnabled())) {
-            boolean qualificationDocumentEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
-                    PrismWorkflowPropertyDefinition.APPLICATION_QUALIFICATION_PROOF_OF_AWARD);
+            WorkflowPropertyConfiguration qualificationDocumentConfiguration = (WorkflowPropertyConfiguration) customizationService
+                    .getConfigurationWithVersion(
+                            WORKFLOW_PROPERTY, APPLICATION_QUALIFICATION_PROOF_OF_AWARD, to.getWorkflowPropertyConfigurationVersion());
 
             Integer counter = 0;
             for (ApplicationQualification fromQualification : from.getQualifications()) {
@@ -133,7 +174,7 @@ public class ApplicationCopyHelper {
                 ApplicationQualification qualification = new ApplicationQualification();
                 to.getQualifications().add(qualification);
                 qualification.setApplication(to);
-                copyQualification(qualification, fromQualification, qualificationDocumentEnabled);
+                copyQualification(qualification, fromQualification, qualificationDocumentConfiguration);
                 counter++;
             }
         }
@@ -141,8 +182,7 @@ public class ApplicationCopyHelper {
 
     private void copyApplicationEmploymentPositions(Application to, Application from) {
         WorkflowPropertyConfiguration employmentConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
-                PrismConfiguration.WORKFLOW_PROPERTY, PrismWorkflowPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION,
-                to.getWorkflowPropertyConfigurationVersion());
+                WORKFLOW_PROPERTY, APPLICATION_EMPLOYMENT_POSITION, to.getWorkflowPropertyConfigurationVersion());
 
         if (BooleanUtils.isTrue(employmentConfiguration.getEnabled())) {
             Integer counter = 0;
@@ -159,9 +199,9 @@ public class ApplicationCopyHelper {
         }
     }
 
-    private void copyApplicationFundings(Application to, Application from) throws IOException, IntegrationException {
+    private void copyApplicationFundings(Application to, Application from) throws Exception {
         WorkflowPropertyConfiguration fundingConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
-                PrismConfiguration.WORKFLOW_PROPERTY, PrismWorkflowPropertyDefinition.APPLICATION_FUNDING, to.getWorkflowPropertyConfigurationVersion());
+                WORKFLOW_PROPERTY, APPLICATION_FUNDING, to.getWorkflowPropertyConfigurationVersion());
 
         if (BooleanUtils.isTrue(fundingConfiguration.getEnabled())) {
             boolean fundingDocumentEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
@@ -183,7 +223,7 @@ public class ApplicationCopyHelper {
 
     private void copyApplicationPrizes(Application to, Application from) {
         WorkflowPropertyConfiguration prizeConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
-                PrismConfiguration.WORKFLOW_PROPERTY, PrismWorkflowPropertyDefinition.APPLICATION_PRIZE, to.getWorkflowPropertyConfigurationVersion());
+                WORKFLOW_PROPERTY, APPLICATION_PRIZE, to.getWorkflowPropertyConfigurationVersion());
 
         if (BooleanUtils.isTrue(prizeConfiguration.getEnabled())) {
             Integer counter = 0;
@@ -202,7 +242,7 @@ public class ApplicationCopyHelper {
 
     private void copyApplicationReferences(Application to, Application from) {
         WorkflowPropertyConfiguration refereeConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
-                PrismConfiguration.WORKFLOW_PROPERTY, PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE, to.getWorkflowPropertyConfigurationVersion());
+                WORKFLOW_PROPERTY, APPLICATION_ASSIGN_REFEREE, to.getWorkflowPropertyConfigurationVersion());
 
         if (BooleanUtils.isTrue(refereeConfiguration.getEnabled())) {
             Integer counter = 0;
@@ -219,18 +259,22 @@ public class ApplicationCopyHelper {
         }
     }
 
-    private void copyApplicationDocument(Application to, Application from) throws IOException, IntegrationException {
-        boolean personalStatementEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
-                PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_PERSONAL_STATEMENT);
+    private void copyApplicationDocument(Application to, Application from) throws Exception {
+        WorkflowPropertyConfiguration personalStatementConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
+                WORKFLOW_PROPERTY, APPLICATION_DOCUMENT_PERSONAL_STATEMENT, to.getWorkflowPropertyConfigurationVersion());
+        boolean personalStatementEnabled = BooleanUtils.isTrue(personalStatementConfiguration.getEnabled());
 
-        boolean cvEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
-                PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_CV);
+        WorkflowPropertyConfiguration cvConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
+                WORKFLOW_PROPERTY, APPLICATION_DOCUMENT_CV, to.getWorkflowPropertyConfigurationVersion());
+        boolean cvEnabled = BooleanUtils.isTrue(cvConfiguration.getEnabled());
 
-        boolean researchStatementEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
-                PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_RESEARCH_STATEMENT);
+        WorkflowPropertyConfiguration researchStatementConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
+                WORKFLOW_PROPERTY, APPLICATION_DOCUMENT_RESEARCH_STATEMENT, to.getWorkflowPropertyConfigurationVersion());
+        boolean researchStatementEnabled = BooleanUtils.isTrue(researchStatementConfiguration.getEnabled());
 
-        boolean coveringLetterEnabled = customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
-                PrismWorkflowPropertyDefinition.APPLICATION_DOCUMENT_COVERING_LETTER);
+        WorkflowPropertyConfiguration coveringLetterConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
+                WORKFLOW_PROPERTY, APPLICATION_DOCUMENT_COVERING_LETTER, to.getWorkflowPropertyConfigurationVersion());
+        boolean coveringLetterEnabled = BooleanUtils.isTrue(coveringLetterConfiguration.getEnabled());
 
         if (personalStatementEnabled || cvEnabled || researchStatementEnabled || coveringLetterEnabled) {
             if (from.getDocument() != null) {
@@ -239,19 +283,39 @@ public class ApplicationCopyHelper {
                 applicationDocument.setApplication(to);
 
                 if (personalStatementEnabled) {
-                    applicationDocument.setPersonalStatement(copyDocument(from.getDocument().getPersonalStatement()));
+                    Document document = from.getDocument().getPersonalStatement();
+                    applicationDocument.setPersonalStatement(copyDocument(document));
+
+                    if (BooleanUtils.isTrue(personalStatementConfiguration.getRequired()) && document == null) {
+                        sectionsWithErrors.add(applicationDocument);
+                    }
                 }
 
                 if (cvEnabled) {
-                    applicationDocument.setCv(copyDocument(from.getDocument().getCv()));
+                    Document document = from.getDocument().getCv();
+                    applicationDocument.setCv(copyDocument(document));
+
+                    if (BooleanUtils.isTrue(cvConfiguration.getRequired()) && document == null) {
+                        sectionsWithErrors.add(applicationDocument);
+                    }
                 }
 
                 if (researchStatementEnabled) {
-                    applicationDocument.setResearchStatement(copyDocument(from.getDocument().getResearchStatement()));
+                    Document document = from.getDocument().getResearchStatement();
+                    applicationDocument.setResearchStatement(copyDocument(document));
+
+                    if (BooleanUtils.isTrue(researchStatementConfiguration.getRequired())) {
+                        sectionsWithErrors.add(applicationDocument);
+                    }
                 }
 
                 if (coveringLetterEnabled) {
-                    applicationDocument.setCoveringLetter(copyDocument(from.getDocument().getCoveringLetter()));
+                    Document document = from.getDocument().getCoveringLetter();
+                    applicationDocument.setCoveringLetter(copyDocument(document));
+
+                    if (BooleanUtils.isTrue(coveringLetterConfiguration.getRequired())) {
+                        sectionsWithErrors.add(applicationDocument);
+                    }
                 }
 
                 applicationDocument.setLastUpdatedTimestamp(new DateTime());
@@ -260,8 +324,7 @@ public class ApplicationCopyHelper {
     }
 
     private void copyApplicationAdditionalInformation(Application to, Application from) {
-        if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, to,
-                PrismWorkflowPropertyDefinition.APPLICATION_CRIMINAL_CONVICTION) && from.getAdditionalInformation() != null) {
+        if (customizationService.isConfigurationEnabled(WORKFLOW_PROPERTY, to, APPLICATION_CRIMINAL_CONVICTION) && from.getAdditionalInformation() != null) {
             ApplicationAdditionalInformation additionalInformation = new ApplicationAdditionalInformation();
             to.setAdditionalInformation(additionalInformation);
             additionalInformation.setApplication(to);
@@ -282,7 +345,7 @@ public class ApplicationCopyHelper {
         to.setLastUpdatedTimestamp(new DateTime());
     }
 
-    public void copyFunding(ApplicationFunding to, ApplicationFunding from, boolean documentEnabled) throws IOException, IntegrationException {
+    public void copyFunding(ApplicationFunding to, ApplicationFunding from, boolean documentEnabled) throws Exception {
         Institution toInstitution = to.getApplication().getInstitution();
         to.setSponsor(from.getSponsor());
         to.setFundingSource(getEnabledImportedObject(toInstitution, from.getFundingSource(), to));
@@ -318,7 +381,7 @@ public class ApplicationCopyHelper {
         to.setLastUpdatedTimestamp(new DateTime());
     }
 
-    public void copyQualification(ApplicationQualification to, ApplicationQualification from, boolean documentEnabled) throws IOException, IntegrationException {
+    public void copyQualification(ApplicationQualification to, ApplicationQualification from, WorkflowPropertyConfiguration configuration) throws Exception {
         Institution toInstitution = to.getApplication().getInstitution();
         to.setInstitution(getEnabledImportedObject(toInstitution, from.getInstitution(), to));
         to.setType(getEnabledImportedObject(toInstitution, from.getType(), to));
@@ -330,8 +393,13 @@ public class ApplicationCopyHelper {
         to.setGrade(from.getGrade());
         to.setAwardDate(from.getAwardDate());
 
-        if (documentEnabled) {
-            to.setDocument(copyDocument(from.getDocument()));
+        if (BooleanUtils.isTrue(configuration.getEnabled())) {
+            Document document = from.getDocument();
+            to.setDocument(copyDocument(document));
+
+            if (BooleanUtils.isTrue(configuration.getRequired()) && document == null) {
+                sectionsWithErrors.add(to);
+            }
         }
 
         to.setLastUpdatedTimestamp(new DateTime());
@@ -351,7 +419,7 @@ public class ApplicationCopyHelper {
         return toAddress;
     }
 
-    private Document copyDocument(Document from) throws IOException, IntegrationException {
+    private Document copyDocument(Document from) throws Exception {
         if (from == null) {
             return null;
         }
@@ -367,7 +435,7 @@ public class ApplicationCopyHelper {
     }
 
     private ApplicationLanguageQualification copyLanguageQualification(Institution toInstitution, ApplicationLanguageQualification from,
-            Application toApplication) throws IOException, IntegrationException {
+            Application toApplication) throws Exception {
         if (from == null) {
             return null;
         }
@@ -379,10 +447,18 @@ public class ApplicationCopyHelper {
         to.setWritingScore(from.getWritingScore());
         to.setSpeakingScore(from.getSpeakingScore());
         to.setListeningScore(from.getListeningScore());
+        to.setPersonalDetail(toApplication.getPersonalDetail());
 
-        if (customizationService.isConfigurationEnabled(PrismConfiguration.WORKFLOW_PROPERTY, toApplication,
-                PrismWorkflowPropertyDefinition.APPLICATION_LANGUAGE_PROOF_OF_AWARD)) {
-            to.setDocument(copyDocument(from.getDocument()));
+        WorkflowPropertyConfiguration languageDocumentConfiguration = (WorkflowPropertyConfiguration) customizationService.getConfigurationWithVersion(
+                WORKFLOW_PROPERTY, APPLICATION_LANGUAGE_PROOF_OF_AWARD, toApplication.getWorkflowPropertyConfigurationVersion());
+
+        if (BooleanUtils.isTrue(languageDocumentConfiguration.getEnabled())) {
+            Document document = from.getDocument();
+            to.setDocument(copyDocument(document));
+
+            if (BooleanUtils.isTrue(languageDocumentConfiguration.getRequired()) && document == null) {
+                sectionsWithErrors.add(to.getPersonalDetail());
+            }
         }
 
         to.setLastUpdatedTimestamp(new DateTime());

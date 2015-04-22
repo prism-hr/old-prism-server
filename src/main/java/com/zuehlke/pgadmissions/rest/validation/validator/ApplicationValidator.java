@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.validation.validator;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -22,7 +24,6 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.Disability;
 import com.zuehlke.pgadmissions.domain.imported.Ethnicity;
@@ -68,7 +69,7 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
         validateStartDate(application, application.getProgramDetail(), errors);
 
         List<WorkflowPropertyConfiguration> configurations = (List<WorkflowPropertyConfiguration>) (List<?>) customizationService.getConfigurationsWithVersion(
-                PrismConfiguration.WORKFLOW_PROPERTY, application.getWorkflowPropertyConfigurationVersion());
+                WORKFLOW_PROPERTY, application.getWorkflowPropertyConfigurationVersion());
 
         for (WorkflowPropertyConfiguration configuration : configurations) {
             switch (configuration.getWorkflowPropertyDefinition().getId()) {
@@ -237,7 +238,7 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
         validateRequiredConstraint(visaRequired, "personalDetail", "visaRequired", configuration, errors);
     }
 
-    private void validateStudyDetailConstraint(Errors errors, Application application, WorkflowPropertyConfiguration configuration) throws Error {
+    private void validateStudyDetailConstraint(Errors errors, Application application, WorkflowPropertyConfiguration configuration) {
         if (BooleanUtils.isTrue(configuration.getEnabled())) {
             if (BooleanUtils.isTrue(configuration.getRequired())) {
                 ValidationUtils.rejectIfEmpty(errors, "studyDetail", "notNull");

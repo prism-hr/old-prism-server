@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -65,13 +66,13 @@ public class ActionDAO {
     public Action getUserRedirectAction(Resource resource, User user) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.property("action")) //
+                .setProjection(Projections.property("stateAction.action")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
@@ -93,12 +94,20 @@ public class ActionDAO {
     }
 
     public Action getSystemRedirectAction(Resource resource) {
-        return (Action) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.property("action")) //
+        String resourceReference = resource.getResourceScope().getLowerCamelName();
+        return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.property("stateAction.action")) //
+                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state", resource.getState())) //
                 .add(Restrictions.eq("action.actionType", SYSTEM_INVOCATION)) //
                 .add(Restrictions.eq("action.actionCategory", VIEW_EDIT_RESOURCE)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("stateAction.actionCondition")) //
+                        .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition"))) //
                 .uniqueResult();
     }
 
@@ -170,9 +179,9 @@ public class ActionDAO {
                 .list();
     }
     
-    public List<ResourceListActionDTO> getCreateResourceActions(Resource resource) {
+    public List<ResourceListActionDTO> getCreateResourceActions(Resource resource, PrismScope... exclusions) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
-        return (List<ResourceListActionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property(resourceReference + ".id"), "resourceId") //
                         .add(Projections.groupProperty("action.id"), "actionId") //
@@ -185,11 +194,15 @@ public class ActionDAO {
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(Restrictions.eq("action.actionType", USER_INVOCATION)) //
-                .add(Restrictions.eq("action.actionCategory", CREATE_RESOURCE)) //
-                .add(Restrictions.ne("action.creationScope.id", APPLICATION)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("stateAction.actionCondition")) //
-                        .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition"))) //
+                .add(Restrictions.eq("action.actionCategory", CREATE_RESOURCE));
+
+        for (PrismScope exclusion : exclusions) {
+            criteria.add(Restrictions.ne("action.creationScope.id", exclusion)); //
+        }
+
+        return (List<ResourceListActionDTO>) criteria.add(Restrictions.disjunction() //
+                .add(Restrictions.isNull("stateAction.actionCondition")) //
+                .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition"))) //
                 .addOrder(Order.asc("action.id")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceListActionDTO.class)) //
                 .list();

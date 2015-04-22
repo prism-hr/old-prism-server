@@ -8,6 +8,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.USER_INVOCATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 
 import java.util.List;
@@ -139,7 +140,7 @@ public class ActionService {
             representations.add(mapper.map(action, ActionRepresentation.class));
         }
 
-        List<ResourceListActionDTO> creationActions = actionDAO.getCreateResourceActions(resource);
+        List<ResourceListActionDTO> creationActions = actionDAO.getCreateResourceActions(resource, APPLICATION);
         for (ResourceListActionDTO creationAction : creationActions) {
             representations.add(mapper.map(creationAction, ActionRepresentation.class));
         }

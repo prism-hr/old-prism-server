@@ -397,11 +397,11 @@ public class ImportedEntityService {
         }
     }
 
-    private StudyOption mergeStudyOption(Institution institution, ModeOfAttendance modeOfAttendance) throws DeduplicationException {
+    private StudyOption mergeStudyOption(Advert advert, ModeOfAttendance modeOfAttendance) throws DeduplicationException {
         String externalCode = modeOfAttendance.getCode();
         PrismStudyOption studyOptionId = PrismStudyOption.findValueFromString(externalCode);
         studyOptionId = studyOptionId == null ? getSystemStudyOption() : studyOptionId;
-        StudyOption studyOption = new StudyOption().withInstitution(institution).withCode(studyOptionId.name()).withName(externalCode).withEnabled(true);
+        StudyOption studyOption = new StudyOption().withInstitution(advert).withCode(studyOptionId.name()).withName(externalCode).withEnabled(true);
         studyOption.setType(STUDY_OPTION);
         return entityService.createOrUpdate(studyOption);
     }

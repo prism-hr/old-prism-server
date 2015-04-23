@@ -464,9 +464,9 @@
                         </goals>
                         <configuration>
                             <packageName>com.zuehlke.pgadmissions.iso.jaxb</packageName>
-                            <outputDirectory>${project.build.directory}/generated-sources/jaxb/isoCountryCodes
+                            <outputDirectory>${project.build.directory}/generated-sources/jaxb/iso
                             </outputDirectory>
-                            <schemaDirectory>${project.basedir}/src/main/resources/xsd/isoCountryCodes</schemaDirectory>
+                            <schemaDirectory>${project.basedir}/src/main/resources/xsd/iso</schemaDirectory>
                         </configuration>
                     </execution>
                 </executions>

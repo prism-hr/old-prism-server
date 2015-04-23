@@ -5,8 +5,6 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
 public class InstitutionDTO {
 
@@ -23,12 +21,6 @@ public class InstitutionDTO {
     private String currency;
 
     @NotNull
-    private PrismProgramType defaultProgramType;
-
-    @NotNull
-    private PrismStudyOption defaultStudyOption;
-
-    @NotNull
     private String summary;
 
     private String description;
@@ -36,9 +28,9 @@ public class InstitutionDTO {
     @NotEmpty
     private String homepage;
 
-    private FileDTO logoDocument;
+    private FileDTO logoImage;
 
-    private String logoUri;
+    private FileDTO backgroundImage;
 
     private String googleIdentifier;
 
@@ -100,37 +92,21 @@ public class InstitutionDTO {
     public void setHomepage(String homepage) {
         this.homepage = homepage;
     }
-
-    public  PrismProgramType getDefaultProgramType() {
-        return defaultProgramType;
+    
+    public FileDTO getLogoImage() {
+        return logoImage;
     }
 
-    public  void setDefaultProgramType(PrismProgramType defaultProgramType) {
-        this.defaultProgramType = defaultProgramType;
+    public void setLogoImage(FileDTO logoImage) {
+        this.logoImage = logoImage;
     }
 
-    public  PrismStudyOption getDefaultStudyOption() {
-        return defaultStudyOption;
+    public  FileDTO getBackgroundImage() {
+        return backgroundImage;
     }
 
-    public  void setDefaultStudyOption(PrismStudyOption defaultStudyOption) {
-        this.defaultStudyOption = defaultStudyOption;
-    }
-
-    public  FileDTO getLogoDocument() {
-        return logoDocument;
-    }
-
-    public  void setLogoDocument(FileDTO logoDocument) {
-        this.logoDocument = logoDocument;
-    }
-
-    public  String getLogoUri() {
-        return logoUri;
-    }
-
-    public  void setLogoUri(String logoUri) {
-        this.logoUri = logoUri;
+    public  void setBackgroundImage(FileDTO backgroundImage) {
+        this.backgroundImage = backgroundImage;
     }
 
     public  String getGoogleIdentifier() {

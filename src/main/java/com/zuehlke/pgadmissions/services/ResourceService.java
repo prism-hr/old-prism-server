@@ -507,7 +507,7 @@ public class ResourceService {
         if (resource.getResourceScope() == PrismScope.SYSTEM) {
             return defaultSocialThumbnail;
         } else {
-            Document logoDocument = resource.getInstitution().getLogoDocument();
+            Document logoDocument = resource.getInstitution().getLogoImage();
             if (logoDocument == null) {
                 return defaultSocialThumbnail;
             }

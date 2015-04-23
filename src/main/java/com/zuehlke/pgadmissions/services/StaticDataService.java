@@ -51,13 +51,11 @@ import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
 import com.zuehlke.pgadmissions.domain.imported.ResidenceState;
 import com.zuehlke.pgadmissions.domain.imported.Title;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
-import com.zuehlke.pgadmissions.rest.representation.InstitutionDomicileRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.StateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.ProgramCategoryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.FilterRepresentation;
@@ -145,26 +143,19 @@ public class StaticDataService {
         return staticData;
     }
 
-    public Map<String, Object> getInstitutionDomiciles() {
+    public Map<String, Object> getInstitutionDomiciles(PrismLocale locale) {
         Map<String, Object> staticData = Maps.newHashMap();
-
-        List<InstitutionDomicile> institutionDomiciles = institutionService.getDomiciles();
-        List<InstitutionDomicileRepresentation> institutionDomicileRepresentations = Lists.newArrayListWithExpectedSize(institutionDomiciles.size());
-        for (InstitutionDomicile institutionDomicile : institutionDomiciles) {
-            institutionDomicileRepresentations.add(mapper.map(institutionDomicile, InstitutionDomicileRepresentation.class));
-        }
-
-        staticData.put("institutionDomiciles", institutionDomicileRepresentations);
+        staticData.put("institutionDomiciles", institutionService.getInstitutionDomiciles(locale));
         return staticData;
     }
 
     public Map<String, Object> getSimpleProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        for (Class<?> enumClass : new Class[]{PrismProgramType.class, PrismStudyOption.class,
+        for (Class<?> enumClass : new Class[] { PrismProgramType.class, PrismStudyOption.class,
                 PrismYesNoUnsureResponse.class, PrismDurationUnit.class, PrismAdvertDomain.class,
                 PrismAdvertFunction.class, PrismAdvertIndustry.class, PrismRefereeType.class,
-                PrismApplicationReserveStatus.class, PrismDisplayPropertyCategory.class}) {
+                PrismApplicationReserveStatus.class, PrismDisplayPropertyCategory.class }) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = WordUtils.uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
@@ -243,9 +234,9 @@ public class StaticDataService {
 
         Institution institution = entityService.getById(Institution.class, institutionId);
 
-        for (Class<? extends ImportedEntity> entityClass : new Class[]{ReferralSource.class, Title.class, Ethnicity.class, Disability.class, Gender.class,
+        for (Class<? extends ImportedEntity> entityClass : new Class[] { ReferralSource.class, Title.class, Ethnicity.class, Disability.class, Gender.class,
                 Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, FundingSource.class, RejectionReason.class,
-                ResidenceState.class}) {
+                ResidenceState.class }) {
             String simpleName = entityClass.getSimpleName();
             simpleName = WordUtils.uncapitalize(simpleName);
             List<? extends ImportedEntity> entities = importedEntityService.getEnabledImportedEntities(institution, entityClass);

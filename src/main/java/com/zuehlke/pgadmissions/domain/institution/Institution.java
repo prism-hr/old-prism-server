@@ -108,8 +108,8 @@ public class Institution extends ResourceParent {
 	private PrismStudyOption defaultStudyOption;
 
 	@OneToOne
-	@JoinColumn(name = "logo_document_id")
-	private Document logoDocument;
+	@JoinColumn(name = "logo_image_id")
+	private Document logoImage;
 
 	@JoinColumn(name = "institution_address_id")
 	@OneToOne
@@ -326,12 +326,12 @@ public class Institution extends ResourceParent {
 		this.defaultStudyOption = defaultStudyOption;
 	}
 
-	public Document getLogoDocument() {
-		return logoDocument;
+	public Document getLogoImage() {
+		return logoImage;
 	}
 
-	public void setLogoDocument(Document logoDocument) {
-		this.logoDocument = logoDocument;
+	public void setLogoImage(Document logoDocument) {
+		this.logoImage = logoDocument;
 	}
 
 	public InstitutionAddress getAddress() {
@@ -517,18 +517,8 @@ public class Institution extends ResourceParent {
 		return this;
 	}
 
-	public Institution withDefaultProgramType(PrismProgramType defaultProgramType) {
-		this.defaultProgramType = defaultProgramType;
-		return this;
-	}
-
-	public Institution withDefaultStudyOption(PrismStudyOption defaultStudyOption) {
-		this.defaultStudyOption = defaultStudyOption;
-		return this;
-	}
-
-	public Institution withLogoDocument(Document logoDocument) {
-		this.logoDocument = logoDocument;
+	public Institution withLogoImage(Document logoImage) {
+		this.logoImage = logoImage;
 		return this;
 	}
 

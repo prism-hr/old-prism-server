@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
+
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ImportedInstitutionRepresentation;
 import com.zuehlke.pgadmissions.services.StaticDataService;
 
@@ -24,14 +27,15 @@ public class StaticDataResource {
     private StaticDataService staticDataService;
 
     @Cacheable("staticData")
-    @RequestMapping(method = RequestMethod.GET)
-    public Map<String, Object> getStaticData() {
+    @RequestMapping(method = RequestMethod.GET, params = "locale")
+    public Map<String, Object> getStaticData(@RequestParam(required = false) PrismLocale locale) {
         Map<String, Object> staticData = Maps.newHashMap();
+        locale = locale == null ? getSystemLocale() : locale;
         staticData.putAll(staticDataService.getActions());
         staticData.putAll(staticDataService.getStates());
         staticData.putAll(staticDataService.getStateGroups());
         staticData.putAll(staticDataService.getRoles());
-        staticData.putAll(staticDataService.getInstitutionDomiciles());
+        staticData.putAll(staticDataService.getInstitutionDomiciles(locale));
         staticData.putAll(staticDataService.getSimpleProperties());
         staticData.putAll(staticDataService.getFilterProperties());
         staticData.putAll(staticDataService.getConfigurations());

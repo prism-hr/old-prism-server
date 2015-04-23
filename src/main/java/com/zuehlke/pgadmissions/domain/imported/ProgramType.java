@@ -8,7 +8,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 
 @Entity
 @DiscriminatorValue("PROGRAM_TYPE")
-public class ProgramType extends SimpleImportedEntity {
+public class ProgramType extends ImportedEntitySimple {
 
     public ProgramType withInstitution(Institution institution) {
         setInstitution(institution);

@@ -92,7 +92,7 @@ public class MailSender {
             final String subject = processHeader(configuration.getNotificationDefinition().getId(), configuration.getSubject(), model);
 
             Institution institution = modelDTO.getResource().getInstitution();
-            Document logoDocument = institution != null ? institution.getLogoDocument() : null;
+            Document logoDocument = institution != null ? institution.getLogoImage() : null;
             final String html = processContent(configuration.getNotificationDefinition().getId(), configuration.getContent(), model, subject,
                     logoDocument);
             final String plainText = mailToPlainTextConverter.getPlainText(html) + "\n\n" + propertyLoader.load(SYSTEM_EMAIL_LINK_MESSAGE);

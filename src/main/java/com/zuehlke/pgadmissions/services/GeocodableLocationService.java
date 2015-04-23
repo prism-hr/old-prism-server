@@ -1,13 +1,13 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
@@ -17,13 +17,11 @@ import org.springframework.web.client.RestTemplate;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
-import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.location.GeocodableLocation;
 import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
 import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO;
 import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO.Results.Geometry;
 import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO.Results.Geometry.Location;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 
 @Service
 @Transactional
@@ -40,17 +38,20 @@ public class GeocodableLocationService {
     @Value("${integration.google.geocoding.api.request.delay.ms}")
     private Integer googleGeocodeRequestDelayMs;
 
-    @Autowired
+    @Inject
     private EntityService entityService;
 
-    @Autowired
+    @Inject
+    private InstitutionService institutionService;
+
+    @Inject
     private RestTemplate restTemplate;
 
     public <T extends GeocodableLocation> T getById(Class<T> locationClass, Object id) {
         return entityService.getById(locationClass, id);
     }
 
-    public <T extends GeocodableLocation> T getOrCreate(T transientLocation) throws DeduplicationException {
+    public <T extends GeocodableLocation> T getOrCreate(T transientLocation) throws Exception {
         T persistentLocation = entityService.getDuplicateEntity(transientLocation);
         if (persistentLocation == null) {
             entityService.save(transientLocation);
@@ -60,7 +61,7 @@ public class GeocodableLocationService {
         return entityService.replace(persistentLocation, transientLocation);
     }
 
-    public synchronized <T extends GeocodableLocation> LocationSearchResponseDTO getLocation(String address) throws InterruptedException, IOException {
+    public synchronized <T extends GeocodableLocation> LocationSearchResponseDTO getLocation(String address) throws Exception {
         wait(googleGeocodeRequestDelayMs);
         String addressEncoded = URLEncoder.encode(address, "UTF-8");
         URI request = new DefaultResourceLoader().getResource(googleGeocodeApiUri + "json?address=" + addressEncoded + "&key=" + googleApiKey).getURI();
@@ -70,19 +71,15 @@ public class GeocodableLocationService {
     public void setLocation(InstitutionAddress address) {
         try {
             List<String> addressTokens = Lists.reverse(address.getAddressTokens());
-
-            for (int i = addressTokens.size(); i > 0; i--) {
+            String institutionDomicileName = institutionService.getInstitutionDomicileName(address.getDomicile(), address.getInstitution().getLocale());
+            for (int i = addressTokens.size(); i >= 0; i--) {
                 List<String> requestTokens = addressTokens.subList(0, i);
-
-                LocationSearchResponseDTO response = getLocation(Joiner.on(", ").join(Lists.reverse(requestTokens)) + ", " + address.getDomicile().getName());
+                LocationSearchResponseDTO response = getLocation(Joiner.on(", ").join(Lists.reverse(requestTokens)) + ", " + institutionDomicileName);
                 if (response.getStatus().equals("OK")) {
                     setLocation(address, response);
                     return;
                 }
             }
-
-            InstitutionDomicile domicile = address.getDomicile();
-            address.setLocation(domicile.getLocation());
         } catch (Exception e) {
             logger.error("Problem obtaining location for " + address.getLocationString(), e);
         }

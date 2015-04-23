@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 @Table(name = "imported_entity", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "imported_entity_type", "code" }) })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "imported_entity_type", discriminatorType = DiscriminatorType.STRING)
-public class SimpleImportedEntity extends ImportedEntity {
+public class ImportedEntitySimple extends ImportedEntity {
 
     @Id
     @GeneratedValue
@@ -47,18 +47,22 @@ public class SimpleImportedEntity extends ImportedEntity {
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    @Override
     public Institution getInstitution() {
         return institution;
     }
 
+    @Override
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
@@ -72,28 +76,39 @@ public class SimpleImportedEntity extends ImportedEntity {
         this.type = type;
     }
 
+    @Override
     public String getCode() {
         return code;
     }
 
+    @Override
     public void setCode(String code) {
         this.code = code;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public Boolean getEnabled() {
         return enabled;
     }
 
+    @Override
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    @Override
+    public ResourceSignature getResourceSignature() {
+        return super.getResourceSignature().addProperty("type", type);
     }
 
 }

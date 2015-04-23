@@ -237,16 +237,16 @@ public class ImportedEntityService {
         importedEntityDAO.disableImportedAdvertStudyOptionInstances(institution, updates);
     }
 
-    public Integer mergeImportedProgram(Advert advert, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline, DateTime baselineTime)
+    public Integer mergeImportedProgram(Institution institution, Set<ProgrammeOccurrence> programInstanceDefinitions, LocalDate baseline, DateTime baselineTime)
             throws Exception {
         Programme programDefinition = programInstanceDefinitions.iterator().next().getProgramme();
-        Program persistentProgram = mergeProgram(advert, programDefinition, baseline);
+        Program persistentProgram = mergeProgram(institution, programDefinition, baseline);
         Advert persistentAdvert = persistentProgram.getAdvert();
 
         LocalDate startDate = null;
         LocalDate closeDate = null;
         for (ProgrammeOccurrence occurrence : programInstanceDefinitions) {
-            StudyOption studyOption = mergeStudyOption(advert, occurrence.getModeOfAttendance());
+            StudyOption studyOption = mergeStudyOption(institution, occurrence.getModeOfAttendance());
 
             LocalDate transientStartDate = DATE_FORMAT.parseLocalDate(occurrence.getStartDate());
             LocalDate transientCloseDate = DATE_FORMAT.parseLocalDate(occurrence.getEndDate());

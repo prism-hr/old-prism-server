@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
@@ -92,6 +93,13 @@ public class InstitutionDAO {
 
     public List<Institution> list() {
         return sessionFactory.getCurrentSession().createCriteria(Institution.class).list();
+    }
+
+    public Long getAuthenticatedFeedCount(Institution institution) {
+        return (Long) sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class) //
+                .setProjection(Projections.rowCount()) //
+                .add(Restrictions.eq("institution", institution)) //
+                .add(Restrictions.isNotNull("username")).uniqueResult();
     }
 
     public Institution getActivatedInstitutionByGoogleId(String googleId) {

@@ -11,7 +11,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -20,9 +19,9 @@ import com.zuehlke.pgadmissions.domain.system.System;
 
 @Entity
 @Table(name = "WORKFLOW_PROPERTY_CONFIGURATION", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"system_id", "locale", "program_type", "workflow_property_definition_id", "version"}),
-        @UniqueConstraint(columnNames = {"institution_id", "program_type", "workflow_property_definition_id", "version"}),
-        @UniqueConstraint(columnNames = {"program_id", "workflow_property_definition_id", "version"})})
+        @UniqueConstraint(columnNames = { "system_id", "program_type", "workflow_property_definition_id", "version" }),
+        @UniqueConstraint(columnNames = { "institution_id", "program_type", "workflow_property_definition_id", "version" }),
+        @UniqueConstraint(columnNames = { "program_id", "workflow_property_definition_id", "version" }) })
 public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersioned {
 
     @Id
@@ -40,10 +39,6 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
     @ManyToOne
     @JoinColumn(name = "program_id")
     private Program program;
-
-    @Column(name = "locale")
-    @Enumerated(EnumType.STRING)
-    private PrismLocale locale;
 
     @Column(name = "program_type")
     @Enumerated(EnumType.STRING)
@@ -110,16 +105,6 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
     @Override
     public final void setProgram(Program program) {
         this.program = program;
-    }
-
-    @Override
-    public final PrismLocale getLocale() {
-        return locale;
-    }
-
-    @Override
-    public final void setLocale(PrismLocale locale) {
-        this.locale = locale;
     }
 
     @Override
@@ -209,11 +194,6 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
 
     public WorkflowPropertyConfiguration withResource(Resource resource) {
         setResource(resource);
-        return this;
-    }
-
-    public WorkflowPropertyConfiguration withLocale(PrismLocale locale) {
-        this.locale = locale;
         return this;
     }
 

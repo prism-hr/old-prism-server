@@ -10,7 +10,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -138,7 +137,7 @@ public class ApplicationProgramDetail extends ApplicationSection {
     }
 
     public String getStartDateDisplay(String dateFormat) {
-        return startDate == null ? null : startDate.toString(dateFormat, LocaleUtils.toLocale(application.getLocale().toString()));
+        return startDate == null ? null : startDate.toString(dateFormat);
     }
 
     public String getReferralSourceDisplay() {

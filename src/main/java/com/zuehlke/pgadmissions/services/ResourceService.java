@@ -39,7 +39,6 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -488,8 +487,8 @@ public class ResourceService {
         }
     }
 
-    public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource resource, PrismScope propertiesScope, PrismLocale locale) throws Exception {
-        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource, locale);
+    public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(Resource resource, PrismScope propertiesScope) throws Exception {
+        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(resource);
         Map<PrismDisplayPropertyDefinition, String> properties = Maps.newLinkedHashMap();
         for (PrismDisplayPropertyDefinition prismDisplayPropertyDefinition : PrismDisplayPropertyDefinition.getProperties(propertiesScope)) {
             properties.put(prismDisplayPropertyDefinition, loader.load(prismDisplayPropertyDefinition));
@@ -517,22 +516,6 @@ public class ResourceService {
 
     public String getSocialResourceUrl(Resource resource) {
         return applicationUrl + "/" + PrismConstants.ANGULAR_HASH + "/?" + resource.getResourceScope().getLowerCamelName() + "=" + resource.getId();
-    }
-
-    public PrismLocale getOperativeLocale(Resource resource) {
-        return getOperativeLocale(resource, null);
-    }
-
-    public PrismLocale getOperativeLocale(Resource resource, PrismLocale prismLocale) {
-        if (resource.getResourceScope() == PrismScope.SYSTEM) {
-            User currentUser = userService.getCurrentUser();
-            if (currentUser == null) {
-                return prismLocale == null ? PrismLocale.getSystemLocale() : prismLocale;
-            } else {
-                return currentUser.getLocale();
-            }
-        }
-        return resource.getLocale();
     }
 
     public <T extends Resource> HashMultimap<PrismScope, T> getUserAdministratorResources(User user) {

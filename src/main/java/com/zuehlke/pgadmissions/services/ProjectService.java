@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.ADVERT_TRIAL_PERIOD;
 
 import java.util.List;
 
@@ -90,7 +91,7 @@ public class ProjectService {
         Project project = new Project().withUser(user).withSystem(systemService.getSystem()).withInstitution(program.getInstitution())
                 .withDepartment(deparment).withProgram(program);
         copyProjectDetails(project, projectDTO);
-        project.setEndDate(new LocalDate().plusMonths(12));
+        project.setEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD));
         return project;
     }
 
@@ -226,8 +227,6 @@ public class ProjectService {
         advert.setTitle(title);
         advert.setSummary(projectDTO.getSummary());
         advert.setApplyHomepage(projectDTO.getApplyHomepage());
-        advert.setStudyDurationMinimum(projectDTO.getStudyDurationMinimum());
-        advert.setStudyDurationMaximum(projectDTO.getStudyDurationMaximum());
     }
 
 }

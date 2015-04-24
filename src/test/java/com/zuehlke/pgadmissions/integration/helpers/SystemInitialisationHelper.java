@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.integration.helpers;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static org.junit.Assert.assertEquals;
@@ -18,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
@@ -191,7 +189,6 @@ public class SystemInitialisationHelper {
 	public void verifySystemCreation() {
 		System system = systemService.getSystem();
 		assertEquals(system.getTitle(), systemName);
-		assertEquals(system.getLocale(), PrismLocale.getSystemLocale());
 		assertEquals(system.getHelpdesk(), systemHelpdesk);
 		assertEquals(system.getCode(), resourceService.generateResourceCode(system));
 		assertEquals(system.getState().getId(), PrismState.SYSTEM_RUNNING);
@@ -214,7 +211,6 @@ public class SystemInitialisationHelper {
 		System system = systemService.getSystem();
 		for (DisplayPropertyConfiguration value : localizationService.getAllLocalizedProperties()) {
 			assertEquals(value.getResource(), system);
-			assertEquals(value.getLocale(), system.getLocale());
 
 			DisplayPropertyDefinition displayProperty = value.getDisplayPropertyDefinition();
 			PrismDisplayPropertyDefinition prismDisplayProperty = displayProperty.getId();
@@ -240,7 +236,6 @@ public class SystemInitialisationHelper {
 			NotificationConfiguration configuration = (NotificationConfiguration) customizationService.getConfiguration(PrismConfiguration.NOTIFICATION,
 			        system, system.getUser(), definition);
 
-			assertEquals(configuration.getLocale(), getSystemLocale());
 			assertEquals(configuration.getProgramType(), definition.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemProgramType() : null);
 			assertEquals(configuration.getNotificationDefinition(), definition);
 			assertEquals(prismNotificationDefinition.getDefaultReminderDuration(), configuration.getReminderInterval());
@@ -259,7 +254,6 @@ public class SystemInitialisationHelper {
 			StateDurationConfiguration stateDurationConfiguration = (StateDurationConfiguration) customizationService.getConfiguration(
 			        PrismConfiguration.STATE_DURATION, system, system.getUser(), state.getStateDurationDefinition());
 
-			assertEquals(stateDurationConfiguration.getLocale(), getSystemLocale());
 			assertEquals(stateDurationConfiguration.getProgramType(), state.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemProgramType() : null);
 			assertEquals(state.getId().getDefaultDuration().getDefaultDuration(), stateDurationConfiguration.getDuration());
 			assertTrue(stateDurationConfiguration.getSystemDefault());

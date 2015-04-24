@@ -42,9 +42,6 @@ public class GeocodableLocationService {
     private EntityService entityService;
 
     @Inject
-    private InstitutionService institutionService;
-
-    @Inject
     private RestTemplate restTemplate;
 
     public <T extends GeocodableLocation> T getById(Class<T> locationClass, Object id) {
@@ -71,10 +68,9 @@ public class GeocodableLocationService {
     public void setLocation(InstitutionAddress address) {
         try {
             List<String> addressTokens = Lists.reverse(address.getAddressTokens());
-            String institutionDomicileName = institutionService.getInstitutionDomicileName(address.getDomicile(), address.getInstitution().getLocale());
             for (int i = addressTokens.size(); i >= 0; i--) {
                 List<String> requestTokens = addressTokens.subList(0, i);
-                LocationSearchResponseDTO response = getLocation(Joiner.on(", ").join(Lists.reverse(requestTokens)) + ", " + institutionDomicileName);
+                LocationSearchResponseDTO response = getLocation(Joiner.on(", ").join(Lists.reverse(requestTokens)) + ", " + address.getDomicile().getName());
                 if (response.getStatus().equals("OK")) {
                     setLocation(address, response);
                     return;

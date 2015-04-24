@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
@@ -61,12 +60,6 @@ public class Advert {
     @OneToOne
     @JoinColumn(name = "institution_address_id")
     private InstitutionAddress address;
-
-    @Column(name = "month_study_duration_minimum")
-    private Integer studyDurationMinimum;
-
-    @Column(name = "month_study_duration_maximum")
-    private Integer studyDurationMaximum;
 
     @Embedded
     @AttributeOverrides({ @AttributeOverride(name = "interval", column = @Column(name = "fee_interval")),
@@ -133,16 +126,6 @@ public class Advert {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id", nullable = false)
     private Set<AdvertTheme> themes = Sets.newHashSet();
-
-    @OrderBy(clause = "id")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "advert_id", nullable = false)
-    private Set<AdvertInstitution> institutions = Sets.newHashSet();
-
-    @OrderBy(clause = "program_type")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "advert_id", nullable = false)
-    private Set<AdvertProgramType> programTypes = Sets.newHashSet();
 
     @OneToOne(mappedBy = "advert")
     private Program program;
@@ -215,22 +198,6 @@ public class Advert {
         this.address = address;
     }
 
-    public Integer getStudyDurationMinimum() {
-        return studyDurationMinimum;
-    }
-
-    public void setStudyDurationMinimum(Integer studyDurationMinimum) {
-        this.studyDurationMinimum = studyDurationMinimum;
-    }
-
-    public Integer getStudyDurationMaximum() {
-        return studyDurationMaximum;
-    }
-
-    public void setStudyDurationMaximum(Integer studyDurationMaximum) {
-        this.studyDurationMaximum = studyDurationMaximum;
-    }
-
     public AdvertFinancialDetail getFee() {
         return fee;
     }
@@ -289,14 +256,6 @@ public class Advert {
 
     public final Set<AdvertTheme> getThemes() {
         return themes;
-    }
-
-    public final Set<AdvertInstitution> getInstitutions() {
-        return institutions;
-    }
-
-    public final Set<AdvertProgramType> getProgramTypes() {
-        return programTypes;
     }
 
     public Program getProgram() {
@@ -384,18 +343,6 @@ public class Advert {
         AdvertTheme theme = new AdvertTheme().withAdvert(this);
         theme.setTheme(themeId);
         themes.add(theme);
-    }
-
-    public void addInstitution(Institution institution) {
-        AdvertInstitution advertInstitution = new AdvertInstitution().withAdvert(this);
-        advertInstitution.setInstitution(institution);
-        institutions.add(advertInstitution);
-    }
-
-    public void addProgramType(PrismProgramType programTypeId) {
-        AdvertProgramType advertProgramType = new AdvertProgramType().withAdvert(this);
-        advertProgramType.setProgramType(programTypeId);
-        programTypes.add(advertProgramType);
     }
 
 }

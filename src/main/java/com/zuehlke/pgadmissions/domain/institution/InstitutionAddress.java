@@ -166,7 +166,7 @@ public class InstitutionAddress extends GeocodableLocation {
 
     @Override
     public String getLocationString() {
-        return Joiner.on(", ").join(getAddressTokens()) + ", " + domicile.getId();
+        return Joiner.on(", ").join(getAddressTokens()) + ", " + domicile.getName();
     }
 
     public List<String> getAddressTokens() {

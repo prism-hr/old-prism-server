@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.rest.dto;
 
 import java.util.List;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -40,12 +39,6 @@ public class ProgramDTO {
     @URL
     @Size(max = 2048)
     private String applyHomepage;
-
-    @Min(1)
-    private Integer studyDurationMinimum;
-
-    @Min(1)
-    private Integer studyDurationMaximum;
 
     private List<String> locations = Lists.newArrayList();
 
@@ -111,22 +104,6 @@ public class ProgramDTO {
 
     public void setApplyHomepage(String applyHomepage) {
         this.applyHomepage = applyHomepage;
-    }
-
-    public Integer getStudyDurationMinimum() {
-        return studyDurationMinimum;
-    }
-
-    public void setStudyDurationMinimum(Integer studyDurationMinimum) {
-        this.studyDurationMinimum = studyDurationMinimum;
-    }
-
-    public Integer getStudyDurationMaximum() {
-        return studyDurationMaximum;
-    }
-
-    public void setStudyDurationMaximum(Integer studyDurationMaximum) {
-        this.studyDurationMaximum = studyDurationMaximum;
     }
 
     public final List<String> getLocations() {

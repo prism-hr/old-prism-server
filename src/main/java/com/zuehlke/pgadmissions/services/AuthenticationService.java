@@ -33,7 +33,6 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserAccountExternal;
@@ -82,9 +81,6 @@ public class AuthenticationService {
     private ActionService actionService;
 
     @Inject
-    private ResourceService resourceService;
-
-    @Inject
     private EntityService entityService;
 
     public String requestToken(HttpSession session, OauthProvider oauthProvider) {
@@ -120,7 +116,6 @@ public class AuthenticationService {
 
     public User registerUser(UserRegistrationDTO registrationDTO, HttpSession session) throws Exception {
         User user = userService.getUserByEmail(registrationDTO.getEmail());
-        Resource resource = resourceService.getById(registrationDTO.getAction().getActionId().getScope().getResourceClass(), registrationDTO.getResourceId());
 
         boolean enableAccount = user != null;
         if (enableAccount) {
@@ -131,7 +126,7 @@ public class AuthenticationService {
             }
         }
 
-        user = userService.getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail(), resource.getLocale());
+        user = userService.getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail());
 
         if (registrationDTO.getPassword() == null) {
             OauthUserDefinition oauthUserDefinition = (OauthUserDefinition) session.getAttribute(OAUTH_USER_TO_CONFIRM);

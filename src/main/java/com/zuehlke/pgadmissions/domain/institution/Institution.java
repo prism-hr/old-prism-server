@@ -28,7 +28,6 @@ import org.joda.time.LocalDate;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -75,10 +74,6 @@ public class Institution extends ResourceParent {
 
 	@Column(name = "title", nullable = false, unique = true)
 	private String title;
-
-	@Column(name = "locale", nullable = false)
-	@Enumerated(EnumType.STRING)
-	private PrismLocale locale;
 
 	@Column(name = "summary", nullable = false)
 	private String summary;
@@ -244,16 +239,7 @@ public class Institution extends ResourceParent {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-
-	@Override
-	public PrismLocale getLocale() {
-		return locale;
-	}
-
-	public void setLocale(PrismLocale locale) {
-		this.locale = locale;
-	}
-
+	
 	public String getSummary() {
 		return summary;
 	}
@@ -479,11 +465,6 @@ public class Institution extends ResourceParent {
 
 	public Institution withTitle(String title) {
 		this.title = title;
-		return this;
-	}
-
-	public Institution withLocale(PrismLocale locale) {
-		this.locale = locale;
 		return this;
 	}
 

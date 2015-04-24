@@ -4,8 +4,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-
 public class InstitutionDTO {
 
     @NotEmpty
@@ -13,9 +11,6 @@ public class InstitutionDTO {
 
     @NotEmpty
     private String title;
-
-    @NotNull
-    private PrismLocale locale;
 
     @NotNull
     private String currency;
@@ -59,14 +54,6 @@ public class InstitutionDTO {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public  PrismLocale getLocale() {
-        return locale;
-    }
-
-    public  void setLocale(PrismLocale locale) {
-        this.locale = locale;
     }
 
     public  String getSummary() {

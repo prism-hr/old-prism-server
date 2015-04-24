@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
@@ -14,8 +13,6 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
 
     private String summary;
 
-    private PrismLocale locale;
-
     private InstitutionAddressRepresentation address;
 
     private String currency;
@@ -27,7 +24,7 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
     private String homepage;
 
     private FileRepresentation logoDocument;
-    
+
     private ResourceSummaryRepresentation resourceSummary;
 
     public String getDomicile() {
@@ -52,14 +49,6 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
 
     public void setSummary(String summary) {
         this.summary = summary;
-    }
-
-    public PrismLocale getLocale() {
-        return locale;
-    }
-
-    public void setLocale(PrismLocale locale) {
-        this.locale = locale;
     }
 
     public InstitutionAddressRepresentation getAddress() {
@@ -109,7 +98,7 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
     public void setLogoDocument(FileRepresentation logoDocument) {
         this.logoDocument = logoDocument;
     }
-    
+
     public final ResourceSummaryRepresentation getResourceSummary() {
         return resourceSummary;
     }
@@ -117,5 +106,5 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
     public final void setResourceSummary(ResourceSummaryRepresentation resourceSummary) {
         this.resourceSummary = resourceSummary;
     }
-    
+
 }

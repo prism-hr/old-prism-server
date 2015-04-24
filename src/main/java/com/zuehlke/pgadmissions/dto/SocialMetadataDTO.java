@@ -12,8 +12,6 @@ public class SocialMetadataDTO {
 
 	private String resourceUrl;
 
-	private String locale;
-
 	public final String getAuthor() {
 		return author;
 	}
@@ -32,10 +30,6 @@ public class SocialMetadataDTO {
 
 	public final String getResourceUrl() {
 		return resourceUrl;
-	}
-
-	public final String getLocale() {
-		return locale;
 	}
 
 	public SocialMetadataDTO withAuthor(String author) {
@@ -60,11 +54,6 @@ public class SocialMetadataDTO {
 
 	public SocialMetadataDTO withResourceUrl(String openGraphUrl) {
 		this.resourceUrl = openGraphUrl;
-		return this;
-	}
-
-	public SocialMetadataDTO withLocale(String locale) {
-		this.locale = locale;
 		return this;
 	}
 

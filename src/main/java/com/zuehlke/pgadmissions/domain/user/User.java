@@ -7,8 +7,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -26,7 +24,6 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.document.Document;
 
 @Entity
@@ -61,10 +58,6 @@ public class User implements UserDetails, UniqueEntity {
     @Column(name = "email_bounced_message")
     private String emailBouncedMessage;
 
-    @Column(name = "locale", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PrismLocale locale;
-
     @OneToOne
     @JoinColumn(name = "portrait_document_id")
     private Document portraitDocument;
@@ -86,7 +79,7 @@ public class User implements UserDetails, UniqueEntity {
 
     @OneToMany(mappedBy = "user")
     private Set<UserRole> userRoles = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "user")
     private Set<UserNotification> userNotifications = Sets.newHashSet();
 
@@ -158,14 +151,6 @@ public class User implements UserDetails, UniqueEntity {
 
     public void setEmailBouncedMessage(String emailBouncedMessage) {
         this.emailBouncedMessage = emailBouncedMessage;
-    }
-
-    public PrismLocale getLocale() {
-        return locale;
-    }
-
-    public void setLocale(PrismLocale locale) {
-        this.locale = locale;
     }
 
     public Document getPortraitDocument() {
@@ -257,11 +242,6 @@ public class User implements UserDetails, UniqueEntity {
 
     public User withEmailBouncedMessage(final String emailBouncedMessage) {
         this.emailBouncedMessage = emailBouncedMessage;
-        return this;
-    }
-
-    public User withLocale(PrismLocale locale) {
-        this.locale = locale;
         return this;
     }
 

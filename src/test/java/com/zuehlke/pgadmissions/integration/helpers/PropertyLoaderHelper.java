@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.integration.helpers;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_YES;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.EN_GB;
 import static org.junit.Assert.assertEquals;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,7 @@ public class PropertyLoaderHelper {
 		PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(system);
 		assertEquals(propertyLoader.load(SYSTEM_YES), SYSTEM_YES.getDefaultValue());
 
-		customizationService.createOrUpdateConfiguration(PrismConfiguration.DISPLAY_PROPERTY, systemService.getSystem(), EN_GB, null,
+		customizationService.createOrUpdateConfiguration(PrismConfiguration.DISPLAY_PROPERTY, systemService.getSystem(), null,
 		        new DisplayPropertyConfigurationDTO().withDefinitionId(SYSTEM_YES).withValue("Hej"));
 		PropertyLoader propertyLoaderSk = applicationContext.getBean(PropertyLoader.class).localize(system);
 

@@ -7,21 +7,8 @@
           <xs:complexType>
             <xs:sequence>
               <xs:element type="xs:string" name="isoCode"/>
+              <xs:element type="xs:string" name="name"/>
               <xs:element type="xs:string" name="currency"/>
-              <xs:element name="locales">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element name="locale" maxOccurs="unbounded" minOccurs="1">
-                      <xs:complexType>
-                        <xs:sequence>
-                          <xs:element type="xs:string" name="isoCode"/>
-                          <xs:element type="xs:string" name="name"/>
-                        </xs:sequence>
-                      </xs:complexType>
-                    </xs:element>
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
             </xs:sequence>
           </xs:complexType>
         </xs:element>

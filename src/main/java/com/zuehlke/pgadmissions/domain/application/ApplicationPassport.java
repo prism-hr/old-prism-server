@@ -7,7 +7,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -113,13 +112,11 @@ public class ApplicationPassport extends ApplicationSection {
     }
 
     public String getIssueDateDisplay(String dateFormat) {
-        return issueDate == null ? null : issueDate.toString(dateFormat,
-                LocaleUtils.toLocale(applicationPersonalDetail.getApplication().getLocale().toString()));
+        return issueDate == null ? null : issueDate.toString(dateFormat);
     }
 
     public String getExipryDateDisplay(String dateFormat) {
-        return expiryDate == null ? null : expiryDate.toString(dateFormat,
-                LocaleUtils.toLocale(applicationPersonalDetail.getApplication().getLocale().toString()));
+        return expiryDate == null ? null : expiryDate.toString(dateFormat);
     }
 
 }

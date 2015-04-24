@@ -2,14 +2,12 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.INSTITUTION_COMMENT_UPDATED;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_STARTUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -21,11 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -33,19 +29,16 @@ import com.zuehlke.pgadmissions.domain.document.FileCategory;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicileName;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.InstitutionDomicileDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.iso.jaxb.InstitutionDomiciles;
-import com.zuehlke.pgadmissions.iso.jaxb.InstitutionDomiciles.InstitutionDomicile.Locales.Locale;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
@@ -106,17 +99,17 @@ public class InstitutionService {
         return entityService.getById(Institution.class, id);
     }
 
-    public Set<InstitutionDomicileRepresentation> getInstitutionDomiciles(PrismLocale locale) {
-        Set<InstitutionDomicileRepresentation> representations = Sets.newLinkedHashSet();
-        List<InstitutionDomicileDTO> institutionDomiciles = institutionDAO.getInstitutionDomiciles(locale);
-        for (InstitutionDomicileDTO institutionDomicile : institutionDomiciles) {
+    public List<InstitutionDomicileRepresentation> getInstitutionDomiciles() {
+        List<InstitutionDomicileRepresentation> representations = Lists.newLinkedList();
+        List<InstitutionDomicile> institutionDomiciles = institutionDAO.getInstitutionDomiciles();
+        for (InstitutionDomicile institutionDomicile : institutionDomiciles) {
             representations.add(mapper.map(institutionDomicile, InstitutionDomicileRepresentation.class));
         }
         return representations;
     }
 
-    public List<Institution> listApprovedInstitutionsByCountry(InstitutionDomicile domicile) {
-        return institutionDAO.listApprovedInstitutionsByCountry(domicile);
+    public List<Institution> getApprovedInstitutionsByCountry(InstitutionDomicile domicile) {
+        return institutionDAO.getApprovedInstitutionsByCountry(domicile);
     }
 
     public Institution getUclInstitution() {
@@ -135,9 +128,8 @@ public class InstitutionService {
         InstitutionDomicile institutionCountry = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
 
         Institution institution = new Institution().withSystem(systemService.getSystem()).withDomicile(institutionCountry).withAddress(address)
-                .withTitle(institutionDTO.getTitle()).withLocale(institutionDTO.getLocale()).withSummary(institutionDTO.getSummary())
-                .withHomepage(institutionDTO.getHomepage()).withUclInstitution(false).withGoogleId(institutionDTO.getGoogleIdentifier())
-                .withCurrency(institutionDTO.getCurrency()).withUser(user);
+                .withTitle(institutionDTO.getTitle()).withSummary(institutionDTO.getSummary()).withHomepage(institutionDTO.getHomepage())
+                .withUclInstitution(false).withGoogleId(institutionDTO.getGoogleIdentifier()).withCurrency(institutionDTO.getCurrency()).withUser(user);
 
         address.setInstitution(institution);
         setLogoImage(institution, institutionDTO, PrismAction.SYSTEM_CREATE_INSTITUTION);
@@ -153,7 +145,6 @@ public class InstitutionService {
 
         institution.setDomicile(domicile);
         institution.setTitle(institutionDTO.getTitle());
-        institution.setLocale(institutionDTO.getLocale());
         institution.setSummary(institutionDTO.getSummary());
         institution.setDescription(institutionDTO.getDescription());
 
@@ -255,7 +246,7 @@ public class InstitutionService {
     public SocialMetadataDTO getSocialMetadata(Institution institution) {
         return new SocialMetadataDTO().withAuthor(institution.getUser().getFullName()).withTitle(institution.getTitle())
                 .withDescription(institution.getSummary()).withThumbnailUrl(resourceService.getSocialThumbnailUrl(institution))
-                .withResourceUrl(resourceService.getSocialResourceUrl(institution)).withLocale(resourceService.getOperativeLocale(institution).toString());
+                .withResourceUrl(resourceService.getSocialResourceUrl(institution));
     }
 
     public SearchEngineAdvertDTO getSearchEngineAdvert(Integer institutionId) {
@@ -290,21 +281,10 @@ public class InstitutionService {
     }
 
     public String mergeInstitutionDomicile(InstitutionDomiciles.InstitutionDomicile instituitionDomicileDefinition) throws DeduplicationException {
-        String id = instituitionDomicileDefinition.getIsoCode();
-        InstitutionDomicile persistentInstitutionDomicile = entityService.getOrCreate(new InstitutionDomicile().withId(id)
+        InstitutionDomicile persistentInstitutionDomicile = entityService.getOrCreate(new InstitutionDomicile()
+                .withId(instituitionDomicileDefinition.getIsoCode()).withName(instituitionDomicileDefinition.getName())
                 .withCurrency(instituitionDomicileDefinition.getCurrency()).withEnabled(true));
-        for (Locale localeDefinition : instituitionDomicileDefinition.getLocales().getLocale()) {
-            String localeString = localeDefinition.getIsoCode();
-            PrismLocale locale = PrismLocale.valueOf(localeString);
-            InstitutionDomicileName persistentInstitutionDomicileName = entityService.createOrUpdate(new InstitutionDomicileName().withInstitutionDomicile(
-                    persistentInstitutionDomicile).withLocale(locale).withName(localeDefinition.getName()).withSystemDefault(locale.equals(getSystemLocale())));
-            persistentInstitutionDomicile.addName(persistentInstitutionDomicileName);
-        }
-        return id;
-    }
-
-    public String getInstitutionDomicileName(InstitutionDomicile institutionDomicile, PrismLocale locale) {
-        return institutionDAO.getInstitutionDomicileName(institutionDomicile, locale);
+        return persistentInstitutionDomicile.getId();
     }
 
     private void setLogoImage(Institution institution, InstitutionDTO institutionDTO, PrismAction actionId) {

@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -13,7 +12,7 @@ import com.zuehlke.pgadmissions.dto.DepartmentDTO;
 public class ProjectDTO {
 
     private DepartmentDTO department;
-    
+
     @NotNull
     private Integer programId;
 
@@ -31,12 +30,6 @@ public class ProjectDTO {
     @Size(max = 2048)
     private String applyHomepage;
 
-    @Min(1)
-    private Integer studyDurationMinimum;
-
-    @Min(1)
-    private Integer studyDurationMaximum;
-    
     public DepartmentDTO getDepartment() {
         return department;
     }
@@ -83,22 +76,6 @@ public class ProjectDTO {
 
     public void setApplyHomepage(String applyHomepage) {
         this.applyHomepage = applyHomepage;
-    }
-
-    public Integer getStudyDurationMinimum() {
-        return studyDurationMinimum;
-    }
-
-    public void setStudyDurationMinimum(Integer studyDurationMinimum) {
-        this.studyDurationMinimum = studyDurationMinimum;
-    }
-
-    public Integer getStudyDurationMaximum() {
-        return studyDurationMaximum;
-    }
-
-    public void setStudyDurationMaximum(Integer studyDurationMaximum) {
-        this.studyDurationMaximum = studyDurationMaximum;
     }
 
 }

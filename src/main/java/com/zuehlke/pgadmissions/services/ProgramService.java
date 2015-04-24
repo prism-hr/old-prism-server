@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.ADVERT_TRIAL_PERIOD;
 
 import java.util.List;
 
@@ -121,7 +122,7 @@ public class ProgramService {
         Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withInstitution(institution).withDepartment(department)
                 .withImported(false).withRequireProjectDefinition(false);
         copyProgramDetails(program, programDTO);
-        program.setEndDate(new LocalDate().plusMonths(12));
+        program.setEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD));
         copyStudyOptions(program, programDTO);
         return program;
     }
@@ -294,9 +295,6 @@ public class ProgramService {
 
         advert.setSummary(programDTO.getSummary());
         advert.setApplyHomepage(programDTO.getApplyHomepage());
-
-        advert.setStudyDurationMinimum(programDTO.getStudyDurationMinimum());
-        advert.setStudyDurationMaximum(programDTO.getStudyDurationMaximum());
     }
 
     private void copyStudyOptions(Program program, ProgramDTO programDTO) {

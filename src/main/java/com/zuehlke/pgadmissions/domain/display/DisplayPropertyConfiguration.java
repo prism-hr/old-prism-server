@@ -12,7 +12,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -23,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 
 @Entity
 @Table(name = "DISPLAY_PROPERTY_CONFIGURATION", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "display_property_definition_id" }),
+        @UniqueConstraint(columnNames = { "system_id", "program_type", "display_property_definition_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "program_type", "display_property_definition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "display_property_definition_id" }) })
 public class DisplayPropertyConfiguration extends WorkflowConfiguration {
@@ -43,10 +42,6 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
     @ManyToOne
     @JoinColumn(name = "program_id")
     private Program program;
-
-    @Column(name = "locale")
-    @Enumerated(EnumType.STRING)
-    private PrismLocale locale;
 
     @Column(name = "program_type")
     @Enumerated(EnumType.STRING)
@@ -102,16 +97,6 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
     }
 
     @Override
-    public final PrismLocale getLocale() {
-        return locale;
-    }
-
-    @Override
-    public final void setLocale(PrismLocale locale) {
-        this.locale = locale;
-    }
-
-    @Override
     public final PrismProgramType getProgramType() {
         return programType;
     }
@@ -154,11 +139,6 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
 
     public DisplayPropertyConfiguration withResource(Resource resource) {
         setResource(resource);
-        return this;
-    }
-
-    public DisplayPropertyConfiguration withLocale(PrismLocale locale) {
-        this.locale = locale;
         return this;
     }
 

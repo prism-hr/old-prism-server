@@ -3,15 +3,11 @@ package com.zuehlke.pgadmissions.domain.workflow;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
+import java.util.Arrays;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public abstract class WorkflowConfiguration extends WorkflowResource {
-
-    public abstract PrismLocale getLocale();
-
-    public abstract void setLocale(PrismLocale locale);
 
     public abstract PrismProgramType getProgramType();
 
@@ -26,10 +22,7 @@ public abstract class WorkflowConfiguration extends WorkflowResource {
     @Override
     public ResourceSignature getResourceSignature() {
         ResourceSignature resourceSignature = super.getResourceSignature();
-        PrismScope resourceScope = getResource().getResourceScope();
-        if (resourceScope == SYSTEM) {
-            resourceSignature.addProperty("locale", getLocale()).addProperty("programType", getProgramType());
-        } else if (resourceScope == INSTITUTION) {
+        if (Arrays.asList(SYSTEM, INSTITUTION).contains(getResource().getResourceScope())) {
             resourceSignature.addProperty("programType", getProgramType());
         }
         return resourceSignature;

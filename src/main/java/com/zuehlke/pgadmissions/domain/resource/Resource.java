@@ -8,7 +8,6 @@ import org.joda.time.LocalDate;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -32,8 +31,6 @@ public abstract class Resource implements UniqueEntity {
 	public abstract String getCode();
 
 	public abstract void setCode(String code);
-
-	public abstract PrismLocale getLocale();
 
 	public abstract System getSystem();
 

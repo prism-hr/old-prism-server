@@ -15,13 +15,11 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
-import com.zuehlke.pgadmissions.dto.InstitutionDomicileDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
@@ -34,7 +32,7 @@ public class InstitutionDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public List<Institution> listApprovedInstitutionsByCountry(InstitutionDomicile domicile) {
+    public List<Institution> getApprovedInstitutionsByCountry(InstitutionDomicile domicile) {
         return sessionFactory.getCurrentSession().createCriteria(Institution.class) //
                 .add(Restrictions.eq("domicile", domicile)) //
                 .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED_COMPLETED)) //
@@ -180,32 +178,10 @@ public class InstitutionDAO {
                 .executeUpdate();
     }
 
-    public String getInstitutionDomicileName(InstitutionDomicile institutionDomicile, PrismLocale locale) {
-        return (String) sessionFactory.getCurrentSession().createCriteria(InstitutionDomicile.class) //
-                .setProjection(Projections.property("name.name")) //
-                .createAlias("names", "name", JoinType.INNER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("name.locale", locale)) //
-                        .add(Restrictions.eq("name.systemDefault", true))) //
-                .addOrder(Order.asc("name.systemDefault")) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-
-    public List<InstitutionDomicileDTO> getInstitutionDomiciles(PrismLocale locale) {
+    public List<InstitutionDomicile> getInstitutionDomiciles() {
         return sessionFactory.getCurrentSession().createCriteria(InstitutionDomicile.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.property("id"), "id") //
-                        .add(Projections.property("currency"), "currency") //
-                        .add(Projections.property("name.locale"), "locale") //
-                        .add(Projections.property("name.name"), "name")) //
-                .createAlias("names", "name", JoinType.INNER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("name.locale", locale)) //
-                        .add(Restrictions.eq("name.systemDefault", true))) //
-                .addOrder(Order.asc("name.systemDefault")) //
-                .addOrder(Order.asc("name.name")) //
-                .setResultTransformer(Transformers.aliasToBean(InstitutionDomicileDTO.class)) //
+                .add(Restrictions.eq("enabled", true)) //
+                .addOrder(Order.asc("name")) //
                 .list();
     }
 

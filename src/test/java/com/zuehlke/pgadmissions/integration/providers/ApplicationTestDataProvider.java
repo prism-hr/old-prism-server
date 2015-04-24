@@ -155,7 +155,7 @@ public class ApplicationTestDataProvider {
     private void createReferees(Application application) throws Exception {
         for (int i = 0; i < 3; i++) {
             ApplicationReferee referee = new ApplicationReferee();
-            referee.setUser(userService.getOrCreateUser("Jakis", "Polecacz", "polecacz" + UUID.randomUUID().toString() + "@email.com", application.getLocale()));
+            referee.setUser(userService.getOrCreateUser("Jakis", "Polecacz", "polecacz" + UUID.randomUUID().toString() + "@email.com"));
             referee.setJobEmployer("Kozacka firma");
             referee.setJobTitle("Szef wszystkich szefow");
             Address address = new Address();

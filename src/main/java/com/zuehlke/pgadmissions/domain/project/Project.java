@@ -24,7 +24,6 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -64,7 +63,7 @@ public class Project extends ResourceParent {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
-    
+
     @ManyToOne
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "department_id")
@@ -74,7 +73,7 @@ public class Project extends ResourceParent {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
-    
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "advert_id", nullable = false)
@@ -137,7 +136,7 @@ public class Project extends ResourceParent {
     @Column(name = "updated_timestamp_sitemap", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestampSitemap;
-    
+
     @Column(name = "last_reminded_request_individual")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastRemindedRequestIndividual;
@@ -161,7 +160,7 @@ public class Project extends ResourceParent {
 
     @OneToMany(mappedBy = "project")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "project")
     private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
@@ -206,7 +205,7 @@ public class Project extends ResourceParent {
     public void setCode(String code) {
         this.code = code;
     }
-    
+
     @Override
     public System getSystem() {
         return system;
@@ -244,7 +243,7 @@ public class Project extends ResourceParent {
     public void setProgram(Program program) {
         this.program = program;
     }
-    
+
     public Advert getAdvert() {
         return advert;
     }
@@ -259,11 +258,6 @@ public class Project extends ResourceParent {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    @Override
-    public PrismLocale getLocale() {
-        return program.getLocale();
     }
 
     @Override
@@ -506,13 +500,13 @@ public class Project extends ResourceParent {
     public Set<ResourcePreviousState> getResourcePreviousStates() {
         return resourcePreviousStates;
     }
-    
+
     @Override
     public Set<ResourceCondition> getResourceConditions() {
-		return resourceConditions;
-	}
+        return resourceConditions;
+    }
 
-	public Project withUser(User user) {
+    public Project withUser(User user) {
         this.user = user;
         return this;
     }
@@ -526,7 +520,7 @@ public class Project extends ResourceParent {
         this.institution = institution;
         return this;
     }
-    
+
     public Project withDepartment(Department department) {
         this.department = department;
         return this;

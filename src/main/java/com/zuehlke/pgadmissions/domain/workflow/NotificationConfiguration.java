@@ -12,7 +12,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -21,8 +20,8 @@ import com.zuehlke.pgadmissions.domain.system.System;
 
 @Entity
 @Table(name = "NOTIFICATION_CONFIGURATION", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "locale", "program_type", "notification_definition_id" }),
+        @UniqueConstraint(columnNames = { "system_id", "program_type", "notification_definition_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "program_type", "notification_definition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "notification_definition_id" }) })
 public class NotificationConfiguration extends WorkflowConfiguration {
 
@@ -41,10 +40,6 @@ public class NotificationConfiguration extends WorkflowConfiguration {
     @ManyToOne
     @JoinColumn(name = "program_id")
     private Program program;
-
-    @Column(name = "locale")
-    @Enumerated(EnumType.STRING)
-    private PrismLocale locale;
 
     @Column(name = "program_type")
     @Enumerated(EnumType.STRING)
@@ -95,16 +90,6 @@ public class NotificationConfiguration extends WorkflowConfiguration {
     @Override
     public final void setProgramType(PrismProgramType programType) {
         this.programType = programType;
-    }
-
-    @Override
-    public final PrismLocale getLocale() {
-        return locale;
-    }
-
-    @Override
-    public final void setLocale(PrismLocale locale) {
-        this.locale = locale;
     }
 
     @Override
@@ -181,11 +166,6 @@ public class NotificationConfiguration extends WorkflowConfiguration {
 
     public NotificationConfiguration withProgramType(PrismProgramType programType) {
         this.programType = programType;
-        return this;
-    }
-
-    public NotificationConfiguration withLocale(PrismLocale locale) {
-        this.locale = locale;
         return this;
     }
 

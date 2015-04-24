@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
@@ -14,8 +12,6 @@ public class InstitutionRepresentation {
     private String title;
 
     private String domicile;
-
-    private PrismLocale locale;
 
     private InstitutionAddressRepresentation address;
 
@@ -51,14 +47,6 @@ public class InstitutionRepresentation {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public PrismLocale getLocale() {
-        return locale;
-    }
-
-    public void setLocale(PrismLocale locale) {
-        this.locale = locale;
     }
 
     public String getDomicile() {

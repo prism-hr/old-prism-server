@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
@@ -143,9 +142,9 @@ public class StaticDataService {
         return staticData;
     }
 
-    public Map<String, Object> getInstitutionDomiciles(PrismLocale locale) {
+    public Map<String, Object> getInstitutionDomiciles() {
         Map<String, Object> staticData = Maps.newHashMap();
-        staticData.put("institutionDomiciles", institutionService.getInstitutionDomiciles(locale));
+        staticData.put("institutionDomiciles", institutionService.getInstitutionDomiciles());
         return staticData;
     }
 
@@ -163,9 +162,7 @@ public class StaticDataService {
 
         staticData.put("timeZones", TimeZoneUtils.getInstance().getTimeZoneDefinitions());
         staticData.put("currencies", institutionService.listAvailableCurrencies());
-        staticData.put("defaultLocale", PrismLocale.getSystemLocale());
         staticData.put("defaultProgramType", PrismProgramType.getSystemProgramType());
-        staticData.put("locales", PrismLocale.values());
         staticData.put("googleApiKey", googleApiKey);
 
         return staticData;

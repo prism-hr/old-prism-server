@@ -24,7 +24,7 @@ update institution inner join advert
 set institution.advert_id = advert.id
 ;
 
-delete
+delete advert.*
 from advert left join institution
 	on advert.id = institution.advert_id
 left join program
@@ -61,11 +61,11 @@ alter table institution
 ;
 
 alter table project
-	modify column user_id int(10) unsigned not null,
+	modify column user_id int(10) unsigned not null
 ;
 
 alter table program
-	modify column user_id int(10) unsigned not null,
+	modify column user_id int(10) unsigned not null
 ;
 
 alter table institution
@@ -81,25 +81,6 @@ alter table imported_institution
 	add unique index (institution_id, code)
 ;
 
-create table institution_domicile_name (
-	id int(10) unsigned not null auto_increment,
-	institution_domicile_id varchar(10) not null,
-	locale varchar(10) not null,
-	name varchar(255) not null,
-	system_default int(1) unsigned not null,
-	primary key (id),
-	unique index (institution_domicile_id, locale),
-	unique index (institution_domicile_id, system_default),
-	foreign key (institution_domicile_id) references institution_domicile (id))
-collate = utf8_general_ci
-engine = innodb
-;
-
-insert into institution_domicile_name (institution_domicile_id, locale, name, system_default)
-	select id, "EN_GB", name, 1
-	from institution_domicile
-;
-
 alter table institution_domicile
 	drop index code,
 	drop index location_x,
@@ -109,6 +90,47 @@ alter table institution_domicile
 	drop column location_view_ne_x,
 	drop column location_view_ne_y,
 	drop column location_view_sw_x,
-	drop column location_view_sw_y,
-	drop column name;
+	drop column location_view_sw_y;
+;
+
+drop table advert_institution
+;
+
+drop table advert_program_type
+;
+
+delete
+from advert_domain
+;
+
+alter table action_custom_question_configuration
+	drop column locale
+;
+
+alter table display_property_configuration
+	drop column locale
+;
+
+alter table institution
+	drop column locale
+;
+
+alter table notification_configuration
+	drop column locale
+;
+
+alter table state_duration_configuration
+	drop column locale
+;
+
+alter table system
+	drop column locale
+;
+
+alter table user
+	drop column locale
+;
+
+alter table workflow_property_configuration
+	drop column locale
 ;

@@ -36,7 +36,6 @@ import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -199,10 +198,9 @@ public class ResourceResource {
     public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(
             @PathVariable Integer resourceId,
             @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestParam PrismScope propertiesScope,
-            @RequestParam(required = false) PrismLocale locale) throws Exception {
+            @RequestParam PrismScope propertiesScope) throws Exception {
         Resource resource = loadResource(resourceId, resourceDescriptor);
-        return resourceService.getDisplayProperties(resource, propertiesScope, locale);
+        return resourceService.getDisplayProperties(resource, propertiesScope);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -294,8 +292,7 @@ public class ResourceResource {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         UserRepresentation newUser = userRolesRepresentation.getUser();
 
-        User user = userService.getOrCreateUserWithRoles(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource.getLocale(), resource,
-                userRolesRepresentation.getRoles());
+        User user = userService.getOrCreateUserWithRoles(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource, userRolesRepresentation.getRoles());
         return mapper.map(user, UserRepresentation.class);
     }
 

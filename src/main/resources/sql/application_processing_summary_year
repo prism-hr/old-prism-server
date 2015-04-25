@@ -16,5 +16,4 @@ select application_year as applicationYear,
 from application
 where "${resourceReference}.id = :resourceId
 group by application_year desc
-order by application_year
-;
+order by application_year;

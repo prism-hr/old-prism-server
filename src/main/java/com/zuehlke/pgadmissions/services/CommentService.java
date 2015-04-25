@@ -51,7 +51,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.document.FileCategory;
+import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
 import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -381,7 +381,7 @@ public class CommentService {
         comment.getDocuments().clear();
 
         for (FileDTO fileDTO : commentDTO.getDocuments()) {
-            Document document = documentService.getById(fileDTO.getId(), FileCategory.DOCUMENT);
+            Document document = documentService.getById(fileDTO.getId(), PrismFileCategory.DOCUMENT);
             comment.getDocuments().add(document);
         }
     }
@@ -750,7 +750,7 @@ public class CommentService {
 
     private void appendDocuments(Comment comment, CommentDTO commentDTO) {
         for (FileDTO fileDTO : commentDTO.getDocuments()) {
-            Document document = documentService.getById(fileDTO.getId(), FileCategory.DOCUMENT);
+            Document document = documentService.getById(fileDTO.getId(), PrismFileCategory.DOCUMENT);
             comment.getDocuments().add(document);
         }
     }

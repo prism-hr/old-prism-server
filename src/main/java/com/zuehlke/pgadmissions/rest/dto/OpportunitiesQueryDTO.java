@@ -9,6 +9,8 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 public class OpportunitiesQueryDTO {
 
@@ -34,13 +36,13 @@ public class OpportunitiesQueryDTO {
     private Integer maxDuration;
 
     private Integer[] institutions;
-    
+
     private Integer[] departments;
 
     private Integer[] programs;
 
     private Integer[] projects;
-    
+
     private BigDecimal neLat;
 
     private BigDecimal neLon;
@@ -48,11 +50,11 @@ public class OpportunitiesQueryDTO {
     private BigDecimal swLat;
 
     private BigDecimal swLon;
-    
+
     private String lastSequenceIdentifier;
 
     private Integer resourceId;
-    
+
     private PrismAction actionId;
 
     public PrismOpportunityCategory getProgramCategory() {
@@ -86,7 +88,7 @@ public class OpportunitiesQueryDTO {
     public void setStudyOptions(List<PrismStudyOption> studyOptions) {
         this.studyOptions = studyOptions;
     }
-    
+
     public final Integer getMinFee() {
         return minFee;
     }
@@ -142,7 +144,7 @@ public class OpportunitiesQueryDTO {
     public final void setInstitutions(Integer[] institutions) {
         this.institutions = institutions;
     }
-    
+
     public final Integer[] getDepartments() {
         return departments;
     }
@@ -222,9 +224,13 @@ public class OpportunitiesQueryDTO {
     public final void setActionId(PrismAction actionId) {
         this.actionId = actionId;
     }
-    
+
+    public void setResources(PrismScope resourceScope, Integer id) {
+        PrismReflectionUtils.setProperty(this, resourceScope.getLowerCamelName() + "s", new Integer[] { id });
+    }
+
     public boolean isResourceAction() {
         return !(resourceId == null || actionId == null);
     }
-    
+
 }

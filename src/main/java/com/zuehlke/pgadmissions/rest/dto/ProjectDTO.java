@@ -3,32 +3,44 @@ package com.zuehlke.pgadmissions.rest.dto;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.NotEmpty;
-import org.hibernate.validator.constraints.URL;
-import org.joda.time.LocalDate;
-
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.dto.DepartmentDTO;
 
 public class ProjectDTO {
 
-    private DepartmentDTO department;
+    @NotNull
+    private PrismScope resourceScope;
 
     @NotNull
-    private Integer programId;
+    private Integer resourceId;
 
-    @NotEmpty
-    @Size(max = 255)
-    private String title;
+    private DepartmentDTO department;
 
-    private LocalDate endDate;
+    private AdvertDTO advert;
+    
+    private Integer durationMinimum;
+    
+    private Integer durationMaximum;
+    
+    @Size(min = 1)
+    private PrismStudyOption[] studyOptions;
+    
+    public PrismScope getResourceScope() {
+        return resourceScope;
+    }
 
-    @NotEmpty
-    @Size(max = 1000)
-    private String summary;
+    public void setResourceScope(PrismScope resourceScope) {
+        this.resourceScope = resourceScope;
+    }
 
-    @URL
-    @Size(max = 2048)
-    private String applyHomepage;
+    public Integer getResourceId() {
+        return resourceId;
+    }
+
+    public void setResourceId(Integer resourceId) {
+        this.resourceId = resourceId;
+    }
 
     public DepartmentDTO getDepartment() {
         return department;
@@ -38,44 +50,36 @@ public class ProjectDTO {
         this.department = department;
     }
 
-    public Integer getProgramId() {
-        return programId;
+    public AdvertDTO getAdvert() {
+        return advert;
     }
 
-    public void setProgramId(Integer programId) {
-        this.programId = programId;
+    public void setAdvert(AdvertDTO advert) {
+        this.advert = advert;
     }
 
-    public String getTitle() {
-        return title;
+    public Integer getDurationMinimum() {
+        return durationMinimum;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setDurationMinimum(Integer durationMinimum) {
+        this.durationMinimum = durationMinimum;
     }
 
-    public LocalDate getEndDate() {
-        return endDate;
+    public Integer getDurationMaximum() {
+        return durationMaximum;
     }
 
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
+    public void setDurationMaximum(Integer durationMaximum) {
+        this.durationMaximum = durationMaximum;
     }
 
-    public String getSummary() {
-        return summary;
+    public PrismStudyOption[] getStudyOptions() {
+        return studyOptions;
     }
 
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
-
-    public String getApplyHomepage() {
-        return applyHomepage;
-    }
-
-    public void setApplyHomepage(String applyHomepage) {
-        this.applyHomepage = applyHomepage;
+    public void setStudyOptions(PrismStudyOption[] studyOptions) {
+        this.studyOptions = studyOptions;
     }
 
 }

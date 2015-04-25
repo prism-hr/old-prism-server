@@ -681,19 +681,7 @@ public class Comment {
     public boolean isApplicationSubmittedComment() {
         return action.getId() == PrismAction.APPLICATION_COMPLETE;
     }
-
-    public boolean isApplicationApprovedComment() {
-        return isStateGroupTransitionComment() && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED;
-    }
-
-    public boolean isApplicationRejectedComment() {
-        return isStateGroupTransitionComment() && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED;
-    }
-
-    public boolean isApplicationWithdrawnComment() {
-        return isStateGroupTransitionComment() && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_WITHDRAWN;
-    }
-
+    
     public boolean isApplicationPurgeComment() {
         return action.getId() == PrismAction.APPLICATION_PURGE;
     }
@@ -802,7 +790,7 @@ public class Comment {
                 .toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone())).isBefore(baseline);
     }
 
-    public boolean isApplicationReserveRatingComment() {
+    public boolean isApplicationReserveStatusComment() {
         return applicationReserveStatus != null;
     }
 

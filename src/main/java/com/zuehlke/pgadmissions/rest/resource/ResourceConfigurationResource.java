@@ -25,7 +25,7 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -62,20 +62,20 @@ public class ResourceConfigurationResource {
     @RequestMapping(value = "{configurationType:notifications}/{id}", method = RequestMethod.GET)
     public WorkflowConfigurationRepresentation getConfiguration(@ModelAttribute PrismConfiguration configurationType,
             @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-            @RequestParam(required = false) PrismProgramType programType, @PathVariable PrismNotificationDefinition id) throws Exception {
+            @RequestParam(required = false) PrismOpportunityType opportunityType, @PathVariable PrismNotificationDefinition id) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         WorkflowDefinition definition = entityService.getById(configurationType.getDefinitionClass(), id);
-        return customizationService.getConfigurationRepresentation(configurationType, resource, programType, definition);
+        return customizationService.getConfigurationRepresentation(configurationType, resource, opportunityType, definition);
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:customQuestions}/{id}", method = RequestMethod.GET)
     public List<WorkflowConfigurationRepresentation> getConfiguration(@ModelAttribute PrismConfiguration configurationType,
             @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-            @RequestParam(required = false) PrismProgramType programType, @PathVariable PrismActionCustomQuestionDefinition id) throws Exception {
+            @RequestParam(required = false) PrismOpportunityType opportunityType, @PathVariable PrismActionCustomQuestionDefinition id) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         WorkflowDefinition definition = entityService.getById(configurationType.getDefinitionClass(), id);
-        return customizationService.getConfigurationRepresentations(configurationType, resource, programType, definition);
+        return customizationService.getConfigurationRepresentations(configurationType, resource, opportunityType, definition);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -86,17 +86,17 @@ public class ResourceConfigurationResource {
             @PathVariable Integer resourceId,
             @PathVariable PrismDisplayPropertyCategory category,
             @RequestParam PrismScope scope,
-            @RequestParam(required = false) PrismProgramType programType,
+            @RequestParam(required = false) PrismOpportunityType opportunityType,
             @RequestParam(required = false) Boolean fetchReference) throws Exception {
 
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         if (BooleanUtils.isTrue(fetchReference)) {
             List<WorkflowConfigurationRepresentation> translations = customizationService.getConfigurationRepresentations(configurationType, resource, scope,
-                    programType, category);
+                    opportunityType, category);
             return sparsifyDisplayPropertyConfigurations(category, translations);
         }
-        List<WorkflowConfigurationRepresentation> translations = customizationService.getConfigurationRepresentationsTranslationMode(configurationType,
-                resource, scope, programType, category);
+        List<WorkflowConfigurationRepresentation> translations = customizationService.getConfigurationRepresentationsConfigurationMode(configurationType,
+                resource, scope, opportunityType, category);
         return sparsifyDisplayPropertyConfigurations(category, translations);
     }
 
@@ -105,9 +105,9 @@ public class ResourceConfigurationResource {
     public List<WorkflowConfigurationRepresentation> getConfigurations(
             @ModelAttribute PrismConfiguration configurationType,
             @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam PrismScope scope,
-            @RequestParam(required = false) PrismProgramType programType) throws Exception {
+            @RequestParam(required = false) PrismOpportunityType opportunityType) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        return customizationService.getConfigurationRepresentations(configurationType, resource, scope, programType);
+        return customizationService.getConfigurationRepresentations(configurationType, resource, scope, opportunityType);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -122,39 +122,39 @@ public class ResourceConfigurationResource {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:notifications}/{id}", method = RequestMethod.DELETE, headers = "Restore-Type")
     public void restoreConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @ModelAttribute PrismConfiguration configurationType,
-            @PathVariable Integer resourceId, @RequestParam(required = false) PrismProgramType programType,
+            @PathVariable Integer resourceId, @RequestParam(required = false) PrismOpportunityType opportunityType,
             @RequestHeader(value = "Restore-Type") String restoreType, @PathVariable PrismNotificationDefinition id) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         if (restoreType.equals("global")) {
-            customizationService.restoreGlobalConfiguration(configurationType, resource, programType, id);
+            customizationService.restoreGlobalConfiguration(configurationType, resource, opportunityType, id);
         } else {
-            customizationService.restoreDefaultConfiguration(configurationType, resource, programType, id);
+            customizationService.restoreDefaultConfiguration(configurationType, resource, opportunityType, id);
         }
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:customQuestions}/{id}", method = RequestMethod.DELETE, headers = "Restore-Type")
     public void restoreConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @ModelAttribute PrismConfiguration configurationType,
-            @PathVariable Integer resourceId, @RequestParam(required = false) PrismProgramType programType,
+            @PathVariable Integer resourceId, @RequestParam(required = false) PrismOpportunityType opportunityType,
             @RequestHeader(value = "Restore-Type") String restoreType, @PathVariable PrismActionCustomQuestionDefinition id) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         if (restoreType.equals("global")) {
-            customizationService.restoreGlobalConfiguration(configurationType, resource, programType, id);
+            customizationService.restoreGlobalConfiguration(configurationType, resource, opportunityType, id);
         } else {
-            customizationService.restoreDefaultConfiguration(configurationType, resource, programType, id);
+            customizationService.restoreDefaultConfiguration(configurationType, resource, opportunityType, id);
         }
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:displayProperties|stateDurations|workflowProperties}", method = RequestMethod.DELETE, headers = "Restore-Type")
     public void restoreConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @ModelAttribute PrismConfiguration configurationType,
-            @PathVariable Integer resourceId, @RequestParam PrismScope scope, @RequestParam(required = false) PrismProgramType programType,
+            @PathVariable Integer resourceId, @RequestParam PrismScope scope, @RequestParam(required = false) PrismOpportunityType opportunityType,
             @RequestHeader(value = "Restore-Type") String restoreType) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         if (restoreType.equals("global")) {
-            customizationService.restoreGlobalConfiguration(configurationType, resource, scope, programType);
+            customizationService.restoreGlobalConfiguration(configurationType, resource, scope, opportunityType);
         } else {
-            customizationService.restoreDefaultConfiguration(configurationType, resource, scope, programType);
+            customizationService.restoreDefaultConfiguration(configurationType, resource, scope, opportunityType);
         }
     }
 
@@ -162,50 +162,53 @@ public class ResourceConfigurationResource {
     @RequestMapping(value = "{configurationType:notifications}/{id}", method = RequestMethod.PUT)
     public void updateNotificationConfiguration(
             @ModelAttribute PrismConfiguration configurationType, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @PathVariable Integer resourceId, @RequestParam(required = false) PrismProgramType programType, @PathVariable PrismNotificationDefinition id,
+            @PathVariable Integer resourceId, @RequestParam(required = false) PrismOpportunityType opportunityType,
+            @PathVariable PrismNotificationDefinition id,
             @Valid @RequestBody NotificationConfigurationDTO notificationConfigurationDTO) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        customizationService.createOrUpdateConfigurationUser(configurationType, resource, programType, notificationConfigurationDTO);
+        customizationService.createOrUpdateConfigurationUser(configurationType, resource, opportunityType, notificationConfigurationDTO);
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:customQuestions}/{id}", method = RequestMethod.PUT)
     public void updateActionCustomQuestionConfiguration(@ModelAttribute PrismConfiguration configurationType,
             @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-            @RequestParam(required = false) PrismProgramType programType, @PathVariable PrismActionCustomQuestionDefinition id,
+            @RequestParam(required = false) PrismOpportunityType opportunityType, @PathVariable PrismActionCustomQuestionDefinition id,
             @Valid @RequestBody ActionCustomQuestionConfigurationDTO actionCustomQuestionConfigurationDTO) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        customizationService.createOrUpdateConfigurationGroup(configurationType, resource, programType, id, actionCustomQuestionConfigurationDTO);
+        customizationService.createOrUpdateConfigurationGroup(configurationType, resource, opportunityType, id, actionCustomQuestionConfigurationDTO);
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:stateDurations}", method = RequestMethod.PUT)
     public void updateStateDurationConfiguration(@ModelAttribute PrismConfiguration configurationType, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @PathVariable Integer resourceId, @RequestParam PrismScope scope, @RequestParam(required = false) PrismProgramType programType,
+            @PathVariable Integer resourceId, @RequestParam PrismScope scope, @RequestParam(required = false) PrismOpportunityType opportunityType,
             @Valid @RequestBody StateDurationConfigurationDTO stateDurationConfigurationDTO)
             throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        customizationService.createOrUpdateConfigurationGroup(configurationType, resource, scope, programType, stateDurationConfigurationDTO);
+        customizationService.createOrUpdateConfigurationGroup(configurationType, resource, scope, opportunityType, stateDurationConfigurationDTO);
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:displayProperties}/{id}", method = RequestMethod.PUT)
     public void updateDisplayPropertyConfiguration(@ModelAttribute PrismConfiguration configurationType, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @PathVariable Integer resourceId, @RequestParam(required = false) PrismProgramType programType, @PathVariable PrismDisplayPropertyDefinition id,
+            @PathVariable Integer resourceId, @RequestParam(required = false) PrismOpportunityType opportunityType,
+            @PathVariable PrismDisplayPropertyDefinition id,
             @Valid @RequestBody DisplayPropertyConfigurationDTO displayPropertyConfigurationDTO) throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         displayPropertyConfigurationDTO.setDefinitionId(id);
-        customizationService.createOrUpdateConfiguration(configurationType, resource, programType, displayPropertyConfigurationDTO);
+        customizationService.createOrUpdateConfiguration(configurationType, resource, opportunityType, displayPropertyConfigurationDTO);
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:workflowProperties}", method = RequestMethod.PUT)
     public void updateWorkflowPropertyConfiguration(@ModelAttribute PrismConfiguration configurationType,
             @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam PrismScope scope,
-            @RequestParam(required = false) PrismProgramType programType, @Valid @RequestBody WorkflowPropertyConfigurationDTO workflowPropertyConfigurationDTO)
+            @RequestParam(required = false) PrismOpportunityType opportunityType,
+            @Valid @RequestBody WorkflowPropertyConfigurationDTO workflowPropertyConfigurationDTO)
             throws Exception {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        customizationService.createOrUpdateConfigurationGroup(configurationType, resource, scope, programType, workflowPropertyConfigurationDTO);
+        customizationService.createOrUpdateConfigurationGroup(configurationType, resource, scope, opportunityType, workflowPropertyConfigurationDTO);
     }
 
     @PreAuthorize("permitAll")

@@ -44,6 +44,7 @@ import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
@@ -103,7 +104,9 @@ public class AdvertService {
         return entityService.getById(AdvertClosingDate.class, id);
     }
 
-    public List<Advert> getAdverts(OpportunitiesQueryDTO queryDTO, List<PrismState> programStates, List<PrismState> projectStates) {
+    public List<Advert> getAdverts(OpportunitiesQueryDTO queryDTO, List<PrismState> institutionStates, List<PrismState> programStates,
+            List<PrismState> projectStates) {
+        institutionStates = queryDTO.getInstitutions() == null ? institutionStates : stateService.getInstitutionStates();
         programStates = queryDTO.getPrograms() == null ? programStates : stateService.getProgramStates();
         projectStates = queryDTO.getProjects() == null ? projectStates : stateService.getProjectStates();
 
@@ -125,7 +128,7 @@ public class AdvertService {
             }
         }
 
-        List<Integer> adverts = advertDAO.getAdverts(programStates, projectStates, queryDTO);
+        List<Integer> adverts = advertDAO.getAdverts(institutionStates, programStates, projectStates, queryDTO);
 
         if (adverts.isEmpty()) {
             return Lists.newArrayList();
@@ -136,10 +139,11 @@ public class AdvertService {
     }
 
     public List<AdvertRecommendationDTO> getRecommendedAdverts(User user) {
+        List<PrismState> activeInstitutionStates = stateService.getActiveInstitutionStates();
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         List<Integer> advertsRecentlyAppliedFor = advertDAO.getAdvertsRecentlyAppliedFor(user, new LocalDate().minusYears(1));
-        return advertDAO.getRecommendedAdverts(user, activeProgramStates, activeProjectStates, advertsRecentlyAppliedFor);
+        return advertDAO.getRecommendedAdverts(user, activeInstitutionStates, activeProgramStates, activeProjectStates, advertsRecentlyAppliedFor);
     }
 
     public void updateDetail(Class<? extends Resource> resourceClass, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) throws Exception {
@@ -188,7 +192,7 @@ public class AdvertService {
         Resource resource = resourceService.getById(resourceClass, resourceId);
         Advert advert = (Advert) PrismReflectionUtils.getProperty(resource, "advert");
 
-        for (String propertyName : new String[] { "domain", "industry", "function", "competency", "theme", "institution", "programType" }) {
+        for (String propertyName : new String[] { "domain", "industry", "function", "competency", "theme" }) {
             String propertySetterName = "add" + WordUtils.capitalize(propertyName);
             List<Object> values = (List<Object>) PrismReflectionUtils.getProperty(categoriesDTO, pluralize(propertyName));
 
@@ -284,9 +288,10 @@ public class AdvertService {
     }
 
     public List<Integer> getAdvertsWithElapsedCurrencyConversions(LocalDate baseline) {
+        List<PrismState> activeInstitutionStates = stateService.getActiveInstitutionStates();
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        return advertDAO.getAdvertsWithElapsedCurrencyConversions(baseline, activeProgramStates, activeProjectStates);
+        return advertDAO.getAdvertsWithElapsedCurrencyConversions(baseline, activeInstitutionStates, activeProgramStates, activeProjectStates);
     }
 
     public InstitutionAddress createAddressCopy(InstitutionAddress address) {
@@ -306,20 +311,20 @@ public class AdvertService {
         return newAddress;
     }
 
-    public List<String> getLocalizedTags(Institution institution, Class<? extends AdvertFilterCategory> clazz) {
-        return advertDAO.getLocalizedTags(institution, clazz);
+    public List<String> getAdvertTags(Institution institution, Class<? extends AdvertFilterCategory> clazz) {
+        return advertDAO.getAdvertTags(institution, clazz);
     }
 
-    public List<String> getLocalizedThemes(Application application) {
-        if (application.isProgramApplication()) {
-            return advertDAO.getLocalizedProgramThemes(application.getProgram());
-        } else {
-            List<String> themes = advertDAO.getLocalizedProjectThemes(application.getProject());
-            if (themes.isEmpty()) {
-                return advertDAO.getLocalizedProgramThemes(application.getProgram());
+    public List<String> getAdvertThemes(Application application) {
+        for (ResourceParent resource : new ResourceParent[] { application.getProject(), application.getProgram(), application.getInstitution() }) {
+            if (resource != null) {
+                List<String> themes = advertDAO.getAdvertThemes(resource.getAdvert());
+                if (!themes.isEmpty()) {
+                    return themes;
+                }
             }
-            return themes;
         }
+        return Lists.newArrayList();
     }
 
     public void setSequenceIdentifier(Advert advert, String prefix) {
@@ -339,7 +344,7 @@ public class AdvertService {
 
     private String getCurrencyAtLocale(Advert advert) {
         InstitutionAddress addressAtLocale = advert.getAddress();
-        addressAtLocale = addressAtLocale == null ? advert.getInstitution().getAddress() : addressAtLocale;
+        addressAtLocale = addressAtLocale == null ? advert.getResourceParent().getInstitution().getAdvert().getAddress() : addressAtLocale;
         return addressAtLocale.getDomicile().getCurrency();
     }
 

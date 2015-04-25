@@ -49,9 +49,6 @@ public class System extends Resource {
     @Column(name = "title", nullable = false, unique = true)
     private String title;
 
-    @Column(name = "helpdesk", nullable = false)
-    private String helpdesk;
-
     @Column(name = "last_data_import_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastDataImportDate;
@@ -161,14 +158,6 @@ public class System extends Resource {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public final String getHelpdesk() {
-        return helpdesk;
-    }
-
-    public final void setHelpdesk(String helpdesk) {
-        this.helpdesk = helpdesk;
     }
 
     public final LocalDate getLastDataImportDate() {
@@ -427,11 +416,6 @@ public class System extends Resource {
 
     public System withId(Integer id) {
         this.id = id;
-        return this;
-    }
-
-    public System withHelpdesk(String helpdesk) {
-        this.helpdesk = helpdesk;
         return this;
     }
 

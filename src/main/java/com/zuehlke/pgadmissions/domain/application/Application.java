@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.application;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_REQUIRED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.IMMEDIATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
@@ -203,6 +204,9 @@ public class Application extends Resource {
 
     @Column(name = "application_month")
     private Integer applicationMonth;
+    
+    @Column(name = "application_month_seqence")
+    private Integer applicationMonthSequence;
 
     @ManyToOne
     @JoinColumn(name = "state_id")
@@ -257,9 +261,6 @@ public class Application extends Resource {
 
     @OneToMany(mappedBy = "application")
     private Set<UserRole> userRoles = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "application")
-    private Set<ApplicationProcessing> processings = Sets.newHashSet();
 
     @Transient
     private Boolean acceptedTerms;
@@ -463,6 +464,14 @@ public class Application extends Resource {
         this.applicationMonth = applicationMonth;
     }
 
+    public Integer getApplicationMonthSequence() {
+        return applicationMonthSequence;
+    }
+
+    public void setApplicationMonthSequence(Integer applicationMonthSequence) {
+        this.applicationMonthSequence = applicationMonthSequence;
+    }
+
     public LocalDate getClosingDate() {
         return closingDate;
     }
@@ -629,10 +638,6 @@ public class Application extends Resource {
     @Override
     public Set<UserRole> getUserRoles() {
         return userRoles;
-    }
-
-    public final Set<ApplicationProcessing> getProcessings() {
-        return processings;
     }
 
     public Application withId(Integer id) {
@@ -855,7 +860,7 @@ public class Application extends Resource {
     }
 
     public boolean isApproved() {
-        return state.getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED && state.getId() != PrismState.APPLICATION_APPROVED;
+        return state.getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED && state.getId() != APPLICATION_APPROVED;
     }
 
     public boolean isSubmitted() {
@@ -870,12 +875,18 @@ public class Application extends Resource {
         return project == null ? program.getCode() : project.getCode();
     }
 
-    public PrismProgramStartType getDefaultStartType() {
-        return project == null && program.getProgramType().getPrismProgramType().getDefaultStartType() == SCHEDULED ? SCHEDULED : IMMEDIATE;
+    public PrismOpportunityType getOpportunityType() {
+        if (project == null && program == null) {
+            return null;
+        } else if (project != null) {
+            return project.getOpportunityType().getPrismOpportunityType();
+        }
+        return program.getOpportunityType().getPrismOpportunityType();
     }
 
-    public boolean isProgramApplication() {
-        return project == null;
+    public PrismProgramStartType getDefaultStartType() {
+        PrismOpportunityType opportunityType = getOpportunityType();
+        return opportunityType == null ? IMMEDIATE : opportunityType.getDefaultStartType();
     }
 
     @Override

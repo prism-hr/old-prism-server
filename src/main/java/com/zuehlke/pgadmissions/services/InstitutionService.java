@@ -287,6 +287,17 @@ public class InstitutionService {
         return persistentInstitutionDomicile.getId();
     }
 
+    public String getBusinessYear(Institution institution, Integer year, Integer month) {
+        Integer businessYearStartMonth = institution.getBusinessYearStartMonth();
+        Integer businessYear = month < businessYearStartMonth ? (year - 1) : year;
+        return month == 1 ? businessYear.toString() : (year.toString() + "/" + new Integer(year + 1).toString());
+    }
+    
+    public Integer getMonthOfBusinessYear(Institution institution, Integer month) {
+        Integer businessYearStartMonth = institution.getBusinessYearStartMonth();
+        return month <= businessYearStartMonth ? (month - (businessYearStartMonth - 1)) : (month + (12 - (businessYearStartMonth - 1)));
+    }
+
     private void setLogoImage(Institution institution, InstitutionDTO institutionDTO, PrismAction actionId) {
         FileDTO logoImageDTO = institutionDTO.getLogoImage();
         if (logoImageDTO != null) {

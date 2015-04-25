@@ -1,20 +1,10 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_TYPE_EMPLOYMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_TYPE_EMPLOYMENT_SECONDMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_RESEARCH;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_TAUGHT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_TYPE_SCHOLARSHIP_UNDERGRADUATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_TYPE_STUDY_POSTGRADUATE_RESEARCH;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_TYPE_STUDY_POSTGRADUATE_TAUGHT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_TYPE_STUDY_UNDERGRADUATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_TYPE_TRAINING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM_TYPE_WORK_EXPERIENCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.EXPERIENCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.FUNDING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.LEARNING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.STUDY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory.WORK;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.FUNDING;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.LEARNING;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramTypeVisibility.EXTERNAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramTypeVisibility.INTERNAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.IMMEDIATE;
@@ -33,24 +23,21 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
 import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
 
-public enum PrismProgramType {
+public enum PrismOpportunityType {
 
-    STUDY_UNDERGRADUATE(STUDY, 36, 48, EXTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3, SYSTEM_PROGRAM_TYPE_STUDY_UNDERGRADUATE, new String[] {}), //
-    STUDY_POSTGRADUATE_TAUGHT(STUDY, 12, 24, EXTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3, SYSTEM_PROGRAM_TYPE_STUDY_POSTGRADUATE_TAUGHT, new String[] {}), //
-    STUDY_POSTGRADUATE_RESEARCH(STUDY, 12, 48, EXTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3, SYSTEM_PROGRAM_TYPE_STUDY_POSTGRADUATE_RESEARCH, new String[] {
+    STUDY_UNDERGRADUATE(STUDY, 36, 48, EXTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3, new String[] {}), //
+    STUDY_POSTGRADUATE_TAUGHT(STUDY, 12, 24, EXTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3, new String[] {}), //
+    STUDY_POSTGRADUATE_RESEARCH(STUDY, 12, 48, EXTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3, new String[] {
             "mres", "md(res)", "research degree", "engineering doctorate", "dpa" }), //
-    SCHOLARSHIP_UNDERGRADUATE(FUNDING, 36, 48, INTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 1, SYSTEM_PROGRAM_TYPE_SCHOLARSHIP_UNDERGRADUATE, new String[] {}), //
-    SCHOLARSHIP_POSTGRADUATE_TAUGHT(FUNDING, 12, 24, INTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3, SYSTEM_PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_TAUGHT,
-            new String[] {}), //
-    SCHOLARSHIP_POSTGRADUATE_RESEARCH(FUNDING, 12, 48, INTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3, SYSTEM_PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_RESEARCH,
-            new String[] {}), //
-    WORK_EXPERIENCE(EXPERIENCE, null, null, EXTERNAL, IMMEDIATE, null, null, MONDAY, 4, 1, SYSTEM_PROGRAM_TYPE_WORK_EXPERIENCE, new String[] {}), //
-    EMPLOYMENT(WORK, null, null, EXTERNAL, IMMEDIATE, null, null, MONDAY, 4, 1, SYSTEM_PROGRAM_TYPE_EMPLOYMENT, new String[] {}), //
-    EMPLOYMENT_SECONDMENT(WORK, null, null, INTERNAL, IMMEDIATE, null, null, MONDAY, 4, 1, SYSTEM_PROGRAM_TYPE_EMPLOYMENT_SECONDMENT,
-            new String[] { "visiting research" }), //
-    TRAINING(LEARNING, null, null, INTERNAL, IMMEDIATE, null, null, MONDAY, 4, 1, SYSTEM_PROGRAM_TYPE_TRAINING, new String[] {}); //
+    SCHOLARSHIP_UNDERGRADUATE(FUNDING, 36, 48, INTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 1, new String[] {}), //
+    SCHOLARSHIP_POSTGRADUATE_TAUGHT(FUNDING, 12, 24, INTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3, new String[] {}), //
+    SCHOLARSHIP_POSTGRADUATE_RESEARCH(FUNDING, 12, 48, INTERNAL, SCHEDULED, SEPTEMBER, 4, MONDAY, 4, 3, new String[] {}), //
+    WORK_EXPERIENCE(EXPERIENCE, null, null, EXTERNAL, IMMEDIATE, null, null, MONDAY, 4, 1, new String[] {}), //
+    EMPLOYMENT(WORK, null, null, EXTERNAL, IMMEDIATE, null, null, MONDAY, 4, 1, new String[] {}), //
+    EMPLOYMENT_SECONDMENT(WORK, null, null, INTERNAL, IMMEDIATE, null, null, MONDAY, 4, 1, new String[] { "visiting research" }), //
+    TRAINING(LEARNING, null, null, INTERNAL, IMMEDIATE, null, null, MONDAY, 4, 1, new String[] {}); //
 
-    private PrismProgramCategory programCategory;
+    private PrismOpportunityCategory programCategory;
 
     private Integer defaultMinimumDurationMonth;
 
@@ -70,15 +57,13 @@ public enum PrismProgramType {
 
     private Integer defaultStartBuffer;
 
-    private PrismDisplayPropertyDefinition displayProperty;
-
     private String[] prefixes;
 
-    private static final HashMultimap<PrismProgramType, PrismProgramType> relations = HashMultimap.create();
+    private static final HashMultimap<PrismOpportunityType, PrismOpportunityType> relations = HashMultimap.create();
 
-    private static final HashMultimap<PrismProgramType, PrismProgramTypeRecommendation> recommendations = HashMultimap.create();
+    private static final HashMultimap<PrismOpportunityType, PrismProgramTypeRecommendation> recommendations = HashMultimap.create();
 
-    private static final LinkedListMultimap<PrismProgramCategory, PrismProgramType> programTypesByCategory = LinkedListMultimap.create();
+    private static final LinkedListMultimap<PrismOpportunityCategory, PrismOpportunityType> byCategory = LinkedListMultimap.create();
 
     private static final List<String> stringValues = Lists.newArrayList();
 
@@ -133,15 +118,15 @@ public enum PrismProgramType {
         recommendations.put(EMPLOYMENT, new PrismProgramTypeRecommendation(EMPLOYMENT, 1, PrismDurationUnit.YEAR,
                 PrismProgramTypeRecommendationBaselineType.FROM_START));
 
-        for (PrismProgramType programType : PrismProgramType.values()) {
-            stringValues.add(programType.name());
-            programTypesByCategory.put(programType.getProgramCategory(), programType);
+        for (PrismOpportunityType opportunityType : PrismOpportunityType.values()) {
+            stringValues.add(opportunityType.name());
+            byCategory.put(opportunityType.getProgramCategory(), opportunityType);
         }
     }
 
-    PrismProgramType(PrismProgramCategory programClass, Integer defaultMinimumDurationMonth, Integer defaultMaximumDurationMonth,
+    PrismOpportunityType(PrismOpportunityCategory programClass, Integer defaultMinimumDurationMonth, Integer defaultMaximumDurationMonth,
             PrismProgramTypeVisibility defaultVisibility, PrismProgramStartType defaultStartType, Integer defaultStartMonth, Integer defaultStartWeek,
-            Integer defaultStartDay, Integer defaultStartDelay, Integer defaultStartBuffer, PrismDisplayPropertyDefinition displayProperty, String[] prefixes) {
+            Integer defaultStartDay, Integer defaultStartDelay, Integer defaultStartBuffer, String[] prefixes) {
         this.programCategory = programClass;
         this.defaultMinimumDurationMonth = defaultMinimumDurationMonth;
         this.defaultMaximumDurationMonth = defaultMaximumDurationMonth;
@@ -152,11 +137,10 @@ public enum PrismProgramType {
         this.defaultStartDay = defaultStartDay;
         this.defaultStartDelay = defaultStartDelay;
         this.defaultStartBuffer = defaultStartBuffer;
-        this.displayProperty = displayProperty;
         this.prefixes = prefixes;
     }
 
-    public PrismProgramCategory getProgramCategory() {
+    public PrismOpportunityCategory getProgramCategory() {
         return programCategory;
     }
 
@@ -196,10 +180,6 @@ public enum PrismProgramType {
         return defaultStartBuffer;
     }
 
-    public PrismDisplayPropertyDefinition getDisplayProperty() {
-        return displayProperty;
-    }
-
     public DefaultStartDateDTO getDefaultStartDate(LocalDate baseline) {
         LocalDate immediateInterim = baseline.plusWeeks(defaultStartDelay);
         LocalDate immediate = immediateInterim.withDayOfWeek(defaultStartDay);
@@ -216,11 +196,11 @@ public enum PrismProgramType {
         return new DefaultStartDateDTO().withImmediate(immediate).withScheduled(scheduled);
     }
 
-    public static PrismProgramType findValueFromString(String toSearchIn) {
+    public static PrismOpportunityType findValueFromString(String toSearchIn) {
         if (stringValues.contains(toSearchIn)) {
-            return PrismProgramType.valueOf(toSearchIn);
+            return PrismOpportunityType.valueOf(toSearchIn);
         }
-        for (PrismProgramType value : PrismProgramType.values()) {
+        for (PrismOpportunityType value : PrismOpportunityType.values()) {
             if (value.prefixes.length > 0) {
                 toSearchIn = toSearchIn.trim().replaceAll("\\s+", " ").toLowerCase();
                 for (String prefix : value.prefixes) {
@@ -233,7 +213,7 @@ public enum PrismProgramType {
         return null;
     }
 
-    public Set<PrismProgramType> getRelations() {
+    public Set<PrismOpportunityType> getRelations() {
         return relations.get(this);
     }
 
@@ -241,11 +221,11 @@ public enum PrismProgramType {
         return recommendations.get(this);
     }
 
-    public static List<PrismProgramType> getProgramTypes(PrismProgramCategory programCategory) {
-        return programTypesByCategory.get(programCategory);
+    public static List<PrismOpportunityType> getOpportunityTypes(PrismOpportunityCategory programCategory) {
+        return byCategory.get(programCategory);
     }
 
-    public static PrismProgramType getSystemProgramType() {
+    public static PrismOpportunityType getSystemOpportunityType() {
         return STUDY_POSTGRADUATE_RESEARCH;
     }
 

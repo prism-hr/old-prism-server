@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<programTypes>
-  <programType>
+<opportunityTypes>
+  <opportunityType>
   	<code>STUDY_UNDERGRADUATE</code>
     <name>Undergraduate Study</name>
-  </programType>
-  <programType>
+  </opportunityType>
+  <opportunityType>
     <code>STUDY_POSTGRADUATE_TAUGHT</code>
     <name>Postgraduate Study</name>
-  </programType>
-  <programType>
+  </opportunityType>
+  <opportunityType>
     <code>STUDY_POSTGRADUATE_RESEARCH</code>
     <name>Postgraduate Research</name>
-  </programType>
-  <programType>
+  </opportunityType>
+  <opportunityType>
   	<code>SCHOLARSHIP_UNDERGRADUATE</code>
     <name>Undergraduate Study Scholarship</name>
-  </programType>
-  <programType>
+  </opportunityType>
+  <opportunityType>
     <code>SCHOLARSHIP_POSTGRADUATE_TAUGHT</code>
     <name>Postgraduate Study Scholarship</name>
-  </programType>
-  <programType>
+  </opportunityType>
+  <opportunityType>
     <code>SCHOLARSHIP_POSTGRADUATE_RESEARCH</code>
     <name>Postgraduate Research Scholarship</name>
-  </programType>
-  <programType>
+  </opportunityType>
+  <opportunityType>
   	<code>WORK_EXPERIENCE</code>
     <name>Work Experience</name>
-  </programType>
-  <programType>
+  </opportunityType>
+  <opportunityType>
     <code>EMPLOYMENT</code>
     <name>Employment</name>
-  </programType>
-  <programType>
+  </opportunityType>
+  <opportunityType>
     <code>EMPLOYMENT_SECONDMENT</code>
     <name>Secondment</name>
-  </programType>
-  <programType>
+  </opportunityType>
+  <opportunityType>
     <code>TRAINING</code>
     <name>Training</name>
-  </programType>
-</programTypes>
+  </opportunityType>
+</opportunityTypes>

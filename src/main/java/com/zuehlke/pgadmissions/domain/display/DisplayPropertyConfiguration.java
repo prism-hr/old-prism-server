@@ -12,9 +12,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
@@ -22,9 +23,10 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 
 @Entity
 @Table(name = "DISPLAY_PROPERTY_CONFIGURATION", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "system_id", "program_type", "display_property_definition_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "program_type", "display_property_definition_id" }),
-        @UniqueConstraint(columnNames = { "program_id", "display_property_definition_id" }) })
+        @UniqueConstraint(columnNames = { "system_id", "opportunity_type", "display_property_definition_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "opportunity_type", "display_property_definition_id" }),
+        @UniqueConstraint(columnNames = { "program_id", "display_property_definition_id" }),
+        @UniqueConstraint(columnNames = { "project_id", "display_property_definition_id" }) })
 public class DisplayPropertyConfiguration extends WorkflowConfiguration {
 
     @Id
@@ -43,9 +45,13 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
     @JoinColumn(name = "program_id")
     private Program program;
 
-    @Column(name = "program_type")
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private Project project;
+
+    @Column(name = "opportunity_type")
     @Enumerated(EnumType.STRING)
-    private PrismProgramType programType;
+    private PrismOpportunityType opportunityType;
 
     @ManyToOne
     @JoinColumn(name = "display_property_definition_id", nullable = false)
@@ -97,13 +103,23 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
     }
 
     @Override
-    public final PrismProgramType getProgramType() {
-        return programType;
+    public Project getProject() {
+        return project;
     }
 
     @Override
-    public final void setProgramType(PrismProgramType programType) {
-        this.programType = programType;
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    @Override
+    public final PrismOpportunityType getOpportunityType() {
+        return opportunityType;
+    }
+
+    @Override
+    public final void setOpportunityType(PrismOpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
     }
 
     public final DisplayPropertyDefinition getDisplayPropertyDefinition() {
@@ -142,8 +158,8 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
         return this;
     }
 
-    public DisplayPropertyConfiguration withProgramType(PrismProgramType programType) {
-        this.programType = programType;
+    public DisplayPropertyConfiguration withProgramType(PrismOpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
         return this;
     }
 

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
@@ -10,9 +12,13 @@ public class ProjectExtendedRepresentation extends AbstractResourceRepresentatio
 
     private ProgramRepresentation program;
 
+    private PrismOpportunityType opportunityType;
+    
     private String title;
 
     private AdvertRepresentation advert;
+    
+    private PrismStudyOption[] studyOptions;
     
     private ResourceSummaryRepresentation resourceSummary;
 
@@ -32,6 +38,14 @@ public class ProjectExtendedRepresentation extends AbstractResourceRepresentatio
         this.program = program;
     }
 
+    public PrismOpportunityType getOpportunityType() {
+        return opportunityType;
+    }
+
+    public void setOpportunityType(PrismOpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -46,6 +60,14 @@ public class ProjectExtendedRepresentation extends AbstractResourceRepresentatio
 
     public void setAdvert(AdvertRepresentation advert) {
         this.advert = advert;
+    }
+    
+    public PrismStudyOption[] getStudyOptions() {
+        return studyOptions;
+    }
+
+    public void setStudyOptions(PrismStudyOption[] studyOptions) {
+        this.studyOptions = studyOptions;
     }
 
     public final ResourceSummaryRepresentation getResourceSummary() {

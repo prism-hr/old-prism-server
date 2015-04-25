@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.integration.helpers;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -215,7 +215,7 @@ public class SystemInitialisationHelper {
 			DisplayPropertyDefinition displayProperty = value.getDisplayPropertyDefinition();
 			PrismDisplayPropertyDefinition prismDisplayProperty = displayProperty.getId();
 
-			assertEquals(value.getProgramType(), displayProperty.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemProgramType() : null);
+			assertEquals(value.getOpportunityType(), displayProperty.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemOpportunityType() : null);
 			assertEquals(displayProperty.getCategory(), prismDisplayProperty.getCategory());
 			assertEquals(value.getValue(), prismDisplayProperty.getDefaultValue());
 			assertTrue(value.getSystemDefault());
@@ -236,7 +236,7 @@ public class SystemInitialisationHelper {
 			NotificationConfiguration configuration = (NotificationConfiguration) customizationService.getConfiguration(PrismConfiguration.NOTIFICATION,
 			        system, system.getUser(), definition);
 
-			assertEquals(configuration.getProgramType(), definition.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemProgramType() : null);
+			assertEquals(configuration.getOpportunityType(), definition.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemOpportunityType() : null);
 			assertEquals(configuration.getNotificationDefinition(), definition);
 			assertEquals(prismNotificationDefinition.getDefaultReminderDuration(), configuration.getReminderInterval());
 			assertTrue(configuration.getSystemDefault());
@@ -254,7 +254,7 @@ public class SystemInitialisationHelper {
 			StateDurationConfiguration stateDurationConfiguration = (StateDurationConfiguration) customizationService.getConfiguration(
 			        PrismConfiguration.STATE_DURATION, system, system.getUser(), state.getStateDurationDefinition());
 
-			assertEquals(stateDurationConfiguration.getProgramType(), state.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemProgramType() : null);
+			assertEquals(stateDurationConfiguration.getOpportunityType(), state.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemOpportunityType() : null);
 			assertEquals(state.getId().getDefaultDuration().getDefaultDuration(), stateDurationConfiguration.getDuration());
 			assertTrue(stateDurationConfiguration.getSystemDefault());
 		}

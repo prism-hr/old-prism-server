@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAddressDTO;
@@ -278,12 +278,12 @@ public class ApplicationResource {
         representation.setOfferRecommendation(commentService.getOfferRecommendation(application));
         representation.setAssignedSupervisors(commentService.getApplicationSupervisors(application));
 
-        representation.setPossibleThemes(advertService.getLocalizedThemes(application));
+        representation.setPossibleThemes(advertService.getAdvertThemes(application));
         representation.setPossibleLocations(programService.getPossibleLocations(application.getProgram()));
 
-        List<ProgramStudyOption> enabledProgramStudyOptions = programService.getEnabledProgramStudyOptions(application.getProgram());
+        List<ResourceStudyOption> enabledProgramStudyOptions = programService.getEnabledProgramStudyOptions(application.getProgram());
         List<PrismStudyOption> availableStudyOptions = Lists.newArrayListWithCapacity(enabledProgramStudyOptions.size());
-        for (ProgramStudyOption studyOption : enabledProgramStudyOptions) {
+        for (ResourceStudyOption studyOption : enabledProgramStudyOptions) {
             availableStudyOptions.add(studyOption.getStudyOption().getPrismStudyOption());
         }
 

@@ -231,6 +231,14 @@ public class StateService {
         return stateDAO.getStatesByStateGroup(stateGroupId);
     }
 
+    public List<PrismState> getInstitutionStates() {
+        return stateDAO.getInstitutionStates();
+    }
+
+    public List<PrismState> getActiveInstitutionStates() {
+        return stateDAO.getActiveInstitutionStates();
+    }
+    
     public List<PrismState> getProgramStates() {
         return stateDAO.getProgramStates();
     }

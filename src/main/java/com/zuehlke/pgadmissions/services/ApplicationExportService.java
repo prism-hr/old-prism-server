@@ -42,7 +42,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ApplicationExportDTO;
@@ -139,7 +139,7 @@ public class ApplicationExportService {
 		String creatorIpAddress = applicationService.getApplicationCreatorIpAddress(application);
 		Comment offerRecommendationComment = commentService.getLatestComment(application, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
 		User primarySupervisor = applicationService.getPrimarySupervisor(offerRecommendationComment);
-		ProgramStudyOptionInstance exportProgramInstance = programService.getFirstEnabledProgramStudyOptionInstance(application.getProgram(), application
+		ResourceStudyOptionInstance exportProgramInstance = programService.getFirstEnabledProgramStudyOptionInstance(application.getProgram(), application
 		        .getProgramDetail().getStudyOption());
 		List<ApplicationReferenceDTO> applicationExportReferences = applicationService.getApplicationExportReferees(application);
 

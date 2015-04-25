@@ -258,7 +258,7 @@ public class ResourceResource {
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceScope:projects|programs|institutions}/{resourceId}", params = "type=summary")
     @PreAuthorize("isAuthenticated()")
-    public ResourceSummaryRepresentation getSummary(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId) {
+    public ResourceSummaryRepresentation getSummary(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId) throws Exception {
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
         if (Arrays.asList(SYSTEM, APPLICATION).contains(resourceScope)) {
             throw new UnsupportedOperationException("Resource summary can only be generated for institutions, programs, projects");
@@ -292,7 +292,8 @@ public class ResourceResource {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         UserRepresentation newUser = userRolesRepresentation.getUser();
 
-        User user = userService.getOrCreateUserWithRoles(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource, userRolesRepresentation.getRoles());
+        User user = userService.getOrCreateUserWithRoles(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource,
+                userRolesRepresentation.getRoles());
         return mapper.map(user, UserRepresentation.class);
     }
 

@@ -5,19 +5,19 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
 public class OpportunitiesQueryDTO {
 
     @NotNull
-    private PrismProgramCategory programCategory;
+    private PrismOpportunityCategory programCategory;
 
     private String keyword;
 
-    private List<PrismProgramType> programTypes;
+    private List<PrismOpportunityType> opportunityTypes;
 
     private List<PrismStudyOption> studyOptions;
 
@@ -55,11 +55,11 @@ public class OpportunitiesQueryDTO {
     
     private PrismAction actionId;
 
-    public PrismProgramCategory getProgramCategory() {
+    public PrismOpportunityCategory getProgramCategory() {
         return programCategory;
     }
 
-    public void setProgramCategory(PrismProgramCategory programCategory) {
+    public void setProgramCategory(PrismOpportunityCategory programCategory) {
         this.programCategory = programCategory;
     }
 
@@ -71,12 +71,12 @@ public class OpportunitiesQueryDTO {
         this.keyword = keyword;
     }
 
-    public List<PrismProgramType> getProgramTypes() {
-        return programTypes;
+    public List<PrismOpportunityType> getOpportunityTypes() {
+        return opportunityTypes;
     }
 
-    public void setProgramTypes(List<PrismProgramType> programTypes) {
-        this.programTypes = programTypes;
+    public void setOpportunityTypes(List<PrismOpportunityType> opportunityTypes) {
+        this.opportunityTypes = opportunityTypes;
     }
 
     public List<PrismStudyOption> getStudyOptions() {

@@ -25,8 +25,8 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
@@ -151,7 +151,7 @@ public class StaticDataService {
     public Map<String, Object> getSimpleProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        for (Class<?> enumClass : new Class[] { PrismProgramType.class, PrismStudyOption.class,
+        for (Class<?> enumClass : new Class[] { PrismOpportunityType.class, PrismStudyOption.class,
                 PrismYesNoUnsureResponse.class, PrismDurationUnit.class, PrismAdvertDomain.class,
                 PrismAdvertFunction.class, PrismAdvertIndustry.class, PrismRefereeType.class,
                 PrismApplicationReserveStatus.class, PrismDisplayPropertyCategory.class }) {
@@ -162,7 +162,7 @@ public class StaticDataService {
 
         staticData.put("timeZones", TimeZoneUtils.getInstance().getTimeZoneDefinitions());
         staticData.put("currencies", institutionService.listAvailableCurrencies());
-        staticData.put("defaultProgramType", PrismProgramType.getSystemProgramType());
+        staticData.put("defaultProgramType", PrismOpportunityType.getSystemOpportunityType());
         staticData.put("googleApiKey", googleApiKey);
 
         return staticData;
@@ -211,13 +211,13 @@ public class StaticDataService {
     public Map<String, Object> getProgramCategories() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        List<ProgramCategoryRepresentation> programCategories = Lists.newArrayListWithCapacity(PrismProgramCategory.values().length);
-        for (PrismProgramCategory programCategory : PrismProgramCategory.values()) {
+        List<ProgramCategoryRepresentation> programCategories = Lists.newArrayListWithCapacity(PrismOpportunityCategory.values().length);
+        for (PrismOpportunityCategory programCategory : PrismOpportunityCategory.values()) {
             ProgramCategoryRepresentation category = new ProgramCategoryRepresentation();
             category.setId(programCategory);
             category.setHasFee(programCategory.isHasFee());
             category.setHasPay(programCategory.isHasPay());
-            category.setProgramTypes(PrismProgramType.getProgramTypes(programCategory));
+            category.setOpportunityTypes(PrismOpportunityType.getOpportunityTypes(programCategory));
             programCategories.add(category);
         }
 

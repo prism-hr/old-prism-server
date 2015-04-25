@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.definitions;
 
 public class PrismProgramTypeRecommendation {
 
-    private PrismProgramType programType;
+    private PrismOpportunityType opportunityType;
 
     private Integer delayDuration;
 
@@ -10,15 +10,16 @@ public class PrismProgramTypeRecommendation {
 
     private PrismProgramTypeRecommendationBaselineType delayBaselineType;
 
-    public PrismProgramTypeRecommendation(PrismProgramType programType, Integer delayDuration, PrismDurationUnit delayDurationUnit, PrismProgramTypeRecommendationBaselineType delayBaselineType) {
-        this.programType = programType;
+    public PrismProgramTypeRecommendation(PrismOpportunityType opportunityType, Integer delayDuration, PrismDurationUnit delayDurationUnit,
+            PrismProgramTypeRecommendationBaselineType delayBaselineType) {
+        this.opportunityType = opportunityType;
         this.delayDuration = delayDuration;
         this.delayDurationUnit = delayDurationUnit;
         this.delayBaselineType = delayBaselineType;
     }
 
-    public final PrismProgramType getProgramType() {
-        return programType;
+    public final PrismOpportunityType getOpportunityType() {
+        return opportunityType;
     }
 
     public final Integer getDelayDuration() {

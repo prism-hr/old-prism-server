@@ -1,5 +1,11 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DEACTIVATED;
 
@@ -133,32 +139,46 @@ public class StateDAO {
 		        .addOrder(Order.asc("stateGroup.ordinal")) //
 		        .list();
 	}
+	
+	   public List<PrismState> getInstitutionStates() {
+	        return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(State.class) //
+	                .setProjection(Projections.property("id")) //
+	                .add(Restrictions.eq("scope.id", INSTITUTION)) //
+	                .list();
+	    }
+
+	    public List<PrismState> getActiveInstitutionStates() {
+	        return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+	                .setProjection(Projections.groupProperty("state.id")) //
+	                .add(Restrictions.eq("action.id", INSTITUTION_CREATE_APPLICATION)) //
+	                .list();
+	    }
 
 	public List<PrismState> getProgramStates() {
 		return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(State.class) //
 		        .setProjection(Projections.property("id")) //
-		        .add(Restrictions.eq("scope.id", PrismScope.PROGRAM)) //
+		        .add(Restrictions.eq("scope.id", PROGRAM)) //
 		        .list();
 	}
 
 	public List<PrismState> getActiveProgramStates() {
 		return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
 		        .setProjection(Projections.groupProperty("state.id")) //
-		        .add(Restrictions.eq("action.id", PrismAction.PROGRAM_CREATE_APPLICATION)) //
+		        .add(Restrictions.eq("action.id", PROGRAM_CREATE_APPLICATION)) //
 		        .list();
 	}
 
 	public List<PrismState> getProjectStates() {
 		return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(State.class) //
 		        .setProjection(Projections.groupProperty("id")) //
-		        .add(Restrictions.eq("scope.id", PrismScope.PROJECT)) //
+		        .add(Restrictions.eq("scope.id", PROJECT)) //
 		        .list();
 	}
 
 	public List<PrismState> getActiveProjectStates() {
 		return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
 		        .setProjection(Projections.groupProperty("state.id")) //
-		        .add(Restrictions.eq("action.id", PrismAction.PROJECT_CREATE_APPLICATION)) //
+		        .add(Restrictions.eq("action.id", PROJECT_CREATE_APPLICATION)) //
 		        .list();
 	}
 

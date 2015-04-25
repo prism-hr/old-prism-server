@@ -1,9 +1,11 @@
 package com.zuehlke.pgadmissions.domain.project;
 
-import java.math.BigDecimal;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DISABLED_COMPLETED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_REJECTED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_WITHDRAWN;
+
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,8 +26,8 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.department.Department;
+import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
@@ -74,10 +76,14 @@ public class Project extends ResourceParent {
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
+
+    @ManyToOne
+    @JoinColumn(name = "advert_type_id", nullable = false)
+    private OpportunityType opportunityType;
 
     @Column(name = "referrer")
     private String referrer;
@@ -85,30 +91,12 @@ public class Project extends ResourceParent {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "application_created_count")
-    private Integer applicationCreatedCount;
-
-    @Column(name = "application_submitted_count")
-    private Integer applicationSubmittedCount;
-
-    @Column(name = "application_approved_count")
-    private Integer applicationApprovedCount;
-
-    @Column(name = "application_rejected_count")
-    private Integer applicationRejectedCount;
-
-    @Column(name = "application_withdrawn_count")
-    private Integer applicationWithdrawnCount;
-
-    @Column(name = "application_rating_count")
-    private Integer applicationRatingCount;
-
-    @Column(name = "application_rating_count_average_non_zero")
-    private BigDecimal applicationRatingCountAverageNonZero;
-
-    @Column(name = "application_rating_average")
-    private BigDecimal applicationRatingAverage;
-
+    @Column(name = "duration_minimum")
+    private Integer durationMinimum;
+    
+    @Column(name = "duration_maximum")
+    private Integer durationMaximum;
+    
     @ManyToOne
     @JoinColumn(name = "state_id")
     private State state;
@@ -252,6 +240,14 @@ public class Project extends ResourceParent {
         this.advert = advert;
     }
 
+    public OpportunityType getOpportunityType() {
+        return opportunityType;
+    }
+
+    public void setOpportunityType(OpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -260,82 +256,20 @@ public class Project extends ResourceParent {
         this.title = title;
     }
 
-    @Override
-    public Integer getApplicationCreatedCount() {
-        return applicationCreatedCount;
+    public Integer getDurationMinimum() {
+        return durationMinimum;
     }
 
-    @Override
-    public void setApplicationCreatedCount(Integer applicationCreatedCount) {
-        this.applicationCreatedCount = applicationCreatedCount;
+    public void setDurationMinimum(Integer durationMinimum) {
+        this.durationMinimum = durationMinimum;
     }
 
-    @Override
-    public Integer getApplicationSubmittedCount() {
-        return applicationSubmittedCount;
+    public Integer getDurationMaximum() {
+        return durationMaximum;
     }
 
-    @Override
-    public void setApplicationSubmittedCount(Integer applicationSubmittedCount) {
-        this.applicationSubmittedCount = applicationSubmittedCount;
-    }
-
-    @Override
-    public Integer getApplicationApprovedCount() {
-        return applicationApprovedCount;
-    }
-
-    @Override
-    public void setApplicationApprovedCount(Integer applicationApprovedCount) {
-        this.applicationApprovedCount = applicationApprovedCount;
-    }
-
-    @Override
-    public Integer getApplicationRejectedCount() {
-        return applicationRejectedCount;
-    }
-
-    @Override
-    public void setApplicationRejectedCount(Integer applicationRejectedCount) {
-        this.applicationRejectedCount = applicationRejectedCount;
-    }
-
-    @Override
-    public Integer getApplicationWithdrawnCount() {
-        return applicationWithdrawnCount;
-    }
-
-    @Override
-    public void setApplicationWithdrawnCount(Integer applicationWithdrawnCount) {
-        this.applicationWithdrawnCount = applicationWithdrawnCount;
-    }
-
-    @Override
-    public Integer getApplicationRatingCount() {
-        return applicationRatingCount;
-    }
-
-    @Override
-    public void setApplicationRatingCount(Integer applicationRatingCountSum) {
-        this.applicationRatingCount = applicationRatingCountSum;
-    }
-
-    @Override
-    public BigDecimal getApplicationRatingCountAverageNonZero() {
-        return applicationRatingCountAverageNonZero;
-    }
-
-    @Override
-    public void setApplicationRatingCountAverageNonZero(BigDecimal applicationRatingCountAverage) {
-        this.applicationRatingCountAverageNonZero = applicationRatingCountAverage;
-    }
-
-    public BigDecimal getApplicationRatingAverage() {
-        return applicationRatingAverage;
-    }
-
-    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
-        this.applicationRatingAverage = applicationRatingAverage;
+    public void setDurationMaximum(Integer durationMaximum) {
+        this.durationMaximum = durationMaximum;
     }
 
     @Override
@@ -535,6 +469,16 @@ public class Project extends ResourceParent {
         this.title = title;
         return this;
     }
+    
+    public Project withDurationMinimum(Integer durationMinimum) {
+        this.durationMinimum = durationMinimum;
+        return this;
+    }
+    
+    public Project withDurationMaximum(Integer durationMaximum) {
+        this.durationMaximum = durationMaximum;
+        return this;
+    }
 
     public Project withCode(String code) {
         this.code = code;
@@ -543,9 +487,9 @@ public class Project extends ResourceParent {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("user", getUser()).addProperty("program", program).addProperty("title", title)
-                .addExclusion("state.id", PrismState.PROJECT_DISABLED_COMPLETED).addExclusion("state.id", PrismState.PROJECT_REJECTED)
-                .addExclusion("state.id", PrismState.PROJECT_WITHDRAWN);
+        return new ResourceSignature().addProperty("user", getUser()).addProperty("program", program).addProperty("opportunityType", opportunityType)
+                .addProperty("title", title).addExclusion("state.id", PROJECT_DISABLED_COMPLETED).addExclusion("state.id", PROJECT_REJECTED)
+                .addExclusion("state.id", PROJECT_WITHDRAWN);
     }
 
 }

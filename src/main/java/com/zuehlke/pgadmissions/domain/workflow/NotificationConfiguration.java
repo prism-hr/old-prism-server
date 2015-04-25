@@ -12,17 +12,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 
 @Entity
 @Table(name = "NOTIFICATION_CONFIGURATION", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "system_id", "program_type", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "program_type", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "program_id", "notification_definition_id" }) })
+        @UniqueConstraint(columnNames = { "system_id", "opportunity_type", "notification_definition_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "opportunity_type", "notification_definition_id" }),
+        @UniqueConstraint(columnNames = { "program_id", "notification_definition_id" }), 
+        @UniqueConstraint(columnNames = { "project_id", "notification_definition_id" })})
 public class NotificationConfiguration extends WorkflowConfiguration {
 
     @Id
@@ -40,10 +42,13 @@ public class NotificationConfiguration extends WorkflowConfiguration {
     @ManyToOne
     @JoinColumn(name = "program_id")
     private Program program;
+    
+    @JoinColumn(name = "project_id")
+    private Project project;
 
-    @Column(name = "program_type")
+    @Column(name = "opportunity_type")
     @Enumerated(EnumType.STRING)
-    private PrismProgramType programType;
+    private PrismOpportunityType opportunityType;
 
     @ManyToOne
     @JoinColumn(name = "notification_definition_id", nullable = false)
@@ -83,13 +88,13 @@ public class NotificationConfiguration extends WorkflowConfiguration {
     }
 
     @Override
-    public final PrismProgramType getProgramType() {
-        return programType;
+    public final PrismOpportunityType getOpportunityType() {
+        return opportunityType;
     }
 
     @Override
-    public final void setProgramType(PrismProgramType programType) {
-        this.programType = programType;
+    public final void setOpportunityType(PrismOpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
     }
 
     @Override
@@ -110,6 +115,16 @@ public class NotificationConfiguration extends WorkflowConfiguration {
     @Override
     public void setProgram(Program program) {
         this.program = program;
+    }
+    
+    @Override
+    public Project getProject() {
+        return project;
+    }
+    
+    @Override
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     public NotificationDefinition getNotificationDefinition() {
@@ -164,8 +179,8 @@ public class NotificationConfiguration extends WorkflowConfiguration {
         return this;
     }
 
-    public NotificationConfiguration withProgramType(PrismProgramType programType) {
-        this.programType = programType;
+    public NotificationConfiguration withProgramType(PrismOpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
         return this;
     }
 

@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+
 import java.util.Set;
 
 import javax.persistence.AttributeOverride;
@@ -26,16 +29,20 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.department.Department;
+import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParentAttribute;
 
 @Entity
 @Table(name = "ADVERT")
-public class Advert {
+public class Advert extends ResourceParentAttribute {
 
     @Id
     @GeneratedValue
@@ -50,6 +57,14 @@ public class Advert {
     @Lob
     @Column(name = "description")
     private String description;
+    
+    @OneToOne
+    @JoinColumn(name = "logo_image_id")
+    private Document logoImage;
+    
+    @OneToOne
+    @JoinColumn(name = "background_image_id")
+    private Document backgroundImage;
 
     @Column(name = "homepage")
     private String homepage;
@@ -128,6 +143,9 @@ public class Advert {
     private Set<AdvertTheme> themes = Sets.newHashSet();
 
     @OneToOne(mappedBy = "advert")
+    private Institution institution;
+
+    @OneToOne(mappedBy = "advert")
     private Program program;
 
     @OneToOne(mappedBy = "advert")
@@ -172,6 +190,22 @@ public class Advert {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Document getLogoImage() {
+        return logoImage;
+    }
+
+    public void setLogoImage(Document logoImage) {
+        this.logoImage = logoImage;
+    }
+
+    public Document getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    public void setBackgroundImage(Document backgroundImage) {
+        this.backgroundImage = backgroundImage;
     }
 
     public final String getHomepage() {
@@ -258,24 +292,49 @@ public class Advert {
         return themes;
     }
 
+    @Override
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    @Override
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
+
+    @Override
     public Program getProgram() {
         return program;
     }
 
+    @Override
     public void setProgram(Program program) {
         this.program = program;
     }
 
+    @Override
     public Project getProject() {
         return project;
     }
 
+    @Override
     public void setProject(Project project) {
         this.project = project;
     }
 
     public Set<AdvertClosingDate> getClosingDates() {
         return closingDates;
+    }
+    
+    public PrismOpportunityType getOpportunityType() {
+        ResourceParent resource = getResourceParent();
+        PrismScope resourceScope = resource.getResourceScope();
+        if (resourceScope.equals(INSTITUTION)) {
+            return null;
+        } else if (resourceScope.equals(PROGRAM)) {
+            return program.getOpportunityType().getPrismOpportunityType();
+        }
+        return project.getOpportunityType().getPrismOpportunityType();
     }
 
     public Advert withTitle(String title) {
@@ -284,7 +343,7 @@ public class Advert {
     }
 
     public ResourceParent getResourceParent() {
-        return ObjectUtils.firstNonNull(project, program);
+        return ObjectUtils.firstNonNull(project, program, institution);
     }
 
     public boolean isProgramAdvert() {
@@ -293,10 +352,6 @@ public class Advert {
 
     public boolean isProjectAdvert() {
         return project != null;
-    }
-
-    public Institution getInstitution() {
-        return getResourceParent().getInstitution();
     }
 
     public Department getDepartment() {

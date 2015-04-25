@@ -16,9 +16,9 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.program.ProgramLocation;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
+import com.zuehlke.pgadmissions.domain.program.ResourceLocation;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
@@ -35,7 +35,7 @@ public class OpportunityResource {
 
     @Autowired
     private AdvertService advertService;
-    
+
     @Autowired
     private ApplicationService applicationService;
 
@@ -47,9 +47,10 @@ public class OpportunityResource {
 
     @RequestMapping(method = RequestMethod.GET)
     public List<AdvertRepresentation> getAdverts(OpportunitiesQueryDTO query) {
+        List<PrismState> activeInstitutionStates = stateService.getActiveInstitutionStates();
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        List<Advert> adverts = advertService.getAdverts(query, activeProgramStates, activeProjectStates);
+        List<Advert> adverts = advertService.getAdverts(query, activeInstitutionStates, activeProgramStates, activeProjectStates);
 
         List<AdvertRepresentation> representations = Lists.newArrayListWithExpectedSize(adverts.size());
         for (Advert advert : adverts) {
@@ -57,10 +58,10 @@ public class OpportunityResource {
             AdvertRepresentation representation = getAdvertRepresentation(advert, acceptingApplications);
             representations.add(representation);
         }
-        
+
         return representations;
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "/{applicationId}")
     public List<AdvertRepresentation> getRecommendedAdverts(Integer applicationId) {
         Application application = applicationService.getById(applicationId);
@@ -71,7 +72,7 @@ public class OpportunityResource {
             AdvertRepresentation representation = getAdvertRepresentation(advertRecommendation.getAdvert(), true);
             representations.add(representation);
         }
-        
+
         return representations;
     }
 
@@ -83,16 +84,16 @@ public class OpportunityResource {
         representation.setUser(dozerBeanMapper.map(resource.getUser(), UserRepresentation.class));
         representation.setResourceScope(resource.getResourceScope());
         representation.setResourceId(resource.getId());
-        representation.setProgramType(resource.getProgram().getProgramType().getPrismProgramType());
+        representation.setOpportunityType(advert.getOpportunityType());
 
         List<String> locations = Lists.newArrayListWithCapacity(resource.getProgram().getLocations().size());
-        for (ProgramLocation programLocation : resource.getProgram().getLocations()) {
+        for (ResourceLocation programLocation : resource.getProgram().getLocations()) {
             locations.add(programLocation.getLocation());
         }
         representation.setLocations(locations);
 
         Set<PrismStudyOption> studyOptions = Sets.newHashSet();
-        for (ProgramStudyOption studyOption : resource.getProgram().getStudyOptions()) {
+        for (ResourceStudyOption studyOption : resource.getProgram().getStudyOptions()) {
             studyOptions.add(studyOption.getStudyOption().getPrismStudyOption());
         }
         representation.setStudyOptions(studyOptions);

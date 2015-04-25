@@ -54,7 +54,6 @@ import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -88,6 +87,9 @@ public class NotificationPropertyLoader {
     @Value("${application.api.url}")
     private String applicationApiUrl;
 
+    @Value("${system.helpdesk}")
+    private String helpdesk;
+
     @Inject
     private ActionService actionService;
 
@@ -103,7 +105,7 @@ public class NotificationPropertyLoader {
     public String load(PrismNotificationDefinitionProperty property) throws Exception {
         String value = (String) PrismReflectionUtils.invokeMethod(this, PrismReflectionUtils.getMethodName(property));
         return value == null ? "[" + propertyLoader.load(SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR) + ". " + propertyLoader.load(SYSTEM_HELPDESK_REPORT)
-                + ": " + notificationDefinitionModelDTO.getResource().getSystem().getHelpdesk() + "]" : value;
+                + ": " + helpdesk + "]" : value;
     }
 
     public String getTemplateUserFullName() {
@@ -151,7 +153,7 @@ public class NotificationPropertyLoader {
     }
 
     public String getTemplateHelpdesk() throws Exception {
-        return buildRedirectionControl(notificationDefinitionModelDTO.getResource().getHelpdeskDisplay(), SYSTEM_HELPDESK);
+        return buildRedirectionControl(helpdesk, SYSTEM_HELPDESK);
     }
 
     public String getActionComplete() throws Exception {
@@ -194,10 +196,9 @@ public class NotificationPropertyLoader {
         return notificationDefinitionModelDTO.getResource().getApplication().getProjectOrProgramCodeDisplay();
     }
 
-    public String getApplicationProgramType() throws Exception {
-        PrismProgramType programType = PrismProgramType.valueOf(notificationDefinitionModelDTO.getResource().getApplication().getProgram().getProgramType()
-                .getCode());
-        return propertyLoader.load(programType.getDisplayProperty());
+    public String getApplicationOpportunityType() throws Exception {
+        return propertyLoader.load(PrismDisplayPropertyDefinition.valueOf("SYSTEM_OPPORTUNITY_TYPE_"
+                + notificationDefinitionModelDTO.getResource().getApplication().getOpportunityType().name()));
     }
 
     public String getApplicationInterviewDateTime() throws Exception {
@@ -283,7 +284,7 @@ public class NotificationPropertyLoader {
     }
 
     public String getInstitutionHomepage() {
-        return notificationDefinitionModelDTO.getResource().getInstitution().getHomepage();
+        return notificationDefinitionModelDTO.getResource().getInstitution().getAdvert().getHomepage();
     }
 
     public String getInstitutionDataImportError() {

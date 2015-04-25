@@ -23,12 +23,12 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.department.Department;
-import com.zuehlke.pgadmissions.domain.imported.ProgramType;
+import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -92,7 +92,7 @@ public class ProgramService {
 
     public void save(Program program) {
         entityService.save(program);
-        for (ProgramStudyOption studyOption : program.getStudyOptions()) {
+        for (ResourceStudyOption studyOption : program.getStudyOptions()) {
             entityService.save(studyOption);
         }
     }
@@ -110,7 +110,7 @@ public class ProgramService {
         return programDAO.getPrograms();
     }
 
-    public ProgramStudyOptionInstance getFirstEnabledProgramStudyOptionInstance(Program program, StudyOption studyOption) {
+    public ResourceStudyOptionInstance getFirstEnabledProgramStudyOptionInstance(Program program, StudyOption studyOption) {
         return programDAO.getFirstEnabledProgramStudyOptionInstance(program, studyOption);
     }
 
@@ -142,11 +142,11 @@ public class ProgramService {
         advertService.setSequenceIdentifier(program.getAdvert(), program.getSequenceIdentifier().substring(0, 13));
     }
 
-    public List<ProgramStudyOption> getEnabledProgramStudyOptions(Program program) {
+    public List<ResourceStudyOption> getEnabledProgramStudyOptions(Program program) {
         return programDAO.getEnabledProgramStudyOptions(program);
     }
 
-    public ProgramStudyOption getEnabledProgramStudyOption(Program program, StudyOption studyOption) {
+    public ResourceStudyOption getEnabledProgramStudyOption(Program program, StudyOption studyOption) {
         return programDAO.getEnabledProgramStudyOption(program, studyOption);
     }
 
@@ -261,7 +261,7 @@ public class ProgramService {
             programDAO.deleteProgramStudyOptions(program);
             program.getStudyOptions().clear();
             copyStudyOptions(program, programDTO);
-            for (ProgramStudyOption studyOption : program.getStudyOptions()) {
+            for (ResourceStudyOption studyOption : program.getStudyOptions()) {
                 entityService.save(studyOption);
             }
         }
@@ -281,8 +281,8 @@ public class ProgramService {
             String title = programDTO.getTitle();
             program.setTitle(title);
             advert.setTitle(title);
-            program.setProgramType((ProgramType) importedEntityService.getImportedEntityByCode(ProgramType.class, program.getInstitution(), programDTO
-                    .getProgramType().name()));
+            program.setOpportunityType((OpportunityType) importedEntityService.getImportedEntityByCode(OpportunityType.class, program.getInstitution(), programDTO
+                    .getOpportunityType().name()));
             program.setEndDate(programDTO.getEndDate());
         }
 
@@ -300,8 +300,8 @@ public class ProgramService {
     private void copyStudyOptions(Program program, ProgramDTO programDTO) {
         for (PrismStudyOption prismStudyOption : programDTO.getStudyOptions()) {
             StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, program.getInstitution(), prismStudyOption.name());
-            ProgramStudyOption programStudyOption = new ProgramStudyOption().withStudyOption(studyOption).withApplicationStartDate(new LocalDate())
-                    .withApplicationCloseDate(program.getEndDate()).withEnabled(true).withProgram(program);
+            ResourceStudyOption programStudyOption = new ResourceStudyOption().withStudyOption(studyOption).withApplicationStartDate(new LocalDate())
+                    .withApplicationCloseDate(program.getEndDate()).withEnabled(true).withResource(program);
             program.getStudyOptions().add(programStudyOption);
         }
     }

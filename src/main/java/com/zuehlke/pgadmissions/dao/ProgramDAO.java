@@ -31,10 +31,10 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.program.ProgramLocation;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
+import com.zuehlke.pgadmissions.domain.program.ResourceLocation;
 import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
@@ -68,16 +68,16 @@ public class ProgramDAO {
 		        .list();
 	}
 
-	public ProgramStudyOption getEnabledProgramStudyOption(Program program, StudyOption studyOption) {
-		return (ProgramStudyOption) sessionFactory.getCurrentSession().createCriteria(ProgramStudyOption.class) //
+	public ResourceStudyOption getEnabledProgramStudyOption(Program program, StudyOption studyOption) {
+		return (ResourceStudyOption) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOption.class) //
 		        .add(Restrictions.eq("program", program)) //
 		        .add(Restrictions.eq("studyOption", studyOption)) //
 		        .add(Restrictions.eq("enabled", true)) //
 		        .uniqueResult();
 	}
 
-	public List<ProgramStudyOption> getEnabledProgramStudyOptions(Program program) {
-		return (List<ProgramStudyOption>) sessionFactory.getCurrentSession().createCriteria(ProgramStudyOption.class) //
+	public List<ResourceStudyOption> getEnabledProgramStudyOptions(Program program) {
+		return (List<ResourceStudyOption>) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOption.class) //
 		        .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
 		        .add(Restrictions.eq("program", program)) //
 		        .add(Restrictions.eq("enabled", true)) //
@@ -85,8 +85,8 @@ public class ProgramDAO {
 		        .list();
 	}
 
-	public ProgramStudyOptionInstance getFirstEnabledProgramStudyOptionInstance(Program program, StudyOption studyOption) {
-		return (ProgramStudyOptionInstance) sessionFactory.getCurrentSession().createCriteria(ProgramStudyOptionInstance.class) //
+	public ResourceStudyOptionInstance getFirstEnabledProgramStudyOptionInstance(Program program, StudyOption studyOption) {
+		return (ResourceStudyOptionInstance) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOptionInstance.class) //
 		        .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
 		        .add(Restrictions.eq("studyOption.program", program)) //
 		        .add(Restrictions.eq("studyOption.studyOption", studyOption)) //
@@ -159,7 +159,7 @@ public class ProgramDAO {
 	}
 
 	public List<String> getPossibleLocations(Program program) {
-		return (List<String>) sessionFactory.getCurrentSession().createCriteria(ProgramLocation.class) //
+		return (List<String>) sessionFactory.getCurrentSession().createCriteria(ResourceLocation.class) //
 		        .setProjection(Projections.property("location")) //
 		        .add(Restrictions.eq("program", program)) //
 		        .addOrder(Order.asc("location")) //
@@ -171,7 +171,7 @@ public class ProgramDAO {
 		        .setProjection(Projections.groupProperty("studyDetail.studyDivision")) //
 		        .add(Restrictions.eq("program", program)) //
 		        .add(Restrictions.eq("studyDetail.studyLocation", location)) //
-		        .add(Subqueries.in(location, DetachedCriteria.forClass(ProgramLocation.class) //
+		        .add(Subqueries.in(location, DetachedCriteria.forClass(ResourceLocation.class) //
 		                .setProjection(Projections.property("location")) //
 		                .add(Restrictions.eq("program", program)))) //
 		        .list();
@@ -183,7 +183,7 @@ public class ProgramDAO {
 		        .add(Restrictions.eq("program", program)) //
 		        .add(Restrictions.eq("studyDetail.studyLocation", location)) //
 		        .add(Restrictions.eq("studyDetail.studyDivision", division)) //
-		        .add(Subqueries.in(location, DetachedCriteria.forClass(ProgramLocation.class) //
+		        .add(Subqueries.in(location, DetachedCriteria.forClass(ResourceLocation.class) //
 		                .setProjection(Projections.property("location")) //
 		                .add(Restrictions.eq("program", program)))) //
 		        .list();

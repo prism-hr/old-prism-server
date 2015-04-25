@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
@@ -17,7 +17,7 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
 
     private String currency;
 
-    private PrismProgramType defaultProgramType;
+    private PrismOpportunityType defaultProgramType;
 
     private PrismStudyOption defaultStudyOption;
 
@@ -67,11 +67,11 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
         this.currency = currency;
     }
 
-    public PrismProgramType getDefaultProgramType() {
+    public PrismOpportunityType getDefaultProgramType() {
         return defaultProgramType;
     }
 
-    public void setDefaultProgramType(PrismProgramType defaultProgramType) {
+    public void setDefaultProgramType(PrismOpportunityType defaultProgramType) {
         this.defaultProgramType = defaultProgramType;
     }
 

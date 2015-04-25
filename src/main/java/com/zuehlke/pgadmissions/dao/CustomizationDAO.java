@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
@@ -34,15 +34,17 @@ public class CustomizationDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public WorkflowConfiguration getConfiguration(PrismConfiguration configurationType, Resource resource, PrismProgramType programType,
-            WorkflowDefinition definition, boolean translationMode) {
+    public WorkflowConfiguration getConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
+            WorkflowDefinition definition, boolean configurationMode) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
-                .add(getResourceLocalizationCriterion(resource, definition.getScope().getId(), programType, translationMode)) //
+                .add(getResourceLocalizationCriterion(resource, definition.getScope().getId(), opportunityType, configurationMode)) //
                 .add(Restrictions.eq(configurationType.getDefinitionPropertyName(), definition));
 
         addActiveVersionCriterion(configurationType, criteria);
 
-        return (WorkflowConfiguration) criteria.addOrder(Order.desc("program")) //
+        return (WorkflowConfiguration) criteria //
+                .addOrder(Order.desc("project")) //
+                .addOrder(Order.desc("program")) //
                 .addOrder(Order.desc("institution")) //
                 .addOrder(Order.desc("system")) //
                 .addOrder(Order.asc("systemDefault")) //
@@ -51,14 +53,16 @@ public class CustomizationDAO {
     }
 
     public List<WorkflowConfiguration> getConfigurations(PrismConfiguration configurationType, Resource resource,
-            PrismProgramType programType, WorkflowDefinition definition, boolean translationMode) {
+            PrismOpportunityType opportunityType, WorkflowDefinition definition, boolean configurationMode) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
-                .add(getResourceLocalizationCriterion(resource, definition.getScope().getId(), programType, translationMode)) //
+                .add(getResourceLocalizationCriterion(resource, definition.getScope().getId(), opportunityType, configurationMode)) //
                 .add(Restrictions.eq(configurationType.getDefinitionPropertyName(), definition));
 
         addActiveVersionCriterion(configurationType, criteria);
 
-        return (List<WorkflowConfiguration>) criteria.addOrder(Order.desc("program")) //
+        return (List<WorkflowConfiguration>) criteria //
+                .addOrder(Order.desc("project")) //
+                .addOrder(Order.desc("program")) //
                 .addOrder(Order.desc("institution")) //
                 .addOrder(Order.desc("system")) //
                 .addOrder(Order.asc("systemDefault")) //
@@ -66,12 +70,12 @@ public class CustomizationDAO {
     }
 
     public List<WorkflowConfiguration> getConfigurations(PrismConfiguration configurationType, Resource resource, PrismScope scope,
-            PrismProgramType programType, Enum<?> category, boolean translationMode) {
+            PrismOpportunityType opportunityType, Enum<?> category, boolean configurationMode) {
         String definitionReference = configurationType.getDefinitionPropertyName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
                 .createAlias(definitionReference, definitionReference, JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(definitionReference + ".scope.id", scope)) //
-                .add(getResourceLocalizationCriterion(resource, scope, programType, translationMode));
+                .add(getResourceLocalizationCriterion(resource, scope, opportunityType, configurationMode));
 
         if (category != null) {
             criteria.add(Restrictions.eq(definitionReference + ".category", category));
@@ -83,7 +87,9 @@ public class CustomizationDAO {
             criteria.addOrder(Order.asc(definitionReference + "." + orderColumn));
         }
 
-        return (List<WorkflowConfiguration>) criteria.addOrder(Order.desc("program")) //
+        return (List<WorkflowConfiguration>) criteria //
+                .addOrder(Order.desc("project")) //
+                .addOrder(Order.desc("program")) //
                 .addOrder(Order.desc("institution")) //
                 .addOrder(Order.desc("system")) //
                 .addOrder(Order.asc("systemDefault")) //
@@ -91,8 +97,8 @@ public class CustomizationDAO {
     }
 
     public List<WorkflowConfiguration> getConfigurations(PrismConfiguration configurationType, Resource resource, PrismScope scope,
-            PrismProgramType programType, boolean translationMode) {
-        return getConfigurations(configurationType, resource, scope, programType, null, translationMode);
+            PrismOpportunityType opportunityType, boolean configurationMode) {
+        return getConfigurations(configurationType, resource, scope, opportunityType, null, configurationMode);
     }
 
     public WorkflowConfiguration getConfigurationWithVersion(PrismConfiguration configurationType, WorkflowDefinition definition, Integer version) {
@@ -108,52 +114,57 @@ public class CustomizationDAO {
                 .list();
     }
 
-    public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismProgramType programType,
+    public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
             Enum<?> definitionId) {
         Query query = sessionFactory.getCurrentSession().createQuery( //
                 getUpdateOperation(configurationType) //
                         + "where " + resource.getResourceScope().getLowerCamelName() + " = :resource " //
                         + "and " + configurationType.getDefinitionPropertyName() + ".id" + " = :definitionId " //
-                        + getProgramTypeCriterionUpdate(programType)) //
+                        + getopportunityTypeCriterionUpdate(opportunityType)) //
                 .setParameter("resource", resource) //
                 .setParameter("definitionId", definitionId);
-        applyLocalizationConstraintsRestoreDefault(programType, query);
+        applyLocalizationConstraintsRestoreDefault(opportunityType, query);
         query.executeUpdate();
     }
 
     public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismScope scope,
-            PrismProgramType programType) {
+            PrismOpportunityType opportunityType) {
         Query query = sessionFactory.getCurrentSession().createQuery( //
                 getUpdateOperation(configurationType) //
                         + "where " + resource.getResourceScope().getLowerCamelName() + " = :resource " //
                         + "and " + getScopeConstraint(configurationType) //
-                        + getProgramTypeCriterionUpdate(programType)) //
+                        + getopportunityTypeCriterionUpdate(opportunityType)) //
                 .setParameter("resource", resource) //
                 .setParameter("scope", scope);
-        applyLocalizationConstraintsRestoreDefault(programType, query);
+        applyLocalizationConstraintsRestoreDefault(opportunityType, query);
         query.executeUpdate();
     }
 
-    public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismProgramType programType,
+    public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
             Enum<?> definitionId) {
         PrismScope resourceScope = resource.getResourceScope();
 
         String updateOperation = getUpdateOperation(configurationType);
         String definitionCriterion = "where " + configurationType.getDefinitionPropertyName() + ".id" + " = :definitionId ";
 
-        String programTypeCriterion = getProgramTypeCriterionUpdate(programType);
+        String opportunityTypeCriterion = getopportunityTypeCriterionUpdate(opportunityType);
 
         Query query;
         if (resourceScope == SYSTEM) {
             query = sessionFactory.getCurrentSession().createQuery( //
                     updateOperation //
                             + definitionCriterion //
-                            + getSystemInheritanceCriterion(programTypeCriterion));
+                            + getSystemInheritanceCriterion(opportunityTypeCriterion));
         } else if (resourceScope == INSTITUTION) {
             query = sessionFactory.getCurrentSession().createQuery( //
                     updateOperation //
                             + definitionCriterion //
-                            + getInstitionInheritanceCriterion(programTypeCriterion));
+                            + getInstitionInheritanceCriterion(opportunityTypeCriterion));
+        } else if (resourceScope == PROGRAM) {
+            query = sessionFactory.getCurrentSession().createQuery( //
+                    updateOperation //
+                            + definitionCriterion //
+                            + getProgramInheritanceCriterion(opportunityTypeCriterion));
         } else {
             throw new Error();
         }
@@ -161,29 +172,34 @@ public class CustomizationDAO {
         query.setParameter(resourceScope.getLowerCamelName(), resource) //
                 .setParameter("definitionId", definitionId);
 
-        applyLocalizationConstraintsRestoreGlobal(programType, query);
+        applyLocalizationConstraintsRestoreGlobal(opportunityType, query);
         query.executeUpdate();
     }
 
-    public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismProgramType programType) {
+    public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismOpportunityType opportunityType) {
         PrismScope resourceScope = resource.getResourceScope();
 
         String updateOperation = getUpdateOperation(configurationType);
         String definitionCriterion = "where " + getScopeConstraint(configurationType);
 
-        String programTypeCriterion = getProgramTypeCriterionUpdate(programType);
+        String opportunityTypeCriterion = getopportunityTypeCriterionUpdate(opportunityType);
 
         Query query;
         if (resourceScope.equals(SYSTEM)) {
             query = sessionFactory.getCurrentSession().createQuery( //
                     updateOperation //
                             + definitionCriterion //
-                            + getSystemInheritanceCriterion(programTypeCriterion));
+                            + getSystemInheritanceCriterion(opportunityTypeCriterion));
         } else if (resourceScope.equals(INSTITUTION)) {
             query = sessionFactory.getCurrentSession().createQuery( //
                     updateOperation //
                             + definitionCriterion //
-                            + getInstitionInheritanceCriterion(programTypeCriterion));
+                            + getInstitionInheritanceCriterion(opportunityTypeCriterion));
+        } else if (resourceScope.equals(PROGRAM)) {
+            query = sessionFactory.getCurrentSession().createQuery( //
+                    updateOperation //
+                            + definitionCriterion //
+                            + getProgramInheritanceCriterion(opportunityTypeCriterion));
         } else {
             throw new Error();
         }
@@ -191,7 +207,7 @@ public class CustomizationDAO {
         query.setParameter(resourceScope.getLowerCamelName(), resource) //
                 .setParameter("scope", scope);
 
-        applyLocalizationConstraintsRestoreGlobal(programType, query);
+        applyLocalizationConstraintsRestoreGlobal(opportunityType, query);
         query.executeUpdate();
     }
 
@@ -202,15 +218,16 @@ public class CustomizationDAO {
                 .list();
     }
 
-    public Integer getActiveConfigurationVersion(PrismConfiguration configurationType, Resource resource, PrismProgramType programType,
+    public Integer getActiveConfigurationVersion(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
             PrismScope scope) {
         String definitionReference = configurationType.getDefinitionPropertyName();
         return (Integer) sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
                 .setProjection(Projections.property("version")) //
-                .add(getResourceLocalizationCriterion(resource, scope, programType, false)) //
+                .add(getResourceLocalizationCriterion(resource, scope, opportunityType, false)) //
                 .createAlias(definitionReference, definitionReference, JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(definitionReference + ".scope.id", scope)) //
                 .add(Restrictions.eq("active", true)) //
+                .addOrder(Order.desc("project")) //
                 .addOrder(Order.desc("program")) //
                 .addOrder(Order.desc("institution")) //
                 .addOrder(Order.desc("system")) //
@@ -219,29 +236,30 @@ public class CustomizationDAO {
                 .uniqueResult();
     }
 
-    private Junction getResourceLocalizationCriterion(Resource resource, PrismScope scope, PrismProgramType programType,
-            boolean translationMode) {
-        Criterion programTypeCriterion = getProgramTypeCriterionSelect(scope, programType);
+    private Junction getResourceLocalizationCriterion(Resource resource, PrismScope scope, PrismOpportunityType opportunityType,
+            boolean configurationMode) {
+        Criterion opportunityTypeCriterion = getopportunityTypeCriterionSelect(scope, opportunityType);
         return Restrictions.disjunction() //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.eq("system", resource.getSystem())) //
-                        .add(programTypeCriterion)) //
+                        .add(opportunityTypeCriterion)) //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.eq("institution", resource.getInstitution())) //
-                        .add(programTypeCriterion)) //
-                .add(Restrictions.eq("program", resource.getProgram()));
+                        .add(opportunityTypeCriterion)) //
+                .add(Restrictions.eq("program", resource.getProgram()))
+                .add(Restrictions.eq("project", resource.getProject()));
     }
 
-    private Criterion getProgramTypeCriterionSelect(PrismScope scope, PrismProgramType programType) {
-        return scope.ordinal() < PROGRAM.ordinal() ? Restrictions.isNull("programType") : programType == null ? Restrictions.eq("programType",
-                getSystemProgramType()) : Restrictions.in("programType", Arrays.asList(programType, getSystemProgramType()));
+    private Criterion getopportunityTypeCriterionSelect(PrismScope scope, PrismOpportunityType opportunityType) {
+        return scope.ordinal() < PROGRAM.ordinal() ? Restrictions.isNull("opportunityType") : opportunityType == null ? Restrictions.eq("opportunityType",
+                getSystemOpportunityType()) : Restrictions.in("opportunityType", Arrays.asList(opportunityType, getSystemOpportunityType()));
     }
 
-    private String getProgramTypeCriterionUpdate(PrismProgramType programType) {
-        return programType == null ? "and programType is null " : //
+    private String getopportunityTypeCriterionUpdate(PrismOpportunityType opportunityType) {
+        return opportunityType == null ? "and opportunityType is null " : //
                 "and (program is not null and " //
-                        + "programType is null " //
-                        + "or programType = :programType) ";
+                        + "opportunityType is null " //
+                        + "or opportunityType = :opportunityType) ";
     }
 
     private void addActiveVersionCriterion(PrismConfiguration configurationType, Criteria criteria) {
@@ -261,36 +279,52 @@ public class CustomizationDAO {
                 + "where scope.id = :scope) ";
     }
 
-    private void applyLocalizationConstraintsRestoreDefault(PrismProgramType programType, Query query) {
-        if (programType != null) {
-            query.setParameter("programType", programType);
+    private void applyLocalizationConstraintsRestoreDefault(PrismOpportunityType opportunityType, Query query) {
+        if (opportunityType != null) {
+            query.setParameter("opportunityType", opportunityType);
         }
     }
 
-    private void applyLocalizationConstraintsRestoreGlobal(PrismProgramType programType, Query query) {
-        applyLocalizationConstraintsRestoreDefault(programType, query);
-        if (programType != null) {
-            query.setParameter("programTypeName", programType.name());
+    private void applyLocalizationConstraintsRestoreGlobal(PrismOpportunityType opportunityType, Query query) {
+        applyLocalizationConstraintsRestoreDefault(opportunityType, query);
+        if (opportunityType != null) {
+            query.setParameter("opportunityTypeName", opportunityType.name());
         }
     }
 
-    private static String getSystemInheritanceCriterion(String programTypeCriterion) {
+    private static String getSystemInheritanceCriterion(String opportunityTypeCriterion) {
         return "and (institution in (" //
                 + "from Institution " //
                 + "where system = :system) " //
-                + programTypeCriterion //
                 + "or program in (" //
                 + "from Program " //
                 + "where system = :system " //
-                + "and programType in (" + "from ProgramType " + "where code like :programTypeName)) " //
-                + programTypeCriterion + ")";
+                + "and opportunityType in (" + "from opportunityType " + "where code like :opportunityTypeName) "
+                + "or project in (" //
+                + "from Project " //
+                + "where system = :system " //
+                + "and opportunityType in (" + "from opportunityType " + "where code like :opportunityTypeName)) " //
+                + opportunityTypeCriterion + ")";
     }
 
-    private static String getInstitionInheritanceCriterion(String programTypeCriterion) {
+    private static String getInstitionInheritanceCriterion(String opportunityTypeCriterion) {
         return "and (program in (" //
                 + "from Program " //
-                + "where institution = :institution " + "and programType in (" + "from ProgramType " + "where code like :programTypeName)) " //
-                + programTypeCriterion + ")";
+                + "where institution = :institution " //
+                + "and opportunityType in (" + "from opportunityType " + "where code like :opportunityTypeName) "
+                + "or project in (" //
+                + "from Project " //
+                + "where institution = :institution " //
+                + "and opportunityType in (" + "from opportunityType " + "where code like :opportunityTypeName)) " //
+                + opportunityTypeCriterion + ")";
+    }
+
+    private static String getProgramInheritanceCriterion(String opportunityTypeCriterion) {
+        return "and (project in (" //
+                + "from Project " //
+                + "where program = :program " //
+                + "and opportunityType in (" + "from opportunityType " + "where code like :opportunityTypeName)) " //
+                + opportunityTypeCriterion + ")";
     }
 
 }

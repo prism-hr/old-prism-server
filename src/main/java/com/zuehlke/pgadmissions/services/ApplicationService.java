@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -31,7 +32,6 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -45,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
@@ -68,7 +69,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismReportColumn;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -79,14 +80,15 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropert
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
@@ -119,61 +121,52 @@ public class ApplicationService {
     @Value("${application.url}")
     private String applicationUrl;
 
-    @Autowired
+    @Inject
     private ApplicationDAO applicationDAO;
 
-    @Autowired
+    @Inject
     private ActionService actionService;
 
-    @Autowired
-    private AdvertService advertService;
-
-    @Autowired
-    private ApplicationSummaryService applicationSummaryService;
-
-    @Autowired
+    @Inject
     private EntityService entityService;
 
-    @Autowired
+    @Inject
     private UserService userService;
 
-    @Autowired
+    @Inject
     private ProgramService programService;
 
-    @Autowired
+    @Inject
     private RoleService roleService;
 
-    @Autowired
+    @Inject
     private CommentService commentService;
 
-    @Autowired
-    private ApplicationExportService applicationExportService;
-
-    @Autowired
+    @Inject
     private CustomizationService customizationService;
 
-    @Autowired
+    @Inject
+    private InstitutionService institutionService;
+    
+    @Inject
     private ImportedEntityService importedEntityService;
 
-    @Autowired
-    private StateService stateService;
-
-    @Autowired
+    @Inject
     private ResourceService resourceService;
 
-    @Autowired
+    @Inject
     private ResourceListFilterService resourceListFilterService;
 
-    @Autowired
+    @Inject
     private ScopeService scopeService;
 
-    @Autowired
+    @Inject
     private SystemService systemService;
 
-    @Autowired
+    @Inject
     private ApplicationValidator applicationValidator;
 
-    @Autowired
+    @Inject
     private ApplicationContext applicationContext;
 
     public Application getById(Integer id) {
@@ -205,7 +198,7 @@ public class ApplicationService {
         Application application = getById(applicationId);
 
         StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, application.getInstitution(), studyOptionId.name());
-        ProgramStudyOption programStudyOption = programService.getEnabledProgramStudyOption(application.getProgram(), studyOption);
+        ResourceStudyOption programStudyOption = programService.getEnabledProgramStudyOption(application.getProgram(), studyOption);
 
         if (programStudyOption != null) {
             return new ApplicationStartDateRepresentation().withEarliestDate(getEarliestStartDate(programStudyOption.getId(), baseline))
@@ -221,7 +214,7 @@ public class ApplicationService {
             return null;
         }
 
-        ProgramStudyOption studyOption = entityService.getById(ProgramStudyOption.class, studyOptionId);
+        ResourceStudyOption studyOption = entityService.getById(ResourceStudyOption.class, studyOptionId);
         LocalDate studyOptionStart = studyOption.getApplicationStartDate();
         LocalDate earliestStartDate = studyOptionStart.isBefore(baseline) ? baseline : studyOptionStart;
         earliestStartDate = earliestStartDate.withDayOfWeek(DateTimeConstants.MONDAY);
@@ -233,9 +226,9 @@ public class ApplicationService {
             return null;
         }
 
-        ProgramStudyOption studyOption = entityService.getById(ProgramStudyOption.class, studyOptionId);
+        ResourceStudyOption studyOption = entityService.getById(ResourceStudyOption.class, studyOptionId);
         LocalDate closeDate = studyOption.getApplicationCloseDate().plusMonths(
-                studyOption.getProgram().getProgramType().getPrismProgramType().getDefaultStartBuffer());
+                studyOption.getProgram().getOpportunityType().getPrismOpportunityType().getDefaultStartBuffer());
         LocalDate latestStartDate = closeDate.withDayOfWeek(DateTimeConstants.MONDAY);
         return latestStartDate.isAfter(closeDate) ? latestStartDate.minusWeeks(1) : latestStartDate;
     }
@@ -296,25 +289,24 @@ public class ApplicationService {
     }
 
     public void preProcessApplication(Application application, Comment comment) {
-        if (comment.isApplicationSubmittedComment()) {
-            DateTime submittedTimestamp = new DateTime();
-            application.setSubmittedTimestamp(submittedTimestamp);
-
-            Integer applicationMonth = submittedTimestamp.getMonthOfYear();
-            Integer applicationYear = applicationMonth < 10 ? (submittedTimestamp.getYear() - 1) : submittedTimestamp.getYear();
-            application.setApplicationYear(applicationYear.toString() + "/" + new Integer(applicationYear + 1).toString());
+        if (comment.isApplicationCreatedComment()) {
+            Institution institution = application.getInstitution();
+            DateTime createdTimestamp = application.getCreatedTimestamp();
+            Integer applicationYear = createdTimestamp.getYear();
+            Integer applicationMonth = createdTimestamp.getMonthOfYear();
+            application.setApplicationYear(institutionService.getBusinessYear(institution, applicationYear, applicationMonth));
             application.setApplicationMonth(applicationMonth);
+            application.setApplicationMonthSequence(institutionService.getMonthOfBusinessYear(institution, applicationMonth));
+        }
 
+        if (comment.isApplicationSubmittedComment()) {
+            application.setSubmittedTimestamp(new DateTime());
             AdvertClosingDate advertClosingDate = application.getAdvert().getClosingDate();
             application.setClosingDate(advertClosingDate == null ? null : advertClosingDate.getClosingDate());
         }
     }
 
     public void postProcessApplication(Application application, Comment comment) throws DeduplicationException {
-        if (comment.isApplicationCreatedComment()) {
-            applicationSummaryService.incrementApplicationCreatedCount(application);
-        }
-
         if (comment.isProjectCreateApplicationComment()) {
             synchroniseProjectSupervisors(application);
         }
@@ -327,32 +319,8 @@ public class ApplicationService {
             synchroniseOfferRecommendation(application, comment);
         }
 
-        if (comment.isApplicationRatingComment()) {
-            applicationSummaryService.summariseApplication(application, comment);
-        }
-
-        if (comment.isStateGroupTransitionComment()) {
-            applicationSummaryService.summariseApplicationProcessing(application);
-        }
-
-        if (comment.isApplicationSubmittedComment()) {
-            applicationSummaryService.incrementApplicationSubmittedCount(application);
-        }
-
-        if (comment.isApplicationReserveRatingComment()) {
+        if (comment.isApplicationReserveStatusComment()) {
             application.setApplicationReserveStatus(comment.getApplicationReserveStatus());
-        }
-
-        if (comment.isApplicationApprovedComment()) {
-            applicationSummaryService.incrementApplicationApprovedCount(application);
-        }
-
-        if (comment.isApplicationRejectedComment()) {
-            applicationSummaryService.incrementApplicationRejectedCount(application);
-        }
-
-        if (comment.isApplicationWithdrawnComment()) {
-            applicationSummaryService.incrementApplicationWithdrawnCount(application);
         }
 
         if (comment.isApplicationCompletionComment()) {
@@ -490,8 +458,6 @@ public class ApplicationService {
         summary.setReferenceDeclinedCount(declinedReferenceCount == null ? null : declinedReferenceCount.intValue());
 
         summary.setOtherLiveApplications(applicationDAO.getOtherLiveApplications(application));
-        summary.setProcessings(applicationSummaryService.getProcessings(application));
-
         return summary;
     }
 
@@ -552,6 +518,20 @@ public class ApplicationService {
         }
 
         return dataTable;
+    }
+
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(PrismScope resourceScope, Integer resourceId) throws Exception {
+        return applicationDAO.getApplicationProcessingSummariesByYear(resourceScope, resourceId);
+    }
+
+    public LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(PrismScope resourceScope, Integer resourceId)
+            throws Exception {
+        LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
+        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationDAO.getApplicationProcessingSummariesByMonth(resourceScope, resourceId);
+        for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
+            index.put(processingSummary.getApplicationYear(), processingSummary);
+        }
+        return index;
     }
 
     public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Application application) throws Exception {
@@ -619,7 +599,7 @@ public class ApplicationService {
         application.getUser().getUserAccount().setSendApplicationRecommendationNotification(false);
     }
 
-    private LocalDate getRecommendedStartDate(Application application, ProgramStudyOption studyOption, LocalDate baseline) {
+    private LocalDate getRecommendedStartDate(Application application, ResourceStudyOption studyOption, LocalDate baseline) {
         if (studyOption == null) {
             return null;
         }
@@ -627,8 +607,8 @@ public class ApplicationService {
         LocalDate earliest = getEarliestStartDate(studyOption.getId(), baseline);
         LocalDate latest = getLatestStartDate(studyOption.getId());
 
-        PrismProgramType programType = application.getProgram().getProgramType().getPrismProgramType();
-        DefaultStartDateDTO defaults = programType.getDefaultStartDate(baseline);
+        PrismOpportunityType opportunityType = application.getProgram().getOpportunityType().getPrismOpportunityType();
+        DefaultStartDateDTO defaults = opportunityType.getDefaultStartDate(baseline);
 
         LocalDate immediate = defaults.getImmediate();
         LocalDate scheduled = defaults.getScheduled();
@@ -636,7 +616,7 @@ public class ApplicationService {
         LocalDate recommended = application.getDefaultStartType() == SCHEDULED ? scheduled : immediate;
 
         if (recommended.isBefore(earliest)) {
-            recommended = earliest.plusWeeks(programType.getDefaultStartDelay());
+            recommended = earliest.plusWeeks(opportunityType.getDefaultStartDelay());
         }
 
         if (recommended.isAfter(latest)) {

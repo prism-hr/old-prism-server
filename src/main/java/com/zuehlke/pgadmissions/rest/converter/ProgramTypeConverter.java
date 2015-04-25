@@ -2,22 +2,22 @@ package com.zuehlke.pgadmissions.rest.converter;
 
 import org.dozer.DozerConverter;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.imported.ProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 
-public class ProgramTypeConverter extends DozerConverter<ProgramType, PrismProgramType> {
+public class ProgramTypeConverter extends DozerConverter<OpportunityType, PrismOpportunityType> {
 
     public ProgramTypeConverter() {
-        super(ProgramType.class, PrismProgramType.class);
+        super(OpportunityType.class, PrismOpportunityType.class);
     }
 
     @Override
-    public PrismProgramType convertTo(ProgramType source, PrismProgramType destination) {
-        return PrismProgramType.valueOf(source.getCode());
+    public PrismOpportunityType convertTo(OpportunityType source, PrismOpportunityType destination) {
+        return PrismOpportunityType.valueOf(source.getCode());
     }
 
     @Override
-    public ProgramType convertFrom(PrismProgramType source, ProgramType destination) {
+    public OpportunityType convertFrom(PrismOpportunityType source, OpportunityType destination) {
         throw new UnsupportedOperationException();
     }
     

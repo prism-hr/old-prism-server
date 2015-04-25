@@ -5,7 +5,6 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
 
 public class AdvertCategoriesDTO {
 
@@ -18,10 +17,6 @@ public class AdvertCategoriesDTO {
     private List<String> competencies;
 
     private List<String> themes;
-
-    private List<Integer> institutions;
-
-    private List<PrismProgramType> programTypes;
 
     public final List<PrismAdvertDomain> getDomains() {
         return domains;
@@ -61,22 +56,6 @@ public class AdvertCategoriesDTO {
 
     public final void setThemes(List<String> themes) {
         this.themes = themes;
-    }
-
-    public final List<Integer> getInstitutions() {
-        return institutions;
-    }
-
-    public final void setInstitutions(List<Integer> institutions) {
-        this.institutions = institutions;
-    }
-
-    public final List<PrismProgramType> getProgramTypes() {
-        return programTypes;
-    }
-
-    public final void setProgramTypes(List<PrismProgramType> programTypes) {
-        this.programTypes = programTypes;
     }
 
 }

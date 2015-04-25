@@ -54,7 +54,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCa
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION_TEMPLATE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES_SECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_PROGRAM_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_PROGRAM_TYPE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REFEREE_TYPE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESERVE_STATUS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCES_SECTION;
@@ -335,16 +335,16 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 	 * *************** SYSTEM PROGRAM TYPE *********************
 	 */
 
-    SYSTEM_PROGRAM_TYPE_STUDY_UNDERGRADUATE(SYSTEM_PROGRAM_TYPE, "Undergraduate Study"),
-    SYSTEM_PROGRAM_TYPE_STUDY_POSTGRADUATE_TAUGHT(SYSTEM_PROGRAM_TYPE, "Postgraduate Study"),
-    SYSTEM_PROGRAM_TYPE_STUDY_POSTGRADUATE_RESEARCH(SYSTEM_PROGRAM_TYPE, "Postgraduate Research"),
-    SYSTEM_PROGRAM_TYPE_SCHOLARSHIP_UNDERGRADUATE(SYSTEM_PROGRAM_TYPE, "Undergraduate Scholarship"),
-    SYSTEM_PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_TAUGHT(SYSTEM_PROGRAM_TYPE, "Postgraduate Study Scholarship"),
-    SYSTEM_PROGRAM_TYPE_SCHOLARSHIP_POSTGRADUATE_RESEARCH(SYSTEM_PROGRAM_TYPE, "Postgraduate Research Scholarship"),
-    SYSTEM_PROGRAM_TYPE_WORK_EXPERIENCE(SYSTEM_PROGRAM_TYPE, "Work Experience"),
-    SYSTEM_PROGRAM_TYPE_EMPLOYMENT(SYSTEM_PROGRAM_TYPE, "Employment"),
-    SYSTEM_PROGRAM_TYPE_EMPLOYMENT_SECONDMENT(SYSTEM_PROGRAM_TYPE, "Secondment"),
-    SYSTEM_PROGRAM_TYPE_TRAINING(SYSTEM_PROGRAM_TYPE, "Training"),
+    SYSTEM_OPPORTUNITY_TYPE_STUDY_UNDERGRADUATE(SYSTEM_OPPORTUNITY_TYPE, "Undergraduate Study"),
+    SYSTEM_OPPORTUNITY_TYPE_STUDY_POSTGRADUATE_TAUGHT(SYSTEM_OPPORTUNITY_TYPE, "Postgraduate Study"),
+    SYSTEM_OPPORTUNITY_TYPE_STUDY_POSTGRADUATE_RESEARCH(SYSTEM_OPPORTUNITY_TYPE, "Postgraduate Research"),
+    SYSTEM_OPPORTUNITY_TYPE_SCHOLARSHIP_UNDERGRADUATE(SYSTEM_OPPORTUNITY_TYPE, "Undergraduate Scholarship"),
+    SYSTEM_OPPORTUNITY_TYPE_SCHOLARSHIP_POSTGRADUATE_TAUGHT(SYSTEM_OPPORTUNITY_TYPE, "Postgraduate Study Scholarship"),
+    SYSTEM_OPPORTUNITY_TYPE_SCHOLARSHIP_POSTGRADUATE_RESEARCH(SYSTEM_OPPORTUNITY_TYPE, "Postgraduate Research Scholarship"),
+    SYSTEM_OPPORTUNITY_TYPE_WORK_EXPERIENCE(SYSTEM_OPPORTUNITY_TYPE, "Work Experience"),
+    SYSTEM_OPPORTUNITY_TYPE_EMPLOYMENT(SYSTEM_OPPORTUNITY_TYPE, "Employment"),
+    SYSTEM_OPPORTUNITY_TYPE_EMPLOYMENT_SECONDMENT(SYSTEM_OPPORTUNITY_TYPE, "Secondment"),
+    SYSTEM_OPPORTUNITY_TYPE_TRAINING(SYSTEM_OPPORTUNITY_TYPE, "Training"),
 
 	/*
 	 * *************** SYSTEM YES NO UNSURE *********************

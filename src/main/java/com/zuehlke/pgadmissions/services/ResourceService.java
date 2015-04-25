@@ -9,6 +9,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -61,6 +64,7 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListActionDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
@@ -76,6 +80,9 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation.ApplicationProcessingSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation.ApplicationProcessingSummaryRepresentationMonth;
+import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation.ApplicationProcessingSummaryRepresentationYear;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -101,9 +108,6 @@ public class ResourceService {
 
     @Inject
     private ApplicationService applicationService;
-
-    @Inject
-    private ApplicationSummaryService applicationSummaryService;
 
     @Inject
     private ProjectService projectService;
@@ -403,14 +407,10 @@ public class ResourceService {
         return Lists.newArrayList();
     }
 
-    public ResourceSummaryRepresentation getResourceSummary(PrismScope resourceScope, Integer resourceId) {
+    public ResourceSummaryRepresentation getResourceSummary(PrismScope resourceScope, Integer resourceId) throws Exception {
         ResourceParent resource = (ResourceParent) getById(resourceScope, resourceId);
 
-        ResourceSummaryRepresentation summary = new ResourceSummaryRepresentation().withCreatedDate(resource.getCreatedTimestamp().toLocalDate())
-                .withApplicationCreatedCount(resource.getApplicationCreatedCount()).withApplicationSubmittedCount(resource.getApplicationSubmittedCount())
-                .withApplicationApprovedCount(resource.getApplicationApprovedCount()).withApplicationRejectedCount(resource.getApplicationRejectedCount())
-                .withApplicationWithdrawnCount(resource.getApplicationWithdrawnCount()).withApplicationRatingCount(resource.getApplicationRatingCount())
-                .withApplicationRatingOccurenceAverage(resource.getApplicationRatingCountAverageNonZero());
+        ResourceSummaryRepresentation summary = new ResourceSummaryRepresentation().withCreatedDate(resource.getCreatedTimestamp().toLocalDate());
 
         if (resourceScope == INSTITUTION) {
             summary.setProgramCount(programService.getActiveProgramCount((Institution) resource));
@@ -419,7 +419,38 @@ public class ResourceService {
             summary.setProjectCount(projectService.getActiveProjectCount(resource));
         }
 
-        summary.setProcessingSummaries(applicationSummaryService.getProcessingSummaries(resource));
+        boolean currentYear = true;
+        List<ApplicationProcessingSummaryRepresentationYear> yearRepresentations = Lists.newLinkedList();
+        List<ApplicationProcessingSummaryDTO> yearSummaries = applicationService.getApplicationProcessingSummariesByYear(resourceScope, resourceId);
+        LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> monthSummaries = applicationService.getApplicationProcessingSummariesByMonth(resourceScope,
+                resourceId);
+        for (ApplicationProcessingSummaryDTO yearSummary : yearSummaries) {
+            ApplicationProcessingSummaryRepresentationYear yearRepresentation = new ApplicationProcessingSummaryRepresentationYear();
+            String applicationYear = yearSummary.getApplicationYear();
+            yearRepresentation.setApplicationYear(applicationYear);
+
+            if (currentYear == true) {
+                Integer monthOfBusinessYear = institutionService.getMonthOfBusinessYear(resource.getInstitution(), new LocalDate().getMonthOfYear());
+                yearRepresentation.setPercentageComplete(new BigDecimal(monthOfBusinessYear).divide(new BigDecimal(12).setScale(2, RoundingMode.HALF_UP)));
+            } else {
+                yearRepresentation.setPercentageComplete(new BigDecimal(100.00));
+            }
+
+            populateApplicationProcessingSummary(yearSummary, yearRepresentation);
+
+            List<ApplicationProcessingSummaryRepresentationMonth> monthRepresentations = Lists.newLinkedList();
+            for (ApplicationProcessingSummaryDTO monthSummary : monthSummaries.get(applicationYear)) {
+                ApplicationProcessingSummaryRepresentationMonth monthRepresentation = new ApplicationProcessingSummaryRepresentationMonth();
+                monthSummary.setApplicationMonth(monthSummary.getApplicationMonth());
+                populateApplicationProcessingSummary(monthSummary, monthRepresentation);
+                monthRepresentations.add(monthRepresentation);
+            }
+
+            yearRepresentation.setProcessingSummaries(monthRepresentations);
+            currentYear = false;
+        }
+
+        summary.setProcessingSummaries(yearRepresentations);
         return summary;
     }
 
@@ -506,7 +537,7 @@ public class ResourceService {
         if (resource.getResourceScope() == PrismScope.SYSTEM) {
             return defaultSocialThumbnail;
         } else {
-            Document logoDocument = resource.getInstitution().getLogoImage();
+            Document logoDocument = resource.getInstitution().getAdvert().getLogoImage();
             if (logoDocument == null) {
                 return defaultSocialThumbnail;
             }
@@ -586,6 +617,24 @@ public class ResourceService {
             T persistentResourceStateDefinition = entityService.createOrUpdate(transientResourceStateDefinition);
             resourceStateDefinitions.add(persistentResourceStateDefinition);
         }
+    }
+
+    public void populateApplicationProcessingSummary(ApplicationProcessingSummaryDTO yearSummary,
+            ApplicationProcessingSummaryRepresentation yearRepresentation) {
+        yearRepresentation.setAdvertCount(yearSummary.getAdvertCount().intValue());
+        yearRepresentation.setCreatedApplicationCount(yearSummary.getCreatedApplicationCount().intValue());
+        yearRepresentation.setSubmittedApplicationCount(yearSummary.getSubmittedApplicationCount().intValue());
+        yearRepresentation.setApprovedApplicationCount(yearSummary.getApprovedApplicationCount().intValue());
+        yearRepresentation.setRejectedApplicationCount(yearSummary.getRejectedApplicationCount().intValue());
+        yearRepresentation.setWithdrawnApplicationCount(yearSummary.getWithdrawnApplicationCount().intValue());
+        yearRepresentation.setCreatedApplicationRatio(BigDecimal.valueOf(yearSummary.getCreatedApplicationRatio()));
+        yearRepresentation.setSubmittedApplicationRatio(BigDecimal.valueOf(yearSummary.getSubmittedApplicationCount()));
+        yearRepresentation.setApprovedApplicationRatio(BigDecimal.valueOf(yearSummary.getApprovedApplicationCount()));
+        yearRepresentation.setRejectedApplicationRatio(BigDecimal.valueOf(yearSummary.getRejectedApplicationCount()));
+        yearRepresentation.setWithdrawnApplicationRatio(BigDecimal.valueOf(yearSummary.getWithdrawnApplicationCount()));
+        yearRepresentation.setAverageRating(BigDecimal.valueOf(yearSummary.getAverageRating()));
+        yearRepresentation.setAveragePreparationTime(BigDecimal.valueOf(yearSummary.getAveragePreparationTime()));
+        yearRepresentation.setAverageProcessingTime(BigDecimal.valueOf(yearSummary.getAverageProcessingTime()));
     }
 
 }

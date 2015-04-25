@@ -2,12 +2,12 @@ package com.zuehlke.pgadmissions.rest.dto;
 
 import javax.validation.constraints.NotNull;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 
 public class AdvertSearchDTO {
 
     @NotNull
-    private PrismProgramType programType;
+    private PrismOpportunityType opportunityType;
 
     private String keywords;
 
@@ -17,12 +17,12 @@ public class AdvertSearchDTO {
 
     private String[] studyOptions;
 
-    public final PrismProgramType getProgramType() {
-        return programType;
+    public final PrismOpportunityType getOpportunityType() {
+        return opportunityType;
     }
 
-    public final void setProgramType(PrismProgramType programType) {
-        this.programType = programType;
+    public final void setOpportunityType(PrismOpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
     }
 
     public final String getKeywords() {

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption.getSystemStudyOption;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_RESTORE;
@@ -26,7 +28,7 @@ import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
@@ -38,12 +40,12 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.imported.ProgramType;
+import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOptionInstance;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
@@ -183,19 +185,19 @@ public class ImportedEntityService {
             LocalDate transientStartDate = DATE_FORMAT.parseLocalDate(occurrence.getStartDate());
             LocalDate transientCloseDate = DATE_FORMAT.parseLocalDate(occurrence.getEndDate());
 
-            ProgramStudyOption transientProgramStudyOption = new ProgramStudyOption().withProgram(persistentProgram).withStudyOption(studyOption)
+            ResourceStudyOption transientProgramStudyOption = new ResourceStudyOption().withResource(persistentProgram).withStudyOption(studyOption)
                     .withApplicationStartDate(transientStartDate).withApplicationCloseDate(transientCloseDate)
                     .withEnabled(transientCloseDate.isAfter(baseline));
 
-            ProgramStudyOption persistentProgramStudyOption = mergeProgramStudyOption(transientProgramStudyOption, baseline);
+            ResourceStudyOption persistentProgramStudyOption = mergeProgramStudyOption(transientProgramStudyOption, baseline);
             persistentProgram.getStudyOptions().add(persistentProgramStudyOption);
 
-            ProgramStudyOptionInstance transientProgramStudyOptionInstance = new ProgramStudyOptionInstance().withStudyOption(persistentProgramStudyOption)
+            ResourceStudyOptionInstance transientProgramStudyOptionInstance = new ResourceStudyOptionInstance().withStudyOption(persistentProgramStudyOption)
                     .withApplicationStartDate(transientStartDate).withApplicationCloseDate(transientCloseDate)
                     .withAcademicYear(Integer.toString(transientStartDate.getYear())).withIdentifier(occurrence.getIdentifier())
                     .withEnabled(transientCloseDate.isAfter(baseline));
 
-            ProgramStudyOptionInstance persistentProgramStudyOptionInstance = entityService.createOrUpdate(transientProgramStudyOptionInstance);
+            ResourceStudyOptionInstance persistentProgramStudyOptionInstance = entityService.createOrUpdate(transientProgramStudyOptionInstance);
             persistentProgramStudyOption.getStudyOptionInstances().add(persistentProgramStudyOptionInstance);
 
             startDate = startDate == null || startDate.isBefore(transientStartDate) ? transientStartDate : startDate;
@@ -277,25 +279,25 @@ public class ImportedEntityService {
         String transientTitle = programDefinition.getName();
         String transientTitleClean = transientTitle.replace("\n", "").replace("\r", "").replace("\t", "");
 
-        PrismProgramType programTypeId = PrismProgramType.findValueFromString(programDefinition.getName());
-        programTypeId = programTypeId == null ? institution.getDefaultProgramType() : programTypeId;
+        PrismOpportunityType prismOpportunityType = PrismOpportunityType.findValueFromString(programDefinition.getName());
+        prismOpportunityType = prismOpportunityType == null ? getSystemOpportunityType() : prismOpportunityType;
 
         boolean transientRequireProjectDefinition = programDefinition.isAtasRegistered();
 
         DateTime baselineDateTime = new DateTime();
-        ProgramType programType = getImportedEntityByCode(ProgramType.class, institution, programTypeId.name());
+        OpportunityType opportunityType = getImportedEntityByCode(OpportunityType.class, institution, prismOpportunityType.name());
         Department department = departmentService.getOrCreateDepartment(new Department().withInstitution(institution).withTitle(
                 programDefinition.getDepartment()));
 
         Program transientProgram = new Program().withSystem(systemService.getSystem()).withInstitution(institution).withDepartment(department)
                 .withImportedCode(programDefinition.getCode()).withTitle(transientTitleClean).withRequireProjectDefinition(transientRequireProjectDefinition)
-                .withImported(true).withProgramType(programType).withUser(proxyCreator).withCreatedTimestamp(baselineDateTime)
+                .withImported(true).withOpportunityType(opportunityType).withUser(proxyCreator).withCreatedTimestamp(baselineDateTime)
                 .withUpdatedTimestamp(baselineDateTime).withUpdatedTimestampSitemap(baselineDateTime);
 
         Program persistentProgram = entityService.getDuplicateEntity(transientProgram);
         if (persistentProgram == null) {
             Advert transientAdvert = new Advert().withTitle(transientTitle);
-            transientAdvert.setAddress(advertService.createAddressCopy(institution.getAddress()));
+            transientAdvert.setAddress(advertService.createAddressCopy(institution.getAdvert().getAddress()));
             transientProgram.setAdvert(transientAdvert);
             entityService.save(transientProgram);
             return transientProgram;
@@ -307,8 +309,8 @@ public class ImportedEntityService {
         }
     }
 
-    private ProgramStudyOption mergeProgramStudyOption(ProgramStudyOption transientProgramStudyOption, LocalDate baseline) throws DeduplicationException {
-        ProgramStudyOption persistentProgramStudyOption = entityService.getDuplicateEntity(transientProgramStudyOption);
+    private ResourceStudyOption mergeProgramStudyOption(ResourceStudyOption transientProgramStudyOption, LocalDate baseline) throws DeduplicationException {
+        ResourceStudyOption persistentProgramStudyOption = entityService.getDuplicateEntity(transientProgramStudyOption);
 
         if (persistentProgramStudyOption == null) {
             entityService.save(transientProgramStudyOption);
@@ -333,9 +335,9 @@ public class ImportedEntityService {
 
     private StudyOption mergeStudyOption(Institution institution, ModeOfAttendance modeOfAttendance) throws DeduplicationException {
         String externalCode = modeOfAttendance.getCode();
-        PrismStudyOption studyOptionId = PrismStudyOption.findValueFromString(externalCode);
-        studyOptionId = studyOptionId == null ? institution.getDefaultStudyOption() : studyOptionId;
-        StudyOption studyOption = new StudyOption().withInstitution(institution).withCode(studyOptionId.name()).withName(externalCode).withEnabled(true);
+        PrismStudyOption prismStudyOption = PrismStudyOption.findValueFromString(externalCode);
+        prismStudyOption = prismStudyOption == null ? getSystemStudyOption() : prismStudyOption;
+        StudyOption studyOption = new StudyOption().withInstitution(institution).withCode(prismStudyOption.name()).withName(externalCode).withEnabled(true);
         studyOption.setType(PrismImportedEntity.STUDY_OPTION);
         return entityService.createOrUpdate(studyOption);
     }

@@ -1,6 +1,9 @@
 package com.zuehlke.pgadmissions.domain.program;
 
-import java.math.BigDecimal;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_COMPLETED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_REJECTED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_WITHDRAWN;
+
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -27,15 +30,15 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.department.Department;
-import com.zuehlke.pgadmissions.domain.imported.ProgramType;
+import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
@@ -48,11 +51,6 @@ public class Program extends ResourceParent {
     @Id
     @GeneratedValue
     private Integer id;
-
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "advert_id", nullable = false)
-    private Advert advert;
 
     @ManyToOne
     @Fetch(FetchMode.SELECT)
@@ -80,45 +78,32 @@ public class Program extends ResourceParent {
     @JoinColumn(name = "department_id")
     private Department department;
 
+    @OneToOne
+    @Fetch(FetchMode.SELECT)
+    @JoinColumn(name = "advert_id", nullable = false)
+    private Advert advert;
+
+    @ManyToOne
+    @JoinColumn(name = "opportunity_type_id", nullable = false)
+    private OpportunityType opportunityType;
+
     @Column(name = "referrer")
     private String referrer;
 
-    @ManyToOne
-    @JoinColumn(name = "program_type_id", nullable = false)
-    private ProgramType programType;
-
     @Column(name = "title", nullable = false)
     private String title;
+    
+    @Column(name = "duration_minimum")
+    private Integer durationMinimum;
+    
+    @Column(name = "duration_maximum")
+    private Integer durationMaximum;
 
     @Column(name = "require_project_definition", nullable = false)
     private Boolean requireProjectDefinition;
 
     @Column(name = "imported", nullable = false)
     private Boolean imported;
-
-    @Column(name = "application_created_count")
-    private Integer applicationCreatedCount;
-
-    @Column(name = "application_submitted_count")
-    private Integer applicationSubmittedCount;
-
-    @Column(name = "application_approved_count")
-    private Integer applicationApprovedCount;
-
-    @Column(name = "application_rejected_count")
-    private Integer applicationRejectedCount;
-
-    @Column(name = "application_withdrawn_count")
-    private Integer applicationWithdrawnCount;
-
-    @Column(name = "application_rating_count")
-    private Integer applicationRatingCount;
-
-    @Column(name = "application_rating_count_average_non_zero")
-    private BigDecimal applicationRatingCountAverageNonZero;
-
-    @Column(name = "application_rating_average")
-    private BigDecimal applicationRatingAverage;
 
     @ManyToOne
     @JoinColumn(name = "state_id")
@@ -168,7 +153,7 @@ public class Program extends ResourceParent {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "program_id", nullable = false)
-    private Set<ProgramLocation> locations = Sets.newHashSet();
+    private Set<ResourceLocation> locations = Sets.newHashSet();
 
     @OneToMany(mappedBy = "program")
     private Set<ResourceState> resourceStates = Sets.newHashSet();
@@ -184,7 +169,7 @@ public class Program extends ResourceParent {
     private Set<Program> programRelations = Sets.newHashSet();
 
     @OneToMany(mappedBy = "program")
-    private Set<ProgramStudyOption> studyOptions = Sets.newHashSet();
+    private Set<ResourceStudyOption> studyOptions = Sets.newHashSet();
 
     @OneToMany(mappedBy = "program")
     private Set<Project> projects = Sets.newHashSet();
@@ -269,20 +254,20 @@ public class Program extends ResourceParent {
         this.referrer = referrer;
     }
 
-    public ProgramType getProgramType() {
-        return programType;
-    }
-
-    public void setProgramType(ProgramType programType) {
-        this.programType = programType;
-    }
-
     public Advert getAdvert() {
         return advert;
     }
 
     public void setAdvert(Advert advert) {
         this.advert = advert;
+    }
+
+    public OpportunityType getOpportunityType() {
+        return opportunityType;
+    }
+
+    public void setOpportunityType(OpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
     }
 
     @Override
@@ -321,6 +306,22 @@ public class Program extends ResourceParent {
         this.title = title;
     }
 
+    public Integer getDurationMinimum() {
+        return durationMinimum;
+    }
+
+    public void setDurationMinimum(Integer durationMinimum) {
+        this.durationMinimum = durationMinimum;
+    }
+
+    public Integer getDurationMaximum() {
+        return durationMaximum;
+    }
+
+    public void setDurationMaximum(Integer durationMaximum) {
+        this.durationMaximum = durationMaximum;
+    }
+
     public Boolean getRequireProjectDefinition() {
         return requireProjectDefinition;
     }
@@ -335,84 +336,6 @@ public class Program extends ResourceParent {
 
     public void setImported(Boolean imported) {
         this.imported = imported;
-    }
-
-    @Override
-    public Integer getApplicationCreatedCount() {
-        return applicationCreatedCount;
-    }
-
-    @Override
-    public void setApplicationCreatedCount(Integer applicationCreatedCount) {
-        this.applicationCreatedCount = applicationCreatedCount;
-    }
-
-    @Override
-    public Integer getApplicationSubmittedCount() {
-        return applicationSubmittedCount;
-    }
-
-    @Override
-    public void setApplicationSubmittedCount(Integer applicationSubmittedCount) {
-        this.applicationSubmittedCount = applicationSubmittedCount;
-    }
-
-    @Override
-    public Integer getApplicationApprovedCount() {
-        return applicationApprovedCount;
-    }
-
-    @Override
-    public void setApplicationApprovedCount(Integer applicationApprovedCount) {
-        this.applicationApprovedCount = applicationApprovedCount;
-    }
-
-    @Override
-    public Integer getApplicationRejectedCount() {
-        return applicationRejectedCount;
-    }
-
-    @Override
-    public void setApplicationRejectedCount(Integer applicationRejectedCount) {
-        this.applicationRejectedCount = applicationRejectedCount;
-    }
-
-    @Override
-    public Integer getApplicationWithdrawnCount() {
-        return applicationWithdrawnCount;
-    }
-
-    @Override
-    public void setApplicationWithdrawnCount(Integer applicationWithdrawnCount) {
-        this.applicationWithdrawnCount = applicationWithdrawnCount;
-    }
-
-    @Override
-    public Integer getApplicationRatingCount() {
-        return applicationRatingCount;
-    }
-
-    @Override
-    public void setApplicationRatingCount(Integer applicationRatingCountSum) {
-        this.applicationRatingCount = applicationRatingCountSum;
-    }
-
-    @Override
-    public BigDecimal getApplicationRatingCountAverageNonZero() {
-        return applicationRatingCountAverageNonZero;
-    }
-
-    @Override
-    public void setApplicationRatingCountAverageNonZero(BigDecimal applicationRatingCountAverage) {
-        this.applicationRatingCountAverageNonZero = applicationRatingCountAverage;
-    }
-
-    public BigDecimal getApplicationRatingAverage() {
-        return applicationRatingAverage;
-    }
-
-    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
-        this.applicationRatingAverage = applicationRatingAverage;
     }
 
     @Override
@@ -531,11 +454,11 @@ public class Program extends ResourceParent {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    public Set<ProgramLocation> getLocations() {
+    public Set<ResourceLocation> getLocations() {
         return locations;
     }
 
-    public void setLocations(Set<ProgramLocation> locations) {
+    public void setLocations(Set<ResourceLocation> locations) {
         this.locations = locations;
     }
 
@@ -558,7 +481,7 @@ public class Program extends ResourceParent {
         return programRelations;
     }
 
-    public Set<ProgramStudyOption> getStudyOptions() {
+    public Set<ResourceStudyOption> getStudyOptions() {
         return studyOptions;
     }
 
@@ -598,6 +521,17 @@ public class Program extends ResourceParent {
         setTitle(title);
         return this;
     }
+    
+    
+    public Program withDurationMinimum(Integer durationMinimum) {
+        this.durationMinimum = durationMinimum;
+        return this;
+    }
+    
+    public Program withDurationMaximum(Integer durationMaximum) {
+        this.durationMaximum = durationMaximum;
+        return this;
+    }
 
     public Program withState(State state) {
         this.state = state;
@@ -618,6 +552,11 @@ public class Program extends ResourceParent {
         this.imported = imported;
         return this;
     }
+    
+    public Program withOpportunityType(OpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
+        return this;
+    }
 
     public Program withSystem(System system) {
         this.system = system;
@@ -631,11 +570,6 @@ public class Program extends ResourceParent {
 
     public Program withDepartment(Department department) {
         this.department = department;
-        return this;
-    }
-
-    public Program withProgramType(ProgramType programType) {
-        this.programType = programType;
         return this;
     }
 
@@ -655,7 +589,7 @@ public class Program extends ResourceParent {
     }
 
     public void addLocation(String location) {
-        locations.add(new ProgramLocation().withLocation(location));
+        locations.add(new ResourceLocation().withLocation(location));
     }
 
     @Override
@@ -664,11 +598,12 @@ public class Program extends ResourceParent {
         if (BooleanUtils.isTrue(imported)) {
             signature.addProperty("importedCode", importedCode);
         } else {
+            signature.addProperty("opportunityType", opportunityType);
             signature.addProperty("title", title);
-            signature.addExclusion("state.id", PrismState.PROGRAM_DISABLED_COMPLETED);
         }
-        signature.addExclusion("state.id", PrismState.PROGRAM_REJECTED);
-        signature.addExclusion("state.id", PrismState.PROGRAM_WITHDRAWN);
+        signature.addExclusion("state.id", PROGRAM_REJECTED);
+        signature.addExclusion("state.id", PROGRAM_WITHDRAWN);
+        signature.addExclusion("state.id", PROGRAM_DISABLED_COMPLETED);
         return signature;
     }
 

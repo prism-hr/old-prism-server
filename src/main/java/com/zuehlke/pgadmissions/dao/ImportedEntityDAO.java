@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.INSTITUTION_APPROVED;
+
 import java.util.List;
 
 import org.hibernate.SessionFactory;
@@ -12,8 +15,6 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.imported.Domicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
@@ -69,7 +70,7 @@ public class ImportedEntityDAO {
         return sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class) //
                 .createAlias("institution", "institution", JoinType.INNER_JOIN) //
                 .createAlias("institution.state", "state", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("state.stateGroup.id", PrismStateGroup.INSTITUTION_APPROVED)) //
+                .add(Restrictions.eq("state.stateGroup.id", INSTITUTION_APPROVED)) //
                 .addOrder(Order.asc("institution")) //
                 .addOrder(Order.asc("importedEntityType")) //
                 .list();
@@ -162,7 +163,7 @@ public class ImportedEntityDAO {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ImportedEntityFeed.class) //
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.eq("institution.id", institutionId)) //
-                .add(Restrictions.ne("importedEntityType", PrismImportedEntity.PROGRAM)) //
+                .add(Restrictions.ne("importedEntityType", PROGRAM)) //
                 .add(Restrictions.isNull("lastImportedTimestamp")) //
                 .list();
     }

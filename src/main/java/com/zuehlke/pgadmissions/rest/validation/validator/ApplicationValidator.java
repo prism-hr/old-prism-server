@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.Disability;
 import com.zuehlke.pgadmissions.domain.imported.Ethnicity;
 import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -145,10 +145,10 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
             LocalDate startDate = programDetail.getStartDate();
 
             Program program = application.getProgram();
-            ProgramStudyOption studyOption = programService.getEnabledProgramStudyOption(program, programDetail.getStudyOption());
+            ResourceStudyOption studyOption = programService.getEnabledProgramStudyOption(program, programDetail.getStudyOption());
 
             if (studyOption == null) {
-                List<ProgramStudyOption> otherStudyOptions = programService.getEnabledProgramStudyOptions(program);
+                List<ResourceStudyOption> otherStudyOptions = programService.getEnabledProgramStudyOptions(program);
                 if (otherStudyOptions.isEmpty()) {
                     throw new CannotApplyException();
                 }

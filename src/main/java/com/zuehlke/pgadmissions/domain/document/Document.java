@@ -15,12 +15,12 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
@@ -35,7 +35,7 @@ public class Document {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category")
-    private FileCategory category;
+    private PrismFileCategory category;
 
     @Column(name = "file_name", nullable = false)
     private String fileName;
@@ -87,8 +87,11 @@ public class Document {
     @OneToOne(mappedBy = "portraitDocument")
     private User userPortrait;
 
-    @OneToOne(mappedBy = "logoDocument")
-    private Institution institutionLogo;
+    @OneToOne(mappedBy = "logoImage")
+    private Advert logoImage;
+    
+    @OneToOne(mappedBy = "backgroundImage")
+    private Advert backgroundImage;
 
     public void setId(Integer id) {
         this.id = id;
@@ -98,11 +101,11 @@ public class Document {
         return id;
     }
 
-    public final FileCategory getCategory() {
+    public final PrismFileCategory getCategory() {
         return category;
     }
 
-    public final void setCategory(FileCategory category) {
+    public final void setCategory(PrismFileCategory category) {
         this.category = category;
     }
 
@@ -190,16 +193,12 @@ public class Document {
         return userPortrait;
     }
 
-    public void setUserPortrait(User userPortrait) {
-        this.userPortrait = userPortrait;
+    public Advert getLogoImage() {
+        return logoImage;
     }
-
-    public Institution getInstitutionLogo() {
-        return institutionLogo;
-    }
-
-    public void setInstitutionLogo(Institution institutionLogo) {
-        this.institutionLogo = institutionLogo;
+    
+    public Advert getBackgroundImage() {
+        return backgroundImage;
     }
 
     public Document withId(Integer id) {
@@ -207,7 +206,7 @@ public class Document {
         return this;
     }
 
-    public Document withCategory(final FileCategory category) {
+    public Document withCategory(final PrismFileCategory category) {
         this.category = category;
         return this;
     }

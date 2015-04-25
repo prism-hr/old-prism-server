@@ -17,15 +17,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.document.FileCategory;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
@@ -39,7 +36,6 @@ import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.iso.jaxb.InstitutionDomiciles;
-import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
@@ -52,9 +48,6 @@ public class InstitutionService {
 
     @Inject
     private InstitutionDAO institutionDAO;
-
-    @Inject
-    private DocumentService documentService;
 
     @Inject
     private EntityService entityService;
@@ -132,7 +125,6 @@ public class InstitutionService {
                 .withUclInstitution(false).withGoogleId(institutionDTO.getGoogleIdentifier()).withCurrency(institutionDTO.getCurrency()).withUser(user);
 
         address.setInstitution(institution);
-        setLogoImage(institution, institutionDTO, PrismAction.SYSTEM_CREATE_INSTITUTION);
         return institution;
     }
 
@@ -302,15 +294,6 @@ public class InstitutionService {
         if (!businessYearStartMonth.equals(institution.getBusinessYearStartMonth())) {
             Integer businessYearEndMonth = businessYearStartMonth == 1 ? 12 : businessYearStartMonth - 1;
             institutionDAO.changeInstitutionBusinessYear(institution.getId(), businessYearEndMonth);
-        }
-    }
-
-    private void setLogoImage(Institution institution, InstitutionDTO institutionDTO, PrismAction actionId) {
-        FileDTO logoImageDTO = institutionDTO.getLogoImage();
-        if (logoImageDTO != null) {
-            Document image = documentService.getById(logoImageDTO.getId(), FileCategory.IMAGE);
-            Preconditions.checkState(image.getContentType().equals("image/jpeg"), "Unexpected image type: " + image.getContentType());
-            institution.setLogoImage(image);
         }
     }
 

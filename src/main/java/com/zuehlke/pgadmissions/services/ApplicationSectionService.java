@@ -55,7 +55,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhanceme
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.document.FileCategory;
+import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
 import com.zuehlke.pgadmissions.domain.imported.Country;
 import com.zuehlke.pgadmissions.domain.imported.Disability;
 import com.zuehlke.pgadmissions.domain.imported.Domicile;
@@ -303,7 +303,7 @@ public class ApplicationSectionService {
 
         FileDTO upload = qualificationDTO.getDocument();
         if (upload != null) {
-            Document qualificationDocument = documentService.getById(upload.getId(), FileCategory.DOCUMENT);
+            Document qualificationDocument = documentService.getById(upload.getId(), PrismFileCategory.DOCUMENT);
             qualification.setDocument(qualificationDocument);
         }
         qualification.setLastUpdatedTimestamp(DateTime.now());
@@ -386,7 +386,7 @@ public class ApplicationSectionService {
 
         FileDTO fileDTO = fundingDTO.getDocument();
         if (fileDTO != null) {
-            Document qualificationDocument = documentService.getById(fileDTO.getId(), FileCategory.DOCUMENT);
+            Document qualificationDocument = documentService.getById(fileDTO.getId(), PrismFileCategory.DOCUMENT);
             funding.setDocument(qualificationDocument);
         }
         funding.setLastUpdatedTimestamp(DateTime.now());
@@ -486,12 +486,12 @@ public class ApplicationSectionService {
         }
 
         Document personalStatement = documentDTO.getPersonalStatement() != null ? documentService.getById(documentDTO.getPersonalStatement().getId(),
-                FileCategory.DOCUMENT) : null;
-        Document cv = documentDTO.getCv() != null ? documentService.getById(documentDTO.getCv().getId(), FileCategory.DOCUMENT) : null;
+                PrismFileCategory.DOCUMENT) : null;
+        Document cv = documentDTO.getCv() != null ? documentService.getById(documentDTO.getCv().getId(), PrismFileCategory.DOCUMENT) : null;
         Document researchStatement = documentDTO.getResearchStatement() != null ? documentService.getById(documentDTO.getResearchStatement().getId(),
-                FileCategory.DOCUMENT) : null;
+                PrismFileCategory.DOCUMENT) : null;
         Document coveringLetter = documentDTO.getCoveringLetter() != null ? documentService.getById(documentDTO.getCoveringLetter().getId(),
-                FileCategory.DOCUMENT) : null;
+                PrismFileCategory.DOCUMENT) : null;
         document.setCv(cv);
         document.setPersonalStatement(personalStatement);
         document.setResearchStatement(researchStatement);
@@ -587,7 +587,7 @@ public class ApplicationSectionService {
 
             FileDTO upload = languageQualificationDTO.getDocument();
             if (upload != null) {
-                Document languageQualificationDocument = documentService.getById(upload.getId(), FileCategory.DOCUMENT);
+                Document languageQualificationDocument = documentService.getById(upload.getId(), PrismFileCategory.DOCUMENT);
                 languageQualification.setDocument(languageQualificationDocument);
             }
         }

@@ -16,12 +16,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
@@ -51,8 +53,10 @@ import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertCategoriesDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertClosingDateDTO;
+import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertFeesAndPaymentsDTO;
+import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.FinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
@@ -75,25 +79,28 @@ public class AdvertService {
     @Value("${integration.yahoo.exchange.rate.api.table}")
     private String yahooExchangeRateApiTable;
 
-    @Autowired
+    @Inject
     private AdvertDAO advertDAO;
 
-    @Autowired
+    @Inject
+    private DocumentService documentService;
+    
+    @Inject
     private EntityService entityService;
 
-    @Autowired
+    @Inject
     private ResourceService resourceService;
 
-    @Autowired
+    @Inject
     private InstitutionService institutionService;
 
-    @Autowired
+    @Inject
     private StateService stateService;
 
-    @Autowired
+    @Inject
     private GeocodableLocationService geocodableLocationService;
 
-    @Autowired
+    @Inject
     private RestTemplate restTemplate;
 
     public Advert getById(Integer id) {
@@ -111,21 +118,9 @@ public class AdvertService {
         projectStates = queryDTO.getProjects() == null ? projectStates : stateService.getProjectStates();
 
         if (queryDTO.isResourceAction()) {
-            Resource resource = resourceService.getById(queryDTO.getActionId().getScope().getResourceClass(), queryDTO.getResourceId());
+            Resource resource = resourceService.getById(queryDTO.getActionId().getScope(), queryDTO.getResourceId());
             Resource parentResource = resource.getParentResource();
-            PrismScope parentResourceScope = parentResource.getResourceScope();
-
-            switch (parentResourceScope) {
-            case INSTITUTION:
-            case PROGRAM:
-            case PROJECT:
-                PrismReflectionUtils.setProperty(queryDTO, parentResourceScope.getLowerCamelName() + "s", new Integer[] { parentResource.getId() });
-                break;
-            case SYSTEM:
-                break;
-            default:
-                throw new Error();
-            }
+            queryDTO.setResources(parentResource.getResourceScope(), parentResource.getId());
         }
 
         List<Integer> adverts = advertDAO.getAdverts(institutionStates, programStates, projectStates, queryDTO);
@@ -145,10 +140,38 @@ public class AdvertService {
         List<Integer> advertsRecentlyAppliedFor = advertDAO.getAdvertsRecentlyAppliedFor(user, new LocalDate().minusYears(1));
         return advertDAO.getRecommendedAdverts(user, activeInstitutionStates, activeProgramStates, activeProjectStates, advertsRecentlyAppliedFor);
     }
+    
+    public void createOrUpdateAdvert(ResourceParent resource, AdvertDTO advertDTO) {
+        Advert advert = resource.getAdvert();
+        boolean newAdvert = advert == null;
+        if (newAdvert) {
+            advert = new Advert();
+        }
+        advert.setTitle(advertDTO.getTitle());
+        advert.setSummary(advertDTO.getSummary());
+        advert.setDescription(advertDTO.getDescription());
+        advert.setApplyHomepage(advertDTO.getApplyHomepage());
+        
+        FileDTO logo = advertDTO.getLogoImage();
+        if (logo != null) {
+            Document logoDocument = documentService.getImageDocument(logo);
+            advert.setLogoImage(logoDocument);
+        }
+        
+        FileDTO background = advertDTO.getBackgroundImage();
+        if (background != null) {
+            Document backgroundDocument = documentService.getImageDocument(background);
+            advert.setLogoImage(backgroundDocument);
+        }
+        
+        if (newAdvert) {
+            entityService.save(advert);
+        }
+    }
 
-    public void updateDetail(Class<? extends Resource> resourceClass, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) throws Exception {
-        Resource resource = resourceService.getById(resourceClass, resourceId);
-        Advert advert = (Advert) PrismReflectionUtils.getProperty(resource, "advert");
+    public void updateDetail(PrismScope resourceScope, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) throws Exception {
+        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
+        Advert advert = resource.getAdvert();
 
         InstitutionAddressDTO addressDTO = advertDetailsDTO.getAddress();
         InstitutionDomicile country = entityService.getById(InstitutionDomicile.class, addressDTO.getDomicile());
@@ -169,10 +192,10 @@ public class AdvertService {
         resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_ADVERT);
     }
 
-    public void updateFeesAndPayments(Class<? extends Resource> resourceClass, Integer resourceId, AdvertFeesAndPaymentsDTO feesAndPaymentsDTO)
+    public void updateFeesAndPayments(PrismScope resourceScope, Integer resourceId, AdvertFeesAndPaymentsDTO feesAndPaymentsDTO)
             throws Exception {
-        Resource resource = resourceService.getById(resourceClass, resourceId);
-        Advert advert = (Advert) PrismReflectionUtils.getProperty(resource, "advert");
+        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
+        Advert advert = resource.getAdvert();
 
         LocalDate baseline = new LocalDate();
         String currencyAtLocale = getCurrencyAtLocale(advert);
@@ -188,9 +211,9 @@ public class AdvertService {
     }
 
     @SuppressWarnings("unchecked")
-    public void updateCategories(Class<? extends Resource> resourceClass, Integer resourceId, AdvertCategoriesDTO categoriesDTO) throws Exception {
-        Resource resource = resourceService.getById(resourceClass, resourceId);
-        Advert advert = (Advert) PrismReflectionUtils.getProperty(resource, "advert");
+    public void updateCategories(PrismScope resourceScope, Integer resourceId, AdvertCategoriesDTO categoriesDTO) throws Exception {
+        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
+        Advert advert = resource.getAdvert();
 
         for (String propertyName : new String[] { "domain", "industry", "function", "competency", "theme" }) {
             String propertySetterName = "add" + WordUtils.capitalize(propertyName);
@@ -212,10 +235,10 @@ public class AdvertService {
         resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CATEGORY);
     }
 
-    public AdvertClosingDate createClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, AdvertClosingDateDTO advertClosingDateDTO)
+    public AdvertClosingDate createClosingDate(PrismScope resourceScope, Integer resourceId, AdvertClosingDateDTO advertClosingDateDTO)
             throws Exception {
-        Resource resource = resourceService.getById(resourceClass, resourceId);
-        Advert advert = (Advert) PrismReflectionUtils.getProperty(resource, "advert");
+        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
+        Advert advert = resource.getAdvert();
 
         if (advert != null) {
             AdvertClosingDate advertClosingDate = new AdvertClosingDate().withAdvert(advert).withClosingDate(advertClosingDateDTO.getClosingDate())
@@ -230,12 +253,12 @@ public class AdvertService {
         return null;
     }
 
-    public void updateClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, Integer closingDateId, AdvertClosingDateDTO advertClosingDateDTO)
+    public void updateClosingDate(PrismScope resourceScope, Integer resourceId, Integer closingDateId, AdvertClosingDateDTO advertClosingDateDTO)
             throws Exception {
-        Resource resource = resourceService.getById(resourceClass, resourceId);
-        Advert advert = (Advert) PrismReflectionUtils.getProperty(resource, "advert");
-        AdvertClosingDate advertClosingDate = getClosingDateById(closingDateId);
+        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
+        Advert advert = resource.getAdvert();
 
+        AdvertClosingDate advertClosingDate = getClosingDateById(closingDateId);
         if (advert.getId().equals(advertClosingDate.getAdvert().getId())) {
             advertClosingDate.setClosingDate(advertClosingDateDTO.getClosingDate());
             advertClosingDate.setStudyPlaces(advertClosingDateDTO.getStudyPlaces());
@@ -247,11 +270,11 @@ public class AdvertService {
         }
     }
 
-    public void deleteClosingDate(Class<? extends Resource> resourceClass, Integer resourceId, Integer closingDateId) throws Exception {
-        Resource resource = resourceService.getById(resourceClass, resourceId);
-        Advert advert = (Advert) PrismReflectionUtils.getProperty(resource, "advert");
-        AdvertClosingDate advertClosingDate = getClosingDateById(closingDateId);
+    public void deleteClosingDate(PrismScope resourceScope, Integer resourceId, Integer closingDateId) throws Exception {
+        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
+        Advert advert = resource.getAdvert();
 
+        AdvertClosingDate advertClosingDate = getClosingDateById(closingDateId);
         if (advert.getId().equals(advertClosingDate.getAdvert().getId())) {
             advert.setClosingDate(null);
             entityService.flush();

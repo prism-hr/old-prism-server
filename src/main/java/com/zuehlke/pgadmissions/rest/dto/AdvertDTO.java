@@ -1,49 +1,29 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.util.List;
-
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
-import org.joda.time.LocalDate;
-
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 
 public class AdvertDTO {
-    
-    private PrismOpportunityType advertType;
 
     @NotEmpty
     @Size(max = 255)
     private String title;
-    
+
     @NotEmpty
     @Size(max = 1000)
     private String summary;
-    
+
     private String description;
-    
+
     @URL
     @Size(max = 2048)
     private String applyHomepage;
-    
+
     private FileDTO logoImage;
 
     private FileDTO backgroundImage;
-    
-    private List<String> locations = Lists.newArrayList();
-    
-    private LocalDate endDate;
-    
-    public PrismOpportunityType getAdvertType() {
-        return advertType;
-    }
-
-    public void setAdvertType(PrismOpportunityType advertType) {
-        this.advertType = advertType;
-    }
 
     public String getTitle() {
         return title;
@@ -93,20 +73,4 @@ public class AdvertDTO {
         this.backgroundImage = backgroundImage;
     }
 
-    public List<String> getLocations() {
-        return locations;
-    }
-
-    public void setLocations(List<String> locations) {
-        this.locations = locations;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
-    
 }

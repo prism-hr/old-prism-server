@@ -42,13 +42,14 @@ import com.google.common.io.Resources;
 import com.itextpdf.text.pdf.PdfReader;
 import com.zuehlke.pgadmissions.dao.DocumentDAO;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.document.FileCategory;
+import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
+import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 
 @Service
 @Transactional
@@ -82,21 +83,21 @@ public class DocumentService {
 		return entityService.getById(Document.class, id);
 	}
 
-	public Document getById(Integer id, FileCategory category) {
+	public Document getById(Integer id, PrismFileCategory category) {
 		return entityService.getByProperties(Document.class, ImmutableMap.<String, Object> of("id", id, "category", category));
 	}
 
-	public Document create(FileCategory category, Part uploadStream) throws IOException {
+	public Document create(PrismFileCategory category, Part uploadStream) throws IOException {
 		return create(category, getFileName(uploadStream), Streams.readAll(uploadStream.getInputStream()), uploadStream.getContentType());
 	}
 
-	public Document create(FileCategory category, String fileName, byte[] content, String contentType) throws IOException {
+	public Document create(PrismFileCategory category, String fileName, byte[] content, String contentType) throws IOException {
 		Preconditions.checkNotNull(category);
 
-		if (category == FileCategory.IMAGE) {
+		if (category == PrismFileCategory.IMAGE) {
 			content = createImageDocument(content, contentType);
 			contentType = "image/jpeg";
-		} else if (category == FileCategory.DOCUMENT) {
+		} else if (category == PrismFileCategory.DOCUMENT) {
 			createPdfDocument(content);
 		}
 		Document document = new Document().withContent(content).withContentType(contentType).withExported(false).withFileName(fileName)
@@ -105,7 +106,7 @@ public class DocumentService {
 		return document;
 	}
 
-	public Document getExternalFile(FileCategory fileCategory, String documentLink) throws IOException {
+	public Document getExternalFile(PrismFileCategory fileCategory, String documentLink) throws IOException {
 		URL logoDocumentUri = new DefaultResourceLoader().getResource(documentLink).getURL();
 		URLConnection connection = logoDocumentUri.openConnection();
 		InputStream stream = connection.getInputStream();
@@ -114,6 +115,12 @@ public class DocumentService {
 		String fileName = FilenameUtils.getName(documentLink);
 		return create(fileCategory, fileName, content, contentType);
 	}
+	
+    public Document getImageDocument(FileDTO imageDTO) {
+        Document image = getById(imageDTO.getId(), PrismFileCategory.IMAGE);
+        Preconditions.checkState(image.getContentType().equals("image/jpeg"), "Unexpected image type: " + image.getContentType());
+        return image;
+    }
 
 	public void deleteOrphanDocuments(DateTime baselineTime) throws IOException {
 		List<Integer> documentIds = documentDAO.getOrphanDocuments(baselineTime);
@@ -292,7 +299,7 @@ public class DocumentService {
 	}
 
 	private byte[] getFallbackDocument(Document document) throws IOException {
-		return getSystemDocument("document/" + (document.getCategory() == FileCategory.DOCUMENT ? "document_exported.pdf" : "image_exported.jpg"));
+		return getSystemDocument("document/" + (document.getCategory() == PrismFileCategory.DOCUMENT ? "document_exported.pdf" : "image_exported.jpg"));
 	}
 
 }

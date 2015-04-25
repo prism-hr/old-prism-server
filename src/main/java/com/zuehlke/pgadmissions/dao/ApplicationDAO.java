@@ -1,7 +1,10 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_PURGED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED_PURGED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_PURGED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_RESERVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_VALIDATION;
 
@@ -44,7 +47,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -76,9 +78,9 @@ public class ApplicationDAO {
                 .add(Restrictions.isNotNull("submittedTimestamp")) //
                 .add(Restrictions.not( //
                         Restrictions.in("state.id", Arrays.asList( //
-                                PrismState.APPLICATION_APPROVED_COMPLETED_PURGED, //
-                                PrismState.APPLICATION_REJECTED_COMPLETED_PURGED, //
-                                PrismState.APPLICATION_WITHDRAWN_COMPLETED_PURGED)))) //
+                                APPLICATION_APPROVED_COMPLETED_PURGED, //
+                                APPLICATION_REJECTED_COMPLETED_PURGED, //
+                                APPLICATION_WITHDRAWN_COMPLETED_PURGED)))) //
                 .addOrder(Order.desc("submittedTimestamp")) //
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //

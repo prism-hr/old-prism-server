@@ -3,6 +3,9 @@ package com.zuehlke.pgadmissions.dao;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
 
 import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
@@ -12,9 +15,13 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
+import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
@@ -25,12 +32,17 @@ import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionSuggestionDTO;
 
+import freemarker.template.Template;
+
 @Repository
 @SuppressWarnings("unchecked")
 public class InstitutionDAO {
 
-    @Autowired
+    @Inject
     private SessionFactory sessionFactory;
+
+    @Inject
+    private FreeMarkerConfig freemarkerConfig;
 
     public List<Institution> getApprovedInstitutionsByCountry(InstitutionDomicile domicile) {
         return sessionFactory.getCurrentSession().createCriteria(Institution.class) //
@@ -183,6 +195,26 @@ public class InstitutionDAO {
                 .add(Restrictions.eq("enabled", true)) //
                 .addOrder(Order.asc("name")) //
                 .list();
+    }
+
+    public void changeInstitutionBusinessYear(Integer institutionId, Integer businessYearEndMonth) throws Exception {
+        String templateLocation;
+        Map<String, Object> model = Maps.newHashMap();
+
+        if (businessYearEndMonth == 12) {
+            templateLocation = "sql/institution_change_business_year_simple.ftl";
+        } else {
+            templateLocation = "sql/institution_change_business_year_complex.ftl";
+            model.put("businessYearEndMonth", businessYearEndMonth);
+        }
+
+        String statement = Resources.toString(Resources.getResource(templateLocation), Charsets.UTF_8);
+        Template template = new Template("statement", statement, freemarkerConfig.getConfiguration());
+
+        sessionFactory.getCurrentSession().createSQLQuery( //
+                FreeMarkerTemplateUtils.processTemplateIntoString(template, model)) //
+                .setParameter("id", institutionId) //
+                .executeUpdate();
     }
 
 }

@@ -411,13 +411,10 @@ alter table application
 ;
 
 update application
-set application_month_sequence = application_month - 9
-where application_month > 9
-;
-
-update application
-set application_month_sequence = application_month + (12 - 9)
-where application_month < 10
+set application_month_sequence = 
+	if(application_month > 9, 
+		(application_month - 9),
+		(application_month + (12 - 9)))
 ;
 
 alter table application

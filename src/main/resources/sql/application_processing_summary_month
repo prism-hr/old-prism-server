@@ -18,5 +18,4 @@ from application
 where "${resourceReference}.id = :resourceId
 	and application_year = :year
 group by application_year, application_month_sequence
-order by application_year desc, application_month_sequence desc
-;
+order by application_year desc, application_month_sequence desc;

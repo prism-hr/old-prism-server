@@ -292,10 +292,17 @@ public class InstitutionService {
         Integer businessYear = month < businessYearStartMonth ? (year - 1) : year;
         return month == 1 ? businessYear.toString() : (year.toString() + "/" + new Integer(year + 1).toString());
     }
-    
+
     public Integer getMonthOfBusinessYear(Institution institution, Integer month) {
         Integer businessYearStartMonth = institution.getBusinessYearStartMonth();
         return month <= businessYearStartMonth ? (month - (businessYearStartMonth - 1)) : (month + (12 - (businessYearStartMonth - 1)));
+    }
+
+    public void changeInsitutionBusinessYear(Institution institution, Integer businessYearStartMonth) throws Exception {
+        if (!businessYearStartMonth.equals(institution.getBusinessYearStartMonth())) {
+            Integer businessYearEndMonth = businessYearStartMonth == 1 ? 12 : businessYearStartMonth - 1;
+            institutionDAO.changeInstitutionBusinessYear(institution.getId(), businessYearEndMonth);
+        }
     }
 
     private void setLogoImage(Institution institution, InstitutionDTO institutionDTO, PrismAction actionId) {

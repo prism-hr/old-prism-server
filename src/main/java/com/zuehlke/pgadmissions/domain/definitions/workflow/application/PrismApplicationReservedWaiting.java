@@ -6,6 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEditWithViewerRecruiter;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
@@ -18,6 +19,7 @@ public class PrismApplicationReservedWaiting extends PrismWorkflowState {
 		stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
 		stateActions.add(applicationEscalate(APPLICATION_RESERVED_PENDING_REALLOCATION)); //
 		stateActions.add(applicationCompleteReserved(state));
+        stateActions.add(applicationUploadReference(state));
 		stateActions.add(applicationViewEditWithViewerRecruiter(state)); //
 		stateActions.add(applicationWithdrawnReserved());
 	}

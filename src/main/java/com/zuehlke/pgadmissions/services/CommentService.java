@@ -1,14 +1,17 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_REJECTION_SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.EXHUME;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_REFERENCE;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -31,7 +34,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewAppointment;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewInstruction;
@@ -42,7 +44,6 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -115,6 +116,9 @@ public class CommentService {
     private DocumentService documentService;
 
     @Inject
+    private ResourceService resourceService;
+
+    @Inject
     private Mapper mapper;
 
     @Inject
@@ -122,9 +126,6 @@ public class CommentService {
 
     @Inject
     private CommentValidator commentValidator;
-
-    @Inject
-    private Mapper dozerBeanMapper;
 
     public Comment getById(int id) {
         return entityService.getById(Comment.class, id);
@@ -253,12 +254,12 @@ public class CommentService {
 
         CommentApplicationInterviewAppointment interviewAppointment = schedulingComment.getInterviewAppointment();
         if (interviewAppointment != null) {
-            dozerBeanMapper.map(interviewAppointment, interview);
+            mapper.map(interviewAppointment, interview);
         }
 
         CommentApplicationInterviewInstruction interviewInstruction = schedulingComment.getInterviewInstruction();
         if (interviewInstruction != null) {
-            dozerBeanMapper.map(interviewInstruction, interview);
+            mapper.map(interviewInstruction, interview);
         }
 
         return interview;
@@ -390,10 +391,6 @@ public class CommentService {
         return commentDAO.getRecentComments(resourceScope, resourceId, rangeStart, rangeClose);
     }
 
-    public void recordDelegatedStateTransition(Comment comment, State state) {
-        recordStateTransition(comment, state, state, Collections.<State> emptySet());
-    }
-
     public void recordStateTransition(Comment comment, State state, State transitionState, Set<State> stateTerminations) {
         comment.setState(state);
         comment.setTransitionState(transitionState);
@@ -403,7 +400,7 @@ public class CommentService {
 
         updateCommentStates(comment);
 
-        if (comment.isSecondaryTransitionComment() || comment.isStateGroupTransitionComment()) {
+        if (comment.isSecondaryStateGroupTransitionComment() || comment.isStateGroupTransitionComment()) {
             createCommentTransitionStates(comment, transitionState, stateTerminations);
         } else {
             updateCommentTransitionStates(comment, stateTerminations);
@@ -421,27 +418,32 @@ public class CommentService {
     }
 
     public void preProcessComment(Resource resource, Comment comment) throws Exception {
-        if (comment.isApplicationReverseRejectionComment()) {
-            Role refereeRole = roleService.getById(PrismRole.APPLICATION_REFEREE);
-            for (ApplicationReferee referee : applicationService.getApplicationRefereesNotResponded((Application) resource)) {
-                comment.addAssignedUser(referee.getUser(), refereeRole, PrismRoleTransitionType.EXHUME);
-            }
+        if (comment.isApplicationAssignRefereesComment()) {
+            appendApplicationReferees(resource, comment);
         }
 
         if (comment.isInterviewScheduledConfirmedComment()) {
             appendInterviewScheduledConfirmedComments(comment);
         }
+
+        if (comment.isApplicationReverseRejectionComment()) {
+            exhumeApplicationReferees(resource, comment);
+        }
     }
 
-    public void processComment(Comment comment) throws Exception {
+    public void processComment(Resource resource, Comment comment) throws Exception {
         if (comment.isApplicationAutomatedRejectionComment()) {
-            PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize(comment.getApplication());
-            comment.setRejectionReasonSystem(propertyLoader.load(PrismDisplayPropertyDefinition.APPLICATION_COMMENT_REJECTION_SYSTEM));
+            PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize((Application) resource);
+            comment.setRejectionReasonSystem(propertyLoader.load(APPLICATION_COMMENT_REJECTION_SYSTEM));
         }
         entityService.flush();
     }
 
-    public void postProcessComment(Comment comment) throws Exception {
+    public void postProcessComment(Resource resource, Comment comment) throws Exception {
+        if (comment.isApplicationViewEditComment() && !resourceService.getResourceStatesByStateGroup(resource, APPLICATION_REFERENCE).isEmpty()) {
+            appendApplicationReferees(resource, comment);
+        }
+
         if (comment.isApplicationRatingComment() && comment.getApplicationRating() == null) {
             buildAggregatedRating(comment);
             if (comment.getApplicationRating() == null) {
@@ -705,12 +707,26 @@ public class CommentService {
         }
     }
 
-    public Comment createAutomatedInterviewPreferenceComment(Resource resource, Action action, User invoker, User user, LocalDateTime interviewDateTime,
+    private Comment createAutomatedInterviewPreferenceComment(Resource resource, Action action, User invoker, User user, LocalDateTime interviewDateTime,
             DateTime baseline) {
         Comment preferenceComment = new Comment().withResource(resource).withAction(action).withUser(invoker).withDelegateUser(user)
                 .withDeclinedResponse(false).withState(resource.getState()).withCreatedTimestamp(baseline);
         preferenceComment.getAppointmentPreferences().add(new CommentAppointmentPreference().withDateTime(interviewDateTime));
         return preferenceComment;
+    }
+
+    private void appendApplicationReferees(Resource resource, Comment comment) {
+        Role refereeRole = roleService.getById(APPLICATION_REFEREE);
+        for (User referee : applicationService.getUnassignedApplicationReferees((Application) resource)) {
+            comment.addAssignedUser(referee, refereeRole, CREATE);
+        }
+    }
+
+    private void exhumeApplicationReferees(Resource resource, Comment comment) {
+        Role refereeRole = roleService.getById(APPLICATION_REFEREE);
+        for (User referee : applicationService.getUnassignedApplicationReferees((Application) resource)) {
+            comment.addAssignedUser(referee, refereeRole, EXHUME);
+        }
     }
 
     private void updateCommentStates(Comment comment) {

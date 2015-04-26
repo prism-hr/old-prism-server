@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_PURGED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED;
@@ -137,13 +138,6 @@ public class ApplicationDAO {
                 .list();
     }
 
-    public List<ApplicationReferee> getApplicationRefereesNotResponded(Application application) {
-        return (List<ApplicationReferee>) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
-                .add(Restrictions.eq("application", application)) //
-                .add(Restrictions.isNull("comment")) //
-                .list();
-    }
-
     public List<ApplicationQualification> getApplicationExportQualifications(Application application) {
         return (List<ApplicationQualification>) sessionFactory.getCurrentSession().createCriteria(ApplicationQualification.class) //
                 .add(Restrictions.eq("application", application)) //
@@ -152,10 +146,22 @@ public class ApplicationDAO {
                 .list();
     }
 
-    public ApplicationReferee getRefereeByUser(Application application, User user) {
+    public ApplicationReferee getApplicationRefereeByUser(Application application, User user) {
         return (ApplicationReferee) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
                 .add(Restrictions.eq("application", application)) //
                 .add(Restrictions.eq("user", user)) //
+                .uniqueResult();
+    }
+    
+    public List<User> getUnassignedApplicationReferees(Application application) {
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
+                .setProjection(Projections.property("user")) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userRoles", "userRole", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.eq("userRole.role.id", APPLICATION_REFEREE))
+                .add(Restrictions.eq("application", application)) //
+                .add(Restrictions.isNull("comment")) //
+                .add(Restrictions.isNull("userRole.id")) //
                 .uniqueResult();
     }
 

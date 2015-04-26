@@ -303,10 +303,8 @@ public class SystemInitialisationHelper {
 		assertTrue(prismStateAction.getAssignments().size() == stateActionAssignments.size());
 
 		for (StateActionAssignment stateActionAssignment : stateActionAssignments) {
-			Action delegatedAction = stateActionAssignment.getDelegatedAction();
 			PrismStateActionAssignment prismStateActionAssignment = new PrismStateActionAssignment().withRole(stateActionAssignment.getRole().getId())
-			        .withActionEnhancement(stateActionAssignment.getActionEnhancement())
-			        .withDelegatedAction(delegatedAction == null ? null : delegatedAction.getId());
+			        .withActionEnhancement(stateActionAssignment.getActionEnhancement());
 			assertTrue(prismStateAction.getAssignments().contains(prismStateActionAssignment));
 		}
 	}

@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -21,7 +23,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -38,7 +39,6 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
-import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.dto.ActionCreationScopeDTO;
 import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListActionDTO;
@@ -47,21 +47,8 @@ import com.zuehlke.pgadmissions.dto.ResourceListActionDTO;
 @SuppressWarnings("unchecked")
 public class ActionDAO {
 
-    @Autowired
+    @Inject
     private SessionFactory sessionFactory;
-
-    public Action getDelegateAction(Resource resource, Action action) {
-        return (Action) sessionFactory.getCurrentSession().createCriteria(StateActionAssignment.class) //
-                .setProjection(Projections.property("stateAction.action")) //
-                .createAlias("delegatedAction", "action", JoinType.INNER_JOIN) //
-                .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "delegateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("stateAction.state", resource.getState())) //
-                .add(Restrictions.eq("delegatedAction", action)) //
-                .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
-                .add(Restrictions.eq("delegateAction.actionType", PrismActionType.USER_INVOCATION)) //
-                .uniqueResult();
-    }
 
     public Action getUserRedirectAction(Resource resource, User user) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();

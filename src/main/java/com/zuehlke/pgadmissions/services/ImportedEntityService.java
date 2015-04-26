@@ -185,23 +185,24 @@ public class ImportedEntityService {
             LocalDate transientStartDate = DATE_FORMAT.parseLocalDate(occurrence.getStartDate());
             LocalDate transientCloseDate = DATE_FORMAT.parseLocalDate(occurrence.getEndDate());
 
-            ResourceStudyOption transientProgramStudyOption = new ResourceStudyOption().withResource(persistentProgram).withStudyOption(studyOption)
-                    .withApplicationStartDate(transientStartDate).withApplicationCloseDate(transientCloseDate)
-                    .withEnabled(transientCloseDate.isAfter(baseline));
+            if (transientCloseDate.isAfter(baseline)) {
+                ResourceStudyOption transientProgramStudyOption = new ResourceStudyOption().withResource(persistentProgram).withStudyOption(studyOption)
+                        .withApplicationStartDate(transientStartDate).withApplicationCloseDate(transientCloseDate);
 
-            ResourceStudyOption persistentProgramStudyOption = mergeProgramStudyOption(transientProgramStudyOption, baseline);
-            persistentProgram.getStudyOptions().add(persistentProgramStudyOption);
+                ResourceStudyOption persistentProgramStudyOption = mergeProgramStudyOption(transientProgramStudyOption, baseline);
+                persistentProgram.getStudyOptions().add(persistentProgramStudyOption);
 
-            ResourceStudyOptionInstance transientProgramStudyOptionInstance = new ResourceStudyOptionInstance().withStudyOption(persistentProgramStudyOption)
-                    .withApplicationStartDate(transientStartDate).withApplicationCloseDate(transientCloseDate)
-                    .withAcademicYear(Integer.toString(transientStartDate.getYear())).withIdentifier(occurrence.getIdentifier())
-                    .withEnabled(transientCloseDate.isAfter(baseline));
+                ResourceStudyOptionInstance transientProgramStudyOptionInstance = new ResourceStudyOptionInstance()
+                        .withStudyOption(persistentProgramStudyOption).withApplicationStartDate(transientStartDate)
+                        .withApplicationCloseDate(transientCloseDate).withAcademicYear(Integer.toString(transientStartDate.getYear()))
+                        .withIdentifier(occurrence.getIdentifier());
 
-            ResourceStudyOptionInstance persistentProgramStudyOptionInstance = entityService.createOrUpdate(transientProgramStudyOptionInstance);
-            persistentProgramStudyOption.getStudyOptionInstances().add(persistentProgramStudyOptionInstance);
+                ResourceStudyOptionInstance persistentProgramStudyOptionInstance = entityService.createOrUpdate(transientProgramStudyOptionInstance);
+                persistentProgramStudyOption.getStudyOptionInstances().add(persistentProgramStudyOptionInstance);
 
-            startDate = startDate == null || startDate.isBefore(transientStartDate) ? transientStartDate : startDate;
-            closeDate = closeDate == null || closeDate.isBefore(transientCloseDate) ? transientCloseDate : closeDate;
+                startDate = startDate == null || startDate.isBefore(transientStartDate) ? transientStartDate : startDate;
+                closeDate = closeDate == null || closeDate.isBefore(transientCloseDate) ? transientCloseDate : closeDate;
+            }
         }
 
         persistentProgram.setEndDate(closeDate);
@@ -327,8 +328,6 @@ public class ImportedEntityService {
 
             persistentProgramStudyOption.setApplicationStartDate(persistentStartDate);
             persistentProgramStudyOption.setApplicationCloseDate(persistentCloseDate);
-
-            persistentProgramStudyOption.setEnabled(persistentCloseDate.isAfter(baseline));
             return persistentProgramStudyOption;
         }
     }

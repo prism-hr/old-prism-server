@@ -23,11 +23,9 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -109,10 +107,6 @@ public class ProgramService {
         return programDAO.getPrograms();
     }
 
-    public ResourceStudyOptionInstance getFirstEnabledProgramStudyOptionInstance(Program program, StudyOption studyOption) {
-        return programDAO.getFirstEnabledProgramStudyOptionInstance(program, studyOption);
-    }
-
     public Program create(User user, ProgramDTO programDTO) throws Exception {
         Institution institution = institutionService.getById(programDTO.getInstitutionId());
 
@@ -148,20 +142,6 @@ public class ProgramService {
         advertService.setSequenceIdentifier(program.getAdvert(), program.getSequenceIdentifier().substring(0, 13));
     }
 
-    public List<ResourceStudyOption> getEnabledProgramStudyOptions(Program program) {
-        return programDAO.getEnabledProgramStudyOptions(program);
-    }
-
-    public ResourceStudyOption getEnabledProgramStudyOption(Program program, StudyOption studyOption) {
-        return programDAO.getEnabledProgramStudyOption(program, studyOption);
-    }
-
-    public void disableElapsedProgramStudyOptions() {
-        LocalDate baseline = new LocalDate();
-        programDAO.disableElapsedProgramStudyOptions(baseline);
-        programDAO.disableElapsedProgramStudyOptionInstances(baseline);
-    }
-
     public List<ProgramRepresentation> getSimilarPrograms(Integer institutionId, String searchTerm) {
         return programDAO.getSimilarPrograms(institutionId, searchTerm);
     }
@@ -193,10 +173,6 @@ public class ProgramService {
         update(programId, programDTO);
 
         return actionService.executeUserAction(program, action, comment);
-    }
-
-    public List<String> getPossibleLocations(Program program) {
-        return programDAO.getPossibleLocations(program);
     }
 
     public List<String> getSuggestedDivisions(Integer programId, String location) {

@@ -529,9 +529,8 @@ public class SystemService {
     private void initializeStateActionAssignments(PrismStateAction prismStateAction, StateAction stateAction) {
         for (PrismStateActionAssignment prismAssignment : prismStateAction.getAssignments()) {
             Role role = roleService.getById(prismAssignment.getRole());
-            Action delegateAction = actionService.getById(prismAssignment.getDelegatedAction());
             StateActionAssignment assignment = new StateActionAssignment().withStateAction(stateAction).withRole(role)
-                    .withActionEnhancement(prismAssignment.getActionEnhancement()).withDelegatedAction(delegateAction);
+                    .withActionEnhancement(prismAssignment.getActionEnhancement());
             entityService.save(assignment);
             stateAction.getStateActionAssignments().add(assignment);
         }

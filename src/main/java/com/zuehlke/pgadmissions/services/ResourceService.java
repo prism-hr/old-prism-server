@@ -48,6 +48,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -62,6 +63,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStateDefinition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -582,16 +584,39 @@ public class ResourceService {
         return resourceDAO.getResourcesByMatchingEnclosingResources(enclosingResourceScope, searchTerm);
     }
 
-    public Set<ResourceStudyOption> getStudyOptions(ResourceParent resource) {
-        Set<ResourceStudyOption> studyOptions = Sets.newHashSet();
-        ResourceParent[] parents = new ResourceParent[] { resource.getProject(), resource.getProgram(), resource.getInstitution() };
-        for (ResourceParent parent : parents) {
-            studyOptions = parent.getStudyOptions();
-            if (!studyOptions.isEmpty()) {
-                break;
+    public ResourceStudyOption getStudyOption(ResourceParent resource, StudyOption studyOption) {
+        if (resource.getResourceScope() == PROGRAM) {
+            Program program = resource.getProgram();
+            if (BooleanUtils.isTrue(program.getImported())) {
+                return resourceDAO.getStudyOptionStrict(resource, studyOption);
             }
         }
-        return studyOptions;
+        
+        return resourceDAO.getStudyOption(resource, studyOption);
+    }
+    
+    public List<ResourceStudyOption> getStudyOptions(ResourceParent resource) {
+        if (resource.getResourceScope() == PROGRAM) {
+            Program program = resource.getProgram();
+            if (BooleanUtils.isTrue(program.getImported())) {
+                return resourceDAO.getStudyOptionsStrict(resource);
+            }
+        }
+        
+        List<ResourceStudyOption> filteredStudyOptions = Lists.newLinkedList();
+        List<ResourceStudyOption> studyOptions = resourceDAO.getStudyOptions(resource);
+        
+        PrismScope lastResourceScope = null;
+        for (ResourceStudyOption studyOption : studyOptions) {
+            PrismScope thisResourceScope = studyOption.getResource().getResourceScope();
+            if (lastResourceScope != null && !thisResourceScope.equals(lastResourceScope)) {
+                break;
+            }
+            filteredStudyOptions.add(studyOption);
+            lastResourceScope = thisResourceScope;
+        }
+        
+        return filteredStudyOptions;
     }
 
     public void setStudyOptions(ResourceParent resource, List<PrismStudyOption> prismStudyOptions, LocalDate baseline) {
@@ -600,22 +625,33 @@ public class ResourceService {
         
         LocalDate close = resource.getEndDate();
         for (PrismStudyOption prismStudyOption : prismStudyOptions) {
-            StudyOption studyOption = importedEntityService.getByCode(StudyOption.class, resource.getInstitution(), prismStudyOption.name());
-            resource.addStudyOption(new ResourceStudyOption().withResource(resource).withStudyOption(studyOption).withApplicationStartDate(baseline)
-                    .withApplicationCloseDate(close).withEnabled(close.isAfter(baseline)));
-        }
-    }
-
-    public Set<ResourceStudyLocation> getStudyLocations(ResourceParent resource) {
-        Set<ResourceStudyLocation> studyLocations = Sets.newHashSet();
-        ResourceParent[] parents = new ResourceParent[] { resource.getProject(), resource.getProgram(), resource.getInstitution() };
-        for (ResourceParent parent : parents) {
-            studyLocations = parent.getStudyLocations();
-            if (!studyLocations.isEmpty()) {
-                break;
+            if (close.isAfter(baseline)) {
+                StudyOption studyOption = importedEntityService.getByCode(StudyOption.class, resource.getInstitution(), prismStudyOption.name());
+                resource.addStudyOption(new ResourceStudyOption().withResource(resource).withStudyOption(studyOption).withApplicationStartDate(baseline)
+                        .withApplicationCloseDate(close));
             }
         }
-        return studyLocations;
+    }
+    
+    public ResourceStudyOptionInstance getFirstStudyOptionInstance(ResourceParent resource, StudyOption studyOption) {
+        return resourceDAO.getFirstStudyOptionInstanceStrict(resource, studyOption);
+    }
+    
+    public List<ResourceStudyLocation> getStudyLocations(ResourceParent resource) {
+        List<ResourceStudyLocation> filteredStudylocations = Lists.newLinkedList();
+        List<ResourceStudyLocation> studyLocations = resourceDAO.getStudyLocations(resource);
+        
+        PrismScope lastResourceScope = null;
+        for (ResourceStudyLocation studyLocation : studyLocations) {
+            PrismScope thisResourceScope = studyLocation.getResource().getResourceScope();
+            if (lastResourceScope != null && !thisResourceScope.equals(lastResourceScope)) {
+                break;
+            }
+            filteredStudylocations.add(studyLocation);
+            lastResourceScope = thisResourceScope;
+        }
+        
+        return filteredStudylocations;
     }
 
     public void setStudyLocations(ResourceParent resource, List<String> studyLocations) {
@@ -636,6 +672,16 @@ public class ResourceService {
             }
         }
         return conditions;
+    }
+    
+    public void deleteElapsedStudyOptions() {
+        LocalDate baseline = new LocalDate();
+        resourceDAO.deleteElapsedStudyOptionInstances(baseline);
+        resourceDAO.deleteElapsedStudyOptions(baseline);
+    }
+    
+    public List<ResourceState> getResourceStatesByStateGroup(Resource resource, PrismStateGroup stateGroup) {
+        return resourceDAO.getResourceStatesByStateGroup(resource, stateGroup);
     }
 
     private void createOrUpdateStateTransitionSummary(Resource resource, DateTime baselineTime) {

@@ -40,9 +40,6 @@ public class ResourceStudyOptionInstance implements UniqueEntity {
     @Column(name = "sequence_identifier", nullable = false)
     private String identifier;
 
-    @Column(name = "enabled", nullable = false)
-    private Boolean enabled;
-
     public final Integer getId() {
         return id;
     }
@@ -91,14 +88,6 @@ public class ResourceStudyOptionInstance implements UniqueEntity {
         this.identifier = identifier;
     }
 
-    public final Boolean isEnabled() {
-        return enabled;
-    }
-
-    public final void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
     public ResourceStudyOptionInstance withStudyOption(ResourceStudyOption studyOption) {
         this.studyOption = studyOption;
         return this;
@@ -121,11 +110,6 @@ public class ResourceStudyOptionInstance implements UniqueEntity {
 
     public ResourceStudyOptionInstance withIdentifier(String identifier) {
         this.identifier = identifier;
-        return this;
-    }
-
-    public ResourceStudyOptionInstance withEnabled(Boolean enabled) {
-        this.enabled = enabled;
         return this;
     }
 

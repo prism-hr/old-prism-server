@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -67,7 +68,7 @@ public class Advert extends ResourceParentAttribute {
     @JoinColumn(name = "institution_address_id")
     private InstitutionAddress address;
     
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "institution_partner_id")
     private Institution partner;
 

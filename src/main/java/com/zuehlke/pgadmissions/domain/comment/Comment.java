@@ -7,6 +7,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_REVERSE_REJECTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
@@ -19,6 +20,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_SCHEDULING;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DEACTIVATED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION;
@@ -681,7 +683,7 @@ public class Comment {
     public boolean isApplicationSubmittedComment() {
         return action.getId() == PrismAction.APPLICATION_COMPLETE;
     }
-    
+
     public boolean isApplicationPurgeComment() {
         return action.getId() == PrismAction.APPLICATION_PURGE;
     }
@@ -707,6 +709,11 @@ public class Comment {
     public boolean isApplicationAutomatedWithdrawalComment() {
         return action.getId() == APPLICATION_ESCALATE && state.getStateGroup().getId() != APPLICATION_WITHDRAWN
                 && transitionState.getStateGroup().getId() == APPLICATION_WITHDRAWN;
+    }
+
+    public boolean isApplicationAssignRefereesComment() {
+        return (isStateGroupTransitionComment() && transitionState.getId() == APPLICATION_REFERENCE) ||
+                (isSecondaryStateGroupTransitionComment() && secondaryTransitionStates.contains(new State().withId(APPLICATION_REFERENCE)));
     }
 
     public boolean isApplicationReverseRejectionComment() {
@@ -756,12 +763,16 @@ public class Comment {
     public boolean isViewEditComment() {
         return action.getActionCategory() == VIEW_EDIT_RESOURCE;
     }
+    
+    public boolean isApplicationViewEditComment() {
+        return action.getId() == APPLICATION_VIEW_EDIT;
+    }
 
     public boolean isUserComment() {
         return action.getActionType() == USER_INVOCATION;
     }
 
-    public boolean isSecondaryTransitionComment() {
+    public boolean isSecondaryStateGroupTransitionComment() {
         return !secondaryTransitionStates.isEmpty();
     }
 

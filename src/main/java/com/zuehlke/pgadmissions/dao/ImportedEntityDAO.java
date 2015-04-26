@@ -129,8 +129,7 @@ public class ImportedEntityDAO {
 
     public void disableImportedProgramStudyOptions(Institution institution, List<Integer> updates) {
         sessionFactory.getCurrentSession().createQuery( //
-                "update ProgramStudyOption " //
-                        + "set enabled = false " //
+                "delete ProgramStudyOption " //
                         + "where program in (" //
                         + "select id " //
                         + "from Program " //
@@ -144,8 +143,7 @@ public class ImportedEntityDAO {
 
     public void disableImportedProgramStudyOptionInstances(Institution institution, List<Integer> updates) {
         sessionFactory.getCurrentSession().createQuery( //
-                "update ProgramStudyOptionInstance " //
-                        + "set enabled = false " //
+                "delete ProgramStudyOptionInstance " //
                         + "where studyOption in (" //
                         + "select programStudyOption.id " //
                         + "from ProgramStudyOption as programStudyOption " //

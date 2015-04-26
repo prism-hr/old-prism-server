@@ -10,6 +10,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiterAndAdministrator;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiterAndAdministrator;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
@@ -26,6 +27,7 @@ public class PrismApplicationReviewPendingFeedback extends PrismWorkflowState {
 		        .withTransitions(APPLICATION_PROVIDE_REVIEW_TRANSITION //
 		                .withRoleTransitions(APPLICATION_PROVIDE_REVIEW_GROUP)));
 
+        stateActions.add(applicationUploadReference(state));
 		stateActions.add(applicationViewEditReview(state)); //
 		stateActions.add(applicationWithdrawReview());
 	}

@@ -12,7 +12,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_PROVIDE_REFERENCE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_REVIVE_REFEREE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE_PENDING_COMPLETION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationEvaluation.APPLICATION_REFERENCED_TERMINATION;
@@ -21,6 +20,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCompleteState;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdraw;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -39,7 +39,6 @@ public class PrismApplicationReference extends PrismWorkflowState {
 		stateActions.add(applicationCompleteReference(state) //
 		        .withTransitions(new PrismStateTransition() //
 		                .withTransitionAction(APPLICATION_VIEW_EDIT) //
-		                .withRoleTransitions(APPLICATION_REVIVE_REFEREE_GROUP) //
 		                .withStateTerminations(new PrismStateTermination() //
 		                        .withTerminationState(APPLICATION_REFERENCE)))); //
 
@@ -65,13 +64,14 @@ public class PrismApplicationReference extends PrismWorkflowState {
 		                                .withTerminationState(APPLICATION_REFERENCE) //
 		                                .withStateTerminationEvaluation(APPLICATION_REFERENCED_TERMINATION)))); //
 
+        stateActions.add(applicationUploadReference(state));
 		stateActions.add(applicationViewEditReference(state)); //
 		stateActions.add(applicationWithdrawReference());
 	}
 
 	public static PrismStateAction applicationCompleteReference(PrismState state) {
 		return applicationCompleteState(APPLICATION_COMPLETE_REFERENCE_STAGE, state, //
-		        APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_REVIVE_REFEREE_GROUP);
+		        APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_RETIRE_REFEREE_GROUP);
 	}
 
 	public static PrismStateAction applicationProvideReference() {

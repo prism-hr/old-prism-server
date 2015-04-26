@@ -5,10 +5,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WOR
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -24,26 +25,26 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.Disability;
 import com.zuehlke.pgadmissions.domain.imported.Ethnicity;
-import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CustomizationService;
-import com.zuehlke.pgadmissions.services.ProgramService;
+import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Component
 public class ApplicationValidator extends LocalValidatorFactoryBean implements Validator {
 
-    @Autowired
+    @Inject
     private ApplicationService applicationService;
 
-    @Autowired
+    @Inject
     private CustomizationService customizationService;
-
-    @Autowired
-    private ProgramService programService;
+    
+    @Inject
+    private ResourceService resourceService;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -144,11 +145,11 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
             errors.pushNestedPath("programDetail");
             LocalDate startDate = programDetail.getStartDate();
 
-            Program program = application.getProgram();
-            ResourceStudyOption studyOption = programService.getEnabledProgramStudyOption(program, programDetail.getStudyOption());
+            ResourceParent parent = (ResourceParent) application.getParentResource();
+            ResourceStudyOption studyOption = resourceService.getStudyOption(parent, programDetail.getStudyOption());
 
             if (studyOption == null) {
-                List<ResourceStudyOption> otherStudyOptions = programService.getEnabledProgramStudyOptions(program);
+                List<ResourceStudyOption> otherStudyOptions = resourceService.getStudyOptions(parent);
                 if (otherStudyOptions.isEmpty()) {
                     throw new CannotApplyException();
                 }

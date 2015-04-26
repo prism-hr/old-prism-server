@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -39,7 +38,7 @@ public class OpportunityResource {
 
     @Inject
     private ApplicationService applicationService;
-    
+
     @Inject
     private ResourceService resourceService;
 
@@ -89,15 +88,15 @@ public class OpportunityResource {
         representation.setResourceScope(resource.getResourceScope());
         representation.setResourceId(resource.getId());
         representation.setOpportunityType(advert.getOpportunityType());
-        
-        Set<ResourceStudyOption> studyOptions = resourceService.getStudyOptions(resource);
+
+        List<ResourceStudyOption> studyOptions = resourceService.getStudyOptions(resource);
         List<PrismStudyOption> options = Lists.newArrayListWithCapacity(studyOptions.size());
         for (ResourceStudyOption studyOption : studyOptions) {
             options.add(studyOption.getStudyOption().getPrismStudyOption());
         }
         representation.setStudyOptions(options);
 
-        Set<ResourceStudyLocation> studyLocations = resourceService.getStudyLocations(resource);
+        List<ResourceStudyLocation> studyLocations = resourceService.getStudyLocations(resource);
         List<String> locations = Lists.newArrayListWithCapacity(studyLocations.size());
         for (ResourceStudyLocation studyLocation : studyLocations) {
             locations.add(studyLocation.getStudyLocation());

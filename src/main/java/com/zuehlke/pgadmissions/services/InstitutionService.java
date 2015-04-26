@@ -4,8 +4,12 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_STARTUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_VIEW_EDIT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_CREATE_INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.ADVERT_TRIAL_PERIOD;
 
 import java.util.List;
 
@@ -13,30 +17,33 @@ import javax.inject.Inject;
 
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
-import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.iso.jaxb.InstitutionDomiciles;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.InstitutionDomicileRepresentation;
@@ -50,7 +57,13 @@ public class InstitutionService {
     private InstitutionDAO institutionDAO;
 
     @Inject
+    private AdvertService advertService;
+
+    @Inject
     private EntityService entityService;
+
+    @Inject
+    DocumentService documentService;
 
     @Inject
     private ImportedEntityService importedEntityService;
@@ -68,13 +81,13 @@ public class InstitutionService {
     private CommentService commentService;
 
     @Inject
+    private RoleService roleService;
+
+    @Inject
     private StateService stateService;
 
     @Inject
     private UserService userService;
-
-    @Inject
-    private GeocodableLocationService geocodableLocationService;
 
     @Inject
     private ProgramService programService;
@@ -109,49 +122,59 @@ public class InstitutionService {
         return institutionDAO.getUclInstitution();
     }
 
-    public Institution create(User user, InstitutionDTO institutionDTO) {
-        InstitutionAddressDTO institutionAddressDTO = institutionDTO.getAddress();
-        InstitutionDomicile institutionAddressCountry = entityService.getById(InstitutionDomicile.class, institutionAddressDTO.getDomicile());
+    public Institution create(User user, InstitutionDTO institutionDTO) throws Exception {
+        AdvertDTO advertDTO = institutionDTO.getAdvert();
+        Advert advert = advertService.createAdvert(user, advertDTO);
 
-        InstitutionAddress address = new InstitutionAddress().withAddressLine1(institutionAddressDTO.getAddressLine1())
-                .withAddressLine2(institutionAddressDTO.getAddressLine2()).withAddressTown(institutionAddressDTO.getAddressTown())
-                .withAddressRegion(institutionAddressDTO.getAddressDistrict()).withAddressCode(institutionAddressDTO.getAddressCode())
-                .withDomicile(institutionAddressCountry);
+        Institution institution = new Institution().withUser(user).withSystem(systemService.getSystem()).withDomicile(advert.getAddress().getDomicile())
+                .withAdvert(advert).withTitle(advert.getTitle()).withCurrency(institutionDTO.getCurrency())
+                .withBusinessYearStartMonth(institutionDTO.getBusinessYearStartMonth()).withGoogleId(institutionDTO.getGoogleIdentifier())
+                .withUclInstitution(false).withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD));
+        advert.setInstitution(institution);
 
-        InstitutionDomicile institutionCountry = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
-
-        Institution institution = new Institution().withSystem(systemService.getSystem()).withDomicile(institutionCountry).withAddress(address)
-                .withTitle(institutionDTO.getTitle()).withSummary(institutionDTO.getSummary()).withHomepage(institutionDTO.getHomepage())
-                .withUclInstitution(false).withGoogleId(institutionDTO.getGoogleIdentifier()).withCurrency(institutionDTO.getCurrency()).withUser(user);
-
-        address.setInstitution(institution);
+        setInstitutionImages(institutionDTO, institution);
+        resourceService.setStudyOptions(institution, institutionDTO.getStudyOptions(), new LocalDate());
+        resourceService.setStudyLocations(institution, institutionDTO.getStudyLocations());
         return institution;
     }
 
-    public void update(Integer institutionId, InstitutionDTO institutionDTO) {
+    public Institution createPartner(User user, InstitutionDTO institutionDTO) throws Exception {
+        Institution institution = create(user, institutionDTO);
+        Action action = actionService.getById(SYSTEM_CREATE_INSTITUTION);
+        Role creatorRole = roleService.getById(INSTITUTION_ADMINISTRATOR);
+        Comment comment = new Comment().withResource(institution).withUser(user).withAction(action).withDeclinedResponse(false)
+                .withCreatedTimestamp(new DateTime()).addAssignedUser(user, creatorRole, CREATE);
+        actionService.executeUserAction(institution, action, comment);
+        return institution;
+    }
+
+    public void update(Integer institutionId, InstitutionDTO institutionDTO) throws Exception {
         Institution institution = entityService.getById(Institution.class, institutionId);
 
-        InstitutionAddress address = institution.getAddress();
-        InstitutionAddressDTO addressDTO = institutionDTO.getAddress();
-        InstitutionDomicile domicile = entityService.getById(InstitutionDomicile.class, institutionDTO.getDomicile());
+        AdvertDTO advertDTO = institutionDTO.getAdvert();
+        Advert advert = institution.getAdvert();
+        advertService.updateAdvert(userService.getCurrentUser(), advertDTO, advert);
 
-        institution.setDomicile(domicile);
-        institution.setTitle(institutionDTO.getTitle());
-        institution.setSummary(institutionDTO.getSummary());
-        institution.setDescription(institutionDTO.getDescription());
-
-        address.setAddressLine1(addressDTO.getAddressLine1());
-        address.setAddressLine2(addressDTO.getAddressLine2());
-        address.setAddressTown(addressDTO.getAddressTown());
-        address.setAddressRegion(addressDTO.getAddressDistrict());
-        address.setAddressCode(addressDTO.getAddressCode());
-
-        geocodableLocationService.setLocation(address);
-
+        institution.setTitle(advert.getTitle());
+        institution.setDomicile(advert.getAddress().getDomicile());
         institution.setCurrency(institutionDTO.getCurrency());
-        institution.setHomepage(institutionDTO.getHomepage());
 
-        setLogoImage(institution, institutionDTO, PrismAction.INSTITUTION_VIEW_EDIT);
+        Integer oldBusinessYearStartMonth = institution.getBusinessYearStartMonth();
+        Integer newBusinessYearStartMonth = institutionDTO.getBusinessYearStartMonth();
+        if (!oldBusinessYearStartMonth.equals(newBusinessYearStartMonth)) {
+            changeInsitutionBusinessYear(institution, newBusinessYearStartMonth);
+        }
+
+        institution.setGoogleId(advert.getAddress().getLocation().getGoogleId());
+
+        LocalDate endDate = institutionDTO.getEndDate();
+        if (endDate != null) {
+            institution.setEndDate(endDate);
+        }
+
+        setInstitutionImages(institutionDTO, institution);
+        resourceService.setStudyOptions(institution, institutionDTO.getStudyOptions(), new LocalDate());
+        resourceService.setStudyLocations(institution, institutionDTO.getStudyLocations());
     }
 
     public List<String> listAvailableCurrencies() {
@@ -159,10 +182,7 @@ public class InstitutionService {
     }
 
     public void save(Institution institution) {
-        InstitutionAddress institutionAddress = institution.getAddress();
         entityService.save(institution);
-        entityService.save(institutionAddress);
-        geocodableLocationService.setLocation(institutionAddress);
     }
 
     public void populateDefaultImportedEntityFeeds() throws DeduplicationException {
@@ -235,12 +255,6 @@ public class InstitutionService {
         return institutionDAO.getSitemapEntries(activeProgramStates, activeProjectStates);
     }
 
-    public SocialMetadataDTO getSocialMetadata(Institution institution) {
-        return new SocialMetadataDTO().withAuthor(institution.getUser().getFullName()).withTitle(institution.getTitle())
-                .withDescription(institution.getSummary()).withThumbnailUrl(resourceService.getSocialThumbnailUrl(institution))
-                .withResourceUrl(resourceService.getSocialResourceUrl(institution));
-    }
-
     public SearchEngineAdvertDTO getSearchEngineAdvert(Integer institutionId) {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
@@ -290,10 +304,23 @@ public class InstitutionService {
         return month <= businessYearStartMonth ? (month - (businessYearStartMonth - 1)) : (month + (12 - (businessYearStartMonth - 1)));
     }
 
-    public void changeInsitutionBusinessYear(Institution institution, Integer businessYearStartMonth) throws Exception {
-        if (!businessYearStartMonth.equals(institution.getBusinessYearStartMonth())) {
-            Integer businessYearEndMonth = businessYearStartMonth == 1 ? 12 : businessYearStartMonth - 1;
-            institutionDAO.changeInstitutionBusinessYear(institution.getId(), businessYearEndMonth);
+    private void changeInsitutionBusinessYear(Institution institution, Integer businessYearStartMonth) throws Exception {
+        institution.setBusinessYearStartMonth(businessYearStartMonth);
+        Integer businessYearEndMonth = businessYearStartMonth == 1 ? 12 : businessYearStartMonth - 1;
+        institutionDAO.changeInstitutionBusinessYear(institution.getId(), businessYearEndMonth);
+    }
+
+    private void setInstitutionImages(InstitutionDTO institutionDTO, Institution institution) {
+        FileDTO logo = institutionDTO.getLogoImage();
+        if (logo != null) {
+            Document logoDocument = documentService.getImageDocument(logo);
+            institution.setLogoImage(logoDocument);
+        }
+
+        FileDTO background = institutionDTO.getBackgroundImage();
+        if (background != null) {
+            Document backgroundDocument = documentService.getImageDocument(background);
+            institution.setBackgroundImage(backgroundDocument);
         }
     }
 

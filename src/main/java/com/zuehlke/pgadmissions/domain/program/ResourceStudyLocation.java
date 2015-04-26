@@ -12,12 +12,13 @@ import javax.persistence.UniqueConstraint;
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParentAttribute;
 
 @Entity
-@Table(name = "RESOURCE_LOCATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "location" }),
-        @UniqueConstraint(columnNames = { "program_id", "location" }), @UniqueConstraint(columnNames = { "project_id", "location" }) })
-public class ResourceLocation extends ResourceParentAttribute {
+@Table(name = "RESOURCE_STUDY_LOCATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "study_location" }),
+        @UniqueConstraint(columnNames = { "program_id", "study_location" }), @UniqueConstraint(columnNames = { "project_id", "study_location" }) })
+public class ResourceStudyLocation extends ResourceParentAttribute {
 
     @Id
     @GeneratedValue
@@ -26,17 +27,17 @@ public class ResourceLocation extends ResourceParentAttribute {
     @ManyToOne
     @JoinColumn(name = "institution_id", insertable = false, updatable = false)
     private Institution institution;
-    
+
     @ManyToOne
     @JoinColumn(name = "program_id", insertable = false, updatable = false)
     private Program program;
-    
+
     @ManyToOne
     @JoinColumn(name = "project_id", insertable = false, updatable = false)
     private Project project;
 
-    @Column(name = "location", nullable = false)
-    private String location;
+    @Column(name = "study_location", nullable = false)
+    private String studyLocation;
 
     public final Integer getId() {
         return id;
@@ -76,22 +77,27 @@ public class ResourceLocation extends ResourceParentAttribute {
         this.project = project;
     }
 
-    public final String getLocation() {
-        return location;
+    public final String getStudyLocation() {
+        return studyLocation;
     }
 
-    public final void setLocation(String location) {
-        this.location = location;
+    public final void setStudyLocation(String studyLocation) {
+        this.studyLocation = studyLocation;
     }
 
-    public ResourceLocation withLocation(String location) {
-        this.location = location;
+    public ResourceStudyLocation withResource(ResourceParent resource) {
+        setResource(resource);
+        return this;
+    }
+
+    public ResourceStudyLocation withStudyLocation(String studyLocation) {
+        this.studyLocation = studyLocation;
         return this;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getResourceParent());
+        return Objects.hashCode(getResource(), studyLocation);
     }
 
     @Override
@@ -102,13 +108,13 @@ public class ResourceLocation extends ResourceParentAttribute {
         if (getClass() != object.getClass()) {
             return false;
         }
-        final ResourceLocation other = (ResourceLocation) object;
-        return Objects.equal(getResourceParent(), other.getResourceParent()) && Objects.equal(location, other.getLocation());
+        final ResourceStudyLocation other = (ResourceStudyLocation) object;
+        return Objects.equal(getResource(), other.getResource()) && Objects.equal(studyLocation, other.getStudyLocation());
     }
-    
+
     @Override
     public ResourceSignature getResourceSignature() {
-        return super.getResourceSignature().addProperty("location", location);
+        return super.getResourceSignature().addProperty("studyLocation", studyLocation);
     }
 
 }

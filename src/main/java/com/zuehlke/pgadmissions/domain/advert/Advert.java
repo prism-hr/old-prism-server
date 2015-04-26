@@ -32,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.department.Department;
-import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -57,14 +56,6 @@ public class Advert extends ResourceParentAttribute {
     @Lob
     @Column(name = "description")
     private String description;
-    
-    @OneToOne
-    @JoinColumn(name = "logo_image_id")
-    private Document logoImage;
-    
-    @OneToOne
-    @JoinColumn(name = "background_image_id")
-    private Document backgroundImage;
 
     @Column(name = "homepage")
     private String homepage;
@@ -75,6 +66,10 @@ public class Advert extends ResourceParentAttribute {
     @OneToOne
     @JoinColumn(name = "institution_address_id")
     private InstitutionAddress address;
+    
+    @OneToOne
+    @JoinColumn(name = "institution_partner_id")
+    private Institution partner;
 
     @Embedded
     @AttributeOverrides({ @AttributeOverride(name = "interval", column = @Column(name = "fee_interval")),
@@ -192,22 +187,6 @@ public class Advert extends ResourceParentAttribute {
         this.description = description;
     }
 
-    public Document getLogoImage() {
-        return logoImage;
-    }
-
-    public void setLogoImage(Document logoImage) {
-        this.logoImage = logoImage;
-    }
-
-    public Document getBackgroundImage() {
-        return backgroundImage;
-    }
-
-    public void setBackgroundImage(Document backgroundImage) {
-        this.backgroundImage = backgroundImage;
-    }
-
     public final String getHomepage() {
         return homepage;
     }
@@ -230,6 +209,14 @@ public class Advert extends ResourceParentAttribute {
 
     public void setAddress(InstitutionAddress address) {
         this.address = address;
+    }
+
+    public Institution getPartner() {
+        return partner;
+    }
+
+    public void setPartner(Institution partner) {
+        this.partner = partner;
     }
 
     public AdvertFinancialDetail getFee() {
@@ -327,7 +314,7 @@ public class Advert extends ResourceParentAttribute {
     }
     
     public PrismOpportunityType getOpportunityType() {
-        ResourceParent resource = getResourceParent();
+        ResourceParent resource = getResource();
         PrismScope resourceScope = resource.getResourceScope();
         if (resourceScope.equals(INSTITUTION)) {
             return null;
@@ -342,7 +329,7 @@ public class Advert extends ResourceParentAttribute {
         return this;
     }
 
-    public ResourceParent getResourceParent() {
+    public ResourceParent getResource() {
         return ObjectUtils.firstNonNull(project, program, institution);
     }
 

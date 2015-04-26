@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -20,10 +21,12 @@ public class AdvertDTO {
     @URL
     @Size(max = 2048)
     private String applyHomepage;
-
-    private FileDTO logoImage;
-
-    private FileDTO backgroundImage;
+    
+    @Valid
+    private InstitutionAddressDTO address;
+    
+    @Valid
+    private InstitutionDTO partner;
 
     public String getTitle() {
         return title;
@@ -57,20 +60,20 @@ public class AdvertDTO {
         this.applyHomepage = applyHomepage;
     }
 
-    public FileDTO getLogoImage() {
-        return logoImage;
+    public InstitutionAddressDTO getAddress() {
+        return address;
     }
 
-    public void setLogoImage(FileDTO logoImage) {
-        this.logoImage = logoImage;
+    public void setAddress(InstitutionAddressDTO address) {
+        this.address = address;
     }
 
-    public FileDTO getBackgroundImage() {
-        return backgroundImage;
+    public InstitutionDTO getPartner() {
+        return partner;
     }
 
-    public void setBackgroundImage(FileDTO backgroundImage) {
-        this.backgroundImage = backgroundImage;
+    public void setPartner(InstitutionDTO partner) {
+        this.partner = partner;
     }
 
 }

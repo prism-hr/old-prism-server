@@ -426,3 +426,55 @@ alter table application
 	modify column application_month int(2) unsigned
 ;
 
+alter table advert
+	add column institution_partner_id int(10) unsigned after apply_homepage,
+	add index (institution_partner_id, sequence_identifier),
+	add foreign key (institution_partner_id) references institution (id)
+;
+
+alter table institution
+	add column logo_image_id int(10) unsigned after title,
+	add column background_image_id int(10) unsigned after logo_image_id,
+	add index (logo_image_id),
+	add index (background_image_id),
+	add foreign key (logo_image_id) references document (id),
+	add foreign key (background_image_id) references document (id)
+;
+
+update institution inner join advert
+	on institution.advert_id = advert.id
+set institution.logo_image_id = advert.logo_image_id,
+	institution.background_image_id = advert.background_image_id
+;
+
+alter table advert
+	drop index logo_image_id,
+	drop foreign key advert_ibfk_4,
+	drop column logo_image_id,
+	drop index background_image_id,
+	drop foreign key advert_ibfk_5,
+	drop column background_image_id
+;
+
+rename table resource_location to resource_study_location
+;
+
+alter table institution_address
+	drop index institution_id,
+	drop foreign key institution_address_ibfk_5,
+	drop column institution_id
+;
+
+alter table resource_study_location
+	change column location study_location varchar(255) not null
+;
+
+alter table institution_address
+	add column google_id varchar(255) after address_code,
+	add index (google_id)
+;
+
+alter table institution
+	add column end_date date after previous_state_id,
+	add index (end_date)
+;

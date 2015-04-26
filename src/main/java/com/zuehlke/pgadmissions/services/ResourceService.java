@@ -42,14 +42,17 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
 import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.program.ResourceStudyLocation;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
@@ -58,6 +61,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStateDefinition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -107,6 +111,9 @@ public class ResourceService {
     private ActionService actionService;
 
     @Inject
+    private AdvertService advertService;
+
+    @Inject
     private ApplicationService applicationService;
 
     @Inject
@@ -117,6 +124,9 @@ public class ResourceService {
 
     @Inject
     private InstitutionService institutionService;
+
+    @Inject
+    private ImportedEntityService importedEntityService;
 
     @Inject
     private SystemService systemService;
@@ -491,11 +501,10 @@ public class ResourceService {
         Resource resource = getNotNullResource(resourceScope, resourceId);
         switch (resourceScope) {
         case INSTITUTION:
-            return institutionService.getSocialMetadata((Institution) resource);
         case PROGRAM:
-            return programService.getSocialMetadata((Program) resource);
         case PROJECT:
-            return projectService.getSocialMetadata((Project) resource);
+            ResourceParent parent = (ResourceParent) resource;
+            return advertService.getSocialMetadata(parent.getAdvert());
         case SYSTEM:
             return systemService.getSocialMetadata();
         default:
@@ -537,7 +546,7 @@ public class ResourceService {
         if (resource.getResourceScope() == PrismScope.SYSTEM) {
             return defaultSocialThumbnail;
         } else {
-            Document logoDocument = resource.getInstitution().getAdvert().getLogoImage();
+            Document logoDocument = resource.getInstitution().getLogoImage();
             if (logoDocument == null) {
                 return defaultSocialThumbnail;
             }
@@ -571,6 +580,51 @@ public class ResourceService {
 
     public List<Integer> getResourcesByMatchingEnclosingResource(PrismScope enclosingResourceScope, String searchTerm) {
         return resourceDAO.getResourcesByMatchingEnclosingResources(enclosingResourceScope, searchTerm);
+    }
+
+    public Set<ResourceStudyOption> getStudyOptions(ResourceParent resource) {
+        Set<ResourceStudyOption> studyOptions = Sets.newHashSet();
+        ResourceParent[] parents = new ResourceParent[] { resource.getProject(), resource.getProgram(), resource.getInstitution() };
+        for (ResourceParent parent : parents) {
+            studyOptions = parent.getStudyOptions();
+            if (!studyOptions.isEmpty()) {
+                break;
+            }
+        }
+        return studyOptions;
+    }
+
+    public void setStudyOptions(ResourceParent resource, List<PrismStudyOption> prismStudyOptions, LocalDate baseline) {
+        resource.getStudyOptions().clear();
+        entityService.flush();
+        
+        LocalDate close = resource.getEndDate();
+        for (PrismStudyOption prismStudyOption : prismStudyOptions) {
+            StudyOption studyOption = importedEntityService.getByCode(StudyOption.class, resource.getInstitution(), prismStudyOption.name());
+            resource.addStudyOption(new ResourceStudyOption().withResource(resource).withStudyOption(studyOption).withApplicationStartDate(baseline)
+                    .withApplicationCloseDate(close).withEnabled(close.isAfter(baseline)));
+        }
+    }
+
+    public Set<ResourceStudyLocation> getStudyLocations(ResourceParent resource) {
+        Set<ResourceStudyLocation> studyLocations = Sets.newHashSet();
+        ResourceParent[] parents = new ResourceParent[] { resource.getProject(), resource.getProgram(), resource.getInstitution() };
+        for (ResourceParent parent : parents) {
+            studyLocations = parent.getStudyLocations();
+            if (!studyLocations.isEmpty()) {
+                break;
+            }
+        }
+        return studyLocations;
+    }
+
+    public void setStudyLocations(ResourceParent resource, List<String> studyLocations) {
+        resource.getStudyLocations().clear();
+        entityService.flush();
+        
+        for (String studyLocation : studyLocations) {
+            resource.addStudyLocation(new ResourceStudyLocation().withResource(resource).withStudyLocation(studyLocation));
+        }
     }
 
     private Junction getFilterConditions(PrismScope resourceScope, ResourceListFilterDTO filter) {
@@ -619,7 +673,7 @@ public class ResourceService {
         }
     }
 
-    public void populateApplicationProcessingSummary(ApplicationProcessingSummaryDTO yearSummary,
+    private void populateApplicationProcessingSummary(ApplicationProcessingSummaryDTO yearSummary,
             ApplicationProcessingSummaryRepresentation yearRepresentation) {
         yearRepresentation.setAdvertCount(yearSummary.getAdvertCount().intValue());
         yearRepresentation.setCreatedApplicationCount(yearSummary.getCreatedApplicationCount().intValue());

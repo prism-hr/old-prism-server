@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.program.ResourceLocation;
+import com.zuehlke.pgadmissions.domain.program.ResourceStudyLocation;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
@@ -159,7 +159,7 @@ public class ProgramDAO {
 	}
 
 	public List<String> getPossibleLocations(Program program) {
-		return (List<String>) sessionFactory.getCurrentSession().createCriteria(ResourceLocation.class) //
+		return (List<String>) sessionFactory.getCurrentSession().createCriteria(ResourceStudyLocation.class) //
 		        .setProjection(Projections.property("location")) //
 		        .add(Restrictions.eq("program", program)) //
 		        .addOrder(Order.asc("location")) //
@@ -171,7 +171,7 @@ public class ProgramDAO {
 		        .setProjection(Projections.groupProperty("studyDetail.studyDivision")) //
 		        .add(Restrictions.eq("program", program)) //
 		        .add(Restrictions.eq("studyDetail.studyLocation", location)) //
-		        .add(Subqueries.in(location, DetachedCriteria.forClass(ResourceLocation.class) //
+		        .add(Subqueries.in(location, DetachedCriteria.forClass(ResourceStudyLocation.class) //
 		                .setProjection(Projections.property("location")) //
 		                .add(Restrictions.eq("program", program)))) //
 		        .list();
@@ -183,7 +183,7 @@ public class ProgramDAO {
 		        .add(Restrictions.eq("program", program)) //
 		        .add(Restrictions.eq("studyDetail.studyLocation", location)) //
 		        .add(Restrictions.eq("studyDetail.studyDivision", division)) //
-		        .add(Subqueries.in(location, DetachedCriteria.forClass(ResourceLocation.class) //
+		        .add(Subqueries.in(location, DetachedCriteria.forClass(ResourceStudyLocation.class) //
 		                .setProjection(Projections.property("location")) //
 		                .add(Restrictions.eq("program", program)))) //
 		        .list();

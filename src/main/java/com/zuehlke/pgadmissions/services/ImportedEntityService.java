@@ -101,7 +101,7 @@ public class ImportedEntityService {
         return (T) entityService.getByProperties(clazz, ImmutableMap.of("institution", institution, "id", id));
     }
 
-    public <T extends ImportedEntity> T getImportedEntityByCode(Class<T> entityClass, Institution institution, String code) {
+    public <T extends ImportedEntity> T getByCode(Class<T> entityClass, Institution institution, String code) {
         return importedEntityDAO.getImportedEntityByCode(entityClass, institution, code);
     }
 
@@ -285,7 +285,7 @@ public class ImportedEntityService {
         boolean transientRequireProjectDefinition = programDefinition.isAtasRegistered();
 
         DateTime baselineDateTime = new DateTime();
-        OpportunityType opportunityType = getImportedEntityByCode(OpportunityType.class, institution, prismOpportunityType.name());
+        OpportunityType opportunityType = getByCode(OpportunityType.class, institution, prismOpportunityType.name());
         Department department = departmentService.getOrCreateDepartment(new Department().withInstitution(institution).withTitle(
                 programDefinition.getDepartment()));
 

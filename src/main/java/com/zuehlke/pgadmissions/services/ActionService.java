@@ -51,7 +51,7 @@ import com.zuehlke.pgadmissions.dto.ActionCreationScopeDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListActionDTO;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
@@ -342,7 +342,7 @@ public class ActionService {
                 if (action.getActionCategory() == CREATE_RESOURCE) {
                     Action redirectAction = getRedirectAction(action, user, duplicate);
                     if (redirectAction == null) {
-                        throw new DeduplicationException("SYSTEM_DUPLICATE_" + action.getCreationScope().getId().name());
+                        throw new WorkflowEngineException("SYSTEM_DUPLICATE_" + action.getCreationScope().getId().name());
                     }
                     return new ActionOutcomeDTO().withUser(user).withResource(duplicate).withTransitionResource(duplicate)
                             .withTransitionAction(redirectAction);

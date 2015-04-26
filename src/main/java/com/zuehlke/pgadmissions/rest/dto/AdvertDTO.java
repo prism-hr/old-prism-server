@@ -26,7 +26,7 @@ public class AdvertDTO {
     private InstitutionAddressDTO address;
     
     @Valid
-    private InstitutionDTO partner;
+    private InstitutionPartnerDTO partner;
 
     public String getTitle() {
         return title;
@@ -68,11 +68,11 @@ public class AdvertDTO {
         this.address = address;
     }
 
-    public InstitutionDTO getPartner() {
+    public InstitutionPartnerDTO getPartner() {
         return partner;
     }
 
-    public void setPartner(InstitutionDTO partner) {
+    public void setPartner(InstitutionPartnerDTO partner) {
         this.partner = partner;
     }
 

@@ -19,6 +19,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCompleteState;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEditWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdraw;
 
@@ -28,42 +29,43 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismApplicationRejected extends PrismWorkflowState {
 
-	@Override
-	protected void setStateActions() {
-		stateActions.add(applicationCommentWithViewerRecruiter()); //
+    @Override
+    protected void setStateActions() {
+        stateActions.add(applicationCommentWithViewerRecruiter()); //
 
-		stateActions.add(new PrismStateAction() //
-		        .withAction(APPLICATION_CONFIRM_REJECTION) //
-		        .withRaisesUrgentFlag() //
-		        .withNotification(SYSTEM_APPLICATION_TASK_REQUEST) //
-		        .withAssignments(APPLICATION_PARENT_APPROVER_GROUP) //
-		        .withNotifications(APPLICATION_CREATOR, APPLICATION_CONFIRM_REJECTION_NOTIFICATION) //
-		        .withNotifications(APPLICATION_PARENT_APPROVER_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
-		        .withTransitions(APPLICATION_CONFIRM_REJECTION_TRANSITION //
-		                .withRoleTransitionsAndStateTerminations(APPLICATION_TERMINATE_GROUP, //
-		                        APPLICATION_RETIRE_REFEREE_GROUP)));
+        stateActions.add(new PrismStateAction() //
+                .withAction(APPLICATION_CONFIRM_REJECTION) //
+                .withRaisesUrgentFlag() //
+                .withNotification(SYSTEM_APPLICATION_TASK_REQUEST) //
+                .withAssignments(APPLICATION_PARENT_APPROVER_GROUP) //
+                .withNotifications(APPLICATION_CREATOR, APPLICATION_CONFIRM_REJECTION_NOTIFICATION) //
+                .withNotifications(APPLICATION_PARENT_APPROVER_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
+                .withTransitions(APPLICATION_CONFIRM_REJECTION_TRANSITION //
+                        .withRoleTransitionsAndStateTerminations(APPLICATION_TERMINATE_GROUP, //
+                                APPLICATION_RETIRE_REFEREE_GROUP)));
 
-		stateActions.add(applicationEmailCreatorWithViewerRecruiter());
-		stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP));
-		stateActions.add(applicationCompleteState(APPLICATION_COMPLETE_REJECTED_STAGE, state, APPLICATION_PARENT_APPROVER_GROUP));
-		stateActions.add(applicationViewEditWithViewerRecruiter(state));
-		stateActions.add(applicationWithdraw(APPLICATION_PARENT_APPROVER_GROUP, APPLICATION_RETIRE_REFEREE_GROUP));
-	}
+        stateActions.add(applicationEmailCreatorWithViewerRecruiter());
+        stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP));
+        stateActions.add(applicationCompleteState(APPLICATION_COMPLETE_REJECTED_STAGE, state, APPLICATION_PARENT_APPROVER_GROUP));
+        stateActions.add(applicationUploadReference(state));
+        stateActions.add(applicationViewEditWithViewerRecruiter(state));
+        stateActions.add(applicationWithdraw(APPLICATION_PARENT_APPROVER_GROUP, APPLICATION_RETIRE_REFEREE_GROUP));
+    }
 
-	public static PrismStateAction applicationEscalateRejected() {
-		return applicationEscalate(APPLICATION_REJECTED_COMPLETED);
-	}
+    public static PrismStateAction applicationEscalateRejected() {
+        return applicationEscalate(APPLICATION_REJECTED_COMPLETED);
+    }
 
-	public static PrismStateAction applicationReverseRejection() {
-		return new PrismStateAction() //
-		        .withAction(APPLICATION_REVERSE_REJECTION) //
-		        .withAssignments(APPLICATION_PARENT_APPROVER_GROUP) //
-		        .withNotifications(APPLICATION_CREATOR, APPLICATION_REVERSE_REJECTION_NOTIFICATION) //
-		        .withNotifications(APPLICATION_PARENT_APPROVER_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
-		        .withTransitions(new PrismStateTransition() //
-		                .withTransitionState(APPLICATION_REJECTED) //
-		                .withTransitionAction(APPLICATION_COMPLETE_REJECTED_STAGE) //
-		                .withRoleTransitions(APPLICATION_EXHUME_REFEREE_GROUP));
-	}
+    public static PrismStateAction applicationReverseRejection() {
+        return new PrismStateAction() //
+                .withAction(APPLICATION_REVERSE_REJECTION) //
+                .withAssignments(APPLICATION_PARENT_APPROVER_GROUP) //
+                .withNotifications(APPLICATION_CREATOR, APPLICATION_REVERSE_REJECTION_NOTIFICATION) //
+                .withNotifications(APPLICATION_PARENT_APPROVER_GROUP, SYSTEM_APPLICATION_UPDATE_NOTIFICATION) //
+                .withTransitions(new PrismStateTransition() //
+                        .withTransitionState(APPLICATION_REJECTED) //
+                        .withTransitionAction(APPLICATION_COMPLETE_REJECTED_STAGE) //
+                        .withRoleTransitions(APPLICATION_EXHUME_REFEREE_GROUP));
+    }
 
 }

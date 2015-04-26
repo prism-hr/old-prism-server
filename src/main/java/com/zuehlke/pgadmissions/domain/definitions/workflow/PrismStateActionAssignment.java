@@ -8,18 +8,12 @@ public class PrismStateActionAssignment {
 
     private PrismActionEnhancement actionEnhancement;
 
-    private PrismAction delegatedAction;
-
     public PrismRole getRole() {
         return role;
     }
 
     public PrismActionEnhancement getActionEnhancement() {
         return actionEnhancement;
-    }
-
-    public PrismAction getDelegatedAction() {
-        return delegatedAction;
     }
 
     public PrismStateActionAssignment withRole(PrismRole role) {
@@ -29,11 +23,6 @@ public class PrismStateActionAssignment {
 
     public PrismStateActionAssignment withActionEnhancement(PrismActionEnhancement actionEnhancement) {
         this.actionEnhancement = actionEnhancement;
-        return this;
-    }
-
-    public PrismStateActionAssignment withDelegatedAction(PrismAction delegatedAction) {
-        this.delegatedAction = delegatedAction;
         return this;
     }
 
@@ -51,8 +40,7 @@ public class PrismStateActionAssignment {
             return false;
         }
         final PrismStateActionAssignment other = (PrismStateActionAssignment) object;
-        return Objects.equal(role, other.getRole()) && Objects.equal(actionEnhancement, other.getActionEnhancement())
-                && Objects.equal(delegatedAction, other.getDelegatedAction());
+        return Objects.equal(role, other.getRole()) && Objects.equal(actionEnhancement, other.getActionEnhancement());
     }
 
 }

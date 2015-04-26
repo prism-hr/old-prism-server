@@ -55,9 +55,6 @@ public class ResourceStudyOption extends ResourceParentAttribute {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate applicationCloseDate;
 
-    @Column(name = "enabled", nullable = false)
-    private Boolean enabled;
-
     @OneToMany(mappedBy = "studyOption")
     private Set<ResourceStudyOptionInstance> studyOptionInstances = Sets.newHashSet();
 
@@ -123,14 +120,6 @@ public class ResourceStudyOption extends ResourceParentAttribute {
         this.applicationCloseDate = applicationCloseDate;
     }
 
-    public final Boolean getEnabled() {
-        return enabled;
-    }
-
-    public final void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
     public final Set<ResourceStudyOptionInstance> getStudyOptionInstances() {
         return studyOptionInstances;
     }
@@ -155,11 +144,6 @@ public class ResourceStudyOption extends ResourceParentAttribute {
         return this;
     }
 
-    public ResourceStudyOption withEnabled(Boolean enabled) {
-        this.enabled = enabled;
-        return this;
-    }
-    
     @Override
     public int hashCode() {
         return Objects.hashCode(getResource(), studyOption);

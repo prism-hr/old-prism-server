@@ -25,6 +25,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_INSTITUTION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_PROGRAM_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_PROJECT_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_REFEREE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL_PENDING_COMPLETION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL_PENDING_FEEDBACK;
@@ -121,7 +122,8 @@ public enum PrismStateTransitionGroup {
 	        new PrismStateTransition() //
 	                .withTransitionState(APPLICATION_REFERENCE) //
 	                .withTransitionAction(APPLICATION_PROVIDE_REFERENCE) //
-	                .withTransitionEvaluation(APPLICATION_COMPLETED_STATE_OUTCOME), //
+	                .withTransitionEvaluation(APPLICATION_COMPLETED_STATE_OUTCOME) //
+	                .withRoleTransitions(APPLICATION_CREATE_REFEREE_GROUP), //
 	        new PrismStateTransition() //
 	                .withTransitionState(APPLICATION_REVIEW) //
 	                .withTransitionAction(APPLICATION_ASSIGN_REVIEWERS) //

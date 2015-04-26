@@ -81,6 +81,7 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -134,9 +135,6 @@ public class ApplicationService {
     private UserService userService;
 
     @Inject
-    private ProgramService programService;
-
-    @Inject
     private RoleService roleService;
 
     @Inject
@@ -147,7 +145,7 @@ public class ApplicationService {
 
     @Inject
     private InstitutionService institutionService;
-    
+
     @Inject
     private ImportedEntityService importedEntityService;
 
@@ -198,7 +196,7 @@ public class ApplicationService {
         Application application = getById(applicationId);
 
         StudyOption studyOption = importedEntityService.getByCode(StudyOption.class, application.getInstitution(), studyOptionId.name());
-        ResourceStudyOption programStudyOption = programService.getEnabledProgramStudyOption(application.getProgram(), studyOption);
+        ResourceStudyOption programStudyOption = resourceService.getStudyOption((ResourceParent) application.getParentResource(), studyOption);
 
         if (programStudyOption != null) {
             return new ApplicationStartDateRepresentation().withEarliestDate(getEarliestStartDate(programStudyOption.getId(), baseline))
@@ -277,8 +275,8 @@ public class ApplicationService {
         return references;
     }
 
-    public List<ApplicationReferee> getApplicationRefereesNotResponded(Application application) {
-        return applicationDAO.getApplicationRefereesNotResponded(application);
+    public List<User> getUnassignedApplicationReferees(Application application) {
+        return applicationDAO.getUnassignedApplicationReferees(application);
     }
 
     public void validateApplicationAndThrowException(Application application) {
@@ -312,7 +310,7 @@ public class ApplicationService {
         }
 
         if (comment.isApplicationProvideReferenceComment()) {
-            synchroniseReferees(application, comment);
+            synchroniseApplicationReferees(application, comment);
         }
 
         if (comment.isApplicationConfirmOfferRecommendationComment()) {
@@ -576,7 +574,7 @@ public class ApplicationService {
         application.setApplicationRatingAverage(null);
         commentService.delete(application, comment);
     }
-
+    
     private void synchroniseProjectSupervisors(Application application) {
         List<User> supervisorUsers = roleService.getRoleUsers(application.getProject(), PROJECT_SUPERVISOR_GROUP);
         for (User supervisorUser : supervisorUsers) {
@@ -585,8 +583,8 @@ public class ApplicationService {
         }
     }
 
-    private void synchroniseReferees(Application application, Comment comment) {
-        ApplicationReferee referee = applicationDAO.getRefereeByUser(application, comment.getActionOwner());
+    private void synchroniseApplicationReferees(Application application, Comment comment) {
+        ApplicationReferee referee = applicationDAO.getApplicationRefereeByUser(application, comment.getActionOwner());
         referee.setComment(comment);
     }
 

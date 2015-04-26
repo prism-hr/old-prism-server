@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.validation.Valid;
 
 import org.dozer.Mapper;
@@ -30,6 +31,8 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.program.ResourceStudyLocation;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdditionalInformationDTO;
@@ -56,6 +59,7 @@ import com.zuehlke.pgadmissions.services.ApplicationSectionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.ProgramService;
+import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
@@ -86,6 +90,9 @@ public class ApplicationResource {
 
     @Autowired
     private OpportunityResource opportunityResource;
+    
+    @Inject
+    private ResourceService resourceService;
 
     @Autowired
     private Mapper beanMapper;
@@ -279,11 +286,19 @@ public class ApplicationResource {
         representation.setAssignedSupervisors(commentService.getApplicationSupervisors(application));
 
         representation.setPossibleThemes(advertService.getAdvertThemes(application));
-        representation.setPossibleLocations(programService.getPossibleLocations(application.getProgram()));
+        
+        ResourceParent parent = (ResourceParent) application.getParentResource();
+        
+        List<ResourceStudyLocation> studyLocations = resourceService.getStudyLocations(parent);
+        List<String> availableStudyLocations = Lists.newArrayListWithCapacity(studyLocations.size());
+        for (ResourceStudyLocation studyLocation : studyLocations) {
+            availableStudyLocations.add(studyLocation.getStudyLocation());
+        }
+        representation.setPossibleLocations(availableStudyLocations);
 
-        List<ResourceStudyOption> enabledProgramStudyOptions = programService.getEnabledProgramStudyOptions(application.getProgram());
-        List<PrismStudyOption> availableStudyOptions = Lists.newArrayListWithCapacity(enabledProgramStudyOptions.size());
-        for (ResourceStudyOption studyOption : enabledProgramStudyOptions) {
+        List<ResourceStudyOption> studyOptions = resourceService.getStudyOptions(parent);
+        List<PrismStudyOption> availableStudyOptions = Lists.newArrayListWithCapacity(studyOptions.size());
+        for (ResourceStudyOption studyOption : studyOptions) {
             availableStudyOptions.add(studyOption.getStudyOption().getPrismStudyOption());
         }
 

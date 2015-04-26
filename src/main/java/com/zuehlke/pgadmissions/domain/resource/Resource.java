@@ -142,9 +142,10 @@ public abstract class Resource implements UniqueEntity {
     public Resource getEnclosingResource(PrismScope resourceScope) {
         return (Resource) PrismReflectionUtils.getProperty(this, resourceScope.getLowerCamelName());
     }
-
+    
     @Override
     public String toString() {
         return getResourceScope().name() + "#" + getId();
     }
+  
 }

@@ -40,12 +40,15 @@ public class AdvertDAO {
 
     @Autowired
     private SessionFactory sessionFactory;
-
+    
     public List<Integer> getAdverts(List<PrismState> institutionStates, List<PrismState> programStates, List<PrismState> projectStates,
             OpportunitiesQueryDTO queryDTO) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.groupProperty("id")) //
-                .createAlias("address", "address", JoinType.INNER_JOIN) //
+                .createAlias("address", "address", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("partner", "partner", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("partner.advert", "partnerAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("partnerAdvert.address", "partnerAddress", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("institution", "institution", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("institution.resourceStates", "institutionState", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("institution.resourceConditions", "institutionCondition", JoinType.LEFT_OUTER_JOIN) //
@@ -276,8 +279,13 @@ public class AdvertDAO {
 
     private void appendLocationConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
         if (queryDTO.getNeLat() != null) {
-            criteria.add(Restrictions.between("address.location.locationX", queryDTO.getSwLat(), queryDTO.getNeLat()));
-            criteria.add(Restrictions.between("address.location.locationY", queryDTO.getSwLon(), queryDTO.getNeLon()));
+            criteria.add(Restrictions.disjunction() //
+                    .add(Restrictions.conjunction() //
+                            .add(Restrictions.between("address.location.locationX", queryDTO.getSwLat(), queryDTO.getNeLat())) //
+                            .add(Restrictions.between("address.location.locationY", queryDTO.getSwLon(), queryDTO.getNeLon()))) //
+                    .add(Restrictions.conjunction() //
+                            .add(Restrictions.between("partnerAddress.location.locationX", queryDTO.getSwLat(), queryDTO.getNeLat())) //
+                            .add(Restrictions.between("partnerAddress.location.locationY", queryDTO.getSwLon(), queryDTO.getNeLon()))));
         }
     }
 
@@ -289,6 +297,7 @@ public class AdvertDAO {
                     .add(Restrictions.ilike("summary", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("description", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("institution.title", keyword, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.ilike("partner.title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("program.title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("project.title", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.ilike("programDepartment.title", keyword, MatchMode.ANYWHERE)) //
@@ -349,6 +358,7 @@ public class AdvertDAO {
         Integer[] institutions = queryDTO.getInstitutions();
         if (institutions != null) {
             criteria.add(Restrictions.disjunction() //
+                    .add(Restrictions.in("partner.id", institutions)) //
                     .add(Restrictions.in("institution.id", institutions)) //
                     .add(Restrictions.in("programInstitution.id", institutions)) //
                     .add(Restrictions.in("projectInstitution.id", institutions))); //

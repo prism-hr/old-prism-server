@@ -34,10 +34,6 @@ public class StateActionAssignment implements UniqueEntity {
     @Enumerated(EnumType.STRING)
     private PrismActionEnhancement actionEnhancement;
 
-    @ManyToOne
-    @JoinColumn(name = "delegated_action_id")
-    private Action delegatedAction;
-
     public Integer getId() {
         return id;
     }
@@ -70,14 +66,6 @@ public class StateActionAssignment implements UniqueEntity {
         this.actionEnhancement = actionEnhancement;
     }
 
-    public Action getDelegatedAction() {
-        return delegatedAction;
-    }
-
-    public void setDelegatedAction(Action delegatedAction) {
-        this.delegatedAction = delegatedAction;
-    }
-
     public StateActionAssignment withStateAction(StateAction stateAction) {
         this.stateAction = stateAction;
         return this;
@@ -90,11 +78,6 @@ public class StateActionAssignment implements UniqueEntity {
 
     public StateActionAssignment withActionEnhancement(PrismActionEnhancement actionEnhancement) {
         this.actionEnhancement = actionEnhancement;
-        return this;
-    }
-
-    public StateActionAssignment withDelegatedAction(Action delegatedAction) {
-        this.delegatedAction = delegatedAction;
         return this;
     }
 

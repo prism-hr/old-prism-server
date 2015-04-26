@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_COMPLETED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_REJECTED;
@@ -20,21 +21,16 @@ import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.program.ResourceStudyLocation;
 import com.zuehlke.pgadmissions.domain.project.Project;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
@@ -68,70 +64,6 @@ public class ProgramDAO {
 		        .list();
 	}
 
-	public ResourceStudyOption getEnabledProgramStudyOption(Program program, StudyOption studyOption) {
-		return (ResourceStudyOption) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOption.class) //
-		        .add(Restrictions.eq("program", program)) //
-		        .add(Restrictions.eq("studyOption", studyOption)) //
-		        .add(Restrictions.eq("enabled", true)) //
-		        .uniqueResult();
-	}
-
-	public List<ResourceStudyOption> getEnabledProgramStudyOptions(Program program) {
-		return (List<ResourceStudyOption>) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOption.class) //
-		        .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
-		        .add(Restrictions.eq("program", program)) //
-		        .add(Restrictions.eq("enabled", true)) //
-		        .addOrder(Order.asc("studyOption.code")) //
-		        .list();
-	}
-
-	public ResourceStudyOptionInstance getFirstEnabledProgramStudyOptionInstance(Program program, StudyOption studyOption) {
-		return (ResourceStudyOptionInstance) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOptionInstance.class) //
-		        .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
-		        .add(Restrictions.eq("studyOption.program", program)) //
-		        .add(Restrictions.eq("studyOption.studyOption", studyOption)) //
-		        .add(Restrictions.eq("enabled", true)) //
-		        .addOrder(Order.asc("applicationStartDate")) //
-		        .setMaxResults(1) //
-		        .uniqueResult();
-	}
-
-	public void disableElapsedProgramStudyOptions(LocalDate baseline) {
-		sessionFactory.getCurrentSession().createQuery( //
-		        "update ProgramStudyOption " //
-		                + "set enabled = false " //
-		                + "where applicationCloseDate < :baseline") //
-		        .setParameter("baseline", baseline) //
-		        .executeUpdate();
-	}
-
-	public void disableElapsedProgramStudyOptionInstances(LocalDate baseline) {
-		sessionFactory.getCurrentSession().createQuery( //
-		        "update ProgramStudyOptionInstance " //
-		                + "set enabled = false " //
-		                + "where applicationCloseDate < :baseline") //
-		        .setParameter("baseline", baseline) //
-		        .executeUpdate();
-	}
-
-	public void deleteProgramStudyOptions(Program program) {
-		sessionFactory.getCurrentSession().createQuery( //
-		        "delete ProgramStudyOption " //
-		                + "where program = :program") //
-		        .setParameter("program", program) //
-		        .executeUpdate();
-	}
-
-	public void deleteProgramStudyOptionInstances(Program program) {
-		sessionFactory.getCurrentSession().createQuery( //
-		        "delete ProgramStudyOptionInstance " //
-		                + "where studyOption in ( " //
-		                + "from ProgramStudyOption " //
-		                + "where program = :program)") //
-		        .setParameter("program", program) //
-		        .executeUpdate();
-	}
-
 	public List<ProgramRepresentation> getSimilarPrograms(Integer institutionId, String searchTerm) {
 		return (List<ProgramRepresentation>) sessionFactory.getCurrentSession().createCriteria(Program.class, "program") //
 		        .setProjection(Projections.projectionList() //
@@ -156,14 +88,6 @@ public class ProgramDAO {
 		        .addOrder(Order.desc("id")) //
 		        .setMaxResults(1) //
 		        .uniqueResult();
-	}
-
-	public List<String> getPossibleLocations(Program program) {
-		return (List<String>) sessionFactory.getCurrentSession().createCriteria(ResourceStudyLocation.class) //
-		        .setProjection(Projections.property("location")) //
-		        .add(Restrictions.eq("program", program)) //
-		        .addOrder(Order.asc("location")) //
-		        .list();
 	}
 
 	public List<String> getSuggestedDivisions(Program program, String location) {
@@ -197,7 +121,7 @@ public class ProgramDAO {
 		        .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
 		        .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
 		        .add(Restrictions.eq("institution", institution)) //
-		        .add(Restrictions.eq("stateAction.action.id", PrismAction.PROGRAM_CREATE_APPLICATION)) //
+		        .add(Restrictions.eq("stateAction.action.id", PROGRAM_CREATE_APPLICATION)) //
 		        .uniqueResult();
 	}
 

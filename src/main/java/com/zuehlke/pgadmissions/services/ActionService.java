@@ -77,7 +77,7 @@ public class ActionService {
 
     @Inject
     private UserService userService;
-    
+
     @Inject
     private Mapper mapper;
 
@@ -100,9 +100,7 @@ public class ActionService {
 
         resource = resourceService.getOperativeResource(resource, action);
 
-        if (comment.isDelegateComment() && checkDelegateActionAvailable(resource, action, user)) {
-            return;
-        } else if (checkActionAvailable(resource, action, user)) {
+        if (checkActionAvailable(resource, action, user)) {
             return;
         }
 
@@ -114,10 +112,9 @@ public class ActionService {
 
         User user = comment.getUser();
         authenticateActionInvocation(action, user, null);
-
         Resource resource = comment.getResource();
 
-        if (userService.isCurrentUser(user) || checkDelegateActionAvailable(resource, action, user)) {
+        if (userService.isCurrentUser(user)) {
             return;
         }
 
@@ -270,8 +267,6 @@ public class ActionService {
     public void validateUserAction(Resource resource, Action action, User invoker) {
         if (checkActionAvailable(resource, action, invoker)) {
             return;
-        } else if (checkDelegateActionAvailable(resource, action, invoker)) {
-            return;
         }
         throw new WorkflowPermissionException(resource, action);
     }
@@ -327,7 +322,7 @@ public class ActionService {
     public List<PrismActionCondition> getActionConditions(PrismScope prismScope) {
         return actionDAO.getActionConditions(prismScope);
     }
-    
+
     public Map<PrismScope, PrismAction> getCreateResourceActions(PrismScope creationScope) {
         Map<PrismScope, PrismAction> createResourceActions = Maps.newHashMap();
         List<PrismAction> creationActions = actionDAO.getCreateResourceActions(creationScope);
@@ -367,11 +362,6 @@ public class ActionService {
 
     private boolean checkActionAvailable(Resource resource, Action action, User user) {
         return actionDAO.getPermittedAction(resource, action, user) != null || !actionDAO.getCreateResourceActions(resource).isEmpty();
-    }
-
-    private boolean checkDelegateActionAvailable(Resource resource, Action action, User invoker) {
-        Action delegateAction = actionDAO.getDelegateAction(resource, action);
-        return checkActionAvailable(resource, delegateAction, invoker);
     }
 
     private void authenticateActionInvocation(Action action, User user, Boolean declineComment) {

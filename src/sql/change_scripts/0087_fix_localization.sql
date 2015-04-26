@@ -478,3 +478,17 @@ alter table institution
 	add column end_date date after previous_state_id,
 	add index (end_date)
 ;
+
+alter table resource_study_option
+	drop column enabled
+;
+
+alter table resource_study_option_instance
+	drop column enabled
+;
+
+alter table state_action_assignment
+	drop index delegated_action_id,
+	drop foreign key state_action_assignment_ibfk_3,
+	drop column delegated_action_id
+;

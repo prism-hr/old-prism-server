@@ -89,9 +89,6 @@ public class ProgramService {
 
     public void save(Program program) {
         entityService.save(program);
-        for (ResourceStudyOption studyOption : program.getStudyOptions()) {
-            entityService.save(studyOption);
-        }
     }
 
     public Program getProgramByImportedCode(String importedCode) {

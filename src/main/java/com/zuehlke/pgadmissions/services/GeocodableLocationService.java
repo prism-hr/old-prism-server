@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.location.GeocodableLocation;
 import com.zuehlke.pgadmissions.domain.location.GeographicLocation;
 import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO;
+import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO.Results;
 import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO.Results.Geometry;
 import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO.Results.Geometry.Location;
 
@@ -85,15 +86,16 @@ public class GeocodableLocationService {
     public <T extends GeocodableLocation> void setLocation(T transientLocation, LocationSearchResponseDTO response) {
         T persistentLocation = (T) getById(transientLocation.getClass(), transientLocation.getId());
 
-        Geometry geometry = response.getResults().get(0).getGeometry();
+        Results result = response.getResults().get(0);
+        Geometry geometry = result.getGeometry();
         Location gLocation = geometry.getLocation();
         Location gViewportNe = geometry.getViewPort().getNorthEast();
         Location gViewportSw = geometry.getViewPort().getSouthWest();
 
-        GeographicLocation geographicLocation = new GeographicLocation().withLocationX(gLocation.getLat()).withLocationY(gLocation.getLng())
-                .withLocationViewNeX(gViewportNe.getLat()).withLocationViewNeY(gViewportNe.getLng()).withLocationViewSwX(gViewportSw.getLat())
-                .withLocationViewSwY(gViewportSw.getLng());
-
+        GeographicLocation geographicLocation = new GeographicLocation().withGoogleId(result.getGoogleId()).withLocationX(gLocation.getLat())
+                .withLocationY(gLocation.getLng()).withLocationViewNeX(gViewportNe.getLat()).withLocationViewNeY(gViewportNe.getLng())
+                .withLocationViewSwX(gViewportSw.getLat()).withLocationViewSwY(gViewportSw.getLng());
+        
         persistentLocation.setLocation(geographicLocation);
     }
 

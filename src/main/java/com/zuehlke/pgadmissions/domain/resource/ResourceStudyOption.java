@@ -15,6 +15,7 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -31,15 +32,15 @@ public class ResourceStudyOption extends ResourceParentAttribute {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "institution_id")
+    @JoinColumn(name = "institution_id", insertable = false, updatable = false)
     private Institution institution;
 
     @ManyToOne
-    @JoinColumn(name = "program_id")
+    @JoinColumn(name = "program_id", insertable = false, updatable = false)
     private Program program;
 
     @ManyToOne
-    @JoinColumn(name = "project_id")
+    @JoinColumn(name = "project_id", insertable = false, updatable = false)
     private Project project;
 
     @ManyToOne
@@ -135,7 +136,7 @@ public class ResourceStudyOption extends ResourceParentAttribute {
     }
 
     public ResourceStudyOption withResource(ResourceParent resource) {
-        setResourceParent(resource);
+        setResource(resource);
         return this;
     }
 
@@ -157,6 +158,23 @@ public class ResourceStudyOption extends ResourceParentAttribute {
     public ResourceStudyOption withEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getResource(), studyOption);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        final ResourceStudyOption other = (ResourceStudyOption) object;
+        return Objects.equal(getResource(), other.getResource()) && Objects.equal(studyOption, other.getStudyOption());
     }
 
     @Override

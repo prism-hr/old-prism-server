@@ -61,7 +61,7 @@ public class AdvertRepresentation {
 
     private PrismOpportunityType opportunityType;
 
-    private Set<PrismStudyOption> studyOptions;
+    private List<PrismStudyOption> studyOptions;
 
     private List<String> locations;
 
@@ -255,11 +255,11 @@ public class AdvertRepresentation {
         this.opportunityType = opportunityType;
     }
 
-    public Set<PrismStudyOption> getStudyOptions() {
+    public List<PrismStudyOption> getStudyOptions() {
         return studyOptions;
     }
 
-    public void setStudyOptions(Set<PrismStudyOption> studyOptions) {
+    public void setStudyOptions(List<PrismStudyOption> studyOptions) {
         this.studyOptions = studyOptions;
     }
 

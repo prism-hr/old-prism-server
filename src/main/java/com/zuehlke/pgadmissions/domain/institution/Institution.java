@@ -12,11 +12,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -25,13 +25,16 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.program.ResourceStudyLocation;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
@@ -50,7 +53,7 @@ public class Institution extends ResourceParent {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
-    
+
     @OneToOne
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "advert_id", nullable = false)
@@ -74,9 +77,17 @@ public class Institution extends ResourceParent {
     @Column(name = "title", nullable = false, unique = true)
     private String title;
 
+    @OneToOne
+    @JoinColumn(name = "logo_image_id")
+    private Document logoImage;
+
+    @OneToOne
+    @JoinColumn(name = "background_image_id")
+    private Document backgroundImage;
+
     @Column(name = "currency", nullable = false)
     private String currency;
-    
+
     @Column(name = "business_year_start_month", nullable = false)
     private Integer businessYearStartMonth;
 
@@ -94,6 +105,10 @@ public class Institution extends ResourceParent {
     @JoinColumn(name = "previous_state_id")
     private State previousState;
 
+    @Column(name = "end_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate endDate;
+    
     @Column(name = "due_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate dueDate;
@@ -127,9 +142,15 @@ public class Institution extends ResourceParent {
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
+    
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "institution_id", nullable = false)
+    private Set<ResourceStudyOption> studyOptions = Sets.newHashSet();
 
-    @Transient
-    private Integer importErrorCount;
+    @OrderBy(clause = "location")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "institution_id", nullable = false)
+    private Set<ResourceStudyLocation> studyLocations = Sets.newHashSet();
 
     @OneToMany(mappedBy = "institution")
     private Set<ResourceState> resourceStates = Sets.newHashSet();
@@ -195,6 +216,22 @@ public class Institution extends ResourceParent {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Document getLogoImage() {
+        return logoImage;
+    }
+
+    public void setLogoImage(Document logoImage) {
+        this.logoImage = logoImage;
+    }
+
+    public Document getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    public void setBackgroundImage(Document backgroundImage) {
+        this.backgroundImage = backgroundImage;
     }
 
     public InstitutionDomicile getDomicile() {
@@ -285,7 +322,7 @@ public class Institution extends ResourceParent {
         this.domicile = domicile;
         return this;
     }
-    
+
     public Institution withAdvert(Advert advert) {
         this.advert = advert;
         return this;
@@ -301,6 +338,11 @@ public class Institution extends ResourceParent {
         return this;
     }
 
+    public Institution withBusinessYearStartMonth(Integer businessYearStartMonth) {
+        this.businessYearStartMonth = businessYearStartMonth;
+        return this;
+    }
+    
     public Institution withState(State state) {
         this.state = state;
         return this;
@@ -313,6 +355,11 @@ public class Institution extends ResourceParent {
 
     public Institution withUclInstitution(boolean uclInstitution) {
         this.uclInstitution = uclInstitution;
+        return this;
+    }
+    
+    public Institution withEndDate(LocalDate endDate) {
+        this.endDate = endDate;
         return this;
     }
 
@@ -407,6 +454,16 @@ public class Institution extends ResourceParent {
     public void setPreviousState(State previousState) {
         this.previousState = previousState;
     }
+    
+    @Override
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    @Override
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
 
     @Override
     public LocalDate getDueDate() {
@@ -485,6 +542,16 @@ public class Institution extends ResourceParent {
     @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
+    }
+
+    @Override
+    public Set<ResourceStudyOption> getStudyOptions() {
+        return studyOptions;
+    }
+
+    @Override
+    public Set<ResourceStudyLocation> getStudyLocations() {
+        return studyLocations;
     }
 
     @Override

@@ -3,28 +3,15 @@ package com.zuehlke.pgadmissions.rest.dto;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import org.joda.time.LocalDate;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
 public class InstitutionDTO {
 
-    @NotEmpty
-    private String domicile;
-
     @NotNull
     private AdvertDTO advert;
-    
-    @Size(min = 1)
-    private PrismStudyOption[] studyOptions;
-    
-    private List<String> locations = Lists.newArrayList();
-
-    @NotNull
-    private InstitutionAddressDTO address;
     
     @NotNull
     private String currency;
@@ -33,14 +20,16 @@ public class InstitutionDTO {
     private Integer businessYearStartMonth;
     
     private String googleIdentifier;
+    
+    private FileDTO logoImage;
 
-    public String getDomicile() {
-        return domicile;
-    }
+    private FileDTO backgroundImage;
+    
+    private LocalDate endDate;
+    
+    private List<PrismStudyOption> studyOptions;
 
-    public void setDomicile(String domicile) {
-        this.domicile = domicile;
-    }
+    private List<String> studyLocations;
 
     public AdvertDTO getAdvert() {
         return advert;
@@ -50,30 +39,6 @@ public class InstitutionDTO {
         this.advert = advert;
     }
 
-    public PrismStudyOption[] getStudyOptions() {
-        return studyOptions;
-    }
-
-    public void setStudyOptions(PrismStudyOption[] studyOptions) {
-        this.studyOptions = studyOptions;
-    }
-
-    public List<String> getLocations() {
-        return locations;
-    }
-
-    public void setLocations(List<String> locations) {
-        this.locations = locations;
-    }
-
-    public InstitutionAddressDTO getAddress() {
-        return address;
-    }
-
-    public void setAddress(InstitutionAddressDTO address) {
-        this.address = address;
-    }
-    
     public String getCurrency() {
         return currency;
     }
@@ -81,7 +46,7 @@ public class InstitutionDTO {
     public void setCurrency(String currency) {
         this.currency = currency;
     }
-    
+
     public Integer getBusinessYearStartMonth() {
         return businessYearStartMonth;
     }
@@ -90,12 +55,52 @@ public class InstitutionDTO {
         this.businessYearStartMonth = businessYearStartMonth;
     }
 
-    public  String getGoogleIdentifier() {
+    public String getGoogleIdentifier() {
         return googleIdentifier;
     }
 
-    public  void setGoogleIdentifier(String googleIdentifier) {
+    public void setGoogleIdentifier(String googleIdentifier) {
         this.googleIdentifier = googleIdentifier;
+    }
+
+    public FileDTO getLogoImage() {
+        return logoImage;
+    }
+
+    public void setLogoImage(FileDTO logoImage) {
+        this.logoImage = logoImage;
+    }
+
+    public FileDTO getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    public void setBackgroundImage(FileDTO backgroundImage) {
+        this.backgroundImage = backgroundImage;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public List<PrismStudyOption> getStudyOptions() {
+        return studyOptions;
+    }
+
+    public void setStudyOptions(List<PrismStudyOption> studyOptions) {
+        this.studyOptions = studyOptions;
+    }
+
+    public List<String> getStudyLocations() {
+        return studyLocations;
+    }
+
+    public void setStudyLocations(List<String> studyLocations) {
+        this.studyLocations = studyLocations;
     }
 
 }

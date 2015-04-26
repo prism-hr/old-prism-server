@@ -197,7 +197,7 @@ public class ApplicationService {
         LocalDate baseline = new LocalDate();
         Application application = getById(applicationId);
 
-        StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, application.getInstitution(), studyOptionId.name());
+        StudyOption studyOption = importedEntityService.getByCode(StudyOption.class, application.getInstitution(), studyOptionId.name());
         ResourceStudyOption programStudyOption = programService.getEnabledProgramStudyOption(application.getProgram(), studyOption);
 
         if (programStudyOption != null) {

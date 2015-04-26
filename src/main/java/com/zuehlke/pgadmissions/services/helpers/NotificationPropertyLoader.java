@@ -304,7 +304,7 @@ public class NotificationPropertyLoader {
 
             for (AdvertRecommendationDTO advertRecommendation : advertRecommendations) {
                 Advert advert = advertRecommendation.getAdvert();
-                ResourceParent resourceParent = advert.getResourceParent();
+                ResourceParent resourceParent = advert.getResource();
 
                 String title = "<b>" + advert.getTitle() + "</b>";
                 String summary = advert.getSummary();

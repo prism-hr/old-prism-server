@@ -135,7 +135,7 @@ public class ApplicationSectionService {
 
         application.setPreviousApplication(programDetailDTO.getPreviousApplication());
 
-        StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, institution, programDetailDTO.getStudyOption().name());
+        StudyOption studyOption = importedEntityService.getByCode(StudyOption.class, institution, programDetailDTO.getStudyOption().name());
         ReferralSource referralSource = importedEntityService.getById(ReferralSource.class, institution, programDetailDTO.getReferralSource());
         programDetail.setStudyOption(studyOption);
         programDetail.setStartDate(programDetailDTO.getStartDate());

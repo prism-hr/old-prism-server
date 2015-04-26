@@ -1,9 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_COMMENT_UPDATED_ADVERT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_COMMENT_UPDATED_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_COMMENT_UPDATED_CLOSING_DATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROGRAM_COMMENT_UPDATED_FEE_AND_PAYMENT;
 import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 import java.io.IOException;
@@ -37,10 +33,10 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFilterCategory;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
@@ -56,9 +52,9 @@ import com.zuehlke.pgadmissions.rest.dto.AdvertClosingDateDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertFeesAndPaymentsDTO;
-import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.FinancialDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
@@ -82,9 +78,6 @@ public class AdvertService {
     @Inject
     private AdvertDAO advertDAO;
 
-    @Inject
-    private DocumentService documentService;
-    
     @Inject
     private EntityService entityService;
 
@@ -140,56 +133,48 @@ public class AdvertService {
         List<Integer> advertsRecentlyAppliedFor = advertDAO.getAdvertsRecentlyAppliedFor(user, new LocalDate().minusYears(1));
         return advertDAO.getRecommendedAdverts(user, activeInstitutionStates, activeProgramStates, activeProjectStates, advertsRecentlyAppliedFor);
     }
-    
-    public void createOrUpdateAdvert(ResourceParent resource, AdvertDTO advertDTO) {
-        Advert advert = resource.getAdvert();
-        boolean newAdvert = advert == null;
-        if (newAdvert) {
-            advert = new Advert();
-        }
+
+    public Advert createAdvert(User user, AdvertDTO advertDTO) throws Exception {
+        Advert advert = new Advert();
+        updateAdvert(user, advertDTO, advert);
+        return advert;
+    }
+
+    public void updateAdvert(User user, AdvertDTO advertDTO, Advert advert) throws Exception {
         advert.setTitle(advertDTO.getTitle());
         advert.setSummary(advertDTO.getSummary());
         advert.setDescription(advertDTO.getDescription());
         advert.setApplyHomepage(advertDTO.getApplyHomepage());
-        
-        FileDTO logo = advertDTO.getLogoImage();
-        if (logo != null) {
-            Document logoDocument = documentService.getImageDocument(logo);
-            advert.setLogoImage(logoDocument);
+
+        InstitutionAddressDTO addressDTO = advertDTO.getAddress();
+        InstitutionDTO partnerDTO = advertDTO.getPartner();
+
+        if (addressDTO != null) {
+            InstitutionAddress address = advert.getAddress();
+            if (address == null) {
+                address = createAddress(addressDTO);
+                advert.setAddress(address);
+            } else {
+                updateAddress(addressDTO, address);
+            }
         }
-        
-        FileDTO background = advertDTO.getBackgroundImage();
-        if (background != null) {
-            Document backgroundDocument = documentService.getImageDocument(background);
-            advert.setLogoImage(backgroundDocument);
-        }
-        
-        if (newAdvert) {
-            entityService.save(advert);
+
+        if (partnerDTO != null) {
+            InstitutionDTO partnerPartnerDTO = partnerDTO.getAdvert().getPartner();
+            if (partnerPartnerDTO != null) {
+                throw new Exception("Denial of Service attempt: user attempted to post recursive advert");
+            }
+            Institution partner = institutionService.createPartner(user, partnerDTO);
+            advert.setPartner(partner);
         }
     }
 
     public void updateDetail(PrismScope resourceScope, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) throws Exception {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
-
-        InstitutionAddressDTO addressDTO = advertDetailsDTO.getAddress();
-        InstitutionDomicile country = entityService.getById(InstitutionDomicile.class, addressDTO.getDomicile());
-
         advert.setDescription(advertDetailsDTO.getDescription());
         advert.setHomepage(advertDetailsDTO.getHomepage());
-
-        InstitutionAddress address = advert.getAddress();
-        address.setDomicile(country);
-        address.setInstitution(resource.getInstitution());
-        address.setAddressLine1(addressDTO.getAddressLine1());
-        address.setAddressLine2(addressDTO.getAddressLine2());
-        address.setAddressTown(addressDTO.getAddressTown());
-        address.setAddressRegion(addressDTO.getAddressDistrict());
-        address.setAddressCode(addressDTO.getAddressCode());
-
-        geocodableLocationService.setLocation(address);
-        resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_ADVERT);
+        executeUpdate(resource, "COMMENT_UPDATED_ADVERT");
     }
 
     public void updateFeesAndPayments(PrismScope resourceScope, Integer resourceId, AdvertFeesAndPaymentsDTO feesAndPaymentsDTO)
@@ -207,7 +192,7 @@ public class AdvertService {
         updatePay(baseline, advert, currencyAtLocale, payDTO);
 
         advert.setLastCurrencyConversionDate(baseline);
-        resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_FEE_AND_PAYMENT);
+        executeUpdate(resource, "COMMENT_UPDATED_FEE_AND_PAYMENT");
     }
 
     @SuppressWarnings("unchecked")
@@ -232,7 +217,7 @@ public class AdvertService {
             }
         }
 
-        resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CATEGORY);
+        executeUpdate(resource, "COMMENT_UPDATED_CATEGORY");
     }
 
     public AdvertClosingDate createClosingDate(PrismScope resourceScope, Integer resourceId, AdvertClosingDateDTO advertClosingDateDTO)
@@ -246,7 +231,7 @@ public class AdvertService {
             advert.getClosingDates().add(advertClosingDate);
             entityService.flush();
             advert.setClosingDate(getNextAdvertClosingDate(advert));
-            resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CLOSING_DATE);
+            executeUpdate(resource, "COMMENT_UPDATED_CLOSING_DATE");
             return advertClosingDate;
         }
 
@@ -264,7 +249,7 @@ public class AdvertService {
             advertClosingDate.setStudyPlaces(advertClosingDateDTO.getStudyPlaces());
             entityService.flush();
             advert.setClosingDate(getNextAdvertClosingDate(advert));
-            resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CLOSING_DATE);
+            executeUpdate(resource, "COMMENT_UPDATED_CLOSING_DATE");
         } else {
             throw new Error();
         }
@@ -280,7 +265,7 @@ public class AdvertService {
             entityService.flush();
             advert.getClosingDates().remove(advertClosingDate);
             advert.setClosingDate(getNextAdvertClosingDate(advert));
-            resourceService.executeUpdate(resource, PROGRAM_COMMENT_UPDATED_CLOSING_DATE);
+            executeUpdate(resource, "COMMENT_UPDATED_CLOSING_DATE");
         } else {
             throw new Error();
         }
@@ -318,9 +303,9 @@ public class AdvertService {
     }
 
     public InstitutionAddress createAddressCopy(InstitutionAddress address) {
-        InstitutionAddress newAddress = new InstitutionAddress().withDomicile(address.getDomicile()).withInstitution(address.getInstitution())
-                .withAddressLine1(address.getAddressLine1()).withAddressLine2(address.getAddressLine2()).withAddressTown(address.getAddressTown())
-                .withAddressRegion(address.getAddressRegion()).withAddressCode(address.getAddressCode());
+        InstitutionAddress newAddress = new InstitutionAddress().withDomicile(address.getDomicile()).withAddressLine1(address.getAddressLine1())
+                .withAddressLine2(address.getAddressLine2()).withAddressTown(address.getAddressTown()).withAddressRegion(address.getAddressRegion())
+                .withAddressCode(address.getAddressCode());
 
         GeographicLocation oldLocation = address.getLocation();
         if (oldLocation != null) {
@@ -355,7 +340,7 @@ public class AdvertService {
     }
 
     public SocialMetadataDTO getSocialMetadata(Advert advert) {
-        Resource parentResource = advert.getResourceParent();
+        Resource parentResource = advert.getResource();
         return new SocialMetadataDTO().withAuthor(parentResource.getUser().getFullName()).withTitle(advert.getTitle()).withDescription(advert.getSummary())
                 .withThumbnailUrl(resourceService.getSocialThumbnailUrl(parentResource)).withResourceUrl(resourceService.getSocialResourceUrl(parentResource));
     }
@@ -367,7 +352,7 @@ public class AdvertService {
 
     private String getCurrencyAtLocale(Advert advert) {
         InstitutionAddress addressAtLocale = advert.getAddress();
-        addressAtLocale = addressAtLocale == null ? advert.getResourceParent().getInstitution().getAdvert().getAddress() : addressAtLocale;
+        addressAtLocale = addressAtLocale == null ? advert.getResource().getInstitution().getAdvert().getAddress() : addressAtLocale;
         return addressAtLocale.getDomicile().getCurrency();
     }
 
@@ -539,6 +524,26 @@ public class AdvertService {
 
     private AdvertClosingDate getNextAdvertClosingDate(Advert advert) {
         return advertDAO.getNextAdvertClosingDate(advert, new LocalDate());
+    }
+
+    private void executeUpdate(ResourceParent resource, String message) throws Exception {
+        resourceService.executeUpdate(resource, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_" + message));
+    }
+
+    private InstitutionAddress createAddress(InstitutionAddressDTO addressDTO) {
+        InstitutionAddress address = new InstitutionAddress();
+        updateAddress(addressDTO, address);
+        return address;
+    }
+
+    private void updateAddress(InstitutionAddressDTO addressDTO, InstitutionAddress address) {
+        address.setDomicile(entityService.getById(InstitutionDomicile.class, addressDTO.getDomicile()));
+        address.setAddressLine1(addressDTO.getAddressLine1());
+        address.setAddressLine2(addressDTO.getAddressLine2());
+        address.setAddressTown(addressDTO.getAddressTown());
+        address.setAddressRegion(addressDTO.getAddressDistrict());
+        address.setAddressCode(addressDTO.getAddressCode());
+        geocodableLocationService.setLocation(address);
     }
 
 }

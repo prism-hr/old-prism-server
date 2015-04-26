@@ -19,7 +19,6 @@ import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.department.Department;
@@ -37,7 +36,7 @@ import com.zuehlke.pgadmissions.dto.DepartmentDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
-import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
+import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
@@ -66,13 +65,13 @@ public class ProgramService {
     private DepartmentService departmentService;
 
     @Inject
-    private SystemService systemService;
-
-    @Inject
     private InstitutionService institutionService;
 
     @Inject
     private ProjectService projectService;
+
+    @Inject
+    private ResourceService resourceService;
 
     @Inject
     private UserService userService;
@@ -114,16 +113,23 @@ public class ProgramService {
         return programDAO.getFirstEnabledProgramStudyOptionInstance(program, studyOption);
     }
 
-    public Program create(User user, ProgramDTO programDTO) {
-        Institution institution = entityService.getById(Institution.class, programDTO.getInstitutionId());
+    public Program create(User user, ProgramDTO programDTO) throws Exception {
+        Institution institution = institutionService.getById(programDTO.getInstitutionId());
+
+        AdvertDTO advertDTO = programDTO.getAdvert();
+        Advert advert = advertService.createAdvert(user, advertDTO);
+
         DepartmentDTO departmentDTO = programDTO.getDepartment();
         Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(departmentDTO);
+        OpportunityType opportunityType = importedEntityService.getByCode(OpportunityType.class, institution, programDTO.getOpportunityType().name());
 
-        Program program = new Program().withUser(user).withSystem(systemService.getSystem()).withInstitution(institution).withDepartment(department)
-                .withImported(false).withRequireProjectDefinition(false);
-        copyProgramDetails(program, programDTO);
-        program.setEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD));
-        copyStudyOptions(program, programDTO);
+        Program program = new Program().withUser(user).withInstitution(institution).withDepartment(department).withAdvert(advert)
+                .withOpportunityType(opportunityType).withTitle(advert.getTitle()).withDurationMinimum(programDTO.getDurationMinimum())
+                .withDurationMaximum(programDTO.getDurationMaximum()).withRequireProjectDefinition(false)
+                .withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD));
+
+        resourceService.setStudyOptions(institution, programDTO.getStudyOptions(), new LocalDate());
+        resourceService.setStudyLocations(institution, programDTO.getStudyLocations());
         return program;
     }
 
@@ -217,10 +223,6 @@ public class ProgramService {
         return programDAO.getSitemapEntries(activeProgramStates);
     }
 
-    public SocialMetadataDTO getSocialMetadata(Program program) {
-        return advertService.getSocialMetadata(program.getAdvert());
-    }
-
     public SearchEngineAdvertDTO getSearchEngineAdvert(Integer programId) {
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         SearchEngineAdvertDTO searchEngineDTO = programDAO.getSearchEngineAdvert(programId, activeProgramStates);
@@ -252,57 +254,35 @@ public class ProgramService {
         return programDAO.getApplications(program);
     }
 
-    private void update(Integer programId, ProgramDTO programDTO) {
+    private void update(Integer programId, ProgramDTO programDTO) throws Exception {
         Program program = entityService.getById(Program.class, programId);
-        copyProgramDetails(program, programDTO);
+
+        DepartmentDTO departmentDTO = programDTO.getDepartment();
+        Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(departmentDTO);
+        program.setDepartment(department);
+
+        AdvertDTO advertDTO = programDTO.getAdvert();
+        Advert advert = program.getAdvert();
+        advertService.updateAdvert(userService.getCurrentUser(), advertDTO, advert);
+
+        program.setDurationMinimum(programDTO.getDurationMinimum());
+        program.setDurationMaximum(programDTO.getDurationMaximum());
+
+        resourceService.setStudyLocations(program, programDTO.getStudyLocations());
 
         if (!program.getImported()) {
-            programDAO.deleteProgramStudyOptionInstances(program);
-            programDAO.deleteProgramStudyOptions(program);
-            program.getStudyOptions().clear();
-            copyStudyOptions(program, programDTO);
-            for (ResourceStudyOption studyOption : program.getStudyOptions()) {
-                entityService.save(studyOption);
+            OpportunityType opportunityType = importedEntityService.getByCode(OpportunityType.class, //
+                    program.getInstitution(), programDTO.getOpportunityType().name());
+
+            program.setOpportunityType(opportunityType);
+            program.setTitle(advert.getTitle());
+
+            LocalDate endDate = programDTO.getEndDate();
+            if (endDate != null) {
+                program.setEndDate(endDate);
             }
-        }
-    }
 
-    private void copyProgramDetails(Program program, ProgramDTO programDTO) {
-        Advert advert;
-        if (program.getAdvert() == null) {
-            advert = new Advert();
-            advert.setAddress(advertService.createAddressCopy(program.getInstitution().getAddress()));
-            program.setAdvert(advert);
-        } else {
-            advert = program.getAdvert();
-        }
-
-        if (!program.getImported()) {
-            String title = programDTO.getTitle();
-            program.setTitle(title);
-            advert.setTitle(title);
-            program.setOpportunityType((OpportunityType) importedEntityService.getImportedEntityByCode(OpportunityType.class, program.getInstitution(), programDTO
-                    .getOpportunityType().name()));
-            program.setEndDate(programDTO.getEndDate());
-        }
-
-        program.getLocations().clear();
-        entityService.flush();
-
-        for (String location : programDTO.getLocations()) {
-            program.addLocation(location);
-        }
-
-        advert.setSummary(programDTO.getSummary());
-        advert.setApplyHomepage(programDTO.getApplyHomepage());
-    }
-
-    private void copyStudyOptions(Program program, ProgramDTO programDTO) {
-        for (PrismStudyOption prismStudyOption : programDTO.getStudyOptions()) {
-            StudyOption studyOption = importedEntityService.getImportedEntityByCode(StudyOption.class, program.getInstitution(), prismStudyOption.name());
-            ResourceStudyOption programStudyOption = new ResourceStudyOption().withStudyOption(studyOption).withApplicationStartDate(new LocalDate())
-                    .withApplicationCloseDate(program.getEndDate()).withEnabled(true).withResource(program);
-            program.getStudyOptions().add(programStudyOption);
+            resourceService.setStudyOptions(program, programDTO.getStudyOptions(), new LocalDate());
         }
     }
 

@@ -22,6 +22,7 @@ import javax.persistence.Table;
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -92,10 +93,10 @@ public class Program extends ResourceParent {
 
     @Column(name = "title", nullable = false)
     private String title;
-    
+
     @Column(name = "duration_minimum")
     private Integer durationMinimum;
-    
+
     @Column(name = "duration_maximum")
     private Integer durationMaximum;
 
@@ -153,7 +154,12 @@ public class Program extends ResourceParent {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "program_id", nullable = false)
-    private Set<ResourceLocation> locations = Sets.newHashSet();
+    private Set<ResourceStudyOption> studyOptions = Sets.newHashSet();
+
+    @OrderBy(clause = "location")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "program_id", nullable = false)
+    private Set<ResourceStudyLocation> studyLocations = Sets.newHashSet();
 
     @OneToMany(mappedBy = "program")
     private Set<ResourceState> resourceStates = Sets.newHashSet();
@@ -167,9 +173,6 @@ public class Program extends ResourceParent {
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "PROGRAM_RELATION", joinColumns = @JoinColumn(name = "program_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "program_relation_id", nullable = false))
     private Set<Program> programRelations = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "program")
-    private Set<ResourceStudyOption> studyOptions = Sets.newHashSet();
 
     @OneToMany(mappedBy = "program")
     private Set<Project> projects = Sets.newHashSet();
@@ -454,12 +457,14 @@ public class Program extends ResourceParent {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    public Set<ResourceLocation> getLocations() {
-        return locations;
+    @Override
+    public Set<ResourceStudyOption> getStudyOptions() {
+        return studyOptions;
     }
 
-    public void setLocations(Set<ResourceLocation> locations) {
-        this.locations = locations;
+    @Override
+    public Set<ResourceStudyLocation> getStudyLocations() {
+        return studyLocations;
     }
 
     @Override
@@ -479,10 +484,6 @@ public class Program extends ResourceParent {
 
     public Set<Program> getProgramRelations() {
         return programRelations;
-    }
-
-    public Set<ResourceStudyOption> getStudyOptions() {
-        return studyOptions;
     }
 
     public Set<Project> getProjects() {
@@ -517,22 +518,6 @@ public class Program extends ResourceParent {
         return this;
     }
 
-    public Program withTitle(String title) {
-        setTitle(title);
-        return this;
-    }
-    
-    
-    public Program withDurationMinimum(Integer durationMinimum) {
-        this.durationMinimum = durationMinimum;
-        return this;
-    }
-    
-    public Program withDurationMaximum(Integer durationMaximum) {
-        this.durationMaximum = durationMaximum;
-        return this;
-    }
-
     public Program withState(State state) {
         this.state = state;
         return this;
@@ -540,21 +525,6 @@ public class Program extends ResourceParent {
 
     public Program withUser(User user) {
         this.user = user;
-        return this;
-    }
-
-    public Program withRequireProjectDefinition(boolean requireProjectDefinition) {
-        this.requireProjectDefinition = requireProjectDefinition;
-        return this;
-    }
-
-    public Program withImported(Boolean imported) {
-        this.imported = imported;
-        return this;
-    }
-    
-    public Program withOpportunityType(OpportunityType opportunityType) {
-        this.opportunityType = opportunityType;
         return this;
     }
 
@@ -573,6 +543,46 @@ public class Program extends ResourceParent {
         return this;
     }
 
+    public Program withAdvert(Advert advert) {
+        this.advert = advert;
+        return this;
+    }
+    
+    public Program withOpportunityType(OpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
+        return this;
+    }
+    
+    public Program withTitle(String title) {
+        setTitle(title);
+        return this;
+    }
+    
+    public Program withDurationMinimum(Integer durationMinimum) {
+        this.durationMinimum = durationMinimum;
+        return this;
+    }
+
+    public Program withDurationMaximum(Integer durationMaximum) {
+        this.durationMaximum = durationMaximum;
+        return this;
+    }
+
+    public Program withRequireProjectDefinition(boolean requireProjectDefinition) {
+        this.requireProjectDefinition = requireProjectDefinition;
+        return this;
+    }
+    
+    public Program withEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+        return this;
+    }
+    
+    public Program withImported(Boolean imported) {
+        this.imported = imported;
+        return this;
+    }
+    
     public Program withCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
         return this;
@@ -586,10 +596,6 @@ public class Program extends ResourceParent {
     public Program withUpdatedTimestampSitemap(DateTime updatedTimestampSitemap) {
         this.updatedTimestampSitemap = updatedTimestampSitemap;
         return this;
-    }
-
-    public void addLocation(String location) {
-        locations.add(new ResourceLocation().withLocation(location));
     }
 
     @Override

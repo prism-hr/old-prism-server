@@ -3,11 +3,9 @@ package com.zuehlke.pgadmissions.rest.dto;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -33,12 +31,11 @@ public class ProjectDTO {
 
     private Integer durationMaximum;
 
-    @Size(min = 1)
-    private PrismStudyOption[] studyOptions;
-
-    private List<String> locations = Lists.newArrayList();
-
     private LocalDate endDate;
+    
+    private List<PrismStudyOption> studyOptions;
+
+    private List<String> studyLocations;
 
     public PrismScope getResourceScope() {
         return resourceScope;
@@ -96,28 +93,28 @@ public class ProjectDTO {
         this.durationMaximum = durationMaximum;
     }
 
-    public PrismStudyOption[] getStudyOptions() {
-        return studyOptions;
-    }
-
-    public void setStudyOptions(PrismStudyOption[] studyOptions) {
-        this.studyOptions = studyOptions;
-    }
-
-    public List<String> getLocations() {
-        return locations;
-    }
-
-    public void setLocations(List<String> locations) {
-        this.locations = locations;
-    }
-
     public LocalDate getEndDate() {
         return endDate;
     }
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public List<PrismStudyOption> getStudyOptions() {
+        return studyOptions;
+    }
+
+    public void setStudyOptions(List<PrismStudyOption> studyOptions) {
+        this.studyOptions = studyOptions;
+    }
+
+    public List<String> getStudyLocations() {
+        return studyLocations;
+    }
+
+    public void setStudyLocations(List<String> studyLocations) {
+        this.studyLocations = studyLocations;
     }
 
 }

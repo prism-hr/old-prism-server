@@ -6,6 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PR
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,6 +19,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -30,15 +32,18 @@ import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.program.ResourceStudyLocation;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.ResourceAction;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Entity
 @Table(name = "PROJECT")
@@ -142,6 +147,15 @@ public class Project extends ResourceParent {
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
+    
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "project_id", nullable = false)
+    private Set<ResourceStudyOption> studyOptions = Sets.newHashSet();
+
+    @OrderBy(clause = "location")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "project_id", nullable = false)
+    private Set<ResourceStudyLocation> studyLocations = Sets.newHashSet();
 
     @OneToMany(mappedBy = "project")
     private Set<ResourceState> resourceStates = Sets.newHashSet();
@@ -416,6 +430,16 @@ public class Project extends ResourceParent {
     }
 
     @Override
+    public Set<ResourceStudyOption> getStudyOptions() {
+        return studyOptions;
+    }
+
+    @Override
+    public Set<ResourceStudyLocation> getStudyLocations() {
+        return studyLocations;
+    }
+
+    @Override
     public Integer getWorkflowPropertyConfigurationVersion() {
         return workflowPropertyConfigurationVersion;
     }
@@ -438,6 +462,11 @@ public class Project extends ResourceParent {
     @Override
     public Set<ResourceCondition> getResourceConditions() {
         return resourceConditions;
+    }
+    
+    public Project withResource(ResourceParent resource) {
+        PrismReflectionUtils.setProperty(this, resource.getResourceScope().getLowerCamelName(), resource);
+        return this;
     }
 
     public Project withUser(User user) {
@@ -464,6 +493,16 @@ public class Project extends ResourceParent {
         this.program = program;
         return this;
     }
+    
+    public Project withAdvert(Advert advert) {
+        this.advert = advert;
+        return this;
+    }
+    
+    public Project withOpportunityType(OpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
+        return this;
+    }
 
     public Project withTitle(String title) {
         this.title = title;
@@ -479,6 +518,12 @@ public class Project extends ResourceParent {
         this.durationMaximum = durationMaximum;
         return this;
     }
+    
+    public Project withEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+        return this;
+    }
+
 
     public Project withCode(String code) {
         this.code = code;

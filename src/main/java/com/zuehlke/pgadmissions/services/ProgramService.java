@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 
 import java.util.List;
 
@@ -182,7 +181,7 @@ public class ProgramService {
             searchEngineDTO.setRelatedProjects(projectService.getActiveProjectsByProgram(programId));
 
             List<String> relatedUsers = Lists.newArrayList();
-            List<User> programAcademics = userService.getUsersForResourceAndRoles(getById(programId), PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR);
+            List<User> programAcademics = userService.getUsersForResourceAndRoles(getById(programId), PROJECT_SUPERVISOR_GROUP.getRoles());
             for (User programAcademic : programAcademics) {
                 relatedUsers.add(programAcademic.getSearchEngineRepresentation());
             }

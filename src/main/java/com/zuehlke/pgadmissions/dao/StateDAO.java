@@ -6,6 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_COMPLETED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DEACTIVATED;
 
@@ -324,7 +325,7 @@ public class StateDAO {
 
 	private void appendImportedResourceConstraint(Criteria criteria, boolean importedResource) {
 		if (importedResource) {
-			criteria.add(Restrictions.ne("transitionState.id", PrismState.PROGRAM_DISABLED_COMPLETED)); //
+			criteria.add(Restrictions.ne("transitionState.id", PROGRAM_DISABLED_COMPLETED)); //
 		}
 	}
 

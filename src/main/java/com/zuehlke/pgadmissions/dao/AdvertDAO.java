@@ -1,26 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFilterCategory;
@@ -33,6 +12,21 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.*;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -40,7 +34,7 @@ public class AdvertDAO {
 
     @Autowired
     private SessionFactory sessionFactory;
-    
+
     public List<Integer> getAdverts(List<PrismState> institutionStates, List<PrismState> programStates, List<PrismState> projectStates,
             OpportunitiesQueryDTO queryDTO) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
@@ -238,6 +232,7 @@ public class AdvertDAO {
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(clazz) //
                 .setProjection(Projections.groupProperty(propertyName)) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.institution", "institution", JoinType.INNER_JOIN) //
                 .createAlias("advert.program", "program", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.project", "project", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("project.program", "projectProgram", JoinType.LEFT_OUTER_JOIN) //
@@ -245,7 +240,7 @@ public class AdvertDAO {
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNull("program.institution")) //
                                 .add(Restrictions.isNull("project.institution")) //
-                                .add(Restrictions.eq("advert.institution", institution))) //
+                                .add(Restrictions.eqProperty("advert", "institution.advert"))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNull("advert.institution")) //
                                 .add(Restrictions.isNull("project.institution")) //

@@ -266,7 +266,7 @@ public class ResourceService {
         entityService.flush();
     }
 
-    public void processResource(Resource resource, Comment comment) throws DeduplicationException {
+    public void processResource(Resource resource, Comment comment) {
         StateDurationDefinition stateDurationDefinition = resource.getState().getStateDurationDefinition();
         if (comment.isStateTransitionComment() || (stateDurationDefinition != null && BooleanUtils.isTrue(stateDurationDefinition.getEscalation()))) {
             LocalDate baselineCustom = null;
@@ -287,7 +287,7 @@ public class ResourceService {
         }
     }
 
-    public void postProcessResource(Resource resource, Comment comment) throws DeduplicationException {
+    public void postProcessResource(Resource resource, Comment comment) {
         DateTime baselineTime = new DateTime();
 
         if (comment.isUserComment() || resource.getSequenceIdentifier() == null) {

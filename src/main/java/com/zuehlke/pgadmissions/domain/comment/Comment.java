@@ -4,10 +4,13 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse.UNSURE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_REJECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_REVERSE_REJECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_WITHDRAW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
@@ -24,6 +27,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DEACTIVATED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_WITHDRAWN;
 
 import java.math.BigDecimal;
@@ -63,7 +67,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -689,7 +692,7 @@ public class Comment {
     }
 
     public boolean isApplicationCompletionComment() {
-        return Arrays.asList(PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION, PrismAction.APPLICATION_CONFIRM_REJECTION, PrismAction.APPLICATION_WITHDRAW)
+        return Arrays.asList(APPLICATION_CONFIRM_OFFER_RECOMMENDATION, APPLICATION_CONFIRM_REJECTION, APPLICATION_WITHDRAW)
                 .contains(action.getId()) || isApplicationAutomatedRejectionComment() || isApplicationAutomatedWithdrawalComment();
     }
 
@@ -698,8 +701,8 @@ public class Comment {
     }
 
     public boolean isApplicationAutomatedRejectionComment() {
-        return action.getId() == PrismAction.APPLICATION_ESCALATE && state.getStateGroup().getId() != PrismStateGroup.APPLICATION_REJECTED
-                && transitionState.getStateGroup().getId() == PrismStateGroup.APPLICATION_REJECTED;
+        return action.getId() == APPLICATION_ESCALATE && state.getStateGroup().getId() != APPLICATION_REJECTED
+                && transitionState.getStateGroup().getId() == APPLICATION_REJECTED;
     }
 
     public boolean isApplicationAutomatedWithdrawalComment() {

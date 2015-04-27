@@ -6,8 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.I
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_CREATE_INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 
@@ -241,17 +240,18 @@ public class InstitutionService {
     }
 
     public SearchEngineAdvertDTO getSearchEngineAdvert(Integer institutionId) {
+        List<PrismState> activeInsitutionStates = stateService.getActiveInstitutionStates();
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        SearchEngineAdvertDTO searchEngineDTO = institutionDAO.getSearchEngineAdvert(institutionId, activeProgramStates, activeProjectStates);
+        SearchEngineAdvertDTO searchEngineDTO = institutionDAO.getSearchEngineAdvert(institutionId, activeInsitutionStates, activeProgramStates,
+                activeProjectStates);
 
         if (searchEngineDTO != null) {
             searchEngineDTO.setRelatedPrograms(programService.getActiveProgramsByInstitution(institutionId));
             searchEngineDTO.setRelatedProjects(projectService.getActiveProjectsByInstitution(institutionId));
 
             List<String> relatedUsers = Lists.newArrayList();
-            List<User> institutionAcademics = userService.getUsersForResourceAndRoles(getById(institutionId), PROJECT_PRIMARY_SUPERVISOR,
-                    PROJECT_SECONDARY_SUPERVISOR);
+            List<User> institutionAcademics = userService.getUsersForResourceAndRoles(getById(institutionId), PROJECT_SUPERVISOR_GROUP.getRoles());
             for (User institutionAcademic : institutionAcademics) {
                 relatedUsers.add(institutionAcademic.getSearchEngineRepresentation());
             }
@@ -262,9 +262,10 @@ public class InstitutionService {
     }
 
     public List<ResourceSearchEngineDTO> getActiveInstitions() {
+        List<PrismState> activeInsitutionStates = stateService.getActiveInstitutionStates();
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        return institutionDAO.getRelatedInstitutions(activeProgramStates, activeProjectStates);
+        return institutionDAO.getRelatedInstitutions(activeInsitutionStates, activeProgramStates, activeProjectStates);
     }
 
     public void disableInstitutionDomiciles(List<String> updates) {

@@ -205,7 +205,7 @@ public class Application extends Resource {
     @Column(name = "application_month")
     private Integer applicationMonth;
     
-    @Column(name = "application_month_seqence")
+    @Column(name = "application_month_sequence")
     private Integer applicationMonthSequence;
 
     @ManyToOne

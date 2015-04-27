@@ -2,11 +2,11 @@ package com.zuehlke.pgadmissions.rest.converter;
 
 import org.dozer.DozerConverter;
 
-import com.zuehlke.pgadmissions.domain.program.ResourceStudyLocation;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
 
-public class ProgramLocationConverter extends DozerConverter<ResourceStudyLocation, String> {
+public class ResourceStudyLocationConverter extends DozerConverter<ResourceStudyLocation, String> {
 
-    public ProgramLocationConverter() {
+    public ResourceStudyLocationConverter() {
         super(ResourceStudyLocation.class, String.class);
     }
 

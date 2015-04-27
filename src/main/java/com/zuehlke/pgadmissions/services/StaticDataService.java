@@ -162,7 +162,6 @@ public class StaticDataService {
 
         staticData.put("timeZones", TimeZoneUtils.getInstance().getTimeZoneDefinitions());
         staticData.put("currencies", institutionService.listAvailableCurrencies());
-        staticData.put("defaultProgramType", PrismOpportunityType.getSystemOpportunityType());
         staticData.put("googleApiKey", googleApiKey);
 
         return staticData;

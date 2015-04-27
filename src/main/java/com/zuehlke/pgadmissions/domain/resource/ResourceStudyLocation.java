@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.domain.program;
+package com.zuehlke.pgadmissions.domain.resource;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,9 +11,8 @@ import javax.persistence.UniqueConstraint;
 
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParentAttribute;
 
 @Entity
 @Table(name = "RESOURCE_STUDY_LOCATION", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "study_location" }),

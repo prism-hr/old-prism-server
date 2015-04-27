@@ -38,7 +38,7 @@ public enum PrismScope {
     APPLICATION(APPLICATION_CATEGORY, Application.class, "AN", new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null,
             ApplicationCreator.class, ApplicationPersister.class);
 
-    private static final Map<Class<? extends Resource>, PrismScope> byResourceClass = Maps.newHashMap();
+    private static Map<Class<? extends Resource>, PrismScope> byResourceClass = Maps.newHashMap();
 
     static {
         for (PrismScope scope : values()) {
@@ -84,11 +84,11 @@ public enum PrismScope {
         return shortCode;
     }
 
-    public final HashMultimap<String, String> getConsoleListCustomColumns() {
+    public HashMultimap<String, String> getConsoleListCustomColumns() {
         return consoleListCustomColumns;
     }
 
-    public final HashMultimap<String, String> getReportListCustomColumns() {
+    public HashMultimap<String, String> getReportListCustomColumns() {
         return reportListCustomColumns;
     }
 
@@ -114,7 +114,7 @@ public enum PrismScope {
 
     private static class ColumnDefinition {
 
-        private final HashMultimap<String, String> definitions = HashMultimap.create();
+        private HashMultimap<String, String> definitions = HashMultimap.create();
 
         public ColumnDefinition add(String table, String column) {
             definitions.put(table, column);

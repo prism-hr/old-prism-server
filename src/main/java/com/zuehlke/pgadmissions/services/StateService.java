@@ -147,7 +147,6 @@ public class StateService {
 
     public StateTransition executeStateTransition(Resource resource, Action action, Comment comment, boolean notify) throws Exception {
         comment.setResource(resource);
-
         resourceService.persistResource(resource, comment);
         commentService.persistComment(resource, comment);
 
@@ -180,7 +179,6 @@ public class StateService {
 
         commentService.postProcessComment(resource, comment);
         resourceService.postProcessResource(resource, comment);
-
         return stateTransition;
     }
 

@@ -1,14 +1,23 @@
 package com.zuehlke.pgadmissions.utils;
 
+import static java.math.RoundingMode.HALF_UP;
+
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ConversionUtils {
+public class PrismConversionUtils {
+
+    public static BigDecimal doubleToBigDecimal(Double input, int precision) {
+        return input == null ? null : BigDecimal.valueOf(input).setScale(precision, HALF_UP);
+    }
 
     public static BigDecimal floatToBigDecimal(Float input, int precision) {
-        return input == null ? null : BigDecimal.valueOf(input).setScale(precision, RoundingMode.HALF_UP);
+        return input == null ? null : BigDecimal.valueOf(input).setScale(precision, HALF_UP);
+    }
+
+    public static Integer longToInteger(Long input) {
+        return input == null ? null : input.intValue();
     }
 
     public static Map<String, String> getQueryMap(String query)

@@ -152,12 +152,10 @@ public class PrismApplicationWorkflow {
                 .withTransitions(stateTransitions);
     }
 
-    public static PrismStateAction applicationPurge(PrismState state) {
+    public static PrismStateAction applicationPurge(PrismStateTransitionGroup stateTransitions) {
         return new PrismStateAction() //
                 .withAction(APPLICATION_PURGE) //
-                .withTransitions(new PrismStateTransition() //
-                        .withTransitionState(state) //
-                        .withTransitionAction(APPLICATION_PURGE));
+                .withTransitions(stateTransitions);
     }
 
     public static PrismStateAction applicationUploadReference(PrismState state) {

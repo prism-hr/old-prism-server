@@ -336,8 +336,7 @@ public class AdvertService {
     }
 
     public boolean getAcceptingApplications(List<PrismState> activeProgramStates, List<PrismState> activeProjectStates, Advert advert) {
-        return (advert.isProgramAdvert() && activeProgramStates.contains(advert.getProgram().getState().getId()))
-                || (advert.isProjectAdvert() && activeProjectStates.contains(advert.getProject().getState().getId()));
+        return resourceService.getResourceAcceptingApplications(advert.getResource()) != null;
     }
 
     private String getCurrencyAtLocale(Advert advert) {
@@ -525,7 +524,7 @@ public class AdvertService {
         updateAddress(addressDTO, address);
         return address;
     }
-    
+
     private void updateAddress(Advert advert, InstitutionAddressDTO addressDTO) {
         InstitutionAddress address = advert.getAddress();
         if (address == null) {
@@ -545,7 +544,7 @@ public class AdvertService {
         address.setAddressCode(addressDTO.getAddressCode());
         geocodableLocationService.setLocation(address);
     }
-    
+
     private void updatePartner(User user, Advert advert, InstitutionPartnerDTO partnerDTO) throws Exception {
         Institution partner = null;
         Integer partnerId = partnerDTO.getPartnerId();

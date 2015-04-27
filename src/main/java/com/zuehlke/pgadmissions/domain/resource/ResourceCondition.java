@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -26,115 +27,132 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
         @UniqueConstraint(columnNames = { "project_id", "action_condition" }), @UniqueConstraint(columnNames = { "application_id", "action_condition" }) })
 public class ResourceCondition extends WorkflowResourceExecution {
 
-	@Id
-	@GeneratedValue
-	private Integer id;
+    @Id
+    @GeneratedValue
+    private Integer id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "system_id")
-	private System system;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "system_id", insertable = false, updatable = false)
+    private System system;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "institution_id")
-	private Institution institution;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "institution_id", insertable = false, updatable = false)
+    private Institution institution;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "program_id")
-	private Program program;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "program_id", insertable = false, updatable = false)
+    private Program program;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "project_id")
-	private Project project;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id", insertable = false, updatable = false)
+    private Project project;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "application_id")
-	private Application application;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "application_id", insertable = false, updatable = false)
+    private Application application;
 
-	@Column(name = "action_condition")
-	@Enumerated(EnumType.STRING)
-	private PrismActionCondition actionCondition;
+    @Column(name = "action_condition")
+    @Enumerated(EnumType.STRING)
+    private PrismActionCondition actionCondition;
 
-	@Override
-	public Integer getId() {
-		return id;
-	}
+    @Override
+    public Integer getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	@Override
-	public System getSystem() {
-		return system;
-	}
+    @Override
+    public System getSystem() {
+        return system;
+    }
 
-	@Override
-	public void setSystem(System system) {
-		this.system = system;
-	}
+    @Override
+    public void setSystem(System system) {
+        this.system = system;
+    }
 
-	@Override
-	public Institution getInstitution() {
-		return institution;
-	}
+    @Override
+    public Institution getInstitution() {
+        return institution;
+    }
 
-	@Override
-	public void setInstitution(Institution institution) {
-		this.institution = institution;
-	}
+    @Override
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
 
-	@Override
-	public Program getProgram() {
-		return program;
-	}
+    @Override
+    public Program getProgram() {
+        return program;
+    }
 
-	@Override
-	public void setProgram(Program program) {
-		this.program = program;
-	}
+    @Override
+    public void setProgram(Program program) {
+        this.program = program;
+    }
 
-	@Override
-	public Project getProject() {
-		return project;
-	}
+    @Override
+    public Project getProject() {
+        return project;
+    }
 
-	@Override
-	public void setProject(Project project) {
-		this.project = project;
-	}
+    @Override
+    public void setProject(Project project) {
+        this.project = project;
+    }
 
-	@Override
-	public Application getApplication() {
-		return application;
-	}
+    @Override
+    public Application getApplication() {
+        return application;
+    }
 
-	@Override
-	public void setApplication(Application application) {
-		this.application = application;
-	}
+    @Override
+    public void setApplication(Application application) {
+        this.application = application;
+    }
 
-	public PrismActionCondition getActionCondition() {
-		return actionCondition;
-	}
+    public PrismActionCondition getActionCondition() {
+        return actionCondition;
+    }
 
-	public void setActionCondition(PrismActionCondition actionCondition) {
-		this.actionCondition = actionCondition;
-	}
+    public void setActionCondition(PrismActionCondition actionCondition) {
+        this.actionCondition = actionCondition;
+    }
 
-	public ResourceCondition withResource(Resource resource) {
-		setResource(resource);
-		return this;
-	}
+    public ResourceCondition withResource(Resource resource) {
+        setResource(resource);
+        return this;
+    }
 
-	public ResourceCondition withActionCondition(PrismActionCondition actionCondition) {
-		this.actionCondition = actionCondition;
-		return this;
-	}
+    public ResourceCondition withActionCondition(PrismActionCondition actionCondition) {
+        this.actionCondition = actionCondition;
+        return this;
+    }
 
-	@Override
-	public ResourceSignature getResourceSignature() {
-		return super.getResourceSignature().addProperty("actionCondition", actionCondition);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getResource(), actionCondition);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        final ResourceCondition other = (ResourceCondition) object;
+        return Objects.equal(getResource(), other.getResource()) && Objects.equal(actionCondition, other.getActionCondition());
+    }
+
+    @Override
+    public ResourceSignature getResourceSignature() {
+        return super.getResourceSignature().addProperty("actionCondition", actionCondition);
+    }
 
 }

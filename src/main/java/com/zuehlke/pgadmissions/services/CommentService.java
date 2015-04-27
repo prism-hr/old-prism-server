@@ -409,14 +409,6 @@ public class CommentService {
         entityService.flush();
     }
 
-    public void delete(Application application, Comment exclusion) {
-        for (Comment comment : application.getComments()) {
-            if (comment != exclusion) {
-                entityService.delete(comment);
-            }
-        }
-    }
-
     public void preProcessComment(Resource resource, Comment comment) throws Exception {
         if (comment.isApplicationAssignRefereesComment()) {
             appendApplicationReferees(resource, comment);

@@ -51,6 +51,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
@@ -58,6 +59,7 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
+import com.zuehlke.pgadmissions.dto.ApplicationRatingSummaryDTO;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.OtherApplicationSummaryRepresentation;
 
 import freemarker.template.Template;
@@ -152,7 +154,7 @@ public class ApplicationDAO {
                 .add(Restrictions.eq("user", user)) //
                 .uniqueResult();
     }
-    
+
     public List<User> getUnassignedApplicationReferees(Application application) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
                 .setProjection(Projections.property("user")) //
@@ -325,6 +327,21 @@ public class ApplicationDAO {
                 .addScalar("applicationMonth", IntegerType.INSTANCE) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
                 .list();
+    }
+
+    public ApplicationRatingSummaryDTO getApplicationRatingSummary(ResourceParent parent) {
+        String resourceReference = parent.getResourceScope().getLowerCamelName();
+        return (ApplicationRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty(resourceReference), "parent") //
+                        .add(Projections.sum("applicationRatingCount"), "applicationRatingCount") //
+                        .add(Projections.countDistinct("id"), "applicationRatingApplications") //
+                        .add(Projections.avg("applicationRatingAverage"), "applicationRatingAverage")) //
+                .add(Restrictions.eq(resourceReference, parent)) //
+                .add(Restrictions.isNotNull("applicationRatingCount")) //
+                .setResultTransformer(Transformers.aliasToBean(ApplicationRatingSummaryDTO.class)) //
+                .uniqueResult();
+
     }
 
     private SQLQuery getApplicationProcessingSummaryQuery(PrismScope resourceScope, String templateLocation) throws Exception {

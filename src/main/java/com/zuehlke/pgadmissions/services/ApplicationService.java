@@ -17,7 +17,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.UNCONDI
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE;
+import static java.math.RoundingMode.HALF_UP;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -90,6 +92,7 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
+import com.zuehlke.pgadmissions.dto.ApplicationRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
@@ -313,6 +316,10 @@ public class ApplicationService {
             synchroniseApplicationReferees(application, comment);
         }
 
+        if (comment.isApplicationRatingComment()) {
+            summariseApplicationRating(application);
+        }
+
         if (comment.isApplicationConfirmOfferRecommendationComment()) {
             synchroniseOfferRecommendation(application, comment);
         }
@@ -323,10 +330,6 @@ public class ApplicationService {
 
         if (comment.isApplicationCompletionComment()) {
             application.setCompletionDate(comment.getCreatedTimestamp().toLocalDate());
-        }
-
-        if (comment.isApplicationPurgeComment()) {
-            purgeApplication(application, comment);
         }
     }
 
@@ -556,25 +559,6 @@ public class ApplicationService {
                 .getUserAdministratorApplications(userAdministratorResources);
     }
 
-    private void purgeApplication(Application application, Comment comment) {
-        if (!application.getRetain()) {
-            application.setProgramDetail(null);
-            application.getSupervisors().clear();
-            application.setPersonalDetail(null);
-            application.setAddress(null);
-            application.getQualifications().clear();
-            application.getEmploymentPositions().clear();
-            application.getFundings().clear();
-            application.getReferees().clear();
-            application.setDocument(null);
-            application.setAdditionalInformation(null);
-        }
-
-        application.setApplicationRatingCount(null);
-        application.setApplicationRatingAverage(null);
-        commentService.delete(application, comment);
-    }
-    
     private void synchroniseProjectSupervisors(Application application) {
         List<User> supervisorUsers = roleService.getRoleUsers(application.getProject(), PROJECT_SUPERVISOR_GROUP);
         for (User supervisorUser : supervisorUsers) {
@@ -595,6 +579,17 @@ public class ApplicationService {
             application.setConfirmedOfferType(offerDetail.getAppointmentConditions() == null ? UNCONDITIONAL : CONDITIONAL);
         }
         application.getUser().getUserAccount().setSendApplicationRecommendationNotification(false);
+    }
+    
+    private void summariseApplicationRating(Application application) {
+        for (ResourceParent parent : application.getParentResources()) {
+            ApplicationRatingSummaryDTO ratingSummary = applicationDAO.getApplicationRatingSummary(parent);
+            Integer ratingCount = ratingSummary.getApplicationRatingCount().intValue();
+            Integer ratingApplications = ratingSummary.getApplicationRatingApplications().intValue();
+            parent.setApplicationRatingCount(ratingCount);
+            parent.setApplicationRatingFrequency(new BigDecimal(ratingCount).divide(new BigDecimal(ratingApplications).setScale(2, HALF_UP)));
+            parent.setApplicationRatingAverage(BigDecimal.valueOf(ratingSummary.getApplicationRatingAverage()).setScale(2, HALF_UP));
+        }
     }
 
     private LocalDate getRecommendedStartDate(Application application, ResourceStudyOption studyOption, LocalDate baseline) {

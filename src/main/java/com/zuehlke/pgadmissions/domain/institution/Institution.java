@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.institution;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -97,6 +98,15 @@ public class Institution extends ResourceParent {
     @Column(name = "ucl_institution", nullable = false)
     private Boolean uclInstitution;
 
+    @Column(name = "application_rating_count")
+    private Integer applicationRatingCount;
+
+    @Column(name = "application_rating_frequency")
+    private BigDecimal applicationRatingFrequency;
+
+    @Column(name = "application_rating_average")
+    private BigDecimal applicationRatingAverage;
+
     @ManyToOne
     @JoinColumn(name = "state_id")
     private State state;
@@ -108,7 +118,7 @@ public class Institution extends ResourceParent {
     @Column(name = "end_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate endDate;
-    
+
     @Column(name = "due_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate dueDate;
@@ -142,6 +152,10 @@ public class Institution extends ResourceParent {
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "institution_id", nullable = false)
+    private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "institution_id", nullable = false)
@@ -157,9 +171,6 @@ public class Institution extends ResourceParent {
 
     @OneToMany(mappedBy = "institution")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "institution")
-    private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
     @OneToMany(mappedBy = "institution")
     private Set<ImportedEntityFeed> importedEntityFeeds = Sets.newHashSet();
@@ -275,6 +286,36 @@ public class Institution extends ResourceParent {
     }
 
     @Override
+    public Integer getApplicationRatingCount() {
+        return applicationRatingCount;
+    }
+
+    @Override
+    public void setApplicationRatingCount(Integer applicationRatingCount) {
+        this.applicationRatingCount = applicationRatingCount;
+    }
+
+    @Override
+    public BigDecimal getApplicationRatingFrequency() {
+        return applicationRatingFrequency;
+    }
+
+    @Override
+    public void setApplicationRatingFrequency(BigDecimal applicationRatingFrequency) {
+        this.applicationRatingFrequency = applicationRatingFrequency;
+    }
+
+    @Override
+    public BigDecimal getApplicationRatingAverage() {
+        return applicationRatingAverage;
+    }
+
+    @Override
+    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+        this.applicationRatingAverage = applicationRatingAverage;
+    }
+
+    @Override
     public Set<ResourceState> getResourceStates() {
         return resourceStates;
     }
@@ -342,7 +383,7 @@ public class Institution extends ResourceParent {
         this.businessYearStartMonth = businessYearStartMonth;
         return this;
     }
-    
+
     public Institution withState(State state) {
         this.state = state;
         return this;
@@ -357,7 +398,7 @@ public class Institution extends ResourceParent {
         this.uclInstitution = uclInstitution;
         return this;
     }
-    
+
     public Institution withEndDate(LocalDate endDate) {
         this.endDate = endDate;
         return this;
@@ -454,7 +495,7 @@ public class Institution extends ResourceParent {
     public void setPreviousState(State previousState) {
         this.previousState = previousState;
     }
-    
+
     @Override
     public LocalDate getEndDate() {
         return endDate;

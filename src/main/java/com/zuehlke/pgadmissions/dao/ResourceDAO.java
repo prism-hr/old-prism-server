@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.SEQUENCE_IDENTIFIER;
 
 import java.util.ArrayList;
@@ -131,7 +133,7 @@ public class ResourceDAO {
                 .executeUpdate();
     }
 
-    public List<ResourceListRowDTO> getResourceConsoleList(User user, PrismScope scopeId, List<PrismScope> parentScopeIds,
+    public List<ResourceListRowDTO> getResourceList(User user, PrismScope scopeId, List<PrismScope> parentScopeIds,
             Set<Integer> assignedResources, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords, boolean hasRedactions) {
         if (assignedResources.isEmpty()) {
             return new ArrayList<ResourceListRowDTO>(0);
@@ -376,6 +378,20 @@ public class ResourceDAO {
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("state.stateGroup.id", stateGroup)) //
                 .list();
+    }
+
+    public ResourceParent getResourceAcceptingApplications(Resource resource) {
+        String resourceReference = resource.getResourceScope().getLowerCamelName();
+        return (ResourceParent) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resourceReference, resource)) //
+                .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_APPLICATION)) //
+                .add(Restrictions.eq("action.creationScope", APPLICATION)) //
+                .uniqueResult();
     }
 
     private void addResourceListCustomColumns(PrismScope scopeId, ProjectionList projectionList) {

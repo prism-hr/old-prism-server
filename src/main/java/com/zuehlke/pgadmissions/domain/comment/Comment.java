@@ -684,10 +684,6 @@ public class Comment {
         return action.getId() == PrismAction.APPLICATION_COMPLETE;
     }
 
-    public boolean isApplicationPurgeComment() {
-        return action.getId() == PrismAction.APPLICATION_PURGE;
-    }
-
     public boolean isApplicationRatingComment() {
         return action.getRatingAction() && !declinedResponse;
     }

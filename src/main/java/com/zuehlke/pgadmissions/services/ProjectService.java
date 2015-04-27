@@ -41,6 +41,7 @@ import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceParentAttributesDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
@@ -116,12 +117,15 @@ public class ProjectService {
         Project project = new Project().withUser(user).withResource(resource).withDepartment(department).withAdvert(advert)
                 .withOpportunityType(opportunityType).withTitle(advert.getTitle()).withDurationMinimum(projectDTO.getDurationMinimum())
                 .withDurationMaximum(projectDTO.getDurationMaximum()).withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD));
+        
+        ResourceParentAttributesDTO attributes = projectDTO.getAttributes();
+        resourceService.setResourceConditions(project, attributes.getConditions());
 
         if (!imported) {
-            resourceService.setStudyOptions(resource, projectDTO.getStudyOptions(), new LocalDate());
+            resourceService.setStudyOptions(project, attributes.getStudyOptions(), new LocalDate());
         }
-
-        resourceService.setStudyLocations(resource, projectDTO.getStudyLocations());
+        
+        resourceService.setStudyLocations(project, attributes.getStudyLocations());
         return project;
     }
 
@@ -246,8 +250,6 @@ public class ProjectService {
         project.setDurationMinimum(projectDTO.getDurationMinimum());
         project.setDurationMaximum(projectDTO.getDurationMaximum());
 
-        resourceService.setStudyLocations(project, projectDTO.getStudyLocations());
-
         Program program = null;
         boolean imported = false;
         ResourceParent resource = (ResourceParent) project.getParentResource();
@@ -256,20 +258,25 @@ public class ProjectService {
             imported = BooleanUtils.isTrue(program.getImported());
         }
 
+        ResourceParentAttributesDTO attributes = projectDTO.getAttributes();
+        resourceService.setResourceConditions(project, attributes.getConditions());
+        
         if (!imported) {
             OpportunityType opportunityType = importedEntityService.getByCode(OpportunityType.class, //
-                    program.getInstitution(), projectDTO.getOpportunityType().name());
+                    project.getInstitution(), projectDTO.getOpportunityType().name());
 
-            program.setOpportunityType(opportunityType);
-            program.setTitle(advert.getTitle());
+            project.setOpportunityType(opportunityType);
+            project.setTitle(advert.getTitle());
 
             LocalDate endDate = projectDTO.getEndDate();
             if (endDate != null) {
-                program.setEndDate(endDate);
+                project.setEndDate(endDate);
             }
 
-            resourceService.setStudyOptions(program, projectDTO.getStudyOptions(), new LocalDate());
+            resourceService.setStudyOptions(project, attributes.getStudyOptions(), new LocalDate());
         }
+        
+        resourceService.setStudyLocations(project, attributes.getStudyLocations());
     }
 
 }

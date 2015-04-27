@@ -1,11 +1,5 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.APPLICATION_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION_CATEGORY;
-
-import java.util.Map;
-
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
@@ -15,6 +9,10 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
+
+import java.util.Map;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.*;
 
 public enum PrismScope {
 
@@ -42,7 +40,7 @@ public enum PrismScope {
 
 	private HashMultimap<String, String> reportListCustomColumns;
 
-	private PrismScope(PrismScopeCategory prismScopeCategory, Class<? extends Resource> resourceClass, String shortCode,
+	PrismScope(PrismScopeCategory prismScopeCategory, Class<? extends Resource> resourceClass, String shortCode,
 	        HashMultimap<String, String> consoleListCustomColumns, HashMultimap<String, String> reportListCustomColumns) {
 		this.prismScopeCategory = prismScopeCategory;
 		this.resourceClass = resourceClass;
@@ -63,11 +61,11 @@ public enum PrismScope {
 		return shortCode;
 	}
 
-	public final HashMultimap<String, String> getConsoleListCustomColumns() {
+	public HashMultimap<String, String> getConsoleListCustomColumns() {
 		return consoleListCustomColumns;
 	}
 
-	public final HashMultimap<String, String> getReportListCustomColumns() {
+	public HashMultimap<String, String> getReportListCustomColumns() {
 		return reportListCustomColumns;
 	}
 

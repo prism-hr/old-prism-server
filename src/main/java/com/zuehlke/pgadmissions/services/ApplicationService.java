@@ -54,7 +54,6 @@ import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.TableRow;
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
@@ -100,7 +99,6 @@ import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
-import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentApplicationOfferDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentApplicationPositionDetailDTO;
@@ -172,18 +170,6 @@ public class ApplicationService {
 
     public Application getById(Integer id) {
         return entityService.getById(Application.class, id);
-    }
-
-    public Application create(User user, ApplicationDTO applicationDTO) throws Exception {
-        Resource parentResource = entityService.getById(applicationDTO.getResourceScope().getResourceClass(), applicationDTO.getResourceId());
-        return new Application().withUser(user).withParentResource(parentResource)
-                .withAdvert((Advert) PrismReflectionUtils.getProperty(parentResource, "advert"))
-                .withRetain(false).withCreatedTimestamp(new DateTime());
-    }
-
-    public void save(Application application) throws Exception {
-        prepopulateApplication(application);
-        entityService.save(application);
     }
 
     public Application getByCode(String code) {
@@ -559,6 +545,20 @@ public class ApplicationService {
                 .getUserAdministratorApplications(userAdministratorResources);
     }
 
+    public void prepopulateApplication(Application application) throws Exception {
+        Application previousApplication = applicationDAO.getPreviousSubmittedApplication(application);
+        if (previousApplication != null) {
+            applicationContext.getBean(ApplicationCopyHelper.class).copyApplication(application, previousApplication);
+            BeanPropertyBindingResult errors = validateApplication(application);
+            for (ObjectError error : errors.getAllErrors()) {
+                Object property = PrismReflectionUtils.getProperty(application, error.getObjectName());
+                if (ApplicationSection.class.isAssignableFrom(property.getClass())) {
+                    PrismReflectionUtils.setProperty(property, "lastUpdatedTimestamp", null);
+                }
+            }
+        }
+    }
+
     private void synchroniseProjectSupervisors(Application application) {
         List<User> supervisorUsers = roleService.getRoleUsers(application.getProject(), PROJECT_SUPERVISOR_GROUP);
         for (User supervisorUser : supervisorUsers) {
@@ -580,7 +580,7 @@ public class ApplicationService {
         }
         application.getUser().getUserAccount().setSendApplicationRecommendationNotification(false);
     }
-    
+
     private void summariseApplicationRating(Application application) {
         for (ResourceParent parent : application.getParentResources()) {
             ApplicationRatingSummaryDTO ratingSummary = applicationDAO.getApplicationRatingSummary(parent);
@@ -623,20 +623,6 @@ public class ApplicationService {
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(application, "application");
         ValidationUtils.invokeValidator(applicationValidator, application, errors);
         return errors;
-    }
-
-    private void prepopulateApplication(Application application) throws Exception {
-        Application previousApplication = applicationDAO.getPreviousSubmittedApplication(application);
-        if (previousApplication != null) {
-            applicationContext.getBean(ApplicationCopyHelper.class).copyApplication(application, previousApplication);
-            BeanPropertyBindingResult errors = validateApplication(application);
-            for (ObjectError error : errors.getAllErrors()) {
-                Object property = PrismReflectionUtils.getProperty(application, error.getObjectName());
-                if (ApplicationSection.class.isAssignableFrom(property.getClass())) {
-                    PrismReflectionUtils.setProperty(property, "lastUpdatedTimestamp", null);
-                }
-            }
-        }
     }
 
 }

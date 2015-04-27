@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.ADVERT_TRIAL_PERIOD;
 
 import java.util.List;
 
@@ -40,7 +39,7 @@ import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
-import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
+import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceParentAttributesDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -86,49 +85,6 @@ public class ProjectService {
         return entityService.getById(Project.class, id);
     }
 
-    public void save(Project project) {
-        entityService.save(project);
-    }
-
-    public Project create(User user, ProjectDTO projectDTO) throws Exception {
-        PrismScope resourceScope = projectDTO.getResourceScope();
-        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, projectDTO.getResourceId());
-
-        AdvertDTO advertDTO = projectDTO.getAdvert();
-        Advert advert = advertService.createAdvert(user, advertDTO);
-
-        DepartmentDTO departmentDTO = projectDTO.getDepartment();
-        Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(departmentDTO);
-
-        Program program = null;
-        boolean imported = false;
-        if (resourceScope == PROGRAM) {
-            program = (Program) resource;
-            imported = BooleanUtils.isTrue(program.getImported());
-        }
-
-        OpportunityType opportunityType;
-        if (imported) {
-            opportunityType = program.getOpportunityType();
-        } else {
-            opportunityType = importedEntityService.getByCode(OpportunityType.class, resource.getInstitution(), projectDTO.getOpportunityType().name());
-        }
-
-        Project project = new Project().withUser(user).withResource(resource).withDepartment(department).withAdvert(advert)
-                .withOpportunityType(opportunityType).withTitle(advert.getTitle()).withDurationMinimum(projectDTO.getDurationMinimum())
-                .withDurationMaximum(projectDTO.getDurationMaximum()).withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD));
-        
-        ResourceParentAttributesDTO attributes = projectDTO.getAttributes();
-        resourceService.setResourceConditions(project, attributes.getConditions());
-
-        if (!imported) {
-            resourceService.setStudyOptions(project, attributes.getStudyOptions(), new LocalDate());
-        }
-        
-        resourceService.setStudyLocations(project, attributes.getStudyLocations());
-        return project;
-    }
-
     public ActionOutcomeDTO executeAction(Integer programId, CommentDTO commentDTO) throws Exception {
         User user = userService.getById(commentDTO.getUser());
         Project project = getById(programId);
@@ -141,7 +97,7 @@ public class ProjectService {
         String commentContent = viewEditAction ? applicationContext.getBean(PropertyLoader.class).localize(project)
                 .load(PrismDisplayPropertyDefinition.PROJECT_COMMENT_UPDATED) : commentDTO.getContent();
 
-        ProjectDTO projectDTO = (ProjectDTO) commentDTO.fetchResourceDTO();
+        OpportunityDTO projectDTO = (OpportunityDTO) commentDTO.getResource();
         LocalDate dueDate = projectDTO.getEndDate();
 
         State transitionState = stateService.getById(commentDTO.getTransitionState());
@@ -236,7 +192,7 @@ public class ProjectService {
         return projectDAO.getActiveProjectsByInstitution(institutionId, activeStates);
     }
 
-    private void update(Integer projectId, ProjectDTO projectDTO) throws Exception {
+    private void update(Integer projectId, OpportunityDTO projectDTO) throws Exception {
         Program project = entityService.getById(Program.class, projectId);
 
         DepartmentDTO departmentDTO = projectDTO.getDepartment();

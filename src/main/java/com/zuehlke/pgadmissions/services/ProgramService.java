@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.ADVERT_TRIAL_PERIOD;
 
 import java.util.List;
 
@@ -34,7 +33,7 @@ import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
-import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
+import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceParentAttributesDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
@@ -104,25 +103,6 @@ public class ProgramService {
         return programDAO.getPrograms();
     }
 
-    public Program create(User user, ProgramDTO programDTO) throws Exception {
-        Institution institution = institutionService.getById(programDTO.getInstitutionId());
-
-        AdvertDTO advertDTO = programDTO.getAdvert();
-        Advert advert = advertService.createAdvert(user, advertDTO);
-
-        DepartmentDTO departmentDTO = programDTO.getDepartment();
-        Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(departmentDTO);
-        OpportunityType opportunityType = importedEntityService.getByCode(OpportunityType.class, institution, programDTO.getOpportunityType().name());
-
-        Program program = new Program().withUser(user).withInstitution(institution).withDepartment(department).withAdvert(advert)
-                .withOpportunityType(opportunityType).withTitle(advert.getTitle()).withDurationMinimum(programDTO.getDurationMinimum())
-                .withDurationMaximum(programDTO.getDurationMaximum()).withRequireProjectDefinition(false)
-                .withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD));
-
-        resourceService.setAttributes(program, programDTO.getAttributes());
-        return program;
-    }
-
     public void postProcessProgram(Program program, Comment comment) {
         DateTime updatedTimestamp = program.getUpdatedTimestamp();
         program.setUpdatedTimestampSitemap(updatedTimestamp);
@@ -154,7 +134,7 @@ public class ProgramService {
         String commentContent = viewEditAction ? applicationContext.getBean(PropertyLoader.class).localize(program)
                 .load(PrismDisplayPropertyDefinition.PROGRAM_COMMENT_UPDATED) : commentDTO.getContent();
 
-        ProgramDTO programDTO = (ProgramDTO) commentDTO.fetchResourceDTO();
+        OpportunityDTO programDTO = (OpportunityDTO) commentDTO.getResource();
         LocalDate dueDate = programDTO.getEndDate();
 
         State transitionState = stateService.getById(commentDTO.getTransitionState());
@@ -167,7 +147,6 @@ public class ProgramService {
         commentService.appendCommentProperties(comment, commentDTO);
 
         update(programId, programDTO);
-
         return actionService.executeUserAction(program, action, comment);
     }
 
@@ -226,7 +205,7 @@ public class ProgramService {
         return programDAO.getApplications(program);
     }
 
-    private void update(Integer programId, ProgramDTO programDTO) throws Exception {
+    private void update(Integer programId, OpportunityDTO programDTO) throws Exception {
         Program program = entityService.getById(Program.class, programId);
 
         DepartmentDTO departmentDTO = programDTO.getDepartment();

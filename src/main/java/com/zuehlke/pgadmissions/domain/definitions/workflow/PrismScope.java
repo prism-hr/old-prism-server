@@ -15,87 +15,116 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
+import com.zuehlke.pgadmissions.workflow.resource.creators.ApplicationCreator;
+import com.zuehlke.pgadmissions.workflow.resource.creators.InstitutionCreator;
+import com.zuehlke.pgadmissions.workflow.resource.creators.ProgramCreator;
+import com.zuehlke.pgadmissions.workflow.resource.creators.ProjectCreator;
+import com.zuehlke.pgadmissions.workflow.resource.creators.ResourceCreator;
+import com.zuehlke.pgadmissions.workflow.resource.persisters.ApplicationPersister;
+import com.zuehlke.pgadmissions.workflow.resource.persisters.InstitutionPersister;
+import com.zuehlke.pgadmissions.workflow.resource.persisters.ProgramPersister;
+import com.zuehlke.pgadmissions.workflow.resource.persisters.ProjectPersister;
+import com.zuehlke.pgadmissions.workflow.resource.persisters.ResourcePersister;
 
 public enum PrismScope {
 
-	SYSTEM(null, System.class, "SM", null, null), //
-	INSTITUTION(ORGANIZATION_CATEGORY, Institution.class, "IN", new ColumnDefinition().add("institution", "title").getAll(), null), //
-	PROGRAM(OPPORTUNITY_CATEGORY, Program.class, "PM", new ColumnDefinition().add("institution", "title").add("program", "title").getAll(), null), //
-	PROJECT(OPPORTUNITY_CATEGORY, Project.class, "PT", new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null), //
-	APPLICATION(APPLICATION_CATEGORY, Application.class, "AN", new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null);
+    SYSTEM(null, System.class, "SM", null, null, null, null), //
+    INSTITUTION(ORGANIZATION_CATEGORY, Institution.class, "IN", new ColumnDefinition().add("institution", "title").getAll(), null,
+            InstitutionCreator.class, InstitutionPersister.class), //
+    PROGRAM(OPPORTUNITY_CATEGORY, Program.class, "PM", new ColumnDefinition().add("institution", "title").add("program", "title").getAll(), null,
+            ProgramCreator.class, ProgramPersister.class), //
+    PROJECT(OPPORTUNITY_CATEGORY, Project.class, "PT", new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null,
+            ProjectCreator.class, ProjectPersister.class), //
+    APPLICATION(APPLICATION_CATEGORY, Application.class, "AN", new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null,
+            ApplicationCreator.class, ApplicationPersister.class);
 
-	private static final Map<Class<? extends Resource>, PrismScope> byResourceClass = Maps.newHashMap();
+    private static final Map<Class<? extends Resource>, PrismScope> byResourceClass = Maps.newHashMap();
 
-	static {
-		for (PrismScope scope : values()) {
-			byResourceClass.put(scope.getResourceClass(), scope);
-		}
-	}
+    static {
+        for (PrismScope scope : values()) {
+            byResourceClass.put(scope.getResourceClass(), scope);
+        }
+    }
 
-	private PrismScopeCategory prismScopeCategory;
+    private PrismScopeCategory prismScopeCategory;
 
-	private Class<? extends Resource> resourceClass;
+    private Class<? extends Resource> resourceClass;
 
-	private String shortCode;
+    private String shortCode;
 
-	private HashMultimap<String, String> consoleListCustomColumns;
+    private HashMultimap<String, String> consoleListCustomColumns;
 
-	private HashMultimap<String, String> reportListCustomColumns;
+    private HashMultimap<String, String> reportListCustomColumns;
 
-	private PrismScope(PrismScopeCategory prismScopeCategory, Class<? extends Resource> resourceClass, String shortCode,
-	        HashMultimap<String, String> consoleListCustomColumns, HashMultimap<String, String> reportListCustomColumns) {
-		this.prismScopeCategory = prismScopeCategory;
-		this.resourceClass = resourceClass;
-		this.shortCode = shortCode;
-		this.consoleListCustomColumns = consoleListCustomColumns;
-		this.reportListCustomColumns = reportListCustomColumns;
-	}
+    private Class<? extends ResourceCreator> resourceCreator;
 
-	public PrismScopeCategory getPrismScopeCategory() {
-		return prismScopeCategory;
-	}
+    private Class<? extends ResourcePersister> resourcePersister;
 
-	public Class<? extends Resource> getResourceClass() {
-		return resourceClass;
-	}
+    private PrismScope(PrismScopeCategory prismScopeCategory, Class<? extends Resource> resourceClass, String shortCode,
+            HashMultimap<String, String> consoleListCustomColumns, HashMultimap<String, String> reportListCustomColumns,
+            Class<? extends ResourceCreator> resourceCreator, Class<? extends ResourcePersister> resourcePersister) {
+        this.prismScopeCategory = prismScopeCategory;
+        this.resourceClass = resourceClass;
+        this.shortCode = shortCode;
+        this.consoleListCustomColumns = consoleListCustomColumns;
+        this.reportListCustomColumns = reportListCustomColumns;
+        this.resourceCreator = resourceCreator;
+        this.resourcePersister = resourcePersister;
+    }
 
-	public String getShortCode() {
-		return shortCode;
-	}
+    public PrismScopeCategory getPrismScopeCategory() {
+        return prismScopeCategory;
+    }
 
-	public final HashMultimap<String, String> getConsoleListCustomColumns() {
-		return consoleListCustomColumns;
-	}
+    public Class<? extends Resource> getResourceClass() {
+        return resourceClass;
+    }
 
-	public final HashMultimap<String, String> getReportListCustomColumns() {
-		return reportListCustomColumns;
-	}
+    public String getShortCode() {
+        return shortCode;
+    }
 
-	public static PrismScope getByResourceClass(Class<? extends Resource> resourceClass) {
-		return byResourceClass.get(resourceClass);
-	}
+    public final HashMultimap<String, String> getConsoleListCustomColumns() {
+        return consoleListCustomColumns;
+    }
 
-	public String getLowerCamelName() {
-		return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name());
-	}
+    public final HashMultimap<String, String> getReportListCustomColumns() {
+        return reportListCustomColumns;
+    }
 
-	public String getUpperCamelName() {
-		return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
-	}
+    public Class<? extends ResourceCreator> getResourceCreator() {
+        return resourceCreator;
+    }
 
-	private static class ColumnDefinition {
+    public Class<? extends ResourcePersister> getResourcePersister() {
+        return resourcePersister;
+    }
 
-		private final HashMultimap<String, String> definitions = HashMultimap.create();
+    public static PrismScope getByResourceClass(Class<? extends Resource> resourceClass) {
+        return byResourceClass.get(resourceClass);
+    }
 
-		public ColumnDefinition add(String table, String column) {
-			definitions.put(table, column);
-			return this;
-		}
+    public String getLowerCamelName() {
+        return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name());
+    }
 
-		public HashMultimap<String, String> getAll() {
-			return definitions;
-		}
+    public String getUpperCamelName() {
+        return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
+    }
 
-	}
+    private static class ColumnDefinition {
+
+        private final HashMultimap<String, String> definitions = HashMultimap.create();
+
+        public ColumnDefinition add(String table, String column) {
+            definitions.put(table, column);
+            return this;
+        }
+
+        public HashMultimap<String, String> getAll() {
+            return definitions;
+        }
+
+    }
 
 }

@@ -52,6 +52,7 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestApiUtils;
 import com.zuehlke.pgadmissions.rest.dto.ActionDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
@@ -121,10 +122,10 @@ public class ResourceResource {
         }
 
         User user = userService.getCurrentUser();
-        Object newResourceDTO = actionDTO.getOperativeResourceDTO();
+        ResourceDTO newResource = actionDTO.getNewResource();
         Action action = actionService.getById(actionDTO.getActionId());
 
-        ActionOutcomeDTO actionOutcome = resourceService.create(user, action, newResourceDTO, actionDTO.getReferer(),
+        ActionOutcomeDTO actionOutcome = resourceService.create(user, action, newResource, actionDTO.getReferer(),
                 actionDTO.getWorkflowPropertyConfigurationVersion());
         return mapper.map(actionOutcome, ActionOutcomeRepresentation.class);
     }

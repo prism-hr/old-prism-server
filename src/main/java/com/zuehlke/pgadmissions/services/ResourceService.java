@@ -77,11 +77,7 @@ import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.dto.ApplicationDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
-import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceParentAttributesDTO;
@@ -94,7 +90,8 @@ import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowProper
 import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
-import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
+import com.zuehlke.pgadmissions.workflow.resource.creators.ResourceCreator;
+import com.zuehlke.pgadmissions.workflow.resource.persisters.ResourcePersister;
 
 @Service
 @Transactional
@@ -176,28 +173,17 @@ public class ResourceService {
         return resource == null ? null : resource.getId();
     }
 
-    public ActionOutcomeDTO create(User user, Action action, Object resourceDTO, String referrer, Integer workflowPropertyConfigurationVersion)
+    public ActionOutcomeDTO create(User user, Action action, ResourceDTO resourceDTO, String referrer, Integer workflowPropertyConfigurationVersion)
             throws Exception {
-        Resource resource;
         PrismScope resourceScope = action.getCreationScope().getId();
 
-        User resourceUser = user.getParentUser();
-        switch (resourceScope) {
-        case INSTITUTION:
-            resource = institutionService.create(resourceUser, (InstitutionDTO) resourceDTO);
-            break;
-        case PROGRAM:
-            resource = programService.create(resourceUser, (ProgramDTO) resourceDTO);
-            break;
-        case PROJECT:
-            resource = projectService.create(resourceUser, (ProjectDTO) resourceDTO);
-            break;
-        case APPLICATION:
-            resource = applicationService.create(resourceUser, (ApplicationDTO) resourceDTO);
-            break;
-        default:
+        Class<? extends ResourceCreator> resourceCreator = resourceScope.getResourceCreator();
+        if (resourceCreator == null) {
             throw new UnsupportedOperationException();
         }
+
+        User resourceUser = user.getParentUser();
+        Resource resource = applicationContext.getBean(resourceCreator).create(user, resourceDTO);
 
         resource.setReferrer(referrer);
         resource.setWorkflowPropertyConfigurationVersion(workflowPropertyConfigurationVersion);
@@ -222,25 +208,16 @@ public class ResourceService {
             resource.setUpdatedTimestamp(baseline);
 
             if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
-                PrismReflectionUtils.setProperty(resource, "updatedTimestampSitemap", baseline);
+                ResourceParent parent = (ResourceParent) resource;
+                parent.setUpdatedTimestampSitemap(baseline);
             }
 
-            switch (resource.getResourceScope()) {
-            case INSTITUTION:
-                institutionService.save((Institution) resource);
-                break;
-            case PROGRAM:
-                programService.save((Program) resource);
-                break;
-            case PROJECT:
-                projectService.save((Project) resource);
-                break;
-            case APPLICATION:
-                applicationService.save((Application) resource);
-                break;
-            default:
-                throw new WorkflowEngineException("Attempted to create resource of invalid type");
+            Class<? extends ResourcePersister> resourcePersister = resource.getResourceScope().getResourcePersister();
+            if (resourcePersister == null) {
+                throw new UnsupportedOperationException();
             }
+
+            applicationContext.getBean(resourcePersister).persist(resource);
 
             resource.setCode(generateResourceCode(resource));
             entityService.save(resource);
@@ -646,7 +623,7 @@ public class ResourceService {
         setStudyOptions(resource, attributes.getStudyOptions(), new LocalDate());
         setStudyLocations(resource, attributes.getStudyLocations());
     }
-    
+
     public void setResourceConditions(ResourceParent resource, List<PrismActionCondition> prismConditions) {
         resource.getResourceConditions().clear();
         entityService.flush();

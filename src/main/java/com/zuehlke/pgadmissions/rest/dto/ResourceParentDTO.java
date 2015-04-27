@@ -9,7 +9,7 @@ import org.joda.time.LocalDate;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 
-public class ResourceParentDTO {
+public class ResourceParentDTO extends ResourceDTO {
 
     @NotNull
     private AdvertDTO advert;

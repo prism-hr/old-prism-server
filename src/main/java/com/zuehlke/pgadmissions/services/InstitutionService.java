@@ -9,7 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INS
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.ADVERT_TRIAL_PERIOD;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 
 import java.util.List;
 
@@ -122,28 +122,15 @@ public class InstitutionService {
         return institutionDAO.getUclInstitution();
     }
 
-    public Institution create(User user, InstitutionDTO institutionDTO) throws Exception {
-        AdvertDTO advertDTO = institutionDTO.getAdvert();
-        Advert advert = advertService.createAdvert(user, advertDTO);
-
-        Institution institution = new Institution().withUser(user).withSystem(systemService.getSystem()).withDomicile(advert.getAddress().getDomicile())
-                .withAdvert(advert).withTitle(advert.getTitle()).withCurrency(institutionDTO.getCurrency())
-                .withBusinessYearStartMonth(institutionDTO.getBusinessYearStartMonth()).withGoogleId(institutionDTO.getGoogleIdentifier())
-                .withUclInstitution(false).withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD));
-        advert.setInstitution(institution);
-
-        setInstitutionImages(institutionDTO, institution);
-        resourceService.setAttributes(institution, institutionDTO.getAttributes());
-        return institution;
-    }
-
     public Institution createPartner(User user, InstitutionDTO institutionDTO) throws Exception {
-        Institution institution = create(user, institutionDTO);
+        Institution institution = (Institution) applicationContext.getBean(INSTITUTION.getResourceCreator()).create(user, institutionDTO);
+
         Action action = actionService.getById(SYSTEM_CREATE_INSTITUTION);
         Role creatorRole = roleService.getById(INSTITUTION_ADMINISTRATOR);
         Comment comment = new Comment().withResource(institution).withUser(user).withAction(action).withDeclinedResponse(false)
                 .withCreatedTimestamp(new DateTime()).addAssignedUser(user, creatorRole, CREATE);
         actionService.executeUserAction(institution, action, comment);
+
         return institution;
     }
 
@@ -231,7 +218,7 @@ public class InstitutionService {
                 .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
         commentService.appendCommentProperties(comment, commentDTO);
 
-        InstitutionDTO institutionDTO = (InstitutionDTO) commentDTO.fetchResourceDTO();
+        InstitutionDTO institutionDTO = (InstitutionDTO) commentDTO.getResource();
         if (institutionDTO != null) {
             update(institutionId, institutionDTO);
         }
@@ -302,13 +289,7 @@ public class InstitutionService {
         return month <= businessYearStartMonth ? (month - (businessYearStartMonth - 1)) : (month + (12 - (businessYearStartMonth - 1)));
     }
 
-    private void changeInsitutionBusinessYear(Institution institution, Integer businessYearStartMonth) throws Exception {
-        institution.setBusinessYearStartMonth(businessYearStartMonth);
-        Integer businessYearEndMonth = businessYearStartMonth == 1 ? 12 : businessYearStartMonth - 1;
-        institutionDAO.changeInstitutionBusinessYear(institution.getId(), businessYearEndMonth);
-    }
-
-    private void setInstitutionImages(InstitutionDTO institutionDTO, Institution institution) {
+    public void setInstitutionImages(InstitutionDTO institutionDTO, Institution institution) {
         FileDTO logo = institutionDTO.getLogoImage();
         if (logo != null) {
             Document logoDocument = documentService.getImageDocument(logo);
@@ -320,6 +301,12 @@ public class InstitutionService {
             Document backgroundDocument = documentService.getImageDocument(background);
             institution.setBackgroundImage(backgroundDocument);
         }
+    }
+
+    private void changeInsitutionBusinessYear(Institution institution, Integer businessYearStartMonth) throws Exception {
+        institution.setBusinessYearStartMonth(businessYearStartMonth);
+        Integer businessYearEndMonth = businessYearStartMonth == 1 ? 12 : businessYearStartMonth - 1;
+        institutionDAO.changeInstitutionBusinessYear(institution.getId(), businessYearEndMonth);
     }
 
 }

@@ -53,6 +53,8 @@ import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListActionDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
+import com.zuehlke.pgadmissions.rest.dto.ActionDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 
@@ -191,10 +193,11 @@ public class ActionService {
     }
 
     public ActionOutcomeDTO getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO) throws Exception {
-        Action action = getById(registrationDTO.getAction().getActionId());
+        ActionDTO actionDTO = registrationDTO.getAction();
+        Action action = getById(actionDTO.getActionId());
         if (action.getActionCategory() == CREATE_RESOURCE) {
-            Object operativeResourceDTO = registrationDTO.getAction().getOperativeResourceDTO();
-            return resourceService.create(user, action, operativeResourceDTO, registrationDTO.getAction().getReferer(), registrationDTO.getAction()
+            ResourceDTO newResource = actionDTO.getNewResource();
+            return resourceService.create(user, action, newResource, registrationDTO.getAction().getReferer(), registrationDTO.getAction()
                     .getWorkflowPropertyConfigurationVersion());
         } else {
             Resource resource = entityService.getById(action.getScope().getId().getResourceClass(), registrationDTO.getResourceId());

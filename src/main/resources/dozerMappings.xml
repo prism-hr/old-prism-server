@@ -376,7 +376,7 @@
 		</class-a>
 		<class-b>com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation
 		</class-b>
-		<field type="one-way" copy-by-reference="true">
+		<field>
 			<a>department.title</a>
 			<b>department</b>
 		</field>

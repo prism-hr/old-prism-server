@@ -1,22 +1,13 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "STATE")
@@ -74,35 +65,35 @@ public class State extends WorkflowDefinition {
         this.stateGroup = stateGroup;
     }
 
-    public final StateDurationDefinition getStateDurationDefinition() {
+    public StateDurationDefinition getStateDurationDefinition() {
         return stateDurationDefinition;
     }
 
-    public final void setStateDurationDefinition(StateDurationDefinition stateDurationDefinition) {
+    public void setStateDurationDefinition(StateDurationDefinition stateDurationDefinition) {
         this.stateDurationDefinition = stateDurationDefinition;
     }
 
-    public final PrismStateDurationEvaluation getStateDurationEvaluation() {
+    public PrismStateDurationEvaluation getStateDurationEvaluation() {
         return stateDurationEvaluation;
     }
 
-    public final void setStateDurationEvaluation(PrismStateDurationEvaluation stateDurationEvaluation) {
+    public void setStateDurationEvaluation(PrismStateDurationEvaluation stateDurationEvaluation) {
         this.stateDurationEvaluation = stateDurationEvaluation;
     }
 
-    public final Boolean getParallelizable() {
+    public Boolean getParallelizable() {
         return parallelizable;
     }
 
-    public final void setParallelizable(Boolean parallelizable) {
+    public void setParallelizable(Boolean parallelizable) {
         this.parallelizable = parallelizable;
     }
 
-    public final Boolean getHidden() {
+    public Boolean getHidden() {
         return hidden;
     }
 
-    public final void setHidden(Boolean hidden) {
+    public void setHidden(Boolean hidden) {
         this.hidden = hidden;
     }
 
@@ -116,15 +107,15 @@ public class State extends WorkflowDefinition {
         this.scope = scope;
     }
 
-    public final Set<StateAction> getStateActions() {
+    public Set<StateAction> getStateActions() {
         return stateActions;
     }
 
-    public final Set<ResourceState> getResourceStates() {
+    public Set<ResourceState> getResourceStates() {
         return resourceStates;
     }
 
-    public final Set<ResourcePreviousState> getResourcePreviousStates() {
+    public Set<ResourcePreviousState> getResourcePreviousStates() {
         return resourcePreviousStates;
     }
 

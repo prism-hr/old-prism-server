@@ -1,27 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.INSTITUTION_COMMENT_UPDATED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_STARTUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_VIEW_EDIT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_CREATE_INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.ADVERT_TRIAL_PERIOD;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.dozer.Mapper;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
@@ -48,6 +26,22 @@ import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.InstitutionDomicileRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import org.dozer.Mapper;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.INSTITUTION_COMMENT_UPDATED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.ADVERT_TRIAL_PERIOD;
 
 @Service
 @Transactional
@@ -161,7 +155,7 @@ public class InstitutionService {
         Integer oldBusinessYearStartMonth = institution.getBusinessYearStartMonth();
         Integer newBusinessYearStartMonth = institutionDTO.getBusinessYearStartMonth();
         if (!oldBusinessYearStartMonth.equals(newBusinessYearStartMonth)) {
-            changeInsitutionBusinessYear(institution, newBusinessYearStartMonth);
+            changeInstitutionBusinessYear(institution, newBusinessYearStartMonth);
         }
 
         institution.setGoogleId(advert.getAddress().getLocation().getGoogleId());
@@ -299,10 +293,10 @@ public class InstitutionService {
 
     public Integer getMonthOfBusinessYear(Institution institution, Integer month) {
         Integer businessYearStartMonth = institution.getBusinessYearStartMonth();
-        return month <= businessYearStartMonth ? (month - (businessYearStartMonth - 1)) : (month + (12 - (businessYearStartMonth - 1)));
+        return month <= businessYearStartMonth ? (businessYearStartMonth - (month - 1)) : (month + (12 - (businessYearStartMonth - 1)));
     }
 
-    private void changeInsitutionBusinessYear(Institution institution, Integer businessYearStartMonth) throws Exception {
+    private void changeInstitutionBusinessYear(Institution institution, Integer businessYearStartMonth) throws Exception {
         institution.setBusinessYearStartMonth(businessYearStartMonth);
         Integer businessYearEndMonth = businessYearStartMonth == 1 ? 12 : businessYearStartMonth - 1;
         institutionDAO.changeInstitutionBusinessYear(institution.getId(), businessYearEndMonth);

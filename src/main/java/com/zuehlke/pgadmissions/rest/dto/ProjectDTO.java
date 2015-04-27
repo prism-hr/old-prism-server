@@ -1,41 +1,16 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.util.List;
-
 import javax.validation.constraints.NotNull;
 
-import org.joda.time.LocalDate;
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.dto.DepartmentDTO;
 
-public class ProjectDTO {
+public class ProjectDTO extends OpportunityDTO {
 
     @NotNull
     private PrismScope resourceScope;
 
     @NotNull
     private Integer resourceId;
-
-    private DepartmentDTO department;
-
-    @NotNull
-    private PrismOpportunityType opportunityType;
-
-    @NotNull
-    private AdvertDTO advert;
-
-    private Integer durationMinimum;
-
-    private Integer durationMaximum;
-
-    private LocalDate endDate;
-    
-    private List<PrismStudyOption> studyOptions;
-
-    private List<String> studyLocations;
 
     public PrismScope getResourceScope() {
         return resourceScope;
@@ -51,70 +26,6 @@ public class ProjectDTO {
 
     public void setResourceId(Integer resourceId) {
         this.resourceId = resourceId;
-    }
-
-    public DepartmentDTO getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(DepartmentDTO department) {
-        this.department = department;
-    }
-
-    public PrismOpportunityType getOpportunityType() {
-        return opportunityType;
-    }
-
-    public void setOpportunityType(PrismOpportunityType opportunityType) {
-        this.opportunityType = opportunityType;
-    }
-
-    public AdvertDTO getAdvert() {
-        return advert;
-    }
-
-    public void setAdvert(AdvertDTO advert) {
-        this.advert = advert;
-    }
-
-    public Integer getDurationMinimum() {
-        return durationMinimum;
-    }
-
-    public void setDurationMinimum(Integer durationMinimum) {
-        this.durationMinimum = durationMinimum;
-    }
-
-    public Integer getDurationMaximum() {
-        return durationMaximum;
-    }
-
-    public void setDurationMaximum(Integer durationMaximum) {
-        this.durationMaximum = durationMaximum;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
-
-    public List<PrismStudyOption> getStudyOptions() {
-        return studyOptions;
-    }
-
-    public void setStudyOptions(List<PrismStudyOption> studyOptions) {
-        this.studyOptions = studyOptions;
-    }
-
-    public List<String> getStudyLocations() {
-        return studyLocations;
-    }
-
-    public void setStudyLocations(List<String> studyLocations) {
-        this.studyLocations = studyLocations;
     }
 
 }

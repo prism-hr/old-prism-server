@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_WITHDRAWN;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -107,6 +108,15 @@ public class Program extends ResourceParent {
     @Column(name = "imported", nullable = false)
     private Boolean imported;
 
+    @Column(name = "application_rating_count")
+    private Integer applicationRatingCount;
+
+    @Column(name = "application_rating_frequency")
+    private BigDecimal applicationRatingFrequency;
+
+    @Column(name = "application_rating_average")
+    private BigDecimal applicationRatingAverage;
+
     @ManyToOne
     @JoinColumn(name = "state_id")
     private State state;
@@ -155,6 +165,10 @@ public class Program extends ResourceParent {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "program_id", nullable = false)
+    private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
+    
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "program_id", nullable = false)
     private Set<ResourceStudyOption> studyOptions = Sets.newHashSet();
 
     @OrderBy(clause = "location")
@@ -167,9 +181,6 @@ public class Program extends ResourceParent {
 
     @OneToMany(mappedBy = "program")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "program")
-    private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "PROGRAM_RELATION", joinColumns = @JoinColumn(name = "program_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "program_relation_id", nullable = false))
@@ -217,6 +228,7 @@ public class Program extends ResourceParent {
         this.institution = institution;
     }
 
+    @Override
     public Department getDepartment() {
         return department;
     }
@@ -340,6 +352,36 @@ public class Program extends ResourceParent {
 
     public void setImported(Boolean imported) {
         this.imported = imported;
+    }
+    
+    @Override
+    public Integer getApplicationRatingCount() {
+        return applicationRatingCount;
+    }
+
+    @Override
+    public void setApplicationRatingCount(Integer applicationRatingCount) {
+        this.applicationRatingCount = applicationRatingCount;
+    }
+
+    @Override
+    public BigDecimal getApplicationRatingFrequency() {
+        return applicationRatingFrequency;
+    }
+
+    @Override
+    public void setApplicationRatingFrequency(BigDecimal applicationRatingFrequency) {
+        this.applicationRatingFrequency = applicationRatingFrequency;
+    }
+
+    @Override
+    public BigDecimal getApplicationRatingAverage() {
+        return applicationRatingAverage;
+    }
+
+    @Override
+    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+        this.applicationRatingAverage = applicationRatingAverage;
     }
 
     @Override
@@ -548,17 +590,17 @@ public class Program extends ResourceParent {
         this.advert = advert;
         return this;
     }
-    
+
     public Program withOpportunityType(OpportunityType opportunityType) {
         this.opportunityType = opportunityType;
         return this;
     }
-    
+
     public Program withTitle(String title) {
         setTitle(title);
         return this;
     }
-    
+
     public Program withDurationMinimum(Integer durationMinimum) {
         this.durationMinimum = durationMinimum;
         return this;
@@ -573,17 +615,17 @@ public class Program extends ResourceParent {
         this.requireProjectDefinition = requireProjectDefinition;
         return this;
     }
-    
+
     public Program withEndDate(LocalDate endDate) {
         this.endDate = endDate;
         return this;
     }
-    
+
     public Program withImported(Boolean imported) {
         this.imported = imported;
         return this;
     }
-    
+
     public Program withCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
         return this;

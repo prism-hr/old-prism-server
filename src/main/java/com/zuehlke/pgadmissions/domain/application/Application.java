@@ -204,7 +204,7 @@ public class Application extends Resource {
 
     @Column(name = "application_month")
     private Integer applicationMonth;
-    
+
     @Column(name = "application_month_sequence")
     private Integer applicationMonthSequence;
 
@@ -253,7 +253,8 @@ public class Application extends Resource {
     @OneToMany(mappedBy = "application")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
 
-    @OneToMany(mappedBy = "application")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_id", nullable = false)
     private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
     @OneToMany(mappedBy = "application")
@@ -802,11 +803,11 @@ public class Application extends Resource {
 
     public Set<ResourceParent> getParentResources() {
         Set<ResourceParent> parentResources = Sets.newLinkedHashSet();
-        if (project != null) {
-            parentResources.add(project);
+        for (ResourceParent parentResource : new ResourceParent[] { project, program, institution }) {
+            if (parentResource != null) {
+                parentResources.add(parentResource);
+            }
         }
-        parentResources.add(program);
-        parentResources.add(institution);
         return parentResources;
     }
 

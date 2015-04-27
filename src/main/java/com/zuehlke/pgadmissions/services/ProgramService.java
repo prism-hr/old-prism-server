@@ -35,6 +35,7 @@ import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceParentAttributesDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -118,8 +119,7 @@ public class ProgramService {
                 .withDurationMaximum(programDTO.getDurationMaximum()).withRequireProjectDefinition(false)
                 .withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD));
 
-        resourceService.setStudyOptions(institution, programDTO.getStudyOptions(), new LocalDate());
-        resourceService.setStudyLocations(institution, programDTO.getStudyLocations());
+        resourceService.setAttributes(program, programDTO.getAttributes());
         return program;
     }
 
@@ -240,7 +240,9 @@ public class ProgramService {
         program.setDurationMinimum(programDTO.getDurationMinimum());
         program.setDurationMaximum(programDTO.getDurationMaximum());
 
-        resourceService.setStudyLocations(program, programDTO.getStudyLocations());
+        ResourceParentAttributesDTO attributes = programDTO.getAttributes();
+        resourceService.setResourceConditions(program, attributes.getConditions());
+        resourceService.setStudyLocations(program, attributes.getStudyLocations());
 
         if (!program.getImported()) {
             OpportunityType opportunityType = importedEntityService.getByCode(OpportunityType.class, //
@@ -254,7 +256,7 @@ public class ProgramService {
                 program.setEndDate(endDate);
             }
 
-            resourceService.setStudyOptions(program, programDTO.getStudyOptions(), new LocalDate());
+            resourceService.setStudyOptions(program, attributes.getStudyOptions(), new LocalDate());
         }
     }
 

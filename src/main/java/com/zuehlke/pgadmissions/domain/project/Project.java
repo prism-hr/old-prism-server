@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_WITHDRAWN;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -98,10 +99,19 @@ public class Project extends ResourceParent {
 
     @Column(name = "duration_minimum")
     private Integer durationMinimum;
-    
+
     @Column(name = "duration_maximum")
     private Integer durationMaximum;
-    
+
+    @Column(name = "application_rating_count")
+    private Integer applicationRatingCount;
+
+    @Column(name = "application_rating_frequency")
+    private BigDecimal applicationRatingFrequency;
+
+    @Column(name = "application_rating_average")
+    private BigDecimal applicationRatingAverage;
+
     @ManyToOne
     @JoinColumn(name = "state_id")
     private State state;
@@ -150,6 +160,10 @@ public class Project extends ResourceParent {
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_id", nullable = false)
+    private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "project_id", nullable = false)
     private Set<ResourceStudyOption> studyOptions = Sets.newHashSet();
 
     @OrderBy(clause = "location")
@@ -162,9 +176,6 @@ public class Project extends ResourceParent {
 
     @OneToMany(mappedBy = "project")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "project")
-    private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
     @OneToMany(mappedBy = "project")
     private Set<Application> applications = Sets.newHashSet();
@@ -228,6 +239,7 @@ public class Project extends ResourceParent {
         this.institution = institution;
     }
 
+    @Override
     public Department getDepartment() {
         return department;
     }
@@ -284,6 +296,36 @@ public class Project extends ResourceParent {
 
     public void setDurationMaximum(Integer durationMaximum) {
         this.durationMaximum = durationMaximum;
+    }
+
+    @Override
+    public Integer getApplicationRatingCount() {
+        return applicationRatingCount;
+    }
+
+    @Override
+    public void setApplicationRatingCount(Integer applicationRatingCount) {
+        this.applicationRatingCount = applicationRatingCount;
+    }
+
+    @Override
+    public BigDecimal getApplicationRatingFrequency() {
+        return applicationRatingFrequency;
+    }
+
+    @Override
+    public void setApplicationRatingFrequency(BigDecimal applicationRatingFrequency) {
+        this.applicationRatingFrequency = applicationRatingFrequency;
+    }
+
+    @Override
+    public BigDecimal getApplicationRatingAverage() {
+        return applicationRatingAverage;
+    }
+
+    @Override
+    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+        this.applicationRatingAverage = applicationRatingAverage;
     }
 
     @Override
@@ -463,7 +505,7 @@ public class Project extends ResourceParent {
     public Set<ResourceCondition> getResourceConditions() {
         return resourceConditions;
     }
-    
+
     public Project withResource(ResourceParent resource) {
         PrismReflectionUtils.setProperty(this, resource.getResourceScope().getLowerCamelName(), resource);
         return this;
@@ -493,12 +535,12 @@ public class Project extends ResourceParent {
         this.program = program;
         return this;
     }
-    
+
     public Project withAdvert(Advert advert) {
         this.advert = advert;
         return this;
     }
-    
+
     public Project withOpportunityType(OpportunityType opportunityType) {
         this.opportunityType = opportunityType;
         return this;
@@ -508,22 +550,21 @@ public class Project extends ResourceParent {
         this.title = title;
         return this;
     }
-    
+
     public Project withDurationMinimum(Integer durationMinimum) {
         this.durationMinimum = durationMinimum;
         return this;
     }
-    
+
     public Project withDurationMaximum(Integer durationMaximum) {
         this.durationMaximum = durationMaximum;
         return this;
     }
-    
+
     public Project withEndDate(LocalDate endDate) {
         this.endDate = endDate;
         return this;
     }
-
 
     public Project withCode(String code) {
         this.code = code;

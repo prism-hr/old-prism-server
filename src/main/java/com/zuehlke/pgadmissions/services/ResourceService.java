@@ -84,6 +84,7 @@ import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
 import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceParentAttributesDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation.ApplicationProcessingSummaryRepresentation;
@@ -403,7 +404,7 @@ public class ResourceService {
 
         if (!assignedResources.isEmpty()) {
             HashMultimap<Integer, ResourceListActionDTO> creations = actionService.getCreateResourceActions(resourceScope, assignedResources);
-            List<ResourceListRowDTO> rows = resourceDAO.getResourceConsoleList(user, resourceScope, parentScopeIds, assignedResources, filter,
+            List<ResourceListRowDTO> rows = resourceDAO.getResourceList(user, resourceScope, parentScopeIds, assignedResources, filter,
                     lastSequenceIdentifier, maxRecords, hasRedactions);
             for (ResourceListRowDTO row : rows) {
                 Set<ResourceListActionDTO> actions = Sets.newLinkedHashSet();
@@ -591,10 +592,10 @@ public class ResourceService {
                 return resourceDAO.getStudyOptionStrict(resource, studyOption);
             }
         }
-        
+
         return resourceDAO.getStudyOption(resource, studyOption);
     }
-    
+
     public List<ResourceStudyOption> getStudyOptions(ResourceParent resource) {
         if (resource.getResourceScope() == PROGRAM) {
             Program program = resource.getProgram();
@@ -602,10 +603,10 @@ public class ResourceService {
                 return resourceDAO.getStudyOptionsStrict(resource);
             }
         }
-        
+
         List<ResourceStudyOption> filteredStudyOptions = Lists.newLinkedList();
         List<ResourceStudyOption> studyOptions = resourceDAO.getStudyOptions(resource);
-        
+
         PrismScope lastResourceScope = null;
         for (ResourceStudyOption studyOption : studyOptions) {
             PrismScope thisResourceScope = studyOption.getResource().getResourceScope();
@@ -615,32 +616,18 @@ public class ResourceService {
             filteredStudyOptions.add(studyOption);
             lastResourceScope = thisResourceScope;
         }
-        
+
         return filteredStudyOptions;
     }
 
-    public void setStudyOptions(ResourceParent resource, List<PrismStudyOption> prismStudyOptions, LocalDate baseline) {
-        resource.getStudyOptions().clear();
-        entityService.flush();
-        
-        LocalDate close = resource.getEndDate();
-        for (PrismStudyOption prismStudyOption : prismStudyOptions) {
-            if (close.isAfter(baseline)) {
-                StudyOption studyOption = importedEntityService.getByCode(StudyOption.class, resource.getInstitution(), prismStudyOption.name());
-                resource.addStudyOption(new ResourceStudyOption().withResource(resource).withStudyOption(studyOption).withApplicationStartDate(baseline)
-                        .withApplicationCloseDate(close));
-            }
-        }
-    }
-    
     public ResourceStudyOptionInstance getFirstStudyOptionInstance(ResourceParent resource, StudyOption studyOption) {
         return resourceDAO.getFirstStudyOptionInstanceStrict(resource, studyOption);
     }
-    
+
     public List<ResourceStudyLocation> getStudyLocations(ResourceParent resource) {
         List<ResourceStudyLocation> filteredStudylocations = Lists.newLinkedList();
         List<ResourceStudyLocation> studyLocations = resourceDAO.getStudyLocations(resource);
-        
+
         PrismScope lastResourceScope = null;
         for (ResourceStudyLocation studyLocation : studyLocations) {
             PrismScope thisResourceScope = studyLocation.getResource().getResourceScope();
@@ -650,17 +637,50 @@ public class ResourceService {
             filteredStudylocations.add(studyLocation);
             lastResourceScope = thisResourceScope;
         }
-        
+
         return filteredStudylocations;
+    }
+
+    public void setAttributes(ResourceParent resource, ResourceParentAttributesDTO attributes) {
+        setResourceConditions(resource, attributes.getConditions());
+        setStudyOptions(resource, attributes.getStudyOptions(), new LocalDate());
+        setStudyLocations(resource, attributes.getStudyLocations());
+    }
+    
+    public void setResourceConditions(ResourceParent resource, List<PrismActionCondition> prismConditions) {
+        resource.getResourceConditions().clear();
+        entityService.flush();
+
+        for (PrismActionCondition prismCondition : prismConditions) {
+            resource.addResourceCondition(new ResourceCondition().withResource(resource).withActionCondition(prismCondition));
+        }
+    }
+
+    public void setStudyOptions(ResourceParent resource, List<PrismStudyOption> prismStudyOptions, LocalDate baseline) {
+        resource.getStudyOptions().clear();
+        entityService.flush();
+
+        LocalDate close = resource.getEndDate();
+        for (PrismStudyOption prismStudyOption : prismStudyOptions) {
+            if (close.isAfter(baseline)) {
+                StudyOption studyOption = importedEntityService.getByCode(StudyOption.class, resource.getInstitution(), prismStudyOption.name());
+                resource.addStudyOption(new ResourceStudyOption().withResource(resource).withStudyOption(studyOption).withApplicationStartDate(baseline)
+                        .withApplicationCloseDate(close));
+            }
+        }
     }
 
     public void setStudyLocations(ResourceParent resource, List<String> studyLocations) {
         resource.getStudyLocations().clear();
         entityService.flush();
-        
+
         for (String studyLocation : studyLocations) {
             resource.addStudyLocation(new ResourceStudyLocation().withResource(resource).withStudyLocation(studyLocation));
         }
+    }
+
+    public ResourceParent getResourceAcceptingApplications(ResourceParent resource) {
+        return resourceDAO.getResourceAcceptingApplications(resource);
     }
 
     private Junction getFilterConditions(PrismScope resourceScope, ResourceListFilterDTO filter) {
@@ -673,13 +693,13 @@ public class ResourceService {
         }
         return conditions;
     }
-    
+
     public void deleteElapsedStudyOptions() {
         LocalDate baseline = new LocalDate();
         resourceDAO.deleteElapsedStudyOptionInstances(baseline);
         resourceDAO.deleteElapsedStudyOptions(baseline);
     }
-    
+
     public List<ResourceState> getResourceStatesByStateGroup(Resource resource, PrismStateGroup stateGroup) {
         return resourceDAO.getResourceStatesByStateGroup(resource, stateGroup);
     }

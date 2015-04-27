@@ -133,8 +133,7 @@ public class InstitutionService {
         advert.setInstitution(institution);
 
         setInstitutionImages(institutionDTO, institution);
-        resourceService.setStudyOptions(institution, institutionDTO.getStudyOptions(), new LocalDate());
-        resourceService.setStudyLocations(institution, institutionDTO.getStudyLocations());
+        resourceService.setAttributes(institution, institutionDTO.getAttributes());
         return institution;
     }
 
@@ -173,8 +172,7 @@ public class InstitutionService {
         }
 
         setInstitutionImages(institutionDTO, institution);
-        resourceService.setStudyOptions(institution, institutionDTO.getStudyOptions(), new LocalDate());
-        resourceService.setStudyLocations(institution, institutionDTO.getStudyLocations());
+        resourceService.setAttributes(institution, institutionDTO.getAttributes());
     }
 
     public List<String> listAvailableCurrencies() {

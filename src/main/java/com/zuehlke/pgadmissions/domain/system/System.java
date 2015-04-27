@@ -84,7 +84,7 @@ public class System extends Resource {
     @Column(name = "last_notified_update_syndicated")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedUpdateSyndicated;
-    
+
     @Column(name = "last_notified_recommendation_syndicated")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedRecommendationSyndicated;
@@ -110,8 +110,9 @@ public class System extends Resource {
 
     @OneToMany(mappedBy = "system")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
-    
-    @OneToMany(mappedBy = "system")
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "system_id", nullable = false)
     private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "system")
@@ -307,7 +308,7 @@ public class System extends Resource {
     public final void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
         this.lastNotifiedUpdateSyndicated = lastNotifiedUpdateSyndicated;
     }
-    
+
     public LocalDate getLastNotifiedRecommendationSyndicated() {
         return lastNotifiedRecommendationSyndicated;
     }
@@ -380,10 +381,10 @@ public class System extends Resource {
 
     @Override
     public Set<ResourceCondition> getResourceConditions() {
-		return resourceConditions;
-	}
+        return resourceConditions;
+    }
 
-	public final Set<Institution> getInstitutions() {
+    public final Set<Institution> getInstitutions() {
         return institutions;
     }
 

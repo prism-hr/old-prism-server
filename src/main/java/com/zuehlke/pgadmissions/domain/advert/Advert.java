@@ -334,16 +334,12 @@ public class Advert extends ResourceParentAttribute {
         return ObjectUtils.firstNonNull(project, program, institution);
     }
 
-    public boolean isProgramAdvert() {
-        return program != null;
-    }
-
-    public boolean isProjectAdvert() {
-        return project != null;
+    public boolean isAdvertOfScope(PrismScope scope) {
+        return getResource().getResourceScope().equals(scope);
     }
 
     public Department getDepartment() {
-        return isProjectAdvert() ? project.getProgram().getDepartment() : program.getDepartment();
+        return getResource().getDepartment();
     }
 
     public boolean hasConvertedFee() {

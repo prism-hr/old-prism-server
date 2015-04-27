@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED_PURGED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_REJECTED_PURGED_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationRejected.applicationReverseRejection;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
@@ -15,7 +15,7 @@ public class PrismApplicationRejectedCompleted extends PrismWorkflowState {
 	protected void setStateActions() {
 		stateActions.add(applicationCommentWithViewerRecruiter()); //
 		stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
-		stateActions.add(applicationPurge(APPLICATION_REJECTED_COMPLETED_PURGED)); //
+		stateActions.add(applicationPurge(APPLICATION_REJECTED_PURGED_TRANSITION)); //
 		stateActions.add(applicationReverseRejection());
 		stateActions.add(applicationViewEdit()); //
 	}

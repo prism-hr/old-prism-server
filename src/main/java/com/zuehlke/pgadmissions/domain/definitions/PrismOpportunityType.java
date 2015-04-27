@@ -5,8 +5,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCatego
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.LEARNING;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramTypeVisibility.EXTERNAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramTypeVisibility.INTERNAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOppportunityTypeVisibility.EXTERNAL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOppportunityTypeVisibility.INTERNAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.IMMEDIATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
 import static org.joda.time.DateTimeConstants.MONDAY;
@@ -43,7 +43,7 @@ public enum PrismOpportunityType {
 
     private Integer defaultMaximumDurationMonth;
 
-    private PrismProgramTypeVisibility defaultVisibility;
+    private PrismOppportunityTypeVisibility defaultVisibility;
 
     private PrismProgramStartType defaultStartType;
 
@@ -61,7 +61,7 @@ public enum PrismOpportunityType {
 
     private static final HashMultimap<PrismOpportunityType, PrismOpportunityType> relations = HashMultimap.create();
 
-    private static final HashMultimap<PrismOpportunityType, PrismProgramTypeRecommendation> recommendations = HashMultimap.create();
+    private static final HashMultimap<PrismOpportunityType, PrismOpportunityTypeRecommendation> recommendations = HashMultimap.create();
 
     private static final LinkedListMultimap<PrismOpportunityCategory, PrismOpportunityType> byCategory = LinkedListMultimap.create();
 
@@ -72,51 +72,51 @@ public enum PrismOpportunityType {
         relations.put(STUDY_POSTGRADUATE_TAUGHT, SCHOLARSHIP_POSTGRADUATE_TAUGHT);
         relations.put(STUDY_POSTGRADUATE_RESEARCH, SCHOLARSHIP_POSTGRADUATE_RESEARCH);
 
-        recommendations.put(STUDY_UNDERGRADUATE, new PrismProgramTypeRecommendation(SCHOLARSHIP_UNDERGRADUATE, 1, PrismDurationUnit.WEEK,
-                PrismProgramTypeRecommendationBaselineType.FROM_OFFER));
-        recommendations.put(STUDY_UNDERGRADUATE, new PrismProgramTypeRecommendation(TRAINING, 3, PrismDurationUnit.MONTH,
-                PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(STUDY_UNDERGRADUATE, new PrismProgramTypeRecommendation(WORK_EXPERIENCE, 6, PrismDurationUnit.MONTH,
-                PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(STUDY_UNDERGRADUATE, new PrismProgramTypeRecommendation(STUDY_POSTGRADUATE_TAUGHT, 1, PrismDurationUnit.YEAR,
-                PrismProgramTypeRecommendationBaselineType.FROM_CLOSE));
-        recommendations.put(STUDY_UNDERGRADUATE, new PrismProgramTypeRecommendation(STUDY_POSTGRADUATE_RESEARCH, 1, PrismDurationUnit.YEAR,
-                PrismProgramTypeRecommendationBaselineType.FROM_CLOSE));
-        recommendations.put(STUDY_UNDERGRADUATE, new PrismProgramTypeRecommendation(EMPLOYMENT, 1, PrismDurationUnit.YEAR,
-                PrismProgramTypeRecommendationBaselineType.FROM_CLOSE));
+        recommendations.put(STUDY_UNDERGRADUATE, new PrismOpportunityTypeRecommendation(SCHOLARSHIP_UNDERGRADUATE, 1, PrismDurationUnit.WEEK,
+                PrismOpportunityTypeRecommendationBaselineType.FROM_OFFER));
+        recommendations.put(STUDY_UNDERGRADUATE, new PrismOpportunityTypeRecommendation(TRAINING, 3, PrismDurationUnit.MONTH,
+                PrismOpportunityTypeRecommendationBaselineType.FROM_START));
+        recommendations.put(STUDY_UNDERGRADUATE, new PrismOpportunityTypeRecommendation(WORK_EXPERIENCE, 6, PrismDurationUnit.MONTH,
+                PrismOpportunityTypeRecommendationBaselineType.FROM_START));
+        recommendations.put(STUDY_UNDERGRADUATE, new PrismOpportunityTypeRecommendation(STUDY_POSTGRADUATE_TAUGHT, 1, PrismDurationUnit.YEAR,
+                PrismOpportunityTypeRecommendationBaselineType.FROM_CLOSE));
+        recommendations.put(STUDY_UNDERGRADUATE, new PrismOpportunityTypeRecommendation(STUDY_POSTGRADUATE_RESEARCH, 1, PrismDurationUnit.YEAR,
+                PrismOpportunityTypeRecommendationBaselineType.FROM_CLOSE));
+        recommendations.put(STUDY_UNDERGRADUATE, new PrismOpportunityTypeRecommendation(EMPLOYMENT, 1, PrismDurationUnit.YEAR,
+                PrismOpportunityTypeRecommendationBaselineType.FROM_CLOSE));
 
-        recommendations.put(STUDY_POSTGRADUATE_TAUGHT, new PrismProgramTypeRecommendation(SCHOLARSHIP_POSTGRADUATE_TAUGHT, 1, PrismDurationUnit.WEEK,
-                PrismProgramTypeRecommendationBaselineType.FROM_OFFER));
-        recommendations.put(STUDY_POSTGRADUATE_TAUGHT, new PrismProgramTypeRecommendation(TRAINING, 3, PrismDurationUnit.MONTH,
-                PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(STUDY_POSTGRADUATE_TAUGHT, new PrismProgramTypeRecommendation(WORK_EXPERIENCE, 3, PrismDurationUnit.MONTH,
-                PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(STUDY_POSTGRADUATE_TAUGHT, new PrismProgramTypeRecommendation(STUDY_POSTGRADUATE_RESEARCH, 1, PrismDurationUnit.YEAR,
-                PrismProgramTypeRecommendationBaselineType.FROM_CLOSE));
-        recommendations.put(STUDY_POSTGRADUATE_TAUGHT, new PrismProgramTypeRecommendation(EMPLOYMENT, 1, PrismDurationUnit.YEAR,
-                PrismProgramTypeRecommendationBaselineType.FROM_CLOSE));
+        recommendations.put(STUDY_POSTGRADUATE_TAUGHT, new PrismOpportunityTypeRecommendation(SCHOLARSHIP_POSTGRADUATE_TAUGHT, 1, PrismDurationUnit.WEEK,
+                PrismOpportunityTypeRecommendationBaselineType.FROM_OFFER));
+        recommendations.put(STUDY_POSTGRADUATE_TAUGHT, new PrismOpportunityTypeRecommendation(TRAINING, 3, PrismDurationUnit.MONTH,
+                PrismOpportunityTypeRecommendationBaselineType.FROM_START));
+        recommendations.put(STUDY_POSTGRADUATE_TAUGHT, new PrismOpportunityTypeRecommendation(WORK_EXPERIENCE, 3, PrismDurationUnit.MONTH,
+                PrismOpportunityTypeRecommendationBaselineType.FROM_START));
+        recommendations.put(STUDY_POSTGRADUATE_TAUGHT, new PrismOpportunityTypeRecommendation(STUDY_POSTGRADUATE_RESEARCH, 1, PrismDurationUnit.YEAR,
+                PrismOpportunityTypeRecommendationBaselineType.FROM_CLOSE));
+        recommendations.put(STUDY_POSTGRADUATE_TAUGHT, new PrismOpportunityTypeRecommendation(EMPLOYMENT, 1, PrismDurationUnit.YEAR,
+                PrismOpportunityTypeRecommendationBaselineType.FROM_CLOSE));
 
-        recommendations.put(STUDY_POSTGRADUATE_RESEARCH, new PrismProgramTypeRecommendation(SCHOLARSHIP_POSTGRADUATE_RESEARCH, 1, PrismDurationUnit.WEEK,
-                PrismProgramTypeRecommendationBaselineType.FROM_OFFER));
-        recommendations.put(STUDY_POSTGRADUATE_RESEARCH, new PrismProgramTypeRecommendation(TRAINING, 3, PrismDurationUnit.MONTH,
-                PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(STUDY_POSTGRADUATE_RESEARCH, new PrismProgramTypeRecommendation(WORK_EXPERIENCE, 3, PrismDurationUnit.MONTH,
-                PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(STUDY_POSTGRADUATE_RESEARCH, new PrismProgramTypeRecommendation(EMPLOYMENT, 1, PrismDurationUnit.YEAR,
-                PrismProgramTypeRecommendationBaselineType.FROM_CLOSE));
+        recommendations.put(STUDY_POSTGRADUATE_RESEARCH, new PrismOpportunityTypeRecommendation(SCHOLARSHIP_POSTGRADUATE_RESEARCH, 1, PrismDurationUnit.WEEK,
+                PrismOpportunityTypeRecommendationBaselineType.FROM_OFFER));
+        recommendations.put(STUDY_POSTGRADUATE_RESEARCH, new PrismOpportunityTypeRecommendation(TRAINING, 3, PrismDurationUnit.MONTH,
+                PrismOpportunityTypeRecommendationBaselineType.FROM_START));
+        recommendations.put(STUDY_POSTGRADUATE_RESEARCH, new PrismOpportunityTypeRecommendation(WORK_EXPERIENCE, 3, PrismDurationUnit.MONTH,
+                PrismOpportunityTypeRecommendationBaselineType.FROM_START));
+        recommendations.put(STUDY_POSTGRADUATE_RESEARCH, new PrismOpportunityTypeRecommendation(EMPLOYMENT, 1, PrismDurationUnit.YEAR,
+                PrismOpportunityTypeRecommendationBaselineType.FROM_CLOSE));
 
-        recommendations.put(EMPLOYMENT, new PrismProgramTypeRecommendation(TRAINING, 3, PrismDurationUnit.MONTH,
-                PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(EMPLOYMENT, new PrismProgramTypeRecommendation(STUDY_UNDERGRADUATE, 1, PrismDurationUnit.YEAR,
-                PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(EMPLOYMENT, new PrismProgramTypeRecommendation(STUDY_POSTGRADUATE_TAUGHT, 1, PrismDurationUnit.YEAR,
-                PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(EMPLOYMENT, new PrismProgramTypeRecommendation(STUDY_POSTGRADUATE_RESEARCH, 1, PrismDurationUnit.YEAR,
-                PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(EMPLOYMENT, new PrismProgramTypeRecommendation(EMPLOYMENT_SECONDMENT, 1, PrismDurationUnit.YEAR,
-                PrismProgramTypeRecommendationBaselineType.FROM_START));
-        recommendations.put(EMPLOYMENT, new PrismProgramTypeRecommendation(EMPLOYMENT, 1, PrismDurationUnit.YEAR,
-                PrismProgramTypeRecommendationBaselineType.FROM_START));
+        recommendations.put(EMPLOYMENT, new PrismOpportunityTypeRecommendation(TRAINING, 3, PrismDurationUnit.MONTH,
+                PrismOpportunityTypeRecommendationBaselineType.FROM_START));
+        recommendations.put(EMPLOYMENT, new PrismOpportunityTypeRecommendation(STUDY_UNDERGRADUATE, 1, PrismDurationUnit.YEAR,
+                PrismOpportunityTypeRecommendationBaselineType.FROM_START));
+        recommendations.put(EMPLOYMENT, new PrismOpportunityTypeRecommendation(STUDY_POSTGRADUATE_TAUGHT, 1, PrismDurationUnit.YEAR,
+                PrismOpportunityTypeRecommendationBaselineType.FROM_START));
+        recommendations.put(EMPLOYMENT, new PrismOpportunityTypeRecommendation(STUDY_POSTGRADUATE_RESEARCH, 1, PrismDurationUnit.YEAR,
+                PrismOpportunityTypeRecommendationBaselineType.FROM_START));
+        recommendations.put(EMPLOYMENT, new PrismOpportunityTypeRecommendation(EMPLOYMENT_SECONDMENT, 1, PrismDurationUnit.YEAR,
+                PrismOpportunityTypeRecommendationBaselineType.FROM_START));
+        recommendations.put(EMPLOYMENT, new PrismOpportunityTypeRecommendation(EMPLOYMENT, 1, PrismDurationUnit.YEAR,
+                PrismOpportunityTypeRecommendationBaselineType.FROM_START));
 
         for (PrismOpportunityType opportunityType : PrismOpportunityType.values()) {
             stringValues.add(opportunityType.name());
@@ -125,7 +125,7 @@ public enum PrismOpportunityType {
     }
 
     PrismOpportunityType(PrismOpportunityCategory programClass, Integer defaultMinimumDurationMonth, Integer defaultMaximumDurationMonth,
-            PrismProgramTypeVisibility defaultVisibility, PrismProgramStartType defaultStartType, Integer defaultStartMonth, Integer defaultStartWeek,
+            PrismOppportunityTypeVisibility defaultVisibility, PrismProgramStartType defaultStartType, Integer defaultStartMonth, Integer defaultStartWeek,
             Integer defaultStartDay, Integer defaultStartDelay, Integer defaultStartBuffer, String[] prefixes) {
         this.programCategory = programClass;
         this.defaultMinimumDurationMonth = defaultMinimumDurationMonth;
@@ -152,7 +152,7 @@ public enum PrismOpportunityType {
         return defaultMaximumDurationMonth;
     }
 
-    public PrismProgramTypeVisibility getDefaultVisibility() {
+    public PrismOppportunityTypeVisibility getDefaultVisibility() {
         return defaultVisibility;
     }
 
@@ -217,7 +217,7 @@ public enum PrismOpportunityType {
         return relations.get(this);
     }
 
-    public Set<PrismProgramTypeRecommendation> getRecommendations() {
+    public Set<PrismOpportunityTypeRecommendation> getRecommendations() {
         return recommendations.get(this);
     }
 

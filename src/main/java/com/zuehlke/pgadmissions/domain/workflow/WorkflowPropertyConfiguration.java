@@ -213,7 +213,7 @@ public class WorkflowPropertyConfiguration extends WorkflowConfigurationVersione
         return this;
     }
 
-    public WorkflowPropertyConfiguration withProgramType(PrismOpportunityType opportunityType) {
+    public WorkflowPropertyConfiguration withOpportunityType(PrismOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
         return this;
     }

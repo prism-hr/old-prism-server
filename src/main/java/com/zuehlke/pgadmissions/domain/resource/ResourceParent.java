@@ -6,7 +6,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.program.ResourceStudyLocation;
 
 public abstract class ResourceParent extends Resource {
 

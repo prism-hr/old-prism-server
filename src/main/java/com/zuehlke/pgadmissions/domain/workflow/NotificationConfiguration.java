@@ -43,6 +43,7 @@ public class NotificationConfiguration extends WorkflowConfiguration {
     @JoinColumn(name = "program_id")
     private Program program;
     
+    @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
 
@@ -179,7 +180,7 @@ public class NotificationConfiguration extends WorkflowConfiguration {
         return this;
     }
 
-    public NotificationConfiguration withProgramType(PrismOpportunityType opportunityType) {
+    public NotificationConfiguration withOpportunityType(PrismOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
         return this;
     }

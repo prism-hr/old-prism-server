@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-public class PrismProgramTypeRecommendation {
+public class PrismOpportunityTypeRecommendation {
 
     private PrismOpportunityType opportunityType;
 
@@ -8,10 +8,10 @@ public class PrismProgramTypeRecommendation {
 
     private PrismDurationUnit delayDurationUnit;
 
-    private PrismProgramTypeRecommendationBaselineType delayBaselineType;
+    private PrismOpportunityTypeRecommendationBaselineType delayBaselineType;
 
-    public PrismProgramTypeRecommendation(PrismOpportunityType opportunityType, Integer delayDuration, PrismDurationUnit delayDurationUnit,
-            PrismProgramTypeRecommendationBaselineType delayBaselineType) {
+    public PrismOpportunityTypeRecommendation(PrismOpportunityType opportunityType, Integer delayDuration, PrismDurationUnit delayDurationUnit,
+            PrismOpportunityTypeRecommendationBaselineType delayBaselineType) {
         this.opportunityType = opportunityType;
         this.delayDuration = delayDuration;
         this.delayDurationUnit = delayDurationUnit;
@@ -30,7 +30,7 @@ public class PrismProgramTypeRecommendation {
         return delayDurationUnit;
     }
 
-    public final PrismProgramTypeRecommendationBaselineType getDelayBaselineType() {
+    public final PrismOpportunityTypeRecommendationBaselineType getDelayBaselineType() {
         return delayBaselineType;
     }
 

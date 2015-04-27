@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-public enum PrismProgramTypeRecommendationBaselineType {
+public enum PrismOpportunityTypeRecommendationBaselineType {
 
     FROM_OFFER,
     FROM_START,

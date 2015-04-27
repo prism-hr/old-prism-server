@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-
 public class InstitutionRepresentation {
 
     private Integer id;
@@ -16,10 +13,6 @@ public class InstitutionRepresentation {
     private InstitutionAddressRepresentation address;
 
     private String currency;
-
-    private PrismOpportunityType defaultProgramType;
-
-    private PrismStudyOption defaultStudyOption;
 
     private String homepage;
 
@@ -71,22 +64,6 @@ public class InstitutionRepresentation {
 
     public void setCurrency(String currency) {
         this.currency = currency;
-    }
-
-    public PrismOpportunityType getDefaultProgramType() {
-        return defaultProgramType;
-    }
-
-    public void setDefaultProgramType(PrismOpportunityType defaultProgramType) {
-        this.defaultProgramType = defaultProgramType;
-    }
-
-    public PrismStudyOption getDefaultStudyOption() {
-        return defaultStudyOption;
-    }
-
-    public void setDefaultStudyOption(PrismStudyOption defaultStudyOption) {
-        this.defaultStudyOption = defaultStudyOption;
     }
 
     public String getHomepage() {

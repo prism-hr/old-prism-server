@@ -5,9 +5,9 @@ import org.dozer.DozerConverter;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 
-public class ProgramTypeConverter extends DozerConverter<OpportunityType, PrismOpportunityType> {
+public class OpportunityTypeConverter extends DozerConverter<OpportunityType, PrismOpportunityType> {
 
-    public ProgramTypeConverter() {
+    public OpportunityTypeConverter() {
         super(OpportunityType.class, PrismOpportunityType.class);
     }
 

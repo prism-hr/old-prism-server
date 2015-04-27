@@ -61,7 +61,6 @@ public class ImportedEntityServiceHelperSystem implements AbstractServiceHelper 
         }
     }
 
-    @SuppressWarnings("unchecked")
     public List<InstitutionDomiciles.InstitutionDomicile> unmarshal() throws Exception {
         JAXBContext jaxbContext = JAXBContext.newInstance(InstitutionDomiciles.class);
         DefaultResourceLoader loader = new DefaultResourceLoader();
@@ -73,7 +72,8 @@ public class ImportedEntityServiceHelperSystem implements AbstractServiceHelper 
         unmarshaller.setSchema(schema);
 
         try {
-            return (List<InstitutionDomiciles.InstitutionDomicile>) unmarshaller.unmarshal(loader.getResource(institutionDomicileImportLocation).getURL());
+            InstitutionDomiciles unmarshalled = (InstitutionDomiciles) unmarshaller.unmarshal(loader.getResource(institutionDomicileImportLocation).getURL());
+            return unmarshalled.getInstitutionDomicile();
         } catch (Exception e) {
             return null;
         }

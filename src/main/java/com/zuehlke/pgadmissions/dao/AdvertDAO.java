@@ -76,15 +76,15 @@ public class AdvertDAO {
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("institution.id")) //
                                 .add(Restrictions.isNotNull("institutionCondition.id")) //
-                                .add(Restrictions.in("institutionState.id", institutionStates))) //
+                                .add(Restrictions.in("institutionState.state.id", institutionStates))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("program.id")) //
                                 .add(Restrictions.isNotNull("programCondition.id")) //
-                                .add(Restrictions.in("programState.id", programStates))) //
+                                .add(Restrictions.in("programState.state.id", programStates))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("project.id")) //
                                 .add(Restrictions.isNotNull("projectCondition.id")) //
-                                .add(Restrictions.in("projectState.id", projectStates))));
+                                .add(Restrictions.in("projectState.state.id", projectStates))));
 
         appendLocationConstraint(criteria, queryDTO);
         appendKeywordConstraint(queryDTO, criteria);
@@ -155,15 +155,15 @@ public class AdvertDAO {
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("institution.id")) //
                                 .add(Restrictions.isNotNull("institutionCondition.id")) //
-                                .add(Restrictions.in("institutionState.id", activeInstitutionStates))) //
+                                .add(Restrictions.in("institutionState.state.id", activeInstitutionStates))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("program.id")) //
                                 .add(Restrictions.isNotNull("programCondition.id")) //
-                                .add(Restrictions.in("programState.id", activeProgramStates))) //
+                                .add(Restrictions.in("programState.state.id", activeProgramStates))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("project.id")) //
                                 .add(Restrictions.isNotNull("projectCondition.id")) //
-                                .add(Restrictions.in("projectState.id", activeProjectStates))));
+                                .add(Restrictions.in("projectState.state.id", activeProjectStates))));
 
         if (!advertsRecentlyAppliedFor.isEmpty()) {
             criteria.add(Restrictions.not( //
@@ -213,15 +213,15 @@ public class AdvertDAO {
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("institution.id")) //
                                 .add(Restrictions.isNotNull("institutionCondition.id")) //
-                                .add(Restrictions.in("institutionState.id", activeInstitutionStates))) //
+                                .add(Restrictions.in("institutionState.state.id", activeInstitutionStates))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("program.id")) //
                                 .add(Restrictions.isNotNull("programCondition.id")) //
-                                .add(Restrictions.in("programState.id", activeProgramStates))) //
+                                .add(Restrictions.in("programState.state.id", activeProgramStates))) //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNotNull("project.id")) //
                                 .add(Restrictions.isNotNull("projectCondition.id")) //
-                                .add(Restrictions.in("projectState.id", activeProjectStates)))) //
+                                .add(Restrictions.in("projectState.state.id", activeProjectStates)))) //
                 .add(Restrictions.lt("lastCurrencyConversionDate", baseline)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //

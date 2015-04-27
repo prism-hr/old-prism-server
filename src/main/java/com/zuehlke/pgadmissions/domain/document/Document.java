@@ -15,12 +15,12 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationFunding;
 import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
@@ -88,10 +88,10 @@ public class Document {
     private User userPortrait;
 
     @OneToOne(mappedBy = "logoImage")
-    private Advert logoImage;
+    private Institution logoImage;
     
     @OneToOne(mappedBy = "backgroundImage")
-    private Advert backgroundImage;
+    private Institution backgroundImage;
 
     public void setId(Integer id) {
         this.id = id;
@@ -192,12 +192,12 @@ public class Document {
     public User getUserPortrait() {
         return userPortrait;
     }
-
-    public Advert getLogoImage() {
+    
+    public Institution getLogoImage() {
         return logoImage;
     }
-    
-    public Advert getBackgroundImage() {
+
+    public Institution getBackgroundImage() {
         return backgroundImage;
     }
 

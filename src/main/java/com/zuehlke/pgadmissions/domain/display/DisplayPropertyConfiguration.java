@@ -158,7 +158,7 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
         return this;
     }
 
-    public DisplayPropertyConfiguration withProgramType(PrismOpportunityType opportunityType) {
+    public DisplayPropertyConfiguration withOpportunityType(PrismOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
         return this;
     }

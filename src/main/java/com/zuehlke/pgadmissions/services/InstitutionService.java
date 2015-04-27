@@ -286,7 +286,7 @@ public class InstitutionService {
 
     public Integer getMonthOfBusinessYear(Institution institution, Integer month) {
         Integer businessYearStartMonth = institution.getBusinessYearStartMonth();
-        return month <= businessYearStartMonth ? (month - (businessYearStartMonth - 1)) : (month + (12 - (businessYearStartMonth - 1)));
+        return month >= businessYearStartMonth ? (month - (businessYearStartMonth - 1)) : (month + (12 - (businessYearStartMonth - 1)));
     }
 
     public void setInstitutionImages(InstitutionDTO institutionDTO, Institution institution) {

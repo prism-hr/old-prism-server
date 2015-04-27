@@ -8,6 +8,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
+import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
+import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.longToInteger;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -718,20 +720,20 @@ public class ResourceService {
 
     private void populateApplicationProcessingSummary(ApplicationProcessingSummaryDTO yearSummary,
             ApplicationProcessingSummaryRepresentation yearRepresentation) {
-        yearRepresentation.setAdvertCount(yearSummary.getAdvertCount().intValue());
-        yearRepresentation.setCreatedApplicationCount(yearSummary.getCreatedApplicationCount().intValue());
-        yearRepresentation.setSubmittedApplicationCount(yearSummary.getSubmittedApplicationCount().intValue());
-        yearRepresentation.setApprovedApplicationCount(yearSummary.getApprovedApplicationCount().intValue());
-        yearRepresentation.setRejectedApplicationCount(yearSummary.getRejectedApplicationCount().intValue());
-        yearRepresentation.setWithdrawnApplicationCount(yearSummary.getWithdrawnApplicationCount().intValue());
-        yearRepresentation.setCreatedApplicationRatio(BigDecimal.valueOf(yearSummary.getCreatedApplicationRatio()));
-        yearRepresentation.setSubmittedApplicationRatio(BigDecimal.valueOf(yearSummary.getSubmittedApplicationCount()));
-        yearRepresentation.setApprovedApplicationRatio(BigDecimal.valueOf(yearSummary.getApprovedApplicationCount()));
-        yearRepresentation.setRejectedApplicationRatio(BigDecimal.valueOf(yearSummary.getRejectedApplicationCount()));
-        yearRepresentation.setWithdrawnApplicationRatio(BigDecimal.valueOf(yearSummary.getWithdrawnApplicationCount()));
-        yearRepresentation.setAverageRating(BigDecimal.valueOf(yearSummary.getAverageRating()));
-        yearRepresentation.setAveragePreparationTime(BigDecimal.valueOf(yearSummary.getAveragePreparationTime()));
-        yearRepresentation.setAverageProcessingTime(BigDecimal.valueOf(yearSummary.getAverageProcessingTime()));
+        yearRepresentation.setAdvertCount(longToInteger(yearSummary.getAdvertCount()));
+        yearRepresentation.setCreatedApplicationCount(longToInteger(yearSummary.getCreatedApplicationCount()));
+        yearRepresentation.setSubmittedApplicationCount(longToInteger(yearSummary.getSubmittedApplicationCount()));
+        yearRepresentation.setApprovedApplicationCount(longToInteger(yearSummary.getApprovedApplicationCount()));
+        yearRepresentation.setRejectedApplicationCount(longToInteger(yearSummary.getRejectedApplicationCount()));
+        yearRepresentation.setWithdrawnApplicationCount(longToInteger(yearSummary.getWithdrawnApplicationCount()));
+        yearRepresentation.setCreatedApplicationRatio(doubleToBigDecimal(yearSummary.getCreatedApplicationRatio(), 2));
+        yearRepresentation.setSubmittedApplicationRatio(doubleToBigDecimal(yearSummary.getSubmittedApplicationRatio(), 2));
+        yearRepresentation.setApprovedApplicationRatio(doubleToBigDecimal(yearSummary.getApprovedApplicationRatio(), 2));
+        yearRepresentation.setRejectedApplicationRatio(doubleToBigDecimal(yearSummary.getRejectedApplicationRatio(), 2));
+        yearRepresentation.setWithdrawnApplicationRatio(doubleToBigDecimal(yearSummary.getWithdrawnApplicationRatio(), 2));
+        yearRepresentation.setAverageRating(doubleToBigDecimal(yearSummary.getAverageRating(), 2));
+        yearRepresentation.setAveragePreparationTime(doubleToBigDecimal(yearSummary.getAveragePreparationTime(), 2));
+        yearRepresentation.setAverageProcessingTime(doubleToBigDecimal(yearSummary.getAverageProcessingTime(), 2));
     }
 
 }

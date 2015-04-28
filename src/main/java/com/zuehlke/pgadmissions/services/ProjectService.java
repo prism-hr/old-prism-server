@@ -2,11 +2,13 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.context.ApplicationContext;
@@ -22,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.department.Department;
+import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -35,8 +38,9 @@ import com.zuehlke.pgadmissions.dto.DepartmentDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
-import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
-import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
+import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceParentAttributesDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
@@ -60,38 +64,25 @@ public class ProjectService {
     private EntityService entityService;
 
     @Inject
+    private ImportedEntityService importedEntityService;
+
+    @Inject
     private UserService userService;
 
     @Inject
     private StateService stateService;
 
     @Inject
-    private SystemService systemService;
+    private AdvertService advertService;
 
     @Inject
-    private AdvertService advertService;
+    private ResourceService resourceService;
 
     @Inject
     private ApplicationContext applicationContext;
 
     public Project getById(Integer id) {
         return entityService.getById(Project.class, id);
-    }
-
-    public void save(Project project) {
-        entityService.save(project);
-    }
-
-    public Project create(User user, ProjectDTO projectDTO) {
-        Program program = entityService.getById(Program.class, projectDTO.getProgramId());
-        DepartmentDTO departmentDTO = projectDTO.getDepartment();
-        Department deparment = departmentDTO == null ? program.getDepartment() : departmentService.getOrCreateDepartment(departmentDTO);
-
-        Project project = new Project().withUser(user).withSystem(systemService.getSystem()).withInstitution(program.getInstitution())
-                .withDepartment(deparment).withProgram(program);
-        copyProjectDetails(project, projectDTO);
-        project.setEndDate(new LocalDate().plusMonths(12));
-        return project;
     }
 
     public ActionOutcomeDTO executeAction(Integer programId, CommentDTO commentDTO) throws Exception {
@@ -106,7 +97,7 @@ public class ProjectService {
         String commentContent = viewEditAction ? applicationContext.getBean(PropertyLoader.class).localize(project)
                 .load(PrismDisplayPropertyDefinition.PROJECT_COMMENT_UPDATED) : commentDTO.getContent();
 
-        ProjectDTO projectDTO = (ProjectDTO) commentDTO.fetchResourceDTO();
+        OpportunityDTO projectDTO = (OpportunityDTO) commentDTO.getResource();
         LocalDate dueDate = projectDTO.getEndDate();
 
         State transitionState = stateService.getById(commentDTO.getTransitionState());
@@ -174,10 +165,6 @@ public class ProjectService {
         return projectDAO.getSitemapEntries(activeProjectStates);
     }
 
-    public SocialMetadataDTO getSocialMetadata(Project project) {
-        return advertService.getSocialMetadata(project.getAdvert());
-    }
-
     public SearchEngineAdvertDTO getSearchEngineAdvert(Integer projectId) {
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
         SearchEngineAdvertDTO searchEngineDTO = projectDAO.getSearchEngineAdvert(projectId, activeProjectStates);
@@ -205,29 +192,47 @@ public class ProjectService {
         return projectDAO.getActiveProjectsByInstitution(institutionId, activeStates);
     }
 
-    private void update(Integer projectId, ProjectDTO projectDTO) {
-        Project project = entityService.getById(Project.class, projectId);
-        copyProjectDetails(project, projectDTO);
-    }
+    private void update(Integer projectId, OpportunityDTO projectDTO) throws Exception {
+        Program project = entityService.getById(Program.class, projectId);
 
-    private void copyProjectDetails(Project project, ProjectDTO projectDTO) {
-        Advert advert;
-        if (project.getAdvert() == null) {
-            advert = new Advert();
-            advert.setAddress(advertService.createAddressCopy(project.getInstitution().getAddress()));
-            project.setAdvert(advert);
-        } else {
-            advert = project.getAdvert();
+        DepartmentDTO departmentDTO = projectDTO.getDepartment();
+        Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(departmentDTO);
+        project.setDepartment(department);
+
+        AdvertDTO advertDTO = projectDTO.getAdvert();
+        Advert advert = project.getAdvert();
+        advertService.updateAdvert(userService.getCurrentUser(), advertDTO, advert);
+
+        project.setDurationMinimum(projectDTO.getDurationMinimum());
+        project.setDurationMaximum(projectDTO.getDurationMaximum());
+
+        Program program = null;
+        boolean imported = false;
+        ResourceParent resource = (ResourceParent) project.getParentResource();
+        if (project.getParentResource().getResourceScope() == PROGRAM) {
+            program = (Program) resource;
+            imported = BooleanUtils.isTrue(program.getImported());
         }
 
-        String title = projectDTO.getTitle();
-        project.setEndDate(projectDTO.getEndDate());
-        project.setTitle(title);
-        advert.setTitle(title);
-        advert.setSummary(projectDTO.getSummary());
-        advert.setApplyHomepage(projectDTO.getApplyHomepage());
-        advert.setStudyDurationMinimum(projectDTO.getStudyDurationMinimum());
-        advert.setStudyDurationMaximum(projectDTO.getStudyDurationMaximum());
+        ResourceParentAttributesDTO attributes = projectDTO.getAttributes();
+        resourceService.setResourceConditions(project, attributes.getConditions());
+        
+        if (!imported) {
+            OpportunityType opportunityType = importedEntityService.getByCode(OpportunityType.class, //
+                    project.getInstitution(), projectDTO.getOpportunityType().name());
+
+            project.setOpportunityType(opportunityType);
+            project.setTitle(advert.getTitle());
+
+            LocalDate endDate = projectDTO.getEndDate();
+            if (endDate != null) {
+                project.setEndDate(endDate);
+            }
+
+            resourceService.setStudyOptions(project, attributes.getStudyOptions(), new LocalDate());
+        }
+        
+        resourceService.setStudyLocations(project, attributes.getStudyLocations());
     }
 
 }

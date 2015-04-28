@@ -14,6 +14,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApproval.applicationWithdrawApproval;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiterAndAdministrator;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiterAndAdministrator;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
@@ -46,6 +47,7 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
 		        APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
 		        APPLICATION_RETIRE_SUPERVISOR_GROUP));
 
+        stateActions.add(applicationUploadReference(state));
 		stateActions.add(applicationViewEditApproval(state)); //
 		stateActions.add(applicationWithdrawApproval());
 	}

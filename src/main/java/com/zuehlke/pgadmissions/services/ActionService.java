@@ -8,6 +8,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.USER_INVOCATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 
 import java.util.List;
@@ -50,8 +51,10 @@ import com.zuehlke.pgadmissions.dto.ActionCreationScopeDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListActionDTO;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
+import com.zuehlke.pgadmissions.rest.dto.ActionDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
 
@@ -76,7 +79,7 @@ public class ActionService {
 
     @Inject
     private UserService userService;
-    
+
     @Inject
     private Mapper mapper;
 
@@ -99,9 +102,7 @@ public class ActionService {
 
         resource = resourceService.getOperativeResource(resource, action);
 
-        if (comment.isDelegateComment() && checkDelegateActionAvailable(resource, action, user)) {
-            return;
-        } else if (checkActionAvailable(resource, action, user)) {
+        if (checkActionAvailable(resource, action, user)) {
             return;
         }
 
@@ -113,10 +114,9 @@ public class ActionService {
 
         User user = comment.getUser();
         authenticateActionInvocation(action, user, null);
-
         Resource resource = comment.getResource();
 
-        if (userService.isCurrentUser(user) || checkDelegateActionAvailable(resource, action, user)) {
+        if (userService.isCurrentUser(user)) {
             return;
         }
 
@@ -139,7 +139,7 @@ public class ActionService {
             representations.add(mapper.map(action, ActionRepresentation.class));
         }
 
-        List<ResourceListActionDTO> creationActions = actionDAO.getCreateResourceActions(resource);
+        List<ResourceListActionDTO> creationActions = actionDAO.getCreateResourceActions(resource, APPLICATION);
         for (ResourceListActionDTO creationAction : creationActions) {
             representations.add(mapper.map(creationAction, ActionRepresentation.class));
         }
@@ -193,10 +193,11 @@ public class ActionService {
     }
 
     public ActionOutcomeDTO getRegistrationOutcome(User user, UserRegistrationDTO registrationDTO) throws Exception {
-        Action action = getById(registrationDTO.getAction().getActionId());
+        ActionDTO actionDTO = registrationDTO.getAction();
+        Action action = getById(actionDTO.getActionId());
         if (action.getActionCategory() == CREATE_RESOURCE) {
-            Object operativeResourceDTO = registrationDTO.getAction().getOperativeResourceDTO();
-            return resourceService.create(user, action, operativeResourceDTO, registrationDTO.getAction().getReferer(), registrationDTO.getAction()
+            ResourceDTO newResource = actionDTO.getNewResource();
+            return resourceService.create(user, action, newResource, registrationDTO.getAction().getReferer(), registrationDTO.getAction()
                     .getWorkflowPropertyConfigurationVersion());
         } else {
             Resource resource = entityService.getById(action.getScope().getId().getResourceClass(), registrationDTO.getResourceId());
@@ -269,8 +270,6 @@ public class ActionService {
     public void validateUserAction(Resource resource, Action action, User invoker) {
         if (checkActionAvailable(resource, action, invoker)) {
             return;
-        } else if (checkDelegateActionAvailable(resource, action, invoker)) {
-            return;
         }
         throw new WorkflowPermissionException(resource, action);
     }
@@ -326,7 +325,7 @@ public class ActionService {
     public List<PrismActionCondition> getActionConditions(PrismScope prismScope) {
         return actionDAO.getActionConditions(prismScope);
     }
-    
+
     public Map<PrismScope, PrismAction> getCreateResourceActions(PrismScope creationScope) {
         Map<PrismScope, PrismAction> createResourceActions = Maps.newHashMap();
         List<PrismAction> creationActions = actionDAO.getCreateResourceActions(creationScope);
@@ -346,7 +345,7 @@ public class ActionService {
                 if (action.getActionCategory() == CREATE_RESOURCE) {
                     Action redirectAction = getRedirectAction(action, user, duplicate);
                     if (redirectAction == null) {
-                        throw new DeduplicationException("SYSTEM_DUPLICATE_" + action.getCreationScope().getId().name());
+                        throw new WorkflowEngineException("SYSTEM_DUPLICATE_" + action.getCreationScope().getId().name());
                     }
                     return new ActionOutcomeDTO().withUser(user).withResource(duplicate).withTransitionResource(duplicate)
                             .withTransitionAction(redirectAction);
@@ -366,11 +365,6 @@ public class ActionService {
 
     private boolean checkActionAvailable(Resource resource, Action action, User user) {
         return actionDAO.getPermittedAction(resource, action, user) != null || !actionDAO.getCreateResourceActions(resource).isEmpty();
-    }
-
-    private boolean checkDelegateActionAvailable(Resource resource, Action action, User invoker) {
-        Action delegateAction = actionDAO.getDelegateAction(resource, action);
-        return checkActionAvailable(resource, delegateAction, invoker);
     }
 
     private void authenticateActionInvocation(Action action, User user, Boolean declineComment) {

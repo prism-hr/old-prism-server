@@ -13,5 +13,7 @@ public class PrismConstants {
 	public static final Integer LIST_PAGE_ROW_COUNT = 50;
 	
 	public static final String SEQUENCE_IDENTIFIER = "sequenceIdentifier";
+	
+	public static final Integer ADVERT_TRIAL_PERIOD = 12;
 
 }

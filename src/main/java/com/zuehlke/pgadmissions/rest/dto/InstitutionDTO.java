@@ -2,56 +2,19 @@ package com.zuehlke.pgadmissions.rest.dto;
 
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-
-public class InstitutionDTO {
-
-    @NotEmpty
-    private String domicile;
-
-    @NotEmpty
-    private String title;
-
-    @NotNull
-    private PrismLocale locale;
+public class InstitutionDTO extends ResourceParentDTO {
 
     @NotNull
     private String currency;
 
     @NotNull
-    private PrismProgramType defaultProgramType;
-
-    @NotNull
-    private PrismStudyOption defaultStudyOption;
-
-    @NotNull
-    private String summary;
-
-    private String description;
-
-    @NotEmpty
-    private String homepage;
-
-    private FileDTO logoDocument;
-
-    private String logoUri;
+    private Integer businessYearStartMonth;
 
     private String googleIdentifier;
 
-    @NotNull
-    private InstitutionAddressDTO address;
+    private FileDTO logoImage;
 
-    public String getDomicile() {
-        return domicile;
-    }
-
-    public void setDomicile(String domicile) {
-        this.domicile = domicile;
-    }
+    private FileDTO backgroundImage;
 
     public String getCurrency() {
         return currency;
@@ -61,92 +24,36 @@ public class InstitutionDTO {
         this.currency = currency;
     }
 
-    public String getTitle() {
-        return title;
+    public Integer getBusinessYearStartMonth() {
+        return businessYearStartMonth;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setBusinessYearStartMonth(Integer businessYearStartMonth) {
+        this.businessYearStartMonth = businessYearStartMonth;
     }
 
-    public  PrismLocale getLocale() {
-        return locale;
-    }
-
-    public  void setLocale(PrismLocale locale) {
-        this.locale = locale;
-    }
-
-    public  String getSummary() {
-        return summary;
-    }
-
-    public  void setSummary(String summary) {
-        this.summary = summary;
-    }
-
-    public  String getDescription() {
-        return description;
-    }
-
-    public  void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getHomepage() {
-        return homepage;
-    }
-
-    public void setHomepage(String homepage) {
-        this.homepage = homepage;
-    }
-
-    public  PrismProgramType getDefaultProgramType() {
-        return defaultProgramType;
-    }
-
-    public  void setDefaultProgramType(PrismProgramType defaultProgramType) {
-        this.defaultProgramType = defaultProgramType;
-    }
-
-    public  PrismStudyOption getDefaultStudyOption() {
-        return defaultStudyOption;
-    }
-
-    public  void setDefaultStudyOption(PrismStudyOption defaultStudyOption) {
-        this.defaultStudyOption = defaultStudyOption;
-    }
-
-    public  FileDTO getLogoDocument() {
-        return logoDocument;
-    }
-
-    public  void setLogoDocument(FileDTO logoDocument) {
-        this.logoDocument = logoDocument;
-    }
-
-    public  String getLogoUri() {
-        return logoUri;
-    }
-
-    public  void setLogoUri(String logoUri) {
-        this.logoUri = logoUri;
-    }
-
-    public  String getGoogleIdentifier() {
+    public String getGoogleIdentifier() {
         return googleIdentifier;
     }
 
-    public  void setGoogleIdentifier(String googleIdentifier) {
+    public void setGoogleIdentifier(String googleIdentifier) {
         this.googleIdentifier = googleIdentifier;
     }
 
-    public InstitutionAddressDTO getAddress() {
-        return address;
+    public FileDTO getLogoImage() {
+        return logoImage;
     }
 
-    public void setAddress(InstitutionAddressDTO address) {
-        this.address = address;
+    public void setLogoImage(FileDTO logoImage) {
+        this.logoImage = logoImage;
+    }
+
+    public FileDTO getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    public void setBackgroundImage(FileDTO backgroundImage) {
+        this.backgroundImage = backgroundImage;
     }
 
 }

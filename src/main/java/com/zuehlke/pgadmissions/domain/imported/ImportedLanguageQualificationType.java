@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.LANGUAGE_QUALIFICATION_TYPE;
+
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -12,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 
 @Entity
@@ -66,34 +69,47 @@ public class ImportedLanguageQualificationType extends ImportedEntity {
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    @Override
     public Institution getInstitution() {
         return institution;
     }
 
+    @Override
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
 
+    @Override
+    public PrismImportedEntity getType() {
+        return LANGUAGE_QUALIFICATION_TYPE;
+    }
+    
+    @Override
     public String getCode() {
         return code;
     }
 
+    @Override
     public void setCode(String code) {
         this.code = code;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -178,10 +194,12 @@ public class ImportedLanguageQualificationType extends ImportedEntity {
         this.maximumListeningScore = maximumListeningScore;
     }
 
+    @Override
     public Boolean getEnabled() {
         return enabled;
     }
 
+    @Override
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
@@ -254,10 +272,6 @@ public class ImportedLanguageQualificationType extends ImportedEntity {
     public ImportedLanguageQualificationType withEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
-    }
-
-    public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("institution", getInstitution()).addProperty("code", getCode());
     }
 
 }

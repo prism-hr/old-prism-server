@@ -16,7 +16,7 @@
     <meta property="og:image" content="${metadata.thumbnailUrl}"/>
     <meta property="og:type" content="website"/>
     <meta property="og:site_name" content="PRiSM"/>
-    <meta property="og:locale" content="${metadata.locale}"/>
+    <meta property="og:locale" content="en_GB"/>
 </head>
 <body>
 <#if advert??>

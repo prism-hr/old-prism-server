@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain.imported;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.INSTITUTION;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,11 +12,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.google.common.base.Objects;
+import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 
 @Entity
-@Table(name = "IMPORTED_INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "domicile_id", "code" }) })
+@Table(name = "IMPORTED_INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "code" }) })
 public class ImportedInstitution extends ImportedEntity {
 
     @Id
@@ -41,21 +43,30 @@ public class ImportedInstitution extends ImportedEntity {
 
     @Column(name = "custom", nullable = false)
     private Boolean custom;
-    
+
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    @Override
     public Institution getInstitution() {
         return institution;
     }
 
+    @Override
     public void setInstitution(Institution institution) {
         this.institution = institution;
+    }
+
+    @Override
+    public PrismImportedEntity getType() {
+        return INSTITUTION;
     }
 
     public Domicile getDomicile() {
@@ -66,26 +77,32 @@ public class ImportedInstitution extends ImportedEntity {
         this.domicile = domicile;
     }
 
+    @Override
     public String getCode() {
         return code;
     }
 
+    @Override
     public void setCode(String code) {
         this.code = code;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public Boolean getEnabled() {
         return enabled;
     }
 
+    @Override
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
@@ -122,28 +139,10 @@ public class ImportedInstitution extends ImportedEntity {
         this.enabled = enabled;
         return this;
     }
-    
+
     public ImportedInstitution withCustom(Boolean custom) {
         this.custom = custom;
         return this;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(institution, domicile, code, name);
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == null) {
-            return false;
-        }
-        if (getClass() != object.getClass()) {
-            return false;
-        }
-        final ImportedInstitution other = (ImportedInstitution) object;
-        return Objects.equal(institution, other.getInstitution()) && Objects.equal(domicile, other.getDomicile()) && Objects.equal(code, other.getCode())
-                && Objects.equal(name, other.getName());
     }
 
     public String getDomicileDisplay() {

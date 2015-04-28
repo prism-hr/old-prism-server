@@ -7,7 +7,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 
 @Entity
 @DiscriminatorValue("QUALIFICATION_TYPE")
-public class QualificationType extends SimpleImportedEntity {
+public class QualificationType extends ImportedEntitySimple {
 
     public QualificationType withInstitution(Institution institution) {
         setInstitution(institution);

@@ -2,24 +2,24 @@ package com.zuehlke.pgadmissions.rest.representation.configuration;
 
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 
 public class ProgramCategoryRepresentation {
 
-    private PrismProgramCategory id;
+    private PrismOpportunityCategory id;
 
     private boolean hasFee;
 
     private boolean hasPay;
 
-    private List<PrismProgramType> programTypes;
+    private List<PrismOpportunityType> opportunityTypes;
 
-    public PrismProgramCategory getId() {
+    public PrismOpportunityCategory getId() {
         return id;
     }
 
-    public void setId(PrismProgramCategory id) {
+    public void setId(PrismOpportunityCategory id) {
         this.id = id;
     }
 
@@ -39,12 +39,12 @@ public class ProgramCategoryRepresentation {
         this.hasPay = hasPay;
     }
 
-    public List<PrismProgramType> getProgramTypes() {
-        return programTypes;
+    public List<PrismOpportunityType> getOpportunityTypes() {
+        return opportunityTypes;
     }
 
-    public void setProgramTypes(List<PrismProgramType> programTypes) {
-        this.programTypes = programTypes;
+    public void setOpportunityTypes(List<PrismOpportunityType> opportunityTypes) {
+        this.opportunityTypes = opportunityTypes;
     }
 
 }

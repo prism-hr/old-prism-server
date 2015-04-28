@@ -99,5 +99,10 @@ public class ApplicationSupervisor extends ApplicationAssignmentSection {
         this.acceptedSupervision = acceptedSupervision;
         return this;
     }
+    
+    public ApplicationSupervisor withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
+        this.lastUpdatedTimestamp = lastUpdatedTimestamp;
+        return this;
+    }
 
 }

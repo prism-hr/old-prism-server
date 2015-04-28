@@ -6,7 +6,7 @@ import java.util.Set;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresen
 public class AdvertRepresentation {
 
     private Integer id;
-    
+
     private boolean acceptingApplication;
 
     private String title;
@@ -59,18 +59,14 @@ public class AdvertRepresentation {
 
     private List<String> themes;
 
-    private List<Integer> institutions;
+    private PrismOpportunityType opportunityType;
 
-    private List<PrismProgramType> programTypes;
-
-    private PrismProgramType programType;
-
-    private Set<PrismStudyOption> studyOptions;
+    private List<PrismStudyOption> studyOptions;
 
     private List<String> locations;
 
     private InstitutionRepresentation institution;
-    
+
     private String department;
 
     private String sequenceIdentifier;
@@ -251,35 +247,19 @@ public class AdvertRepresentation {
         this.themes = themes;
     }
 
-    public final List<Integer> getInstitutions() {
-        return institutions;
+    public final PrismOpportunityType getOpportunityType() {
+        return opportunityType;
     }
 
-    public final void setInstitutions(List<Integer> institutions) {
-        this.institutions = institutions;
+    public final void setOpportunityType(PrismOpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
     }
 
-    public final List<PrismProgramType> getProgramTypes() {
-        return programTypes;
-    }
-
-    public final void setProgramTypes(List<PrismProgramType> programTypes) {
-        this.programTypes = programTypes;
-    }
-
-    public final PrismProgramType getProgramType() {
-        return programType;
-    }
-
-    public final void setProgramType(PrismProgramType programType) {
-        this.programType = programType;
-    }
-
-    public Set<PrismStudyOption> getStudyOptions() {
+    public List<PrismStudyOption> getStudyOptions() {
         return studyOptions;
     }
 
-    public void setStudyOptions(Set<PrismStudyOption> studyOptions) {
+    public void setStudyOptions(List<PrismStudyOption> studyOptions) {
         this.studyOptions = studyOptions;
     }
 

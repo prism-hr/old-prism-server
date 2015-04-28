@@ -16,6 +16,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCompleteState;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEditWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdraw;
 
@@ -56,6 +57,7 @@ public class PrismApplicationVerification extends PrismWorkflowState {
 
 		stateActions.add(applicationEmailCreatorWithViewerRecruiter());
 		stateActions.add(applicationEscalate(APPLICATION_VERIFICATION_PENDING_COMPLETION));
+        stateActions.add(applicationUploadReference(state));
 		stateActions.add(applicationViewEditWithViewerRecruiter(state));
 		stateActions.add(applicationWithdrawVerification());
 	}

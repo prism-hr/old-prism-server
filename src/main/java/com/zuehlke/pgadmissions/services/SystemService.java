@@ -6,8 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STA
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DESCRIPTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -34,8 +33,7 @@ import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
@@ -268,8 +266,7 @@ public class SystemService {
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localize(system);
         return new SocialMetadataDTO().withAuthor(system.getUser().getFullName()).withTitle(system.getTitle())
                 .withDescription(loader.load(SYSTEM_DESCRIPTION))
-                .withThumbnailUrl(resourceService.getSocialThumbnailUrl(system)).withResourceUrl(resourceService.getSocialResourceUrl(system))
-                .withLocale(resourceService.getOperativeLocale(system).toString());
+                .withThumbnailUrl(resourceService.getSocialThumbnailUrl(system)).withResourceUrl(resourceService.getSocialResourceUrl(system));
     }
 
     @Transactional
@@ -405,14 +402,13 @@ public class SystemService {
 
     private System initializeSystemResource() throws DeduplicationException {
         System system = getSystem();
-        User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail, PrismLocale.getSystemLocale());
+        User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail);
         DateTime baseline = new DateTime();
 
         if (system == null) {
             State systemRunning = stateService.getById(SYSTEM_RUNNING);
-            system = new System().withId(systemId).withTitle(systemName).withLocale(PrismLocale.getSystemLocale()).withHelpdesk(systemHelpdesk)
-                    .withUser(systemUser).withState(systemRunning).withCipherSalt(EncryptionUtils.getUUID()).withCreatedTimestamp(baseline)
-                    .withUpdatedTimestamp(baseline);
+            system = new System().withId(systemId).withTitle(systemName).withUser(systemUser).withState(systemRunning)
+                    .withCipherSalt(EncryptionUtils.getUUID()).withCreatedTimestamp(baseline).withUpdatedTimestamp(baseline);
             entityService.save(system);
 
             ResourceState systemState = new ResourceState().withResource(system).withState(systemRunning).withPrimaryState(true);
@@ -421,8 +417,6 @@ public class SystemService {
         } else {
             system.setId(systemId);
             system.setTitle(systemName);
-            system.setLocale(PrismLocale.getSystemLocale());
-            system.setHelpdesk(systemHelpdesk);
             system.setUser(systemUser);
             system.setUpdatedTimestamp(baseline);
         }
@@ -453,8 +447,8 @@ public class SystemService {
                     DisplayPropertyConfigurationDTO configurationDTO = new DisplayPropertyConfigurationDTO().withDefinitionId(prismDisplayPropertyDefinition)
                             .withValue(
                                     prismDisplayPropertyDefinition.getDefaultValue());
-                    customizationService.createOrUpdateConfiguration(DISPLAY_PROPERTY, system, getSystemLocale(),
-                            prismScope.ordinal() > INSTITUTION.ordinal() ? getSystemProgramType() : null, configurationDTO);
+                    customizationService.createOrUpdateConfiguration(DISPLAY_PROPERTY, system,
+                            prismScope.ordinal() > INSTITUTION.ordinal() ? getSystemOpportunityType() : null, configurationDTO);
                 }
             }
         }
@@ -489,12 +483,12 @@ public class SystemService {
             String subject = FileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationDefinition.getInitialTemplateSubject());
             String content = FileUtils.getContent(defaultEmailContentDirectory + prismNotificationDefinition.getInitialTemplateContent());
 
-            PrismProgramType programType = prismNotificationDefinition.getScope().ordinal() > INSTITUTION.ordinal() ? PrismProgramType
-                    .getSystemProgramType() : null;
+            PrismOpportunityType opportunityType = prismNotificationDefinition.getScope().ordinal() > INSTITUTION.ordinal() ? PrismOpportunityType
+                    .getSystemOpportunityType() : null;
 
             NotificationConfigurationDTO configurationDTO = new NotificationConfigurationDTO().withId(prismNotificationDefinition).withSubject(subject)
                     .withContent(content).withReminderInterval(prismNotificationDefinition.getDefaultReminderDuration());
-            customizationService.createOrUpdateConfiguration(NOTIFICATION, system, getSystemLocale(), programType, configurationDTO);
+            customizationService.createOrUpdateConfiguration(NOTIFICATION, system, opportunityType, configurationDTO);
         }
     }
 
@@ -535,9 +529,8 @@ public class SystemService {
     private void initializeStateActionAssignments(PrismStateAction prismStateAction, StateAction stateAction) {
         for (PrismStateActionAssignment prismAssignment : prismStateAction.getAssignments()) {
             Role role = roleService.getById(prismAssignment.getRole());
-            Action delegateAction = actionService.getById(prismAssignment.getDelegatedAction());
             StateActionAssignment assignment = new StateActionAssignment().withStateAction(stateAction).withRole(role)
-                    .withActionEnhancement(prismAssignment.getActionEnhancement()).withDelegatedAction(delegateAction);
+                    .withActionEnhancement(prismAssignment.getActionEnhancement());
             entityService.save(assignment);
             stateAction.getStateActionAssignments().add(assignment);
         }
@@ -625,8 +618,8 @@ public class SystemService {
             List<? extends WorkflowConfigurationDTO> configurationDTO) throws CustomizationException, DeduplicationException, InstantiationException,
             IllegalAccessException {
         if (configurationDTO.size() > 0) {
-            customizationService.createConfigurationGroup(configurationType, system, prismScope, getSystemLocale(),
-                    prismScope.ordinal() > INSTITUTION.ordinal() ? getSystemProgramType() : null, configurationDTO);
+            customizationService.createConfigurationGroup(configurationType, system, prismScope,
+                    prismScope.ordinal() > INSTITUTION.ordinal() ? getSystemOpportunityType() : null, configurationDTO);
         }
     }
 

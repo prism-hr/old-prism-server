@@ -14,19 +14,20 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismCustomQuestionType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 
 @Entity
 @Table(name = "ACTION_CUSTOM_QUESTION_CONFIGURATION", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"system_id", "program_type", "locale", "action_custom_question_definition_id", "version", "display_index"}),
-        @UniqueConstraint(columnNames = {"institution_id", "program_type", "action_custom_question_definition_id", "version", "display_index"}),
-        @UniqueConstraint(columnNames = {"program_id", "action_custom_question_definition_id", "version", "display_index"})})
+        @UniqueConstraint(columnNames = { "system_id", "opportunity_type", "action_custom_question_definition_id", "version", "display_index" }),
+        @UniqueConstraint(columnNames = { "institution_id", "opportunity_type", "action_custom_question_definition_id", "version", "display_index" }),
+        @UniqueConstraint(columnNames = { "program_id", "action_custom_question_definition_id", "version", "display_index" }),
+        @UniqueConstraint(columnNames = { "project_id", "action_custom_question_definition_id", "version", "display_index" })})
 public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVersioned {
 
     @Id
@@ -45,13 +46,13 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
     @JoinColumn(name = "program_id")
     private Program program;
 
-    @Column(name = "locale")
-    @Enumerated(EnumType.STRING)
-    private PrismLocale locale;
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private Project project;
 
-    @Column(name = "program_type")
+    @Column(name = "opportunity_type")
     @Enumerated(EnumType.STRING)
-    private PrismProgramType programType;
+    private PrismOpportunityType opportunityType;
 
     @ManyToOne
     @JoinColumn(name = "action_custom_question_definition_id", nullable = false)
@@ -147,23 +148,23 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
     }
 
     @Override
-    public PrismLocale getLocale() {
-        return locale;
+    public Project getProject() {
+        return project;
     }
 
     @Override
-    public void setLocale(PrismLocale locale) {
-        this.locale = locale;
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     @Override
-    public PrismProgramType getProgramType() {
-        return programType;
+    public PrismOpportunityType getOpportunityType() {
+        return opportunityType;
     }
 
     @Override
-    public void setProgramType(PrismProgramType programType) {
-        this.programType = programType;
+    public void setOpportunityType(PrismOpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
     }
 
     public ActionCustomQuestionDefinition getActionCustomQuestionDefinition() {
@@ -312,13 +313,8 @@ public class ActionCustomQuestionConfiguration extends WorkflowConfigurationVers
         return this;
     }
 
-    public ActionCustomQuestionConfiguration withLocale(PrismLocale locale) {
-        this.locale = locale;
-        return this;
-    }
-
-    public ActionCustomQuestionConfiguration withProgramType(PrismProgramType programType) {
-        this.programType = programType;
+    public ActionCustomQuestionConfiguration withOpportunityType(PrismOpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
         return this;
     }
 

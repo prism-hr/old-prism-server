@@ -1,24 +1,23 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
 import java.util.List;
-import java.util.Set;
+
+import javax.inject.Inject;
 
 import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.program.ProgramLocation;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
@@ -26,6 +25,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresen
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.StateService;
 
 @RestController
@@ -33,23 +33,27 @@ import com.zuehlke.pgadmissions.services.StateService;
 @PreAuthorize("permitAll")
 public class OpportunityResource {
 
-    @Autowired
+    @Inject
     private AdvertService advertService;
-    
-    @Autowired
+
+    @Inject
     private ApplicationService applicationService;
 
-    @Autowired
+    @Inject
+    private ResourceService resourceService;
+
+    @Inject
     private StateService stateService;
 
-    @Autowired
+    @Inject
     private Mapper dozerBeanMapper;
 
     @RequestMapping(method = RequestMethod.GET)
     public List<AdvertRepresentation> getAdverts(OpportunitiesQueryDTO query) {
+        List<PrismState> activeInstitutionStates = stateService.getActiveInstitutionStates();
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        List<Advert> adverts = advertService.getAdverts(query, activeProgramStates, activeProjectStates);
+        List<Advert> adverts = advertService.getAdverts(query, activeInstitutionStates, activeProgramStates, activeProjectStates);
 
         List<AdvertRepresentation> representations = Lists.newArrayListWithExpectedSize(adverts.size());
         for (Advert advert : adverts) {
@@ -57,10 +61,10 @@ public class OpportunityResource {
             AdvertRepresentation representation = getAdvertRepresentation(advert, acceptingApplications);
             representations.add(representation);
         }
-        
+
         return representations;
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "/{applicationId}")
     public List<AdvertRepresentation> getRecommendedAdverts(Integer applicationId) {
         Application application = applicationService.getById(applicationId);
@@ -71,7 +75,7 @@ public class OpportunityResource {
             AdvertRepresentation representation = getAdvertRepresentation(advertRecommendation.getAdvert(), true);
             representations.add(representation);
         }
-        
+
         return representations;
     }
 
@@ -79,23 +83,26 @@ public class OpportunityResource {
         AdvertRepresentation representation = dozerBeanMapper.map(advert, AdvertRepresentation.class);
         representation.setAcceptingApplication(acceptingApplications);
 
-        Resource resource = advert.getProgram() != null ? advert.getProgram() : advert.getProject();
+        ResourceParent resource = advert.getResource();
         representation.setUser(dozerBeanMapper.map(resource.getUser(), UserRepresentation.class));
         representation.setResourceScope(resource.getResourceScope());
         representation.setResourceId(resource.getId());
-        representation.setProgramType(resource.getProgram().getProgramType().getPrismProgramType());
+        representation.setOpportunityType(advert.getOpportunityType());
 
-        List<String> locations = Lists.newArrayListWithCapacity(resource.getProgram().getLocations().size());
-        for (ProgramLocation programLocation : resource.getProgram().getLocations()) {
-            locations.add(programLocation.getLocation());
+        List<ResourceStudyOption> studyOptions = resourceService.getStudyOptions(resource);
+        List<PrismStudyOption> options = Lists.newArrayListWithCapacity(studyOptions.size());
+        for (ResourceStudyOption studyOption : studyOptions) {
+            options.add(studyOption.getStudyOption().getPrismStudyOption());
+        }
+        representation.setStudyOptions(options);
+
+        List<ResourceStudyLocation> studyLocations = resourceService.getStudyLocations(resource);
+        List<String> locations = Lists.newArrayListWithCapacity(studyLocations.size());
+        for (ResourceStudyLocation studyLocation : studyLocations) {
+            locations.add(studyLocation.getStudyLocation());
         }
         representation.setLocations(locations);
 
-        Set<PrismStudyOption> studyOptions = Sets.newHashSet();
-        for (ProgramStudyOption studyOption : resource.getProgram().getStudyOptions()) {
-            studyOptions.add(studyOption.getStudyOption().getPrismStudyOption());
-        }
-        representation.setStudyOptions(studyOptions);
         representation.setInstitution(dozerBeanMapper.map(resource.getInstitution(), InstitutionRepresentation.class));
         return representation;
     }

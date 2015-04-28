@@ -8,6 +8,7 @@ import java.net.URLConnection;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -18,7 +19,6 @@ import javax.xml.validation.SchemaFactory;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -50,13 +50,13 @@ public class ImportedEntityServiceHelperInstitution implements AbstractServiceHe
 	@Value("${context.environment}")
 	private String contextEnvironment;
 
-	@Autowired
+	@Inject
 	private ImportedEntityService importedEntityService;
 
-	@Autowired
+	@Inject
 	private InstitutionService institutionService;
 
-	@Autowired
+	@Inject
 	private NotificationService notificationService;
 
 	public void execute() throws Exception {

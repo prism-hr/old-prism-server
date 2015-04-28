@@ -7,7 +7,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 
 @Entity
 @DiscriminatorValue("REJECTION_REASON")
-public class RejectionReason extends SimpleImportedEntity {
+public class RejectionReason extends ImportedEntitySimple {
 
     public RejectionReason withInstitution(Institution institution) {
         setInstitution(institution);

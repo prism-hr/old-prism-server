@@ -25,14 +25,13 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.document.FileCategory;
+import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -105,9 +104,8 @@ public class UserService {
                 .withLastName(user.getLastName()).withEmail(user.getEmail());
     }
 
-    public User getOrCreateUser(String firstName, String lastName, String email, PrismLocale locale) throws DeduplicationException {
-        User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email)
-                .withLocale(locale);
+    public User getOrCreateUser(String firstName, String lastName, String email) throws DeduplicationException {
+        User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email);
         User duplicateUser = entityService.getDuplicateEntity(transientUser);
         if (duplicateUser == null) {
             transientUser.setActivationCode(EncryptionUtils.getUUID());
@@ -119,9 +117,9 @@ public class UserService {
         }
     }
 
-    public User getOrCreateUserWithRoles(String firstName, String lastName, String email, PrismLocale locale, Resource resource, Set<PrismRole> roles)
+    public User getOrCreateUserWithRoles(String firstName, String lastName, String email, Resource resource, Set<PrismRole> roles)
             throws Exception {
-        User user = getOrCreateUser(firstName, lastName, email, locale);
+        User user = getOrCreateUser(firstName, lastName, email);
         roleService.assignUserRoles(resource, user, PrismRoleTransitionType.CREATE, roles.toArray(new PrismRole[roles.size()]));
         return user;
     }
@@ -148,11 +146,10 @@ public class UserService {
         user.setFirstName2(Strings.emptyToNull(userDTO.getFirstName2()));
         user.setFirstName3(Strings.emptyToNull(userDTO.getFirstName3()));
         user.setEmail(userDTO.getEmail());
-        user.setLocale(userDTO.getLocale());
 
         Document portraitDocument = null;
         if (userDTO.getPortraitDocument() != null) {
-            portraitDocument = documentService.getById(userDTO.getPortraitDocument(), FileCategory.IMAGE);
+            portraitDocument = documentService.getById(userDTO.getPortraitDocument(), PrismFileCategory.IMAGE);
         }
 
         user.setPortraitDocument(portraitDocument);

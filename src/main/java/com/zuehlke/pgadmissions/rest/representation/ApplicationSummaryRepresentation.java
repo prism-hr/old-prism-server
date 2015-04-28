@@ -34,8 +34,6 @@ public class ApplicationSummaryRepresentation {
 
     private List<OtherApplicationSummaryRepresentation> otherLiveApplications;
 
-    private List<ApplicationProcessingRepresentation> processings;
-
     private String studyOption;
 
     private String referralSource;
@@ -148,14 +146,6 @@ public class ApplicationSummaryRepresentation {
 
     public void setDocuments(List<DocumentSummaryRepresentation> documents) {
         this.documents = documents;
-    }
-
-    public List<ApplicationProcessingRepresentation> getProcessings() {
-        return processings;
-    }
-
-    public void setProcessings(List<ApplicationProcessingRepresentation> processings) {
-        this.processings = processings;
     }
 
     public String getStudyOption() {

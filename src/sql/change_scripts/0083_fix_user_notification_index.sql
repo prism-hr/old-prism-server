@@ -1,14 +1,23 @@
+set foreign_key_checks = 0
+;
+
 alter table user_notification
 	drop index system_id,
-	add unique index (system_id, user_role_id, notification_definition_id),
 	drop index institution_id,
-	add unique index (institution_id, user_role_id, notification_definition_id),
 	drop index program_id,
-	add unique index (program_id, user_role_id, notification_definition_id),
 	drop index project_id,
+	drop index application_id
+;
+
+alter table user_notification
+	add unique index (system_id, user_role_id, notification_definition_id),
+	add unique index (institution_id, user_role_id, notification_definition_id),
+	add unique index (program_id, user_role_id, notification_definition_id),
 	add unique index (project_id, user_role_id, notification_definition_id),
-	drop index application_id,
 	add unique index (application_id, user_role_id, notification_definition_id)
+;
+
+set foreign_key_checks = 1
 ;
 
 update application inner join user 

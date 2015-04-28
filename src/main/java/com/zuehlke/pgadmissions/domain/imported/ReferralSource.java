@@ -7,7 +7,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 
 @Entity
 @DiscriminatorValue("REFERRAL_SOURCE")
-public class ReferralSource extends SimpleImportedEntity {
+public class ReferralSource extends ImportedEntitySimple {
 
     public ReferralSource withInstitution(Institution institution) {
         setInstitution(institution);

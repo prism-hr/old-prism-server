@@ -5,8 +5,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -22,7 +20,6 @@ import org.joda.time.LocalDate;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
@@ -51,13 +48,6 @@ public class System extends Resource {
 
     @Column(name = "title", nullable = false, unique = true)
     private String title;
-
-    @Column(name = "locale", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PrismLocale locale;
-
-    @Column(name = "helpdesk", nullable = false)
-    private String helpdesk;
 
     @Column(name = "last_data_import_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -94,7 +84,7 @@ public class System extends Resource {
     @Column(name = "last_notified_update_syndicated")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedUpdateSyndicated;
-    
+
     @Column(name = "last_notified_recommendation_syndicated")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastNotifiedRecommendationSyndicated;
@@ -120,8 +110,9 @@ public class System extends Resource {
 
     @OneToMany(mappedBy = "system")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
-    
-    @OneToMany(mappedBy = "system")
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "system_id", nullable = false)
     private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "system")
@@ -168,23 +159,6 @@ public class System extends Resource {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    @Override
-    public final PrismLocale getLocale() {
-        return locale;
-    }
-
-    public final void setLocale(PrismLocale locale) {
-        this.locale = locale;
-    }
-
-    public final String getHelpdesk() {
-        return helpdesk;
-    }
-
-    public final void setHelpdesk(String helpdesk) {
-        this.helpdesk = helpdesk;
     }
 
     public final LocalDate getLastDataImportDate() {
@@ -334,7 +308,7 @@ public class System extends Resource {
     public final void setLastNotifiedUpdateSyndicated(LocalDate lastNotifiedUpdateSyndicated) {
         this.lastNotifiedUpdateSyndicated = lastNotifiedUpdateSyndicated;
     }
-    
+
     public LocalDate getLastNotifiedRecommendationSyndicated() {
         return lastNotifiedRecommendationSyndicated;
     }
@@ -407,10 +381,10 @@ public class System extends Resource {
 
     @Override
     public Set<ResourceCondition> getResourceConditions() {
-		return resourceConditions;
-	}
+        return resourceConditions;
+    }
 
-	public final Set<Institution> getInstitutions() {
+    public final Set<Institution> getInstitutions() {
         return institutions;
     }
 
@@ -443,16 +417,6 @@ public class System extends Resource {
 
     public System withId(Integer id) {
         this.id = id;
-        return this;
-    }
-
-    public System withLocale(PrismLocale locale) {
-        this.locale = locale;
-        return this;
-    }
-
-    public System withHelpdesk(String helpdesk) {
-        this.helpdesk = helpdesk;
         return this;
     }
 

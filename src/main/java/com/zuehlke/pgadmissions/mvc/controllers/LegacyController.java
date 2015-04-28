@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.mvc.controllers;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -44,7 +46,7 @@ public class LegacyController {
             Integer advertId = Ints.tryParse(Strings.nullToEmpty(request.getParameter("advert")));
             if (advertId != null) {
                 Advert advert = advertService.getById(advertId);
-                if (advert.isProgramAdvert()) {
+                if (advert.isAdvertOfScope(PROGRAM)) {
                     redirect = redirectionPrefix + "?program=" + advert.getProgram().getId();
                 } else {
                     redirect = redirectionPrefix + "?project=" + advert.getProject().getId();

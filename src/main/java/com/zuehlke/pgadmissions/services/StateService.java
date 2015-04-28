@@ -141,14 +141,12 @@ public class StateService {
         return stateDAO.getStateTransitionsPending(scopeId);
     }
 
-
     public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) throws Exception {
         return executeStateTransition(resource, action, comment, true);
     }
-    
+
     public StateTransition executeStateTransition(Resource resource, Action action, Comment comment, boolean notify) throws Exception {
         comment.setResource(resource);
-
         resourceService.persistResource(resource, comment);
         commentService.persistComment(resource, comment);
 
@@ -158,35 +156,29 @@ public class StateService {
         State state = resource.getState();
         StateTransition stateTransition = getStateTransition(resource, action, comment);
 
-        if (comment.isDelegateComment() && stateTransition == null) {
-            commentService.recordDelegatedStateTransition(comment, state);
-            roleService.executeDelegatedRoleTransitions(resource, comment);
-        } else {
-            State transitionState = stateTransition.getTransitionState();
-            transitionState = transitionState == null ? state : transitionState;
-            state = state == null ? transitionState : state;
+        State transitionState = stateTransition.getTransitionState();
+        transitionState = transitionState == null ? state : transitionState;
+        state = state == null ? transitionState : state;
 
-            Set<State> stateTerminations = getStateTerminations(resource, action, stateTransition);
-            commentService.recordStateTransition(comment, state, transitionState, stateTerminations);
-            resourceService.recordStateTransition(resource, comment, state, transitionState);
+        Set<State> stateTerminations = getStateTerminations(resource, action, stateTransition);
+        commentService.recordStateTransition(comment, state, transitionState, stateTerminations);
+        resourceService.recordStateTransition(resource, comment, state, transitionState);
 
-            commentService.processComment(comment);
-            resourceService.processResource(resource, comment);
+        commentService.processComment(resource, comment);
+        resourceService.processResource(resource, comment);
 
-            roleService.executeRoleTransitions(resource, comment, stateTransition);
+        roleService.executeRoleTransitions(resource, comment, stateTransition);
 
-            for (Action propagatedAction : stateTransition.getPropagatedActions()) {
-                getOrCreateStateTransitionPending(resource, propagatedAction);
-            }
-
-            if (notify) {
-                notificationService.sendWorkflowNotifications(resource, comment);
-            }
+        for (Action propagatedAction : stateTransition.getPropagatedActions()) {
+            getOrCreateStateTransitionPending(resource, propagatedAction);
         }
 
-        commentService.postProcessComment(comment);
-        resourceService.postProcessResource(resource, comment);
+        if (notify) {
+            notificationService.sendWorkflowNotifications(resource, comment);
+        }
 
+        commentService.postProcessComment(resource, comment);
+        resourceService.postProcessResource(resource, comment);
         return stateTransition;
     }
 
@@ -229,6 +221,14 @@ public class StateService {
 
     public List<PrismState> getStatesByStateGroup(PrismStateGroup stateGroupId) {
         return stateDAO.getStatesByStateGroup(stateGroupId);
+    }
+
+    public List<PrismState> getInstitutionStates() {
+        return stateDAO.getInstitutionStates();
+    }
+
+    public List<PrismState> getActiveInstitutionStates() {
+        return stateDAO.getActiveInstitutionStates();
     }
 
     public List<PrismState> getProgramStates() {

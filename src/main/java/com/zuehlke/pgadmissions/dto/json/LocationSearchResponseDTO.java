@@ -11,31 +11,42 @@ public class LocationSearchResponseDTO {
     
     private String status;
     
-    public final List<Results> getResults() {
+    public List<Results> getResults() {
         return results;
     }
 
-    public final void setResults(List<Results> results) {
+    public void setResults(List<Results> results) {
         this.results = results;
     }
 
-    public final String getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public final void setStatus(String status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
     public static class Results {
         
+        @JsonProperty("place_id")
+        private String googleId;
+        
         private Geometry geometry;
 
-        public final Geometry getGeometry() {
+        public String getGoogleId() {
+            return googleId;
+        }
+
+        public void setGoogleId(String googleId) {
+            this.googleId = googleId;
+        }
+
+        public Geometry getGeometry() {
             return geometry;
         }
 
-        public final void setGeometry(Geometry geometry) {
+        public void setGeometry(Geometry geometry) {
             this.geometry = geometry;
         }
         
@@ -49,28 +60,28 @@ public class LocationSearchResponseDTO {
             @JsonProperty("viewport")
             private Region viewPort;
 
-            public final Location getLocation() {
+            public Location getLocation() {
                 return location;
             }
 
-            public final void setLocation(Location location) {
+            public void setLocation(Location location) {
                 this.location = location;
             }
 
-            public final String getLocationType() {
+            public String getLocationType() {
                 return locationType;
             }
 
 
-            public final void setLocationType(String locationType) {
+            public void setLocationType(String locationType) {
                 this.locationType = locationType;
             }
 
-            public final Region getViewPort() {
+            public Region getViewPort() {
                 return viewPort;
             }
 
-            public final void setViewPort(Region viewPort) {
+            public void setViewPort(Region viewPort) {
                 this.viewPort = viewPort;
             }
 
@@ -80,19 +91,19 @@ public class LocationSearchResponseDTO {
                 
                 private BigDecimal lng;
 
-                public final BigDecimal getLat() {
+                public BigDecimal getLat() {
                     return lat;
                 }
 
-                public final void setLat(BigDecimal lat) {
+                public void setLat(BigDecimal lat) {
                     this.lat = lat;
                 }
 
-                public final BigDecimal getLng() {
+                public BigDecimal getLng() {
                     return lng;
                 }
 
-                public final void setLng(BigDecimal lng) {
+                public void setLng(BigDecimal lng) {
                     this.lng = lng;
                 }
                 
@@ -106,19 +117,19 @@ public class LocationSearchResponseDTO {
                 @JsonProperty("southwest")
                 private Location southWest;
 
-                public final Location getNorthEast() {
+                public Location getNorthEast() {
                     return northEast;
                 }
 
-                public final void setNorthEast(Location northEast) {
+                public void setNorthEast(Location northEast) {
                     this.northEast = northEast;
                 }
 
-                public final Location getSouthWest() {
+                public Location getSouthWest() {
                     return southWest;
                 }
 
-                public final void setSouthWest(Location southWest) {
+                public void setSouthWest(Location southWest) {
                     this.southWest = southWest;
                 }
                 

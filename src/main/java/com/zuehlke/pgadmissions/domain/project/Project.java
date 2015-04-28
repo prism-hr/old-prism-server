@@ -1,5 +1,9 @@
 package com.zuehlke.pgadmissions.domain.project;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DISABLED_COMPLETED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_REJECTED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_WITHDRAWN;
+
 import java.math.BigDecimal;
 import java.util.Set;
 
@@ -16,6 +20,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -24,20 +29,22 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.department.Department;
+import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.ResourceAction;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Entity
 @Table(name = "PROJECT")
@@ -64,7 +71,7 @@ public class Project extends ResourceParent {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
-    
+
     @ManyToOne
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "department_id")
@@ -74,11 +81,15 @@ public class Project extends ResourceParent {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
-    
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @OneToOne
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
+
+    @ManyToOne
+    @JoinColumn(name = "opportunity_type_id", nullable = false)
+    private OpportunityType opportunityType;
 
     @Column(name = "referrer")
     private String referrer;
@@ -86,26 +97,17 @@ public class Project extends ResourceParent {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "application_created_count")
-    private Integer applicationCreatedCount;
+    @Column(name = "duration_minimum")
+    private Integer durationMinimum;
 
-    @Column(name = "application_submitted_count")
-    private Integer applicationSubmittedCount;
-
-    @Column(name = "application_approved_count")
-    private Integer applicationApprovedCount;
-
-    @Column(name = "application_rejected_count")
-    private Integer applicationRejectedCount;
-
-    @Column(name = "application_withdrawn_count")
-    private Integer applicationWithdrawnCount;
+    @Column(name = "duration_maximum")
+    private Integer durationMaximum;
 
     @Column(name = "application_rating_count")
     private Integer applicationRatingCount;
 
-    @Column(name = "application_rating_count_average_non_zero")
-    private BigDecimal applicationRatingCountAverageNonZero;
+    @Column(name = "application_rating_frequency")
+    private BigDecimal applicationRatingFrequency;
 
     @Column(name = "application_rating_average")
     private BigDecimal applicationRatingAverage;
@@ -137,7 +139,7 @@ public class Project extends ResourceParent {
     @Column(name = "updated_timestamp_sitemap", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestampSitemap;
-    
+
     @Column(name = "last_reminded_request_individual")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastRemindedRequestIndividual;
@@ -155,15 +157,25 @@ public class Project extends ResourceParent {
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
+    
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "project_id", nullable = false)
+    private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "project_id", nullable = false)
+    private Set<ResourceStudyOption> studyOptions = Sets.newHashSet();
+
+    @OrderBy(clause = "location")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "project_id", nullable = false)
+    private Set<ResourceStudyLocation> studyLocations = Sets.newHashSet();
 
     @OneToMany(mappedBy = "project")
     private Set<ResourceState> resourceStates = Sets.newHashSet();
 
     @OneToMany(mappedBy = "project")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
-    
-    @OneToMany(mappedBy = "project")
-    private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
     @OneToMany(mappedBy = "project")
     private Set<Application> applications = Sets.newHashSet();
@@ -206,7 +218,7 @@ public class Project extends ResourceParent {
     public void setCode(String code) {
         this.code = code;
     }
-    
+
     @Override
     public System getSystem() {
         return system;
@@ -227,6 +239,7 @@ public class Project extends ResourceParent {
         this.institution = institution;
     }
 
+    @Override
     public Department getDepartment() {
         return department;
     }
@@ -244,13 +257,21 @@ public class Project extends ResourceParent {
     public void setProgram(Program program) {
         this.program = program;
     }
-    
+
     public Advert getAdvert() {
         return advert;
     }
 
     public void setAdvert(Advert advert) {
         this.advert = advert;
+    }
+
+    public OpportunityType getOpportunityType() {
+        return opportunityType;
+    }
+
+    public void setOpportunityType(OpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
     }
 
     public String getTitle() {
@@ -261,59 +282,20 @@ public class Project extends ResourceParent {
         this.title = title;
     }
 
-    @Override
-    public PrismLocale getLocale() {
-        return program.getLocale();
+    public Integer getDurationMinimum() {
+        return durationMinimum;
     }
 
-    @Override
-    public Integer getApplicationCreatedCount() {
-        return applicationCreatedCount;
+    public void setDurationMinimum(Integer durationMinimum) {
+        this.durationMinimum = durationMinimum;
     }
 
-    @Override
-    public void setApplicationCreatedCount(Integer applicationCreatedCount) {
-        this.applicationCreatedCount = applicationCreatedCount;
+    public Integer getDurationMaximum() {
+        return durationMaximum;
     }
 
-    @Override
-    public Integer getApplicationSubmittedCount() {
-        return applicationSubmittedCount;
-    }
-
-    @Override
-    public void setApplicationSubmittedCount(Integer applicationSubmittedCount) {
-        this.applicationSubmittedCount = applicationSubmittedCount;
-    }
-
-    @Override
-    public Integer getApplicationApprovedCount() {
-        return applicationApprovedCount;
-    }
-
-    @Override
-    public void setApplicationApprovedCount(Integer applicationApprovedCount) {
-        this.applicationApprovedCount = applicationApprovedCount;
-    }
-
-    @Override
-    public Integer getApplicationRejectedCount() {
-        return applicationRejectedCount;
-    }
-
-    @Override
-    public void setApplicationRejectedCount(Integer applicationRejectedCount) {
-        this.applicationRejectedCount = applicationRejectedCount;
-    }
-
-    @Override
-    public Integer getApplicationWithdrawnCount() {
-        return applicationWithdrawnCount;
-    }
-
-    @Override
-    public void setApplicationWithdrawnCount(Integer applicationWithdrawnCount) {
-        this.applicationWithdrawnCount = applicationWithdrawnCount;
+    public void setDurationMaximum(Integer durationMaximum) {
+        this.durationMaximum = durationMaximum;
     }
 
     @Override
@@ -322,24 +304,26 @@ public class Project extends ResourceParent {
     }
 
     @Override
-    public void setApplicationRatingCount(Integer applicationRatingCountSum) {
-        this.applicationRatingCount = applicationRatingCountSum;
+    public void setApplicationRatingCount(Integer applicationRatingCount) {
+        this.applicationRatingCount = applicationRatingCount;
     }
 
     @Override
-    public BigDecimal getApplicationRatingCountAverageNonZero() {
-        return applicationRatingCountAverageNonZero;
+    public BigDecimal getApplicationRatingFrequency() {
+        return applicationRatingFrequency;
     }
 
     @Override
-    public void setApplicationRatingCountAverageNonZero(BigDecimal applicationRatingCountAverage) {
-        this.applicationRatingCountAverageNonZero = applicationRatingCountAverage;
+    public void setApplicationRatingFrequency(BigDecimal applicationRatingFrequency) {
+        this.applicationRatingFrequency = applicationRatingFrequency;
     }
 
+    @Override
     public BigDecimal getApplicationRatingAverage() {
         return applicationRatingAverage;
     }
 
+    @Override
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
     }
@@ -488,6 +472,16 @@ public class Project extends ResourceParent {
     }
 
     @Override
+    public Set<ResourceStudyOption> getStudyOptions() {
+        return studyOptions;
+    }
+
+    @Override
+    public Set<ResourceStudyLocation> getStudyLocations() {
+        return studyLocations;
+    }
+
+    @Override
     public Integer getWorkflowPropertyConfigurationVersion() {
         return workflowPropertyConfigurationVersion;
     }
@@ -506,13 +500,18 @@ public class Project extends ResourceParent {
     public Set<ResourcePreviousState> getResourcePreviousStates() {
         return resourcePreviousStates;
     }
-    
+
     @Override
     public Set<ResourceCondition> getResourceConditions() {
-		return resourceConditions;
-	}
+        return resourceConditions;
+    }
 
-	public Project withUser(User user) {
+    public Project withResource(ResourceParent resource) {
+        PrismReflectionUtils.setProperty(this, resource.getResourceScope().getLowerCamelName(), resource);
+        return this;
+    }
+
+    public Project withUser(User user) {
         this.user = user;
         return this;
     }
@@ -526,7 +525,7 @@ public class Project extends ResourceParent {
         this.institution = institution;
         return this;
     }
-    
+
     public Project withDepartment(Department department) {
         this.department = department;
         return this;
@@ -537,8 +536,33 @@ public class Project extends ResourceParent {
         return this;
     }
 
+    public Project withAdvert(Advert advert) {
+        this.advert = advert;
+        return this;
+    }
+
+    public Project withOpportunityType(OpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
+        return this;
+    }
+
     public Project withTitle(String title) {
         this.title = title;
+        return this;
+    }
+
+    public Project withDurationMinimum(Integer durationMinimum) {
+        this.durationMinimum = durationMinimum;
+        return this;
+    }
+
+    public Project withDurationMaximum(Integer durationMaximum) {
+        this.durationMaximum = durationMaximum;
+        return this;
+    }
+
+    public Project withEndDate(LocalDate endDate) {
+        this.endDate = endDate;
         return this;
     }
 
@@ -549,9 +573,9 @@ public class Project extends ResourceParent {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("user", getUser()).addProperty("program", program).addProperty("title", title)
-                .addExclusion("state.id", PrismState.PROJECT_DISABLED_COMPLETED).addExclusion("state.id", PrismState.PROJECT_REJECTED)
-                .addExclusion("state.id", PrismState.PROJECT_WITHDRAWN);
+        return new ResourceSignature().addProperty("user", getUser()).addProperty("program", program).addProperty("opportunityType", opportunityType)
+                .addProperty("title", title).addExclusion("state.id", PROJECT_DISABLED_COMPLETED).addExclusion("state.id", PROJECT_REJECTED)
+                .addExclusion("state.id", PROJECT_WITHDRAWN);
     }
 
 }

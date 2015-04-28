@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DEACTIVATED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DISABLED_PENDING_REACTIVATION;
@@ -77,9 +78,11 @@ public class ProjectDAO {
                 .setProjection(Projections.countDistinct("id")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .createAlias("resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
                 .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resourceReference, resource)) //
+                .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_APPLICATION))
                 .add(Restrictions.eq("stateAction.action.id", PROJECT_CREATE_APPLICATION)) //
                 .uniqueResult();
     }
@@ -96,17 +99,19 @@ public class ProjectDAO {
         return (DateTime) sessionFactory.getCurrentSession().createCriteria(Project.class) //
                 .setProjection(Projections.property("updatedTimestampSitemap")) //
                 .add(Restrictions.in("state.id", states)) //
+                .add(Restrictions.isNotEmpty("resourceConditions")) //
                 .addOrder(Order.desc("updatedTimestampSitemap")) //
                 .setMaxResults(1) //
                 .uniqueResult();
     }
 
     public List<SitemapEntryDTO> getSitemapEntries(List<PrismState> states) {
-        return (List<SitemapEntryDTO>) sessionFactory.getCurrentSession().createCriteria(Project.class, "project") //
+        return (List<SitemapEntryDTO>) sessionFactory.getCurrentSession().createCriteria(Project.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("id"), "resourceId") //
                         .add(Projections.property("updatedTimestampSitemap"), "lastModifiedTimestamp")) //
                 .add(Restrictions.in("state.id", states)) //
+                .add(Restrictions.isNotEmpty("resourceConditions")) //
                 .addOrder(Order.desc("updatedTimestampSitemap")) //
                 .setMaxResults(50000) //
                 .setResultTransformer(Transformers.aliasToBean(SitemapEntryDTO.class)) //
@@ -114,7 +119,7 @@ public class ProjectDAO {
     }
 
     public SearchEngineAdvertDTO getSearchEngineAdvert(Integer projectId, List<PrismState> states) {
-        return (SearchEngineAdvertDTO) sessionFactory.getCurrentSession().createCriteria(Project.class, "project") //
+        return (SearchEngineAdvertDTO) sessionFactory.getCurrentSession().createCriteria(Project.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("id"), "projectId") //
                         .add(Projections.property("advert.title"), "projectTitle") //
@@ -134,29 +139,32 @@ public class ProjectDAO {
                 .createAlias("institution", "institution", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("id", projectId)) //
                 .add(Restrictions.in("state.id", states)) //
+                .add(Restrictions.isNotEmpty("resourceConditions")) //
                 .setResultTransformer(Transformers.aliasToBean(SearchEngineAdvertDTO.class)) //
                 .uniqueResult();
     }
 
     public List<ResourceSearchEngineDTO> getActiveProjectsByProgram(Integer programId, List<PrismState> states) {
-        return (List<ResourceSearchEngineDTO>) sessionFactory.getCurrentSession().createCriteria(Project.class, "project") //
+        return (List<ResourceSearchEngineDTO>) sessionFactory.getCurrentSession().createCriteria(Project.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("id"), "id") //
                         .add(Projections.property("title"), "title")) //
                 .add(Restrictions.eq("program.id", programId)) //
                 .add(Restrictions.in("state.id", states)) //
+                .add(Restrictions.isNotEmpty("resourceConditions")) //
                 .addOrder(Order.desc("updatedTimestampSitemap")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceSearchEngineDTO.class)) //
                 .list();
     }
 
     public List<ResourceSearchEngineDTO> getActiveProjectsByInstitution(Integer institutionId, List<PrismState> states) {
-        return (List<ResourceSearchEngineDTO>) sessionFactory.getCurrentSession().createCriteria(Project.class, "project") //
+        return (List<ResourceSearchEngineDTO>) sessionFactory.getCurrentSession().createCriteria(Project.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("id"), "id") //
                         .add(Projections.property("title"), "title")) //
                 .add(Restrictions.eq("institution.id", institutionId)) //
                 .add(Restrictions.in("state.id", states)) //
+                .add(Restrictions.isNotEmpty("resourceConditions")) //
                 .addOrder(Order.desc("updatedTimestampSitemap")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceSearchEngineDTO.class)) //
                 .list();

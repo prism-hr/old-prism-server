@@ -36,7 +36,6 @@ import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -53,6 +52,7 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.RestApiUtils;
 import com.zuehlke.pgadmissions.rest.dto.ActionDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
@@ -122,10 +122,10 @@ public class ResourceResource {
         }
 
         User user = userService.getCurrentUser();
-        Object newResourceDTO = actionDTO.getOperativeResourceDTO();
+        ResourceDTO newResource = actionDTO.getNewResource();
         Action action = actionService.getById(actionDTO.getActionId());
 
-        ActionOutcomeDTO actionOutcome = resourceService.create(user, action, newResourceDTO, actionDTO.getReferer(),
+        ActionOutcomeDTO actionOutcome = resourceService.create(user, action, newResource, actionDTO.getReferer(),
                 actionDTO.getWorkflowPropertyConfigurationVersion());
         return mapper.map(actionOutcome, ActionOutcomeRepresentation.class);
     }
@@ -199,10 +199,9 @@ public class ResourceResource {
     public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(
             @PathVariable Integer resourceId,
             @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestParam PrismScope propertiesScope,
-            @RequestParam(required = false) PrismLocale locale) throws Exception {
+            @RequestParam PrismScope propertiesScope) throws Exception {
         Resource resource = loadResource(resourceId, resourceDescriptor);
-        return resourceService.getDisplayProperties(resource, propertiesScope, locale);
+        return resourceService.getDisplayProperties(resource, propertiesScope);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -260,7 +259,7 @@ public class ResourceResource {
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceScope:projects|programs|institutions}/{resourceId}", params = "type=summary")
     @PreAuthorize("isAuthenticated()")
-    public ResourceSummaryRepresentation getSummary(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId) {
+    public ResourceSummaryRepresentation getSummary(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId) throws Exception {
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
         if (Arrays.asList(SYSTEM, APPLICATION).contains(resourceScope)) {
             throw new UnsupportedOperationException("Resource summary can only be generated for institutions, programs, projects");
@@ -294,7 +293,7 @@ public class ResourceResource {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         UserRepresentation newUser = userRolesRepresentation.getUser();
 
-        User user = userService.getOrCreateUserWithRoles(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource.getLocale(), resource,
+        User user = userService.getOrCreateUserWithRoles(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource,
                 userRolesRepresentation.getRoles());
         return mapper.map(user, UserRepresentation.class);
     }

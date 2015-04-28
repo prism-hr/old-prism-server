@@ -1,16 +1,17 @@
-package com.zuehlke.pgadmissions.rest.representation;
-
-import java.util.List;
-import java.util.Set;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
+package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.rest.representation.ResourceUserRolesRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.TimelineRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowPropertyConfigurationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import java.util.List;
+import java.util.Set;
 
 public class AbstractResourceRepresentation {
 
@@ -19,7 +20,7 @@ public class AbstractResourceRepresentation {
     private String code;
 
     private PrismState state;
-    
+
     private PrismState previousState;
 
     private PrismStateGroup stateGroup;
@@ -45,6 +46,8 @@ public class AbstractResourceRepresentation {
     private List<ResourceUserRolesRepresentation> users;
 
     private List<WorkflowPropertyConfigurationRepresentation> workflowPropertyConfigurations;
+
+    private ResourceAttributesRepresentation attributes;
 
     public Integer getId() {
         return id;
@@ -174,4 +177,11 @@ public class AbstractResourceRepresentation {
         this.workflowPropertyConfigurations = workflowPropertyConfigurations;
     }
 
+    public ResourceAttributesRepresentation getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(ResourceAttributesRepresentation attributes) {
+        this.attributes = attributes;
+    }
 }

@@ -7,7 +7,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
@@ -73,7 +73,7 @@ public class ApplicationExtendedRepresentation extends AbstractResourceRepresent
     private BigDecimal applicationRatingAverage;
 
     private ApplicationSummaryRepresentation resourceSummary;
-    
+
     private List<AdvertRepresentation> recommendedAdverts;
 
     public ProgramRepresentation getProgram() {

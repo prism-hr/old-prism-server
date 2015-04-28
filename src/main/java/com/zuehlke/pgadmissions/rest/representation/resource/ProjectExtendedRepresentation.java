@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 
@@ -13,13 +12,17 @@ public class ProjectExtendedRepresentation extends AbstractResourceRepresentatio
     private ProgramRepresentation program;
 
     private PrismOpportunityType opportunityType;
-    
+
     private String title;
 
+    private Integer durationMinimum;
+
+    private Integer durationMaximum;
+
     private AdvertRepresentation advert;
-    
+
     private PrismStudyOption[] studyOptions;
-    
+
     private ResourceSummaryRepresentation resourceSummary;
 
     public InstitutionRepresentation getInstitution() {
@@ -54,6 +57,22 @@ public class ProjectExtendedRepresentation extends AbstractResourceRepresentatio
         this.title = title;
     }
 
+    public Integer getDurationMinimum() {
+        return durationMinimum;
+    }
+
+    public void setDurationMinimum(Integer durationMinimum) {
+        this.durationMinimum = durationMinimum;
+    }
+
+    public Integer getDurationMaximum() {
+        return durationMaximum;
+    }
+
+    public void setDurationMaximum(Integer durationMaximum) {
+        this.durationMaximum = durationMaximum;
+    }
+
     public AdvertRepresentation getAdvert() {
         return advert;
     }
@@ -61,7 +80,7 @@ public class ProjectExtendedRepresentation extends AbstractResourceRepresentatio
     public void setAdvert(AdvertRepresentation advert) {
         this.advert = advert;
     }
-    
+
     public PrismStudyOption[] getStudyOptions() {
         return studyOptions;
     }
@@ -77,5 +96,5 @@ public class ProjectExtendedRepresentation extends AbstractResourceRepresentatio
     public final void setResourceSummary(ResourceSummaryRepresentation resourceSummary) {
         this.resourceSummary = resourceSummary;
     }
-    
+
 }

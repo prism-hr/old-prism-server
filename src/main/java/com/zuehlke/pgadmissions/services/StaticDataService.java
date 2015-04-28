@@ -1,60 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
-
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.WordUtils;
-import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
+import com.google.common.collect.*;
+import com.zuehlke.pgadmissions.domain.definitions.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.imported.Country;
-import com.zuehlke.pgadmissions.domain.imported.Disability;
-import com.zuehlke.pgadmissions.domain.imported.Domicile;
-import com.zuehlke.pgadmissions.domain.imported.Ethnicity;
-import com.zuehlke.pgadmissions.domain.imported.FundingSource;
-import com.zuehlke.pgadmissions.domain.imported.Gender;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.ImportedLanguageQualificationType;
-import com.zuehlke.pgadmissions.domain.imported.Language;
-import com.zuehlke.pgadmissions.domain.imported.QualificationType;
-import com.zuehlke.pgadmissions.domain.imported.ReferralSource;
-import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
-import com.zuehlke.pgadmissions.domain.imported.ResidenceState;
-import com.zuehlke.pgadmissions.domain.imported.Title;
+import com.zuehlke.pgadmissions.domain.imported.*;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
-import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
+import com.zuehlke.pgadmissions.domain.workflow.*;
 import com.zuehlke.pgadmissions.rest.representation.StateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.ProgramCategoryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.FilterRepresentation;
@@ -66,6 +21,18 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.Languag
 import com.zuehlke.pgadmissions.rest.representation.workflow.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
 import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
+import org.apache.commons.lang.WordUtils;
+import org.dozer.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
+
+import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 @Service
 @Transactional
@@ -151,10 +118,10 @@ public class StaticDataService {
     public Map<String, Object> getSimpleProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        for (Class<?> enumClass : new Class[] { PrismOpportunityType.class, PrismStudyOption.class,
+        for (Class<?> enumClass : new Class[]{PrismOpportunityType.class, PrismStudyOption.class,
                 PrismYesNoUnsureResponse.class, PrismDurationUnit.class, PrismAdvertDomain.class,
                 PrismAdvertFunction.class, PrismAdvertIndustry.class, PrismRefereeType.class,
-                PrismApplicationReserveStatus.class, PrismDisplayPropertyCategory.class }) {
+                PrismApplicationReserveStatus.class, PrismDisplayPropertyCategory.class}) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = WordUtils.uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
@@ -224,15 +191,28 @@ public class StaticDataService {
         return staticData;
     }
 
+    public Map<String, Object> getActionConditions() {
+        Map<String, Object> staticData = Maps.newHashMap();
+
+        ListMultimap<PrismScope, PrismActionCondition> actionConditionsMultimap = LinkedListMultimap.create();
+        for (PrismActionCondition actionCondition : PrismActionCondition.values()) {
+            for (PrismScope prismScope : actionCondition.getValidScopes()) {
+                actionConditionsMultimap.put(prismScope, actionCondition);
+            }
+        }
+        staticData.put("actionConditions", actionConditionsMultimap.asMap());
+        return staticData;
+    }
+
     @SuppressWarnings("unchecked")
     public Map<String, Object> getImportedData(Integer institutionId) {
         Map<String, Object> staticData = Maps.newHashMap();
 
         Institution institution = entityService.getById(Institution.class, institutionId);
 
-        for (Class<? extends ImportedEntity> entityClass : new Class[] { ReferralSource.class, Title.class, Ethnicity.class, Disability.class, Gender.class,
+        for (Class<? extends ImportedEntity> entityClass : new Class[]{ReferralSource.class, Title.class, Ethnicity.class, Disability.class, Gender.class,
                 Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, FundingSource.class, RejectionReason.class,
-                ResidenceState.class }) {
+                ResidenceState.class}) {
             String simpleName = entityClass.getSimpleName();
             simpleName = WordUtils.uncapitalize(simpleName);
             List<? extends ImportedEntity> entities = importedEntityService.getEnabledImportedEntities(institution, entityClass);
@@ -267,6 +247,7 @@ public class StaticDataService {
 
         return institutionRepresentations;
     }
+
 
     private static class ToIdFunction implements Function<WorkflowDefinition, Object> {
         @Override

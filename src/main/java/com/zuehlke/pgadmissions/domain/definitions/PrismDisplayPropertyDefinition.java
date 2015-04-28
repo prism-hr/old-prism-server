@@ -1071,8 +1071,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 	 * *************** SYSTEM ADVERTISE SECTION *********************
 	 */
 
-    SYSTEM_ADVERTISE_OPPORTUNITY_TYPE_LABEL(SYSTEM_ADVERTISE_SECTION, "Type"),
-    SYSTEM_ADVERTISE_OPPORTUNITY_TYPE_HINT(SYSTEM_ADVERTISE_SECTION, "The type of the program"),
     SYSTEM_ADVERTISE_LOOKUP_ORGANIZATION_LABEL(SYSTEM_ADVERTISE_SECTION, "Lookup Organization"),
     SYSTEM_ADVERTISE_LOOKUP_GOOGLE_ORGANIZATION_LABEL(SYSTEM_ADVERTISE_SECTION, "Lookup Organization in Google"),
     SYSTEM_ADVERTISE_LOOKUP_ORGANIZATION_HINT(SYSTEM_ADVERTISE_SECTION, "Start typing the name of your organization"),
@@ -1250,6 +1248,24 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ADDRESS_DOMICILE_HINT(SYSTEM_HTML_ADDRESS, "The country of your address."),
     SYSTEM_ADDRESS_CONTACT_SAME_AS_CURRENT_LABEL(SYSTEM_HTML_ADDRESS, "Is this the same as your current address?"),
     SYSTEM_ADDRESS_CONTACT_SAME_AS_CURRENT_HINT(SYSTEM_HTML_ADDRESS, "This tells us that your contact address is the same as your current address. If you wish to specify a different address, you may choose to."),
+
+    /*
+     * *************** SYSTEM HTML RESOURCE PARENT *********************
+     */
+
+    SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Type"),
+    SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The type of the opportunity"),
+    SYSTEM_RESOURCE_PARENT_TITLE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Title"),
+    SYSTEM_RESOURCE_PARENT_TITLE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The title of your opportunity."),
+    SYSTEM_RESOURCE_PARENT_SUMMARY_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Summary"),
+    SYSTEM_RESOURCE_PARENT_SUMMARY_HINT(SYSTEM_HTML_RESOURCE_PARENT, "A brief description of your opportunity."),
+    SYSTEM_RESOURCE_PARENT_STUDY_OPTIONS_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Study Options"),
+    SYSTEM_RESOURCE_PARENT_STUDY_OPTIONS_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The modes of participation that your opportunity offers (e.g. full-time, part-time, by distance)."),
+    SYSTEM_RESOURCE_PARENT_STUDY_LOCATIONS_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Possible Locations"),
+    SYSTEM_RESOURCE_PARENT_STUDY_LOCATIONS_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The locations at which it is possible for successful applicants of your opportunity to attend at."),
+    SYSTEM_RESOURCE_PARENT_END_DATE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "End Date"),
+    SYSTEM_RESOURCE_PARENT_END_DATE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The end date of the opportunity."),
+
 	/*
 	 * *************** SYSTEM HTML RESOURCE CONFIGURATION *********************
 	 */
@@ -1390,24 +1406,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 	 * *************** PROGRAM FORM *********************
 	 */
 
-    PROGRAM_FORM_TITLE_LABEL(PROGRAM_FORM, "Title"),
-    PROGRAM_FORM_TITLE_HINT(PROGRAM_FORM, "The title of your programme."),
-    PROGRAM_FORM_SUMMARY_LABEL(PROGRAM_FORM, "Summary"),
-    PROGRAM_FORM_SUMMARY_HINT(PROGRAM_FORM, "A brief description of your programme."),
-    PROGRAM_FORM_STUDY_OPTIONS_LABEL(PROGRAM_FORM, "Study Options"),
-    PROGRAM_FORM_STUDY_OPTIONS_HINT(PROGRAM_FORM, "The modes of participation that your programme offers (e.g. full-time, part-time, by distance)."),
-    PROGRAM_FORM_END_DATE_LABEL(PROGRAM_FORM, "End Date"),
-    PROGRAM_FORM_END_DATE_HINT(PROGRAM_FORM, "The end date of the program."),
-    PROGRAM_FORM_USE_OUR_ENGINE_LABEL(PROGRAM_FORM, "Use our recruitment engine?"),
-    PROGRAM_FORM_USE_OUR_ENGINE_HINT(PROGRAM_FORM, "Specify whether you wish to use our recruitment engine, or link to your own."),
-    PROGRAM_FORM_HOMEPAGE_LABEL(PROGRAM_FORM, "Application Page URL"),
-    PROGRAM_FORM_HOMEPAGE_HINT(PROGRAM_FORM, "Link to your application page for the opportunity."),
-    PROGRAM_FORM_STUDY_DURATION_MINIMUM_LABEL(PROGRAM_FORM, "Study Duration Minimum"),
-    PROGRAM_FORM_STUDY_DURATION_MINIMUM_HINT(PROGRAM_FORM, "The minimum anticipated duration of study for your program."),
-    PROGRAM_FORM_STUDY_DURATION_MAXIMUM_LABEL(PROGRAM_FORM, "Study Duration Maximum"),
-    PROGRAM_FORM_STUDY_DURATION_MAXIMUM_HINT(PROGRAM_FORM, "The maximum anticipated duration of study for your program."),
-    PROGRAM_FORM_LOCATIONS_LABEL(PROGRAM_FORM, "Possible Locations"),
-    PROGRAM_FORM_LOCATIONS_HINT(PROGRAM_FORM, "The locations at which it is possible for successful applicants of your program to study at."),
+    PROGRAM_FORM_DURATION_MINIMUM_LABEL(PROGRAM_FORM, "Duration Minimum"),
+    PROGRAM_FORM_DURATION_MINIMUM_HINT(PROGRAM_FORM, "The minimum anticipated duration of study for your program."),
+    PROGRAM_FORM_DURATION_MAXIMUM_LABEL(PROGRAM_FORM, "Duration Maximum"),
+    PROGRAM_FORM_DURATION_MAXIMUM_HINT(PROGRAM_FORM, "The maximum anticipated duration of study for your program."),
     PROGRAM_FORM_ADVERTISE_LABEL(PROGRAM_FORM, "Advertise Program?"),
     PROGRAM_FORM_ADVERTISE_HINT(PROGRAM_FORM, "Specify whether you wish to advertise the program for new applications at the current time"),
     PROGRAM_FORM_DISABLE_PROGRAM_BUTTON(PROGRAM_FORM, "Disable Program"),
@@ -1419,8 +1421,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROGRAM_ADVERT_HEADER(PROGRAM_ADVERT_DETAILS, "Advert"),
     PROGRAM_ADVERT_DESCRIPTION_LABEL(PROGRAM_ADVERT_DETAILS, "Description"),
     PROGRAM_ADVERT_DESCRIPTION_HINT(PROGRAM_ADVERT_DETAILS, "Detailed description of your advert."),
-    PROGRAM_ADVERT_APPLY_HOMEPAGE_LABEL(PROGRAM_ADVERT_DETAILS, "Allow Project Posting"),
-    PROGRAM_ADVERT_APPLY_HOMEPAGE_HINT(PROGRAM_ADVERT_DETAILS, "Add a button in the program advert to allow users to post projects"),
+    PROGRAM_ADVERT_USE_OUR_ENGINE_LABEL(PROGRAM_FORM, "Use our recruitment engine?"),
+    PROGRAM_ADVERT_USE_OUR_ENGINE_HINT(PROGRAM_FORM, "Specify whether you wish to use our recruitment engine, or link to your own."),
+    PROGRAM_ADVERT_APPLY_HOMEPAGE_LABEL(PROGRAM_FORM, "Application Page URL"),
+    PROGRAM_ADVERT_APPLY_HOMEPAGE_HINT(PROGRAM_FORM, "Link to your application page for the opportunity."),
     PROGRAM_ADVERT_HOMEPAGE_LABEL(PROGRAM_ADVERT_DETAILS, "Homepage URL"),
     PROGRAM_ADVERT_HOMEPAGE_HINT(PROGRAM_ADVERT_DETAILS, "???"),
     PROGRAM_ADVERT_USE_DIFFERENT_ADDRESS_LABEL(PROGRAM_ADVERT_DETAILS, "Use different address"),
@@ -1507,6 +1511,15 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROJECT_COMMENT_UPDATED_FEE_AND_PAYMENT(PROJECT_COMMENT, "Updated project fees and payments"),
     PROJECT_COMMENT_UPDATED_CATEGORY(PROJECT_COMMENT, "Updated project categories"),
     PROJECT_COMMENT_UPDATED_CLOSING_DATE(PROJECT_COMMENT, "Updated project closing dates"),
+
+	/*
+	 * *************** PROJECT FORM *********************
+	 */
+
+    PROJECT_FORM_DURATION_MINIMUM_LABEL(PROJECT_FORM, "Duration Minimum"),
+    PROJECT_FORM_DURATION_MINIMUM_HINT(PROJECT_FORM, "The minimum anticipated duration of study for your project."),
+    PROJECT_FORM_DURATION_MAXIMUM_LABEL(PROJECT_FORM, "Duration Maximum"),
+    PROJECT_FORM_DURATION_MAXIMUM_HINT(PROJECT_FORM, "The maximum anticipated duration of study for your project."),
 
 	/*
 	 * *************** APPLICATION GLOBAL *********************

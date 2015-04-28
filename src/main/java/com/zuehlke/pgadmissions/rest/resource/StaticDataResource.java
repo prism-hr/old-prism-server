@@ -1,20 +1,14 @@
 package com.zuehlke.pgadmissions.rest.resource;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ImportedInstitutionRepresentation;
 import com.zuehlke.pgadmissions.services.StaticDataService;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.web.bind.annotation.*;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/static")
@@ -36,6 +30,7 @@ public class StaticDataResource {
         staticData.putAll(staticDataService.getFilterProperties());
         staticData.putAll(staticDataService.getConfigurations());
         staticData.putAll(staticDataService.getProgramCategories());
+        staticData.putAll(staticDataService.getActionConditions());
         return staticData;
     }
 

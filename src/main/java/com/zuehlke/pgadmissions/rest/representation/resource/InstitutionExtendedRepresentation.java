@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
 
 public class InstitutionExtendedRepresentation extends AbstractResourceRepresentation {

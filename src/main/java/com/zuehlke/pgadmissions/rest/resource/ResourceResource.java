@@ -14,6 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
+import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
+import com.zuehlke.pgadmissions.rest.representation.resource.*;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
@@ -36,10 +39,6 @@ import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -55,17 +54,10 @@ import com.zuehlke.pgadmissions.rest.dto.ActionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
-import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceUserRolesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ActionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionExtendedRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ProgramExtendedRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ProjectExtendedRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.SimpleResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationExtendedRepresentation;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -164,9 +156,10 @@ public class ResourceResource {
             Set<PrismRole> roles = Sets.newHashSet(roleService.getRolesForResource(resource, user));
             userRolesRepresentations.add(new ResourceUserRolesRepresentation(userRepresentation, roles));
         }
-        representation.setUsers(userRolesRepresentations);
 
+        representation.setUsers(userRolesRepresentations);
         representation.setWorkflowPropertyConfigurations(resourceService.getWorkflowPropertyConfigurations(resource));
+        representation.setAttributes(mapper.map(resource, ResourceAttributesRepresentation.class));
 
         PrismScope resourceScope = resource.getResourceScope();
         switch (resourceScope) {

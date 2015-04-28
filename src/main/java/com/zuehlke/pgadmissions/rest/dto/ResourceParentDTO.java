@@ -1,13 +1,11 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import org.joda.time.LocalDate;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
+import org.joda.time.LocalDate;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public class ResourceParentDTO extends ResourceDTO {
 
@@ -44,18 +42,18 @@ public class ResourceParentDTO extends ResourceDTO {
 
     public static class ResourceParentAttributesDTO {
 
-        private List<PrismActionCondition> conditions;
+        private List<PrismActionCondition> resourceConditions;
 
         private List<PrismStudyOption> studyOptions;
 
         private List<String> studyLocations;
 
-        public List<PrismActionCondition> getConditions() {
-            return conditions;
+        public List<PrismActionCondition> getResourceConditions() {
+            return resourceConditions;
         }
 
-        public void setConditions(List<PrismActionCondition> conditions) {
-            this.conditions = conditions;
+        public void setResourceConditions(List<PrismActionCondition> resourceConditions) {
+            this.resourceConditions = resourceConditions;
         }
 
         public List<PrismStudyOption> getStudyOptions() {

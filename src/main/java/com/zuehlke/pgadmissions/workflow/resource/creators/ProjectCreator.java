@@ -1,14 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.resource.creators;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.ADVERT_TRIAL_PERIOD;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.LocalDate;
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.department.Department;
@@ -27,26 +18,34 @@ import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.DepartmentService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ResourceService;
+import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.LocalDate;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.ADVERT_TRIAL_PERIOD;
 
 @Component
 public class ProjectCreator implements ResourceCreator {
 
     @Inject
     private AdvertService advertService;
-    
+
     @Inject
     private DepartmentService departmentService;
-    
+
     @Inject
     private ImportedEntityService importedEntityService;
-    
+
     @Inject
     private ResourceService resourceService;
-    
+
     @Override
     public Resource create(User user, ResourceDTO newResource) throws Exception {
         OpportunityDTO newProject = (OpportunityDTO) newResource;
-        
+
         PrismScope resourceScope = newProject.getResourceScope();
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, newProject.getResourceId());
 
@@ -73,14 +72,14 @@ public class ProjectCreator implements ResourceCreator {
         Project project = new Project().withUser(user).withResource(resource).withDepartment(department).withAdvert(advert)
                 .withOpportunityType(opportunityType).withTitle(advert.getTitle()).withDurationMinimum(newProject.getDurationMinimum())
                 .withDurationMaximum(newProject.getDurationMaximum()).withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD));
-        
+
         ResourceParentAttributesDTO attributes = newProject.getAttributes();
-        resourceService.setResourceConditions(project, attributes.getConditions());
+        resourceService.setResourceConditions(project, attributes.getResourceConditions());
 
         if (!imported) {
             resourceService.setStudyOptions(project, attributes.getStudyOptions(), new LocalDate());
         }
-        
+
         resourceService.setStudyLocations(project, attributes.getStudyLocations());
         return project;
     }

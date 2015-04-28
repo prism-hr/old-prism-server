@@ -1,10 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import java.util.Set;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 
@@ -18,13 +14,13 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
 
     private String title;
 
-    private PrismStudyOption[] studyOptions;
-
     private Boolean requireProjectDefinition;
 
-    private AdvertRepresentation advert;
+    private Integer durationMinimum;
 
-    private Set<String> locations;
+    private Integer durationMaximum;
+
+    private AdvertRepresentation advert;
 
     private ResourceSummaryRepresentation resourceSummary;
 
@@ -60,20 +56,28 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
         this.title = title;
     }
 
-    public PrismStudyOption[] getStudyOptions() {
-        return studyOptions;
-    }
-
-    public void setStudyOptions(PrismStudyOption[] studyOptions) {
-        this.studyOptions = studyOptions;
-    }
-
     public Boolean getRequireProjectDefinition() {
         return requireProjectDefinition;
     }
 
     public void setRequireProjectDefinition(Boolean requireProjectDefinition) {
         this.requireProjectDefinition = requireProjectDefinition;
+    }
+
+    public Integer getDurationMinimum() {
+        return durationMinimum;
+    }
+
+    public void setDurationMinimum(Integer durationMinimum) {
+        this.durationMinimum = durationMinimum;
+    }
+
+    public Integer getDurationMaximum() {
+        return durationMaximum;
+    }
+
+    public void setDurationMaximum(Integer durationMaximum) {
+        this.durationMaximum = durationMaximum;
     }
 
     public AdvertRepresentation getAdvert() {
@@ -84,19 +88,11 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
         this.advert = advert;
     }
 
-    public Set<String> getLocations() {
-        return locations;
-    }
-
-    public void setLocations(Set<String> locations) {
-        this.locations = locations;
-    }
-
-    public final ResourceSummaryRepresentation getResourceSummary() {
+    public ResourceSummaryRepresentation getResourceSummary() {
         return resourceSummary;
     }
 
-    public final void setResourceSummary(ResourceSummaryRepresentation resourceSummary) {
+    public void setResourceSummary(ResourceSummaryRepresentation resourceSummary) {
         this.resourceSummary = resourceSummary;
     }
 

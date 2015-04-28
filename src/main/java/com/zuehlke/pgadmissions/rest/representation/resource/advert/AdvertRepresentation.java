@@ -1,17 +1,13 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.advert;
 
-import java.util.List;
-import java.util.Set;
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.*;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
+
+import java.util.List;
+import java.util.Set;
 
 public class AdvertRepresentation {
 
@@ -30,10 +26,6 @@ public class AdvertRepresentation {
     private String applyHomepage;
 
     private InstitutionAddressRepresentation address;
-
-    private Integer studyDurationMinimum;
-
-    private Integer studyDurationMaximum;
 
     private FinancialDetailsRepresentation fee;
 
@@ -133,22 +125,6 @@ public class AdvertRepresentation {
 
     public void setAddress(InstitutionAddressRepresentation address) {
         this.address = address;
-    }
-
-    public Integer getStudyDurationMinimum() {
-        return studyDurationMinimum;
-    }
-
-    public void setStudyDurationMinimum(Integer studyDurationMinimum) {
-        this.studyDurationMinimum = studyDurationMinimum;
-    }
-
-    public Integer getStudyDurationMaximum() {
-        return studyDurationMaximum;
-    }
-
-    public void setStudyDurationMaximum(Integer studyDurationMaximum) {
-        this.studyDurationMaximum = studyDurationMaximum;
     }
 
     public FinancialDetailsRepresentation getFee() {

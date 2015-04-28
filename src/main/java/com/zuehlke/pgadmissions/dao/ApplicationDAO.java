@@ -147,7 +147,7 @@ public class ApplicationDAO {
                 .add(Restrictions.eq("application", application)) //
                 .add(Restrictions.isNull("comment")) //
                 .add(Restrictions.isNull("userRole.id")) //
-                .uniqueResult();
+                .list();
     }
 
     public List<Integer> getApplicationsForExport() {

@@ -410,7 +410,7 @@ public class CommentService {
     }
 
     public void preProcessComment(Resource resource, Comment comment) throws Exception {
-        if (comment.isInterviewScheduledConfirmedComment()) {
+        if (comment.isApplicationInterviewScheduledConfirmedComment()) {
             appendInterviewScheduledConfirmedComments(comment);
         }
 

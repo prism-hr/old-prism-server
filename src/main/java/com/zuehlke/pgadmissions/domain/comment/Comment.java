@@ -724,7 +724,7 @@ public class Comment {
                 && Arrays.asList(APPLICATION_INTERVIEW_PENDING_INTERVIEW, APPLICATION_INTERVIEW_PENDING_FEEDBACK).contains(transitionState.getId());
     }
 
-    public boolean isInterviewScheduledConfirmedComment() {
+    public boolean isApplicationInterviewScheduledConfirmedComment() {
         return action.getId().equals(APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS);
     }
 

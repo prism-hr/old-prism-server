@@ -3,12 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_REJECTION_SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.EXHUME;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_REFERENCE;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -98,9 +93,6 @@ public class CommentService {
     private ActionService actionService;
 
     @Inject
-    private ApplicationService applicationService;
-
-    @Inject
     private EntityService entityService;
 
     @Inject
@@ -114,9 +106,6 @@ public class CommentService {
 
     @Inject
     private DocumentService documentService;
-
-    @Inject
-    private ResourceService resourceService;
 
     @Inject
     private Mapper mapper;
@@ -409,16 +398,6 @@ public class CommentService {
         entityService.flush();
     }
 
-    public void preProcessComment(Resource resource, Comment comment) throws Exception {
-        if (comment.isApplicationInterviewScheduledConfirmedComment()) {
-            appendInterviewScheduledConfirmedComments(comment);
-        }
-
-        if (comment.isApplicationReverseRejectionComment()) {
-            exhumeApplicationReferees(resource, comment);
-        }
-    }
-
     public void processComment(Resource resource, Comment comment) throws Exception {
         if (comment.isApplicationAutomatedRejectionComment()) {
             PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize((Application) resource);
@@ -428,23 +407,12 @@ public class CommentService {
     }
 
     public void postProcessComment(Resource resource, Comment comment) throws Exception {
-        if (comment.isApplicationAssignRefereesComment()) {
-            appendApplicationReferees(resource, comment);
-        }
-        
-        if (comment.isApplicationViewEditComment() && !resourceService.getResourceStatesByStateGroup(resource, APPLICATION_REFERENCE).isEmpty()) {
-            appendApplicationReferees(resource, comment);
-        }
 
         if (comment.isApplicationRatingComment() && comment.getApplicationRating() == null) {
             buildAggregatedRating(comment);
             if (comment.getApplicationRating() == null) {
                 comment.setApplicationRating(new BigDecimal(PrismConstants.DEFAULT_RATING));
             }
-        }
-
-        if (comment.isInterviewScheduledExpeditedComment()) {
-            appendInterviewScheduledExpeditedComments(comment);
         }
     }
 
@@ -521,6 +489,24 @@ public class CommentService {
         commentDAO.reassignComments(oldUser, newUser);
         commentDAO.reassignDelegateComments(oldUser, newUser);
         reassignCommentAssignedUsers(oldUser, newUser);
+    }
+
+    public Comment createInterviewPreferenceComment(Resource resource, Action action, User invoker, User user, LocalDateTime interviewDateTime,
+            DateTime baseline) {
+        Comment preferenceComment = new Comment().withResource(resource).withAction(action).withUser(invoker).withDelegateUser(user)
+                .withDeclinedResponse(false).withState(resource.getState()).withCreatedTimestamp(baseline);
+        preferenceComment.getAppointmentPreferences().add(new CommentAppointmentPreference().withDateTime(interviewDateTime));
+        return preferenceComment;
+    }
+
+    public List<LocalDateTime> getAppointmentPreferences(Application application, User user) {
+        Comment preferenceComment = getLatestComment(application, user, APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY,
+                APPLICATION_UPDATE_INTERVIEW_AVAILABILITY);
+        return commentDAO.getAppointmentPreferences(preferenceComment);
+    }
+
+    public List<User> getAssignedUsers(Comment comment, PrismRole... roles) {
+        return commentDAO.getAssignedUsers(comment, roles);
     }
 
     private void reassignCommentAssignedUsers(User oldUser, User newUser) {
@@ -658,67 +644,6 @@ public class CommentService {
         String propertyValue = customResponse.getPropertyValue();
         return new BigDecimal(propertyValue == null ? PrismConstants.DEFAULT_RATING.toString() : propertyValue).divide(new BigDecimal(denominator))
                 .multiply(new BigDecimal(5)).multiply(customResponse.getActionCustomQuestionConfiguration().getWeighting()).setScale(2, RoundingMode.HALF_UP);
-    }
-
-    private void appendInterviewScheduledExpeditedComments(Comment comment) throws Exception {
-        LocalDateTime interviewDateTime = comment.getInterviewAppointment().getInterviewDateTime();
-        comment.getAppointmentTimeslots().add(new CommentAppointmentTimeslot().withDateTime(interviewDateTime));
-
-        Resource resource = comment.getResource();
-        PrismAction prismAction = APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
-        Action action = actionService.getById(prismAction);
-        DateTime baseline = comment.getCreatedTimestamp();
-
-        User invoker = comment.getUser();
-        List<User> users = commentDAO.getAssignedUsers(comment, APPLICATION_INTERVIEWER, APPLICATION_INTERVIEWEE);
-        for (User user : users) {
-            Comment preferenceComment = createAutomatedInterviewPreferenceComment(resource, action, invoker, user, interviewDateTime, baseline);
-            persistComment(resource, preferenceComment);
-            resource.addComment(preferenceComment);
-        }
-    }
-
-    private void appendInterviewScheduledConfirmedComments(Comment comment) throws Exception {
-        Resource resource = comment.getResource();
-        PrismAction prismAction = APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
-        Action action = actionService.getById(prismAction);
-        DateTime baseline = comment.getCreatedTimestamp().minusSeconds(1);
-
-        User invoker = comment.getUser();
-        List<User> users = userService.getUsersWithAction(resource, prismAction, APPLICATION_UPDATE_INTERVIEW_AVAILABILITY);
-        LocalDateTime interviewDateTime = comment.getInterviewAppointment().getInterviewDateTime();
-        for (User user : users) {
-            Comment oldPreferenceComment = getLatestComment(resource, user, APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY,
-                    APPLICATION_UPDATE_INTERVIEW_AVAILABILITY);
-
-            List<LocalDateTime> oldPreferences = commentDAO.getAppointmentPreferences(oldPreferenceComment);
-            if (!oldPreferences.contains(interviewDateTime)) {
-                Comment newPreferenceComment = createAutomatedInterviewPreferenceComment(resource, action, invoker, user, interviewDateTime, baseline);
-                actionService.executeActionSilent(resource, action, newPreferenceComment);
-            }
-        }
-    }
-
-    private Comment createAutomatedInterviewPreferenceComment(Resource resource, Action action, User invoker, User user, LocalDateTime interviewDateTime,
-            DateTime baseline) {
-        Comment preferenceComment = new Comment().withResource(resource).withAction(action).withUser(invoker).withDelegateUser(user)
-                .withDeclinedResponse(false).withState(resource.getState()).withCreatedTimestamp(baseline);
-        preferenceComment.getAppointmentPreferences().add(new CommentAppointmentPreference().withDateTime(interviewDateTime));
-        return preferenceComment;
-    }
-
-    private void appendApplicationReferees(Resource resource, Comment comment) {
-        Role refereeRole = roleService.getById(APPLICATION_REFEREE);
-        for (User referee : applicationService.getUnassignedApplicationReferees((Application) resource)) {
-            comment.addAssignedUser(referee, refereeRole, CREATE);
-        }
-    }
-
-    private void exhumeApplicationReferees(Resource resource, Comment comment) {
-        Role refereeRole = roleService.getById(APPLICATION_REFEREE);
-        for (User referee : applicationService.getUnassignedApplicationReferees((Application) resource)) {
-            comment.addAssignedUser(referee, refereeRole, EXHUME);
-        }
     }
 
     private void updateCommentStates(Comment comment) {

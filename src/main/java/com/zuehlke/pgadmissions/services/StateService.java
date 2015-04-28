@@ -151,8 +151,6 @@ public class StateService {
         commentService.persistComment(resource, comment);
 
         resourceService.preProcessResource(resource, comment);
-        commentService.preProcessComment(resource, comment);
-
         State state = resource.getState();
         StateTransition stateTransition = getStateTransition(resource, action, comment);
 

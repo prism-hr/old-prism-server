@@ -50,7 +50,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
@@ -91,9 +90,9 @@ import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowProper
 import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
-import com.zuehlke.pgadmissions.workflow.resource.creators.ResourceCreator;
-import com.zuehlke.pgadmissions.workflow.resource.persisters.ResourcePersister;
-import com.zuehlke.pgadmissions.workflow.resourcer.processors.ResourceProcessor;
+import com.zuehlke.pgadmissions.workflow.transition.creators.ResourceCreator;
+import com.zuehlke.pgadmissions.workflow.transition.persisters.ResourcePersister;
+import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
 
 @Service
 @Transactional
@@ -665,10 +664,6 @@ public class ResourceService {
         LocalDate baseline = new LocalDate();
         resourceDAO.deleteElapsedStudyOptionInstances(baseline);
         resourceDAO.deleteElapsedStudyOptions(baseline);
-    }
-
-    public List<ResourceState> getResourceStatesByStateGroup(Resource resource, PrismStateGroup stateGroup) {
-        return resourceDAO.getResourceStatesByStateGroup(resource, stateGroup);
     }
 
     private void createOrUpdateStateTransitionSummary(Resource resource, DateTime baselineTime) {

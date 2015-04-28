@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.workflow.resourcer.processors;
+package com.zuehlke.pgadmissions.workflow.transition.processors;
 
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.resource.Resource;

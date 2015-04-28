@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.workflow.resource.persisters;
+package com.zuehlke.pgadmissions.workflow.transition.persisters;
 
 import javax.inject.Inject;
 

@@ -13,9 +13,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.dto.ProgramDTO;
-import com.zuehlke.pgadmissions.rest.dto.ProjectDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 
 public class CommentDTO {
 
@@ -60,11 +58,7 @@ public class CommentDTO {
 
 	private Integer rejectionReason;
 
-	private InstitutionDTO institution;
-
-	private ProgramDTO program;
-
-	private ProjectDTO project;
+	private ResourceDTO resource;
 
 	@Valid
 	private List<CommentAssignedUserDTO> assignedUsers;
@@ -228,31 +222,15 @@ public class CommentDTO {
 		this.rejectionReason = rejectionReason;
 	}
 
-	public InstitutionDTO getInstitution() {
-		return institution;
-	}
+	public ResourceDTO getResource() {
+        return resource;
+    }
 
-	public void setInstitution(InstitutionDTO institution) {
-		this.institution = institution;
-	}
+    public void setResource(ResourceDTO resource) {
+        this.resource = resource;
+    }
 
-	public ProgramDTO getProgram() {
-		return program;
-	}
-
-	public void setProgram(ProgramDTO program) {
-		this.program = program;
-	}
-
-	public ProjectDTO getProject() {
-		return project;
-	}
-
-	public void setProject(ProjectDTO project) {
-		this.project = project;
-	}
-
-	public List<CommentAssignedUserDTO> getAssignedUsers() {
+    public List<CommentAssignedUserDTO> getAssignedUsers() {
 		return assignedUsers;
 	}
 
@@ -298,19 +276,6 @@ public class CommentDTO {
 
 	public void setDocuments(List<FileDTO> documents) {
 		this.documents = documents;
-	}
-
-	public Object fetchResourceDTO() {
-		switch (action.getScope()) {
-		case INSTITUTION:
-			return institution;
-		case PROGRAM:
-			return program;
-		case PROJECT:
-			return project;
-		default:
-			throw new Error();
-		}
 	}
 
 }

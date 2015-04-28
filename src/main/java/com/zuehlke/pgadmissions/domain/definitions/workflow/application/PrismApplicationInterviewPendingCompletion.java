@@ -13,6 +13,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationWithdrawInterviewScheduled;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiterAndAdministrator;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiterAndAdministrator;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
@@ -37,7 +38,8 @@ public class PrismApplicationInterviewPendingCompletion extends PrismWorkflowSta
 		                .withTransitionState(APPLICATION_INTERVIEW_PENDING_COMPLETION) //
 		                .withTransitionAction(APPLICATION_COMPLETE_INTERVIEW_STAGE) //
 		                .withRoleTransitions(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_GROUP)));
-
+		
+        stateActions.add(applicationUploadReference(state));
 		stateActions.add(applicationViewEditInterviewScheduled(state)); //
 		stateActions.add(applicationWithdrawInterviewScheduled());
 	}

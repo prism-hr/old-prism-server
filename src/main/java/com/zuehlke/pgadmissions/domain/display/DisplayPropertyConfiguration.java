@@ -12,10 +12,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
@@ -23,9 +23,10 @@ import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 
 @Entity
 @Table(name = "DISPLAY_PROPERTY_CONFIGURATION", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "system_id", "locale", "program_type", "display_property_definition_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "program_type", "display_property_definition_id" }),
-        @UniqueConstraint(columnNames = { "program_id", "display_property_definition_id" }) })
+        @UniqueConstraint(columnNames = { "system_id", "opportunity_type", "display_property_definition_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "opportunity_type", "display_property_definition_id" }),
+        @UniqueConstraint(columnNames = { "program_id", "display_property_definition_id" }),
+        @UniqueConstraint(columnNames = { "project_id", "display_property_definition_id" }) })
 public class DisplayPropertyConfiguration extends WorkflowConfiguration {
 
     @Id
@@ -44,13 +45,13 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
     @JoinColumn(name = "program_id")
     private Program program;
 
-    @Column(name = "locale")
-    @Enumerated(EnumType.STRING)
-    private PrismLocale locale;
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private Project project;
 
-    @Column(name = "program_type")
+    @Column(name = "opportunity_type")
     @Enumerated(EnumType.STRING)
-    private PrismProgramType programType;
+    private PrismOpportunityType opportunityType;
 
     @ManyToOne
     @JoinColumn(name = "display_property_definition_id", nullable = false)
@@ -102,23 +103,23 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
     }
 
     @Override
-    public final PrismLocale getLocale() {
-        return locale;
+    public Project getProject() {
+        return project;
     }
 
     @Override
-    public final void setLocale(PrismLocale locale) {
-        this.locale = locale;
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     @Override
-    public final PrismProgramType getProgramType() {
-        return programType;
+    public final PrismOpportunityType getOpportunityType() {
+        return opportunityType;
     }
 
     @Override
-    public final void setProgramType(PrismProgramType programType) {
-        this.programType = programType;
+    public final void setOpportunityType(PrismOpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
     }
 
     public final DisplayPropertyDefinition getDisplayPropertyDefinition() {
@@ -157,13 +158,8 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration {
         return this;
     }
 
-    public DisplayPropertyConfiguration withLocale(PrismLocale locale) {
-        this.locale = locale;
-        return this;
-    }
-
-    public DisplayPropertyConfiguration withProgramType(PrismProgramType programType) {
-        this.programType = programType;
+    public DisplayPropertyConfiguration withOpportunityType(PrismOpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
         return this;
     }
 

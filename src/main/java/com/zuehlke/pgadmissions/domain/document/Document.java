@@ -35,7 +35,7 @@ public class Document {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category")
-    private FileCategory category;
+    private PrismFileCategory category;
 
     @Column(name = "file_name", nullable = false)
     private String fileName;
@@ -87,8 +87,11 @@ public class Document {
     @OneToOne(mappedBy = "portraitDocument")
     private User userPortrait;
 
-    @OneToOne(mappedBy = "logoDocument")
-    private Institution institutionLogo;
+    @OneToOne(mappedBy = "logoImage")
+    private Institution logoImage;
+    
+    @OneToOne(mappedBy = "backgroundImage")
+    private Institution backgroundImage;
 
     public void setId(Integer id) {
         this.id = id;
@@ -98,11 +101,11 @@ public class Document {
         return id;
     }
 
-    public final FileCategory getCategory() {
+    public final PrismFileCategory getCategory() {
         return category;
     }
 
-    public final void setCategory(FileCategory category) {
+    public final void setCategory(PrismFileCategory category) {
         this.category = category;
     }
 
@@ -189,17 +192,13 @@ public class Document {
     public User getUserPortrait() {
         return userPortrait;
     }
-
-    public void setUserPortrait(User userPortrait) {
-        this.userPortrait = userPortrait;
+    
+    public Institution getLogoImage() {
+        return logoImage;
     }
 
-    public Institution getInstitutionLogo() {
-        return institutionLogo;
-    }
-
-    public void setInstitutionLogo(Institution institutionLogo) {
-        this.institutionLogo = institutionLogo;
+    public Institution getBackgroundImage() {
+        return backgroundImage;
     }
 
     public Document withId(Integer id) {
@@ -207,7 +206,7 @@ public class Document {
         return this;
     }
 
-    public Document withCategory(final FileCategory category) {
+    public Document withCategory(final PrismFileCategory category) {
         this.category = category;
         return this;
     }

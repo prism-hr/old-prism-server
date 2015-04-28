@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.INSTITUTION_IMPORT_ERROR_NOTIFICATION;
@@ -88,7 +89,7 @@ public class NotificationService {
     }
 
     public NotificationConfiguration getNotificationConfiguration(Resource resource, User user, NotificationDefinition definition) {
-        return (NotificationConfiguration) customizationService.getConfiguration(PrismConfiguration.NOTIFICATION, resource, user, definition);
+        return (NotificationConfiguration) customizationService.getConfiguration(NOTIFICATION, resource, user, definition);
     }
 
     public List<NotificationDefinition> getDefinitions() {
@@ -164,7 +165,7 @@ public class NotificationService {
                     NotificationDefinition sendDefinition = doSendReminder ? definition.getReminderDefinition() : definition;
                     sendNotification(sendDefinition, new NotificationDefinitionModelDTO().withUser(user).withAuthor(author).withResource(system)
                             .withTransitionAction(transitionActionId));
-                    createOrUpdateUserNotification(system, user, sendDefinition, baseline);
+                    createOrUpdateUserNotification(system, user, definition, baseline);
                 }
             }
         }
@@ -192,13 +193,10 @@ public class NotificationService {
 
                 if (!requested.contains(user)) {
                     List<Integer> requests = notificationDAO.getRecentSyndicatedUserNotifications(system, user, baseline);
-
                     if (requests.isEmpty()) {
-
                         NotificationDefinition definition = getById(update.getNotificationDefinitionId());
                         sendNotification(definition, new NotificationDefinitionModelDTO().withUser(user).withAuthor(author).withResource(system)
                                 .withTransitionAction(transitionActionId));
-
                         createOrUpdateUserNotification(system, user, definition, baseline);
                     }
                     else {

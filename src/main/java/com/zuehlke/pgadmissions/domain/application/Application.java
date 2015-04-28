@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.application;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_REQUIRED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.IMMEDIATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -24,7 +24,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OrderBy;
@@ -36,8 +35,8 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
@@ -177,9 +176,9 @@ public class Application extends Resource {
     @Column(name = "application_rating_average")
     private BigDecimal applicationRatingAverage;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "application_reserve_status")
-	private PrismApplicationReserveStatus applicationReserveStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "application_reserve_status")
+    private PrismApplicationReserveStatus applicationReserveStatus;
 
     @Column(name = "completion_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -199,12 +198,15 @@ public class Application extends Resource {
     @Column(name = "submitted_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime submittedTimestamp;
-    
+
     @Column(name = "application_year")
     private String applicationYear;
-    
+
     @Column(name = "application_month")
     private Integer applicationMonth;
+
+    @Column(name = "application_month_sequence")
+    private Integer applicationMonthSequence;
 
     @ManyToOne
     @JoinColumn(name = "state_id")
@@ -224,7 +226,7 @@ public class Application extends Resource {
 
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	@PrismConstraintRequired(error = SYSTEM_VALIDATION_REQUIRED)
+    @PrismConstraintRequired(error = SYSTEM_VALIDATION_REQUIRED)
     private DateTime updatedTimestamp;
 
     @Column(name = "last_reminded_request_individual")
@@ -250,8 +252,9 @@ public class Application extends Resource {
 
     @OneToMany(mappedBy = "application")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
-    
-    @OneToMany(mappedBy = "application")
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_id", nullable = false)
     private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
     @OneToMany(mappedBy = "application")
@@ -259,9 +262,6 @@ public class Application extends Resource {
 
     @OneToMany(mappedBy = "application")
     private Set<UserRole> userRoles = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "application")
-    private Set<ApplicationProcessing> processings = Sets.newHashSet();
 
     @Transient
     private Boolean acceptedTerms;
@@ -302,11 +302,6 @@ public class Application extends Resource {
     @Override
     public void setUser(User user) {
         this.user = user;
-    }
-
-    @Override
-    public PrismLocale getLocale() {
-        return program.getLocale();
     }
 
     @Override
@@ -455,22 +450,30 @@ public class Application extends Resource {
     }
 
     public String getApplicationYear() {
-		return applicationYear;
-	}
+        return applicationYear;
+    }
 
-	public void setApplicationYear(String applicationYear) {
-		this.applicationYear = applicationYear;
-	}
+    public void setApplicationYear(String applicationYear) {
+        this.applicationYear = applicationYear;
+    }
 
-	public Integer getApplicationMonth() {
-		return applicationMonth;
-	}
+    public Integer getApplicationMonth() {
+        return applicationMonth;
+    }
 
-	public void setApplicationMonth(Integer applicationMonth) {
-		this.applicationMonth = applicationMonth;
-	}
+    public void setApplicationMonth(Integer applicationMonth) {
+        this.applicationMonth = applicationMonth;
+    }
 
-	public LocalDate getClosingDate() {
+    public Integer getApplicationMonthSequence() {
+        return applicationMonthSequence;
+    }
+
+    public void setApplicationMonthSequence(Integer applicationMonthSequence) {
+        this.applicationMonthSequence = applicationMonthSequence;
+    }
+
+    public LocalDate getClosingDate() {
         return closingDate;
     }
 
@@ -555,14 +558,14 @@ public class Application extends Resource {
     }
 
     public PrismApplicationReserveStatus getApplicationReserveStatus() {
-		return applicationReserveStatus;
-	}
+        return applicationReserveStatus;
+    }
 
-	public void setApplicationReserveStatus(PrismApplicationReserveStatus applicationReserveRating) {
-		this.applicationReserveStatus = applicationReserveRating;
-	}
+    public void setApplicationReserveStatus(PrismApplicationReserveStatus applicationReserveRating) {
+        this.applicationReserveStatus = applicationReserveRating;
+    }
 
-	public LocalDate getCompletionDate() {
+    public LocalDate getCompletionDate() {
         return completionDate;
     }
 
@@ -626,20 +629,16 @@ public class Application extends Resource {
 
     @Override
     public Set<ResourceCondition> getResourceConditions() {
-		return resourceConditions;
-	}
+        return resourceConditions;
+    }
 
-	public Set<Comment> getComments() {
+    public Set<Comment> getComments() {
         return comments;
     }
 
     @Override
     public Set<UserRole> getUserRoles() {
         return userRoles;
-    }
-
-    public final Set<ApplicationProcessing> getProcessings() {
-        return processings;
     }
 
     public Application withId(Integer id) {
@@ -804,11 +803,11 @@ public class Application extends Resource {
 
     public Set<ResourceParent> getParentResources() {
         Set<ResourceParent> parentResources = Sets.newLinkedHashSet();
-        if (project != null) {
-            parentResources.add(project);
+        for (ResourceParent parentResource : new ResourceParent[] { project, program, institution }) {
+            if (parentResource != null) {
+                parentResources.add(parentResource);
+            }
         }
-        parentResources.add(program);
-        parentResources.add(institution);
         return parentResources;
     }
 
@@ -834,19 +833,19 @@ public class Application extends Resource {
     }
 
     public String getCreatedTimestampDisplay(String dateFormat) {
-        return createdTimestamp == null ? null : createdTimestamp.toString(dateFormat, LocaleUtils.toLocale(this.getLocale().toString()));
+        return createdTimestamp == null ? null : createdTimestamp.toString(dateFormat);
     }
 
     public String getSubmittedTimestampDisplay(String dateFormat) {
-        return submittedTimestamp == null ? null : submittedTimestamp.toString(dateFormat, LocaleUtils.toLocale(this.getLocale().toString()));
+        return submittedTimestamp == null ? null : submittedTimestamp.toString(dateFormat);
     }
 
     public String getClosingDateDisplay(String dateFormat) {
-        return closingDate == null ? null : closingDate.toString(dateFormat, LocaleUtils.toLocale(this.getLocale().toString()));
+        return closingDate == null ? null : closingDate.toString(dateFormat);
     }
 
     public String getConfirmedStartDateDisplay(String dateFormat) {
-        return confirmedStartDate == null ? null : confirmedStartDate.toString(dateFormat, LocaleUtils.toLocale(this.getLocale().toString()));
+        return confirmedStartDate == null ? null : confirmedStartDate.toString(dateFormat);
     }
 
     public String getApplicationRatingAverageDisplay() {
@@ -862,7 +861,7 @@ public class Application extends Resource {
     }
 
     public boolean isApproved() {
-        return state.getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED && state.getId() != PrismState.APPLICATION_APPROVED;
+        return state.getStateGroup().getId() == PrismStateGroup.APPLICATION_APPROVED && state.getId() != APPLICATION_APPROVED;
     }
 
     public boolean isSubmitted() {
@@ -877,12 +876,18 @@ public class Application extends Resource {
         return project == null ? program.getCode() : project.getCode();
     }
 
-    public PrismProgramStartType getDefaultStartType() {
-        return project == null && program.getProgramType().getPrismProgramType().getDefaultStartType() == SCHEDULED ? SCHEDULED : IMMEDIATE;
+    public PrismOpportunityType getOpportunityType() {
+        if (project == null && program == null) {
+            return null;
+        } else if (project != null) {
+            return project.getOpportunityType().getPrismOpportunityType();
+        }
+        return program.getOpportunityType().getPrismOpportunityType();
     }
 
-    public boolean isProgramApplication() {
-        return project == null;
+    public PrismProgramStartType getDefaultStartType() {
+        PrismOpportunityType opportunityType = getOpportunityType();
+        return opportunityType == null ? IMMEDIATE : opportunityType.getDefaultStartType();
     }
 
     @Override

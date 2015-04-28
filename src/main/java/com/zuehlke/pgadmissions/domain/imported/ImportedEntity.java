@@ -10,7 +10,7 @@ public abstract class ImportedEntity implements UniqueEntity {
     public abstract Integer getId();
 
     public abstract void setId(Integer id);
-    
+
     public abstract Institution getInstitution();
 
     public abstract void setInstitution(Institution institution);
@@ -27,9 +27,7 @@ public abstract class ImportedEntity implements UniqueEntity {
 
     public abstract void setEnabled(Boolean enabled);
 
-    public PrismImportedEntity getType() {
-        return null;
-    }
+    public abstract PrismImportedEntity getType();
 
     @Override
     public String toString() {
@@ -56,7 +54,7 @@ public abstract class ImportedEntity implements UniqueEntity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("institution", getInstitution()).addProperty("type", getType()).addProperty("code", getCode());
+        return new ResourceSignature().addProperty("institution", getInstitution()).addProperty("code", getCode());
     }
 
 }

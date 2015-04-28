@@ -10,7 +10,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -189,11 +188,11 @@ public class ApplicationEmploymentPosition extends ApplicationSection {
     }
 
     public String getStartDateDisplay(String dateFormat) {
-        return startDate == null ? null : startDate.toString(dateFormat, LocaleUtils.toLocale(getApplication().getLocale().toString()));
+        return startDate == null ? null : startDate.toString(dateFormat);
     }
 
     public String getEndDateDisplay(String dateFormat) {
-        return endDate == null ? null : endDate.toString(dateFormat, LocaleUtils.toLocale(getApplication().getLocale().toString()));
+        return endDate == null ? null : endDate.toString(dateFormat);
     }
 
 }

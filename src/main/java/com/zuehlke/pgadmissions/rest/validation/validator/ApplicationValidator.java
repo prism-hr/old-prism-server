@@ -1,12 +1,15 @@
 package com.zuehlke.pgadmissions.rest.validation.validator;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.WORKFLOW_PROPERTY;
+
 import java.util.Collection;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -19,30 +22,29 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationLanguageQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.Disability;
 import com.zuehlke.pgadmissions.domain.imported.Ethnicity;
-import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.program.ProgramStudyOption;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CustomizationService;
-import com.zuehlke.pgadmissions.services.ProgramService;
+import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @Component
 public class ApplicationValidator extends LocalValidatorFactoryBean implements Validator {
 
-    @Autowired
+    @Inject
     private ApplicationService applicationService;
 
-    @Autowired
+    @Inject
     private CustomizationService customizationService;
-
-    @Autowired
-    private ProgramService programService;
+    
+    @Inject
+    private ResourceService resourceService;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -67,7 +69,7 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
         validateStartDate(application, application.getProgramDetail(), errors);
 
         List<WorkflowPropertyConfiguration> configurations = (List<WorkflowPropertyConfiguration>) (List<?>) customizationService.getConfigurationsWithVersion(
-                PrismConfiguration.WORKFLOW_PROPERTY, application.getWorkflowPropertyConfigurationVersion());
+                WORKFLOW_PROPERTY, application.getWorkflowPropertyConfigurationVersion());
 
         for (WorkflowPropertyConfiguration configuration : configurations) {
             switch (configuration.getWorkflowPropertyDefinition().getId()) {
@@ -143,11 +145,11 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
             errors.pushNestedPath("programDetail");
             LocalDate startDate = programDetail.getStartDate();
 
-            Program program = application.getProgram();
-            ProgramStudyOption studyOption = programService.getEnabledProgramStudyOption(program, programDetail.getStudyOption());
+            ResourceParent parent = (ResourceParent) application.getParentResource();
+            ResourceStudyOption studyOption = resourceService.getStudyOption(parent, programDetail.getStudyOption());
 
             if (studyOption == null) {
-                List<ProgramStudyOption> otherStudyOptions = programService.getEnabledProgramStudyOptions(program);
+                List<ResourceStudyOption> otherStudyOptions = resourceService.getStudyOptions(parent);
                 if (otherStudyOptions.isEmpty()) {
                     throw new CannotApplyException();
                 }
@@ -157,9 +159,9 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
                 LocalDate latestStartDate = applicationService.getLatestStartDate(studyOption.getId());
 
                 if (startDate.isBefore(earliestStartDate)) {
-                    errors.rejectValue("startDate", "notBefore", new Object[]{earliestStartDate}, null);
+                    errors.rejectValue("startDate", "notBefore", new Object[] { earliestStartDate }, null);
                 } else if (startDate.isAfter(latestStartDate)) {
-                    errors.rejectValue("startDate", "notAfter", new Object[]{latestStartDate}, null);
+                    errors.rejectValue("startDate", "notAfter", new Object[] { latestStartDate }, null);
                 }
             }
 
@@ -236,7 +238,7 @@ public class ApplicationValidator extends LocalValidatorFactoryBean implements V
         validateRequiredConstraint(visaRequired, "personalDetail", "visaRequired", configuration, errors);
     }
 
-    private void validateStudyDetailConstraint(Errors errors, Application application, WorkflowPropertyConfiguration configuration) throws Error {
+    private void validateStudyDetailConstraint(Errors errors, Application application, WorkflowPropertyConfiguration configuration) {
         if (BooleanUtils.isTrue(configuration.getEnabled())) {
             if (BooleanUtils.isTrue(configuration.getRequired())) {
                 ValidationUtils.rejectIfEmpty(errors, "studyDetail", "notNull");

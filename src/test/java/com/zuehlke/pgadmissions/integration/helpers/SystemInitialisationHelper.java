@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.integration.helpers;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismLocale.getSystemLocale;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismProgramType.getSystemProgramType;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -18,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
@@ -191,8 +189,6 @@ public class SystemInitialisationHelper {
 	public void verifySystemCreation() {
 		System system = systemService.getSystem();
 		assertEquals(system.getTitle(), systemName);
-		assertEquals(system.getLocale(), PrismLocale.getSystemLocale());
-		assertEquals(system.getHelpdesk(), systemHelpdesk);
 		assertEquals(system.getCode(), resourceService.generateResourceCode(system));
 		assertEquals(system.getState().getId(), PrismState.SYSTEM_RUNNING);
 		assertNotNull(system.getCipherSalt());
@@ -214,12 +210,11 @@ public class SystemInitialisationHelper {
 		System system = systemService.getSystem();
 		for (DisplayPropertyConfiguration value : localizationService.getAllLocalizedProperties()) {
 			assertEquals(value.getResource(), system);
-			assertEquals(value.getLocale(), system.getLocale());
 
 			DisplayPropertyDefinition displayProperty = value.getDisplayPropertyDefinition();
 			PrismDisplayPropertyDefinition prismDisplayProperty = displayProperty.getId();
 
-			assertEquals(value.getProgramType(), displayProperty.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemProgramType() : null);
+			assertEquals(value.getOpportunityType(), displayProperty.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemOpportunityType() : null);
 			assertEquals(displayProperty.getCategory(), prismDisplayProperty.getCategory());
 			assertEquals(value.getValue(), prismDisplayProperty.getDefaultValue());
 			assertTrue(value.getSystemDefault());
@@ -240,8 +235,7 @@ public class SystemInitialisationHelper {
 			NotificationConfiguration configuration = (NotificationConfiguration) customizationService.getConfiguration(PrismConfiguration.NOTIFICATION,
 			        system, system.getUser(), definition);
 
-			assertEquals(configuration.getLocale(), getSystemLocale());
-			assertEquals(configuration.getProgramType(), definition.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemProgramType() : null);
+			assertEquals(configuration.getOpportunityType(), definition.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemOpportunityType() : null);
 			assertEquals(configuration.getNotificationDefinition(), definition);
 			assertEquals(prismNotificationDefinition.getDefaultReminderDuration(), configuration.getReminderInterval());
 			assertTrue(configuration.getSystemDefault());
@@ -259,8 +253,7 @@ public class SystemInitialisationHelper {
 			StateDurationConfiguration stateDurationConfiguration = (StateDurationConfiguration) customizationService.getConfiguration(
 			        PrismConfiguration.STATE_DURATION, system, system.getUser(), state.getStateDurationDefinition());
 
-			assertEquals(stateDurationConfiguration.getLocale(), getSystemLocale());
-			assertEquals(stateDurationConfiguration.getProgramType(), state.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemProgramType() : null);
+			assertEquals(stateDurationConfiguration.getOpportunityType(), state.getScope().getOrdinal() > INSTITUTION.ordinal() ? getSystemOpportunityType() : null);
 			assertEquals(state.getId().getDefaultDuration().getDefaultDuration(), stateDurationConfiguration.getDuration());
 			assertTrue(stateDurationConfiguration.getSystemDefault());
 		}
@@ -310,10 +303,8 @@ public class SystemInitialisationHelper {
 		assertTrue(prismStateAction.getAssignments().size() == stateActionAssignments.size());
 
 		for (StateActionAssignment stateActionAssignment : stateActionAssignments) {
-			Action delegatedAction = stateActionAssignment.getDelegatedAction();
 			PrismStateActionAssignment prismStateActionAssignment = new PrismStateActionAssignment().withRole(stateActionAssignment.getRole().getId())
-			        .withActionEnhancement(stateActionAssignment.getActionEnhancement())
-			        .withDelegatedAction(delegatedAction == null ? null : delegatedAction.getId());
+			        .withActionEnhancement(stateActionAssignment.getActionEnhancement());
 			assertTrue(prismStateAction.getAssignments().contains(prismStateActionAssignment));
 		}
 	}

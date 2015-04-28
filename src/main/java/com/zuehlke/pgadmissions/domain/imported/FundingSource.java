@@ -7,7 +7,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 
 @Entity
 @DiscriminatorValue("FUNDING_SOURCE")
-public class FundingSource extends SimpleImportedEntity {
+public class FundingSource extends ImportedEntitySimple {
 
     public FundingSource withInstitution(Institution institution) {
         setInstitution(institution);

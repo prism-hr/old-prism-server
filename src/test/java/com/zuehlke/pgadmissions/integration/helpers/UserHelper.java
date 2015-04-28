@@ -28,44 +28,44 @@ import com.zuehlke.pgadmissions.services.UserService;
 @Transactional
 public class UserHelper {
 
-	@Inject
-	private MailSenderMock mailSenderMock;
+    @Inject
+    private MailSenderMock mailSenderMock;
 
-	@Inject
-	private ActionService actionService;
+    @Inject
+    private ActionService actionService;
 
-	@Inject
-	private AuthenticationService authenticationService;
+    @Inject
+    private AuthenticationService authenticationService;
 
-	@Inject
-	private ResourceService resourceService;
+    @Inject
+    private ResourceService resourceService;
 
-	@Inject
-	private UserService userService;
+    @Inject
+    private UserService userService;
 
-	public void registerAndActivateUser(PrismAction actionId, Integer resourceId, User user, PrismNotificationDefinition activationTemplate) throws Exception {
-		if (user.getUserAccount() != null && user.getUserAccount().getPassword() == null) {
-			throw new IllegalStateException("User already registered");
-		}
+    public void registerAndActivateUser(PrismAction actionId, Integer resourceId, User user, PrismNotificationDefinition activationTemplate) throws Exception {
+        if (user.getUserAccount() != null && user.getUserAccount().getPassword() == null) {
+            throw new IllegalStateException("User already registered");
+        }
 
-		mailSenderMock.assertEmailSent(user, activationTemplate);
+        mailSenderMock.assertEmailSent(user, activationTemplate);
 
-		String testContextReferrer = actionId.getActionCategory() == CREATE_RESOURCE ? "http://www.testcontextreferrer.com" : null;
+        String testContextReferrer = actionId.getActionCategory() == CREATE_RESOURCE ? "http://www.testcontextreferrer.com" : null;
 
-		authenticationService.registerUser(
-		        new UserRegistrationDTO().withFirstName(user.getFirstName()).withLastName(user.getLastName()).withEmail(user.getEmail())
-		                .withActivationCode(user.getActivationCode()).withPassword("password").withResourceId(resourceId)
-		                .withAction(new ActionDTO().withAction(actionId)), null);
+        authenticationService.registerUser(
+                new UserRegistrationDTO().withFirstName(user.getFirstName()).withLastName(user.getLastName()).withEmail(user.getEmail())
+                        .withActivationCode(user.getActivationCode()).withPassword("password").withResourceId(resourceId)
+                        .withAction(new ActionDTO().withActionId(actionId)), null);
 
-		mailSenderMock.assertEmailSent(user, SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+        mailSenderMock.assertEmailSent(user, SYSTEM_COMPLETE_REGISTRATION_REQUEST);
 
-		Action action = actionService.getById(actionId);
-		PrismScope resourceScope = action.getCreationScope() == null ? actionId.getScope() : action.getCreationScope().getId();
-		Resource resource = resourceService.getById(resourceScope.getResourceClass(), resourceId);
-		assertEquals(testContextReferrer, resource.getReferrer());
+        Action action = actionService.getById(actionId);
+        PrismScope resourceScope = action.getCreationScope() == null ? actionId.getScope() : action.getCreationScope().getId();
+        Resource resource = resourceService.getById(resourceScope.getResourceClass(), resourceId);
+        assertEquals(testContextReferrer, resource.getReferrer());
 
-		userService.activateUser(user.getId(), actionId, resourceId);
-		assertTrue(user.isEnabled());
-	}
+        userService.activateUser(user.getId(), actionId, resourceId);
+        assertTrue(user.isEnabled());
+    }
 
 }

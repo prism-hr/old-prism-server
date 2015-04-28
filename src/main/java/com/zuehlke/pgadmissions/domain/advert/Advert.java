@@ -1,42 +1,33 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-import java.util.Set;
-
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.hibernate.annotations.OrderBy;
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParentAttribute;
+import org.apache.commons.lang3.ObjectUtils;
+import org.hibernate.annotations.OrderBy;
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
+
+import javax.persistence.*;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 
 @Entity
 @Table(name = "ADVERT")
-public class Advert {
+public class Advert extends ResourceParentAttribute {
 
     @Id
     @GeneratedValue
@@ -62,11 +53,9 @@ public class Advert {
     @JoinColumn(name = "institution_address_id")
     private InstitutionAddress address;
 
-    @Column(name = "month_study_duration_minimum")
-    private Integer studyDurationMinimum;
-
-    @Column(name = "month_study_duration_maximum")
-    private Integer studyDurationMaximum;
+    @ManyToOne
+    @JoinColumn(name = "institution_partner_id")
+    private Institution partner;
 
     @Embedded
     @AttributeOverrides({ @AttributeOverride(name = "interval", column = @Column(name = "fee_interval")),
@@ -134,15 +123,8 @@ public class Advert {
     @JoinColumn(name = "advert_id", nullable = false)
     private Set<AdvertTheme> themes = Sets.newHashSet();
 
-    @OrderBy(clause = "id")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "advert_id", nullable = false)
-    private Set<AdvertInstitution> institutions = Sets.newHashSet();
-
-    @OrderBy(clause = "program_type")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "advert_id", nullable = false)
-    private Set<AdvertProgramType> programTypes = Sets.newHashSet();
+    @OneToOne(mappedBy = "advert")
+    private Institution institution;
 
     @OneToOne(mappedBy = "advert")
     private Program program;
@@ -215,20 +197,12 @@ public class Advert {
         this.address = address;
     }
 
-    public Integer getStudyDurationMinimum() {
-        return studyDurationMinimum;
+    public Institution getPartner() {
+        return partner;
     }
 
-    public void setStudyDurationMinimum(Integer studyDurationMinimum) {
-        this.studyDurationMinimum = studyDurationMinimum;
-    }
-
-    public Integer getStudyDurationMaximum() {
-        return studyDurationMaximum;
-    }
-
-    public void setStudyDurationMaximum(Integer studyDurationMaximum) {
-        this.studyDurationMaximum = studyDurationMaximum;
+    public void setPartner(Institution partner) {
+        this.partner = partner;
     }
 
     public AdvertFinancialDetail getFee() {
@@ -291,26 +265,32 @@ public class Advert {
         return themes;
     }
 
-    public final Set<AdvertInstitution> getInstitutions() {
-        return institutions;
+    @Override
+    public Institution getInstitution() {
+        return institution;
     }
 
-    public final Set<AdvertProgramType> getProgramTypes() {
-        return programTypes;
+    @Override
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
     }
 
+    @Override
     public Program getProgram() {
         return program;
     }
 
+    @Override
     public void setProgram(Program program) {
         this.program = program;
     }
 
+    @Override
     public Project getProject() {
         return project;
     }
 
+    @Override
     public void setProject(Project project) {
         this.project = project;
     }
@@ -319,29 +299,32 @@ public class Advert {
         return closingDates;
     }
 
+    public PrismOpportunityType getOpportunityType() {
+        ResourceParent resource = getResource();
+        PrismScope resourceScope = resource.getResourceScope();
+        if (resourceScope.equals(INSTITUTION)) {
+            return null;
+        } else if (resourceScope.equals(PROGRAM)) {
+            return program.getOpportunityType().getPrismOpportunityType();
+        }
+        return project.getOpportunityType().getPrismOpportunityType();
+    }
+
     public Advert withTitle(String title) {
         this.title = title;
         return this;
     }
 
-    public ResourceParent getResourceParent() {
-        return ObjectUtils.firstNonNull(project, program);
+    public ResourceParent getResource() {
+        return ObjectUtils.firstNonNull(project, program, institution);
     }
 
-    public boolean isProgramAdvert() {
-        return program != null;
-    }
-
-    public boolean isProjectAdvert() {
-        return project != null;
-    }
-
-    public Institution getInstitution() {
-        return getResourceParent().getInstitution();
+    public boolean isAdvertOfScope(PrismScope scope) {
+        return getResource().getResourceScope().equals(scope);
     }
 
     public Department getDepartment() {
-        return isProjectAdvert() ? project.getProgram().getDepartment() : program.getDepartment();
+        return getResource().getDepartment();
     }
 
     public boolean hasConvertedFee() {
@@ -384,18 +367,6 @@ public class Advert {
         AdvertTheme theme = new AdvertTheme().withAdvert(this);
         theme.setTheme(themeId);
         themes.add(theme);
-    }
-
-    public void addInstitution(Institution institution) {
-        AdvertInstitution advertInstitution = new AdvertInstitution().withAdvert(this);
-        advertInstitution.setInstitution(institution);
-        institutions.add(advertInstitution);
-    }
-
-    public void addProgramType(PrismProgramType programTypeId) {
-        AdvertProgramType advertProgramType = new AdvertProgramType().withAdvert(this);
-        advertProgramType.setProgramType(programTypeId);
-        programTypes.add(advertProgramType);
     }
 
 }

@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-
 public class ResourceSummaryRepresentation {
 
     private LocalDate createdDate;
@@ -15,21 +13,7 @@ public class ResourceSummaryRepresentation {
 
     private Integer projectCount;
 
-    private Integer applicationCreatedCount;
-
-    private Integer applicationSubmittedCount;
-
-    private Integer applicationApprovedCount;
-
-    private Integer applicationRejectedCount;
-
-    private Integer applicationWithdrawnCount;
-
-    private Integer applicationRatingCount;
-
-    private BigDecimal applicationRatingOccurenceAverage;
-
-    private List<ApplicationProcessingSummaryRepresentation> processingSummaries;
+    private List<ApplicationProcessingSummaryRepresentationYear> processingSummaries;
 
     public final LocalDate getCreatedDate() {
         return createdDate;
@@ -55,147 +39,12 @@ public class ResourceSummaryRepresentation {
         this.projectCount = projectCount;
     }
 
-    public final Integer getApplicationCreatedCount() {
-        return applicationCreatedCount;
-    }
-
-    public final void setApplicationCreatedCount(Integer applicationCreatedCount) {
-        this.applicationCreatedCount = applicationCreatedCount;
-    }
-
-    public final Integer getApplicationSubmittedCount() {
-        return applicationSubmittedCount;
-    }
-
-    public final void setApplicationSubmittedCount(Integer applicationSubmittedCount) {
-        this.applicationSubmittedCount = applicationSubmittedCount;
-    }
-
-    public final Integer getApplicationApprovedCount() {
-        return applicationApprovedCount;
-    }
-
-    public final void setApplicationApprovedCount(Integer applicationApprovedCount) {
-        this.applicationApprovedCount = applicationApprovedCount;
-    }
-
-    public final Integer getApplicationRejectedCount() {
-        return applicationRejectedCount;
-    }
-
-    public final void setApplicationRejectedCount(Integer applicationRejectedCount) {
-        this.applicationRejectedCount = applicationRejectedCount;
-    }
-
-    public final Integer getApplicationWithdrawnCount() {
-        return applicationWithdrawnCount;
-    }
-
-    public final void setApplicationWithdrawnCount(Integer applicationWithdrawnCount) {
-        this.applicationWithdrawnCount = applicationWithdrawnCount;
-    }
-
-    public final Integer getApplicationRatingCount() {
-        return applicationRatingCount;
-    }
-
-    public final void setApplicationRatingCount(Integer applicationRatingCount) {
-        this.applicationRatingCount = applicationRatingCount;
-    }
-
-    public final BigDecimal getApplicationRatingOccurenceAverage() {
-        return applicationRatingOccurenceAverage;
-    }
-
-    public final void setApplicationRatingOccurenceAverage(BigDecimal applicationRatingOccurenceAverage) {
-        this.applicationRatingOccurenceAverage = applicationRatingOccurenceAverage;
-    }
-
-    public final List<ApplicationProcessingSummaryRepresentation> getProcessingSummaries() {
+    public List<ApplicationProcessingSummaryRepresentationYear> getProcessingSummaries() {
         return processingSummaries;
     }
 
-    public final void setProcessingSummaries(List<ApplicationProcessingSummaryRepresentation> processingSummaries) {
+    public void setProcessingSummaries(List<ApplicationProcessingSummaryRepresentationYear> processingSummaries) {
         this.processingSummaries = processingSummaries;
-    }
-
-    public static class ApplicationProcessingSummaryRepresentation {
-
-        private PrismStateGroup stateGroup;
-
-        private Integer instanceTotal;
-
-        private Integer instanceTotalLive;
-
-        private BigDecimal instanceOccurrenceAverage;
-
-        private BigDecimal instanceDurationAverage;
-
-        public final PrismStateGroup getStateGroup() {
-            return stateGroup;
-        }
-
-        public final void setStateGroup(PrismStateGroup stateGroup) {
-            this.stateGroup = stateGroup;
-        }
-
-        public final Integer getInstanceTotal() {
-            return instanceTotal;
-        }
-
-        public final void setInstanceTotal(Integer instanceTotal) {
-            this.instanceTotal = instanceTotal;
-        }
-
-        public final Integer getInstanceTotalLive() {
-            return instanceTotalLive;
-        }
-
-        public final void setInstanceTotalLive(Integer instanceTotalLive) {
-            this.instanceTotalLive = instanceTotalLive;
-        }
-
-        public final BigDecimal getInstanceOccurrenceAverage() {
-            return instanceOccurrenceAverage;
-        }
-
-        public final void setInstanceOccurrenceAverage(BigDecimal instanceOccurrenceAverage) {
-            this.instanceOccurrenceAverage = instanceOccurrenceAverage;
-        }
-
-        public final BigDecimal getInstanceDurationAverage() {
-            return instanceDurationAverage;
-        }
-
-        public final void setInstanceDurationAverage(BigDecimal instanceDurationAverage) {
-            this.instanceDurationAverage = instanceDurationAverage;
-        }
-
-        public ApplicationProcessingSummaryRepresentation withStateGroup(PrismStateGroup stateGroup) {
-            this.stateGroup = stateGroup;
-            return this;
-        }
-
-        public ApplicationProcessingSummaryRepresentation withInstanceTotal(Integer instanceTotal) {
-            this.instanceTotal = instanceTotal;
-            return this;
-        }
-
-        public ApplicationProcessingSummaryRepresentation withInstanceTotalLive(Integer instanceTotalLive) {
-            this.instanceTotalLive = instanceTotalLive;
-            return this;
-        }
-
-        public ApplicationProcessingSummaryRepresentation withInstanceOccurrenceAverage(BigDecimal instanceOccurrenceAverage) {
-            this.instanceOccurrenceAverage = instanceOccurrenceAverage;
-            return this;
-        }
-
-        public ApplicationProcessingSummaryRepresentation withInstanceDurationAverage(BigDecimal instanceDurationAverage) {
-            this.instanceDurationAverage = instanceDurationAverage;
-            return this;
-        }
-
     }
 
     public ResourceSummaryRepresentation withCreatedDate(LocalDate createdDate) {
@@ -213,39 +62,201 @@ public class ResourceSummaryRepresentation {
         return this;
     }
 
-    public ResourceSummaryRepresentation withApplicationCreatedCount(Integer applicationCreatedCount) {
-        this.applicationCreatedCount = applicationCreatedCount;
+    public ResourceSummaryRepresentation withProcessingSummaries(List<ApplicationProcessingSummaryRepresentationYear> processingSummaries) {
+        this.processingSummaries = processingSummaries;
         return this;
     }
 
-    public ResourceSummaryRepresentation withApplicationSubmittedCount(Integer applicationSubmittedCount) {
-        this.applicationSubmittedCount = applicationSubmittedCount;
-        return this;
+    public static class ApplicationProcessingSummaryRepresentationYear extends ApplicationProcessingSummaryRepresentation {
+
+        private String applicationYear;
+
+        private BigDecimal percentageComplete;
+
+        private List<ApplicationProcessingSummaryRepresentationMonth> processingSummaries;
+
+        public String getApplicationYear() {
+            return applicationYear;
+        }
+
+        public void setApplicationYear(String applicationYear) {
+            this.applicationYear = applicationYear;
+        }
+
+        public BigDecimal getPercentageComplete() {
+            return percentageComplete;
+        }
+
+        public void setPercentageComplete(BigDecimal percentageComplete) {
+            this.percentageComplete = percentageComplete;
+        }
+
+        public List<ApplicationProcessingSummaryRepresentationMonth> getProcessingSummaries() {
+            return processingSummaries;
+        }
+
+        public void setProcessingSummaries(List<ApplicationProcessingSummaryRepresentationMonth> processingSummaries) {
+            this.processingSummaries = processingSummaries;
+        }
+
     }
 
-    public ResourceSummaryRepresentation withApplicationApprovedCount(Integer applicationApprovedCount) {
-        this.applicationApprovedCount = applicationApprovedCount;
-        return this;
+    public static class ApplicationProcessingSummaryRepresentationMonth extends ApplicationProcessingSummaryRepresentation {
+
+        private Integer applicationMonth;
+
+        public Integer getApplicationMonth() {
+            return applicationMonth;
+        }
+
+        public void setApplicationMonth(Integer applicationMonth) {
+            this.applicationMonth = applicationMonth;
+        }
+
     }
 
-    public ResourceSummaryRepresentation withApplicationRejectedCount(Integer applicationRejectedCount) {
-        this.applicationRejectedCount = applicationRejectedCount;
-        return this;
-    }
+    public static class ApplicationProcessingSummaryRepresentation {
 
-    public ResourceSummaryRepresentation withApplicationWithdrawnCount(Integer applicationWithdrawnCount) {
-        this.applicationWithdrawnCount = applicationWithdrawnCount;
-        return this;
-    }
+        private Integer advertCount;
 
-    public ResourceSummaryRepresentation withApplicationRatingCount(Integer applicationRatingCount) {
-        this.applicationRatingCount = applicationRatingCount;
-        return this;
-    }
+        private Integer createdApplicationCount;
 
-    public ResourceSummaryRepresentation withApplicationRatingOccurenceAverage(BigDecimal applicationRatingOccurenceAverage) {
-        this.applicationRatingOccurenceAverage = applicationRatingOccurenceAverage;
-        return this;
+        private Integer submittedApplicationCount;
+
+        private Integer approvedApplicationCount;
+
+        private Integer rejectedApplicationCount;
+
+        private Integer withdrawnApplicationCount;
+
+        private BigDecimal createdApplicationRatio;
+
+        private BigDecimal submittedApplicationRatio;
+
+        private BigDecimal approvedApplicationRatio;
+
+        private BigDecimal rejectedApplicationRatio;
+
+        private BigDecimal withdrawnApplicationRatio;
+
+        private BigDecimal averageRating;
+
+        private BigDecimal averagePreparationTime;
+
+        private BigDecimal averageProcessingTime;
+
+        public Integer getAdvertCount() {
+            return advertCount;
+        }
+
+        public void setAdvertCount(Integer advertCount) {
+            this.advertCount = advertCount;
+        }
+
+        public Integer getCreatedApplicationCount() {
+            return createdApplicationCount;
+        }
+
+        public void setCreatedApplicationCount(Integer createdApplicationCount) {
+            this.createdApplicationCount = createdApplicationCount;
+        }
+
+        public Integer getSubmittedApplicationCount() {
+            return submittedApplicationCount;
+        }
+
+        public void setSubmittedApplicationCount(Integer submittedApplicationCount) {
+            this.submittedApplicationCount = submittedApplicationCount;
+        }
+
+        public Integer getApprovedApplicationCount() {
+            return approvedApplicationCount;
+        }
+
+        public void setApprovedApplicationCount(Integer approvedApplicationCount) {
+            this.approvedApplicationCount = approvedApplicationCount;
+        }
+
+        public Integer getRejectedApplicationCount() {
+            return rejectedApplicationCount;
+        }
+
+        public void setRejectedApplicationCount(Integer rejectedApplicationCount) {
+            this.rejectedApplicationCount = rejectedApplicationCount;
+        }
+
+        public Integer getWithdrawnApplicationCount() {
+            return withdrawnApplicationCount;
+        }
+
+        public void setWithdrawnApplicationCount(Integer withdrawnApplicationCount) {
+            this.withdrawnApplicationCount = withdrawnApplicationCount;
+        }
+
+        public BigDecimal getCreatedApplicationRatio() {
+            return createdApplicationRatio;
+        }
+
+        public void setCreatedApplicationRatio(BigDecimal createdApplicationRatio) {
+            this.createdApplicationRatio = createdApplicationRatio;
+        }
+
+        public BigDecimal getSubmittedApplicationRatio() {
+            return submittedApplicationRatio;
+        }
+
+        public void setSubmittedApplicationRatio(BigDecimal submittedApplicationRatio) {
+            this.submittedApplicationRatio = submittedApplicationRatio;
+        }
+
+        public BigDecimal getApprovedApplicationRatio() {
+            return approvedApplicationRatio;
+        }
+
+        public void setApprovedApplicationRatio(BigDecimal approvedApplicationRatio) {
+            this.approvedApplicationRatio = approvedApplicationRatio;
+        }
+
+        public BigDecimal getRejectedApplicationRatio() {
+            return rejectedApplicationRatio;
+        }
+
+        public void setRejectedApplicationRatio(BigDecimal rejectedApplicationRatio) {
+            this.rejectedApplicationRatio = rejectedApplicationRatio;
+        }
+
+        public BigDecimal getWithdrawnApplicationRatio() {
+            return withdrawnApplicationRatio;
+        }
+
+        public void setWithdrawnApplicationRatio(BigDecimal withdrawnApplicationRatio) {
+            this.withdrawnApplicationRatio = withdrawnApplicationRatio;
+        }
+
+        public BigDecimal getAverageRating() {
+            return averageRating;
+        }
+
+        public void setAverageRating(BigDecimal averageRating) {
+            this.averageRating = averageRating;
+        }
+
+        public BigDecimal getAveragePreparationTime() {
+            return averagePreparationTime;
+        }
+
+        public void setAveragePreparationTime(BigDecimal averagePreparationTime) {
+            this.averagePreparationTime = averagePreparationTime;
+        }
+
+        public BigDecimal getAverageProcessingTime() {
+            return averageProcessingTime;
+        }
+
+        public void setAverageProcessingTime(BigDecimal averageProcessingTime) {
+            this.averageProcessingTime = averageProcessingTime;
+        }
+
     }
 
 }

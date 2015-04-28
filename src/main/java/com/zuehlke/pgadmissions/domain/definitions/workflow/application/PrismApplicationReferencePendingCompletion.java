@@ -12,6 +12,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
@@ -35,6 +36,7 @@ public class PrismApplicationReferencePendingCompletion extends PrismWorkflowSta
 		                .withTransitionAction(APPLICATION_COMPLETE_REFERENCE_STAGE) //
 		                .withRoleTransitions(APPLICATION_PROVIDE_REFERENCE_GROUP))); //
 
+        stateActions.add(applicationUploadReference(state));
 		stateActions.add(applicationViewEditReference(state)); //
 		stateActions.add(applicationWithdrawReference());
 	}

@@ -69,7 +69,7 @@ public class PrismStateAction {
         this.actionCondition = actionCondition;
         return this;
     }
-    
+
     public PrismStateAction withActionEnhancement(PrismActionEnhancement actionEnhancement) {
         this.actionEnhancement = actionEnhancement;
         return this;
@@ -81,12 +81,7 @@ public class PrismStateAction {
     }
 
     public PrismStateAction withAssignments(PrismRole role, PrismActionEnhancement actionEnhancement) {
-        withAssignments(role, actionEnhancement, null);
-        return this;
-    }
-
-    public PrismStateAction withAssignments(PrismRole role, PrismActionEnhancement actionEnhancement, PrismAction delegatedAction) {
-        this.assignments.add(new PrismStateActionAssignment().withRole(role).withActionEnhancement(actionEnhancement).withDelegatedAction(delegatedAction));
+        this.assignments.add(new PrismStateActionAssignment().withRole(role).withActionEnhancement(actionEnhancement));
         return this;
     }
 

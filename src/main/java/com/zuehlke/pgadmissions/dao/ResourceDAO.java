@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.SEQUENCE_IDENTIFIER;
 
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -28,7 +31,14 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterSortOr
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -123,7 +133,7 @@ public class ResourceDAO {
                 .executeUpdate();
     }
 
-    public List<ResourceListRowDTO> getResourceConsoleList(User user, PrismScope scopeId, List<PrismScope> parentScopeIds,
+    public List<ResourceListRowDTO> getResourceList(User user, PrismScope scopeId, List<PrismScope> parentScopeIds,
             Set<Integer> assignedResources, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords, boolean hasRedactions) {
         if (assignedResources.isEmpty()) {
             return new ArrayList<ResourceListRowDTO>(0);
@@ -280,6 +290,109 @@ public class ResourceDAO {
                 .setParameter("newUser", newUser) //
                 .setParameter("oldUser", oldUser) //
                 .executeUpdate();
+    }
+
+    public ResourceStudyOption getStudyOption(ResourceParent resource, StudyOption studyOption) {
+        return (ResourceStudyOption) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOption.class) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("project", resource.getProject())) //
+                        .add(Restrictions.eq("program", resource.getProgram())) //
+                        .add(Restrictions.eq("institution", resource.getInstitution()))) //
+                .addOrder(Order.desc("project")) //
+                .addOrder(Order.desc("program")) //
+                .addOrder(Order.desc("institution")) //
+                .add(Restrictions.eq("studyOption", studyOption)) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
+
+    public ResourceStudyOption getStudyOptionStrict(ResourceParent resource, StudyOption studyOption) {
+        return (ResourceStudyOption) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOption.class) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.eq("studyOption", studyOption)) //
+                .uniqueResult();
+    }
+
+    public List<ResourceStudyOption> getStudyOptions(ResourceParent resource) {
+        return (List<ResourceStudyOption>) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOption.class) //
+                .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("project", resource.getProject())) //
+                        .add(Restrictions.eq("program", resource.getProgram())) //
+                        .add(Restrictions.eq("institution", resource.getInstitution()))) //
+                .addOrder(Order.desc("project")) //
+                .addOrder(Order.desc("program")) //
+                .addOrder(Order.desc("institution")) //
+                .addOrder(Order.asc("studyOption.code")) //
+                .list();
+    }
+
+    public List<ResourceStudyOption> getStudyOptionsStrict(ResourceParent resource) {
+        return (List<ResourceStudyOption>) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOption.class) //
+                .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .addOrder(Order.asc("studyOption.code")) //
+                .list();
+    }
+
+    public ResourceStudyOptionInstance getFirstStudyOptionInstanceStrict(ResourceParent resource, StudyOption studyOption) {
+        return (ResourceStudyOptionInstance) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOptionInstance.class) //
+                .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("studyOption." + resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.eq("studyOption.studyOption", studyOption)) //
+                .addOrder(Order.asc("applicationStartDate")) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
+
+    public List<ResourceStudyLocation> getStudyLocations(ResourceParent resource) {
+        return (List<ResourceStudyLocation>) sessionFactory.getCurrentSession().createCriteria(ResourceStudyLocation.class) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("project", resource.getProject())) //
+                        .add(Restrictions.eq("program", resource.getProgram())) //
+                        .add(Restrictions.eq("institution", resource.getInstitution()))) //
+                .addOrder(Order.desc("project")) //
+                .addOrder(Order.desc("program")) //
+                .addOrder(Order.desc("institution")) //
+                .list();
+    }
+
+    public void deleteElapsedStudyOptions(LocalDate baseline) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete ResourceStudyOption " //
+                        + "where applicationCloseDate < :baseline") //
+                .setParameter("baseline", baseline) //
+                .executeUpdate();
+    }
+
+    public void deleteElapsedStudyOptionInstances(LocalDate baseline) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete ResourceStudyOptionInstance " //
+                        + "where applicationCloseDate < :baseline") //
+                .setParameter("baseline", baseline) //
+                .executeUpdate();
+    }
+
+    public List<ResourceState> getResourceStatesByStateGroup(Resource resource, PrismStateGroup stateGroup) {
+        return (List<ResourceState>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("state.stateGroup.id", stateGroup)) //
+                .list();
+    }
+
+    public ResourceParent getResourceAcceptingApplications(Resource resource) {
+        String resourceReference = resource.getResourceScope().getLowerCamelName();
+        return (ResourceParent) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.property(resourceReference))
+                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resourceReference, resource)) //
+                .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_APPLICATION)) //
+                .add(Restrictions.eq("action.creationScope.id", APPLICATION)) //
+                .uniqueResult();
     }
 
     private void addResourceListCustomColumns(PrismScope scopeId, ProjectionList projectionList) {

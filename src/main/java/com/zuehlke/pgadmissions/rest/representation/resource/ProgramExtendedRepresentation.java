@@ -2,8 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import java.util.Set;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.AbstractResourceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
@@ -15,11 +14,9 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
 
     private Boolean imported;
 
-    private PrismProgramType programType;
+    private PrismOpportunityType opportunityType;
 
     private String title;
-
-    private PrismLocale locale;
 
     private PrismStudyOption[] studyOptions;
 
@@ -28,7 +25,7 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
     private AdvertRepresentation advert;
 
     private Set<String> locations;
-    
+
     private ResourceSummaryRepresentation resourceSummary;
 
     public InstitutionRepresentation getInstitution() {
@@ -47,12 +44,12 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
         this.imported = imported;
     }
 
-    public PrismProgramType getProgramType() {
-        return programType;
+    public PrismOpportunityType getOpportunityType() {
+        return opportunityType;
     }
 
-    public void setProgramType(PrismProgramType programType) {
-        this.programType = programType;
+    public void setOpportunityType(PrismOpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
     }
 
     public String getTitle() {
@@ -61,14 +58,6 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public PrismLocale getLocale() {
-        return locale;
-    }
-
-    public void setLocale(PrismLocale locale) {
-        this.locale = locale;
     }
 
     public PrismStudyOption[] getStudyOptions() {
@@ -110,5 +99,5 @@ public class ProgramExtendedRepresentation extends AbstractResourceRepresentatio
     public final void setResourceSummary(ResourceSummaryRepresentation resourceSummary) {
         this.resourceSummary = resourceSummary;
     }
-    
+
 }

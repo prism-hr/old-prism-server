@@ -25,9 +25,8 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismRefereeType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
@@ -51,13 +50,11 @@ import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
 import com.zuehlke.pgadmissions.domain.imported.ResidenceState;
 import com.zuehlke.pgadmissions.domain.imported.Title;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
-import com.zuehlke.pgadmissions.rest.representation.InstitutionDomicileRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.StateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.ProgramCategoryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.FilterRepresentation;
@@ -147,24 +144,17 @@ public class StaticDataService {
 
     public Map<String, Object> getInstitutionDomiciles() {
         Map<String, Object> staticData = Maps.newHashMap();
-
-        List<InstitutionDomicile> institutionDomiciles = institutionService.getDomiciles();
-        List<InstitutionDomicileRepresentation> institutionDomicileRepresentations = Lists.newArrayListWithExpectedSize(institutionDomiciles.size());
-        for (InstitutionDomicile institutionDomicile : institutionDomiciles) {
-            institutionDomicileRepresentations.add(mapper.map(institutionDomicile, InstitutionDomicileRepresentation.class));
-        }
-
-        staticData.put("institutionDomiciles", institutionDomicileRepresentations);
+        staticData.put("institutionDomiciles", institutionService.getInstitutionDomiciles());
         return staticData;
     }
 
     public Map<String, Object> getSimpleProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        for (Class<?> enumClass : new Class[]{PrismProgramType.class, PrismStudyOption.class,
+        for (Class<?> enumClass : new Class[] { PrismOpportunityType.class, PrismStudyOption.class,
                 PrismYesNoUnsureResponse.class, PrismDurationUnit.class, PrismAdvertDomain.class,
                 PrismAdvertFunction.class, PrismAdvertIndustry.class, PrismRefereeType.class,
-                PrismApplicationReserveStatus.class, PrismDisplayPropertyCategory.class}) {
+                PrismApplicationReserveStatus.class, PrismDisplayPropertyCategory.class }) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = WordUtils.uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
@@ -172,9 +162,6 @@ public class StaticDataService {
 
         staticData.put("timeZones", TimeZoneUtils.getInstance().getTimeZoneDefinitions());
         staticData.put("currencies", institutionService.listAvailableCurrencies());
-        staticData.put("defaultLocale", PrismLocale.getSystemLocale());
-        staticData.put("defaultProgramType", PrismProgramType.getSystemProgramType());
-        staticData.put("locales", PrismLocale.values());
         staticData.put("googleApiKey", googleApiKey);
 
         return staticData;
@@ -223,13 +210,13 @@ public class StaticDataService {
     public Map<String, Object> getProgramCategories() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        List<ProgramCategoryRepresentation> programCategories = Lists.newArrayListWithCapacity(PrismProgramCategory.values().length);
-        for (PrismProgramCategory programCategory : PrismProgramCategory.values()) {
+        List<ProgramCategoryRepresentation> programCategories = Lists.newArrayListWithCapacity(PrismOpportunityCategory.values().length);
+        for (PrismOpportunityCategory programCategory : PrismOpportunityCategory.values()) {
             ProgramCategoryRepresentation category = new ProgramCategoryRepresentation();
             category.setId(programCategory);
             category.setHasFee(programCategory.isHasFee());
             category.setHasPay(programCategory.isHasPay());
-            category.setProgramTypes(PrismProgramType.getProgramTypes(programCategory));
+            category.setOpportunityTypes(PrismOpportunityType.getOpportunityTypes(programCategory));
             programCategories.add(category);
         }
 
@@ -243,9 +230,9 @@ public class StaticDataService {
 
         Institution institution = entityService.getById(Institution.class, institutionId);
 
-        for (Class<? extends ImportedEntity> entityClass : new Class[]{ReferralSource.class, Title.class, Ethnicity.class, Disability.class, Gender.class,
+        for (Class<? extends ImportedEntity> entityClass : new Class[] { ReferralSource.class, Title.class, Ethnicity.class, Disability.class, Gender.class,
                 Country.class, Domicile.class, ReferralSource.class, Language.class, QualificationType.class, FundingSource.class, RejectionReason.class,
-                ResidenceState.class}) {
+                ResidenceState.class }) {
             String simpleName = entityClass.getSimpleName();
             simpleName = WordUtils.uncapitalize(simpleName);
             List<? extends ImportedEntity> entities = importedEntityService.getEnabledImportedEntities(institution, entityClass);

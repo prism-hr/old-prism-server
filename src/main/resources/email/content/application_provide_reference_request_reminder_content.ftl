@@ -4,7 +4,7 @@
 
 <p>
     This is a gentle reminder that ${APPLICATION_CREATOR_FULL_NAME} has nominated you as their referee for Application ${APPLICATION_CODE}
-    , ${APPLICATION_PROGRAM_TYPE} at ${INSTITUTION_HOMEPAGE} in ${APPLICATION_PROJECT_OR_PROGRAM_TITLE}.
+    , ${APPLICATION_OPPORTUNITY_TYPE} at ${INSTITUTION_HOMEPAGE} in ${APPLICATION_PROJECT_OR_PROGRAM_TITLE}.
 </p>
 <p>
     The Programme Admissions Panel would still very much appreciate your feedback on their suitability for

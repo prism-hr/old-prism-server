@@ -14,6 +14,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiterAndAdministrator;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiterAndAdministrator;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
@@ -40,6 +41,7 @@ public class PrismApplicationReviewPendingCompletion extends PrismWorkflowState 
 		                .withTransitionAction(APPLICATION_COMPLETE_REVIEW_STAGE) //
 		                .withRoleTransitions(APPLICATION_PROVIDE_REVIEW_GROUP))); //
 
+        stateActions.add(applicationUploadReference(state));
 		stateActions.add(applicationViewEditReview(state)); //
 		stateActions.add(applicationWithdrawReview());
 	}

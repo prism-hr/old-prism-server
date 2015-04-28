@@ -1,10 +1,5 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocale;
-import com.zuehlke.pgadmissions.domain.definitions.PrismProgramType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-
 public class InstitutionRepresentation {
 
     private Integer id;
@@ -15,15 +10,9 @@ public class InstitutionRepresentation {
 
     private String domicile;
 
-    private PrismLocale locale;
-
     private InstitutionAddressRepresentation address;
 
     private String currency;
-
-    private PrismProgramType defaultProgramType;
-
-    private PrismStudyOption defaultStudyOption;
 
     private String homepage;
 
@@ -53,14 +42,6 @@ public class InstitutionRepresentation {
         this.title = title;
     }
 
-    public PrismLocale getLocale() {
-        return locale;
-    }
-
-    public void setLocale(PrismLocale locale) {
-        this.locale = locale;
-    }
-
     public String getDomicile() {
         return domicile;
     }
@@ -83,22 +64,6 @@ public class InstitutionRepresentation {
 
     public void setCurrency(String currency) {
         this.currency = currency;
-    }
-
-    public PrismProgramType getDefaultProgramType() {
-        return defaultProgramType;
-    }
-
-    public void setDefaultProgramType(PrismProgramType defaultProgramType) {
-        this.defaultProgramType = defaultProgramType;
-    }
-
-    public PrismStudyOption getDefaultStudyOption() {
-        return defaultStudyOption;
-    }
-
-    public void setDefaultStudyOption(PrismStudyOption defaultStudyOption) {
-        this.defaultStudyOption = defaultStudyOption;
     }
 
     public String getHomepage() {

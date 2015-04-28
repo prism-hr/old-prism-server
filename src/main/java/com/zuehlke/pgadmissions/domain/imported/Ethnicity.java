@@ -7,7 +7,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 
 @Entity
 @DiscriminatorValue("ETHNICITY")
-public class Ethnicity extends SimpleImportedEntity {
+public class Ethnicity extends ImportedEntitySimple {
 
     public Ethnicity withInstitution(Institution institution) {
         setInstitution(institution);

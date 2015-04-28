@@ -12,15 +12,15 @@
 				<class-b>java.lang.Integer</class-b>
 			</converter>
 			<converter
-				type="com.zuehlke.pgadmissions.rest.converter.ProgramTypeConverter">
-				<class-a>com.zuehlke.pgadmissions.domain.imported.ProgramType
+				type="com.zuehlke.pgadmissions.rest.converter.OpportunityTypeConverter">
+				<class-a>com.zuehlke.pgadmissions.domain.imported.OpportunityType
 				</class-a>
-				<class-b>com.zuehlke.pgadmissions.domain.definitions.PrismProgramType
+				<class-b>com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType
 				</class-b>
 			</converter>
 			<converter
 				type="com.zuehlke.pgadmissions.rest.converter.StudyOptionConverter">
-				<class-a>com.zuehlke.pgadmissions.domain.program.ProgramStudyOption
+				<class-a>com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption
 				</class-a>
 				<class-b>com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption
 				</class-b>
@@ -33,8 +33,8 @@
 				</class-b>
 			</converter>
 			<converter
-				type="com.zuehlke.pgadmissions.rest.converter.ProgramLocationConverter">
-				<class-a>com.zuehlke.pgadmissions.domain.program.ProgramLocation
+				type="com.zuehlke.pgadmissions.rest.converter.ResourceStudyLocationConverter">
+				<class-a>com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation
 				</class-a>
 				<class-b>java.lang.String</class-b>
 			</converter>
@@ -72,19 +72,6 @@
 				<class-a>com.zuehlke.pgadmissions.domain.advert.AdvertTheme
 				</class-a>
 				<class-b>java.lang.String</class-b>
-			</converter>
-			<converter
-				type="com.zuehlke.pgadmissions.rest.converter.AdvertCategoryConverter">
-				<class-a>com.zuehlke.pgadmissions.domain.advert.AdvertInstitution
-				</class-a>
-				<class-b>java.lang.Integer</class-b>
-			</converter>
-			<converter
-				type="com.zuehlke.pgadmissions.rest.converter.AdvertCategoryConverter">
-				<class-a>com.zuehlke.pgadmissions.domain.advert.AdvertProgramType
-				</class-a>
-				<class-b>com.zuehlke.pgadmissions.domain.definitions.PrismProgramType
-				</class-b>
 			</converter>
 			<converter
 				type="com.zuehlke.pgadmissions.rest.converter.WorkflowDefinitionConverter">
@@ -389,7 +376,7 @@
 		</class-a>
 		<class-b>com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation
 		</class-b>
-		<field type="one-way" copy-by-reference="true">
+		<field>
 			<a>department.title</a>
 			<b>department</b>
 		</field>

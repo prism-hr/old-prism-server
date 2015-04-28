@@ -411,7 +411,7 @@ public class ResourceService {
 
             if (currentYear == true) {
                 Integer monthOfBusinessYear = institutionService.getMonthOfBusinessYear(resource.getInstitution(), new LocalDate().getMonthOfYear());
-                yearRepresentation.setPercentageComplete(new BigDecimal(monthOfBusinessYear).divide(new BigDecimal(12).setScale(2, RoundingMode.HALF_UP)));
+                yearRepresentation.setPercentageComplete(new BigDecimal(monthOfBusinessYear).divide(new BigDecimal(12), 2, RoundingMode.HALF_UP));
             } else {
                 yearRepresentation.setPercentageComplete(new BigDecimal(100.00));
             }

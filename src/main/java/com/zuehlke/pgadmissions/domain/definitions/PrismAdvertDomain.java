@@ -127,15 +127,15 @@ public enum PrismAdvertDomain {
     COMBINED_SOCIAL_SCIENCE("Y2"), //
     COMBINED_ART("Y3"), //
     RESEARCH_METHODS("Y6");
-    
+
     private String hesaCode;
 
-    private PrismAdvertDomain(String hesaCode) {
+    PrismAdvertDomain(String hesaCode) {
         this.hesaCode = hesaCode;
     }
 
     public String getHesaCode() {
         return hesaCode;
     }
-    
+
 }

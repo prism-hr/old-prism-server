@@ -8,9 +8,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.DEFAULT_RATING;
 import static java.math.RoundingMode.HALF_UP;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -25,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
+import com.zuehlke.pgadmissions.domain.comment.CommentCustomResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -74,7 +77,7 @@ public class ApplicationPostprocessor implements ResourceProcessor {
         }
 
         if (comment.isApplicationRatingComment()) {
-            syncrhonizeApplicationRating(application);
+            syncrhonizeApplicationRating(application, comment);
         }
 
         if (comment.isInterviewScheduledExpeditedComment()) {
@@ -115,7 +118,12 @@ public class ApplicationPostprocessor implements ResourceProcessor {
         referee.setComment(comment);
     }
 
-    private void syncrhonizeApplicationRating(Application application) {
+    private void syncrhonizeApplicationRating(Application application, Comment comment) {
+        buildAggregatedRating(comment);
+        if (comment.getApplicationRating() == null) {
+            comment.setApplicationRating(new BigDecimal(DEFAULT_RATING));
+        }
+
         for (ResourceParent parent : application.getParentResources()) {
             ApplicationRatingSummaryDTO ratingSummary = applicationService.getApplicationRatingSummary(parent);
             Integer ratingCount = ratingSummary.getApplicationRatingCount().intValue();
@@ -124,6 +132,31 @@ public class ApplicationPostprocessor implements ResourceProcessor {
             parent.setApplicationRatingFrequency(new BigDecimal(ratingCount).divide(new BigDecimal(ratingApplications).setScale(2, HALF_UP)));
             parent.setApplicationRatingAverage(BigDecimal.valueOf(ratingSummary.getApplicationRatingAverage()).setScale(2, HALF_UP));
         }
+    }
+
+    private void buildAggregatedRating(Comment comment) {
+        if (!comment.getCustomResponses().isEmpty()) {
+            BigDecimal aggregatedRating = new BigDecimal(0.00);
+            for (CommentCustomResponse customResponse : comment.getCustomResponses()) {
+                switch (customResponse.getActionCustomQuestionConfiguration().getCustomQuestionType()) {
+                case RATING_NORMAL:
+                    aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(customResponse, 5));
+                    break;
+                case RATING_WEIGHTED:
+                    aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(customResponse, 8));
+                    break;
+                default:
+                    break;
+                }
+            }
+            comment.setApplicationRating(aggregatedRating);
+        }
+    }
+
+    private BigDecimal getWeightedRatingComponent(CommentCustomResponse customResponse, Integer denominator) {
+        String propertyValue = customResponse.getPropertyValue();
+        return new BigDecimal(propertyValue == null ? DEFAULT_RATING.toString() : propertyValue).divide(new BigDecimal(denominator))
+                .multiply(new BigDecimal(5)).multiply(customResponse.getActionCustomQuestionConfiguration().getWeighting()).setScale(2, RoundingMode.HALF_UP);
     }
 
     private void appendInterviewScheduledExpeditedComments(Comment comment) throws Exception {

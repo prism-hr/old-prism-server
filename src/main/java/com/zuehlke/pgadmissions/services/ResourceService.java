@@ -262,7 +262,12 @@ public class ResourceService {
         entityService.flush();
     }
 
-    public void processResource(Resource resource, Comment comment) {
+    public void processResource(Resource resource, Comment comment) throws Exception {
+        Class<? extends ResourceProcessor> processor = resource.getResourceScope().getResourceProcessor();
+        if (processor != null) {
+            applicationContext.getBean(processor).process(resource, comment);
+        }
+
         StateDurationDefinition stateDurationDefinition = resource.getState().getStateDurationDefinition();
         if (comment.isStateTransitionComment() || (stateDurationDefinition != null && BooleanUtils.isTrue(stateDurationDefinition.getEscalation()))) {
             LocalDate baselineCustom = null;

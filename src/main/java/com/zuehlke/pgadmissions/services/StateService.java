@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
+
 import java.util.List;
 import java.util.Set;
 
@@ -15,7 +17,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -112,7 +113,7 @@ public class StateService {
     }
 
     public StateDurationConfiguration getStateDurationConfiguration(Resource resource, User user, StateDurationDefinition definition) {
-        return (StateDurationConfiguration) customizationService.getConfiguration(PrismConfiguration.STATE_DURATION, resource, user, definition);
+        return (StateDurationConfiguration) customizationService.getConfiguration(STATE_DURATION, resource, user, definition);
     }
 
     public void deleteStateActions() {
@@ -162,9 +163,7 @@ public class StateService {
         commentService.recordStateTransition(comment, state, transitionState, stateTerminations);
         resourceService.recordStateTransition(resource, comment, state, transitionState);
 
-        commentService.processComment(resource, comment);
         resourceService.processResource(resource, comment);
-
         roleService.executeRoleTransitions(resource, comment, stateTransition);
 
         for (Action propagatedAction : stateTransition.getPropagatedActions()) {
@@ -175,7 +174,6 @@ public class StateService {
             notificationService.sendWorkflowNotifications(resource, comment);
         }
 
-        commentService.postProcessComment(resource, comment);
         resourceService.postProcessResource(resource, comment);
         return stateTransition;
     }

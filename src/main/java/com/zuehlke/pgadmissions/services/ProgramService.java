@@ -102,21 +102,6 @@ public class ProgramService {
         return programDAO.getPrograms();
     }
 
-    public void postProcessProgram(Program program, Comment comment) {
-        DateTime updatedTimestamp = program.getUpdatedTimestamp();
-        program.setUpdatedTimestampSitemap(updatedTimestamp);
-        program.getInstitution().setUpdatedTimestampSitemap(updatedTimestamp);
-
-        if (comment.isProgramApproveOrDeactivateComment()) {
-            projectService.synchronizeProjects(program);
-            if (comment.isProgramRestoreComment()) {
-                projectService.restoreProjects(program, comment.getCreatedTimestamp().toLocalDate());
-            }
-        }
-
-        advertService.setSequenceIdentifier(program.getAdvert(), program.getSequenceIdentifier().substring(0, 13));
-    }
-
     public List<ProgramRepresentation> getSimilarPrograms(Integer institutionId, String searchTerm) {
         return programDAO.getSimilarPrograms(institutionId, searchTerm);
     }

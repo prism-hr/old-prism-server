@@ -1,8 +1,12 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROJECT_COMMENT_UPDATED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_VIEW_EDIT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DISABLED_PENDING_REACTIVATION;
 
 import java.util.List;
 
@@ -19,9 +23,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
@@ -92,10 +94,9 @@ public class ProjectService {
         PrismAction actionId = commentDTO.getAction();
         Action action = actionService.getById(actionId);
 
-        boolean viewEditAction = actionId == PrismAction.PROJECT_VIEW_EDIT;
-
+        boolean viewEditAction = actionId == PROJECT_VIEW_EDIT;
         String commentContent = viewEditAction ? applicationContext.getBean(PropertyLoader.class).localize(project)
-                .load(PrismDisplayPropertyDefinition.PROJECT_COMMENT_UPDATED) : commentDTO.getContent();
+                .load(PROJECT_COMMENT_UPDATED) : commentDTO.getContent();
 
         OpportunityDTO projectDTO = (OpportunityDTO) commentDTO.getResource();
         LocalDate dueDate = projectDTO.getEndDate();
@@ -114,14 +115,6 @@ public class ProjectService {
         return actionService.executeUserAction(project, action, comment);
     }
 
-    public void postProcessProject(Project project, Comment comment) {
-        DateTime updatedTimestamp = project.getUpdatedTimestamp();
-        project.setUpdatedTimestampSitemap(updatedTimestamp);
-        project.getProgram().setUpdatedTimestampSitemap(updatedTimestamp);
-        project.getInstitution().setUpdatedTimestampSitemap(updatedTimestamp);
-        advertService.setSequenceIdentifier(project.getAdvert(), project.getSequenceIdentifier().substring(0, 13));
-    }
-
     public void synchronizeProjects(Program program) {
         projectDAO.synchronizeProjectDueDates(program);
         projectDAO.synchronizeProjectEndDates(program);
@@ -130,8 +123,8 @@ public class ProjectService {
     public void restoreProjects(Program program, LocalDate baseline) {
         List<Project> projects = projectDAO.getProjectsPendingReactivation(program, baseline);
         if (!projects.isEmpty()) {
-            State state = stateService.getById(PrismState.PROJECT_APPROVED);
-            State previousState = stateService.getById(PrismState.PROJECT_DISABLED_PENDING_REACTIVATION);
+            State state = stateService.getById(PROJECT_APPROVED);
+            State previousState = stateService.getById(PROJECT_DISABLED_PENDING_REACTIVATION);
 
             for (Project project : projects) {
                 project.setState(state);
@@ -149,7 +142,7 @@ public class ProjectService {
     }
 
     public Integer getActiveProjectCount(ResourceParent resource) {
-        if (resource.getResourceScope() == PrismScope.PROJECT) {
+        if (resource.getResourceScope() == PROJECT) {
             throw new Error();
         }
         Long count = projectDAO.getActiveProjectCount(resource);
@@ -171,7 +164,7 @@ public class ProjectService {
 
         if (searchEngineDTO != null) {
             List<String> relatedUsers = Lists.newArrayList();
-            List<User> projectAcademics = userService.getUsersForResourceAndRoles(getById(projectId), PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR);
+            List<User> projectAcademics = userService.getUsersForResourceAndRoles(getById(projectId), PROJECT_SUPERVISOR_GROUP.getRoles());
             for (User projectAcademic : projectAcademics) {
                 relatedUsers.add(projectAcademic.getSearchEngineRepresentation());
             }
@@ -216,7 +209,7 @@ public class ProjectService {
 
         ResourceParentAttributesDTO attributes = projectDTO.getAttributes();
         resourceService.setResourceConditions(project, attributes.getConditions());
-        
+
         if (!imported) {
             OpportunityType opportunityType = importedEntityService.getByCode(OpportunityType.class, //
                     project.getInstitution(), projectDTO.getOpportunityType().name());
@@ -231,7 +224,7 @@ public class ProjectService {
 
             resourceService.setStudyOptions(project, attributes.getStudyOptions(), new LocalDate());
         }
-        
+
         resourceService.setStudyLocations(project, attributes.getStudyLocations());
     }
 

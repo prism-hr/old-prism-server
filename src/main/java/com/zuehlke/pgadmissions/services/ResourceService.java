@@ -55,7 +55,6 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -94,6 +93,7 @@ import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
 import com.zuehlke.pgadmissions.workflow.resource.creators.ResourceCreator;
 import com.zuehlke.pgadmissions.workflow.resource.persisters.ResourcePersister;
+import com.zuehlke.pgadmissions.workflow.resourcer.processors.ResourceProcessor;
 
 @Service
 @Transactional
@@ -242,13 +242,10 @@ public class ResourceService {
         }
     }
 
-    public void preProcessResource(Resource resource, Comment comment) {
-        switch (resource.getResourceScope()) {
-        case APPLICATION:
-            applicationService.preProcessApplication((Application) resource, comment);
-            break;
-        default:
-            break;
+    public void preProcessResource(Resource resource, Comment comment) throws Exception {
+        Class<? extends ResourceProcessor> processor = resource.getResourceScope().getResourcePreprocessor();
+        if (processor != null) {
+            applicationContext.getBean(processor).process(resource, comment);
         }
     }
 
@@ -287,7 +284,7 @@ public class ResourceService {
         }
     }
 
-    public void postProcessResource(Resource resource, Comment comment) {
+    public void postProcessResource(Resource resource, Comment comment) throws Exception {
         DateTime baselineTime = new DateTime();
 
         if (comment.isUserComment() || resource.getSequenceIdentifier() == null) {
@@ -295,18 +292,9 @@ public class ResourceService {
             resource.setSequenceIdentifier(Long.toString(baselineTime.getMillis()) + String.format("%010d", resource.getId()));
         }
 
-        switch (resource.getResourceScope()) {
-        case PROGRAM:
-            programService.postProcessProgram((Program) resource, comment);
-            break;
-        case PROJECT:
-            projectService.postProcessProject((Project) resource, comment);
-            break;
-        case APPLICATION:
-            applicationService.postProcessApplication((Application) resource, comment);
-            break;
-        default:
-            break;
+        Class<? extends ResourceProcessor> processor = resource.getResourceScope().getResourcePostprocessor();
+        if (processor != null) {
+            applicationContext.getBean(processor).process(resource, comment);
         }
 
         if (comment.isUserCreationComment()) {

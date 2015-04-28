@@ -6,6 +6,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.joda.time.LocalDateTime;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
@@ -13,6 +14,8 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 
 public class CommentDTO {
@@ -58,7 +61,13 @@ public class CommentDTO {
 
 	private Integer rejectionReason;
 
-	private ResourceDTO resource;
+	private InstitutionDTO institution;
+	
+	private OpportunityDTO program;
+	
+	private OpportunityDTO project;
+	
+	private ResourceDTO application;
 
 	@Valid
 	private List<CommentAssignedUserDTO> assignedUsers;
@@ -222,12 +231,40 @@ public class CommentDTO {
 		this.rejectionReason = rejectionReason;
 	}
 
-	public ResourceDTO getResource() {
-        return resource;
+	public InstitutionDTO getInstitution() {
+        return institution;
     }
 
-    public void setResource(ResourceDTO resource) {
-        this.resource = resource;
+    public void setInstitution(InstitutionDTO institution) {
+        this.institution = institution;
+    }
+
+    public OpportunityDTO getProgram() {
+        return program;
+    }
+
+    public void setProgram(OpportunityDTO program) {
+        this.program = program;
+    }
+
+    public OpportunityDTO getProject() {
+        return project;
+    }
+
+    public void setProject(OpportunityDTO project) {
+        this.project = project;
+    }
+
+    public ResourceDTO getApplication() {
+        return application;
+    }
+
+    public void setApplication(ResourceDTO application) {
+        this.application = application;
+    }
+
+    public ResourceDTO getResource() {
+        return ObjectUtils.firstNonNull(application, project, program, institution);
     }
 
     public List<CommentAssignedUserDTO> getAssignedUsers() {

@@ -410,10 +410,6 @@ public class CommentService {
     }
 
     public void preProcessComment(Resource resource, Comment comment) throws Exception {
-        if (comment.isApplicationAssignRefereesComment()) {
-            appendApplicationReferees(resource, comment);
-        }
-
         if (comment.isInterviewScheduledConfirmedComment()) {
             appendInterviewScheduledConfirmedComments(comment);
         }
@@ -432,6 +428,10 @@ public class CommentService {
     }
 
     public void postProcessComment(Resource resource, Comment comment) throws Exception {
+        if (comment.isApplicationAssignRefereesComment()) {
+            appendApplicationReferees(resource, comment);
+        }
+        
         if (comment.isApplicationViewEditComment() && !resourceService.getResourceStatesByStateGroup(resource, APPLICATION_REFERENCE).isEmpty()) {
             appendApplicationReferees(resource, comment);
         }

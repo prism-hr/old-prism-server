@@ -44,3 +44,18 @@ insert into user_notification (system_id, institution_id, program_id, project_id
 
 drop table old_user_notification
 ;
+
+create table user_connection (
+	id int(10) unsigned not null auto_increment,
+	user_requested_id int(10) unsigned not null,
+	user_connected_id int(10) unsigned not null,
+	connected int(1) unsigned not null,
+	created_timestamp datetime not null,
+	primary key (id),
+	unique index (user_requested_id, user_connected_id),
+	index (user_connected_id),
+	foreign key (user_requested_id) references user_requested (id),
+	foreign key (user_connected_id) references user_connected (id))
+collate = utf8_general_ci
+engine = innodb
+;

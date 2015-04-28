@@ -37,9 +37,9 @@ import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowProper
 import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
-import com.zuehlke.pgadmissions.workflow.resource.creators.ResourceCreator;
-import com.zuehlke.pgadmissions.workflow.resource.persisters.ResourcePersister;
-import com.zuehlke.pgadmissions.workflow.resourcer.processors.ResourceProcessor;
+import com.zuehlke.pgadmissions.workflow.transition.creators.ResourceCreator;
+import com.zuehlke.pgadmissions.workflow.transition.persisters.ResourcePersister;
+import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
@@ -235,7 +235,12 @@ public class ResourceService {
         entityService.flush();
     }
 
-    public void processResource(Resource resource, Comment comment) {
+    public void processResource(Resource resource, Comment comment) throws Exception {
+        Class<? extends ResourceProcessor> processor = resource.getResourceScope().getResourceProcessor();
+        if (processor != null) {
+            applicationContext.getBean(processor).process(resource, comment);
+        }
+
         StateDurationDefinition stateDurationDefinition = resource.getState().getStateDurationDefinition();
         if (comment.isStateTransitionComment() || (stateDurationDefinition != null && BooleanUtils.isTrue(stateDurationDefinition.getEscalation()))) {
             LocalDate baselineCustom = null;
@@ -637,10 +642,6 @@ public class ResourceService {
         LocalDate baseline = new LocalDate();
         resourceDAO.deleteElapsedStudyOptionInstances(baseline);
         resourceDAO.deleteElapsedStudyOptions(baseline);
-    }
-
-    public List<ResourceState> getResourceStatesByStateGroup(Resource resource, PrismStateGroup stateGroup) {
-        return resourceDAO.getResourceStatesByStateGroup(resource, stateGroup);
     }
 
     private void createOrUpdateStateTransitionSummary(Resource resource, DateTime baselineTime) {

@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.workflow.resource.creators;
+package com.zuehlke.pgadmissions.workflow.transition.creators;
 
 import javax.inject.Inject;
 

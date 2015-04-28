@@ -292,12 +292,21 @@ public class NotificationService {
             }
         }
     }
-    
+
     public void resetNotifications(UserRole userRole) {
         User user = userRole.getUser();
         Role role = userRole.getRole();
         List<NotificationDefinition> individualDefinitions = notificationDAO.getNotificationDefinitionsIndividual(role);
         notificationDAO.resetNotifications(user, individualDefinitions);
+    }
+
+    public void reassignUserNotifications(User oldUser, User newUser) {
+        Set<UserNotification> notifications = oldUser.getUserNotifications();
+        for (UserNotification notification : notifications) {
+            entityService.createOrUpdate(new UserNotification().withResource(notification.getResource()).withUser(newUser)
+                    .withNotificationDefinition(notification.getNotificationDefinition()).withLastNotifiedDate(notification.getLastNotifiedDate()));
+            entityService.delete(notification);
+        }
     }
 
     private Set<User> sendIndividualRequestNotifications(Resource resource, Comment comment, User author, LocalDate baseline) {

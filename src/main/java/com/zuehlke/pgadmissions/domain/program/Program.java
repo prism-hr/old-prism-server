@@ -164,16 +164,16 @@ public class Program extends ResourceParent {
     private String sequenceIdentifier;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "program_id", nullable = false)
+    @JoinColumn(name = "program_id")
     private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "program_id", nullable = false)
+    @JoinColumn(name = "program_id")
     private Set<ResourceStudyOption> studyOptions = Sets.newHashSet();
 
     @OrderBy(clause = "location")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "program_id", nullable = false)
+    @JoinColumn(name = "program_id")
     private Set<ResourceStudyLocation> studyLocations = Sets.newHashSet();
 
     @OneToMany(mappedBy = "program")

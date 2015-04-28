@@ -224,7 +224,7 @@ public class DocumentService {
 		return Resources.toByteArray(Resources.getResource(path));
 	}
 
-	public void reassignDoucments(User oldUser, User newUser) {
+	public void reassignDocuments(User oldUser, User newUser) {
 		documentDAO.reassignDocuments(oldUser, newUser);
 	}
 

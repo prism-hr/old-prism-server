@@ -33,7 +33,7 @@ public class DocumentDAO {
                         .add(Restrictions.isNotNull("applicationResearchStatement.id")) //
                         .add(Restrictions.isNotNull("applicationCv.id")) //
                         .add(Restrictions.isNotNull("applicationCoveringLetter.id")) //
-                        .add(Restrictions.isNotNull("userPortrait.id")) //
+                        .add(Restrictions.isNotNull("portraitImage.id")) //
                         .add(Restrictions.isNotNull("logoImage.id")) //
                         .add(Restrictions.isNotNull("backgroundImage.id"))) //
                 .list();
@@ -49,7 +49,7 @@ public class DocumentDAO {
                 .add(Restrictions.isNull("applicationResearchStatement.id")) //
                 .add(Restrictions.isNull("applicationCv.id")) //
                 .add(Restrictions.isNull("applicationCoveringLetter.id")) //
-                .add(Restrictions.isNull("userPortrait.id")) //
+                .add(Restrictions.isNull("portraitImage.id")) //
                 .add(Restrictions.isNull("logoImage.id")) //
                 .add(Restrictions.isNull("backgroundImage.id")) //
                 .add(Restrictions.le("createdTimestamp", baselineTime.minusDays(1))) //
@@ -85,7 +85,7 @@ public class DocumentDAO {
                 .createAlias("applicationResearchStatement", "applicationResearchStatement", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("applicationCv", "applicationCv", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("applicationCoveringLetter", "applicationCoveringLetter", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("userPortrait", "userPortrait", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("portraitImage", "portraitImage", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("logoImage", "logoImage", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("backgroundImage", "backgroundImage", JoinType.LEFT_OUTER_JOIN);
     }

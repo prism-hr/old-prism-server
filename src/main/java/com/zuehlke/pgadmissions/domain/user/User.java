@@ -59,8 +59,8 @@ public class User implements UserDetails, UniqueEntity {
     private String emailBouncedMessage;
 
     @OneToOne
-    @JoinColumn(name = "portrait_document_id")
-    private Document portraitDocument;
+    @JoinColumn(name = "portrait_image_id")
+    private Document portraitImage;
 
     @Column(name = "activation_code", unique = true)
     private String activationCode;
@@ -88,6 +88,12 @@ public class User implements UserDetails, UniqueEntity {
 
     @OneToMany(mappedBy = "user")
     private Set<UserInstitutionIdentity> institutionIdentities = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "userRequested")
+    private Set<UserConnection> requestedUserConnections = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "userConnected")
+    private Set<UserConnection> connectedUserConnections = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -153,12 +159,12 @@ public class User implements UserDetails, UniqueEntity {
         this.emailBouncedMessage = emailBouncedMessage;
     }
 
-    public Document getPortraitDocument() {
-        return portraitDocument;
+    public Document getPortraitImage() {
+        return portraitImage;
     }
 
-    public void setPortraitDocument(Document portraitDocument) {
-        this.portraitDocument = portraitDocument;
+    public void setPortraitImage(Document portraitDocument) {
+        this.portraitImage = portraitDocument;
     }
 
     public String getActivationCode() {
@@ -203,6 +209,14 @@ public class User implements UserDetails, UniqueEntity {
 
     public Set<UserInstitutionIdentity> getInstitutionIdentities() {
         return institutionIdentities;
+    }
+
+    public Set<UserConnection> getRequestedUserConnections() {
+        return requestedUserConnections;
+    }
+
+    public Set<UserConnection> getConnectedUserConnections() {
+        return connectedUserConnections;
     }
 
     public User withId(Integer id) {

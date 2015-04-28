@@ -31,7 +31,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterSortOr
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -371,13 +370,6 @@ public class ResourceDAO {
                         + "where applicationCloseDate < :baseline") //
                 .setParameter("baseline", baseline) //
                 .executeUpdate();
-    }
-
-    public List<ResourceState> getResourceStatesByStateGroup(Resource resource, PrismStateGroup stateGroup) {
-        return (List<ResourceState>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("state.stateGroup.id", stateGroup)) //
-                .list();
     }
 
     public ResourceParent getResourceAcceptingApplications(Resource resource) {

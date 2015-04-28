@@ -8,7 +8,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_REJECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_REVERSE_REJECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_WITHDRAW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROGRAM;
@@ -688,7 +687,7 @@ public class Comment {
     }
 
     public boolean isApplicationRatingComment() {
-        return action.getRatingAction() && !declinedResponse;
+        return action.getRatingAction() && applicationRating != null;
     }
 
     public boolean isApplicationCompletionComment() {
@@ -715,8 +714,8 @@ public class Comment {
                 (isSecondaryStateGroupTransitionComment() && secondaryTransitionStates.contains(new State().withId(APPLICATION_REFERENCE)));
     }
 
-    public boolean isApplicationReverseRejectionComment() {
-        return action.getId() == APPLICATION_REVERSE_REJECTION;
+    public boolean isApplicationCollectingReferencesComment() {
+        return transitionState.getId() == APPLICATION_REFERENCE || secondaryTransitionStates.contains(new State().withId(APPLICATION_REFERENCE));
     }
 
     public boolean isInterviewScheduledExpeditedComment() {
@@ -762,7 +761,7 @@ public class Comment {
     public boolean isViewEditComment() {
         return action.getActionCategory() == VIEW_EDIT_RESOURCE;
     }
-    
+
     public boolean isApplicationViewEditComment() {
         return action.getId() == APPLICATION_VIEW_EDIT;
     }

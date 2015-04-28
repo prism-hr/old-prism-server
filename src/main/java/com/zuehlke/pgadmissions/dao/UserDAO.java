@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserConnection;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
@@ -377,6 +378,25 @@ public class UserDAO {
                         .add(Restrictions.isNull("user.userAccount")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
                 .list();
+    }
+
+    public UserConnection getUserConnection(User userRequested, User userConnected) {
+        return (UserConnection) sessionFactory.getCurrentSession().createCriteria(UserConnection.class) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.eq("userRequested", userRequested)) //
+                                .add(Restrictions.eq("userConnected", userConnected))) //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.eq("userConnected", userRequested)) //
+                                .add(Restrictions.eq("userRequested", userConnected)))) //
+                .uniqueResult();
+    }
+
+    public UserConnection getUserConnectionStrict(User userRequested, User userConnected) {
+        return (UserConnection) sessionFactory.getCurrentSession().createCriteria(UserConnection.class) //
+                .add(Restrictions.eq("userRequested", userRequested)) //
+                .add(Restrictions.eq("userConnected", userConnected)) //
+                .uniqueResult();
     }
 
 }

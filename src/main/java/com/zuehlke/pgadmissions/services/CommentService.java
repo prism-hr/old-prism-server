@@ -1,17 +1,16 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_REJECTION_SYSTEM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_SUPERVISORS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.EXHUME;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_REFERENCE;
+import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMENT;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 import java.util.Set;
 
@@ -22,7 +21,6 @@ import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -52,7 +50,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
 import com.zuehlke.pgadmissions.domain.imported.RejectionReason;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -84,8 +81,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.Intervi
 import com.zuehlke.pgadmissions.rest.representation.resource.application.OfferRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.UserAppointmentPreferencesRepresentation;
 import com.zuehlke.pgadmissions.rest.validation.validator.CommentValidator;
-import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import com.zuehlke.pgadmissions.utils.PrismConstants;
 
 @Service
 @Transactional
@@ -96,9 +91,6 @@ public class CommentService {
 
     @Inject
     private ActionService actionService;
-
-    @Inject
-    private ApplicationService applicationService;
 
     @Inject
     private EntityService entityService;
@@ -116,13 +108,7 @@ public class CommentService {
     private DocumentService documentService;
 
     @Inject
-    private ResourceService resourceService;
-
-    @Inject
     private Mapper mapper;
-
-    @Inject
-    private ApplicationContext applicationContext;
 
     @Inject
     private CommentValidator commentValidator;
@@ -219,7 +205,7 @@ public class CommentService {
     }
 
     public InterviewRepresentation getInterview(Application application) {
-        Comment schedulingComment = commentDAO.getLatestComment(application, PrismAction.APPLICATION_ASSIGN_INTERVIEWERS);
+        Comment schedulingComment = commentDAO.getLatestComment(application, APPLICATION_ASSIGN_INTERVIEWERS);
         if (schedulingComment == null) {
             return null;
         }
@@ -266,12 +252,12 @@ public class CommentService {
     }
 
     public List<ApplicationAssignedSupervisorRepresentation> getApplicationSupervisors(Application application) {
-        Comment assignmentComment = getLatestComment(application, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
+        Comment assignmentComment = getLatestComment(application, APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
 
         if (assignmentComment != null) {
             return Lists.newArrayList(buildApplicationSupervisorRepresentation(assignmentComment));
         } else {
-            assignmentComment = getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
+            assignmentComment = getLatestComment(application, APPLICATION_ASSIGN_SUPERVISORS);
 
             if (assignmentComment != null) {
                 Set<ApplicationAssignedSupervisorRepresentation> assignedSupervisors = buildApplicationSupervisorRepresentation(assignmentComment);
@@ -292,19 +278,19 @@ public class CommentService {
     }
 
     public OfferRepresentation getOfferRecommendation(Application application) {
-        Comment sourceComment = getLatestComment(application, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
+        Comment sourceComment = getLatestComment(application, APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
 
         if (sourceComment != null) {
             return buildOfferRepresentation(sourceComment);
         }
 
-        sourceComment = getLatestComment(application, PrismAction.APPLICATION_ASSIGN_SUPERVISORS);
+        sourceComment = getLatestComment(application, APPLICATION_ASSIGN_SUPERVISORS);
         if (sourceComment != null) {
             OfferRepresentation offerRepresentation = buildOfferRepresentation(sourceComment);
 
-            User primarySupervisor = Iterables.getFirst(commentDAO.getAssignedUsers(sourceComment, PrismRole.APPLICATION_PRIMARY_SUPERVISOR), null);
+            User primarySupervisor = Iterables.getFirst(commentDAO.getAssignedUsers(sourceComment, APPLICATION_PRIMARY_SUPERVISOR), null);
             if (primarySupervisor != null) {
-                sourceComment = getLatestComment(application, PrismAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION, primarySupervisor,
+                sourceComment = getLatestComment(application, APPLICATION_CONFIRM_PRIMARY_SUPERVISION, primarySupervisor,
                         sourceComment.getCreatedTimestamp());
             }
 
@@ -382,7 +368,7 @@ public class CommentService {
         comment.getDocuments().clear();
 
         for (FileDTO fileDTO : commentDTO.getDocuments()) {
-            Document document = documentService.getById(fileDTO.getId(), PrismFileCategory.DOCUMENT);
+            Document document = documentService.getById(fileDTO.getId(), DOCUMENT);
             comment.getDocuments().add(document);
         }
     }
@@ -407,45 +393,6 @@ public class CommentService {
         }
 
         entityService.flush();
-    }
-
-    public void preProcessComment(Resource resource, Comment comment) throws Exception {
-        if (comment.isApplicationInterviewScheduledConfirmedComment()) {
-            appendInterviewScheduledConfirmedComments(comment);
-        }
-
-        if (comment.isApplicationReverseRejectionComment()) {
-            exhumeApplicationReferees(resource, comment);
-        }
-    }
-
-    public void processComment(Resource resource, Comment comment) throws Exception {
-        if (comment.isApplicationAutomatedRejectionComment()) {
-            PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localize((Application) resource);
-            comment.setRejectionReasonSystem(propertyLoader.load(APPLICATION_COMMENT_REJECTION_SYSTEM));
-        }
-        entityService.flush();
-    }
-
-    public void postProcessComment(Resource resource, Comment comment) throws Exception {
-        if (comment.isApplicationAssignRefereesComment()) {
-            appendApplicationReferees(resource, comment);
-        }
-        
-        if (comment.isApplicationViewEditComment() && !resourceService.getResourceStatesByStateGroup(resource, APPLICATION_REFERENCE).isEmpty()) {
-            appendApplicationReferees(resource, comment);
-        }
-
-        if (comment.isApplicationRatingComment() && comment.getApplicationRating() == null) {
-            buildAggregatedRating(comment);
-            if (comment.getApplicationRating() == null) {
-                comment.setApplicationRating(new BigDecimal(PrismConstants.DEFAULT_RATING));
-            }
-        }
-
-        if (comment.isInterviewScheduledExpeditedComment()) {
-            appendInterviewScheduledExpeditedComments(comment);
-        }
     }
 
     public void appendAssignedUsers(Comment comment, CommentDTO commentDTO) throws DeduplicationException {
@@ -523,6 +470,24 @@ public class CommentService {
         reassignCommentAssignedUsers(oldUser, newUser);
     }
 
+    public Comment createInterviewPreferenceComment(Resource resource, Action action, User invoker, User user, LocalDateTime interviewDateTime,
+            DateTime baseline) {
+        Comment preferenceComment = new Comment().withResource(resource).withAction(action).withUser(invoker).withDelegateUser(user)
+                .withDeclinedResponse(false).withState(resource.getState()).withCreatedTimestamp(baseline);
+        preferenceComment.getAppointmentPreferences().add(new CommentAppointmentPreference().withDateTime(interviewDateTime));
+        return preferenceComment;
+    }
+
+    public List<LocalDateTime> getAppointmentPreferences(Application application, User user) {
+        Comment preferenceComment = getLatestComment(application, user, APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY,
+                APPLICATION_UPDATE_INTERVIEW_AVAILABILITY);
+        return commentDAO.getAppointmentPreferences(preferenceComment);
+    }
+
+    public List<User> getAssignedUsers(Comment comment, PrismRole... roles) {
+        return commentDAO.getAssignedUsers(comment, roles);
+    }
+
     private void reassignCommentAssignedUsers(User oldUser, User newUser) {
         List<CommentAssignedUser> commentAssignedUsers = commentDAO.getCommentAssignedUsers(oldUser);
         for (CommentAssignedUser commentAssignedUser : commentAssignedUsers) {
@@ -537,8 +502,8 @@ public class CommentService {
 
     private Comment getLatestAppointmentPreferenceComment(Application application, Comment schedulingComment, User user) {
         DateTime baseline = schedulingComment.getCreatedTimestamp();
-        Comment preferenceComment = getLatestComment(application, PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY, user, baseline);
-        return preferenceComment == null ? getLatestComment(application, PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY, user, baseline)
+        Comment preferenceComment = getLatestComment(application, APPLICATION_UPDATE_INTERVIEW_AVAILABILITY, user, baseline);
+        return preferenceComment == null ? getLatestComment(application, APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY, user, baseline)
                 : preferenceComment;
     }
 
@@ -596,7 +561,7 @@ public class CommentService {
                     .addAction(comment.getAction().getId()).addDeclinedResponse(comment.getDeclinedResponse())
                     .addCreatedTimestamp(comment.getCreatedTimestamp());
 
-            if (redactions.contains(PrismActionRedactionType.ALL_ASSESSMENT_CONTENT)) {
+            if (redactions.contains(ALL_ASSESSMENT_CONTENT)) {
                 CommentApplicationInterviewAppointment interviewAppointment = comment.getInterviewAppointment();
                 if (interviewAppointment != null) {
                     representation.setInterviewAppointment(new CommentApplicationInterviewAppointmentRepresentation()
@@ -632,92 +597,6 @@ public class CommentService {
                 }
             }
             representation.setAssignedUsers(representations);
-        }
-    }
-
-    private void buildAggregatedRating(Comment comment) {
-        if (!comment.getCustomResponses().isEmpty()) {
-            BigDecimal aggregatedRating = new BigDecimal(0.00);
-            for (CommentCustomResponse customResponse : comment.getCustomResponses()) {
-                switch (customResponse.getActionCustomQuestionConfiguration().getCustomQuestionType()) {
-                case RATING_NORMAL:
-                    aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(customResponse, 5));
-                    break;
-                case RATING_WEIGHTED:
-                    aggregatedRating = aggregatedRating.add(getWeightedRatingComponent(customResponse, 8));
-                    break;
-                default:
-                    break;
-                }
-            }
-            comment.setApplicationRating(aggregatedRating);
-        }
-    }
-
-    private BigDecimal getWeightedRatingComponent(CommentCustomResponse customResponse, Integer denominator) {
-        String propertyValue = customResponse.getPropertyValue();
-        return new BigDecimal(propertyValue == null ? PrismConstants.DEFAULT_RATING.toString() : propertyValue).divide(new BigDecimal(denominator))
-                .multiply(new BigDecimal(5)).multiply(customResponse.getActionCustomQuestionConfiguration().getWeighting()).setScale(2, RoundingMode.HALF_UP);
-    }
-
-    private void appendInterviewScheduledExpeditedComments(Comment comment) throws Exception {
-        LocalDateTime interviewDateTime = comment.getInterviewAppointment().getInterviewDateTime();
-        comment.getAppointmentTimeslots().add(new CommentAppointmentTimeslot().withDateTime(interviewDateTime));
-
-        Resource resource = comment.getResource();
-        PrismAction prismAction = APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
-        Action action = actionService.getById(prismAction);
-        DateTime baseline = comment.getCreatedTimestamp();
-
-        User invoker = comment.getUser();
-        List<User> users = commentDAO.getAssignedUsers(comment, APPLICATION_INTERVIEWER, APPLICATION_INTERVIEWEE);
-        for (User user : users) {
-            Comment preferenceComment = createAutomatedInterviewPreferenceComment(resource, action, invoker, user, interviewDateTime, baseline);
-            persistComment(resource, preferenceComment);
-            resource.addComment(preferenceComment);
-        }
-    }
-
-    private void appendInterviewScheduledConfirmedComments(Comment comment) throws Exception {
-        Resource resource = comment.getResource();
-        PrismAction prismAction = APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
-        Action action = actionService.getById(prismAction);
-        DateTime baseline = comment.getCreatedTimestamp().minusSeconds(1);
-
-        User invoker = comment.getUser();
-        List<User> users = userService.getUsersWithAction(resource, prismAction, APPLICATION_UPDATE_INTERVIEW_AVAILABILITY);
-        LocalDateTime interviewDateTime = comment.getInterviewAppointment().getInterviewDateTime();
-        for (User user : users) {
-            Comment oldPreferenceComment = getLatestComment(resource, user, APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY,
-                    APPLICATION_UPDATE_INTERVIEW_AVAILABILITY);
-
-            List<LocalDateTime> oldPreferences = commentDAO.getAppointmentPreferences(oldPreferenceComment);
-            if (!oldPreferences.contains(interviewDateTime)) {
-                Comment newPreferenceComment = createAutomatedInterviewPreferenceComment(resource, action, invoker, user, interviewDateTime, baseline);
-                actionService.executeActionSilent(resource, action, newPreferenceComment);
-            }
-        }
-    }
-
-    private Comment createAutomatedInterviewPreferenceComment(Resource resource, Action action, User invoker, User user, LocalDateTime interviewDateTime,
-            DateTime baseline) {
-        Comment preferenceComment = new Comment().withResource(resource).withAction(action).withUser(invoker).withDelegateUser(user)
-                .withDeclinedResponse(false).withState(resource.getState()).withCreatedTimestamp(baseline);
-        preferenceComment.getAppointmentPreferences().add(new CommentAppointmentPreference().withDateTime(interviewDateTime));
-        return preferenceComment;
-    }
-
-    private void appendApplicationReferees(Resource resource, Comment comment) {
-        Role refereeRole = roleService.getById(APPLICATION_REFEREE);
-        for (User referee : applicationService.getUnassignedApplicationReferees((Application) resource)) {
-            comment.addAssignedUser(referee, refereeRole, CREATE);
-        }
-    }
-
-    private void exhumeApplicationReferees(Resource resource, Comment comment) {
-        Role refereeRole = roleService.getById(APPLICATION_REFEREE);
-        for (User referee : applicationService.getUnassignedApplicationReferees((Application) resource)) {
-            comment.addAssignedUser(referee, refereeRole, EXHUME);
         }
     }
 
@@ -758,7 +637,7 @@ public class CommentService {
 
     private void appendDocuments(Comment comment, CommentDTO commentDTO) {
         for (FileDTO fileDTO : commentDTO.getDocuments()) {
-            Document document = documentService.getById(fileDTO.getId(), PrismFileCategory.DOCUMENT);
+            Document document = documentService.getById(fileDTO.getId(), DOCUMENT);
             comment.getDocuments().add(document);
         }
     }

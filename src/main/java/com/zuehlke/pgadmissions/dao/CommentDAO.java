@@ -198,11 +198,11 @@ public class CommentDAO {
                 .list();
     }
 
-    public List<User> getAssignedUsers(Comment comment, PrismRole... roleIds) {
+    public List<User> getAssignedUsers(Comment comment, PrismRole... roles) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
                 .setProjection(Projections.property("user")) //
                 .add(Restrictions.eq("comment", comment)) //
-                .add(Restrictions.in("role.id", roleIds)) //
+                .add(Restrictions.in("role.id", roles)) //
                 .list();
     }
 

@@ -84,8 +84,8 @@ public class Document {
     @OneToOne(mappedBy = "cv")
     private ApplicationDocument applicationCv;
 
-    @OneToOne(mappedBy = "portraitDocument")
-    private User userPortrait;
+    @OneToOne(mappedBy = "portraitImage")
+    private User portraitImage;
 
     @OneToOne(mappedBy = "logoImage")
     private Institution logoImage;
@@ -189,8 +189,8 @@ public class Document {
         return applicationCoveringLetter;
     }
 
-    public User getUserPortrait() {
-        return userPortrait;
+    public User getPortraitImage() {
+        return portraitImage;
     }
     
     public Institution getLogoImage() {

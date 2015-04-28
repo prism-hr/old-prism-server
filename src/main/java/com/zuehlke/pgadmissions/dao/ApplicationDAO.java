@@ -131,7 +131,7 @@ public class ApplicationDAO {
                 .list();
     }
 
-    public ApplicationReferee getApplicationRefereeByUser(Application application, User user) {
+    public ApplicationReferee getApplicationReferee(Application application, User user) {
         return (ApplicationReferee) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
                 .add(Restrictions.eq("application", application)) //
                 .add(Restrictions.eq("user", user)) //
@@ -312,15 +312,15 @@ public class ApplicationDAO {
                 .list();
     }
 
-    public ApplicationRatingSummaryDTO getApplicationRatingSummary(ResourceParent parent) {
-        String resourceReference = parent.getResourceScope().getLowerCamelName();
+    public ApplicationRatingSummaryDTO getApplicationRatingSummary(ResourceParent resource) {
+        String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (ApplicationRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty(resourceReference), "parent") //
                         .add(Projections.sum("applicationRatingCount"), "applicationRatingCount") //
                         .add(Projections.countDistinct("id"), "applicationRatingApplications") //
                         .add(Projections.avg("applicationRatingAverage"), "applicationRatingAverage")) //
-                .add(Restrictions.eq(resourceReference, parent)) //
+                .add(Restrictions.eq(resourceReference, resource)) //
                 .add(Restrictions.isNotNull("applicationRatingCount")) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationRatingSummaryDTO.class)) //
                 .uniqueResult();

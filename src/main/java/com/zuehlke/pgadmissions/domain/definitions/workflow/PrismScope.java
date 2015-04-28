@@ -25,18 +25,23 @@ import com.zuehlke.pgadmissions.workflow.resource.persisters.InstitutionPersiste
 import com.zuehlke.pgadmissions.workflow.resource.persisters.ProgramPersister;
 import com.zuehlke.pgadmissions.workflow.resource.persisters.ProjectPersister;
 import com.zuehlke.pgadmissions.workflow.resource.persisters.ResourcePersister;
+import com.zuehlke.pgadmissions.workflow.resourcer.processors.ResourceProcessor;
+import com.zuehlke.pgadmissions.workflow.resourcer.processors.postprocessors.ApplicationPostprocessor;
+import com.zuehlke.pgadmissions.workflow.resourcer.processors.postprocessors.ProgramPostprocessor;
+import com.zuehlke.pgadmissions.workflow.resourcer.processors.postprocessors.ProjectPostprocessor;
+import com.zuehlke.pgadmissions.workflow.resourcer.processors.preprocessors.ApplicationPreprocessor;
 
 public enum PrismScope {
 
-    SYSTEM(null, System.class, "SM", null, null, null, null), //
+    SYSTEM(null, System.class, "SM", null, null, null, null, null, null), //
     INSTITUTION(ORGANIZATION_CATEGORY, Institution.class, "IN", new ColumnDefinition().add("institution", "title").getAll(), null,
-            InstitutionCreator.class, InstitutionPersister.class), //
+            InstitutionCreator.class, InstitutionPersister.class, null, null), //
     PROGRAM(OPPORTUNITY_CATEGORY, Program.class, "PM", new ColumnDefinition().add("institution", "title").add("program", "title").getAll(), null,
-            ProgramCreator.class, ProgramPersister.class), //
+            ProgramCreator.class, ProgramPersister.class, null, ProgramPostprocessor.class), //
     PROJECT(OPPORTUNITY_CATEGORY, Project.class, "PT", new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null,
-            ProjectCreator.class, ProjectPersister.class), //
+            ProjectCreator.class, ProjectPersister.class, null, ProjectPostprocessor.class), //
     APPLICATION(APPLICATION_CATEGORY, Application.class, "AN", new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null,
-            ApplicationCreator.class, ApplicationPersister.class);
+            ApplicationCreator.class, ApplicationPersister.class, ApplicationPreprocessor.class, ApplicationPostprocessor.class);
 
     private static Map<Class<? extends Resource>, PrismScope> byResourceClass = Maps.newHashMap();
 
@@ -60,9 +65,14 @@ public enum PrismScope {
 
     private Class<? extends ResourcePersister> resourcePersister;
 
+    private Class<? extends ResourceProcessor> resourcePreprocessor;
+
+    private Class<? extends ResourceProcessor> resourcePostprocessor;
+
     private PrismScope(PrismScopeCategory prismScopeCategory, Class<? extends Resource> resourceClass, String shortCode,
             HashMultimap<String, String> consoleListCustomColumns, HashMultimap<String, String> reportListCustomColumns,
-            Class<? extends ResourceCreator> resourceCreator, Class<? extends ResourcePersister> resourcePersister) {
+            Class<? extends ResourceCreator> resourceCreator, Class<? extends ResourcePersister> resourcePersister,
+            Class<? extends ResourceProcessor> resourcePreprocessor, Class<? extends ResourceProcessor> resourcePostprocessor) {
         this.prismScopeCategory = prismScopeCategory;
         this.resourceClass = resourceClass;
         this.shortCode = shortCode;
@@ -70,6 +80,8 @@ public enum PrismScope {
         this.reportListCustomColumns = reportListCustomColumns;
         this.resourceCreator = resourceCreator;
         this.resourcePersister = resourcePersister;
+        this.resourcePreprocessor = resourcePreprocessor;
+        this.resourcePostprocessor = resourcePostprocessor;
     }
 
     public PrismScopeCategory getPrismScopeCategory() {
@@ -98,6 +110,14 @@ public enum PrismScope {
 
     public Class<? extends ResourcePersister> getResourcePersister() {
         return resourcePersister;
+    }
+    
+    public Class<? extends ResourceProcessor> getResourcePreprocessor() {
+        return resourcePreprocessor;
+    }
+
+    public Class<? extends ResourceProcessor> getResourcePostprocessor() {
+        return resourcePostprocessor;
     }
 
     public static PrismScope getByResourceClass(Class<? extends Resource> resourceClass) {

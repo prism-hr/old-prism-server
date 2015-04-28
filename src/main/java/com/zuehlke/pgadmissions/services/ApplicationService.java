@@ -12,14 +12,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_LINK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PHONE_MOCK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ROLE_APPLICATION_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.CONDITIONAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.UNCONDITIONAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismProgramStartType.SCHEDULED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition.APPLICATION_ASSIGN_REFEREE;
-import static java.math.RoundingMode.HALF_UP;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +49,6 @@ import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.TableRow;
 import com.zuehlke.pgadmissions.components.ApplicationCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationDAO;
-import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
@@ -63,7 +57,6 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
-import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
@@ -97,7 +90,6 @@ import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentApplicationOfferDetailDTO;
@@ -136,16 +128,10 @@ public class ApplicationService {
     private UserService userService;
 
     @Inject
-    private RoleService roleService;
-
-    @Inject
     private CommentService commentService;
 
     @Inject
     private CustomizationService customizationService;
-
-    @Inject
-    private InstitutionService institutionService;
 
     @Inject
     private ImportedEntityService importedEntityService;
@@ -272,50 +258,6 @@ public class ApplicationService {
         BeanPropertyBindingResult errors = validateApplication(application);
         if (errors.hasErrors()) {
             throw new PrismValidationException("Application not completed", errors);
-        }
-    }
-
-    public void preProcessApplication(Application application, Comment comment) {
-        if (comment.isApplicationCreatedComment()) {
-            Institution institution = application.getInstitution();
-            DateTime createdTimestamp = application.getCreatedTimestamp();
-            Integer applicationYear = createdTimestamp.getYear();
-            Integer applicationMonth = createdTimestamp.getMonthOfYear();
-            application.setApplicationYear(institutionService.getBusinessYear(institution, applicationYear, applicationMonth));
-            application.setApplicationMonth(applicationMonth);
-            application.setApplicationMonthSequence(institutionService.getMonthOfBusinessYear(institution, applicationMonth));
-        }
-
-        if (comment.isApplicationSubmittedComment()) {
-            application.setSubmittedTimestamp(new DateTime());
-            AdvertClosingDate advertClosingDate = application.getAdvert().getClosingDate();
-            application.setClosingDate(advertClosingDate == null ? null : advertClosingDate.getClosingDate());
-        }
-    }
-
-    public void postProcessApplication(Application application, Comment comment) throws DeduplicationException {
-        if (comment.isProjectCreateApplicationComment()) {
-            synchroniseProjectSupervisors(application);
-        }
-
-        if (comment.isApplicationProvideReferenceComment()) {
-            synchroniseApplicationReferees(application, comment);
-        }
-
-        if (comment.isApplicationRatingComment()) {
-            summariseApplicationRating(application);
-        }
-
-        if (comment.isApplicationConfirmOfferRecommendationComment()) {
-            synchroniseOfferRecommendation(application, comment);
-        }
-
-        if (comment.isApplicationReserveStatusComment()) {
-            application.setApplicationReserveStatus(comment.getApplicationReserveStatus());
-        }
-
-        if (comment.isApplicationCompletionComment()) {
-            application.setCompletionDate(comment.getCreatedTimestamp().toLocalDate());
         }
     }
 
@@ -558,38 +500,13 @@ public class ApplicationService {
             }
         }
     }
-
-    private void synchroniseProjectSupervisors(Application application) {
-        List<User> supervisorUsers = roleService.getRoleUsers(application.getProject(), PROJECT_SUPERVISOR_GROUP);
-        for (User supervisorUser : supervisorUsers) {
-            application.getSupervisors().add(
-                    new ApplicationSupervisor().withUser(supervisorUser).withAcceptedSupervision(true).withLastUpdatedTimestamp(new DateTime()));
-        }
+    
+    public ApplicationRatingSummaryDTO getApplicationRatingSummary(ResourceParent resource) {
+        return applicationDAO.getApplicationRatingSummary(resource);
     }
-
-    private void synchroniseApplicationReferees(Application application, Comment comment) {
-        ApplicationReferee referee = applicationDAO.getApplicationRefereeByUser(application, comment.getActionOwner());
-        referee.setComment(comment);
-    }
-
-    private void synchroniseOfferRecommendation(Application application, Comment comment) {
-        CommentApplicationOfferDetail offerDetail = comment.getOfferDetail();
-        if (offerDetail != null) {
-            application.setConfirmedStartDate(offerDetail.getPositionProvisionalStartDate());
-            application.setConfirmedOfferType(offerDetail.getAppointmentConditions() == null ? UNCONDITIONAL : CONDITIONAL);
-        }
-        application.getUser().getUserAccount().setSendApplicationRecommendationNotification(false);
-    }
-
-    private void summariseApplicationRating(Application application) {
-        for (ResourceParent parent : application.getParentResources()) {
-            ApplicationRatingSummaryDTO ratingSummary = applicationDAO.getApplicationRatingSummary(parent);
-            Integer ratingCount = ratingSummary.getApplicationRatingCount().intValue();
-            Integer ratingApplications = ratingSummary.getApplicationRatingApplications().intValue();
-            parent.setApplicationRatingCount(ratingCount);
-            parent.setApplicationRatingFrequency(new BigDecimal(ratingCount).divide(new BigDecimal(ratingApplications).setScale(2, HALF_UP)));
-            parent.setApplicationRatingAverage(BigDecimal.valueOf(ratingSummary.getApplicationRatingAverage()).setScale(2, HALF_UP));
-        }
+    
+    public ApplicationReferee getApplicationReferee(Application application, User user) {
+        return applicationDAO.getApplicationReferee(application, user);
     }
 
     private LocalDate getRecommendedStartDate(Application application, ResourceStudyOption studyOption, LocalDate baseline) {

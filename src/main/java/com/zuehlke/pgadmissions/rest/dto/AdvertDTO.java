@@ -16,15 +16,13 @@ public class AdvertDTO {
     @Size(max = 1000)
     private String summary;
 
-    private String description;
-
     @URL
     @Size(max = 2048)
     private String applyHomepage;
-    
+
     @Valid
     private InstitutionAddressDTO address;
-    
+
     @Valid
     private InstitutionPartnerDTO partner;
 
@@ -42,14 +40,6 @@ public class AdvertDTO {
 
     public void setSummary(String summary) {
         this.summary = summary;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getApplyHomepage() {

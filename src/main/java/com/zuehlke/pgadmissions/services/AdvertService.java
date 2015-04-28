@@ -145,7 +145,6 @@ public class AdvertService {
     public void updateAdvert(User user, AdvertDTO advertDTO, Advert advert) throws Exception {
         advert.setTitle(advertDTO.getTitle());
         advert.setSummary(advertDTO.getSummary());
-        advert.setDescription(advertDTO.getDescription());
         advert.setApplyHomepage(advertDTO.getApplyHomepage());
 
         InstitutionAddressDTO addressDTO = advertDTO.getAddress();

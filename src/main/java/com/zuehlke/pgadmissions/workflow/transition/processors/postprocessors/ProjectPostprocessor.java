@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.workflow.resourcer.processors.postprocessors;
+package com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors;
 
 import javax.inject.Inject;
 
@@ -9,7 +9,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.workflow.resourcer.processors.ResourceProcessor;
+import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
 
 @Component
 public class ProjectPostprocessor implements ResourceProcessor {

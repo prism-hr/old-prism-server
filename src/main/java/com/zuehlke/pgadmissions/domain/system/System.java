@@ -112,7 +112,7 @@ public class System extends Resource {
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "system_id", nullable = false)
+    @JoinColumn(name = "system_id")
     private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "system")

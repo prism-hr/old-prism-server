@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
+import com.zuehlke.pgadmissions.domain.user.UserConnection;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
@@ -152,7 +153,7 @@ public class UserService {
             portraitDocument = documentService.getById(userDTO.getPortraitDocument(), PrismFileCategory.IMAGE);
         }
 
-        user.setPortraitDocument(portraitDocument);
+        user.setPortraitImage(portraitDocument);
 
         UserAccount account = user.getUserAccount();
         account.setSendApplicationRecommendationNotification(userDTO.getSendApplicationRecommendationNotification());
@@ -322,14 +323,52 @@ public class UserService {
         return userDAO.getUsersWithAction(resource, actions);
     }
 
+    public void createUserConnection(User userConnected) {
+        User userRequested = getCurrentUser();
+        UserConnection connection = userDAO.getUserConnection(userRequested, userConnected);
+        if (connection == null) {
+            entityService.save(new UserConnection().withUserRequested(userRequested).withUserConnected(userConnected).withConnected(false)
+                    .withCreatedTimestamp(new DateTime()));
+        }
+    }
+
+    public void acceptUserConnection(User userConnected) {
+        UserConnection connection = userDAO.getUserConnectionStrict(getCurrentUser(), userConnected);
+        if (connection != null) {
+            connection.setConnected(true);
+        }
+    }
+
+    public void deleteUserConnection(User userConnected) {
+        UserConnection connection = userDAO.getUserConnectionStrict(getCurrentUser(), userConnected);
+        if (connection != null) {
+            entityService.delete(connection);
+        }
+    }
+    
+    public List<UserConnection> getUserConnections(User user) {
+        Map<String, UserConnection> connections = Maps.newTreeMap();
+        for (UserConnection connection : user.getRequestedUserConnections()) {
+            connections.put(connection.getUserRequested().getFullName(), connection);
+        }
+        
+        for (UserConnection connection : user.getConnectedUserConnections()) {
+            connections.put(connection.getUserConnected().getFullName(), connection);
+        }
+        
+        return Lists.newLinkedList(connections.values());
+    }
+
     private void mergeUsers(User oldUser, User newUser) {
-        reassignUserRoles(oldUser, newUser);
         resourceService.reassignResources(oldUser, newUser);
         applicationSectionService.reassignApplicationSections(oldUser, newUser);
         commentService.reassignComments(oldUser, newUser);
-        documentService.reassignDoucments(oldUser, newUser);
+        documentService.reassignDocuments(oldUser, newUser);
+        reassignUserRoles(oldUser, newUser);
         userDAO.reassignUsers(oldUser, newUser);
         reassignUserInsitutionIdentities(oldUser, newUser);
+        reassignUserConnections(oldUser, newUser);
+        notificationService.reassignUserNotifications(oldUser, newUser);
 
         oldUser.setActivationCode(null);
         UserAccount oldUserAccount = oldUser.getUserAccount();
@@ -355,6 +394,20 @@ public class UserService {
                 entityService.delete(userInstitutionIdentity);
             }
         }
+    }
+
+    private void reassignUserConnections(User oldUser, User newUser) {
+        Set<UserConnection> requestedUserConnections = newUser.getRequestedUserConnections();
+        for (UserConnection connection : oldUser.getRequestedUserConnections()) {
+            requestedUserConnections.add(connection);
+        }
+        oldUser.getRequestedUserConnections().clear();
+
+        Set<UserConnection> connectedUserConnections = newUser.getConnectedUserConnections();
+        for (UserConnection connection : oldUser.getConnectedUserConnections()) {
+            connectedUserConnections.add(connection);
+        }
+        oldUser.getConnectedUserConnections().clear();
     }
 
 }

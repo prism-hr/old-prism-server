@@ -493,11 +493,11 @@ public class ResourceService {
         if (resource.getResourceScope() == PrismScope.SYSTEM) {
             return defaultSocialThumbnail;
         } else {
-            Document logoDocument = resource.getInstitution().getLogoImage();
-            if (logoDocument == null) {
+            Document logoImage = resource.getInstitution().getLogoImage();
+            if (logoImage == null) {
                 return defaultSocialThumbnail;
             }
-            return applicationApiUrl + "/images/" + logoDocument.getId().toString();
+            return applicationApiUrl + "/images/" + logoImage.getId().toString();
         }
     }
 

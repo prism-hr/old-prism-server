@@ -1,13 +1,17 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+
 import java.util.Arrays;
 import java.util.List;
 
 public enum PrismActionCondition {
 
-    ACCEPT_PROGRAM(PrismScope.INSTITUTION),
-    ACCEPT_PROJECT(PrismScope.INSTITUTION, PrismScope.PROGRAM),
-    ACCEPT_APPLICATION(PrismScope.INSTITUTION, PrismScope.PROGRAM, PrismScope.PROJECT);
+    ACCEPT_PROGRAM(INSTITUTION),
+    ACCEPT_PROJECT(INSTITUTION, PROGRAM),
+    ACCEPT_APPLICATION(INSTITUTION, PROGRAM, PROJECT);
 
     private List<PrismScope> validScopes;
 
@@ -18,4 +22,5 @@ public enum PrismActionCondition {
     public List<PrismScope> getValidScopes() {
         return validScopes;
     }
+
 }

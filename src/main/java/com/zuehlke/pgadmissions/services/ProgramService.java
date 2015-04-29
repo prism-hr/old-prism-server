@@ -182,6 +182,14 @@ public class ProgramService {
     public List<Integer> getApplications(Integer program) {
         return programDAO.getApplications(program);
     }
+    
+    public List<ResourceForWhichUserCanCreateChildDTO> getProgramsForWhichUserCanCreateProject() {
+        return programDAO.getProgramsForWhichUserCanCreateProject(userService.getCurrentUser());
+    }
+    
+    public List<ResourceForWhichUserCanCreateChildDTO> getProgramsForWhichUserCanCreateProject(Integer institutionId) {
+        return programDAO.getProgramsForWhichUserCanCreateProject(userService.getCurrentUser(), institutionId);
+    }
 
     private void update(Integer programId, OpportunityDTO programDTO) throws Exception {
         Program program = entityService.getById(Program.class, programId);

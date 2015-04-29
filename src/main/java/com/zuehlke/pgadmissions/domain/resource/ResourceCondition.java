@@ -51,9 +51,12 @@ public class ResourceCondition extends WorkflowResourceExecution {
     @JoinColumn(name = "application_id", insertable = false, updatable = false)
     private Application application;
 
-    @Column(name = "action_condition")
+    @Column(name = "action_condition", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismActionCondition actionCondition;
+
+    @Column(name = "partner_mode", nullable = false)
+    private Boolean partnerMode;
 
     @Override
     public Integer getId() {
@@ -123,6 +126,14 @@ public class ResourceCondition extends WorkflowResourceExecution {
         this.actionCondition = actionCondition;
     }
 
+    public Boolean getPartnerMode() {
+        return partnerMode;
+    }
+
+    public void setPartnerMode(Boolean partnerMode) {
+        this.partnerMode = partnerMode;
+    }
+
     public ResourceCondition withResource(Resource resource) {
         setResource(resource);
         return this;
@@ -130,6 +141,11 @@ public class ResourceCondition extends WorkflowResourceExecution {
 
     public ResourceCondition withActionCondition(PrismActionCondition actionCondition) {
         this.actionCondition = actionCondition;
+        return this;
+    }
+
+    public ResourceCondition withPartnerNode(Boolean partnerMode) {
+        this.partnerMode = partnerMode;
         return this;
     }
 

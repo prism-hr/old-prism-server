@@ -271,10 +271,12 @@ public class Project extends ResourceParent {
         this.opportunityType = opportunityType;
     }
 
+    @Override
     public String getTitle() {
         return title;
     }
 
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }

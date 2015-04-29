@@ -11,6 +11,10 @@ import com.zuehlke.pgadmissions.domain.department.Department;
 
 public abstract class ResourceParent extends Resource {
 
+    public abstract String getTitle();
+    
+    public abstract void setTitle(String title);
+    
     public abstract Advert getAdvert();
 
     public abstract void setAdvert(Advert advert);

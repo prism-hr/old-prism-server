@@ -1,6 +1,29 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.INSTITUTION_COMMENT_UPDATED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_STARTUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_VIEW_EDIT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_CREATE_INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.dozer.Mapper;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -15,6 +38,8 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.InstitutionsForWhichUserCanCreateProjectDTO;
+import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
@@ -26,23 +51,6 @@ import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.InstitutionDomicileRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import org.dozer.Mapper;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-import java.util.List;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.INSTITUTION_COMMENT_UPDATED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.*;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 
 @Service
 @Transactional
@@ -298,6 +306,38 @@ public class InstitutionService {
             Document backgroundDocument = documentService.getImageDocument(background);
             institution.setBackgroundImage(backgroundDocument);
         }
+    }
+
+    public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsForWhichUserCanCreateProgram(User user) {
+        return institutionDAO.getInstitutionsForWhichUserCanCreateProgram(user);
+    }
+
+    public List<InstitutionsForWhichUserCanCreateProjectDTO> getInstitutionsForWhichUserCanCreateProject(User user) {
+        Map<Integer, InstitutionsForWhichUserCanCreateProjectDTO> index = Maps.newHashMap();
+        Map<String, InstitutionsForWhichUserCanCreateProjectDTO> institutions = Maps.newTreeMap();
+
+        List<ResourceForWhichUserCanCreateChildDTO> institutionProjectParents = institutionDAO.getInstitutionsForWhichUserCanCreateProject(user);
+        for (ResourceForWhichUserCanCreateChildDTO institutionProjectParent : institutionProjectParents) {
+            InstitutionsForWhichUserCanCreateProjectDTO institution = new InstitutionsForWhichUserCanCreateProjectDTO().withInstitution(
+                    (Institution) institutionProjectParent.getResource()).withInstitutionPartnerMode(institutionProjectParent.getPatnerMode());
+            index.put(institutionProjectParent.getResource().getId(), institution);
+            institutions.put(institutionProjectParent.getResource().getTitle(), institution);
+        }
+
+        List<ResourceForWhichUserCanCreateChildDTO> institutionProgramProjectParents = institutionDAO
+                .getInstitutionsWhichHaveProgramsForWhichUserCanCreateProject(user);
+        for (ResourceForWhichUserCanCreateChildDTO institutionProgramProjectParent : institutionProgramProjectParents) {
+            InstitutionsForWhichUserCanCreateProjectDTO institution = index.get(institutionProgramProjectParent.getResource().getId());
+            if (institution == null) {
+                institutions.put(institutionProgramProjectParent.getResource().getTitle(), new InstitutionsForWhichUserCanCreateProjectDTO().withInstitution(
+                        (Institution) institutionProgramProjectParent.getResource())
+                        .withProgramPartnerMode(institutionProgramProjectParent.getPatnerMode()));
+            } else {
+                institution.setProgramPartnerMode(institutionProgramProjectParent.getPatnerMode());
+            }
+        }
+        
+        return Lists.newLinkedList(institutions.values());
     }
 
     private void changeInsitutionBusinessYear(Institution institution, Integer businessYearStartMonth) throws Exception {

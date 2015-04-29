@@ -1,9 +1,10 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import org.apache.commons.lang3.ObjectUtils;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
 public class ActionDTO {
 
@@ -13,7 +14,16 @@ public class ActionDTO {
     private Integer workflowPropertyConfigurationVersion;
 
     @Valid
-    private ResourceDTO newResource;
+    private InstitutionDTO newInstitution;
+
+    @Valid
+    private OpportunityDTO newProgram;
+
+    @Valid
+    private OpportunityDTO newProject;
+
+    @Valid
+    private ResourceDTO newApplication;
 
     private String referer;
 
@@ -33,12 +43,40 @@ public class ActionDTO {
         this.workflowPropertyConfigurationVersion = workflowPropertyConfigurationVersion;
     }
 
-    public ResourceDTO getNewResource() {
-        return newResource;
+    public InstitutionDTO getNewInstitution() {
+        return newInstitution;
     }
 
-    public void setNewResource(ResourceDTO newResource) {
-        this.newResource = newResource;
+    public void setNewInstitution(InstitutionDTO newInstitution) {
+        this.newInstitution = newInstitution;
+    }
+
+    public OpportunityDTO getNewProgram() {
+        return newProgram;
+    }
+
+    public void setNewProgram(OpportunityDTO newProgram) {
+        this.newProgram = newProgram;
+    }
+
+    public OpportunityDTO getNewProject() {
+        return newProject;
+    }
+
+    public void setNewProject(OpportunityDTO newProject) {
+        this.newProject = newProject;
+    }
+
+    public ResourceDTO getNewApplication() {
+        return newApplication;
+    }
+
+    public void setNewApplication(ResourceDTO newApplication) {
+        this.newApplication = newApplication;
+    }
+
+    public ResourceDTO getNewResource() {
+        return ObjectUtils.firstNonNull(newApplication, newProject, newProgram, newInstitution);
     }
 
     public String getReferer() {

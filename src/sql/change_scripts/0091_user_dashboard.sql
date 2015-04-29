@@ -25,8 +25,8 @@ create table user_connection (
 	primary key (id),
 	unique index (user_requested_id, user_connected_id),
 	unique index (user_connected_id, user_requested_id),
-	foreign key (user_requested_id) references user_requested (id),
-	foreign key (user_connected_id) references user_connected (id))
+	foreign key (user_requested_id) references user (id),
+	foreign key (user_connected_id) references user (id))
 collate = utf8_general_ci
 engine = innodb
 ;

@@ -39,7 +39,6 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
-import com.zuehlke.pgadmissions.domain.workflow.ResourceAction;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
@@ -189,9 +188,6 @@ public class Institution extends ResourceParent {
 
     @OneToMany(mappedBy = "institution")
     private Set<UserRole> userRoles = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "institution")
-    private Set<ResourceAction> resourceActions = Sets.newHashSet();
 
     @Override
     public Integer getId() {

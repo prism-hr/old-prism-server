@@ -15,6 +15,8 @@ import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.ResourceAction;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
+
+import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OrderBy;
@@ -23,6 +25,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import javax.persistence.*;
+
 import java.math.BigDecimal;
 import java.util.Set;
 
@@ -486,6 +489,10 @@ public class Project extends ResourceParent {
     @Override
     public Set<ResourceCondition> getResourceConditions() {
         return resourceConditions;
+    }
+    
+    public Boolean getImported() {
+        return program != null && BooleanUtils.isTrue(program.getImported());
     }
 
     public Project withResource(ResourceParent resource) {

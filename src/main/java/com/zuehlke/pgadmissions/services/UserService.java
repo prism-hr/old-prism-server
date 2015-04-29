@@ -340,22 +340,22 @@ public class UserService {
     }
 
     public void deleteUserConnection(User userConnected) {
-        UserConnection connection = userDAO.getUserConnectionStrict(getCurrentUser(), userConnected);
+        UserConnection connection = userDAO.getUserConnection(getCurrentUser(), userConnected);
         if (connection != null) {
             entityService.delete(connection);
         }
     }
-    
+
     public List<UserConnection> getUserConnections(User user) {
         Map<String, UserConnection> connections = Maps.newTreeMap();
         for (UserConnection connection : user.getRequestedUserConnections()) {
             connections.put(connection.getUserRequested().getFullName(), connection);
         }
-        
+
         for (UserConnection connection : user.getConnectedUserConnections()) {
             connections.put(connection.getUserConnected().getFullName(), connection);
         }
-        
+
         return Lists.newLinkedList(connections.values());
     }
 

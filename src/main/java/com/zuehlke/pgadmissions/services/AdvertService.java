@@ -16,6 +16,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -143,7 +144,10 @@ public class AdvertService {
     }
 
     public void updateAdvert(User user, AdvertDTO advertDTO, Advert advert) throws Exception {
-        advert.setTitle(advertDTO.getTitle());
+        if (BooleanUtils.isFalse(advert.getImported())) {
+            advert.setTitle(advertDTO.getTitle());
+        }
+        
         advert.setSummary(advertDTO.getSummary());
         advert.setApplyHomepage(advertDTO.getApplyHomepage());
 

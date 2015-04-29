@@ -16,7 +16,7 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
 
     private String homepage;
 
-    private FileRepresentation logoDocument;
+    private FileRepresentation logoImage;
 
     private ResourceSummaryRepresentation resourceSummary;
 
@@ -68,12 +68,12 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
         this.homepage = homepage;
     }
 
-    public FileRepresentation getLogoDocument() {
-        return logoDocument;
+    public FileRepresentation getLogoImage() {
+        return logoImage;
     }
 
-    public void setLogoDocument(FileRepresentation logoDocument) {
-        this.logoDocument = logoDocument;
+    public void setLogoImage(FileRepresentation logoImage) {
+        this.logoImage = logoImage;
     }
 
     public final ResourceSummaryRepresentation getResourceSummary() {

@@ -1,31 +1,24 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-
-import java.util.Arrays;
-import java.util.List;
-
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.*;
+import org.hibernate.sql.JoinType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -120,7 +113,7 @@ public class CustomizationDAO {
                 getUpdateOperation(configurationType) //
                         + "where " + resource.getResourceScope().getLowerCamelName() + " = :resource " //
                         + "and " + configurationType.getDefinitionPropertyName() + ".id" + " = :definitionId " //
-                        + getopportunityTypeCriterionUpdate(opportunityType)) //
+                        + getOpportunityTypeCriterionUpdate(opportunityType)) //
                 .setParameter("resource", resource) //
                 .setParameter("definitionId", definitionId);
         applyLocalizationConstraintsRestoreDefault(opportunityType, query);
@@ -133,7 +126,7 @@ public class CustomizationDAO {
                 getUpdateOperation(configurationType) //
                         + "where " + resource.getResourceScope().getLowerCamelName() + " = :resource " //
                         + "and " + getScopeConstraint(configurationType) //
-                        + getopportunityTypeCriterionUpdate(opportunityType)) //
+                        + getOpportunityTypeCriterionUpdate(opportunityType)) //
                 .setParameter("resource", resource) //
                 .setParameter("scope", scope);
         applyLocalizationConstraintsRestoreDefault(opportunityType, query);
@@ -147,7 +140,7 @@ public class CustomizationDAO {
         String updateOperation = getUpdateOperation(configurationType);
         String definitionCriterion = "where " + configurationType.getDefinitionPropertyName() + ".id" + " = :definitionId ";
 
-        String opportunityTypeCriterion = getopportunityTypeCriterionUpdate(opportunityType);
+        String opportunityTypeCriterion = getOpportunityTypeCriterionUpdate(opportunityType);
 
         Query query;
         if (resourceScope == SYSTEM) {
@@ -182,7 +175,7 @@ public class CustomizationDAO {
         String updateOperation = getUpdateOperation(configurationType);
         String definitionCriterion = "where " + getScopeConstraint(configurationType);
 
-        String opportunityTypeCriterion = getopportunityTypeCriterionUpdate(opportunityType);
+        String opportunityTypeCriterion = getOpportunityTypeCriterionUpdate(opportunityType);
 
         Query query;
         if (resourceScope.equals(SYSTEM)) {
@@ -238,7 +231,7 @@ public class CustomizationDAO {
 
     private Junction getResourceLocalizationCriterion(Resource resource, PrismScope scope, PrismOpportunityType opportunityType,
             boolean configurationMode) {
-        Criterion opportunityTypeCriterion = getopportunityTypeCriterionSelect(scope, opportunityType);
+        Criterion opportunityTypeCriterion = getOpportunityTypeCriterionSelect(scope, opportunityType);
         return Restrictions.disjunction() //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.eq("system", resource.getSystem())) //
@@ -250,12 +243,12 @@ public class CustomizationDAO {
                 .add(Restrictions.eq("project", resource.getProject()));
     }
 
-    private Criterion getopportunityTypeCriterionSelect(PrismScope scope, PrismOpportunityType opportunityType) {
+    private Criterion getOpportunityTypeCriterionSelect(PrismScope scope, PrismOpportunityType opportunityType) {
         return scope.ordinal() < PROGRAM.ordinal() ? Restrictions.isNull("opportunityType") : opportunityType == null ? Restrictions.eq("opportunityType",
                 getSystemOpportunityType()) : Restrictions.in("opportunityType", Arrays.asList(opportunityType, getSystemOpportunityType()));
     }
 
-    private String getopportunityTypeCriterionUpdate(PrismOpportunityType opportunityType) {
+    private String getOpportunityTypeCriterionUpdate(PrismOpportunityType opportunityType) {
         return opportunityType == null ? "and opportunityType is null " : //
                 "and (program is not null and " //
                         + "opportunityType is null " //

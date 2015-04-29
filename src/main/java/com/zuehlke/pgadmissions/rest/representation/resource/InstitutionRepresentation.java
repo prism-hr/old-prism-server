@@ -16,7 +16,7 @@ public class InstitutionRepresentation {
 
     private String homepage;
 
-    private FileRepresentation logoDocument;
+    private FileRepresentation logoImage;
 
     public Integer getId() {
         return id;
@@ -74,11 +74,11 @@ public class InstitutionRepresentation {
         this.homepage = homepage;
     }
 
-    public FileRepresentation getLogoDocument() {
-        return logoDocument;
+    public FileRepresentation getLogoImage() {
+        return logoImage;
     }
 
-    public void setLogoDocument(FileRepresentation logoDocument) {
-        this.logoDocument = logoDocument;
+    public void setLogoImage(FileRepresentation logoImage) {
+        this.logoImage = logoImage;
     }
 }

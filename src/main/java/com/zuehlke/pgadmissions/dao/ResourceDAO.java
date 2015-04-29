@@ -35,8 +35,6 @@ import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
@@ -291,8 +289,8 @@ public class ResourceDAO {
                 .executeUpdate();
     }
 
-    public ResourceStudyOption getStudyOption(ResourceParent resource, StudyOption studyOption) {
-        return (ResourceStudyOption) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOption.class) //
+    public <T> T getResourceAttribute(ResourceParent resource, Class<T> attributeClass, String attributeName, Object attributeValue) {
+        return (T) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("project", resource.getProject())) //
                         .add(Restrictions.eq("program", resource.getProgram())) //
@@ -300,21 +298,14 @@ public class ResourceDAO {
                 .addOrder(Order.desc("project")) //
                 .addOrder(Order.desc("program")) //
                 .addOrder(Order.desc("institution")) //
-                .add(Restrictions.eq("studyOption", studyOption)) //
+                .add(Restrictions.eq(attributeName, attributeValue)) //
                 .setMaxResults(1) //
                 .uniqueResult();
     }
 
-    public ResourceStudyOption getStudyOptionStrict(ResourceParent resource, StudyOption studyOption) {
-        return (ResourceStudyOption) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOption.class) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.eq("studyOption", studyOption)) //
-                .uniqueResult();
-    }
-
-    public List<ResourceStudyOption> getStudyOptions(ResourceParent resource) {
-        return (List<ResourceStudyOption>) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOption.class) //
-                .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
+    public <T> List<T> getResourceAttributes(ResourceParent resource, Class<T> attributeClass, String attributeName, String orderAttributeName) {
+        return (List<T>) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
+                .createAlias(attributeName + "s", attributeName, JoinType.INNER_JOIN) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("project", resource.getProject())) //
                         .add(Restrictions.eq("program", resource.getProgram())) //
@@ -322,19 +313,18 @@ public class ResourceDAO {
                 .addOrder(Order.desc("project")) //
                 .addOrder(Order.desc("program")) //
                 .addOrder(Order.desc("institution")) //
-                .addOrder(Order.asc("studyOption.code")) //
+                .addOrder(Order.asc(attributeName + "." + orderAttributeName)) //
                 .list();
     }
 
-    public List<ResourceStudyOption> getStudyOptionsStrict(ResourceParent resource) {
-        return (List<ResourceStudyOption>) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOption.class) //
-                .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
+    public <T> T getResourceAttributeStrict(ResourceParent resource, Class<T> attributeClass, String attributeName, Object attributeValue) {
+        return (T) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .addOrder(Order.asc("studyOption.code")) //
-                .list();
+                .add(Restrictions.eq(attributeName, attributeValue)) //
+                .uniqueResult();
     }
 
-    public ResourceStudyOptionInstance getFirstStudyOptionInstanceStrict(ResourceParent resource, StudyOption studyOption) {
+    public ResourceStudyOptionInstance getFirstStudyOptionInstance(ResourceParent resource, StudyOption studyOption) {
         return (ResourceStudyOptionInstance) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOptionInstance.class) //
                 .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("studyOption." + resource.getResourceScope().getLowerCamelName(), resource)) //
@@ -342,18 +332,6 @@ public class ResourceDAO {
                 .addOrder(Order.asc("applicationStartDate")) //
                 .setMaxResults(1) //
                 .uniqueResult();
-    }
-
-    public List<ResourceStudyLocation> getStudyLocations(ResourceParent resource) {
-        return (List<ResourceStudyLocation>) sessionFactory.getCurrentSession().createCriteria(ResourceStudyLocation.class) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("project", resource.getProject())) //
-                        .add(Restrictions.eq("program", resource.getProgram())) //
-                        .add(Restrictions.eq("institution", resource.getInstitution()))) //
-                .addOrder(Order.desc("project")) //
-                .addOrder(Order.desc("program")) //
-                .addOrder(Order.desc("institution")) //
-                .list();
     }
 
     public void deleteElapsedStudyOptions(LocalDate baseline) {

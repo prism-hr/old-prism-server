@@ -1,11 +1,18 @@
 package com.zuehlke.pgadmissions.domain.user;
 
-import com.google.common.base.Objects;
-import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 
 @Entity
 @Table(name = "USER_CONNECTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_requested_id", "user_connected_id" }),
@@ -89,23 +96,6 @@ public class UserConnection implements UniqueEntity {
     public UserConnection withCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
         return this;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(userRequested, userConnected);
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == null) {
-            return false;
-        }
-        if (getClass() != object.getClass()) {
-            return false;
-        }
-        final UserConnection other = (UserConnection) object;
-        return Objects.equal(userRequested, other.getUserRequested()) && Objects.equal(userConnected, other.getUserConnected());
     }
 
     @Override

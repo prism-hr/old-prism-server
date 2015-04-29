@@ -324,6 +324,10 @@ public class Advert extends ResourceParentAttribute {
         }
         return project.getOpportunityType().getPrismOpportunityType();
     }
+    
+    public Boolean getImported() {
+        return program != null && program.getImported();
+    }
 
     public Advert withTitle(String title) {
         this.title = title;

@@ -271,7 +271,7 @@ public class SystemService {
 
     @Transactional
     public SearchEngineAdvertDTO getSearchEngineAdvert() {
-        return new SearchEngineAdvertDTO().withRelatedInstitutions(institutionService.getActiveInstitions());
+        return new SearchEngineAdvertDTO().withRelatedInstitutions(institutionService.getActiveInstitutions());
     }
 
     @Transactional

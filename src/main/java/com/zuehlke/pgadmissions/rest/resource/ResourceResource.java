@@ -14,12 +14,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -117,13 +121,21 @@ public class ResourceResource {
 
     @RequestMapping(method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public ActionOutcomeRepresentation createResource(@RequestBody ActionDTO actionDTO) throws Exception {
+    public ActionOutcomeRepresentation createResource(@RequestBody @Valid ActionDTO actionDTO) throws Exception {
+        ResourceDTO newResource = actionDTO.getNewResource();
+
+        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(newResource, "userDTO");
+        ValidationUtils.rejectIfEmpty(errors, "resourceId", "notNull");
+        ValidationUtils.rejectIfEmpty(errors, "resourceScope", "notNull");
+        if(errors.hasErrors()){
+            throw new PrismValidationException("Could not create resource", errors);
+        }
+
         if (!actionDTO.getActionId().getActionCategory().equals(PrismActionCategory.CREATE_RESOURCE)) {
             throw new Error();
         }
 
         User user = userService.getCurrentUser();
-        ResourceDTO newResource = actionDTO.getNewResource();
         Action action = actionService.getById(actionDTO.getActionId());
 
         ActionOutcomeDTO actionOutcome = resourceService.create(user, action, newResource, actionDTO.getReferer(),

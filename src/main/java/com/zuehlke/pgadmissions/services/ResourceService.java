@@ -330,14 +330,6 @@ public class ResourceService {
         actionService.executeUserAction(resource, action, comment);
     }
 
-    public void deleteResourceState(Resource resource, State state) {
-        resourceDAO.deleteResourceState(resource, state);
-    }
-
-    public void deleteSecondaryResourceState(Resource resource, State state) {
-        resourceDAO.deleteSecondaryResourceState(resource, state);
-    }
-
     public Resource getOperativeResource(Resource resource, Action action) {
         return Arrays.asList(CREATE_RESOURCE, IMPORT_RESOURCE).contains(action.getActionCategory()) ? resource.getParentResource() : resource;
     }

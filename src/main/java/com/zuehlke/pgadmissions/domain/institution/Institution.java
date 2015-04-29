@@ -161,7 +161,7 @@ public class Institution extends ResourceParent {
     @JoinColumn(name = "institution_id")
     private Set<ResourceStudyOption> studyOptions = Sets.newHashSet();
 
-    @OrderBy(clause = "location")
+    @OrderBy(clause = "study_location")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "institution_id")
     private Set<ResourceStudyLocation> studyLocations = Sets.newHashSet();

@@ -12,10 +12,8 @@ import com.zuehlke.pgadmissions.domain.resource.*;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
-import com.zuehlke.pgadmissions.domain.workflow.ResourceAction;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
-
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -25,7 +23,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import javax.persistence.*;
-
 import java.math.BigDecimal;
 import java.util.Set;
 
@@ -170,9 +167,6 @@ public class Project extends ResourceParent {
 
     @OneToMany(mappedBy = "project")
     private Set<UserRole> userRoles = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "project")
-    private Set<ResourceAction> resourceActions = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -490,7 +484,7 @@ public class Project extends ResourceParent {
     public Set<ResourceCondition> getResourceConditions() {
         return resourceConditions;
     }
-    
+
     public Boolean getImported() {
         return program != null && BooleanUtils.isTrue(program.getImported());
     }

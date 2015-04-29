@@ -1,32 +1,19 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.advert.AdvertRepresentation;
 
 public class InstitutionExtendedRepresentation extends AbstractResourceRepresentation {
 
-    private String domicile;
-
     private String title;
-
-    private String summary;
-
-    private InstitutionAddressRepresentation address;
 
     private String currency;
 
-    private String homepage;
-
     private FileRepresentation logoImage;
 
+    private AdvertRepresentation advert;
+
     private ResourceSummaryRepresentation resourceSummary;
-
-    public String getDomicile() {
-        return domicile;
-    }
-
-    public void setDomicile(String domicile) {
-        this.domicile = domicile;
-    }
 
     public String getTitle() {
         return title;
@@ -34,22 +21,6 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getSummary() {
-        return summary;
-    }
-
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
-
-    public InstitutionAddressRepresentation getAddress() {
-        return address;
-    }
-
-    public void setAddress(InstitutionAddressRepresentation address) {
-        this.address = address;
     }
 
     public String getCurrency() {
@@ -60,14 +31,6 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
         this.currency = currency;
     }
 
-    public String getHomepage() {
-        return homepage;
-    }
-
-    public void setHomepage(String homepage) {
-        this.homepage = homepage;
-    }
-
     public FileRepresentation getLogoImage() {
         return logoImage;
     }
@@ -76,12 +39,19 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
         this.logoImage = logoImage;
     }
 
-    public final ResourceSummaryRepresentation getResourceSummary() {
+    public AdvertRepresentation getAdvert() {
+        return advert;
+    }
+
+    public void setAdvert(AdvertRepresentation advert) {
+        this.advert = advert;
+    }
+
+    public ResourceSummaryRepresentation getResourceSummary() {
         return resourceSummary;
     }
 
-    public final void setResourceSummary(ResourceSummaryRepresentation resourceSummary) {
+    public void setResourceSummary(ResourceSummaryRepresentation resourceSummary) {
         this.resourceSummary = resourceSummary;
     }
-
 }

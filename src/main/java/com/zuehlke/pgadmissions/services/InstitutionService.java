@@ -143,7 +143,7 @@ public class InstitutionService {
         Integer oldBusinessYearStartMonth = institution.getBusinessYearStartMonth();
         Integer newBusinessYearStartMonth = institutionDTO.getBusinessYearStartMonth();
         if (!oldBusinessYearStartMonth.equals(newBusinessYearStartMonth)) {
-            changeInsitutionBusinessYear(institution, newBusinessYearStartMonth);
+            changeInstitutionBusinessYear(institution, newBusinessYearStartMonth);
         }
 
         institution.setGoogleId(advert.getAddress().getLocation().getGoogleId());
@@ -257,11 +257,11 @@ public class InstitutionService {
         return searchEngineDTO;
     }
 
-    public List<ResourceSearchEngineDTO> getActiveInstitions() {
-        List<PrismState> activeInsitutionStates = stateService.getActiveInstitutionStates();
+    public List<ResourceSearchEngineDTO> getActiveInstitutions() {
+        List<PrismState> activeInstitutionStates = stateService.getActiveInstitutionStates();
         List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
         List<PrismState> activeProjectStates = stateService.getActiveProjectStates();
-        return institutionDAO.getRelatedInstitutions(activeInsitutionStates, activeProgramStates, activeProjectStates);
+        return institutionDAO.getRelatedInstitutions(activeInstitutionStates, activeProgramStates, activeProjectStates);
     }
 
     public void disableInstitutionDomiciles(List<String> updates) {
@@ -300,7 +300,7 @@ public class InstitutionService {
         }
     }
 
-    private void changeInsitutionBusinessYear(Institution institution, Integer businessYearStartMonth) throws Exception {
+    private void changeInstitutionBusinessYear(Institution institution, Integer businessYearStartMonth) throws Exception {
         institution.setBusinessYearStartMonth(businessYearStartMonth);
         Integer businessYearEndMonth = businessYearStartMonth == 1 ? 12 : businessYearStartMonth - 1;
         institutionDAO.changeInstitutionBusinessYear(institution.getId(), businessYearEndMonth);

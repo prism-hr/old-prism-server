@@ -589,7 +589,7 @@ public class ResourceService {
         if (resource.getResourceScope() == PROGRAM) {
             Program program = resource.getProgram();
             if (BooleanUtils.isTrue(program.getImported())) {
-                return Lists.newLinkedList(resource.getStudyOptions());
+                return resourceDAO.getResourceAttributesStrict(resource, ResourceStudyOption.class, "studyOption", "code");
             }
         }
 

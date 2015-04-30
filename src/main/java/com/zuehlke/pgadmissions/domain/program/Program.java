@@ -167,7 +167,6 @@ public class Program extends ResourceParent {
     @JoinColumn(name = "program_id")
     private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
-    @OrderBy(clause = "code")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "program_id")
     private Set<ResourceStudyOption> studyOptions = Sets.newHashSet();

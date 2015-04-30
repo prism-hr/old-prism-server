@@ -303,6 +303,13 @@ public class ResourceDAO {
                 .uniqueResult();
     }
 
+    public <T> T getResourceAttributeStrict(ResourceParent resource, Class<T> attributeClass, String attributeName, Object attributeValue) {
+        return (T) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.eq(attributeName, attributeValue)) //
+                .uniqueResult();
+    }
+
     public <T> List<T> getResourceAttributes(ResourceParent resource, Class<T> attributeClass, String attributeName, String orderAttributeName) {
         return (List<T>) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
                 .createAlias(attributeName + "s", attributeName, JoinType.INNER_JOIN) //
@@ -317,11 +324,12 @@ public class ResourceDAO {
                 .list();
     }
 
-    public <T> T getResourceAttributeStrict(ResourceParent resource, Class<T> attributeClass, String attributeName, Object attributeValue) {
-        return (T) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
+    public <T> List<T> getResourceAttributesStrict(ResourceParent resource, Class<T> attributeClass, String attributeName, String orderAttributeName) {
+        return (List<T>) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
+                .createAlias(attributeName + "s", attributeName, JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.eq(attributeName, attributeValue)) //
-                .uniqueResult();
+                .addOrder(Order.asc(attributeName + "." + orderAttributeName)) //
+                .list();
     }
 
     public ResourceStudyOptionInstance getFirstStudyOptionInstance(ResourceParent resource, StudyOption studyOption) {

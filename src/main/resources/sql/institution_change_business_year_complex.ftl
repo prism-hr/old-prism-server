@@ -7,4 +7,4 @@ set application_year =
 	if(application_month > ${businessYearEndMonth},
 		(application_month - ${businessYearEndMonth}),
 		(application_month + (12 - ${businessYearEndMonth})))
-where institution_id = {institutionId};
+where institution_id = 5243;

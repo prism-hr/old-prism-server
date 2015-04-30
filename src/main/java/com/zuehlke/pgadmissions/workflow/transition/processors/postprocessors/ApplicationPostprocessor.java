@@ -191,13 +191,11 @@ public class ApplicationPostprocessor implements ResourceProcessor {
         }
         application.getUser().getUserAccount().setSendApplicationRecommendationNotification(false);
 
-        List<User> firstSupervisors = commentService.getAssignedUsers(comment, PROJECT_PRIMARY_SUPERVISOR);
-        List<User> secondSupervisors = commentService.getAssignedUsers(comment, PROJECT_SECONDARY_SUPERVISOR);
-        userService.createUserConnections(firstSupervisors, secondSupervisors);
+        List<User> supervisors = commentService.getAssignedUsers(comment, PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR);
+        userService.createUserConnections(supervisors);
 
         User applicant = application.getUser();
-        userService.createUserConnections(firstSupervisors, applicant);
-        userService.createUserConnections(secondSupervisors, applicant);
+        userService.createUserConnections(supervisors, applicant);
     }
 
 }

@@ -108,7 +108,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_COMMENT_CUSTOM_FORM_WEIGHT_ERROR(SYSTEM_COMMENT, "The weights for your rating fields must add up to one"),
 
 	/*
-	 * *************** SYSTEM STATE GROUP *********************
+     * *************** SYSTEM STATE GROUP *********************
 	 */
 
     SYSTEM_STATE_GROUP_APPLICATION_UNSUBMITTED(SYSTEM_STATE_GROUP, "Unsubmitted"),
@@ -139,7 +139,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_STATE_GROUP_SYSTEM_RUNNING(SYSTEM_STATE_GROUP, "Running"),
 
 	/*
-	 * *************** SYSTEM STATE TRANSITION *********************
+     * *************** SYSTEM STATE TRANSITION *********************
 	 */
 
     SYSTEM_STATE_TRANSITION_APPLICATION_APPROVAL(SYSTEM_STATE_TRANSITION, "Confirm supervision"),
@@ -161,7 +161,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_STATE_TRANSITION_PROJECT_REJECTED(SYSTEM_STATE_TRANSITION, "Reject"),
 
 	/*
-	 * *************** SYSTEM ACTION *********************
+     * *************** SYSTEM ACTION *********************
 	 */
 
     SYSTEM_ACTION_APPLICATION_ASSESS_ELIGIBILITY(SYSTEM_ACTION, "Assess Eligibility"),
@@ -170,7 +170,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_APPLICATION_ASSIGN_SUPERVISORS(SYSTEM_ACTION, "Assign Supervisors"),
     SYSTEM_ACTION_APPLICATION_RESERVE(SYSTEM_ACTION, "Commit To Reserve List"),
     SYSTEM_ACTION_APPLICATION_COMMENT(SYSTEM_ACTION, "Comment"),
-	SYSTEM_ACTION_APPLICATION_COMPLETE(SYSTEM_ACTION, "Submit Application"),
+    SYSTEM_ACTION_APPLICATION_COMPLETE(SYSTEM_ACTION, "Submit Application"),
     SYSTEM_ACTION_APPLICATION_COMPLETE_VALIDATION_STAGE(SYSTEM_ACTION, "Complete Validation Stage"),
     SYSTEM_ACTION_APPLICATION_COMPLETE_VERIFICATION_STAGE(SYSTEM_ACTION, "Complete Verification Stage"),
     SYSTEM_ACTION_APPLICATION_COMPLETE_REFERENCE_STAGE(SYSTEM_ACTION, "Complete Reference Stage"),
@@ -207,8 +207,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_INSTITUTION_VIEW_EDIT(SYSTEM_ACTION, "View / Edit"),
     SYSTEM_ACTION_INSTITUTION_CORRECT(SYSTEM_ACTION, "Correct"),
     SYSTEM_ACTION_INSTITUTION_CREATE_PROGRAM(SYSTEM_ACTION, "Create Program"),
-	SYSTEM_ACTION_INSTITUTION_CREATE_PROJECT(SYSTEM_ACTION, "Create Project"),
-	SYSTEM_ACTION_INSTITUTION_CREATE_APPLICATION(SYSTEM_ACTION, "Create Application"),
+    SYSTEM_ACTION_INSTITUTION_CREATE_PROJECT(SYSTEM_ACTION, "Create Project"),
+    SYSTEM_ACTION_INSTITUTION_CREATE_APPLICATION(SYSTEM_ACTION, "Create Application"),
     SYSTEM_ACTION_INSTITUTION_EMAIL_CREATOR(SYSTEM_ACTION, "Email Creator"),
     SYSTEM_ACTION_INSTITUTION_ESCALATE(SYSTEM_ACTION, "Escalate"),
     SYSTEM_ACTION_INSTITUTION_IMPORT_PROGRAM(SYSTEM_ACTION, "Import Program"),
@@ -895,6 +895,23 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_INSTITUTION_ESCALATE_DURATION_LABEL(SYSTEM_STATE_DURATION, "Escalation Duration"),
     SYSTEM_INSTITUTION_ESCALATE_DURATION_HINT(SYSTEM_STATE_DURATION, "The length of time you wish to allow a new institution request that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
 
+    /*
+	 * *************** SYSTEM MONTH *********************
+	 */
+
+    SYSTEM_MONTH_JANUARY(SYSTEM_MONTH, "January"),
+    SYSTEM_MONTH_FEBRUARY(SYSTEM_MONTH, "February"),
+    SYSTEM_MONTH_MARCH(SYSTEM_MONTH, "March"),
+    SYSTEM_MONTH_APRIL(SYSTEM_MONTH, "April"),
+    SYSTEM_MONTH_MAY(SYSTEM_MONTH, "May"),
+    SYSTEM_MONTH_JUNE(SYSTEM_MONTH, "June"),
+    SYSTEM_MONTH_JULY(SYSTEM_MONTH, "July"),
+    SYSTEM_MONTH_AUGUST(SYSTEM_MONTH, "August"),
+    SYSTEM_MONTH_SEPTEMBER(SYSTEM_MONTH, "September"),
+    SYSTEM_MONTH_OCTOBER(SYSTEM_MONTH, "October"),
+    SYSTEM_MONTH_NOVEMBER(SYSTEM_MONTH, "November"),
+    SYSTEM_MONTH_DECEMBER(SYSTEM_MONTH, "December"),
+
 	/*
 	 * *************** SYSTEM WORKFLOW *********************
 	 */
@@ -1338,8 +1355,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_WORKFLOW_CONFIGURATION_HEADER(SYSTEM_HTML_WORKFLOW_CONFIGURATION, "Configuration: {{title}}"),
 
 	/*
-	 * *************** SYSTEM HTML TRANSLATIONS CONFIGURATION
-	 * *********************
+	 * *************** SYSTEM HTML TRANSLATIONS CONFIGURATION *********************
 	 */
 
     SYSTEM_TRANSLATIONS_CONFIGURATION_HEADER(SYSTEM_HTML_TRANSLATIONS_CONFIGURATION, "Customization: {{title}}"),
@@ -1381,6 +1397,13 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     INSTITUTION_COMMENT_UPDATED_FEE_AND_PAYMENT(PROGRAM_COMMENT, "Updated institution fees and payments"),
     INSTITUTION_COMMENT_UPDATED_CATEGORY(PROGRAM_COMMENT, "Updated institution categories"),
     INSTITUTION_COMMENT_UPDATED_CLOSING_DATE(PROGRAM_COMMENT, "Updated institution closing dates"),
+
+    /*
+	 * *************** INSTITUTION FORM *********************
+	 */
+
+    INSTITUTION_FORM_BUSINESS_YEAR_START_MONTH_LABEL(INSTITUTION_FORM, "Business Year Start Month"),
+    INSTITUTION_FORM_BUSINESS_YEAR_START_MONTH_HINT(INSTITUTION_FORM, "???"),
 
 	/*
 	 * *************** PROGRAM COMMENT *********************

@@ -6,6 +6,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.DEFAULT_RATING;
@@ -39,6 +41,7 @@ import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
 
 @Component
@@ -55,6 +58,9 @@ public class ApplicationPostprocessor implements ResourceProcessor {
 
     @Inject
     private RoleService roleService;
+
+    @Inject
+    private UserService userService;
 
     @Override
     public void process(Resource resource, Comment comment) throws Exception {
@@ -184,6 +190,14 @@ public class ApplicationPostprocessor implements ResourceProcessor {
             application.setConfirmedOfferType(offerDetail.getAppointmentConditions() == null ? UNCONDITIONAL : CONDITIONAL);
         }
         application.getUser().getUserAccount().setSendApplicationRecommendationNotification(false);
+
+        List<User> firstSupervisors = commentService.getAssignedUsers(comment, PROJECT_PRIMARY_SUPERVISOR);
+        List<User> secondSupervisors = commentService.getAssignedUsers(comment, PROJECT_SECONDARY_SUPERVISOR);
+        userService.createUserConnections(firstSupervisors, secondSupervisors);
+
+        User applicant = application.getUser();
+        userService.createUserConnections(firstSupervisors, applicant);
+        userService.createUserConnections(secondSupervisors, applicant);
     }
 
 }

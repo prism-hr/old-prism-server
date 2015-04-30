@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -24,10 +25,10 @@ public class ProjectPostprocessor implements ResourceProcessor {
 
     @Inject
     private AdvertService advertService;
-    
+
     @Inject
     private RoleService roleService;
-    
+
     @Inject
     private UserService userService;
 
@@ -39,7 +40,7 @@ public class ProjectPostprocessor implements ResourceProcessor {
         project.getProgram().setUpdatedTimestampSitemap(updatedTimestamp);
         project.getInstitution().setUpdatedTimestampSitemap(updatedTimestamp);
         advertService.setSequenceIdentifier(project.getAdvert(), project.getSequenceIdentifier().substring(0, 13));
-        
+
         if (comment.isProjectViewEditComment()) {
             connectProjectSupervisors(project, comment);
         }
@@ -47,7 +48,8 @@ public class ProjectPostprocessor implements ResourceProcessor {
 
     private void connectProjectSupervisors(Project project, Comment comment) {
         if (!comment.getAssignedUsers().isEmpty()) {
-            List<User> users = roleService.getRoleUsers(project, PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR);
+            List<User> users = Lists.newLinkedList(roleService.getRoleUsers(project, PROJECT_PRIMARY_SUPERVISOR));
+            users.addAll(roleService.getRoleUsers(project, PROJECT_SECONDARY_SUPERVISOR));
             userService.createUserConnections(users);
         }
     }

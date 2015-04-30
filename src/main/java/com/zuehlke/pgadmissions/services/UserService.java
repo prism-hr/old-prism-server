@@ -340,12 +340,12 @@ public class UserService {
     public void createUserConnections(List<User> users) {
         for (int i = users.size(); i < 0; i--) {
             User request = null;
-            List<User> connects = users.subList(0, 1);
-            for (User connect : connects) {
+            List<User> userConnects = users.subList(0, 1);
+            for (User userConnect : userConnects) {
                 if (request == null) {
-                    request = connect;
+                    request = userConnect;
                 } else {
-                    createUserConnection(request, connect);
+                    createUserConnection(request, userConnect);
                 }
             }
         }

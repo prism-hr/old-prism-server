@@ -654,7 +654,7 @@ public class Comment {
     public User getActionOwner() {
         return delegateUser == null ? user : delegateUser;
     }
-    
+
     public boolean isProgramApproveOrDeactivateComment() {
         return Arrays.asList(PROGRAM_APPROVED, PROGRAM_DEACTIVATED).contains(transitionState.getId());
     }
@@ -667,7 +667,7 @@ public class Comment {
     public boolean isProjectCreateApplicationComment() {
         return action.getId() == PROJECT_CREATE_APPLICATION;
     }
-    
+
     public boolean isProjectViewEditComment() {
         return action.getId() == PROJECT_VIEW_EDIT;
     }
@@ -720,8 +720,9 @@ public class Comment {
                 (isSecondaryStateGroupTransitionComment() && secondaryTransitionStates.contains(new State().withId(APPLICATION_REFERENCE)));
     }
 
-    public boolean isApplicationCollectingReferencesComment() {
-        return transitionState.getId() == APPLICATION_REFERENCE || secondaryTransitionStates.contains(new State().withId(APPLICATION_REFERENCE));
+    public boolean isApplicationUpdateRefereesComment() {
+        return isApplicationViewEditComment()
+                && (transitionState.getId() == APPLICATION_REFERENCE || secondaryTransitionStates.contains(new State().withId(APPLICATION_REFERENCE)));
     }
 
     public boolean isInterviewScheduledExpeditedComment() {

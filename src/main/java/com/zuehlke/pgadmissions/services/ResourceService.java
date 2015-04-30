@@ -41,7 +41,9 @@ import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.comment.CommentState;
 import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
+import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
@@ -253,12 +255,18 @@ public class ResourceService {
         resource.setPreviousState(state);
         resource.setState(transitionState);
 
-        deleteResourceStates(resource.getResourcePreviousStates());
-        deleteResourceStates(resource.getResourceStates());
+        Set<ResourcePreviousState> resourcePreviousStates = resource.getResourcePreviousStates();
+        Set<CommentState> commentStates = comment.getCommentStates();
+        deleteResourceStates(resourcePreviousStates, commentStates);
+
+        Set<ResourceState> resourceStates = resource.getResourceStates();
+        Set<CommentTransitionState> commentTransitionStates = comment.getCommentTransitionStates();
+        deleteResourceStates(resourceStates, commentTransitionStates);
         entityService.flush();
 
-        insertResourceStates(resource, resource.getResourcePreviousStates(), comment.getCommentStates(), ResourcePreviousState.class);
-        insertResourceStates(resource, resource.getResourceStates(), comment.getCommentTransitionStates(), ResourceState.class);
+        LocalDate baseline = comment.getCreatedTimestamp().toLocalDate();
+        insertResourceStates(resource, resourcePreviousStates, commentStates, ResourcePreviousState.class, baseline);
+        insertResourceStates(resource, resourceStates, commentTransitionStates, ResourceState.class, baseline);
         entityService.flush();
     }
 
@@ -550,7 +558,8 @@ public class ResourceService {
 
     public List<ResourceCondition> getConditions(ResourceParent resource) {
         List<ResourceCondition> filteredStudylocations = Lists.newLinkedList();
-        List<ResourceCondition> actionConditions = resourceDAO.getResourceAttributes(resource, ResourceCondition.class, "resourceConditions", "actionCondition");
+        List<ResourceCondition> actionConditions = resourceDAO
+                .getResourceAttributes(resource, ResourceCondition.class, "resourceConditions", "actionCondition");
 
         PrismScope lastResourceScope = null;
         for (ResourceCondition actionCondition : actionConditions) {
@@ -697,22 +706,35 @@ public class ResourceService {
         }
     }
 
-    private <T extends ResourceStateDefinition> void deleteResourceStates(Set<T> resourceStateDefinitions) {
+    private <T extends ResourceStateDefinition, U extends CommentStateDefinition> void deleteResourceStates(Set<T> resourceStateDefinitions,
+            Set<U> commentStateDefinitions) {
+        List<State> preservedStates = Lists.newArrayListWithCapacity(commentStateDefinitions.size());
+        for (CommentStateDefinition commentStateDefinition : commentStateDefinitions) {
+            preservedStates.add(commentStateDefinition.getState());
+        }
+        
         for (T resourceState : resourceStateDefinitions) {
-            entityService.delete(resourceState);
+            if (!preservedStates.contains(resourceState.getState())) {
+                entityService.delete(resourceState);
+            }
         }
         resourceStateDefinitions.clear();
     }
 
     private <T extends ResourceStateDefinition, U extends CommentStateDefinition> void insertResourceStates(Resource resource, Set<T> resourceStateDefinitions,
-            Set<U> commentStateDefinitions, Class<T> resourceStateClass) throws InstantiationException, IllegalAccessException {
+            Set<U> commentStateDefinitions, Class<T> resourceStateClass, LocalDate baseline) throws InstantiationException, IllegalAccessException {
         for (U commentState : commentStateDefinitions) {
             T transientResourceStateDefinition = resourceStateClass.newInstance();
             transientResourceStateDefinition.setResource(resource);
             transientResourceStateDefinition.setState(commentState.getState());
-            transientResourceStateDefinition.setPrimaryState(commentState.getPrimaryState());
-            T persistentResourceStateDefinition = entityService.createOrUpdate(transientResourceStateDefinition);
-            resourceStateDefinitions.add(persistentResourceStateDefinition);
+
+            T persistentResourceStateDefinition = entityService.getDuplicateEntity(transientResourceStateDefinition);
+            if (persistentResourceStateDefinition == null) {
+                transientResourceStateDefinition.setPrimaryState(commentState.getPrimaryState());
+                transientResourceStateDefinition.setCreatedDate(baseline);
+                entityService.save(transientResourceStateDefinition);
+                resourceStateDefinitions.add(persistentResourceStateDefinition);
+            }
         }
     }
 

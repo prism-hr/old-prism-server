@@ -316,14 +316,16 @@ public class ApplicationDAO {
     }
 
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(PrismScope resourceScope, Integer resourceId) throws Exception {
-        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resourceScope, resourceId, "sql/application_processing_summary_year.ftl")
+        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resourceScope, resourceId,
+                "sql/application_processing_summary_year.ftl")
                 .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
                 .list();
     }
 
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(PrismScope resourceScope, Integer resourceId)
             throws Exception {
-        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resourceScope, resourceId, "sql/application_processing_summary_month.ftl")
+        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resourceScope, resourceId,
+                "sql/application_processing_summary_month.ftl")
                 .addScalar("applicationMonth", IntegerType.INSTANCE) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
                 .list();
@@ -347,11 +349,10 @@ public class ApplicationDAO {
     private SQLQuery getApplicationProcessingSummaryQuery(PrismScope resourceScope, Integer resourceId, String templateLocation) throws Exception {
         String statement = Resources.toString(Resources.getResource(templateLocation), Charsets.UTF_8);
         Template template = new Template("statement", statement, freemarkerConfig.getConfiguration());
-        ImmutableMap<String, Object> model = ImmutableMap.of("resourceReference", (Object) resourceScope.getLowerCamelName());
+        ImmutableMap<String, Object> model = ImmutableMap.of("resourceReference", (Object) resourceScope.getLowerCamelName(), "resourceId", resourceId);
 
         SQLQuery query = (SQLQuery) sessionFactory.getCurrentSession().createSQLQuery( //
-                FreeMarkerTemplateUtils.processTemplateIntoString(template, model)) //
-                .setParameter("resourceId", resourceId); //
+                FreeMarkerTemplateUtils.processTemplateIntoString(template, model)); //
 
         return query.addScalar("advertCount", LongType.INSTANCE) //
                 .addScalar("applicationYear", StringType.INSTANCE) //

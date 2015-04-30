@@ -26,9 +26,9 @@ import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.document.PrismFileCategory.PrismImageCategory;
 import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.rest.dto.ImageUploadDTO;
 import com.zuehlke.pgadmissions.services.ApplicationDownloadService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.EntityService;
@@ -55,9 +55,8 @@ public class FileResource {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/images", method = RequestMethod.POST)
-    public Map<String, Object> uploadImage(@RequestParam(value = "file-data") Part uploadStream, @RequestParam Integer entityId,
-            @RequestParam PrismImageCategory imageCategory) throws Exception {
-        Document document = documentService.createImage(uploadStream, entityId, imageCategory);
+    public Map<String, Object> uploadImage(@RequestParam(value = "file-data") Part uploadStream, ImageUploadDTO imageUpload) throws Exception {
+        Document document = documentService.createImage(uploadStream, imageUpload);
         return ImmutableMap.of("id", (Object) document.getId());
     }
 

@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceParentAttributesDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
@@ -199,16 +200,16 @@ public class ResourceService {
 
     public ActionOutcomeDTO executeAction(Integer resourceId, CommentDTO commentDTO) throws Exception {
         switch (commentDTO.getAction().getScope()) {
-        case APPLICATION:
-            return applicationService.executeAction(resourceId, commentDTO);
-        case PROJECT:
-            return projectService.executeAction(resourceId, commentDTO);
-        case PROGRAM:
-            return programService.executeAction(resourceId, commentDTO);
-        case INSTITUTION:
-            return institutionService.executeAction(resourceId, commentDTO);
-        default:
-            throw new Error();
+            case APPLICATION:
+                return applicationService.executeAction(resourceId, commentDTO);
+            case PROJECT:
+                return projectService.executeAction(resourceId, commentDTO);
+            case PROGRAM:
+                return programService.executeAction(resourceId, commentDTO);
+            case INSTITUTION:
+                return institutionService.executeAction(resourceId, commentDTO);
+            default:
+                throw new Error();
         }
     }
 
@@ -316,7 +317,7 @@ public class ResourceService {
     }
 
     public <T extends Resource> List<Integer> getResourcesToPropagate(PrismScope propagatingResourceScope, Integer propagatingResourceId,
-            PrismScope propagatedResourceScope, PrismAction actionId) {
+                                                                      PrismScope propagatedResourceScope, PrismAction actionId) {
         return resourceDAO.getResourcesToPropagate(propagatingResourceScope, propagatingResourceId, propagatedResourceScope, actionId);
     }
 
@@ -416,7 +417,7 @@ public class ResourceService {
     }
 
     public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter,
-            String lastSequenceIdentifier, Integer recordsToRetrieve) {
+                                             String lastSequenceIdentifier, Integer recordsToRetrieve) {
         Set<Integer> assigned = Sets.newHashSet();
         Junction conditions = getFilterConditions(scopeId, filter);
 
@@ -432,41 +433,41 @@ public class ResourceService {
 
     public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Resource resource) throws Exception {
         switch (resource.getResourceScope()) {
-        case APPLICATION:
-            return applicationService.getWorkflowPropertyConfigurations((Application) resource);
-        default:
-            return (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) customizationService.getConfigurationRepresentationsWithOrWithoutVersion(
-                    PrismConfiguration.WORKFLOW_PROPERTY, resource, resource.getWorkflowPropertyConfigurationVersion());
+            case APPLICATION:
+                return applicationService.getWorkflowPropertyConfigurations((Application) resource);
+            default:
+                return (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) customizationService.getConfigurationRepresentationsWithOrWithoutVersion(
+                        PrismConfiguration.WORKFLOW_PROPERTY, resource, resource.getWorkflowPropertyConfigurationVersion());
         }
     }
 
     public SocialMetadataDTO getSocialMetadata(PrismScope resourceScope, Integer resourceId) throws Exception {
         Resource resource = getNotNullResource(resourceScope, resourceId);
         switch (resourceScope) {
-        case INSTITUTION:
-        case PROGRAM:
-        case PROJECT:
-            ResourceParent parent = (ResourceParent) resource;
-            return advertService.getSocialMetadata(parent.getAdvert());
-        case SYSTEM:
-            return systemService.getSocialMetadata();
-        default:
-            throw new Error();
+            case INSTITUTION:
+            case PROGRAM:
+            case PROJECT:
+                ResourceParent parent = (ResourceParent) resource;
+                return advertService.getSocialMetadata(parent.getAdvert());
+            case SYSTEM:
+                return systemService.getSocialMetadata();
+            default:
+                throw new Error();
         }
     }
 
     public SearchEngineAdvertDTO getSearchEngineAdvert(PrismScope resourceScope, Integer resourceId) {
         switch (resourceScope) {
-        case INSTITUTION:
-            return institutionService.getSearchEngineAdvert(resourceId);
-        case PROGRAM:
-            return programService.getSearchEngineAdvert(resourceId);
-        case PROJECT:
-            return projectService.getSearchEngineAdvert(resourceId);
-        case SYSTEM:
-            return systemService.getSearchEngineAdvert();
-        default:
-            throw new Error();
+            case INSTITUTION:
+                return institutionService.getSearchEngineAdvert(resourceId);
+            case PROGRAM:
+                return programService.getSearchEngineAdvert(resourceId);
+            case PROJECT:
+                return projectService.getSearchEngineAdvert(resourceId);
+            case SYSTEM:
+                return systemService.getSearchEngineAdvert();
+            default:
+                throw new Error();
         }
     }
 
@@ -606,12 +607,14 @@ public class ResourceService {
         setStudyLocations(resource, attributes.getStudyLocations());
     }
 
-    public void setResourceConditions(ResourceParent resource, List<PrismActionCondition> prismConditions) {
+    public void setResourceConditions(ResourceParent resource, List<ResourceParentDTO.ResourceConditionDTO> resourceConditions) {
         resource.getResourceConditions().clear();
         entityService.flush();
 
-        for (PrismActionCondition prismCondition : prismConditions) {
-            resource.addResourceCondition(new ResourceCondition().withResource(resource).withActionCondition(prismCondition));
+        for (ResourceParentDTO.ResourceConditionDTO resourceCondition : resourceConditions) {
+            resource.addResourceCondition(new ResourceCondition().withResource(resource)
+                    .withActionCondition(resourceCondition.getActionCondition())
+                    .withPartnerNode(resourceCondition.getPartnerMode()));
         }
     }
 
@@ -676,7 +679,7 @@ public class ResourceService {
     }
 
     private <T extends ResourceStateDefinition, U extends CommentStateDefinition> void deleteResourceStates(Set<T> resourceStateDefinitions,
-            Set<U> commentStateDefinitions) {
+                                                                                                            Set<U> commentStateDefinitions) {
         List<State> preservedStates = Lists.newArrayListWithCapacity(commentStateDefinitions.size());
         for (CommentStateDefinition commentStateDefinition : commentStateDefinitions) {
             preservedStates.add(commentStateDefinition.getState());
@@ -691,7 +694,7 @@ public class ResourceService {
     }
 
     private <T extends ResourceStateDefinition, U extends CommentStateDefinition> void insertResourceStates(Resource resource, Set<T> resourceStateDefinitions,
-            Set<U> commentStateDefinitions, Class<T> resourceStateClass, LocalDate baseline) throws InstantiationException, IllegalAccessException {
+                                                                                                            Set<U> commentStateDefinitions, Class<T> resourceStateClass, LocalDate baseline) throws InstantiationException, IllegalAccessException {
         for (U commentState : commentStateDefinitions) {
             T transientResourceStateDefinition = resourceStateClass.newInstance();
             transientResourceStateDefinition.setResource(resource);
@@ -708,7 +711,7 @@ public class ResourceService {
     }
 
     private void populateApplicationProcessingSummary(ApplicationProcessingSummaryDTO yearSummary,
-            ApplicationProcessingSummaryRepresentation yearRepresentation) {
+                                                      ApplicationProcessingSummaryRepresentation yearRepresentation) {
         yearRepresentation.setAdvertCount(longToInteger(yearSummary.getAdvertCount()));
         yearRepresentation.setCreatedApplicationCount(longToInteger(yearSummary.getCreatedApplicationCount()));
         yearRepresentation.setSubmittedApplicationCount(longToInteger(yearSummary.getSubmittedApplicationCount()));

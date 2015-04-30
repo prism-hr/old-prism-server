@@ -1,23 +1,22 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 
 import java.util.List;
 
 public class ResourceAttributesRepresentation {
 
-    private List<PrismActionCondition> resourceConditions;
+    private List<ResourceConditionRepresentation> resourceConditions;
 
     private List<PrismStudyOption> studyOptions;
 
     private List<String> studyLocations;
 
-    public List<PrismActionCondition> getResourceConditions() {
+    public List<ResourceConditionRepresentation> getResourceConditions() {
         return resourceConditions;
     }
 
-    public void setResourceConditions(List<PrismActionCondition> resourceConditions) {
+    public void setResourceConditions(List<ResourceConditionRepresentation> resourceConditions) {
         this.resourceConditions = resourceConditions;
     }
 

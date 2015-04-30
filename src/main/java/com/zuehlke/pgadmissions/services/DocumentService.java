@@ -45,7 +45,6 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
-import com.zuehlke.pgadmissions.rest.dto.ImageUploadDTO;
 import com.zuehlke.pgadmissions.services.helpers.processors.ImageDocumentProcessor;
 
 @Service
@@ -91,9 +90,9 @@ public class DocumentService {
         return create(DOCUMENT, getFileName(uploadStream), Streams.readAll(uploadStream.getInputStream()), uploadStream.getContentType(), null, null);
     }
 
-    public Document createImage(Part uploadStream, ImageUploadDTO imageUpload) throws Exception {
-        return create(IMAGE, getFileName(uploadStream), Streams.readAll(uploadStream.getInputStream()), uploadStream.getContentType(),
-                imageUpload.getEntityId(), imageUpload.getImageCategory());
+    public Document createImage(Part uploadStream, Integer institutionId, PrismImageCategory imageCategory) throws Exception {
+        return create(IMAGE, getFileName(uploadStream), Streams.readAll(uploadStream.getInputStream()), uploadStream.getContentType(), institutionId,
+                imageCategory);
     }
 
     public Document create(PrismFileCategory category, String fileName, byte[] content, String contentType, Integer entityId, PrismImageCategory imageCategory)

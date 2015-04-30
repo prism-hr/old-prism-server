@@ -24,16 +24,14 @@ public class ProgramPostprocessor implements ResourceProcessor {
     @Override
     public void process(Resource resource, Comment comment) throws Exception {
         Program program = (Program) resource;
-
         DateTime updatedTimestamp = program.getUpdatedTimestamp();
         program.setUpdatedTimestampSitemap(updatedTimestamp);
         program.getInstitution().setUpdatedTimestampSitemap(updatedTimestamp);
+        advertService.setSequenceIdentifier(program.getAdvert(), program.getSequenceIdentifier().substring(0, 13));
 
         if (comment.isProgramApproveOrDeactivateComment()) {
             synchronizeProjects(comment, program);
         }
-
-        advertService.setSequenceIdentifier(program.getAdvert(), program.getSequenceIdentifier().substring(0, 13));
     }
 
     private void synchronizeProjects(Comment comment, Program program) {

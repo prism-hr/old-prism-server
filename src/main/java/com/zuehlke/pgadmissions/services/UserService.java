@@ -337,12 +337,6 @@ public class UserService {
         }
     }
 
-    public void createUserConnections(List<User> usersRequested, User userConnected) {
-        for (User userRequested : usersRequested) {
-            createUserConnection(userRequested, userConnected);
-        }
-    }
-
     public void createUserConnections(List<User> users) {
         for (int i = users.size(); i < 0; i--) {
             User request = null;

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
+import org.joda.time.LocalDate;
+
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
@@ -13,6 +15,10 @@ public abstract class ResourceStateDefinition extends WorkflowResourceExecution 
     public abstract Boolean getPrimaryState();
 
     public abstract void setPrimaryState(Boolean primaryState);
+    
+    public abstract LocalDate getCreatedDate();
+    
+    public abstract void setCreatedDate(LocalDate createdDate);
 
     @Override
     public int hashCode() {

@@ -24,6 +24,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
@@ -75,7 +76,7 @@ public class ApplicationPostprocessor implements ResourceProcessor {
             appendApplicationReferees(application, comment);
         }
 
-        if (comment.isApplicationViewEditComment() && comment.isApplicationCollectingReferencesComment()) {
+        if (comment.isApplicationUpdateRefereesComment()) {
             appendApplicationReferees(application, comment);
         }
 
@@ -192,9 +193,12 @@ public class ApplicationPostprocessor implements ResourceProcessor {
         }
         application.getUser().getUserAccount().setSendApplicationRecommendationNotification(false);
 
-        List<User> supervisors = commentService
-                .getAssignedUsers(comment, APPLICATION_PRIMARY_SUPERVISOR, APPLICATION_SECONDARY_SUPERVISOR, APPLICATION_CREATOR);
-        userService.createUserConnections(supervisors);
+        if (!comment.getAssignedUsers().isEmpty()) {
+            List<User> connections = Lists.newLinkedList(roleService.getRoleUsers(application, APPLICATION_PRIMARY_SUPERVISOR));
+            connections.addAll(roleService.getRoleUsers(application, APPLICATION_SECONDARY_SUPERVISOR));
+            connections.addAll(roleService.getRoleUsers(application, APPLICATION_CREATOR));
+            userService.createUserConnections(connections);
+        }
     }
 
 }

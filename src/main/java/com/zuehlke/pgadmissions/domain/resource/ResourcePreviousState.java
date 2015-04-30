@@ -10,6 +10,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
+
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -53,6 +56,10 @@ public class ResourcePreviousState extends ResourceStateDefinition {
 
     @Column(name = "primary_state", nullable = false)
     private Boolean primaryState;
+    
+    @Column(name = "created_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate createdDate;
 
     @Override
     public Integer getId() {
@@ -132,6 +139,16 @@ public class ResourcePreviousState extends ResourceStateDefinition {
     @Override
     public final void setPrimaryState(Boolean primaryState) {
         this.primaryState = primaryState;
+    }
+
+    @Override
+    public LocalDate getCreatedDate() {
+        return createdDate;
+    }
+
+    @Override
+    public void setCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
     }
 
     public ResourcePreviousState withResource(Resource resource) {

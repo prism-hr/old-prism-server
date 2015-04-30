@@ -326,7 +326,7 @@ public class ResourceDAO {
 
     public <T> List<T> getResourceAttributesStrict(ResourceParent resource, Class<T> attributeClass, String attributeName, String orderAttributeName) {
         return (List<T>) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
-                .createAlias(attributeName + "s", attributeName, JoinType.INNER_JOIN) //
+                .createAlias(attributeName, attributeName, JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .addOrder(Order.asc(Joiner.on(".").skipNulls().join(attributeName, orderAttributeName))) //
                 .list();

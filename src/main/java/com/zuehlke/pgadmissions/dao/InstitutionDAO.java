@@ -229,7 +229,7 @@ public class InstitutionDAO {
 
         sessionFactory.getCurrentSession().createSQLQuery( //
                 FreeMarkerTemplateUtils.processTemplateIntoString(template, model)) //
-                .setInteger("institutionId", institutionId) //
+                .setParameter("institutionId", institutionId) //
                 .executeUpdate();
     }
 

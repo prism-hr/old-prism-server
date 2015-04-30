@@ -616,7 +616,7 @@ public class ResourceService {
 
     public List<ResourceStudyLocation> getStudyLocations(ResourceParent resource) {
         List<ResourceStudyLocation> filteredStudylocations = Lists.newLinkedList();
-        List<ResourceStudyLocation> studyLocations = resourceDAO.getResourceAttributes(resource, ResourceStudyLocation.class, "studyLocation", "studyLocation");
+        List<ResourceStudyLocation> studyLocations = resourceDAO.getResourceAttributes(resource, ResourceStudyLocation.class, "studyLocation", null);
 
         PrismScope lastResourceScope = null;
         for (ResourceStudyLocation studyLocation : studyLocations) {

@@ -9,6 +9,8 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
 
     private String currency;
 
+    private Integer businessYearStartMonth;
+
     private FileRepresentation logoImage;
 
     private AdvertRepresentation advert;
@@ -29,6 +31,14 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public Integer getBusinessYearStartMonth() {
+        return businessYearStartMonth;
+    }
+
+    public void setBusinessYearStartMonth(Integer businessYearStartMonth) {
+        this.businessYearStartMonth = businessYearStartMonth;
     }
 
     public FileRepresentation getLogoImage() {

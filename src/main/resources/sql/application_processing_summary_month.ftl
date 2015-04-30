@@ -15,6 +15,6 @@ select application_year as applicationYear,
 	round(avg(datediff(date(submitted_timestamp), date(created_timestamp))), 2) as averagePreparationTime,
 	round(avg(datediff(completion_date, date(submitted_timestamp))), 2) as averageProcessingTime
 from application
-where ${resourceReference}_id = :resourceId
+where ${resourceReference}_id = ${resourceId?c}
 group by application_year, application_month_sequence
 order by application_year desc, application_month_sequence desc;

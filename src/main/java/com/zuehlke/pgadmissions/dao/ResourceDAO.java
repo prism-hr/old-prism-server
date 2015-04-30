@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -310,9 +311,7 @@ public class ResourceDAO {
                 .uniqueResult();
     }
 
-    public <T> List<T> getResourceAttributes(ResourceParent resource, Class<T> attributeClass, String attributeName, String orderAttributeName) {
         return (List<T>) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
-                .createAlias(attributeName + "s", attributeName, JoinType.INNER_JOIN) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("project", resource.getProject())) //
                         .add(Restrictions.eq("program", resource.getProgram())) //
@@ -320,7 +319,7 @@ public class ResourceDAO {
                 .addOrder(Order.desc("project")) //
                 .addOrder(Order.desc("program")) //
                 .addOrder(Order.desc("institution")) //
-                .addOrder(Order.asc(attributeName + "." + orderAttributeName)) //
+                .addOrder(Order.asc(orderAttributeName)) //
                 .list();
     }
 

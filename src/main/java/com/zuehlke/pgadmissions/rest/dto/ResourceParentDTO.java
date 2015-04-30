@@ -42,17 +42,17 @@ public class ResourceParentDTO extends ResourceDTO {
 
     public static class ResourceParentAttributesDTO {
 
-        private List<PrismActionCondition> resourceConditions;
+        private List<ResourceConditionDTO> resourceConditions;
 
         private List<PrismStudyOption> studyOptions;
 
         private List<String> studyLocations;
 
-        public List<PrismActionCondition> getResourceConditions() {
+        public List<ResourceConditionDTO> getResourceConditions() {
             return resourceConditions;
         }
 
-        public void setResourceConditions(List<PrismActionCondition> resourceConditions) {
+        public void setResourceConditions(List<ResourceConditionDTO> resourceConditions) {
             this.resourceConditions = resourceConditions;
         }
 
@@ -72,6 +72,29 @@ public class ResourceParentDTO extends ResourceDTO {
             this.studyLocations = studyLocations;
         }
 
+    }
+
+    public static class ResourceConditionDTO {
+
+        private PrismActionCondition actionCondition;
+
+        private Boolean partnerMode;
+
+        public PrismActionCondition getActionCondition() {
+            return actionCondition;
+        }
+
+        public void setActionCondition(PrismActionCondition actionCondition) {
+            this.actionCondition = actionCondition;
+        }
+
+        public Boolean getPartnerMode() {
+            return partnerMode;
+        }
+
+        public void setPartnerMode(Boolean partnerMode) {
+            this.partnerMode = partnerMode;
+        }
     }
 
 }

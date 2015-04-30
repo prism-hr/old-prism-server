@@ -324,11 +324,30 @@ public class UserService {
     }
 
     public void createUserConnection(User userConnected) {
-        User userRequested = getCurrentUser();
-        UserConnection connection = userDAO.getUserConnection(userRequested, userConnected);
-        if (connection == null) {
-            entityService.save(new UserConnection().withUserRequested(userRequested).withUserConnected(userConnected).withConnected(false)
-                    .withCreatedTimestamp(new DateTime()));
+        createUserConnection(getCurrentUser(), userConnected);
+    }
+
+    public void createUserConnection(User userRequested, User userConnected) {
+        if (!userRequested.equals(userConnected)) {
+            UserConnection connection = userDAO.getUserConnection(userRequested, userConnected);
+            if (connection == null) {
+                entityService.save(new UserConnection().withUserRequested(userRequested).withUserConnected(userConnected).withConnected(false)
+                        .withCreatedTimestamp(new DateTime()));
+            }
+        }
+    }
+
+    public void createUserConnections(List<User> usersRequested, User userConnected) {
+        for (User userRequested : usersRequested) {
+            createUserConnection(userRequested, userConnected);
+        }
+    }
+
+    public void createUserConnections(List<User> usersRequested, List<User> usersConnected) {
+        for (User userRequested : usersRequested) {
+            for (User userConnected : usersConnected) {
+                createUserConnection(userRequested, userConnected);
+            }
         }
     }
 

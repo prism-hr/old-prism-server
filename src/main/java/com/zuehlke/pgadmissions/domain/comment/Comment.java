@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.comment;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_REQUIRED;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse.UNSURE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_REVIEWERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_REJECTION;
@@ -13,6 +14,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.USER_INVOCATION;
@@ -663,19 +665,23 @@ public class Comment {
     }
 
     public boolean isProjectCreateApplicationComment() {
-        return action.getId() == PrismAction.PROJECT_CREATE_APPLICATION;
+        return action.getId() == PROJECT_CREATE_APPLICATION;
+    }
+    
+    public boolean isProjectViewEditComment() {
+        return action.getId() == PROJECT_VIEW_EDIT;
     }
 
     public boolean isApplicationAssignReviewersComment() {
-        return action.getId() == PrismAction.APPLICATION_ASSIGN_REVIEWERS;
+        return action.getId() == APPLICATION_ASSIGN_REVIEWERS;
     }
 
     public boolean isApplicationProvideReferenceComment() {
-        return action.getId() == PrismAction.APPLICATION_PROVIDE_REFERENCE;
+        return action.getId() == APPLICATION_PROVIDE_REFERENCE;
     }
 
     public boolean isApplicationConfirmOfferRecommendationComment() {
-        return action.getId() == PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
+        return action.getId() == APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
     }
 
     public boolean isApplicationCreatedComment() {
@@ -696,7 +702,7 @@ public class Comment {
     }
 
     public boolean isApplicationReferenceComment() {
-        return action.getId() == PrismAction.APPLICATION_PROVIDE_REFERENCE;
+        return action.getId() == APPLICATION_PROVIDE_REFERENCE;
     }
 
     public boolean isApplicationAutomatedRejectionComment() {

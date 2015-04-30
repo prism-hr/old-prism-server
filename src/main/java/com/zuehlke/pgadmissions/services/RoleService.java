@@ -79,16 +79,10 @@ public class RoleService {
         return entityService.list(Role.class);
     }
 
-    public UserRole getOrCreateUserRole(UserRole userRole) throws DeduplicationException {
-        return getOrCreateUserRole(userRole.getResource(), userRole.getUser(), userRole.getRole().getId());
-    }
-
-    public UserRole getOrCreateUserRole(Resource resource, User user, PrismRole newRoleId) throws DeduplicationException {
-        Role newRole = getById(newRoleId);
-        UserRole userRole = entityService.getOrCreate(new UserRole().withResource(resource).withUser(user).withRole(newRole)
-                .withAssignedTimestamp(new DateTime()));
+    public UserRole getOrCreateUserRole(UserRole transientUserRole) {
+        UserRole persistentUserRole = entityService.getOrCreate(transientUserRole.withAssignedTimestamp(new DateTime()));
         entityService.flush();
-        return userRole;
+        return persistentUserRole;
     }
 
     public void assignUserRoles(Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) throws Exception {

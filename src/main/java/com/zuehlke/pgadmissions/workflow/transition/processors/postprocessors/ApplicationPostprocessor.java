@@ -3,11 +3,12 @@ package com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.CONDITIONAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.UNCONDITIONAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_SECONDARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SECONDARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.DEFAULT_RATING;
@@ -191,11 +192,9 @@ public class ApplicationPostprocessor implements ResourceProcessor {
         }
         application.getUser().getUserAccount().setSendApplicationRecommendationNotification(false);
 
-        List<User> supervisors = commentService.getAssignedUsers(comment, PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR);
+        List<User> supervisors = commentService
+                .getAssignedUsers(comment, APPLICATION_PRIMARY_SUPERVISOR, APPLICATION_SECONDARY_SUPERVISOR, APPLICATION_CREATOR);
         userService.createUserConnections(supervisors);
-
-        User applicant = application.getUser();
-        userService.createUserConnections(supervisors, applicant);
     }
 
 }

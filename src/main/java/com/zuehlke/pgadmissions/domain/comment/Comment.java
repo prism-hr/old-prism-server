@@ -654,7 +654,7 @@ public class Comment {
     public User getActionOwner() {
         return delegateUser == null ? user : delegateUser;
     }
-
+    
     public boolean isProgramApproveOrDeactivateComment() {
         return Arrays.asList(PROGRAM_APPROVED, PROGRAM_DEACTIVATED).contains(transitionState.getId());
     }

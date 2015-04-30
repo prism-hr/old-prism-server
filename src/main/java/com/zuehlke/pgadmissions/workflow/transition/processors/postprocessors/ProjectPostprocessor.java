@@ -41,13 +41,15 @@ public class ProjectPostprocessor implements ResourceProcessor {
         advertService.setSequenceIdentifier(project.getAdvert(), project.getSequenceIdentifier().substring(0, 13));
         
         if (comment.isProjectViewEditComment()) {
-            connectProjectSupervisors(project);
+            connectProjectSupervisors(project, comment);
         }
     }
 
-    private void connectProjectSupervisors(Project project) {
-        List<User> supervisors = roleService.getRoleUsers(project, PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR);
-        userService.createUserConnections(supervisors);
+    private void connectProjectSupervisors(Project project, Comment comment) {
+        if (!comment.getAssignedUsers().isEmpty()) {
+            List<User> users = roleService.getRoleUsers(project, PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR);
+            userService.createUserConnections(users);
+        }
     }
 
 }

@@ -13,6 +13,8 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
 
     private FileRepresentation logoImage;
 
+    private FileRepresentation backgroundImage;
+
     private AdvertRepresentation advert;
 
     private ResourceSummaryRepresentation resourceSummary;
@@ -47,6 +49,14 @@ public class InstitutionExtendedRepresentation extends AbstractResourceRepresent
 
     public void setLogoImage(FileRepresentation logoImage) {
         this.logoImage = logoImage;
+    }
+
+    public FileRepresentation getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    public void setBackgroundImage(FileRepresentation backgroundImage) {
+        this.backgroundImage = backgroundImage;
     }
 
     public AdvertRepresentation getAdvert() {

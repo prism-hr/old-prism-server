@@ -165,5 +165,10 @@ public class ResourceState extends ResourceStateDefinition {
         this.primaryState = primaryState;
         return this;
     }
+    
+    public ResourceState withCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
+        return this;
+    }
 
 }

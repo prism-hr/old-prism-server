@@ -46,9 +46,8 @@ public class ProjectPostprocessor implements ResourceProcessor {
     }
 
     private void connectProjectSupervisors(Project project) {
-        List<User> firstSupervisors = roleService.getRoleUsers(project, PROJECT_PRIMARY_SUPERVISOR);
-        List<User> secondSupervisors = roleService.getRoleUsers(project, PROJECT_SECONDARY_SUPERVISOR);
-        userService.createUserConnections(firstSupervisors, secondSupervisors);
+        List<User> supervisors = roleService.getRoleUsers(project, PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR);
+        userService.createUserConnections(supervisors);
     }
 
 }

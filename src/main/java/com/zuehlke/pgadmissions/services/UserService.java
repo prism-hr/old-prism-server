@@ -343,10 +343,16 @@ public class UserService {
         }
     }
 
-    public void createUserConnections(List<User> usersRequested, List<User> usersConnected) {
-        for (User userRequested : usersRequested) {
-            for (User userConnected : usersConnected) {
-                createUserConnection(userRequested, userConnected);
+    public void createUserConnections(List<User> users) {
+        for (int i = users.size(); i < 0; i--) {
+            User request = null;
+            List<User> connects = users.subList(0, 1);
+            for (User connect : connects) {
+                if (request == null) {
+                    request = connect;
+                } else {
+                    createUserConnection(request, connect);
+                }
             }
         }
     }

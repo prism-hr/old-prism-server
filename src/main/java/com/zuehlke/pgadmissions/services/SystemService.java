@@ -411,7 +411,8 @@ public class SystemService {
                     .withCipherSalt(EncryptionUtils.getUUID()).withCreatedTimestamp(baseline).withUpdatedTimestamp(baseline);
             entityService.save(system);
 
-            ResourceState systemState = new ResourceState().withResource(system).withState(systemRunning).withPrimaryState(true);
+            ResourceState systemState = new ResourceState().withResource(system).withState(systemRunning).withPrimaryState(true)
+                    .withCreatedDate(new LocalDate());
             entityService.save(systemState);
             system.getResourceStates().add(systemState);
         } else {

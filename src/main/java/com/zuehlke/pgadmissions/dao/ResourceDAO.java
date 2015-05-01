@@ -358,21 +358,6 @@ public class ResourceDAO {
                 .executeUpdate();
     }
 
-    public ResourceParent getResourceAcceptingApplications(Resource resource) {
-        String resourceReference = resource.getResourceScope().getLowerCamelName();
-        return (ResourceParent) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.property(resourceReference))
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resourceReference, resource)) //
-                .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_APPLICATION)) //
-                .add(Restrictions.eq("action.creationScope.id", APPLICATION)) //
-                .uniqueResult();
-    }
-
     private void addResourceListCustomColumns(PrismScope scopeId, ProjectionList projectionList) {
         HashMultimap<String, String> customColumns = scopeId.getConsoleListCustomColumns();
         for (String tableName : customColumns.keySet()) {

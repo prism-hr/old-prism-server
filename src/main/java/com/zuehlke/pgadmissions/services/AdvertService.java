@@ -97,6 +97,10 @@ public class AdvertService {
         return entityService.getById(AdvertClosingDate.class, id);
     }
 
+    public Advert getAdvert(String resourceScope, Integer resourceId) {
+        return advertDAO.getAdvert(resourceScope, resourceId);
+    }
+
     public List<Advert> getAdverts(OpportunitiesQueryDTO queryDTO, List<PrismState> institutionStates, List<PrismState> programStates,
                                    List<PrismState> projectStates) {
         institutionStates = queryDTO.getInstitutions() == null ? institutionStates : stateService.getInstitutionStates();
@@ -326,10 +330,6 @@ public class AdvertService {
         Resource parentResource = advert.getResource();
         return new SocialMetadataDTO().withAuthor(parentResource.getUser().getFullName()).withTitle(advert.getTitle()).withDescription(advert.getSummary())
                 .withThumbnailUrl(resourceService.getSocialThumbnailUrl(parentResource)).withResourceUrl(resourceService.getSocialResourceUrl(parentResource));
-    }
-
-    public boolean getAcceptingApplications(List<PrismState> activeProgramStates, List<PrismState> activeProjectStates, Advert advert) {
-        return resourceService.getResourceAcceptingApplications(advert.getResource()) != null;
     }
 
     private String getCurrencyAtLocale(Advert advert) {

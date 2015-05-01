@@ -5,6 +5,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 
 import java.util.List;
 import java.util.Set;
@@ -12,8 +13,6 @@ import java.util.Set;
 public class AdvertRepresentation {
 
     private Integer id;
-
-    private boolean acceptingApplication;
 
     private String title;
 
@@ -57,6 +56,8 @@ public class AdvertRepresentation {
 
     private List<String> locations;
 
+    private List<ResourceConditionRepresentation> resourceConditions;
+
     private InstitutionRepresentation institution;
 
     private String department;
@@ -69,14 +70,6 @@ public class AdvertRepresentation {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public final boolean isAcceptingApplication() {
-        return acceptingApplication;
-    }
-
-    public final void setAcceptingApplication(boolean acceptingApplication) {
-        this.acceptingApplication = acceptingApplication;
     }
 
     public String getTitle() {
@@ -103,19 +96,19 @@ public class AdvertRepresentation {
         this.description = description;
     }
 
-    public final String getHomepage() {
+    public String getHomepage() {
         return homepage;
     }
 
-    public final void setHomepage(String homepage) {
+    public void setHomepage(String homepage) {
         this.homepage = homepage;
     }
 
-    public final String getApplyHomepage() {
+    public String getApplyHomepage() {
         return applyHomepage;
     }
 
-    public final void setApplyHomepage(String applyHomepage) {
+    public void setApplyHomepage(String applyHomepage) {
         this.applyHomepage = applyHomepage;
     }
 
@@ -223,11 +216,11 @@ public class AdvertRepresentation {
         this.themes = themes;
     }
 
-    public final PrismOpportunityType getOpportunityType() {
+    public PrismOpportunityType getOpportunityType() {
         return opportunityType;
     }
 
-    public final void setOpportunityType(PrismOpportunityType opportunityType) {
+    public void setOpportunityType(PrismOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
     }
 
@@ -247,6 +240,14 @@ public class AdvertRepresentation {
         this.locations = locations;
     }
 
+    public List<ResourceConditionRepresentation> getResourceConditions() {
+        return resourceConditions;
+    }
+
+    public void setResourceConditions(List<ResourceConditionRepresentation> resourceConditions) {
+        this.resourceConditions = resourceConditions;
+    }
+
     public InstitutionRepresentation getInstitution() {
         return institution;
     }
@@ -255,19 +256,19 @@ public class AdvertRepresentation {
         this.institution = institution;
     }
 
-    public final String getDepartment() {
+    public String getDepartment() {
         return department;
     }
 
-    public final void setDepartment(String department) {
+    public void setDepartment(String department) {
         this.department = department;
     }
 
-    public final String getSequenceIdentifier() {
+    public String getSequenceIdentifier() {
         return sequenceIdentifier;
     }
 
-    public final void setSequenceIdentifier(String sequenceIdentifier) {
+    public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 

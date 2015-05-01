@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.workflow.transition.persisters.ResourcePersister
 import com.zuehlke.pgadmissions.workflow.transition.processors.ApplicationProcessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ApplicationPostprocessor;
+import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.InstitutionPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProgramPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProjectPostprocessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors.ApplicationPreprocessor;
@@ -36,7 +37,7 @@ public enum PrismScope {
 
     SYSTEM(null, System.class, "SM", null, null, null, null, null, null, null), //
     INSTITUTION(ORGANIZATION_CATEGORY, Institution.class, "IN", new ColumnDefinition().add("institution", "title").getAll(), null,
-            InstitutionCreator.class, InstitutionPersister.class, null, null, null), //
+            InstitutionCreator.class, InstitutionPersister.class, null, InstitutionPostprocessor.class, null), //
     PROGRAM(OPPORTUNITY_CATEGORY, Program.class, "PM", new ColumnDefinition().add("institution", "title").add("program", "title").getAll(), null,
             ProgramCreator.class, ProgramPersister.class, null, null, ProgramPostprocessor.class), //
     PROJECT(OPPORTUNITY_CATEGORY, Project.class, "PT", new ColumnDefinition().add("program", "title").add("project", "title").getAll(), null,

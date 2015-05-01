@@ -145,3 +145,25 @@ delete
 from state
 where id like "%_DEACTIVATED"
 ;
+
+alter table comment
+	add column sponsorship_requirement_fulfilled int(1) unsigned after sponsorship_confirmed
+;
+
+alter table advert
+	add column sponsorship_secured decimal(10, 2) after sponsorship_target,
+	add index (sponsorship_required, sponsorship_secured)
+;
+
+drop table advert_sponsorship
+;
+
+alter table comment
+	add column sponsor_id int(10) unsigned after transition_state_id,
+	add index (sponsor_id),
+	add foreign key (sponsor_id) references institution (id)
+;
+
+alter table comment
+	modify column sponsorship_amount_converted decimal(10, 2)
+;

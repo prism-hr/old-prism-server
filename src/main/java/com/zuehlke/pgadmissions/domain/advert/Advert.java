@@ -76,6 +76,9 @@ public class Advert extends ResourceParentAttribute {
     @Column(name = "sponsorship_required")
     private BigDecimal sponsorshipRequired;
 
+    @Column(name = "sponsorship_secured")
+    private BigDecimal sponsorshipSecured;
+
     @Embedded
     @AttributeOverrides({ @AttributeOverride(name = "interval", column = @Column(name = "fee_interval")),
             @AttributeOverride(name = "currencySpecified", column = @Column(name = "fee_currency_specified")),
@@ -160,9 +163,6 @@ public class Advert extends ResourceParentAttribute {
     @JoinColumn(name = "advert_id", nullable = false)
     private Set<AdvertClosingDate> closingDates = Sets.newHashSet();
 
-    @OneToMany(mappedBy = "advert")
-    private Set<AdvertSponsor> sponsorships = Sets.newHashSet();
-
     public Integer getId() {
         return id;
     }
@@ -233,6 +233,14 @@ public class Advert extends ResourceParentAttribute {
 
     public void setSponsorshipRequired(BigDecimal sponsorshipRequired) {
         this.sponsorshipRequired = sponsorshipRequired;
+    }
+
+    public BigDecimal getSponsorshipSecured() {
+        return sponsorshipSecured;
+    }
+
+    public void setSponsorshipSecured(BigDecimal sponsorshipSecured) {
+        this.sponsorshipSecured = sponsorshipSecured;
     }
 
     public AdvertFinancialDetail getFee() {

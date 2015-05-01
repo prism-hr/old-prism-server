@@ -44,6 +44,10 @@ public class ProjectPostprocessor implements ResourceProcessor {
         if (comment.isProjectViewEditComment()) {
             connectProjectSupervisors(project, comment);
         }
+        
+        if (comment.isSponsorshipComment()) {
+            advertService.synchronizeSponsorship(project, comment);
+        }
     }
 
     private void connectProjectSupervisors(Project project, Comment comment) {

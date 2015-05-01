@@ -24,7 +24,6 @@ import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertSponsor;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -189,9 +188,6 @@ public class Institution extends ResourceParent {
 
     @OneToMany(mappedBy = "institution")
     private Set<UserRole> userRoles = Sets.newHashSet();
-    
-    @OneToMany(mappedBy = "sponsor")
-    private Set<AdvertSponsor> sponsorships;
 
     @Override
     public Integer getId() {
@@ -344,10 +340,6 @@ public class Institution extends ResourceParent {
     @Override
     public Set<UserRole> getUserRoles() {
         return userRoles;
-    }
-
-    public Set<AdvertSponsor> getSponsorships() {
-        return sponsorships;
     }
 
     public Institution withId(Integer id) {

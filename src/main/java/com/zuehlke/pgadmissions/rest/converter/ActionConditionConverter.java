@@ -1,8 +1,9 @@
 package com.zuehlke.pgadmissions.rest.converter;
 
+import org.dozer.DozerConverter;
+
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
-import org.dozer.DozerConverter;
 
 public class ActionConditionConverter extends DozerConverter<ResourceCondition, PrismActionCondition> {
 

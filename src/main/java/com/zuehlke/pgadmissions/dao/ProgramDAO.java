@@ -4,11 +4,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_COMPLETED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_WITHDRAWN;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DEACTIVATED;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
@@ -36,7 +33,6 @@ import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
@@ -81,19 +77,6 @@ public class ProgramDAO {
                 .add(Restrictions.ilike("title", searchTerm, MatchMode.ANYWHERE)) //
                 .addOrder(Order.desc("title")) //
                 .list();
-    }
-
-    public State getPreviousState(Program program) {
-        return (State) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.property("state")) //
-                .add(Restrictions.eq("program", program)) // /
-                .add(Restrictions.isNotNull("state")) //
-                .add(Restrictions.ne("state", program.getState())) //
-                .add(Restrictions.in("state.id", Arrays.asList(PROGRAM_APPROVED, PROJECT_DEACTIVATED))) //
-                .addOrder(Order.desc("createdTimestamp")) //
-                .addOrder(Order.desc("id")) //
-                .setMaxResults(1) //
-                .uniqueResult();
     }
 
     public List<String> getSuggestedDivisions(Program program, String location) {

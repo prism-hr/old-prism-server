@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;

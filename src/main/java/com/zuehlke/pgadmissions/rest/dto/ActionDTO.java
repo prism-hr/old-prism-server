@@ -1,10 +1,11 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import org.apache.commons.lang3.ObjectUtils;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import org.apache.commons.lang3.ObjectUtils;
+
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
 public class ActionDTO {
 

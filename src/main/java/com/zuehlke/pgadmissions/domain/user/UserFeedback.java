@@ -15,7 +15,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;

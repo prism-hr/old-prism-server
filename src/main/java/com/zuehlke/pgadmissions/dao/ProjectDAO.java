@@ -2,11 +2,8 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DEACTIVATED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DISABLED_PENDING_REACTIVATION;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
@@ -20,12 +17,10 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
@@ -57,19 +52,6 @@ public class ProjectDAO {
                 .setParameter("program", program) //
                 .setParameter("baseline", program.getDueDate()) //
                 .executeUpdate();
-    }
-
-    public State getPreviousState(Project project) {
-        return (State) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.property("state")) //
-                .add(Restrictions.eq("project", project)) // /
-                .add(Restrictions.isNotNull("state")) //
-                .add(Restrictions.ne("state", project.getState())) //
-                .add(Restrictions.in("state.id", Arrays.asList(PROJECT_APPROVED, PROJECT_DEACTIVATED))) //
-                .addOrder(Order.desc("createdTimestamp")) //
-                .addOrder(Order.desc("id")) //
-                .setMaxResults(1) //
-                .uniqueResult();
     }
 
     public Long getActiveProjectCount(ResourceParent resource) {

@@ -21,4 +21,5 @@ public class AdvertFeesAndPaymentsDTO {
     public void setPay(FinancialDetailsDTO pay) {
         this.pay = pay;
     }
+
 }

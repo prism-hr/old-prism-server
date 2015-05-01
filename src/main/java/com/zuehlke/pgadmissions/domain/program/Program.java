@@ -1,18 +1,23 @@
 package com.zuehlke.pgadmissions.domain.program;
 
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.department.Department;
-import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.project.Project;
-import com.zuehlke.pgadmissions.domain.resource.*;
-import com.zuehlke.pgadmissions.domain.system.System;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserRole;
-import com.zuehlke.pgadmissions.domain.workflow.State;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_COMPLETED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_REJECTED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_WITHDRAWN;
+
+import java.math.BigDecimal;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -21,11 +26,24 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import javax.persistence.*;
-import java.math.BigDecimal;
-import java.util.Set;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.*;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.department.Department;
+import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
+import com.zuehlke.pgadmissions.domain.system.System;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserRole;
+import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
 @Table(name = "PROGRAM")
@@ -161,10 +179,6 @@ public class Program extends ResourceParent {
 
     @OneToMany(mappedBy = "program")
     private Set<ResourcePreviousState> resourcePreviousStates = Sets.newHashSet();
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "PROGRAM_RELATION", joinColumns = @JoinColumn(name = "program_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "program_relation_id", nullable = false))
-    private Set<Program> programRelations = Sets.newHashSet();
 
     @OneToMany(mappedBy = "program")
     private Set<Project> projects = Sets.newHashSet();
@@ -505,10 +519,6 @@ public class Program extends ResourceParent {
     @Override
     public Set<ResourceCondition> getResourceConditions() {
         return resourceConditions;
-    }
-
-    public Set<Program> getProgramRelations() {
-        return programRelations;
     }
 
     public Set<Project> getProjects() {

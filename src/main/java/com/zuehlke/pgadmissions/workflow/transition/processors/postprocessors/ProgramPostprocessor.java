@@ -29,7 +29,7 @@ public class ProgramPostprocessor implements ResourceProcessor {
         program.getInstitution().setUpdatedTimestampSitemap(updatedTimestamp);
         advertService.setSequenceIdentifier(program.getAdvert(), program.getSequenceIdentifier().substring(0, 13));
 
-        if (comment.isProgramApproveOrDeactivateComment()) {
+        if (comment.isProgramApproveComment()) {
             synchronizeProjects(comment, program);
         }
     }

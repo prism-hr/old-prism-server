@@ -1,13 +1,17 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.advert;
 
-import com.zuehlke.pgadmissions.domain.definitions.*;
+import java.util.List;
+import java.util.Set;
+
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.UserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionAddressRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionRepresentation;
-
-import java.util.List;
-import java.util.Set;
 
 public class AdvertRepresentation {
 

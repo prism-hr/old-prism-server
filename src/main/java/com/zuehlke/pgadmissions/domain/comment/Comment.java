@@ -139,7 +139,7 @@ public class Comment {
 
     @Embedded
     private CommentSponsorship sponsorship;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "application_eligible")
     private PrismYesNoUnsureResponse applicationEligible;
@@ -186,7 +186,7 @@ public class Comment {
     @Lob
     @Column(name = "application_export_exception")
     private String exportException;
-    
+
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
@@ -453,7 +453,7 @@ public class Comment {
     public void setExportException(String exportException) {
         this.exportException = exportException;
     }
-    
+
     public Set<CommentAssignedUser> getAssignedUsers() {
         return assignedUsers;
     }
@@ -807,6 +807,10 @@ public class Comment {
 
     public boolean isApplicationReserveStatusComment() {
         return applicationReserveStatus != null;
+    }
+
+    public boolean isSponsorshipComment() {
+        return sponsorship != null && BooleanUtils.isTrue(sponsorship.getConfirmed());
     }
 
     public String getApplicationRatingDisplay() {

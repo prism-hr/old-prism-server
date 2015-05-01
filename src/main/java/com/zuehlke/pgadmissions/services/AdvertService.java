@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ADVERTISE_INVALID_PARTNER_INSTITUTION;
 import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -35,6 +34,8 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFilterCategory;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentSponsorship;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -344,6 +345,28 @@ public class AdvertService {
         return resourceService.getResourceAcceptingApplications(advert.getResource()) != null;
     }
 
+    public void synchronizeSponsorship(ResourceParent resource, Comment comment) throws Exception {
+        Advert advert = resource.getAdvert();
+        String advertCurrency = advert.getResource().getInstitution().getCurrency();
+        BigDecimal advertRequired = advert.getSponsorshipRequired();
+        BigDecimal advertSecured = advert.getSponsorshipSecured();
+        
+        CommentSponsorship sponsorship = comment.getSponsorship(); 
+        String sponsorshipCurrency = sponsorship.getCurrency();
+        
+        BigDecimal sponsorshipConverted = sponsorship.getAmountSpecified();
+        if (!sponsorshipCurrency.equals(advertCurrency)) {
+            BigDecimal exchangeRate = getExchangeRate(sponsorshipCurrency, advertCurrency, new LocalDate());
+            sponsorshipConverted = sponsorshipConverted.multiply(exchangeRate).setScale(2, RoundingMode.HALF_UP);
+        }
+        
+        sponsorship.setAmountConverted(sponsorshipConverted);
+        advertSecured = advertSecured == null ? advertSecured : advertSecured.add(sponsorshipConverted);
+        
+        advert.setSponsorshipSecured(advertSecured);
+        sponsorship.setTargetFulfilled(advertRequired.compareTo(advertSecured) >= 0);
+    }
+    
     private String getCurrencyAtLocale(Advert advert) {
         InstitutionAddress addressAtLocale = advert.getAddress();
         addressAtLocale = addressAtLocale == null ? advert.getResource().getInstitution().getAdvert().getAddress() : addressAtLocale;
@@ -412,7 +435,7 @@ public class AdvertService {
         }
     }
 
-    private BigDecimal getExchangeRate(String specifiedCurrency, String currencyAtLocale, LocalDate baseline) throws IOException {
+    private BigDecimal getExchangeRate(String specifiedCurrency, String currencyAtLocale, LocalDate baseline) throws Exception {
         removeExpiredExchangeRates(baseline);
 
         String pair = specifiedCurrency + currencyAtLocale;

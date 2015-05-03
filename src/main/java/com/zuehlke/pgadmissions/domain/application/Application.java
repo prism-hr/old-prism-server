@@ -746,7 +746,7 @@ public class Application extends Resource {
         return this;
     }
 
-    public Application withParentResource(Resource parentResource) {
+    public Application withResource(Resource parentResource) {
         setParentResource(parentResource);
         return this;
     }

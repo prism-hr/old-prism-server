@@ -21,7 +21,7 @@ public class ApplicationCreator implements ResourceCreator {
     @Override
     public Resource create(User user, ResourceDTO newResource) throws Exception {
         ResourceParent parentResource = (ResourceParent) entityService.getById(newResource.getResourceScope().getResourceClass(), newResource.getResourceId());
-        return new Application().withUser(user).withParentResource(parentResource).withAdvert(parentResource.getAdvert()).withRetain(false)
+        return new Application().withUser(user).withResource(parentResource).withAdvert(parentResource.getAdvert()).withRetain(false)
                 .withCreatedTimestamp(new DateTime());
     }
 

@@ -196,7 +196,7 @@ public class ResourceService {
 
         Class<? extends ResourceCreator> resourceCreator = resourceScope.getResourceCreator();
         if (resourceCreator == null) {
-            throw new Error();
+            throw new UnsupportedOperationException();
         }
 
         User resourceUser = user.getParentUser();
@@ -675,7 +675,7 @@ public class ResourceService {
                 prismStudyOptions = resource.getOpportunityType().getPrismOpportunityType().getDefaultStudyOptions();
             }
         }
-        
+
         for (PrismStudyOption prismStudyOption : prismStudyOptions) {
             if (close.isAfter(baseline)) {
                 StudyOption studyOption = importedEntityService.getByCode(StudyOption.class, resource.getInstitution(), prismStudyOption.name());

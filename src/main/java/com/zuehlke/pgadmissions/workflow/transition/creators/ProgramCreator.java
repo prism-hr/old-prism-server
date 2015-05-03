@@ -54,10 +54,10 @@ public class ProgramCreator implements ResourceCreator {
         Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(departmentDTO);
         OpportunityType opportunityType = importedEntityService.getByCode(OpportunityType.class, institution, newProgram.getOpportunityType().name());
 
-        Program program = new Program().withUser(user).withInstitution(institution).withDepartment(department).withAdvert(advert)
+        Program program = new Program().withUser(user).withResource(institution).withDepartment(department).withAdvert(advert)
                 .withOpportunityType(opportunityType).withTitle(advert.getTitle()).withDurationMinimum(newProgram.getDurationMinimum())
                 .withDurationMaximum(newProgram.getDurationMaximum()).withRequireProjectDefinition(false)
-                .withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD));
+                .withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD)).withImported(false);
 
         resourceService.setAttributes(program, newProgram.getAttributes());
         return program;

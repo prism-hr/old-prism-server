@@ -23,4 +23,5 @@ public class ResourceDTO {
     public void setResourceId(Integer resourceId) {
         this.resourceId = resourceId;
     }
+
 }

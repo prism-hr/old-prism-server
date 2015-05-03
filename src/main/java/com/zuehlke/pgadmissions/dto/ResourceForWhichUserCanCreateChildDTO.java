@@ -5,8 +5,8 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 public class ResourceForWhichUserCanCreateChildDTO {
 
     private ResourceParent resource;
-    
-    private Boolean patnerMode;
+
+    private Boolean partnerMode;
 
     public ResourceParent getResource() {
         return resource;
@@ -16,12 +16,12 @@ public class ResourceForWhichUserCanCreateChildDTO {
         this.resource = resource;
     }
 
-    public Boolean getPatnerMode() {
-        return patnerMode;
+    public Boolean getPartnerMode() {
+        return partnerMode;
     }
 
-    public void setPatnerMode(Boolean patnerMode) {
-        this.patnerMode = patnerMode;
+    public void setPartnerMode(Boolean partnerMode) {
+        this.partnerMode = partnerMode;
     }
-    
+
 }

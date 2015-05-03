@@ -1,27 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.INSTITUTION_COMMENT_UPDATED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_STARTUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_VIEW_EDIT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_CREATE_INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
-import org.dozer.Mapper;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
@@ -37,12 +15,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.InstitutionsForWhichUserCanCreateProjectDTO;
-import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
-import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
-import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
-import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
+import com.zuehlke.pgadmissions.dto.*;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.iso.jaxb.InstitutionDomiciles;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
@@ -50,6 +23,24 @@ import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.InstitutionDomicileRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import org.dozer.Mapper;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.INSTITUTION_COMMENT_UPDATED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 
 @Service
 @Transactional
@@ -307,7 +298,7 @@ public class InstitutionService {
         List<ResourceForWhichUserCanCreateChildDTO> institutionProjectParents = institutionDAO.getInstitutionsForWhichUserCanCreateProject(user);
         for (ResourceForWhichUserCanCreateChildDTO institutionProjectParent : institutionProjectParents) {
             InstitutionsForWhichUserCanCreateProjectDTO institution = new InstitutionsForWhichUserCanCreateProjectDTO().withInstitution(
-                    (Institution) institutionProjectParent.getResource()).withInstitutionPartnerMode(institutionProjectParent.getPatnerMode());
+                    (Institution) institutionProjectParent.getResource()).withInstitutionPartnerMode(institutionProjectParent.getPartnerMode());
             index.put(institutionProjectParent.getResource().getId(), institution);
             institutions.put(institutionProjectParent.getResource().getTitle(), institution);
         }
@@ -319,9 +310,9 @@ public class InstitutionService {
             if (institution == null) {
                 institutions.put(institutionProgramProjectParent.getResource().getTitle(), new InstitutionsForWhichUserCanCreateProjectDTO().withInstitution(
                         (Institution) institutionProgramProjectParent.getResource())
-                        .withProgramPartnerMode(institutionProgramProjectParent.getPatnerMode()));
+                        .withProgramPartnerMode(institutionProgramProjectParent.getPartnerMode()));
             } else {
-                institution.setProgramPartnerMode(institutionProgramProjectParent.getPatnerMode());
+                institution.setProgramPartnerMode(institutionProgramProjectParent.getPartnerMode());
             }
         }
 

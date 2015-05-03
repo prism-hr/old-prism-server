@@ -167,7 +167,7 @@ public class AdvertService {
             updatePartner(user, advert, partnerDTO);
         }
 
-        advert.setSponsorshipRequired(advertDTO.getSponsorshipRequired());
+        advert.setSponsorshipTarget(advertDTO.getSponsorshipRequired());
     }
 
     public void updateDetail(PrismScope resourceScope, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) throws Exception {
@@ -349,25 +349,25 @@ public class AdvertService {
     public void synchronizeSponsorship(ResourceParent resource, Comment comment) throws Exception {
         Advert advert = resource.getAdvert();
         String advertCurrency = advert.getResource().getInstitution().getCurrency();
-        BigDecimal advertRequired = advert.getSponsorshipRequired();
+        BigDecimal advertRequired = advert.getSponsorshipTarget();
         BigDecimal advertSecured = advert.getSponsorshipSecured();
-        
-        CommentSponsorship sponsorship = comment.getSponsorship(); 
+
+        CommentSponsorship sponsorship = comment.getSponsorship();
         String sponsorshipCurrency = sponsorship.getCurrency();
-        
+
         BigDecimal sponsorshipConverted = sponsorship.getAmountSpecified();
         if (!sponsorshipCurrency.equals(advertCurrency)) {
             BigDecimal exchangeRate = getExchangeRate(sponsorshipCurrency, advertCurrency, new LocalDate());
             sponsorshipConverted = sponsorshipConverted.multiply(exchangeRate).setScale(2, RoundingMode.HALF_UP);
         }
-        
+
         sponsorship.setAmountConverted(sponsorshipConverted);
         advertSecured = advertSecured == null ? advertSecured : advertSecured.add(sponsorshipConverted);
-        
+
         advert.setSponsorshipSecured(advertSecured);
         sponsorship.setTargetFulfilled(advertRequired.compareTo(advertSecured) >= 0);
     }
-    
+
     private String getCurrencyAtLocale(Advert advert) {
         InstitutionAddress addressAtLocale = advert.getAddress();
         addressAtLocale = addressAtLocale == null ? advert.getResource().getInstitution().getAdvert().getAddress() : addressAtLocale;

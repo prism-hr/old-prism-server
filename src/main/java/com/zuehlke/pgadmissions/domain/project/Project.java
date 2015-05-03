@@ -35,6 +35,7 @@ import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -47,7 +48,7 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 @Entity
 @Table(name = "PROJECT")
-public class Project extends ResourceParent {
+public class Project extends ResourceOpportunity {
 
     @Id
     @GeneratedValue
@@ -240,6 +241,7 @@ public class Project extends ResourceParent {
         return department;
     }
 
+    @Override
     public void setDepartment(Department department) {
         this.department = department;
     }
@@ -262,10 +264,12 @@ public class Project extends ResourceParent {
         this.advert = advert;
     }
 
+    @Override
     public OpportunityType getOpportunityType() {
         return opportunityType;
     }
 
+    @Override
     public void setOpportunityType(OpportunityType opportunityType) {
         this.opportunityType = opportunityType;
     }
@@ -280,18 +284,22 @@ public class Project extends ResourceParent {
         this.title = title;
     }
 
+    @Override
     public Integer getDurationMinimum() {
         return durationMinimum;
     }
 
+    @Override
     public void setDurationMinimum(Integer durationMinimum) {
         this.durationMinimum = durationMinimum;
     }
 
+    @Override
     public Integer getDurationMaximum() {
         return durationMaximum;
     }
 
+    @Override
     public void setDurationMaximum(Integer durationMaximum) {
         this.durationMaximum = durationMaximum;
     }

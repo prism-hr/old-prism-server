@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Service;
@@ -19,8 +18,6 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.department.Department;
-import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -28,12 +25,10 @@ import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.dto.DepartmentDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceParentAttributesDTO;
 
 @Service
 @Transactional
@@ -43,13 +38,7 @@ public class ProjectService {
     private ProjectDAO projectDAO;
 
     @Inject
-    private DepartmentService departmentService;
-
-    @Inject
     private EntityService entityService;
-
-    @Inject
-    private ImportedEntityService importedEntityService;
 
     @Inject
     private UserService userService;
@@ -135,34 +124,7 @@ public class ProjectService {
     }
 
     public void update(Integer projectId, OpportunityDTO projectDTO, Comment comment) throws Exception {
-        Project project = getById(projectId);
-
-        DepartmentDTO departmentDTO = projectDTO.getDepartment();
-        Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(departmentDTO);
-        project.setDepartment(department);
-
-        resourceService.updateAdvert(project, projectDTO, comment);
-
-        project.setDurationMinimum(projectDTO.getDurationMinimum());
-        project.setDurationMaximum(projectDTO.getDurationMaximum());
-
-        ResourceParentAttributesDTO attributes = projectDTO.getAttributes();
-        resourceService.setResourceConditions(project, attributes.getResourceConditions());
-
-        if (BooleanUtils.isFalse(project.getImported())) {
-            OpportunityType opportunityType = importedEntityService.getByCode(OpportunityType.class, //
-                    project.getInstitution(), projectDTO.getOpportunityType().name());
-
-            project.setOpportunityType(opportunityType);
-            LocalDate endDate = projectDTO.getEndDate();
-            if (endDate != null) {
-                project.setEndDate(endDate);
-            }
-
-            resourceService.setStudyOptions(project, projectDTO.getStudyOptions(), new LocalDate());
-        }
-
-        resourceService.setStudyLocations(project, attributes.getStudyLocations());
+        resourceService.update(PROJECT, projectId, projectDTO, comment);
     }
 
 }

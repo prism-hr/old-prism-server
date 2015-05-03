@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
@@ -47,7 +47,7 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
 @Table(name = "PROGRAM")
-public class Program extends ResourceParent {
+public class Program extends ResourceOpportunity {
 
     @Id
     @GeneratedValue
@@ -227,6 +227,7 @@ public class Program extends ResourceParent {
         return department;
     }
 
+    @Override
     public void setDepartment(Department department) {
         this.department = department;
     }
@@ -272,10 +273,12 @@ public class Program extends ResourceParent {
         this.advert = advert;
     }
 
+    @Override
     public OpportunityType getOpportunityType() {
         return opportunityType;
     }
 
+    @Override
     public void setOpportunityType(OpportunityType opportunityType) {
         this.opportunityType = opportunityType;
     }
@@ -318,18 +321,22 @@ public class Program extends ResourceParent {
         this.title = title;
     }
 
+    @Override
     public Integer getDurationMinimum() {
         return durationMinimum;
     }
 
+    @Override
     public void setDurationMinimum(Integer durationMinimum) {
         this.durationMinimum = durationMinimum;
     }
 
+    @Override
     public Integer getDurationMaximum() {
         return durationMaximum;
     }
 
+    @Override
     public void setDurationMaximum(Integer durationMaximum) {
         this.durationMaximum = durationMaximum;
     }
@@ -342,6 +349,7 @@ public class Program extends ResourceParent {
         this.requireProjectDefinition = requireProjectDefinition;
     }
 
+    @Override
     public Boolean getImported() {
         return imported;
     }

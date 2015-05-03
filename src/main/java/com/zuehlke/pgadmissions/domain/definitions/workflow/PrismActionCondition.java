@@ -13,7 +13,7 @@ public enum PrismActionCondition {
     ACCEPT_PROJECT(INSTITUTION, PROGRAM), //
     ACCEPT_APPLICATION(INSTITUTION, PROGRAM, PROJECT), //
     ACCEPT_SPONSOR(INSTITUTION, PROGRAM, PROJECT);
-
+    
     private List<PrismScope> validScopes;
 
     private PrismActionCondition(PrismScope... validScopes) {

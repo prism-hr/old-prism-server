@@ -1,13 +1,13 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,18 +15,14 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.department.Department;
-import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.dto.DepartmentDTO;
 import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
-import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceParentAttributesDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
 
 @Service
@@ -38,12 +34,6 @@ public class ProgramService {
 
     @Inject
     private EntityService entityService;
-
-    @Inject
-    private ImportedEntityService importedEntityService;
-
-    @Inject
-    private DepartmentService departmentService;
 
     @Inject
     private InstitutionService institutionService;
@@ -146,33 +136,7 @@ public class ProgramService {
     }
 
     public void update(Integer programId, OpportunityDTO programDTO, Comment comment) throws Exception {
-        Program program = entityService.getById(Program.class, programId);
-
-        DepartmentDTO departmentDTO = programDTO.getDepartment();
-        Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(departmentDTO);
-        program.setDepartment(department);
-
-        resourceService.updateAdvert(program, programDTO, comment);
-
-        program.setDurationMinimum(programDTO.getDurationMinimum());
-        program.setDurationMaximum(programDTO.getDurationMaximum());
-
-        ResourceParentAttributesDTO attributes = programDTO.getAttributes();
-        resourceService.setResourceConditions(program, attributes.getResourceConditions());
-        resourceService.setStudyLocations(program, attributes.getStudyLocations());
-
-        if (!program.getImported()) {
-            OpportunityType opportunityType = importedEntityService.getByCode(OpportunityType.class, //
-                    program.getInstitution(), programDTO.getOpportunityType().name());
-            program.setOpportunityType(opportunityType);
-
-            LocalDate endDate = programDTO.getEndDate();
-            if (endDate != null) {
-                program.setEndDate(endDate);
-            }
-
-            resourceService.setStudyOptions(program, programDTO.getStudyOptions(), new LocalDate());
-        }
+        resourceService.update(PROGRAM, programId, programDTO, comment);
     }
 
 }

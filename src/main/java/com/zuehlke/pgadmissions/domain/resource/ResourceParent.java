@@ -8,13 +8,14 @@ import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.department.Department;
+import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 
 public abstract class ResourceParent extends Resource {
 
     public abstract String getTitle();
-    
+
     public abstract void setTitle(String title);
-    
+
     public abstract Advert getAdvert();
 
     public abstract void setAdvert(Advert advert);
@@ -42,6 +43,10 @@ public abstract class ResourceParent extends Resource {
     public abstract Set<ResourceStudyOption> getStudyOptions();
 
     public abstract Set<ResourceStudyLocation> getStudyLocations();
+
+    public OpportunityType getOpportunityType() {
+        return null;
+    }
 
     public Department getDepartment() {
         return null;

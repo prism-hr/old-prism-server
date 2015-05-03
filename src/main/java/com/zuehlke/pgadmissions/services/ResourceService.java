@@ -48,17 +48,22 @@ import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceCondition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
+import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -74,6 +79,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
+import com.zuehlke.pgadmissions.dto.DepartmentDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListActionDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
@@ -86,6 +92,7 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO;
+import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceConditionDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceParentAttributesDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.ResourceSummaryRepresentation;
@@ -128,6 +135,9 @@ public class ResourceService {
 
     @Inject
     private ProgramService programService;
+
+    @Inject
+    private DepartmentService departmentService;
 
     @Inject
     private InstitutionService institutionService;
@@ -630,10 +640,27 @@ public class ResourceService {
         resource.getResourceConditions().clear();
         entityService.flush();
 
-        for (ResourceParentDTO.ResourceConditionDTO resourceCondition : resourceConditions) {
-            resource.addResourceCondition(new ResourceCondition().withResource(resource)
-                    .withActionCondition(resourceCondition.getActionCondition())
-                    .withPartnerNode(resourceCondition.getPartnerMode()));
+        if (resourceConditions == null) {
+            List<PrismResourceCondition> defaultResourceConditions;
+            PrismScope resourceScope = resource.getResourceScope();
+            if (resourceScope.equals(INSTITUTION)) {
+                defaultResourceConditions = PrismOpportunityType.getResourceConditions(resourceScope);
+            } else {
+                PrismOpportunityType opportunityType = resource.getOpportunityType().getPrismOpportunityType();
+                defaultResourceConditions = PrismOpportunityType.getResourceConditions(resourceScope, opportunityType);
+            }
+
+            for (PrismResourceCondition defaultResourceCondition : defaultResourceConditions) {
+                resource.addResourceCondition(new ResourceCondition().withResource(resource)
+                        .withActionCondition(defaultResourceCondition.getActionCondition())
+                        .withPartnerNode(defaultResourceCondition.isPartnerMode()));
+            }
+        } else {
+            for (ResourceParentDTO.ResourceConditionDTO resourceCondition : resourceConditions) {
+                resource.addResourceCondition(new ResourceCondition().withResource(resource)
+                        .withActionCondition(resourceCondition.getActionCondition())
+                        .withPartnerNode(resourceCondition.getPartnerMode()));
+            }
         }
     }
 
@@ -642,6 +669,13 @@ public class ResourceService {
         entityService.flush();
 
         LocalDate close = resource.getEndDate();
+        if (prismStudyOptions == null) {
+            PrismScope resourceScope = resource.getResourceScope();
+            if (!resourceScope.equals(INSTITUTION)) {
+                prismStudyOptions = resource.getOpportunityType().getPrismOpportunityType().getDefaultStudyOptions();
+            }
+        }
+        
         for (PrismStudyOption prismStudyOption : prismStudyOptions) {
             if (close.isAfter(baseline)) {
                 StudyOption studyOption = importedEntityService.getByCode(StudyOption.class, resource.getInstitution(), prismStudyOption.name());
@@ -659,6 +693,38 @@ public class ResourceService {
             for (String studyLocation : studyLocations) {
                 resource.addStudyLocation(new ResourceStudyLocation().withResource(resource).withStudyLocation(studyLocation));
             }
+        }
+    }
+
+    public void update(PrismScope resourceScope, Integer resourceId, OpportunityDTO resourceDTO, Comment comment) throws Exception {
+        ResourceOpportunity resource = (ResourceOpportunity) getById(resourceScope, resourceId);
+
+        DepartmentDTO departmentDTO = resourceDTO.getDepartment();
+        Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(departmentDTO);
+        resource.setDepartment(department);
+
+        updateAdvert(resource, resourceDTO, comment);
+
+        resource.setDurationMinimum(resourceDTO.getDurationMinimum());
+        resource.setDurationMaximum(resourceDTO.getDurationMaximum());
+
+        ResourceParentAttributesDTO attributes = resourceDTO.getAttributes();
+        List<ResourceConditionDTO> resourceConditions = attributes.getResourceConditions();
+        setResourceConditions(resource, resourceConditions == null ? Lists.<ResourceConditionDTO> newArrayList() : resourceConditions);
+        setStudyLocations(resource, attributes.getStudyLocations());
+
+        if (!resource.getImported()) {
+            OpportunityType opportunityType = importedEntityService.getByCode(OpportunityType.class, //
+                    resource.getInstitution(), resourceDTO.getOpportunityType().name());
+            resource.setOpportunityType(opportunityType);
+
+            LocalDate endDate = resourceDTO.getEndDate();
+            if (endDate != null) {
+                resource.setEndDate(endDate);
+            }
+
+            List<PrismStudyOption> studyOptions = resourceDTO.getStudyOptions();
+            setStudyOptions(resource, studyOptions == null ? Lists.<PrismStudyOption> newArrayList() : studyOptions, new LocalDate());
         }
     }
 

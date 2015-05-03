@@ -1,6 +1,6 @@
 alter table advert 
-	add column sponsorship_required decimal(10, 2) unsigned,
-	add index (institution_partner_id, sponsorship_required, sequence_identifier)
+	add column sponsorship_target decimal(10, 2) unsigned,
+	add index (institution_partner_id, sponsorship_target, sequence_identifier)
 ;
 
 create table advert_sponsor (
@@ -152,7 +152,7 @@ alter table comment
 
 alter table advert
 	add column sponsorship_secured decimal(10, 2) after sponsorship_target,
-	add index (sponsorship_required, sponsorship_secured)
+	add index (sponsorship_target, sponsorship_secured)
 ;
 
 drop table advert_sponsor

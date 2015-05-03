@@ -73,8 +73,8 @@ public class Advert extends ResourceParentAttribute {
     @JoinColumn(name = "institution_partner_id")
     private Institution partner;
 
-    @Column(name = "sponsorship_required")
-    private BigDecimal sponsorshipRequired;
+    @Column(name = "sponsorship_target")
+    private BigDecimal sponsorshipTarget;
 
     @Column(name = "sponsorship_secured")
     private BigDecimal sponsorshipSecured;
@@ -227,12 +227,12 @@ public class Advert extends ResourceParentAttribute {
         this.partner = partner;
     }
 
-    public BigDecimal getSponsorshipRequired() {
-        return sponsorshipRequired;
+    public BigDecimal getSponsorshipTarget() {
+        return sponsorshipTarget;
     }
 
-    public void setSponsorshipRequired(BigDecimal sponsorshipRequired) {
-        this.sponsorshipRequired = sponsorshipRequired;
+    public void setSponsorshipTarget(BigDecimal sponsorshipTarget) {
+        this.sponsorshipTarget = sponsorshipTarget;
     }
 
     public BigDecimal getSponsorshipSecured() {

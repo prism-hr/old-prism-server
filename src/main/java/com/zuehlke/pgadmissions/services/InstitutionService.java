@@ -1,9 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.INSTITUTION_COMMENT_UPDATED;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_STARTUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_CREATE_INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
@@ -28,17 +26,12 @@ import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
-import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.dto.InstitutionsForWhichUserCanCreateProjectDTO;
 import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
@@ -47,7 +40,6 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.iso.jaxb.InstitutionDomiciles;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.InstitutionDomicileRepresentation;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
@@ -78,9 +70,6 @@ public class InstitutionService {
 
     @Inject
     private ActionService actionService;
-
-    @Inject
-    private CommentService commentService;
 
     @Inject
     private RoleService roleService;
@@ -168,10 +157,6 @@ public class InstitutionService {
     }
 
     public void save(Institution institution) {
-        Advert advert = institution.getAdvert();
-        InstitutionAddress address = advert.getAddress();
-        entityService.save(address);
-        entityService.save(advert);
         entityService.save(institution);
     }
 
@@ -206,29 +191,6 @@ public class InstitutionService {
 
     public Institution getActivatedInstitutionByGoogleId(String googleId) {
         return institutionDAO.getActivatedInstitutionByGoogleId(googleId);
-    }
-
-    public ActionOutcomeDTO executeAction(Integer institutionId, CommentDTO commentDTO) throws Exception {
-        User user = userService.getById(commentDTO.getUser());
-        Institution institution = getById(institutionId);
-
-        PrismAction actionId = commentDTO.getAction();
-        Action action = actionService.getById(actionId);
-
-        String commentContent = actionId == INSTITUTION_VIEW_EDIT ? applicationContext.getBean(PropertyLoader.class).localize(institution)
-                .load(INSTITUTION_COMMENT_UPDATED) : commentDTO.getContent();
-
-        State transitionState = stateService.getById(commentDTO.getTransitionState());
-        Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
-                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
-        commentService.appendCommentProperties(comment, commentDTO);
-
-        InstitutionDTO institutionDTO = (InstitutionDTO) commentDTO.getResource();
-        if (institutionDTO != null) {
-            update(institutionId, institutionDTO);
-        }
-
-        return actionService.executeUserAction(institution, action, comment);
     }
 
     public boolean hasAuthenticatedFeeds(Institution institution) {
@@ -297,31 +259,31 @@ public class InstitutionService {
     }
 
     public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsForWhichUserCanCreateProgram(User user) {
-        return institutionDAO.getInstitutionsForWhichUserCanCreateProgram(user);
+        boolean userLoggedIn = userService.getCurrentUser() != null;
+        return institutionDAO.getInstitutionsForWhichUserCanCreateProgram(userLoggedIn);
     }
 
-    public List<InstitutionsForWhichUserCanCreateProjectDTO> getInstitutionsForWhichUserCanCreateProject(User user) {
-        Map<Integer, InstitutionsForWhichUserCanCreateProjectDTO> index = Maps.newHashMap();
-        Map<String, InstitutionsForWhichUserCanCreateProjectDTO> institutions = Maps.newTreeMap();
+    public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsForWhichUserCanCreateProject(User user) {
+        Map<Integer, ResourceForWhichUserCanCreateChildDTO> index = Maps.newHashMap();
+        Map<String, ResourceForWhichUserCanCreateChildDTO> institutions = Maps.newTreeMap();
 
-        List<ResourceForWhichUserCanCreateChildDTO> institutionProjectParents = institutionDAO.getInstitutionsForWhichUserCanCreateProject(user);
+        boolean userLoggedIn = userService.getCurrentUser() != null;
+
+        List<ResourceForWhichUserCanCreateChildDTO> institutionProjectParents = institutionDAO.getInstitutionsForWhichUserCanCreateProject(userLoggedIn);
         for (ResourceForWhichUserCanCreateChildDTO institutionProjectParent : institutionProjectParents) {
-            InstitutionsForWhichUserCanCreateProjectDTO institution = new InstitutionsForWhichUserCanCreateProjectDTO().withInstitution(
-                    (Institution) institutionProjectParent.getResource()).withInstitutionPartnerMode(institutionProjectParent.getPatnerMode());
+            ResourceForWhichUserCanCreateChildDTO institution = new ResourceForWhichUserCanCreateChildDTO()
+                    .withResource(institutionProjectParent.getResource()).withPartnerMode(institutionProjectParent.getPartnerMode());
             index.put(institutionProjectParent.getResource().getId(), institution);
             institutions.put(institutionProjectParent.getResource().getTitle(), institution);
         }
 
         List<ResourceForWhichUserCanCreateChildDTO> institutionProgramProjectParents = institutionDAO
-                .getInstitutionsWhichHaveProgramsForWhichUserCanCreateProject(user);
+                .getInstitutionsWhichHaveProgramsForWhichUserCanCreateProject(userLoggedIn);
         for (ResourceForWhichUserCanCreateChildDTO institutionProgramProjectParent : institutionProgramProjectParents) {
-            InstitutionsForWhichUserCanCreateProjectDTO institution = index.get(institutionProgramProjectParent.getResource().getId());
+            ResourceForWhichUserCanCreateChildDTO institution = index.get(institutionProgramProjectParent.getResource().getId());
             if (institution == null) {
-                institutions.put(institutionProgramProjectParent.getResource().getTitle(), new InstitutionsForWhichUserCanCreateProjectDTO().withInstitution(
-                        (Institution) institutionProgramProjectParent.getResource())
-                        .withProgramPartnerMode(institutionProgramProjectParent.getPatnerMode()));
-            } else {
-                institution.setProgramPartnerMode(institutionProgramProjectParent.getPatnerMode());
+                institutions.put(institutionProgramProjectParent.getResource().getTitle(),
+                        new ResourceForWhichUserCanCreateChildDTO().withResource(institutionProgramProjectParent.getResource()));
             }
         }
 

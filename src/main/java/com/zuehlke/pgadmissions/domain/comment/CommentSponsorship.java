@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 public class CommentSponsorship {
 
     @ManyToOne
-    @JoinColumn(name = "sponsor_id")
+    @JoinColumn(name = "institution_sponsor_id")
     private Institution sponsor;
 
     @Column(name = "sponsorship_currency")

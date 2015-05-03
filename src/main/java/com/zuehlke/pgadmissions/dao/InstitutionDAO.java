@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -30,7 +31,6 @@ import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
-import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
@@ -237,38 +237,25 @@ public class InstitutionDAO {
                 .executeUpdate();
     }
 
-    public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsForWhichUserCanCreateProgram(User user) {
-        return (List<ResourceForWhichUserCanCreateChildDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("institution")) //
-                        .add(Projections.max("resourceCondition.partnerMode"))) //
-                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
-                .createAlias("institution.resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.disjunction() //
-                                        .add(Restrictions.eqProperty("institution.id", "userRole.institution.id")) //
-                                        .add(Restrictions.eqProperty("institution.system.id", "userRole.system.id"))) //
-                                .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_PROGRAM)) //
-                                .add(Restrictions.eq("resourceCondition.partnerMode", false)) //
-                                .add(Restrictions.eq("action.creationScope", PROGRAM))) //
+    public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsForWhichUserCanCreateProgram(boolean userLoggedIn) {
+        Junction disjunction = Restrictions.disjunction() //
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.disjunction() //
+                                .add(Restrictions.eqProperty("institution.id", "userRole.institution.id")) //
+                                .add(Restrictions.eqProperty("institution.system.id", "userRole.system.id"))) //
                         .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_PROGRAM)) //
-                        .add(Restrictions.eq("resourceCondition.partnerMode", true))) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceForWhichUserCanCreateChildDTO.class)) //
-                .list();
-    }
+                        .add(Restrictions.eq("resourceCondition.partnerMode", false)) //
+                        .add(Restrictions.eq("action.creationScope", PROGRAM))) //
+                .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_PROGRAM));
 
-    public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsForWhichUserCanCreateProject(User user) {
+        if (!userLoggedIn) {
+            disjunction.add(Restrictions.eq("resourceCondition.partnerMode", true));
+        }
+
         return (List<ResourceForWhichUserCanCreateChildDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("institution")) //
-                        .add(Projections.max("resourceCondition.partnerMode"))) //
+                        .add(Projections.groupProperty("institution"), "resource") //
+                        .add(Projections.max("resourceCondition.partnerMode"), "partnerMode")) //
                 .createAlias("institution", "institution", JoinType.INNER_JOIN) //
                 .createAlias("institution.resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
@@ -277,25 +264,63 @@ public class InstitutionDAO {
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.disjunction() //
-                                        .add(Restrictions.eqProperty("institution.id", "userRole.institution.id")) //
-                                        .add(Restrictions.eqProperty("institution.system.id", "userRole.system.id"))) //
-                                .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_PROJECT)) //
-                                .add(Restrictions.eq("resourceCondition.partnerMode", false)) //
-                                .add(Restrictions.eq("action.creationScope", PROJECT))) //
-                        .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_PROJECT)) //
-                        .add(Restrictions.eq("resourceCondition.partnerMode", true))) //
+                .add(disjunction) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceForWhichUserCanCreateChildDTO.class)) //
                 .list();
     }
 
-    public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsWhichHaveProgramsForWhichUserCanCreateProject(User user) {
+    public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsForWhichUserCanCreateProject(boolean userLoggedIn) {
+        Junction disjunction = Restrictions.disjunction() //
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.disjunction() //
+                                .add(Restrictions.eqProperty("institution.id", "userRole.institution.id")) //
+                                .add(Restrictions.eqProperty("institution.system.id", "userRole.system.id"))) //
+                        .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_PROJECT)) //
+                        .add(Restrictions.eq("resourceCondition.partnerMode", false)) //
+                        .add(Restrictions.eq("action.creationScope", PROJECT))) //
+                .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_PROJECT));
+
+        if (!userLoggedIn) {
+            disjunction.add(Restrictions.eq("resourceCondition.partnerMode", true));
+        }
+
         return (List<ResourceForWhichUserCanCreateChildDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("institution")) //
-                        .add(Projections.max("resourceCondition.partnerMode"))) //
+                        .add(Projections.groupProperty("institution"), "resource") //
+                        .add(Projections.max("resourceCondition.partnerMode"), "partnerMode")) //
+                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
+                .createAlias("institution.resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .add(disjunction) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceForWhichUserCanCreateChildDTO.class)) //
+                .list();
+    }
+
+    public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsWhichHaveProgramsForWhichUserCanCreateProject(boolean userLoggedIn) {
+        Junction disjunction = Restrictions.disjunction() //
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.disjunction() //
+                                .add(Restrictions.eqProperty("program.id", "userRole.program.id"))
+                                .add(Restrictions.eqProperty("program.institution.id", "userRole.institution.id")) //
+                                .add(Restrictions.eqProperty("program.system.id", "userRole.system.id"))) //
+                        .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_PROJECT)) //
+                        .add(Restrictions.eq("resourceCondition.partnerMode", false)) //
+                        .add(Restrictions.eq("action.creationScope", PROJECT))) //
+                .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_PROJECT));
+
+        if (!userLoggedIn) {
+            disjunction.add(Restrictions.eq("resourceCondition.partnerMode", true));
+        }
+
+        return (List<ResourceForWhichUserCanCreateChildDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("institution"), "resource") //
+                        .add(Projections.max("resourceCondition.partnerMode"), "partnerMode")) //
                 .createAlias("institution", "institution", JoinType.INNER_JOIN) //
                 .createAlias("insitution.program", "program", JoinType.INNER_JOIN) //
                 .createAlias("program.resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
@@ -305,17 +330,7 @@ public class InstitutionDAO {
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.disjunction() //
-                                        .add(Restrictions.eqProperty("program.id", "userRole.program.id"))
-                                        .add(Restrictions.eqProperty("program.institution.id", "userRole.institution.id")) //
-                                        .add(Restrictions.eqProperty("program.system.id", "userRole.system.id"))) //
-                                .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_PROJECT)) //
-                                .add(Restrictions.eq("resourceCondition.partnerMode", false)) //
-                                .add(Restrictions.eq("action.creationScope", PROJECT))) //
-                        .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_PROJECT)) //
-                        .add(Restrictions.eq("resourceCondition.partnerMode", true))) //
+                .add(disjunction) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceForWhichUserCanCreateChildDTO.class)) //
                 .list();
     }

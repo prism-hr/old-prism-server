@@ -42,7 +42,7 @@ import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
-@Table(name = "INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "title", "google_id" }) })
+@Table(name = "INSTITUTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "title" }) })
 public class Institution extends ResourceParent {
 
     @Id
@@ -617,7 +617,7 @@ public class Institution extends ResourceParent {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("user", user).addProperty("title", title).addProperty("googleId", googleId);
+        return new ResourceSignature().addProperty("user", user).addProperty("title", title);
     }
 
 }

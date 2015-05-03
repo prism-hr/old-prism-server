@@ -22,11 +22,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.validation.Valid;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.text.WordUtils;
-import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,8 +34,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.ValidationUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
@@ -58,17 +54,12 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
-import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
-import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismReportColumn;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -78,11 +69,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
-import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowPropertyConfiguration;
-import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
@@ -90,11 +77,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.dto.DefaultStartDateDTO;
 import com.zuehlke.pgadmissions.dto.DomicileUseDTO;
 import com.zuehlke.pgadmissions.exceptions.ApplicationExportException;
-import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentApplicationOfferDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentApplicationPositionDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.DocumentSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.EmploymentPositionSummaryRepresentation;
@@ -126,9 +109,6 @@ public class ApplicationService {
 
     @Inject
     private UserService userService;
-
-    @Inject
-    private CommentService commentService;
 
     @Inject
     private CustomizationService customizationService;
@@ -252,71 +232,6 @@ public class ApplicationService {
 
     public List<User> getUnassignedApplicationReferees(Application application) {
         return applicationDAO.getUnassignedApplicationReferees(application);
-    }
-
-    public void validateApplicationAndThrowException(Application application) {
-        BeanPropertyBindingResult errors = validateApplication(application);
-        if (errors.hasErrors()) {
-            throw new PrismValidationException("Application not completed", errors);
-        }
-    }
-
-    public ActionOutcomeDTO executeAction(@PathVariable Integer applicationId, @Valid @RequestBody CommentDTO commentDTO) throws Exception {
-        Application application = entityService.getById(Application.class, applicationId);
-        PrismAction actionId = commentDTO.getAction();
-
-        User user = userService.getById(commentDTO.getUser());
-        if (actionId == PrismAction.APPLICATION_COMPLETE) {
-            validateApplicationAndThrowException(application);
-            application.setRetain(commentDTO.getApplicationRetain());
-            user.getUserAccount().setSendApplicationRecommendationNotification(commentDTO.getApplicationRecommend());
-        }
-
-        Action action = actionService.getById(actionId);
-        User delegateUser = userService.getById(commentDTO.getDelegateUser());
-        State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
-
-        Comment comment = new Comment().withResource(application).withContent(commentDTO.getContent()).withUser(user).withDelegateUser(delegateUser)
-                .withAction(action).withTransitionState(transitionState).withCreatedTimestamp(new DateTime())
-                .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse())).withApplicationEligible(commentDTO.getApplicationEligible())
-                .withApplicationInterested(commentDTO.getApplicationInterested()).withApplicationRating(commentDTO.getApplicationRating())
-                .withRecruiterAcceptAppointment(commentDTO.getRecruiterAcceptAppointment())
-                .withApplicationReserveStatus(commentDTO.getApplicationReserveStatus());
-
-        CommentApplicationPositionDetailDTO positionDetailDTO = commentDTO.getPositionDetail();
-        if (positionDetailDTO != null) {
-            comment.setPositionDetail(new CommentApplicationPositionDetail().withPositionTitle(positionDetailDTO.getPositionTitle()).withPositionDescription(
-                    positionDetailDTO.getPositionDescription()));
-        }
-
-        CommentApplicationOfferDetailDTO offerDetailDTO = commentDTO.getOfferDetail();
-        if (offerDetailDTO != null) {
-            comment.setOfferDetail(new CommentApplicationOfferDetail().withPositionProvisionStartDate(offerDetailDTO.getPositionProvisionalStartDate())
-                    .withAppointmentConditions(offerDetailDTO.getAppointmentConditions()));
-        }
-
-        commentService.appendCommentProperties(comment, commentDTO);
-
-        if (actionId == PrismAction.APPLICATION_COMPLETE) {
-            Role refereeRole = entityService.getById(Role.class, PrismRole.APPLICATION_REFEREE);
-            for (ApplicationReferee referee : application.getReferees()) {
-                comment.getAssignedUsers().add(new CommentAssignedUser().withUser(referee.getUser()).withRole(refereeRole));
-            }
-        }
-
-        if (commentDTO.getAppointmentTimeslots() != null) {
-            commentService.appendAppointmentTimeslots(comment, commentDTO);
-        }
-
-        if (commentDTO.getAppointmentPreferences() != null) {
-            commentService.appendAppointmentPreferences(comment, commentDTO);
-        }
-
-        if (commentDTO.getRejectionReason() != null) {
-            commentService.appendRejectionReason(comment, commentDTO);
-        }
-
-        return actionService.executeUserAction(application, action, comment);
     }
 
     public void filterResourceListData(ResourceListRowRepresentation representation, User currentUser) {
@@ -500,13 +415,19 @@ public class ApplicationService {
             }
         }
     }
-    
+
     public ApplicationRatingSummaryDTO getApplicationRatingSummary(ResourceParent resource) {
         return applicationDAO.getApplicationRatingSummary(resource);
     }
-    
+
     public ApplicationReferee getApplicationReferee(Application application, User user) {
         return applicationDAO.getApplicationReferee(application, user);
+    }
+    
+    public BeanPropertyBindingResult validateApplication(Application application) {
+        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(application, "application");
+        ValidationUtils.invokeValidator(applicationValidator, application, errors);
+        return errors;
     }
 
     private LocalDate getRecommendedStartDate(Application application, ResourceStudyOption studyOption, LocalDate baseline) {
@@ -534,12 +455,6 @@ public class ApplicationService {
         }
 
         return recommended;
-    }
-
-    private BeanPropertyBindingResult validateApplication(Application application) {
-        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(application, "application");
-        ValidationUtils.invokeValidator(applicationValidator, application, errors);
-        return errors;
     }
 
 }

@@ -40,7 +40,7 @@ public class InstitutionCreator implements ResourceCreator {
 
         Institution institution = new Institution().withUser(user).withSystem(systemService.getSystem()).withDomicile(advert.getAddress().getDomicile())
                 .withAdvert(advert).withTitle(advert.getTitle()).withCurrency(newInstitution.getCurrency())
-                .withBusinessYearStartMonth(newInstitution.getBusinessYearStartMonth()).withGoogleId(newInstitution.getGoogleIdentifier())
+                .withBusinessYearStartMonth(newInstitution.getBusinessYearStartMonth()).withGoogleId(advert.getAddress().getLocation().getGoogleId())
                 .withUclInstitution(false).withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD)).withCreatedTimestamp(new DateTime());
         advert.setInstitution(institution);
 

@@ -167,7 +167,7 @@ public class AdvertService {
             updatePartner(user, advert, partnerDTO);
         }
 
-        advert.setSponsorshipRequired(advertDTO.getSponsorshipRequired());
+        advert.setSponsorshipTarget(advertDTO.getSponsorshipRequired());
     }
 
     public void updateDetail(PrismScope resourceScope, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) throws Exception {
@@ -349,7 +349,7 @@ public class AdvertService {
     public void synchronizeSponsorship(ResourceParent resource, Comment comment) throws Exception {
         Advert advert = resource.getAdvert();
         String advertCurrency = advert.getResource().getInstitution().getCurrency();
-        BigDecimal advertRequired = advert.getSponsorshipRequired();
+        BigDecimal advertRequired = advert.getSponsorshipTarget();
         BigDecimal advertSecured = advert.getSponsorshipSecured();
         
         CommentSponsorship sponsorship = comment.getSponsorship(); 
@@ -558,6 +558,7 @@ public class AdvertService {
         InstitutionAddress address = advert.getAddress();
         if (address == null) {
             address = createAddress(addressDTO);
+            entityService.save(address);
             advert.setAddress(address);
         } else {
             updateAddress(addressDTO, address);

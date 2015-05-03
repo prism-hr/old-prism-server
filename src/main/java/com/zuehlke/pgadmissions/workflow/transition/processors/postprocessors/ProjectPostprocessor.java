@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
@@ -26,6 +27,9 @@ public class ProjectPostprocessor implements ResourceProcessor {
     @Inject
     private AdvertService advertService;
 
+    @Inject
+    private ResourceService resourceService;
+    
     @Inject
     private RoleService roleService;
 
@@ -41,10 +45,14 @@ public class ProjectPostprocessor implements ResourceProcessor {
         project.getInstitution().setUpdatedTimestampSitemap(updatedTimestamp);
         advertService.setSequenceIdentifier(project.getAdvert(), project.getSequenceIdentifier().substring(0, 13));
 
+        if (comment.isCreateComment()) {
+            resourceService.synchronizePartner(project, comment);
+        }
+        
         if (comment.isProjectViewEditComment()) {
             connectProjectSupervisors(project, comment);
         }
-        
+
         if (comment.isSponsorshipComment()) {
             advertService.synchronizeSponsorship(project, comment);
         }

@@ -10,8 +10,6 @@ public class InstitutionDTO extends ResourceParentDTO {
     @NotNull
     private Integer businessYearStartMonth;
 
-    private String googleIdentifier;
-
     private FileDTO logoImage;
 
     private FileDTO backgroundImage;
@@ -30,14 +28,6 @@ public class InstitutionDTO extends ResourceParentDTO {
 
     public void setBusinessYearStartMonth(Integer businessYearStartMonth) {
         this.businessYearStartMonth = businessYearStartMonth;
-    }
-
-    public String getGoogleIdentifier() {
-        return googleIdentifier;
-    }
-
-    public void setGoogleIdentifier(String googleIdentifier) {
-        this.googleIdentifier = googleIdentifier;
     }
 
     public FileDTO getLogoImage() {

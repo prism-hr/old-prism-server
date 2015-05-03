@@ -137,6 +137,13 @@ public class Comment {
     @JoinColumn(name = "transition_state_id")
     private State transitionState;
 
+    @ManyToOne
+    @JoinColumn(name = "institution_partner_id")
+    private Institution partner;
+    
+    @Column(name = "removed_partner")
+    private Boolean removedPartner;
+    
     @Embedded
     private CommentSponsorship sponsorship;
 
@@ -332,6 +339,22 @@ public class Comment {
 
     public void setTransitionState(State transitionState) {
         this.transitionState = transitionState;
+    }
+
+    public Institution getPartner() {
+        return partner;
+    }
+
+    public void setPartner(Institution partner) {
+        this.partner = partner;
+    }
+
+    public Boolean getRemovedPartner() {
+        return removedPartner;
+    }
+
+    public void setRemovedPartner(Boolean removedPartner) {
+        this.removedPartner = removedPartner;
     }
 
     public CommentSponsorship getSponsorship() {

@@ -1,27 +1,88 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterMatchMode.ANY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
+import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
+import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.longToInteger;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+
+import org.apache.commons.lang.BooleanUtils;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.*;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.comment.*;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.comment.CommentState;
+import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
+import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.resource.*;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStateDefinition;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
-import com.zuehlke.pgadmissions.dto.*;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
+import com.zuehlke.pgadmissions.dto.ResourceListActionDTO;
+import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
+import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
+import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
+import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
@@ -36,39 +97,13 @@ import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowProper
 import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismConstants;
+import com.zuehlke.pgadmissions.workflow.executors.action.ActionExecutor;
 import com.zuehlke.pgadmissions.workflow.transition.creators.ResourceCreator;
 import com.zuehlke.pgadmissions.workflow.transition.persisters.ResourcePersister;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
-import org.apache.commons.lang.BooleanUtils;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.Restrictions;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterMatchMode.ANY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.LIST_PAGE_ROW_COUNT;
-import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
-import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.longToInteger;
 
 @Service
 @Transactional
-@SuppressWarnings("unchecked")
 public class ResourceService {
 
     @Value("${application.url}")
@@ -199,18 +234,11 @@ public class ResourceService {
     }
 
     public ActionOutcomeDTO executeAction(Integer resourceId, CommentDTO commentDTO) throws Exception {
-        switch (commentDTO.getAction().getScope()) {
-            case APPLICATION:
-                return applicationService.executeAction(resourceId, commentDTO);
-            case PROJECT:
-                return projectService.executeAction(resourceId, commentDTO);
-            case PROGRAM:
-                return programService.executeAction(resourceId, commentDTO);
-            case INSTITUTION:
-                return institutionService.executeAction(resourceId, commentDTO);
-            default:
-                throw new Error();
+        Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
+        if (actionExecutor == null) {
+            throw new UnsupportedOperationException();
         }
+        return applicationContext.getBean(actionExecutor).execute(resourceId, commentDTO);
     }
 
     public void preProcessResource(Resource resource, Comment comment) throws Exception {
@@ -317,7 +345,7 @@ public class ResourceService {
     }
 
     public <T extends Resource> List<Integer> getResourcesToPropagate(PrismScope propagatingResourceScope, Integer propagatingResourceId,
-                                                                      PrismScope propagatedResourceScope, PrismAction actionId) {
+            PrismScope propagatedResourceScope, PrismAction actionId) {
         return resourceDAO.getResourcesToPropagate(propagatingResourceScope, propagatingResourceId, propagatedResourceScope, actionId);
     }
 
@@ -417,7 +445,7 @@ public class ResourceService {
     }
 
     public Set<Integer> getAssignedResources(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, ResourceListFilterDTO filter,
-                                             String lastSequenceIdentifier, Integer recordsToRetrieve) {
+            String lastSequenceIdentifier, Integer recordsToRetrieve) {
         Set<Integer> assigned = Sets.newHashSet();
         Junction conditions = getFilterConditions(scopeId, filter);
 
@@ -431,43 +459,44 @@ public class ResourceService {
         return assigned;
     }
 
+    @SuppressWarnings("unchecked")
     public List<WorkflowPropertyConfigurationRepresentation> getWorkflowPropertyConfigurations(Resource resource) throws Exception {
         switch (resource.getResourceScope()) {
-            case APPLICATION:
-                return applicationService.getWorkflowPropertyConfigurations((Application) resource);
-            default:
-                return (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) customizationService.getConfigurationRepresentationsWithOrWithoutVersion(
-                        PrismConfiguration.WORKFLOW_PROPERTY, resource, resource.getWorkflowPropertyConfigurationVersion());
+        case APPLICATION:
+            return applicationService.getWorkflowPropertyConfigurations((Application) resource);
+        default:
+            return (List<WorkflowPropertyConfigurationRepresentation>) (List<?>) customizationService.getConfigurationRepresentationsWithOrWithoutVersion(
+                    PrismConfiguration.WORKFLOW_PROPERTY, resource, resource.getWorkflowPropertyConfigurationVersion());
         }
     }
 
     public SocialMetadataDTO getSocialMetadata(PrismScope resourceScope, Integer resourceId) throws Exception {
         Resource resource = getNotNullResource(resourceScope, resourceId);
         switch (resourceScope) {
-            case INSTITUTION:
-            case PROGRAM:
-            case PROJECT:
-                ResourceParent parent = (ResourceParent) resource;
-                return advertService.getSocialMetadata(parent.getAdvert());
-            case SYSTEM:
-                return systemService.getSocialMetadata();
-            default:
-                throw new Error();
+        case INSTITUTION:
+        case PROGRAM:
+        case PROJECT:
+            ResourceParent parent = (ResourceParent) resource;
+            return advertService.getSocialMetadata(parent.getAdvert());
+        case SYSTEM:
+            return systemService.getSocialMetadata();
+        default:
+            throw new Error();
         }
     }
 
     public SearchEngineAdvertDTO getSearchEngineAdvert(PrismScope resourceScope, Integer resourceId) {
         switch (resourceScope) {
-            case INSTITUTION:
-                return institutionService.getSearchEngineAdvert(resourceId);
-            case PROGRAM:
-                return programService.getSearchEngineAdvert(resourceId);
-            case PROJECT:
-                return projectService.getSearchEngineAdvert(resourceId);
-            case SYSTEM:
-                return systemService.getSearchEngineAdvert();
-            default:
-                throw new Error();
+        case INSTITUTION:
+            return institutionService.getSearchEngineAdvert(resourceId);
+        case PROGRAM:
+            return programService.getSearchEngineAdvert(resourceId);
+        case PROJECT:
+            return projectService.getSearchEngineAdvert(resourceId);
+        case SYSTEM:
+            return systemService.getSearchEngineAdvert();
+        default:
+            throw new Error();
         }
     }
 
@@ -502,6 +531,7 @@ public class ResourceService {
         return applicationUrl + "/" + PrismConstants.ANGULAR_HASH + "/?" + resource.getResourceScope().getLowerCamelName() + "=" + resource.getId();
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends Resource> HashMultimap<PrismScope, T> getUserAdministratorResources(User user) {
         HashMultimap<PrismScope, T> userAdministratorResources = HashMultimap.create();
         for (UserAdministratorResourceDTO userAdministratorResource : resourceDAO.getUserAdministratorResources(user)) {
@@ -642,6 +672,25 @@ public class ResourceService {
         }
     }
 
+    public void updateAdvert(ResourceParent resource, OpportunityDTO resourceDTO, Comment comment) throws Exception {
+        AdvertDTO advertDTO = resourceDTO.getAdvert();
+        Advert advert = resource.getAdvert();
+
+        Institution oldPartner = advert.getPartner();
+        advertService.updateAdvert(userService.getCurrentUser(), advertDTO, advert);
+        Institution newPartner = advert.getPartner();
+
+        if (oldPartner != null && newPartner == null) {
+            comment.setRemovedPartner(true);
+        } else if (!Objects.equal(oldPartner, newPartner)) {
+            comment.setPartner(newPartner);
+        }
+
+        if (BooleanUtils.isFalse(advert.getImported())) {
+            resource.setTitle(advert.getTitle());
+        }
+    }
+
     private Junction getFilterConditions(PrismScope resourceScope, ResourceListFilterDTO filter) {
         Junction conditions = null;
         if (filter.hasConstraints()) {
@@ -657,6 +706,11 @@ public class ResourceService {
         LocalDate baseline = new LocalDate();
         resourceDAO.deleteElapsedStudyOptionInstances(baseline);
         resourceDAO.deleteElapsedStudyOptions(baseline);
+    }
+
+    public void synchronizePartner(ResourceParent resource, Comment comment) {
+        Institution partner = resource.getAdvert().getPartner();
+        comment.setPartner(partner);
     }
 
     private void createOrUpdateStateTransitionSummary(Resource resource, DateTime baselineTime) {
@@ -676,7 +730,7 @@ public class ResourceService {
     }
 
     private <T extends ResourceStateDefinition, U extends CommentStateDefinition> void deleteResourceStates(Set<T> resourceStateDefinitions,
-                                                                                                            Set<U> commentStateDefinitions) {
+            Set<U> commentStateDefinitions) {
         List<State> preservedStates = Lists.newArrayListWithCapacity(commentStateDefinitions.size());
         for (CommentStateDefinition commentStateDefinition : commentStateDefinitions) {
             preservedStates.add(commentStateDefinition.getState());
@@ -691,7 +745,7 @@ public class ResourceService {
     }
 
     private <T extends ResourceStateDefinition, U extends CommentStateDefinition> void insertResourceStates(Resource resource, Set<T> resourceStateDefinitions,
-                                                                                                            Set<U> commentStateDefinitions, Class<T> resourceStateClass, LocalDate baseline) throws InstantiationException, IllegalAccessException {
+            Set<U> commentStateDefinitions, Class<T> resourceStateClass, LocalDate baseline) throws InstantiationException, IllegalAccessException {
         for (U commentState : commentStateDefinitions) {
             T transientResourceStateDefinition = resourceStateClass.newInstance();
             transientResourceStateDefinition.setResource(resource);
@@ -708,7 +762,7 @@ public class ResourceService {
     }
 
     private void populateApplicationProcessingSummary(ApplicationProcessingSummaryDTO yearSummary,
-                                                      ApplicationProcessingSummaryRepresentation yearRepresentation) {
+            ApplicationProcessingSummaryRepresentation yearRepresentation) {
         yearRepresentation.setAdvertCount(longToInteger(yearSummary.getAdvertCount()));
         yearRepresentation.setCreatedApplicationCount(longToInteger(yearSummary.getCreatedApplicationCount()));
         yearRepresentation.setSubmittedApplicationCount(longToInteger(yearSummary.getSubmittedApplicationCount()));

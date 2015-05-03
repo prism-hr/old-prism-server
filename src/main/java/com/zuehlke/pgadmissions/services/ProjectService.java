@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROJECT_COMMENT_UPDATED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
@@ -14,15 +12,12 @@ import javax.inject.Inject;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
@@ -32,18 +27,13 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.DepartmentDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
 import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
-import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceParentDTO.ResourceParentAttributesDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
-import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
@@ -51,12 +41,6 @@ public class ProjectService {
 
     @Inject
     private ProjectDAO projectDAO;
-
-    @Inject
-    private ActionService actionService;
-
-    @Inject
-    private CommentService commentService;
 
     @Inject
     private DepartmentService departmentService;
@@ -74,43 +58,10 @@ public class ProjectService {
     private StateService stateService;
 
     @Inject
-    private AdvertService advertService;
-
-    @Inject
     private ResourceService resourceService;
-
-    @Inject
-    private ApplicationContext applicationContext;
 
     public Project getById(Integer id) {
         return entityService.getById(Project.class, id);
-    }
-
-    public ActionOutcomeDTO executeAction(Integer programId, CommentDTO commentDTO) throws Exception {
-        User user = userService.getById(commentDTO.getUser());
-        Project project = getById(programId);
-
-        PrismAction actionId = commentDTO.getAction();
-        Action action = actionService.getById(actionId);
-
-        boolean viewEditAction = actionId == PROJECT_VIEW_EDIT;
-        String commentContent = viewEditAction ? applicationContext.getBean(PropertyLoader.class).localize(project)
-                .load(PROJECT_COMMENT_UPDATED) : commentDTO.getContent();
-
-        OpportunityDTO projectDTO = (OpportunityDTO) commentDTO.getResource();
-        LocalDate dueDate = projectDTO.getEndDate();
-
-        State transitionState = stateService.getById(commentDTO.getTransitionState());
-        if (viewEditAction && !project.getImported() && transitionState == null && dueDate.isAfter(new LocalDate())) {
-            transitionState = stateService.getById(PROJECT_APPROVED);
-        }
-
-        Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
-                .withCreatedTimestamp(new DateTime()).withDeclinedResponse(false);
-        commentService.appendCommentProperties(comment, commentDTO);
-
-        update(programId, projectDTO);
-        return actionService.executeUserAction(project, action, comment);
     }
 
     public void synchronizeProjects(Program program) {
@@ -183,17 +134,14 @@ public class ProjectService {
         return projectDAO.getActiveProjectsByInstitution(institutionId, activeStates);
     }
 
-    private void update(Integer projectId, OpportunityDTO projectDTO) throws Exception {
-        Project project = entityService.getById(Project.class, projectId);
+    public void update(Integer projectId, OpportunityDTO projectDTO, Comment comment) throws Exception {
+        Project project = getById(projectId);
 
         DepartmentDTO departmentDTO = projectDTO.getDepartment();
         Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(departmentDTO);
         project.setDepartment(department);
 
-        AdvertDTO advertDTO = projectDTO.getAdvert();
-        Advert advert = project.getAdvert();
-        advertService.updateAdvert(userService.getCurrentUser(), advertDTO, advert);
-        project.setTitle(advert.getTitle());
+        resourceService.updateAdvert(project, projectDTO, comment);
 
         project.setDurationMinimum(projectDTO.getDurationMinimum());
         project.setDurationMaximum(projectDTO.getDurationMaximum());

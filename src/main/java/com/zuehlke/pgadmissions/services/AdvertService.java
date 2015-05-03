@@ -134,6 +134,7 @@ public class AdvertService {
     public Advert createAdvert(User user, AdvertDTO advertDTO) throws Exception {
         Advert advert = new Advert();
         updateAdvert(user, advertDTO, advert);
+        entityService.save(advert);
         return advert;
     }
 

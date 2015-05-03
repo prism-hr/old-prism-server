@@ -563,6 +563,7 @@ public class AdvertService {
         } else {
             updateAddress(addressDTO, address);
         }
+        geocodableLocationService.setLocation(address);
     }
 
     private void updateAddress(InstitutionAddressDTO addressDTO, InstitutionAddress address) {
@@ -572,7 +573,6 @@ public class AdvertService {
         address.setAddressTown(addressDTO.getAddressTown());
         address.setAddressRegion(addressDTO.getAddressDistrict());
         address.setAddressCode(addressDTO.getAddressCode());
-        geocodableLocationService.setLocation(address);
     }
 
     private void updatePartner(User user, Advert advert, InstitutionPartnerDTO partnerDTO) throws Exception {

@@ -232,7 +232,7 @@ public class StaticDataService {
 
         ListMultimap<PrismScope, PrismActionCondition> actionConditionsMultimap = LinkedListMultimap.create();
         for (PrismActionCondition actionCondition : PrismActionCondition.values()) {
-            for (PrismScope prismScope : actionCondition.getValidScopes()) {
+            for (PrismScope prismScope : actionCondition.getPermittedScopes()) {
                 actionConditionsMultimap.put(prismScope, actionCondition);
             }
         }

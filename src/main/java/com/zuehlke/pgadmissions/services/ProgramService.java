@@ -132,7 +132,8 @@ public class ProgramService {
 
     public List<ResourceForWhichUserCanCreateChildDTO> getProgramsForWhichUserCanCreateProject(Integer institutionId) {
         boolean userLoggedIn = userService.getCurrentUser() != null;
-        return programDAO.getProgramsForWhichUserCanCreateProject(institutionId, userLoggedIn);
+        List<PrismState> activeProgramStates = stateService.getActiveProgramStates();
+        return programDAO.getProgramsForWhichUserCanCreateProject(institutionId, activeProgramStates, userLoggedIn);
     }
 
     public void update(Integer programId, OpportunityDTO programDTO, Comment comment) throws Exception {

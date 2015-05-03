@@ -34,6 +34,7 @@ import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
@@ -546,8 +547,8 @@ public class Program extends ResourceOpportunity {
         return userRoles;
     }
 
-    public Program withId(Integer id) {
-        this.id = id;
+    public Program withResource(Resource parentResource) {
+        setParentResource(parentResource);
         return this;
     }
 

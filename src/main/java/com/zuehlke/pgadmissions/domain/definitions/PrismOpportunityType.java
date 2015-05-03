@@ -223,25 +223,25 @@ public enum PrismOpportunityType {
     public static PrismOpportunityType getSystemOpportunityType() {
         return STUDY_POSTGRADUATE_RESEARCH;
     }
-    
+
     public static List<PrismResourceCondition> getResourceConditions(PrismScope scope) {
         Set<PrismResourceCondition> mergedResourceConditions = Sets.newHashSet();
         for (PrismOpportunityType opportunityType : values()) {
             List<PrismResourceCondition> resourceConditions = opportunityType.getDefaultResourceConditions();
             for (PrismResourceCondition resourceCondition : resourceConditions) {
-                if (resourceCondition.getActionCondition().getValidScopes().contains(scope)) {
+                if (resourceCondition.getActionCondition().getDefaultScopes().contains(scope)) {
                     mergedResourceConditions.add(new PrismResourceCondition(resourceCondition.getActionCondition(), false));
                 }
             }
         }
         return Lists.newArrayList(mergedResourceConditions);
     }
-    
+
     public static List<PrismResourceCondition> getResourceConditions(PrismScope scope, PrismOpportunityType opportunityType) {
         Set<PrismResourceCondition> mergedResourceConditions = Sets.newHashSet();
         List<PrismResourceCondition> resourceConditions = opportunityType.getDefaultResourceConditions();
         for (PrismResourceCondition resourceCondition : resourceConditions) {
-            if (resourceCondition.getActionCondition().getValidScopes().contains(scope)) {
+            if (resourceCondition.getActionCondition().getPermittedScopes().contains(scope)) {
                 mergedResourceConditions.add(resourceCondition);
             }
         }

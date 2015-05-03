@@ -79,7 +79,7 @@ public class ActionDTO {
     public ResourceDTO getNewResource() {
         return ObjectUtils.firstNonNull(newApplication, newProject, newProgram, newInstitution);
     }
-
+    
     public String getReferer() {
         return referer;
     }

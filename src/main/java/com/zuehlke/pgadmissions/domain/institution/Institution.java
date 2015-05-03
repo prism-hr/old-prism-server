@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
@@ -342,8 +343,8 @@ public class Institution extends ResourceParent {
         return userRoles;
     }
 
-    public Institution withId(Integer id) {
-        this.id = id;
+    public Institution withResource(Resource parentResource) {
+        setParentResource(parentResource);
         return this;
     }
 

@@ -53,6 +53,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentApplicationInterviewInstru
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationOfferDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentApplicationPositionDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.comment.CommentSponsorship;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionProperty;
@@ -180,6 +181,11 @@ public class NotificationPropertyLoader {
         return propertyLoader.load(PrismDisplayPropertyDefinition.valueOf(resourceName + "_COMMENT_" + outcomePostfix));
     }
 
+    public String getCommentSponsorship() {
+        CommentSponsorship sponsorship = notificationDefinitionModelDTO.getComment().getSponsorship();
+        return sponsorship == null ? null : sponsorship.toString();
+    }
+
     public String getApplicationCreatorFullName() {
         return notificationDefinitionModelDTO.getResource().getApplication().getUser().getFullName();
     }
@@ -259,6 +265,10 @@ public class NotificationPropertyLoader {
         return notificationDefinitionModelDTO.getComment().getRejectionReasonDisplay();
     }
 
+    public String getProjectUserContact() {
+        return notificationDefinitionModelDTO.getUser().toString();
+    }
+
     public String getProjectTitle() {
         return notificationDefinitionModelDTO.getResource().getProject().getTitle();
     }
@@ -267,12 +277,20 @@ public class NotificationPropertyLoader {
         return notificationDefinitionModelDTO.getResource().getProject().getCode();
     }
 
+    public String getProgramUserContact() {
+        return notificationDefinitionModelDTO.getUser().toString();
+    }
+
     public String getProgramTitle() {
         return notificationDefinitionModelDTO.getResource().getProgram().getTitle();
     }
 
     public String getProgramCode() {
         return notificationDefinitionModelDTO.getResource().getProgram().getCode();
+    }
+
+    public String getInstitutionUserContact() {
+        return notificationDefinitionModelDTO.getUser().toString();
     }
 
     public String getInstitutionTitle() {

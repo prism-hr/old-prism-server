@@ -6,10 +6,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.I
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_RESTORE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DEACTIVATED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -368,7 +366,7 @@ public class ImportedEntityService {
             transitionState = stateService.getById(PROGRAM_APPROVED);
         } else {
             PrismState stateId = state.getId();
-            if (Arrays.asList(PROGRAM_APPROVED, PROGRAM_DEACTIVATED).contains(stateId)) {
+            if (stateId.equals(PROGRAM_APPROVED)) {
                 transitionState = state;
             } else if (stateId.equals(PROGRAM_DISABLED_PENDING_REACTIVATION)) {
                 actionId = PROGRAM_RESTORE;

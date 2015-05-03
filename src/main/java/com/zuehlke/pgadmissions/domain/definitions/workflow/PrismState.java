@@ -72,7 +72,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.institution.PrismIns
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApproval;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApprovalPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApproved;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramDeactivated;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramDisabledCompleted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramDisabledPendingReactivation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramRejected;
@@ -80,7 +79,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgram
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApproval;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApprovalPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApproved;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectDeactivated;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectDisabledCompleted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectDisabledPendingReactivation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectRejected;
@@ -166,7 +164,6 @@ public enum PrismState {
     PROJECT_APPROVAL_PENDING_CORRECTION(PrismStateGroup.PROJECT_APPROVAL, PROJECT_ESCALATE_DURATION, null,
             PrismProjectApprovalPendingCorrection.class),
     PROJECT_APPROVED(PrismStateGroup.PROJECT_APPROVED, null, PROJECT_END_DATE, PrismProjectApproved.class),
-    PROJECT_DEACTIVATED(PrismStateGroup.PROJECT_APPROVED, null, PROJECT_END_DATE, PrismProjectDeactivated.class),
     PROJECT_DISABLED_PENDING_REACTIVATION(PrismStateGroup.PROJECT_DISABLED, PROJECT_ESCALATE_DURATION, null,
             PrismProjectDisabledPendingReactivation.class),
     PROJECT_DISABLED_COMPLETED(PrismStateGroup.PROJECT_DISABLED, null, null, PrismProjectDisabledCompleted.class),
@@ -176,7 +173,6 @@ public enum PrismState {
     PROGRAM_APPROVAL_PENDING_CORRECTION(PrismStateGroup.PROGRAM_APPROVAL, PROGRAM_ESCALATE_DURATION, null,
             PrismProgramApprovalPendingCorrection.class),
     PROGRAM_APPROVED(PrismStateGroup.PROGRAM_APPROVED, null, PROGRAM_END_DATE, PrismProgramApproved.class),
-    PROGRAM_DEACTIVATED(PrismStateGroup.PROGRAM_APPROVED, null, PROGRAM_END_DATE, PrismProgramDeactivated.class),
     PROGRAM_DISABLED_PENDING_REACTIVATION(PrismStateGroup.PROGRAM_DISABLED, PROGRAM_ESCALATE_DURATION, null,
             PrismProgramDisabledPendingReactivation.class),
     PROGRAM_DISABLED_COMPLETED(PrismStateGroup.PROGRAM_DISABLED, null, null, PrismProgramDisabledCompleted.class),

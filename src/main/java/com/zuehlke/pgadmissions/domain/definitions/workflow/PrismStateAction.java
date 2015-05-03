@@ -84,6 +84,13 @@ public class PrismStateAction {
         this.assignments.add(new PrismStateActionAssignment().withRole(role).withActionEnhancement(actionEnhancement));
         return this;
     }
+    
+    public PrismStateAction withAssignments(PrismRoleGroup roles, PrismActionEnhancement actionEnhancement) {
+        for (PrismRole role : roles.getRoles()) {
+            this.assignments.add(new PrismStateActionAssignment().withRole(role).withActionEnhancement(actionEnhancement));
+        }
+        return this;
+    }
 
     public PrismStateAction withAssignments(PrismRole... roles) {
         for (PrismRole role : roles) {

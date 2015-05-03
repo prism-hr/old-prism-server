@@ -26,7 +26,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_SCHEDULING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DEACTIVATED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_WITHDRAWN;
@@ -138,6 +137,9 @@ public class Comment {
     @JoinColumn(name = "transition_state_id")
     private State transitionState;
 
+    @Embedded
+    private CommentSponsorship sponsorship;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "application_eligible")
     private PrismYesNoUnsureResponse applicationEligible;
@@ -184,9 +186,6 @@ public class Comment {
     @Lob
     @Column(name = "application_export_exception")
     private String exportException;
-
-    @Column(name = "creator_ip_address")
-    private String creatorIpAddress;
 
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -335,6 +334,14 @@ public class Comment {
         this.transitionState = transitionState;
     }
 
+    public CommentSponsorship getSponsorship() {
+        return sponsorship;
+    }
+
+    public void setSponsorship(CommentSponsorship sponsorship) {
+        this.sponsorship = sponsorship;
+    }
+
     public PrismYesNoUnsureResponse getApplicationEligible() {
         return applicationEligible;
     }
@@ -445,14 +452,6 @@ public class Comment {
 
     public void setExportException(String exportException) {
         this.exportException = exportException;
-    }
-
-    public String getCreatorIpAddress() {
-        return creatorIpAddress;
-    }
-
-    public void setCreatorIpAddress(String creatorIpAddress) {
-        this.creatorIpAddress = creatorIpAddress;
     }
 
     public Set<CommentAssignedUser> getAssignedUsers() {
@@ -655,8 +654,8 @@ public class Comment {
         return delegateUser == null ? user : delegateUser;
     }
 
-    public boolean isProgramApproveOrDeactivateComment() {
-        return Arrays.asList(PROGRAM_APPROVED, PROGRAM_DEACTIVATED).contains(transitionState.getId());
+    public boolean isProgramApproveComment() {
+        return PROGRAM_APPROVED.equals(transitionState.getId());
     }
 
     public boolean isProgramRestoreComment() {
@@ -808,6 +807,10 @@ public class Comment {
 
     public boolean isApplicationReserveStatusComment() {
         return applicationReserveStatus != null;
+    }
+
+    public boolean isSponsorshipComment() {
+        return sponsorship != null && BooleanUtils.isTrue(sponsorship.getConfirmed());
     }
 
     public String getApplicationRatingDisplay() {

@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEn
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PROGRAM_VIEW_EDIT_AS_USER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PROGRAM_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_SPONSOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROGRAM_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROGRAM_PARENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROGRAM_MANAGE_USERS_GROUP;
@@ -53,8 +54,8 @@ public class PrismProgramWorkflow {
 	public static PrismStateAction programViewEditApproved() {
 		return new PrismStateAction() //
 		        .withAction(PROGRAM_VIEW_EDIT) //
-		        .withActionEnhancement(PROGRAM_VIEW_EDIT_AS_USER) //
-		        .withAssignments(PROGRAM_ADMINISTRATOR_GROUP) //
+		        .withAssignments(PROGRAM_ADMINISTRATOR_GROUP, PROGRAM_VIEW_EDIT_AS_USER) //
+		        .withAssignments(PROGRAM_SPONSOR, PROGRAM_VIEW_AS_USER) //
 		        .withNotifications(PROGRAM_ADMINISTRATOR_GROUP, SYSTEM_PROGRAM_UPDATE_NOTIFICATION) //
 		        .withTransitions(PROGRAM_VIEW_EDIT_TRANSITION //
 		                .withRoleTransitions(PROGRAM_MANAGE_USERS_GROUP));

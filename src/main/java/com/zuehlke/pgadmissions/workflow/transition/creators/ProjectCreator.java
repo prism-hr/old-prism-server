@@ -63,7 +63,7 @@ public class ProjectCreator implements ResourceCreator {
             project.setOpportunityType(project.getProgram().getOpportunityType());
         } else {
             project.setOpportunityType(importedEntityService.getByCode(OpportunityType.class, resource.getInstitution(), newProject.getOpportunityType().name()));
-            resourceService.setStudyOptions(project, attributes.getStudyOptions(), new LocalDate());
+            resourceService.setStudyOptions(project, newProject.getStudyOptions(), new LocalDate());
         }
 
         resourceService.setResourceConditions(project, attributes.getResourceConditions());

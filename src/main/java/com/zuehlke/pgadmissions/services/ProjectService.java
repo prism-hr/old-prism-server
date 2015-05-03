@@ -159,7 +159,7 @@ public class ProjectService {
                 project.setEndDate(endDate);
             }
 
-            resourceService.setStudyOptions(project, attributes.getStudyOptions(), new LocalDate());
+            resourceService.setStudyOptions(project, projectDTO.getStudyOptions(), new LocalDate());
         }
 
         resourceService.setStudyLocations(project, attributes.getStudyLocations());

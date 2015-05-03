@@ -1,8 +1,11 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.dto.DepartmentDTO;
 
 public class OpportunityDTO extends ResourceParentDTO {
@@ -15,6 +18,8 @@ public class OpportunityDTO extends ResourceParentDTO {
     private Integer durationMinimum;
 
     private Integer durationMaximum;
+    
+    private List<PrismStudyOption> studyOptions;
 
     public DepartmentDTO getDepartment() {
         return department;
@@ -46,6 +51,14 @@ public class OpportunityDTO extends ResourceParentDTO {
 
     public void setDurationMaximum(Integer durationMaximum) {
         this.durationMaximum = durationMaximum;
+    }
+
+    public List<PrismStudyOption> getStudyOptions() {
+        return studyOptions;
+    }
+
+    public void setStudyOptions(List<PrismStudyOption> studyOptions) {
+        this.studyOptions = studyOptions;
     }
 
 }

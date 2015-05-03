@@ -171,7 +171,7 @@ public class ProgramService {
                 program.setEndDate(endDate);
             }
 
-            resourceService.setStudyOptions(program, attributes.getStudyOptions(), new LocalDate());
+            resourceService.setStudyOptions(program, programDTO.getStudyOptions(), new LocalDate());
         }
     }
 

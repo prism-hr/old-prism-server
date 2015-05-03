@@ -10,7 +10,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.program.Program;
-import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
@@ -18,7 +17,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.SimpleResourceRepre
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.ProgramService;
-import com.zuehlke.pgadmissions.services.UserService;
 import org.dozer.Mapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -42,9 +40,6 @@ public class InstitutionController {
     private InstitutionService institutionService;
 
     @Inject
-    private UserService userService;
-
-    @Inject
     private Mapper dozerBeanMapper;
 
     @RequestMapping(method = RequestMethod.GET, params = "type=simple")
@@ -63,16 +58,20 @@ public class InstitutionController {
 
     @RequestMapping(method = RequestMethod.GET, params = "accepting")
     public List<AcceptingResourceRepresentation> getAcceptingInstitutions(@RequestParam String accepting) {
-        User user = userService.getCurrentUser();
         List<ResourceForWhichUserCanCreateChildDTO> institutions;
         if (accepting.equals("programs")) {
-            institutions = institutionService.getInstitutionsForWhichUserCanCreateProgram(user);
+            institutions = institutionService.getInstitutionsForWhichUserCanCreateProgram();
         } else if (accepting.equals("projects")) {
-            institutions = institutionService.getInstitutionsForWhichUserCanCreateProject(user);
+            institutions = institutionService.getInstitutionsForWhichUserCanCreateProject();
         } else {
             throw new Error();
         }
+        return Lists.transform(institutions, new AcceptingResourceToRepresentationFunction());
+    }
 
+    @RequestMapping(value = "/{institutionId}/programs", method = RequestMethod.GET, params = "accepting=projects")
+    public List<AcceptingResourceRepresentation> getAcceptingPrograms(@PathVariable Integer institutionId) {
+        List<ResourceForWhichUserCanCreateChildDTO> institutions = programService.getProgramsForWhichUserCanCreateProject(institutionId);
         return Lists.transform(institutions, new AcceptingResourceToRepresentationFunction());
     }
 

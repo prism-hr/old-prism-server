@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -9,17 +10,20 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.InstitutionExtendedRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.SimpleResourceRepresentation;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.ProgramService;
+import com.zuehlke.pgadmissions.services.UserService;
 import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 
@@ -28,20 +32,22 @@ import java.util.Map;
 @PreAuthorize("permitAll")
 public class InstitutionController {
 
-    @Autowired
+    @Inject
     private AdvertService advertService;
 
-    @Autowired
+    @Inject
     private ProgramService programService;
 
-    @Autowired
+    @Inject
     private InstitutionService institutionService;
 
-    @Autowired
+    @Inject
+    private UserService userService;
+
+    @Inject
     private Mapper dozerBeanMapper;
 
     @RequestMapping(method = RequestMethod.GET, params = "type=simple")
-    @ResponseBody
     public List<SimpleResourceRepresentation> getInstitutions() {
         List<Institution> institutions;
         institutions = institutionService.list();
@@ -53,6 +59,21 @@ public class InstitutionController {
             institutionRepresentations.add(institutionRepresentation);
         }
         return institutionRepresentations;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, params = "accepting")
+    public List<AcceptingResourceRepresentation> getAcceptingInstitutions(@RequestParam String accepting) {
+        User user = userService.getCurrentUser();
+        List<ResourceForWhichUserCanCreateChildDTO> institutions;
+        if (accepting.equals("programs")) {
+            institutions = institutionService.getInstitutionsForWhichUserCanCreateProgram(user);
+        } else if (accepting.equals("projects")) {
+            institutions = institutionService.getInstitutionsForWhichUserCanCreateProject(user);
+        } else {
+            throw new Error();
+        }
+
+        return Lists.transform(institutions, new AcceptingResourceToRepresentationFunction());
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "googleId")
@@ -94,6 +115,28 @@ public class InstitutionController {
     @RequestMapping(value = "/{institutionId}/similarPrograms", method = RequestMethod.GET)
     public List<ProgramRepresentation> getSimilarPrograms(@PathVariable Integer institutionId, @RequestParam String searchTerm) {
         return programService.getSimilarPrograms(institutionId, searchTerm);
+    }
+
+    private static class AcceptingResourceRepresentation extends SimpleResourceRepresentation {
+
+        private Boolean partnerMode;
+
+        public AcceptingResourceRepresentation(Integer id, String title, Boolean partnerMode) {
+            super(id, title);
+            this.partnerMode = partnerMode;
+        }
+
+        public Boolean getPartnerMode() {
+            return partnerMode;
+        }
+
+    }
+
+    private static class AcceptingResourceToRepresentationFunction implements Function<ResourceForWhichUserCanCreateChildDTO, AcceptingResourceRepresentation> {
+        @Override
+        public AcceptingResourceRepresentation apply(ResourceForWhichUserCanCreateChildDTO input) {
+            return new AcceptingResourceRepresentation(input.getResource().getId(), input.getResource().getTitle(), input.getPartnerMode());
+        }
     }
 
 }

@@ -6,6 +6,9 @@ public class SimpleResourceRepresentation {
 
     private String title;
 
+    public SimpleResourceRepresentation() {
+    }
+
     public SimpleResourceRepresentation(Integer id, String title) {
         this.id = id;
         this.title = title;

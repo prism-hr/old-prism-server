@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest.resource;
+package com.zuehlke.pgadmissions.rest.controller;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.services.ProgramService;
 @RestController
 @RequestMapping(value = { "api/programs" })
 @PreAuthorize("isAuthenticated()")
-public class ProgramResource {
+public class ProgramController {
 
     @Autowired
     private ProgramService programService;

@@ -319,7 +319,7 @@ public class InstitutionDAO {
                         .add(Projections.groupProperty("institution"), "resource") //
                         .add(Projections.max("resourceCondition.partnerMode"), "partnerMode")) //
                 .createAlias("institution", "institution", JoinType.INNER_JOIN) //
-                .createAlias("insitution.program", "program", JoinType.INNER_JOIN) //
+                .createAlias("institution.programs", "program", JoinType.INNER_JOIN) //
                 .createAlias("program.resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //

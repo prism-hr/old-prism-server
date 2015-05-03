@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-
 import java.util.List;
+
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
 public class ResourceAttributesRepresentation {
 

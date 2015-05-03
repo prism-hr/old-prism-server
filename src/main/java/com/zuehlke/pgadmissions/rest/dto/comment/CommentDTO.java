@@ -1,5 +1,14 @@
 package com.zuehlke.pgadmissions.rest.dto.comment;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+
+import org.apache.commons.lang3.ObjectUtils;
+import org.joda.time.LocalDateTime;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -8,13 +17,6 @@ import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
-import org.apache.commons.lang3.ObjectUtils;
-import org.joda.time.LocalDateTime;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
-import java.math.BigDecimal;
-import java.util.List;
 
 public class CommentDTO {
 

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.advert;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 import javax.persistence.AttributeOverride;
@@ -71,6 +72,12 @@ public class Advert extends ResourceParentAttribute {
     @ManyToOne
     @JoinColumn(name = "institution_partner_id")
     private Institution partner;
+
+    @Column(name = "sponsorship_required")
+    private BigDecimal sponsorshipRequired;
+
+    @Column(name = "sponsorship_secured")
+    private BigDecimal sponsorshipSecured;
 
     @Embedded
     @AttributeOverrides({ @AttributeOverride(name = "interval", column = @Column(name = "fee_interval")),
@@ -220,6 +227,22 @@ public class Advert extends ResourceParentAttribute {
         this.partner = partner;
     }
 
+    public BigDecimal getSponsorshipRequired() {
+        return sponsorshipRequired;
+    }
+
+    public void setSponsorshipRequired(BigDecimal sponsorshipRequired) {
+        this.sponsorshipRequired = sponsorshipRequired;
+    }
+
+    public BigDecimal getSponsorshipSecured() {
+        return sponsorshipSecured;
+    }
+
+    public void setSponsorshipSecured(BigDecimal sponsorshipSecured) {
+        this.sponsorshipSecured = sponsorshipSecured;
+    }
+
     public AdvertFinancialDetail getFee() {
         return fee;
     }
@@ -324,7 +347,7 @@ public class Advert extends ResourceParentAttribute {
         }
         return project.getOpportunityType().getPrismOpportunityType();
     }
-    
+
     public Boolean getImported() {
         return program != null && program.getImported();
     }

@@ -8,6 +8,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.INSTITUTION_VIEW_AS_USER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.INSTITUTION_VIEW_EDIT_AS_USER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_SPONSOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.INSTITUTION_MANAGE_USERS_GROUP;
@@ -44,8 +45,8 @@ public class PrismInstitutionWorkflow {
 	public static PrismStateAction institutionViewEditApproved() {
 		return new PrismStateAction() //
 		        .withAction(INSTITUTION_VIEW_EDIT) //
-		        .withActionEnhancement(INSTITUTION_VIEW_EDIT_AS_USER)
-		        .withAssignments(INSTITUTION_ADMINISTRATOR_GROUP) //
+		        .withAssignments(INSTITUTION_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_EDIT_AS_USER) //
+		        .withAssignments(INSTITUTION_SPONSOR, INSTITUTION_VIEW_AS_USER) //
 		        .withTransitions(new PrismStateTransition() //
 		                .withTransitionState(INSTITUTION_APPROVED_COMPLETED) //
 		                .withTransitionAction(INSTITUTION_VIEW_EDIT)

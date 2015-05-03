@@ -101,8 +101,8 @@ public class ProjectService {
         LocalDate dueDate = projectDTO.getEndDate();
 
         State transitionState = stateService.getById(commentDTO.getTransitionState());
-        if (viewEditAction && !project.getProgram().getImported() && transitionState == null && dueDate.isAfter(new LocalDate())) {
-            transitionState = projectDAO.getPreviousState(project);
+        if (viewEditAction && !project.getImported() && transitionState == null && dueDate.isAfter(new LocalDate())) {
+            transitionState = stateService.getById(PROJECT_APPROVED);
         }
 
         Comment comment = new Comment().withContent(commentContent).withUser(user).withAction(action).withTransitionState(transitionState)
@@ -110,7 +110,6 @@ public class ProjectService {
         commentService.appendCommentProperties(comment, commentDTO);
 
         update(programId, projectDTO);
-
         return actionService.executeUserAction(project, action, comment);
     }
 

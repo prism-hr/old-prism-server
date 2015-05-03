@@ -1,7 +1,8 @@
 package com.zuehlke.pgadmissions.utils;
 
-import com.google.common.base.Function;
 import org.apache.commons.beanutils.PropertyUtils;
+
+import com.google.common.base.Function;
 
 public class ToPropertyFunction<T, P> implements Function<T, P> {
 
@@ -12,6 +13,7 @@ public class ToPropertyFunction<T, P> implements Function<T, P> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public P apply(T input) {
         try {
             return (P) PropertyUtils.getSimpleProperty(input, propertyName);

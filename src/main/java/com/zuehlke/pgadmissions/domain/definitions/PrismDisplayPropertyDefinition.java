@@ -1159,7 +1159,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 	 */
 
     SYSTEM_ADVERTISE_LOOKUP_ORGANIZATION_LABEL(SYSTEM_ADVERTISE_SECTION, "Lookup Organization"),
-    SYSTEM_ADVERTISE_LOOKUP_GOOGLE_ORGANIZATION_LABEL(SYSTEM_ADVERTISE_SECTION, "Lookup Organization in Google"),
+    SYSTEM_ADVERTISE_LOOKUP_GOOGLE_ORGANIZATION_LABEL(SYSTEM_ADVERTISE_SECTION, "Lookup Organization"),
     SYSTEM_ADVERTISE_LOOKUP_ORGANIZATION_HINT(SYSTEM_ADVERTISE_SECTION, "Start typing the name of your organization"),
     SYSTEM_ADVERTISE_LOOKUP_ORGANIZATION_PLACEHOLDER(SYSTEM_ADVERTISE_SECTION, "e.g. Google Inc"),
     SYSTEM_ADVERTISE_SELECT_PROGRAM_LABEL(SYSTEM_ADVERTISE_SECTION, "Select Program"),
@@ -1174,6 +1174,12 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ADVERTISE_CATEGORY_HINT(SYSTEM_ADVERTISE_SECTION, "Select the category of your advert"),
     SYSTEM_ADVERTISE_INTRO_TEXT_STEP_2(SYSTEM_ADVERTISE_SECTION, "In order to create an advert we need to know your Organization"),
     SYSTEM_ADVERTISE_INVALID_PARTNER_INSTITUTION(SYSTEM_ADVERTISE_SECTION, "You provided an invalid partner Organization"),
+    SYSTEM_ADVERTISE_ACCEPT_PROGRAM(SYSTEM_ADVERTISE_SECTION, "Allow new programs to be created"), 
+    SYSTEM_ADVERTISE_ACCEPT_PROJECT(SYSTEM_ADVERTISE_SECTION, "Allow new projects to be created"), 
+    SYSTEM_ADVERTISE_ACCEPT_APPLICATION(SYSTEM_ADVERTISE_SECTION, "Allow new applications to be submitted"),
+    SYSTEM_ADVERTISE_ACCEPT_SPONSOR(SYSTEM_ADVERTISE_SECTION, "Allow new sponsors to be assigned"),
+    SYSTEM_ADVERTISE_PARTNER_MODE(SYSTEM_ADVERTISE_SECTION, "Accept from partner orgranizations"),
+    
 
 	/*
 	 * *************** SYSTEM RESOURCES SECTION *********************
@@ -1350,10 +1356,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_USE_OUR_ENGINE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Specify whether you wish to use our recruitment engine, or link to your own."),
     SYSTEM_RESOURCE_PARENT_APPLY_HOMEPAGE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Application Page URL"),
     SYSTEM_RESOURCE_PARENT_APPLY_HOMEPAGE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Link to your application page for the opportunity."),
-    SYSTEM_RESOURCE_PARENT_RESOURCE_CONDITIONS_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Accept"),
-    SYSTEM_RESOURCE_PARENT_RESOURCE_CONDITIONS_HINT(SYSTEM_HTML_RESOURCE_PARENT, "???"),
-    SYSTEM_RESOURCE_PARENT_STUDY_OPTIONS_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Study Options"),
-    SYSTEM_RESOURCE_PARENT_STUDY_OPTIONS_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The modes of participation that your opportunity offers (e.g. full-time, part-time, by distance)."),
+    SYSTEM_RESOURCE_PARENT_RESOURCE_CONDITIONS_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Processing Options"),
+    SYSTEM_RESOURCE_PARENT_RESOURCE_CONDITIONS_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Configure the processing options that you wish to enable"),
+    SYSTEM_RESOURCE_PARENT_STUDY_OPTIONS_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Modes of Participation"),
+    SYSTEM_RESOURCE_PARENT_STUDY_OPTIONS_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The modes of participation that your opportunity offers (e.g. full-time, part-time, modular/flexible)."),
     SYSTEM_RESOURCE_PARENT_STUDY_LOCATIONS_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Possible Locations"),
     SYSTEM_RESOURCE_PARENT_STUDY_LOCATIONS_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The locations at which it is possible for successful applicants of your opportunity to attend at."),
     SYSTEM_RESOURCE_PARENT_END_DATE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "End Date"),

@@ -30,8 +30,8 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -46,7 +46,6 @@ import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.iso.jaxb.InstitutionDomiciles;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
-import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.dto.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.representation.InstitutionDomicileRepresentation;
@@ -161,7 +160,6 @@ public class InstitutionService {
             institution.setEndDate(endDate);
         }
 
-        setInstitutionImages(institutionDTO, institution);
         resourceService.setAttributes(institution, institutionDTO.getAttributes());
     }
 
@@ -170,6 +168,10 @@ public class InstitutionService {
     }
 
     public void save(Institution institution) {
+        Advert advert = institution.getAdvert();
+        InstitutionAddress address = advert.getAddress();
+        entityService.save(address);
+        entityService.save(advert);
         entityService.save(institution);
     }
 
@@ -294,20 +296,6 @@ public class InstitutionService {
         return month >= businessYearStartMonth ? (month - (businessYearStartMonth - 1)) : (month + (12 - (businessYearStartMonth - 1)));
     }
 
-    public void setInstitutionImages(InstitutionDTO institutionDTO, Institution institution) {
-        FileDTO logo = institutionDTO.getLogoImage();
-        if (logo != null) {
-            Document logoImage = documentService.getImageDocument(logo);
-            institution.setLogoImage(logoImage);
-        }
-
-        FileDTO background = institutionDTO.getBackgroundImage();
-        if (background != null) {
-            Document backgroundDocument = documentService.getImageDocument(background);
-            institution.setBackgroundImage(backgroundDocument);
-        }
-    }
-
     public List<ResourceForWhichUserCanCreateChildDTO> getInstitutionsForWhichUserCanCreateProgram(User user) {
         return institutionDAO.getInstitutionsForWhichUserCanCreateProgram(user);
     }
@@ -336,7 +324,7 @@ public class InstitutionService {
                 institution.setProgramPartnerMode(institutionProgramProjectParent.getPatnerMode());
             }
         }
-        
+
         return Lists.newLinkedList(institutions.values());
     }
 

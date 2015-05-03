@@ -27,7 +27,7 @@ alter table comment
 	drop column creator_ip_address
 ;
 
-alter table advert_sponsorship
+alter table advert_sponsor
 	add column sponsorship_currency varchar(10) not null after sponsor_id,
 	change column sponsorship_commited sponsorship_committed_specified decimal(10, 2) not null,
 	add column sponsorship_committed_converted decimal(10, 2) not null after sponsorship_committed_specified,
@@ -155,7 +155,7 @@ alter table advert
 	add index (sponsorship_required, sponsorship_secured)
 ;
 
-drop table advert_sponsorship
+drop table advert_sponsor
 ;
 
 alter table comment

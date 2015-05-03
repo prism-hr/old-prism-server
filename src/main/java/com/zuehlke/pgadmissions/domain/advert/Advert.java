@@ -1,31 +1,5 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-
-import java.math.BigDecimal;
-import java.util.Set;
-
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.hibernate.annotations.OrderBy;
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
@@ -40,6 +14,17 @@ import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParentAttribute;
+import org.apache.commons.lang3.ObjectUtils;
+import org.hibernate.annotations.OrderBy;
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 
 @Entity
 @Table(name = "ADVERT")
@@ -73,8 +58,8 @@ public class Advert extends ResourceParentAttribute {
     @JoinColumn(name = "institution_partner_id")
     private Institution partner;
 
-    @Column(name = "sponsorship_required")
-    private BigDecimal sponsorshipRequired;
+    @Column(name = "sponsorship_target")
+    private BigDecimal sponsorshipTarget;
 
     @Column(name = "sponsorship_secured")
     private BigDecimal sponsorshipSecured;
@@ -227,12 +212,12 @@ public class Advert extends ResourceParentAttribute {
         this.partner = partner;
     }
 
-    public BigDecimal getSponsorshipRequired() {
-        return sponsorshipRequired;
+    public BigDecimal getSponsorshipTarget() {
+        return sponsorshipTarget;
     }
 
-    public void setSponsorshipRequired(BigDecimal sponsorshipRequired) {
-        this.sponsorshipRequired = sponsorshipRequired;
+    public void setSponsorshipTarget(BigDecimal sponsorshipRequired) {
+        this.sponsorshipTarget = sponsorshipRequired;
     }
 
     public BigDecimal getSponsorshipSecured() {

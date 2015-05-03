@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest.resource;
+package com.zuehlke.pgadmissions.rest.controller;
 
 import java.util.List;
 import java.util.Map;
@@ -47,7 +47,7 @@ import com.zuehlke.pgadmissions.utils.WordUtils;
 
 @RestController
 @RequestMapping("api/{resourceScope:projects|programs|institutions|systems}/{resourceId}/configuration")
-public class ResourceConfigurationResource {
+public class ResourceConfigurationController {
 
     @Autowired
     private EntityService entityService;

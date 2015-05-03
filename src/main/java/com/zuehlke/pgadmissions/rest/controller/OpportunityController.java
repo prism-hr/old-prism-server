@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest.resource;
+package com.zuehlke.pgadmissions.rest.controller;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
@@ -37,7 +37,7 @@ import java.util.Set;
 @RestController
 @RequestMapping("/api/opportunities")
 @PreAuthorize("permitAll")
-public class OpportunityResource {
+public class OpportunityController {
 
     @Inject
     private AdvertService advertService;

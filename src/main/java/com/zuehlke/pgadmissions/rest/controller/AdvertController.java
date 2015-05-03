@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest.resource;
+package com.zuehlke.pgadmissions.rest.controller;
 
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
@@ -17,7 +17,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("api/{resourceScope:projects|programs|institutions}/{resourceId}")
 @PreAuthorize("isAuthenticated()")
-public class AdvertResource {
+public class AdvertController {
 
     @Autowired
     private AdvertService advertService;

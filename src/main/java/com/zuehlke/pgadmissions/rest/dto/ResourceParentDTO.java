@@ -6,7 +6,6 @@ import javax.validation.constraints.NotNull;
 
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 
 public class ResourceParentDTO extends ResourceDTO {
@@ -46,8 +45,6 @@ public class ResourceParentDTO extends ResourceDTO {
 
         private List<ResourceConditionDTO> resourceConditions;
 
-        private List<PrismStudyOption> studyOptions;
-
         private List<String> studyLocations;
 
         public List<ResourceConditionDTO> getResourceConditions() {
@@ -56,14 +53,6 @@ public class ResourceParentDTO extends ResourceDTO {
 
         public void setResourceConditions(List<ResourceConditionDTO> resourceConditions) {
             this.resourceConditions = resourceConditions;
-        }
-
-        public List<PrismStudyOption> getStudyOptions() {
-            return studyOptions;
-        }
-
-        public void setStudyOptions(List<PrismStudyOption> studyOptions) {
-            this.studyOptions = studyOptions;
         }
 
         public List<String> getStudyLocations() {

@@ -50,7 +50,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
@@ -195,14 +194,6 @@ public class ResourceService {
 
         resource.setReferrer(referrer);
         resource.setWorkflowPropertyConfigurationVersion(workflowPropertyConfigurationVersion);
-
-        Set<ResourceCondition> resourceConditions = resource.getResourceConditions();
-        List<PrismActionCondition> actionConditions = actionService.getActionConditions(resourceScope);
-        for (PrismActionCondition actionCondition : actionConditions) {
-            ResourceCondition resourceCondition = new ResourceCondition().withResource(resource).withActionCondition(actionCondition);
-            entityService.save(resourceCondition);
-            resourceConditions.add(resourceCondition);
-        }
 
         Comment comment = new Comment().withUser(resourceUser).withCreatedTimestamp(new DateTime()).withAction(action).withDeclinedResponse(false)
                 .addAssignedUser(resourceUser, roleService.getCreatorRole(resource), CREATE);
@@ -632,7 +623,6 @@ public class ResourceService {
 
     public void setAttributes(ResourceParent resource, ResourceParentAttributesDTO attributes) {
         setResourceConditions(resource, attributes.getResourceConditions());
-        setStudyOptions(resource, attributes.getStudyOptions(), new LocalDate());
         setStudyLocations(resource, attributes.getStudyLocations());
     }
 

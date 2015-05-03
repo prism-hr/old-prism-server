@@ -1,4 +1,4 @@
-alter table advert 
+alter table advert
 	add column sponsorship_target decimal(10, 2) unsigned,
 	add index (institution_partner_id, sponsorship_target, sequence_identifier)
 ;
@@ -87,7 +87,7 @@ update resource_previous_state
 set state_id = replace(state_id, "DEACTIVATED", "APPROVED")
 ;
 
-delete 
+delete
 from role_transition
 where state_transition_id in (
 	select id
@@ -99,7 +99,7 @@ where state_transition_id in (
 			where state_id like "%_DEACTIVATED"))
 ;
 
-delete 
+delete
 from state_transition_propagation
 where state_transition_id in (
 	select id
@@ -111,7 +111,7 @@ where state_transition_id in (
 			where state_id like "%_DEACTIVATED"))
 ;
 
-delete 
+delete
 from state_transition
 where transition_state_id like "%_DEACTIVATED"
 	or state_action_id in (
@@ -120,7 +120,7 @@ where transition_state_id like "%_DEACTIVATED"
 		where state_id like "%_DEACTIVATED")
 ;
 
-delete 
+delete
 from state_action_assignment
 where state_action_id in (
 	select id
@@ -128,7 +128,7 @@ where state_action_id in (
 	where state_id like "%_DEACTIVATED")
 ;
 
-delete 
+delete
 from state_action_notification
 where state_action_id in (
 	select id

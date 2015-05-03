@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest.resource;
+package com.zuehlke.pgadmissions.rest.controller;
 
 import java.util.List;
 import java.util.Map;
@@ -32,7 +32,7 @@ import com.zuehlke.pgadmissions.services.ProgramService;
 @RestController
 @RequestMapping("api/institutions")
 @PreAuthorize("permitAll")
-public class InstitutionResource {
+public class InstitutionController {
 
     @Autowired
     private AdvertService advertService;

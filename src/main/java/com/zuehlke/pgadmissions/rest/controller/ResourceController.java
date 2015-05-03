@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest.resource;
+package com.zuehlke.pgadmissions.rest.controller;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
@@ -83,7 +83,7 @@ import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 @RestController
 @RequestMapping("api/{resourceScope:applications|projects|programs|institutions|systems}")
-public class ResourceResource {
+public class ResourceController {
 
     @Autowired
     private EntityService entityService;
@@ -110,7 +110,7 @@ public class ResourceResource {
     private ApplicationService applicationService;
 
     @Autowired
-    private ApplicationResource applicationResource;
+    private ApplicationController applicationController;
 
     @Autowired
     private Mapper mapper;
@@ -184,7 +184,7 @@ public class ResourceResource {
         PrismScope resourceScope = resource.getResourceScope();
         switch (resourceScope) {
         case APPLICATION:
-            applicationResource.enrichApplicationRepresentation((Application) resource, (ApplicationExtendedRepresentation) representation);
+            applicationController.enrichApplicationRepresentation((Application) resource, (ApplicationExtendedRepresentation) representation);
             break;
         case PROJECT:
             ProjectExtendedRepresentation projectRepresentation = (ProjectExtendedRepresentation) representation;

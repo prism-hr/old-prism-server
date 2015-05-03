@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest.resource;
+package com.zuehlke.pgadmissions.rest.controller;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.services.InstitutionService;
 
 @RestController
 @RequestMapping("api/domiciles/{domicileId}")
-public class InstitutionDomicileResource {
+public class InstitutionDomicileController {
 
     @Autowired
     private EntityService entityService;

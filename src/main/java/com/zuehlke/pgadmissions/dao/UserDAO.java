@@ -358,7 +358,9 @@ public class UserDAO {
                 .setProjection(Projections.groupProperty("userRole.user")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //

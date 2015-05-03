@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest.resource;
+package com.zuehlke.pgadmissions.rest.controller;
 
 import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMENT;
 import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.services.EntityService;
 
 @RestController
 @RequestMapping("/api")
-public class FileResource {
+public class FileController {
 
     @Autowired
     private DocumentService documentService;

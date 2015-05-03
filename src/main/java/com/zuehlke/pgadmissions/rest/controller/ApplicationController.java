@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.rest.resource;
+package com.zuehlke.pgadmissions.rest.controller;
 
 import java.util.HashMap;
 import java.util.List;
@@ -65,7 +65,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 @RestController
 @RequestMapping(value = { "api/applications" })
 @PreAuthorize("isAuthenticated()")
-public class ApplicationResource {
+public class ApplicationController {
 
     @Autowired
     private ActionService actionService;
@@ -89,8 +89,8 @@ public class ApplicationResource {
     private UserService userService;
 
     @Autowired
-    private OpportunityResource opportunityResource;
-    
+    private OpportunityController opportunityController;
+
     @Inject
     private ResourceService resourceService;
 
@@ -286,9 +286,9 @@ public class ApplicationResource {
         representation.setAssignedSupervisors(commentService.getApplicationSupervisors(application));
 
         representation.setPossibleThemes(advertService.getAdvertThemes(application));
-        
+
         ResourceParent parent = (ResourceParent) application.getParentResource();
-        
+
         List<ResourceStudyLocation> studyLocations = resourceService.getStudyLocations(parent);
         List<String> availableStudyLocations = Lists.newArrayListWithCapacity(studyLocations.size());
         for (ResourceStudyLocation studyLocation : studyLocations) {
@@ -309,7 +309,7 @@ public class ApplicationResource {
         }
 
         representation.setResourceSummary(applicationService.getApplicationSummary(application.getId()));
-        representation.setRecommendedAdverts(opportunityResource.getRecommendedAdverts(application.getId()));
+        representation.setRecommendedAdverts(opportunityController.getRecommendedAdverts(application.getId()));
     }
 
 }

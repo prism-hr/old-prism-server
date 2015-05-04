@@ -48,7 +48,6 @@ public class AdvertDAO {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("address", "address", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("partner", "partner", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("institution", "institution", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("institution.resourceStates", "institutionState", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("institution.resourceConditions", "institutionCondition", JoinType.LEFT_OUTER_JOIN) //

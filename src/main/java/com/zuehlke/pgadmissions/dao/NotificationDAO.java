@@ -82,7 +82,7 @@ public class NotificationDAO {
                                 .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id"))) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
                 .add(Restrictions.eq(resourceReference, resource)) //
-                .add(getUserRoleConstraint(resource)) //
+                .add(getUserRoleConstraint(resource, "stateActionAssignment")) //
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.isNull("userNotification.id")) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
@@ -109,7 +109,7 @@ public class NotificationDAO {
                 .add(Restrictions.not( //
                         Restrictions.in("userRole.user", exclusions))) //
                 .add(Restrictions.eq(resourceReference, resource)) //
-                .add(getUserRoleConstraint(resource)) //
+                .add(getUserRoleConstraint(resource, "stateActionNotification")) //
                 .add(getResourceStateActionConstraint()) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
@@ -137,7 +137,7 @@ public class NotificationDAO {
                                 .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id"))) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
                 .add(Restrictions.eq(resourceReference, resource)) //
-                .add(getUserRoleConstraint(resource)) //
+                .add(getUserRoleConstraint(resource, "stateActionAssignment")) //
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.lt("userNotification.lastNotifiedDate", baseline)) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
@@ -165,7 +165,7 @@ public class NotificationDAO {
                                 .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id"))) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", SYNDICATED)) //
                 .add(Restrictions.eq(resourceReference, resource)) //
-                .add(getUserRoleConstraint(resource)) //
+                .add(getUserRoleConstraint(resource, "stateActionAssignment")) //
                 .add(getResourceStateActionConstraint())
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userNotification.id")) //
@@ -200,7 +200,7 @@ public class NotificationDAO {
                         .add(Restrictions.eq("userRole.user", resource.getUser())) //
                         .add(Restrictions.ne("userRole.user", invoker))) //
                 .add(Restrictions.eq("comment." + resourceReference, resource)) //
-                .add(getUserRoleConstraint(resource)) //
+                .add(getUserRoleConstraint(resource, "stateActionNotification")) //
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userNotification.id")) //

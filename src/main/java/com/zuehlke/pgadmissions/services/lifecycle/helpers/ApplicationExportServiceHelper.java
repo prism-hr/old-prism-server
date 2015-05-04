@@ -1,20 +1,19 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.services.ApplicationExportService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import java.util.List;
 
 @Component
 public class ApplicationExportServiceHelper implements AbstractServiceHelper {
 
-    @Autowired
+    @Inject
     private ApplicationService applicationService;
 
-    @Autowired
+    @Inject
     private ApplicationExportService applicationExportService;
 
     @Override

@@ -1,14 +1,19 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
+import com.zuehlke.pgadmissions.utils.PrismConstants;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
-
+import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -17,21 +22,12 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
 
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
-
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
-import com.zuehlke.pgadmissions.utils.PrismConstants;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 @Service
 @Transactional
@@ -51,19 +47,16 @@ public class SearchEngineOptimisationService {
     @Value("${application.api.url}")
     private String applicationApiUrl;
 
-    @Autowired
-    private SystemService systemService;
-
-    @Autowired
+    @Inject
     private InstitutionService institutionService;
 
-    @Autowired
+    @Inject
     private ProgramService programService;
 
-    @Autowired
+    @Inject
     private ProjectService projectService;
 
-    @Autowired
+    @Inject
     private StateService stateService;
 
     public String getSitemapIndex() throws ParserConfigurationException, TransformerException {

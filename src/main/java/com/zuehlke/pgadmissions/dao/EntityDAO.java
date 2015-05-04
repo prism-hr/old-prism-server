@@ -1,20 +1,19 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity.ResourceSignature;
+import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.UniqueEntity;
-import com.zuehlke.pgadmissions.domain.UniqueEntity.ResourceSignature;
-import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -45,7 +44,7 @@ public class EntityDAO {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(klass);
 
         for (String property : properties.keySet()) {
-            if (property == null) {
+            if (properties.get(property) == null) {
                 criteria.add(Restrictions.isNull(property));
             } else {
                 criteria.add(Restrictions.eq(property, properties.get(property)));

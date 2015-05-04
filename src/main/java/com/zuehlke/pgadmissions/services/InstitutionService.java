@@ -55,7 +55,7 @@ public class InstitutionService {
     private EntityService entityService;
 
     @Inject
-    DocumentService documentService;
+    private DocumentService documentService;
 
     @Inject
     private ImportedEntityService importedEntityService;

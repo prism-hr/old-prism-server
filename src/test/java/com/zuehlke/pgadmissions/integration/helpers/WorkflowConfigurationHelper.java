@@ -1,18 +1,14 @@
 package com.zuehlke.pgadmissions.integration.helpers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.AbstractMap;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
+import com.google.common.base.Objects;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
+import com.zuehlke.pgadmissions.domain.system.System;
+import com.zuehlke.pgadmissions.domain.workflow.*;
+import com.zuehlke.pgadmissions.services.ActionService;
+import com.zuehlke.pgadmissions.services.StateService;
+import com.zuehlke.pgadmissions.services.SystemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,33 +17,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
-import com.zuehlke.pgadmissions.domain.system.System;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
-import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
-import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.domain.workflow.StateAction;
-import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
-import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
-import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
-import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ScopeService;
-import com.zuehlke.pgadmissions.services.StateService;
-import com.zuehlke.pgadmissions.services.SystemService;
+import java.util.*;
+
+import static org.junit.Assert.*;
 
 @Service
 @Transactional
@@ -70,9 +42,6 @@ public class WorkflowConfigurationHelper {
 
 	@Autowired
 	private ActionService actionService;
-
-	@Autowired
-	private ScopeService scopeService;
 
 	@Autowired
 	private StateService stateService;
@@ -136,7 +105,7 @@ public class WorkflowConfigurationHelper {
 			Action action = stateAction.getAction();
 
 			logger.info("Verifying action: " + action.getId().toString());
-			assertEquals(state.getScope(), action.getScope());
+			assertEquals(state.getScope().getId(), action.getScope().getId());
 
 			PrismActionCategory actionCategory = action.getActionCategory();
 

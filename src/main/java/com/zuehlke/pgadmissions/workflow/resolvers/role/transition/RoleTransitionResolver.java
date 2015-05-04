@@ -6,6 +6,6 @@ import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 
 public interface RoleTransitionResolver {
 
-	public void resolve(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException;
-	
+	void resolve(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException;
+
 }

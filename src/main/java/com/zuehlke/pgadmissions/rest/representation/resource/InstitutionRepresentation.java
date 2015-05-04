@@ -18,6 +18,8 @@ public class InstitutionRepresentation {
 
     private FileRepresentation logoImage;
 
+    private FileRepresentation backgroundImage;
+
     public Integer getId() {
         return id;
     }
@@ -80,5 +82,13 @@ public class InstitutionRepresentation {
 
     public void setLogoImage(FileRepresentation logoImage) {
         this.logoImage = logoImage;
+    }
+
+    public FileRepresentation getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    public void setBackgroundImage(FileRepresentation backgroundImage) {
+        this.backgroundImage = backgroundImage;
     }
 }

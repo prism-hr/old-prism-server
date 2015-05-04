@@ -1,31 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ADVERTISE_INVALID_PARTNER_INSTITUTION;
-import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
-
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.net.URI;
-import java.net.URLEncoder;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.text.WordUtils;
-import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
@@ -51,16 +25,32 @@ import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.dto.AdvertCategoriesDTO;
-import com.zuehlke.pgadmissions.rest.dto.AdvertClosingDateDTO;
-import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
-import com.zuehlke.pgadmissions.rest.dto.AdvertDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.AdvertFeesAndPaymentsDTO;
-import com.zuehlke.pgadmissions.rest.dto.FinancialDetailsDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionAddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.InstitutionPartnerDTO;
-import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
+import com.zuehlke.pgadmissions.rest.dto.*;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.text.WordUtils;
+import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+
+import javax.inject.Inject;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ADVERTISE_INVALID_PARTNER_INSTITUTION;
+import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 @Service
 @Transactional
@@ -440,12 +430,12 @@ public class AdvertService {
         removeExpiredExchangeRates(baseline);
 
         String pair = specifiedCurrency + currencyAtLocale;
-        HashMap<String, BigDecimal> todaysRates = exchangeRates.get(baseline);
+        HashMap<String, BigDecimal> todayRates = exchangeRates.get(baseline);
 
-        if (todaysRates != null) {
-            BigDecimal todaysRate = todaysRates.get(pair);
-            if (todaysRate != null) {
-                return todaysRate;
+        if (todayRates != null) {
+            BigDecimal todayRate = todayRates.get(pair);
+            if (todayRate != null) {
+                return todayRate;
             }
         }
 
@@ -456,12 +446,12 @@ public class AdvertService {
 
         BigDecimal todaysRate = response.getQuery().getResults().getRate().getRate();
 
-        if (todaysRates == null) {
-            todaysRates = new HashMap<String, BigDecimal>();
-            todaysRates.put(pair, todaysRate);
-            exchangeRates.put(baseline, todaysRates);
+        if (todayRates == null) {
+            todayRates = new HashMap<String, BigDecimal>();
+            todayRates.put(pair, todaysRate);
+            exchangeRates.put(baseline, todayRates);
         } else {
-            todaysRates.put(pair, todaysRate);
+            todayRates.put(pair, todaysRate);
         }
 
         return todaysRate;

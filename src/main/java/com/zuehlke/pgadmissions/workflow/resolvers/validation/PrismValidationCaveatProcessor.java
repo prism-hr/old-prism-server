@@ -4,6 +4,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCommentFi
 
 public interface PrismValidationCaveatProcessor {
 
-	public boolean validate(PrismActionCommentField field);
+	boolean validate(PrismActionCommentField field);
 
 }

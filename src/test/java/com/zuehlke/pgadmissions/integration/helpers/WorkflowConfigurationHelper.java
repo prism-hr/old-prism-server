@@ -7,7 +7,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.workflow.*;
 import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ScopeService;
 import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import org.slf4j.Logger;
@@ -43,9 +42,6 @@ public class WorkflowConfigurationHelper {
 
 	@Autowired
 	private ActionService actionService;
-
-	@Autowired
-	private ScopeService scopeService;
 
 	@Autowired
 	private StateService stateService;

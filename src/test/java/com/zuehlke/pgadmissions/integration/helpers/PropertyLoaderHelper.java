@@ -1,21 +1,19 @@
 package com.zuehlke.pgadmissions.integration.helpers;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_YES;
-import static org.junit.Assert.assertEquals;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_YES;
+import static org.junit.Assert.assertEquals;
 
 @Service
 @Transactional
@@ -26,9 +24,6 @@ public class PropertyLoaderHelper {
 
 	@Autowired
 	private SystemService systemService;
-
-	@Autowired
-	private UserService userService;
 
 	@Autowired
 	private ApplicationContext applicationContext;

@@ -4,6 +4,6 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 
 public interface StateTerminationResolver {
 
-	public boolean resolve(Resource resource);
-	
+	boolean resolve(Resource resource);
+
 }

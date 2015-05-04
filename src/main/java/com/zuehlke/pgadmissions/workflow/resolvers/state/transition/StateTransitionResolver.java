@@ -6,6 +6,6 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 
 public interface StateTransitionResolver {
 
-	public StateTransition resolve(Resource resource, Comment comment);
-	
+	StateTransition resolve(Resource resource, Comment comment);
+
 }

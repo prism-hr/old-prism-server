@@ -1,15 +1,15 @@
 package com.zuehlke.pgadmissions.workflow.selectors;
 
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+
+import java.util.List;
 
 public interface PrismSelector<T> {
 
-	public List<T> getSelected(Resource resource);
+	List<T> getSelected(Resource resource);
 
-	public List<T> getPromoted(Resource resource);
+	List<T> getPromoted(Resource resource);
 
-	public List<T> getPossible(Resource resource);
+	List<T> getPossible(Resource resource);
 
 }

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -17,7 +18,6 @@ import javax.validation.Valid;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.dozer.Mapper;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -84,37 +84,37 @@ import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 @RequestMapping("api/{resourceScope:applications|projects|programs|institutions|systems}")
 public class ResourceController {
 
-    @Autowired
+    @Inject
     private EntityService entityService;
 
-    @Autowired
+    @Inject
     private ResourceService resourceService;
 
-    @Autowired
+    @Inject
     private CommentService commentService;
 
-    @Autowired
+    @Inject
     private UserService userService;
 
-    @Autowired
+    @Inject
     private ActionService actionService;
 
-    @Autowired
+    @Inject
     private RoleService roleService;
 
-    @Autowired
+    @Inject
     private StateService stateService;
 
-    @Autowired
+    @Inject
     private ApplicationService applicationService;
 
-    @Autowired
+    @Inject
     private ApplicationController applicationController;
 
-    @Autowired
+    @Inject
     private Mapper mapper;
 
-    @Autowired
+    @Inject
     private ObjectMapper objectMapper;
 
     @RequestMapping(method = RequestMethod.POST)

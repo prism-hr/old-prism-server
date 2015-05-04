@@ -83,9 +83,6 @@ public class ApplicationController {
     private CommentService commentService;
 
     @Autowired
-    private ProgramService programService;
-
-    @Autowired
     private UserService userService;
 
     @Autowired

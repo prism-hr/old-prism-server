@@ -1,5 +1,11 @@
 package com.zuehlke.pgadmissions.integration;
 
+import com.zuehlke.pgadmissions.integration.helpers.PropertyLoaderHelper;
+import com.zuehlke.pgadmissions.integration.helpers.SystemDataImportHelper;
+import com.zuehlke.pgadmissions.integration.helpers.SystemInitialisationHelper;
+import com.zuehlke.pgadmissions.integration.helpers.WorkflowConfigurationHelper;
+import com.zuehlke.pgadmissions.mail.MailSenderMock;
+import com.zuehlke.pgadmissions.services.SystemService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,14 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.zuehlke.pgadmissions.integration.helpers.PropertyLoaderHelper;
-import com.zuehlke.pgadmissions.integration.helpers.SystemDataImportHelper;
-import com.zuehlke.pgadmissions.integration.helpers.SystemInitialisationHelper;
-import com.zuehlke.pgadmissions.integration.helpers.WorkflowConfigurationHelper;
-import com.zuehlke.pgadmissions.mail.MailSenderMock;
-import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.SystemService;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
 @Service
@@ -23,9 +21,6 @@ public class LifeCycleTest {
 
 	@Autowired
 	private SystemService systemService;
-
-	@Autowired
-	private EntityService entityService;
 
 	@Autowired
 	private MailSenderMock mailSenderMock;

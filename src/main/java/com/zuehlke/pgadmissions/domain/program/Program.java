@@ -255,6 +255,7 @@ public class Program extends ResourceOpportunity {
 
     @Override
     public void setProgram(Program program) {
+        return;
     }
 
     @Override
@@ -264,6 +265,7 @@ public class Program extends ResourceOpportunity {
 
     @Override
     public void setProject(Project project) {
+        return;
     }
 
     @Override

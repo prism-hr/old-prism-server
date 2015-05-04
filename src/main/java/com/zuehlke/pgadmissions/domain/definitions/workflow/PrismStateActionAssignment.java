@@ -6,10 +6,16 @@ public class PrismStateActionAssignment {
 
     private PrismRole role;
 
+    private Boolean partnerMode = false;
+
     private PrismActionEnhancement actionEnhancement;
 
     public PrismRole getRole() {
         return role;
+    }
+
+    public Boolean getPartnerMode() {
+        return partnerMode;
     }
 
     public PrismActionEnhancement getActionEnhancement() {
@@ -21,6 +27,11 @@ public class PrismStateActionAssignment {
         return this;
     }
 
+    public PrismStateActionAssignment withPartnerMode() {
+        this.partnerMode = true;
+        return this;
+    }
+
     public PrismStateActionAssignment withActionEnhancement(PrismActionEnhancement actionEnhancement) {
         this.actionEnhancement = actionEnhancement;
         return this;
@@ -28,7 +39,7 @@ public class PrismStateActionAssignment {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(role, actionEnhancement);
+        return Objects.hashCode(role, partnerMode, actionEnhancement);
     }
 
     @Override
@@ -40,7 +51,7 @@ public class PrismStateActionAssignment {
             return false;
         }
         final PrismStateActionAssignment other = (PrismStateActionAssignment) object;
-        return Objects.equal(role, other.getRole()) && Objects.equal(actionEnhancement, other.getActionEnhancement());
+        return Objects.equal(role, other.getRole()) && Objects.equal(partnerMode, other.getPartnerMode())
+                && Objects.equal(actionEnhancement, other.getActionEnhancement());
     }
-
 }

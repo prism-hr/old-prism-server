@@ -1,41 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.*;
 
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationApprovedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationAssignedInterviewerResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationAssignedReviewerResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationAssignedSupervisorResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationCompletedReferenceStateResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationCompletedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationCompletedStateResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationCompletedVerificationStateResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationConfirmedEligibilityResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationConfirmedInterviewResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationConfirmedSupervisionResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationEscalatedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationExportedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationProvidedInterviewAvailabilityResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationProvidedInterviewFeedbackResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationProvidedReferenceResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationProvidedReviewResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationPurgedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationRejectedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationUpdateInterviewAvailabilityResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ApplicationWithdrawnResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.InstitutionApprovedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.InstitutionCreatedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ProgramApprovedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ProgramCreatedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ProgramEscalatedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ProgramImportedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ProgramUpdatedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ProjectCreatedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.ProjectUpdatedResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 public enum PrismStateTransitionEvaluation {
 
@@ -67,7 +34,7 @@ public enum PrismStateTransitionEvaluation {
 	PROGRAM_UPDATED_OUTCOME(true, PROGRAM, ProgramUpdatedResolver.class), //
 	PROGRAM_CREATED_OUTCOME(false, PROGRAM, ProgramCreatedResolver.class), //
 	PROGRAM_ESCALATED_OUTCOME(false, PROGRAM, ProgramEscalatedResolver.class), //
-	PROJECT_APPROVED_OUTCOME(true, PROJECT, ProgramApprovedResolver.class), //
+	PROJECT_APPROVED_OUTCOME(true, PROJECT, ProjectApprovedResolver.class), //
 	PROJECT_UPDATED_OUTCOME(true, PROJECT, ProjectUpdatedResolver.class), //
 	PROJECT_CREATED_OUTCOME(false, PROJECT, ProjectCreatedResolver.class);
 

@@ -49,7 +49,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ADVERTISE_INVALID_PARTNER_INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_PARENT_INVALID_PARTNER_INSTITUTION;
 import static com.zuehlke.pgadmissions.utils.WordUtils.pluralize;
 
 @Service
@@ -103,7 +103,7 @@ public class AdvertService {
     }
 
     public List<Advert> getAdverts(OpportunitiesQueryDTO queryDTO, List<PrismState> institutionStates, List<PrismState> programStates,
-            List<PrismState> projectStates) {
+                                   List<PrismState> projectStates) {
         institutionStates = queryDTO.getInstitutions() == null ? institutionStates : stateService.getInstitutionStates();
         programStates = queryDTO.getPrograms() == null ? programStates : stateService.getProgramStates();
         projectStates = queryDTO.getProjects() == null ? projectStates : stateService.getProjectStates();
@@ -191,7 +191,7 @@ public class AdvertService {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
-        for (String propertyName : new String[] { "domain", "industry", "function", "competency", "theme" }) {
+        for (String propertyName : new String[]{"domain", "industry", "function", "competency", "theme"}) {
             String propertySetterName = "add" + WordUtils.capitalize(propertyName);
             List<Object> values = (List<Object>) PrismReflectionUtils.getProperty(categoriesDTO, pluralize(propertyName));
 
@@ -315,7 +315,7 @@ public class AdvertService {
     }
 
     public List<String> getAdvertThemes(Application application) {
-        for (ResourceParent resource : new ResourceParent[] { application.getProject(), application.getProgram(), application.getInstitution() }) {
+        for (ResourceParent resource : new ResourceParent[]{application.getProject(), application.getProgram(), application.getInstitution()}) {
             if (resource != null) {
                 List<String> themes = advertDAO.getAdvertThemes(resource.getAdvert());
                 if (!themes.isEmpty()) {
@@ -365,7 +365,7 @@ public class AdvertService {
     }
 
     private void setMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context)
+                                   BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Minimum" + context, minimumSpecified);
         PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Maximum" + context, maximumSpecified);
@@ -374,7 +374,7 @@ public class AdvertService {
     }
 
     private void setConvertedMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
+                                            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (rate.compareTo(new BigDecimal(0)) == 1) {
             minimumSpecified = minimumSpecified.multiply(rate).setScale(2, RoundingMode.HALF_UP);
@@ -488,7 +488,7 @@ public class AdvertService {
     }
 
     private void updateFinancialDetails(AdvertFinancialDetail financialDetails, FinancialDetailsDTO financialDetailsDTO, String currencyAtLocale,
-            LocalDate baseline) throws Exception {
+                                        LocalDate baseline) throws Exception {
         PrismDurationUnit interval = financialDetailsDTO.getInterval();
         String currencySpecified = financialDetailsDTO.getCurrency();
 
@@ -566,19 +566,20 @@ public class AdvertService {
     }
 
     private void updatePartner(User user, Advert advert, InstitutionPartnerDTO partnerDTO) throws Exception {
-        Institution partner;
+        Institution partner = null;
         Integer partnerId = partnerDTO.getPartnerId();
-        if (partnerId == null) {
+
+        if (partnerId != null) {
+            partner = institutionService.getById(partnerId);
+            if (partner == null) {
+                throw new WorkflowEngineException(SYSTEM_RESOURCE_PARENT_INVALID_PARTNER_INSTITUTION.name());
+            }
+        } else if (partnerDTO.getPartner() != null) {
             InstitutionPartnerDTO partnerPartnerDTO = partnerDTO.getPartner().getAdvert().getPartner();
             if (partnerPartnerDTO != null) {
                 throw new RuntimeException("Denial of Service attempt: user attempted to post recursive advert");
             }
             partner = institutionService.createPartner(user, partnerDTO.getPartner());
-        } else {
-            partner = institutionService.getById(partnerId);
-            if (partner == null) {
-                throw new WorkflowEngineException(SYSTEM_ADVERTISE_INVALID_PARTNER_INSTITUTION.name());
-            }
         }
         advert.setPartner(partner);
     }

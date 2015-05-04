@@ -89,11 +89,9 @@ public class CustomizationService {
         return representation;
     }
 
-    public List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource resource, User user)
+    public List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource resource)
             throws Exception {
-        PrismScope resourceScope = resource.getResourceScope();
-        PrismOpportunityType opportunityType = resourceScope.ordinal() > INSTITUTION.ordinal() ? resource.getProgram().getOpportunityType()
-                .getPrismOpportunityType() : null;
+        PrismOpportunityType opportunityType = getConfiguredOpportunityType(resource, null);
         return getConfigurationRepresentations(configurationType, resource, resource.getResourceScope(), opportunityType);
     }
 
@@ -152,7 +150,7 @@ public class CustomizationService {
     public List<WorkflowConfigurationRepresentation> getConfigurationRepresentationsWithOrWithoutVersion(PrismConfiguration configurationType,
             Resource resource, Integer configurationVersion) throws Exception {
         if (configurationVersion == null) {
-            return getConfigurationRepresentations(configurationType, resource, userService.getCurrentUser());
+            return getConfigurationRepresentations(configurationType, resource);
         } else {
             return getConfigurationRepresentationsWithVersion(resource, configurationType, configurationVersion);
         }

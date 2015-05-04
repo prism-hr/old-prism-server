@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ADVERTISE_INVALID_PARTNER_INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterMatchMode.ANY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
@@ -747,7 +746,7 @@ public class ResourceService {
             } else {
                 partner = institutionService.getById(newPartnerId);
                 if (partner == null) {
-                    throw new WorkflowEngineException(SYSTEM_ADVERTISE_INVALID_PARTNER_INSTITUTION.name());
+                    throw new WorkflowEngineException("Denial of Service attempt: user attempted to post recursive advert");
                 }
             }
             resource.setPartner(partner);
@@ -764,7 +763,7 @@ public class ResourceService {
         Institution partner = resource.getPartner();
         comment.setPartner(partner);
     }
-    
+
     public void resynchronizePartner(ResourceOpportunity resource, Comment comment) {
         Institution newPartner = resource.getPartner();
         Institution oldPartner = resourceDAO.getPreviousPartner(resource);

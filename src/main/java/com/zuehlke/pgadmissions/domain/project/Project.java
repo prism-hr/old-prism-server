@@ -34,9 +34,9 @@ import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyLocation;
@@ -45,7 +45,6 @@ import com.zuehlke.pgadmissions.domain.system.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 @Entity
 @Table(name = "PROJECT")
 public class Project extends ResourceOpportunity {
@@ -530,8 +529,8 @@ public class Project extends ResourceOpportunity {
         return program != null && BooleanUtils.isTrue(program.getImported());
     }
 
-    public Project withResource(ResourceParent resource) {
-        PrismReflectionUtils.setProperty(this, resource.getResourceScope().getLowerCamelName(), resource);
+    public Project withParentResource(Resource parentResource) {
+        setParentResource(parentResource);
         return this;
     }
 

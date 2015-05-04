@@ -54,7 +54,7 @@ public class ProjectCreator implements ResourceCreator {
         DepartmentDTO departmentDTO = newProject.getDepartment();
         Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(departmentDTO);
 
-        Project project = new Project().withUser(user).withResource(resource).withDepartment(department).withAdvert(advert)
+        Project project = new Project().withUser(user).withParentResource(resource).withDepartment(department).withAdvert(advert)
                 .withTitle(advert.getTitle()).withDurationMinimum(newProject.getDurationMinimum()).withDurationMaximum(newProject.getDurationMaximum())
                 .withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD));
         resourceService.updatePartner(user, project, newProject);

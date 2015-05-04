@@ -38,8 +38,8 @@ public class InstitutionCreator implements ResourceCreator {
         AdvertDTO advertDTO = newInstitution.getAdvert();
         Advert advert = advertService.createAdvert(user, advertDTO);
 
-        Institution institution = new Institution().withUser(user).withSystem(systemService.getSystem()).withDomicile(advert.getAddress().getDomicile())
-                .withAdvert(advert).withTitle(advert.getTitle()).withCurrency(newInstitution.getCurrency())
+        Institution institution = new Institution().withUser(user).withParentResource(systemService.getSystem())
+                .withDomicile(advert.getAddress().getDomicile()).withAdvert(advert).withTitle(advert.getTitle()).withCurrency(newInstitution.getCurrency())
                 .withBusinessYearStartMonth(newInstitution.getBusinessYearStartMonth()).withGoogleId(advert.getAddress().getLocation().getGoogleId())
                 .withUclInstitution(false).withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD)).withCreatedTimestamp(new DateTime());
         advert.setInstitution(institution);

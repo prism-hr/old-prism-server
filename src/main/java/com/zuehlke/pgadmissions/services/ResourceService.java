@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ADVERTISE_INVALID_PARTNER_INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterMatchMode.ANY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
@@ -31,7 +32,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.LinkedHashMultimap;
@@ -86,7 +86,9 @@ import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
 import com.zuehlke.pgadmissions.dto.SocialMetadataDTO;
 import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.AdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.InstitutionPartnerDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
@@ -675,7 +677,7 @@ public class ResourceService {
                 prismStudyOptions = resource.getOpportunityType().getPrismOpportunityType().getDefaultStudyOptions();
             }
         }
-        
+
         for (PrismStudyOption prismStudyOption : prismStudyOptions) {
             if (close.isAfter(baseline)) {
                 StudyOption studyOption = importedEntityService.getByCode(StudyOption.class, resource.getInstitution(), prismStudyOption.name());
@@ -698,12 +700,19 @@ public class ResourceService {
 
     public void update(PrismScope resourceScope, Integer resourceId, OpportunityDTO resourceDTO, Comment comment) throws Exception {
         ResourceOpportunity resource = (ResourceOpportunity) getById(resourceScope, resourceId);
+        updatePartner(comment.getUser(), resource, resourceDTO);
 
         DepartmentDTO departmentDTO = resourceDTO.getDepartment();
         Department department = departmentDTO == null ? null : departmentService.getOrCreateDepartment(departmentDTO);
         resource.setDepartment(department);
 
-        updateAdvert(resource, resourceDTO, comment);
+        AdvertDTO advertDTO = resourceDTO.getAdvert();
+        Advert advert = resource.getAdvert();
+        advertService.updateAdvert(comment.getUser(), advertDTO, advert);
+
+        if (BooleanUtils.isFalse(advert.getImported())) {
+            resource.setTitle(advert.getTitle());
+        }
 
         resource.setDurationMinimum(resourceDTO.getDurationMinimum());
         resource.setDurationMaximum(resourceDTO.getDurationMaximum());
@@ -728,22 +737,41 @@ public class ResourceService {
         }
     }
 
-    public void updateAdvert(ResourceParent resource, OpportunityDTO resourceDTO, Comment comment) throws Exception {
-        AdvertDTO advertDTO = resourceDTO.getAdvert();
-        Advert advert = resource.getAdvert();
-
-        Institution oldPartner = advert.getPartner();
-        advertService.updateAdvert(userService.getCurrentUser(), advertDTO, advert);
-        Institution newPartner = advert.getPartner();
-
-        if (oldPartner != null && newPartner == null) {
-            comment.setRemovedPartner(true);
-        } else if (!Objects.equal(oldPartner, newPartner)) {
-            comment.setPartner(newPartner);
+    public void updatePartner(User user, ResourceOpportunity resource, OpportunityDTO newResource) throws Exception {
+        InstitutionPartnerDTO newPartner = newResource.getPartner();
+        if (newPartner != null) {
+            Institution partner;
+            Integer newPartnerId = newPartner.getPartnerId();
+            if (newPartnerId == null) {
+                partner = institutionService.createPartner(user, newPartner.getPartner());
+            } else {
+                partner = institutionService.getById(newPartnerId);
+                if (partner == null) {
+                    throw new WorkflowEngineException(SYSTEM_ADVERTISE_INVALID_PARTNER_INSTITUTION.name());
+                }
+            }
+            resource.setPartner(partner);
         }
+    }
 
-        if (BooleanUtils.isFalse(advert.getImported())) {
-            resource.setTitle(advert.getTitle());
+    public void deleteElapsedStudyOptions() {
+        LocalDate baseline = new LocalDate();
+        resourceDAO.deleteElapsedStudyOptionInstances(baseline);
+        resourceDAO.deleteElapsedStudyOptions(baseline);
+    }
+
+    public void synchronizePartner(ResourceOpportunity resource, Comment comment) {
+        Institution partner = resource.getPartner();
+        comment.setPartner(partner);
+    }
+    
+    public void resynchronizePartner(ResourceOpportunity resource, Comment comment) {
+        Institution newPartner = resource.getPartner();
+        Institution oldPartner = resourceDAO.getPreviousPartner(resource);
+        if (oldPartner == null) {
+            comment.setPartner(newPartner);
+        } else if (!(oldPartner == null || newPartner == null) && !oldPartner.getId().equals(newPartner.getId())) {
+            comment.setPartner(newPartner);
         }
     }
 
@@ -756,17 +784,6 @@ public class ResourceService {
             }
         }
         return conditions;
-    }
-
-    public void deleteElapsedStudyOptions() {
-        LocalDate baseline = new LocalDate();
-        resourceDAO.deleteElapsedStudyOptionInstances(baseline);
-        resourceDAO.deleteElapsedStudyOptions(baseline);
-    }
-
-    public void synchronizePartner(ResourceParent resource, Comment comment) {
-        Institution partner = resource.getAdvert().getPartner();
-        comment.setPartner(partner);
     }
 
     private void createOrUpdateStateTransitionSummary(Resource resource, DateTime baselineTime) {

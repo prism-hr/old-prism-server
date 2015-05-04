@@ -24,9 +24,6 @@ public class AdvertDTO {
 
     @Valid
     private InstitutionAddressDTO address;
-
-    @Valid
-    private InstitutionPartnerDTO partner;
     
     private BigDecimal sponsorshipRequired;
 
@@ -60,14 +57,6 @@ public class AdvertDTO {
 
     public void setAddress(InstitutionAddressDTO address) {
         this.address = address;
-    }
-
-    public InstitutionPartnerDTO getPartner() {
-        return partner;
-    }
-
-    public void setPartner(InstitutionPartnerDTO partner) {
-        this.partner = partner;
     }
 
     public BigDecimal getSponsorshipRequired() {

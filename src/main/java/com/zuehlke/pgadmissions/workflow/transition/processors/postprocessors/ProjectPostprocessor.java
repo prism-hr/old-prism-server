@@ -29,7 +29,7 @@ public class ProjectPostprocessor implements ResourceProcessor {
 
     @Inject
     private ResourceService resourceService;
-    
+
     @Inject
     private RoleService roleService;
 
@@ -48,9 +48,10 @@ public class ProjectPostprocessor implements ResourceProcessor {
         if (comment.isCreateComment()) {
             resourceService.synchronizePartner(project, comment);
         }
-        
+
         if (comment.isProjectViewEditComment()) {
             connectProjectSupervisors(project, comment);
+            resourceService.resynchronizePartner(project, comment);
         }
 
         if (comment.isSponsorshipComment()) {

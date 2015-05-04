@@ -25,13 +25,16 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.OauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.imported.StudyOption;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOptionInstance;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -353,6 +356,16 @@ public class ResourceDAO {
                         + "where applicationCloseDate < :baseline") //
                 .setParameter("baseline", baseline) //
                 .executeUpdate();
+    }
+
+    public Institution getPreviousPartner(ResourceOpportunity resource) {
+        return (Institution) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .setProjection(Projections.property("partner")) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .addOrder(Order.desc("createdTimestamp")) //
+                .addOrder(Order.desc("id")) //
+                .setMaxResults(1) //
+                .list();
     }
 
     private void addResourceListCustomColumns(PrismScope scopeId, ProjectionList projectionList) {

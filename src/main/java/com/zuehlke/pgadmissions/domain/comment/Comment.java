@@ -593,6 +593,11 @@ public class Comment {
         this.state = state;
         return this;
     }
+    
+    public Comment withRemovedPartner(Boolean removedPartner) {
+        this.removedPartner = removedPartner;
+        return this;
+    }
 
     public Comment withTransitionState(State transitionState) {
         this.transitionState = transitionState;
@@ -831,7 +836,7 @@ public class Comment {
     public boolean isApplicationReserveStatusComment() {
         return applicationReserveStatus != null;
     }
-
+    
     public boolean isSponsorshipComment() {
         return sponsorship != null && BooleanUtils.isTrue(sponsorship.getConfirmed());
     }

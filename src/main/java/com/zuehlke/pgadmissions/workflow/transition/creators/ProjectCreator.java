@@ -57,6 +57,7 @@ public class ProjectCreator implements ResourceCreator {
         Project project = new Project().withUser(user).withResource(resource).withDepartment(department).withAdvert(advert)
                 .withTitle(advert.getTitle()).withDurationMinimum(newProject.getDurationMinimum()).withDurationMaximum(newProject.getDurationMaximum())
                 .withEndDate(new LocalDate().plusMonths(ADVERT_TRIAL_PERIOD));
+        resourceService.updatePartner(user, project, newProject);
 
         ResourceParentAttributesDTO attributes = newProject.getAttributes();
         if (BooleanUtils.isTrue(project.getImported())) {

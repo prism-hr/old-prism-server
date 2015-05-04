@@ -369,7 +369,7 @@ public class UserDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(Restrictions.in("action.id", actions)) //
-                .add(getUserRoleConstraint(resource)) //
+                .add(getUserRoleConstraint(resource, "stateActionAssignment")) //
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("user.userAccount")) //

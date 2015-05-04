@@ -42,6 +42,8 @@ public class ResourceListRowDTO {
     private String code;
 
     private String institutionTitle;
+    
+    private String partnerTitle;
 
     private String programTitle;
 
@@ -161,6 +163,14 @@ public class ResourceListRowDTO {
 
     public void setInstitutionTitle(String institutionTitle) {
         this.institutionTitle = institutionTitle;
+    }
+
+    public String getPartnerTitle() {
+        return partnerTitle;
+    }
+
+    public void setPartnerTitle(String partnerTitle) {
+        this.partnerTitle = partnerTitle;
     }
 
     public String getProgramTitle() {

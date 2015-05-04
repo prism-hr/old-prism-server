@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_EXPORT_PROGRAM_INSTANCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_EXPORT;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -136,7 +137,6 @@ public class ApplicationExportService {
         localize(application);
 
         String creatorExportId = userService.getUserInstitutionId(application.getUser(), application.getInstitution(), PrismUserIdentity.STUDY_APPLICANT);
-        String creatorIpAddress = applicationService.getApplicationCreatorIpAddress(application);
         Comment offerRecommendationComment = commentService.getLatestComment(application, PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
         User primarySupervisor = applicationService.getPrimarySupervisor(offerRecommendationComment);
         ResourceStudyOptionInstance exportProgramInstance = resourceService.getFirstStudyOptionInstance(application.getProgram(), application
@@ -150,7 +150,7 @@ public class ApplicationExportService {
         return applicationContext
                 .getBean(ApplicationExportBuilder.class)
                 .localize(propertyLoader)
-                .build(new ApplicationExportDTO().withApplication(application).withCreatorExportId(creatorExportId).withCreatorIpAddress(creatorIpAddress)
+                .build(new ApplicationExportDTO().withApplication(application).withCreatorExportId(creatorExportId).withCreatorIpAddress("127.0.0.1")
                         .withOfferRecommendationComment(offerRecommendationComment).withPrimarySupervisor(primarySupervisor)
                         .withExportProgramInstance(exportProgramInstance).withApplicationReferences(applicationExportReferences));
     }
@@ -163,7 +163,7 @@ public class ApplicationExportService {
 
     protected void executeExportAction(Application application, SubmitAdmissionsApplicationRequest exportRequest, String exportId, String exportUserId,
             String exportException) throws Exception {
-        Action exportAction = actionService.getById(PrismAction.APPLICATION_EXPORT);
+        Action exportAction = actionService.getById(APPLICATION_EXPORT);
         Institution exportInstitution = application.getInstitution();
 
         Comment comment = new Comment().withUser(exportInstitution.getUser()).withAction(exportAction).withDeclinedResponse(false)

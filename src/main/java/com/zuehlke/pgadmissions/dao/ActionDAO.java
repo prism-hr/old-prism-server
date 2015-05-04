@@ -21,7 +21,6 @@ import javax.inject.Inject;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -70,7 +69,7 @@ public class ActionDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(Restrictions.eq("action.actionCategory", VIEW_EDIT_RESOURCE)) //
-                .add(getUserRoleConstraint(resource, user)) //
+                .add(getUserRoleConstraint(resource, user, "stateActionAssignment")) //
                 .uniqueResult();
     }
 
@@ -105,27 +104,13 @@ public class ActionDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.action", action)) //
-                .add(getUserRoleConstraint(resource, user)) //
+                .add(getUserRoleConstraint(resource, user, "stateActionAssignment")) //
                 .uniqueResult();
     }
 
     public List<ResourceListActionDTO> getPermittedActions(PrismScope resourceScope, Integer resourceId, Integer systemId, Integer institutionId,
             Integer partnerId, Integer programId, Integer projectId, Integer applicationId, User user) {
         String resourceReference = resourceScope.getLowerCamelName();
-        
-        Junction resourceConstraint = Restrictions.disjunction() //
-                .add(Restrictions.eq("userRole.application.id", applicationId)) //
-                .add(Restrictions.eq("userRole.project.id", projectId)) //
-                .add(Restrictions.eq("userRole.program.id", programId)) //
-                .add(Restrictions.eq("userRole.institution.id", institutionId)) //
-                .add(Restrictions.eq("userRole.system.id", systemId));
-        
-        if (partnerId != null) {
-            resourceConstraint.add(Restrictions.conjunction() //
-                    .add(Restrictions.eq("stateActionAssignment.partnerMode", true))
-                    .add(Restrictions.eq("userRole.institution.id", partnerId)));
-        }
-         
         return (List<ResourceListActionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property(resourceReference + ".id"), "resourceId") //
@@ -144,7 +129,15 @@ public class ActionDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("action.actionType", PrismActionType.USER_INVOCATION)) //
                 .add(Restrictions.eq(resourceReference + ".id", resourceId)) //
-                .add(resourceConstraint) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("userRole.application.id", applicationId)) //
+                        .add(Restrictions.eq("userRole.project.id", projectId)) //
+                        .add(Restrictions.eq("userRole.program.id", programId)) //
+                        .add(Restrictions.eq("userRole.institution.id", institutionId)) //
+                        .add(Restrictions.eq("userRole.system.id", systemId)) //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.eq("stateActionAssignment.partnerMode", true)) //
+                                .add(Restrictions.eq("userRole.institution.id", partnerId)))) //
                 .add(getResourceStateActionConstraint()) //
                 .add(getUserEnabledConstraint(user)) //
                 .addOrder(Order.desc("raisesUrgentFlag")) //
@@ -255,7 +248,7 @@ public class ActionDAO {
                 .add(Restrictions.isNotNull("stateAction.actionEnhancement")) //
                 .add(Restrictions.eq("action.actionCategory", PrismActionCategory.VIEW_EDIT_RESOURCE)) //
                 .add(Restrictions.eq(resourceReference, resource)) //
-                .add(getUserRoleConstraint(resource, user)) //
+                .add(getUserRoleConstraint(resource, user, "stateActionAssignment")) //
                 .list();
     }
 
@@ -276,7 +269,7 @@ public class ActionDAO {
                 .add(Restrictions.isNotNull("stateAction.actionEnhancement")) //
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
                 .add(Restrictions.eq(resourceReference, resource)) //
-                .add(getUserRoleConstraint(resource, user)) //
+                .add(getUserRoleConstraint(resource, user, "stateActionAssignment")) //
                 .list();
     }
 
@@ -297,7 +290,7 @@ public class ActionDAO {
                 .add(Restrictions.isNotNull("stateActionAssignment.actionEnhancement")) //
                 .add(Restrictions.eq("action.actionCategory", VIEW_EDIT_RESOURCE)) //
                 .add(Restrictions.eq(resourceReference, resource)) //
-                .add(getUserRoleConstraint(resource, user)) //
+                .add(getUserRoleConstraint(resource, user, "stateActionAssignment")) //
                 .list();
     }
 
@@ -318,7 +311,7 @@ public class ActionDAO {
                 .add(Restrictions.isNotNull("stateActionAssignment.actionEnhancement")) //
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
                 .add(Restrictions.eq(resourceReference, resource)) //
-                .add(getUserRoleConstraint(resource, user)) //
+                .add(getUserRoleConstraint(resource, user, "stateActionAssignment")) //
                 .list();
     }
 

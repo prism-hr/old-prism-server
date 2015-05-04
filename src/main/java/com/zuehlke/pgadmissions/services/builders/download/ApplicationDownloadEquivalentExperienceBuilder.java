@@ -1,20 +1,18 @@
 package com.zuehlke.pgadmissions.services.builders.download;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_QUALIFICATION_EQUIVALENT_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_QUALIFICATION_EXPERIENCE_MESSAGE;
-
-import java.io.ByteArrayOutputStream;
-
+import com.itextpdf.text.Document;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
-import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import java.io.ByteArrayOutputStream;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_QUALIFICATION_EQUIVALENT_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_QUALIFICATION_EXPERIENCE_MESSAGE;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -24,7 +22,7 @@ public class ApplicationDownloadEquivalentExperienceBuilder {
 
     private ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper;
 
-    public byte[] build(final Application application) {
+    public byte[] build() {
         try {
             Document pdfDocument = applicationDownloadBuilderHelper.startDocument();
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

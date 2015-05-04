@@ -7,6 +7,6 @@ import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
 
 public interface PrismResourceListFilterSelector<T> {
 
-	public List<T> getPossible(PrismScope scope, ResourceListFilterConstraintDTO constraint);
+	List<T> getPossible(PrismScope scope, ResourceListFilterConstraintDTO constraint);
 
 }

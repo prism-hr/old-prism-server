@@ -1,17 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter.getPermittedFilters;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.CONTAIN;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterSortOrder.DESCENDING;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter;
@@ -24,21 +12,29 @@ import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilter.getPermittedFilters;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.CONTAIN;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterSortOrder.DESCENDING;
 
 @Service
 @Transactional
 public class ResourceListFilterService {
 
-	@Autowired
+	@Inject
 	private EntityService entityService;
 
-	@Autowired
-	private RoleService roleService;
-
-	@Autowired
+	@Inject
 	private ScopeService scopeService;
 
-	@Autowired
+	@Inject
 	private StateService stateService;
 
 	public void save(User user, Scope scope, ResourceListFilterDTO filterDTO) throws DeduplicationException {

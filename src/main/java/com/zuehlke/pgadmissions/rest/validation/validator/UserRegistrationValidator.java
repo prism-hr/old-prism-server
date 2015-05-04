@@ -1,19 +1,19 @@
 package com.zuehlke.pgadmissions.rest.validation.validator;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
+import com.zuehlke.pgadmissions.services.UserService;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
-import com.zuehlke.pgadmissions.services.UserService;
+import javax.inject.Inject;
 
 @Component
 public class UserRegistrationValidator extends LocalValidatorFactoryBean implements Validator {
 
-    @Autowired
+    @Inject
     private UserService userService;
 
     @Override

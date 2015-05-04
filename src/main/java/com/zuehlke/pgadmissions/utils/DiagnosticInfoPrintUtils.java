@@ -1,12 +1,13 @@
 package com.zuehlke.pgadmissions.utils;
 
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.user.User;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 public final class DiagnosticInfoPrintUtils {
 

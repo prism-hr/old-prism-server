@@ -140,10 +140,10 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "institution_partner_id")
     private Institution partner;
-    
+
     @Column(name = "removed_partner")
     private Boolean removedPartner;
-    
+
     @Embedded
     private CommentSponsorship sponsorship;
 
@@ -593,7 +593,7 @@ public class Comment {
         this.state = state;
         return this;
     }
-    
+
     public Comment withRemovedPartner(Boolean removedPartner) {
         this.removedPartner = removedPartner;
         return this;
@@ -836,7 +836,11 @@ public class Comment {
     public boolean isApplicationReserveStatusComment() {
         return applicationReserveStatus != null;
     }
-    
+
+    public boolean isPartnershipComment() {
+        return partner != null;
+    }
+
     public boolean isSponsorshipComment() {
         return sponsorship != null && BooleanUtils.isTrue(sponsorship.getConfirmed());
     }

@@ -1,18 +1,16 @@
 package com.zuehlke.pgadmissions.dao;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.Maps;
-import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
-import com.zuehlke.pgadmissions.domain.institution.Institution;
-import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
-import com.zuehlke.pgadmissions.domain.resource.ResourceState;
-import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
-import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
-import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
-import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
-import freemarker.template.Template;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
@@ -25,15 +23,20 @@ import org.springframework.stereotype.Repository;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Map;
+import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
+import com.zuehlke.pgadmissions.domain.institution.Institution;
+import com.zuehlke.pgadmissions.domain.institution.InstitutionDomicile;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.dto.ResourceForWhichUserCanCreateChildDTO;
+import com.zuehlke.pgadmissions.dto.ResourceSearchEngineDTO;
+import com.zuehlke.pgadmissions.dto.SearchEngineAdvertDTO;
+import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
+import freemarker.template.Template;
 
 @Repository
 @SuppressWarnings("unchecked")

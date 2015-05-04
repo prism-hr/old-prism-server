@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.utils.PrismConstants.SEQUENCE_IDENTIFIER;
 
@@ -188,7 +189,7 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Integer> getAssignedResources(User user, PrismScope scopeId, ResourceListFilterDTO filter, Junction conditions, String lastIdentifier,
+    public List<Integer> getAssignedResources(User user, PrismScope scopeId, ResourceListFilterDTO filter, Junction conditions, String lastSequenceIdentifier,
             Integer recordsToRetrieve) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
@@ -201,19 +202,16 @@ public class ResourceDAO {
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("stateAction.actionCondition")) //
-                        .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition"))) //
+                .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.isNull("state.hidden"));
 
         appendResourceListFilterCriterion(criteria, conditions, filter);
-        appendResourceListLimitCriterion(criteria, filter, lastIdentifier, recordsToRetrieve);
-
+        appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, recordsToRetrieve);
         return (List<Integer>) criteria.list();
     }
 
     public List<Integer> getAssignedResources(User user, PrismScope scopeId, PrismScope parentScopeId, ResourceListFilterDTO filter, Junction conditions,
-            String lastIdentifier, Integer recordsToRetrieve) {
+            String lastSequenceIdentifier, Integer recordsToRetrieve) {
         String parentResourceReference = parentScopeId.getLowerCamelName();
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
@@ -227,15 +225,35 @@ public class ResourceDAO {
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("stateAction.actionCondition")) //
-                        .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition"))) //
+                .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
                 .add(Restrictions.isNull("state.hidden"));
 
         appendResourceListFilterCriterion(criteria, conditions, filter);
-        appendResourceListLimitCriterion(criteria, filter, lastIdentifier, recordsToRetrieve);
+        appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, recordsToRetrieve);
+        return (List<Integer>) criteria.list();
+    }
 
+    public List<Integer> getAssignedPartnerResources(User user, PrismScope scopeId, ResourceListFilterDTO filter, Junction conditions,
+            String lastSequenceIdentifier, Integer recordsToRetrieve) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .createAlias("resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("partner", "partner", JoinType.INNER_JOIN) //
+                .createAlias("partner.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN, //
+                        Restrictions.eq("stateActionAssignment.partnerMode", true)) //
+                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("userRole.user", user)) //
+                .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
+                .add(getResourceStateActionConstraint()) //
+                .add(Restrictions.isNull("state.hidden"));
+
+        appendResourceListFilterCriterion(criteria, conditions, filter);
+        appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, recordsToRetrieve);
         return (List<Integer>) criteria.list();
     }
 
@@ -366,6 +384,22 @@ public class ResourceDAO {
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //
                 .uniqueResult();
+    }
+
+    public List<Integer> getResourcesByPartner(PrismScope scope, String searchTerm) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
+                .setProjection(Projections.property("id")) //
+                .createAlias("partner", "partner", JoinType.INNER_JOIN) //
+                .add(Restrictions.ilike("partner.title", searchTerm, MatchMode.ANYWHERE))
+                .list();
+    }
+    
+    public List<Integer> getResourcesBySponsor(PrismScope scope, String searchTerm) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .setProjection(Projections.groupProperty(scope.getLowerCamelName() + ".id")) //
+                .createAlias("sponsorship.sponsor", "sponsor", JoinType.INNER_JOIN) //
+                .add(Restrictions.ilike("sponsor.title", searchTerm, MatchMode.ANYWHERE))
+                .list();
     }
 
     private void addResourceListCustomColumns(PrismScope scopeId, ProjectionList projectionList) {

@@ -1,17 +1,13 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
-import com.zuehlke.pgadmissions.utils.PrismConstants;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
@@ -22,12 +18,20 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.dto.SitemapEntryDTO;
+import com.zuehlke.pgadmissions.utils.PrismConstants;
 
 @Service
 @Transactional

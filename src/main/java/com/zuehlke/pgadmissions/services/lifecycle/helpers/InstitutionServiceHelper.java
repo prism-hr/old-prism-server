@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-import com.zuehlke.pgadmissions.services.ImportedEntityService;
-import com.zuehlke.pgadmissions.services.InstitutionService;
-import org.springframework.stereotype.Component;
+import java.util.List;
 
 import javax.inject.Inject;
-import java.util.List;
+
+import org.springframework.stereotype.Component;
+
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
+import com.zuehlke.pgadmissions.services.InstitutionService;
 
 @Component
 public class InstitutionServiceHelper implements AbstractServiceHelper {

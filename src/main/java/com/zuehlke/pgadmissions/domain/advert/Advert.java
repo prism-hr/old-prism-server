@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 
 import java.math.BigDecimal;
 import java.util.Set;
@@ -37,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.institution.InstitutionAddress;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.project.Project;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParentAttribute;
 
@@ -329,10 +329,9 @@ public class Advert extends ResourceParentAttribute {
         PrismScope resourceScope = resource.getResourceScope();
         if (resourceScope.equals(INSTITUTION)) {
             return null;
-        } else if (resourceScope.equals(PROGRAM)) {
-            return program.getOpportunityType().getPrismOpportunityType();
-        }
-        return project.getOpportunityType().getPrismOpportunityType();
+        } 
+        ResourceOpportunity opportunity = (ResourceOpportunity) resource;
+        return opportunity.getOpportunityType().getPrismOpportunityType();
     }
 
     public Boolean getImported() {

@@ -84,7 +84,7 @@ public class PrismStateAction {
         this.assignments.add(new PrismStateActionAssignment().withRole(role).withActionEnhancement(actionEnhancement));
         return this;
     }
-    
+
     public PrismStateAction withAssignments(PrismRoleGroup roles, PrismActionEnhancement actionEnhancement) {
         for (PrismRole role : roles.getRoles()) {
             this.assignments.add(new PrismStateActionAssignment().withRole(role).withActionEnhancement(actionEnhancement));
@@ -99,9 +99,23 @@ public class PrismStateAction {
         return this;
     }
 
-    public PrismStateAction withAssignments(PrismRoleGroup roleGroup) {
-        for (PrismRole role : roleGroup.getRoles()) {
+    public PrismStateAction withAssignments(PrismRoleGroup roles) {
+        for (PrismRole role : roles.getRoles()) {
             assignments.add(new PrismStateActionAssignment().withRole(role));
+        }
+        return this;
+    }
+
+    public PrismStateAction withPartnerAssignments(PrismRoleGroup roles) {
+        for (PrismRole role : roles.getRoles()) {
+            this.assignments.add(new PrismStateActionAssignment().withRole(role).withPartnerMode());
+        }
+        return this;
+    }
+
+    public PrismStateAction withPartnerAssignments(PrismRoleGroup roles, PrismActionEnhancement actionEnhancement) {
+        for (PrismRole role : roles.getRoles()) {
+            this.assignments.add(new PrismStateActionAssignment().withRole(role).withPartnerMode().withActionEnhancement(actionEnhancement));
         }
         return this;
     }
@@ -115,6 +129,13 @@ public class PrismStateAction {
 
     public PrismStateAction withNotifications(PrismRole role, PrismNotificationDefinition notification) {
         notifications.add(new PrismStateActionNotification().withRole(role).withDefinition(notification));
+        return this;
+    }
+
+    public PrismStateAction withPartnerNotifications(PrismRoleGroup roleGroup, PrismNotificationDefinition notification) {
+        for (PrismRole role : roleGroup.getRoles()) {
+            notifications.add(new PrismStateActionNotification().withRole(role).withPartnerMode().withDefinition(notification));
+        }
         return this;
     }
 

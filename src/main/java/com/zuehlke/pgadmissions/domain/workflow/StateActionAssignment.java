@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 
 @Entity
-@Table(name = "STATE_ACTION_ASSIGNMENT", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "role_id" }) })
+@Table(name = "STATE_ACTION_ASSIGNMENT", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "role_id", "partner_mode" }) })
 public class StateActionAssignment implements UniqueEntity {
 
     @Id
@@ -29,6 +29,9 @@ public class StateActionAssignment implements UniqueEntity {
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
+    
+    @Column(name = "partner_mode", nullable = false)
+    private Boolean partnerMode;
 
     @Column(name = "action_enhancement")
     @Enumerated(EnumType.STRING)
@@ -58,6 +61,14 @@ public class StateActionAssignment implements UniqueEntity {
         this.role = role;
     }
 
+    public Boolean getPartnerMode() {
+        return partnerMode;
+    }
+
+    public void setPartnerMode(Boolean partnerMode) {
+        this.partnerMode = partnerMode;
+    }
+
     public PrismActionEnhancement getActionEnhancement() {
         return actionEnhancement;
     }
@@ -76,6 +87,11 @@ public class StateActionAssignment implements UniqueEntity {
         return this;
     }
 
+    public StateActionAssignment withPartnerMode(Boolean partnerMode) {
+        this.partnerMode = partnerMode;
+        return this;
+    }
+    
     public StateActionAssignment withActionEnhancement(PrismActionEnhancement actionEnhancement) {
         this.actionEnhancement = actionEnhancement;
         return this;
@@ -83,7 +99,7 @@ public class StateActionAssignment implements UniqueEntity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("stateAction", stateAction).addProperty("role", role);
+        return new ResourceSignature().addProperty("stateAction", stateAction).addProperty("role", role).addProperty("partnerMode", partnerMode);
     }
 
 }

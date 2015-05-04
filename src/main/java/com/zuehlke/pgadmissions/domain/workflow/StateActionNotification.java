@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.workflow;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -11,7 +12,7 @@ import javax.persistence.UniqueConstraint;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 
 @Entity
-@Table(name = "STATE_ACTION_NOTIFICATION", uniqueConstraints = {@UniqueConstraint(columnNames = {"state_action_id", "role_id"})})
+@Table(name = "STATE_ACTION_NOTIFICATION", uniqueConstraints = {@UniqueConstraint(columnNames = {"state_action_id", "role_id", "partner_mode"})})
 public class StateActionNotification implements UniqueEntity {
 
     @Id
@@ -25,6 +26,9 @@ public class StateActionNotification implements UniqueEntity {
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
+    
+    @Column(name = "partner_mode", nullable = false)
+    private Boolean partnerMode;
 
     @ManyToOne
     @JoinColumn(name = "notification_definition_id", nullable = false)
@@ -54,6 +58,14 @@ public class StateActionNotification implements UniqueEntity {
         this.role = role;
     }
 
+    public Boolean getPartnerMode() {
+        return partnerMode;
+    }
+
+    public void setPartnerMode(Boolean partnerMode) {
+        this.partnerMode = partnerMode;
+    }
+
     public NotificationDefinition getNotificationDefinition() {
         return notificationDefinition;
     }
@@ -72,6 +84,11 @@ public class StateActionNotification implements UniqueEntity {
         return this;
     }
 
+    public StateActionNotification withPartnerMode(Boolean partnerMode) {
+        this.partnerMode = partnerMode;
+        return this;
+    }
+    
     public StateActionNotification withNotificationDefinition(NotificationDefinition notificationTemplate) {
         this.notificationDefinition = notificationTemplate;
         return this;
@@ -79,7 +96,7 @@ public class StateActionNotification implements UniqueEntity {
 
     @Override
     public ResourceSignature getResourceSignature() {
-        return new ResourceSignature().addProperty("stateAction", stateAction).addProperty("role", role);
+        return new ResourceSignature().addProperty("stateAction", stateAction).addProperty("role", role).addProperty("partnerMode", partnerMode);
     }
 
 }
